@@ -1,3 +1,10 @@
 Make sure to install
-sudo apt-get install python3.11-dev, python3.11-venv
+`sudo apt-get install python3.11-dev python3.11-venv`
 
+Steps:
+```
+source env/activate
+cmake -G Ninja -B build
+cmake --build build
+cmake --install build
+```
