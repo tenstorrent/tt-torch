@@ -5,7 +5,7 @@ import threading
 
 import torch
 from torch._decomp import get_decompositions, remove_decompositions
-
+from torch_mlir.extras.fx_decomp_util import get_decomposition_table
 DecompositionTable = Dict[torch._ops.OperatorBase, Callable]
 DecompositionOpsList = Sequence[
     Union[torch._ops.OperatorBase, torch._ops.OpOverloadPacket]
@@ -62,7 +62,7 @@ def _extend_context_manager(
             popped is table
         ), "contextmanager unbalanced: popped different that pushed"
 
-
+#TODO: DO we ever need this?
 def _get_default_decomposition_ops() -> DecompositionOpsList:
     aten = torch.ops.aten
     # default decompositions pulled from SHARK / torch._decomp
@@ -110,11 +110,12 @@ def _get_default_decomposition_ops() -> DecompositionOpsList:
         aten._unsafe_index.Tensor,
         aten.unbind.int,
         aten.linspace.Tensor_Tensor,
+        aten._scaled_dot_product_flash_attention_for_cpu.default,
     ]
 
 
 # Some older APIs still use an op list instead of a table.
-DEFAULT_DECOMPOSITIONS: DecompositionOpsList = _get_default_decomposition_ops()
+DEFAULT_DECOMPOSITIONS: DecompositionOpsList = get_decomposition_table()
 
 # The table of default decompositions.
 DEFAULT_DECOMPOSITION_TABLE: DecompositionTable = get_decompositions(

@@ -42,8 +42,7 @@ def test_linear_with_bias():
       x = self.linear_a(x)
       return x
 
-  mod = fx.export_and_import(Basic(), torch.randint(0, 100, (1, 32)), output_type=OutputType.STABLEHLO)
-  mod.dump()
+  verify_module(Basic(), [(32, 32)])
 
 
 def test_relu():
@@ -58,10 +57,8 @@ def test_relu():
   verify_module(Basic(), [(32, 32)])
 
 def test_bert():
-  pytest.skip()
   from torch_mlir import fx
   from torch_mlir.compiler_utils import OutputType
   from transformers import BertModel
   bert = BertModel.from_pretrained("prajjwal1/bert-tiny")
-  mod = fx.export_and_import(bert, torch.randint(0, 100, (1, 32)), output_type=OutputType.STABLEHLO)
-  # verify_module(bert, [(1, 32)], input_data_types=[torch.int32])
+  verify_module(bert, [(1, 32)], input_data_types=[torch.int32])

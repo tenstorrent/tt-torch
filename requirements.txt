@@ -5,3 +5,5 @@ torchvision
 -f https://github.com/llvm/torch-mlir-release/releases/expanded_assets/dev-wheels
 pybind11
 tabulate
+pytest
+transformers
