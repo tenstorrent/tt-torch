@@ -115,7 +115,7 @@ def _get_default_decomposition_ops() -> DecompositionOpsList:
 
 
 # Some older APIs still use an op list instead of a table.
-DEFAULT_DECOMPOSITIONS: DecompositionOpsList = get_decomposition_table()
+DEFAULT_DECOMPOSITIONS: DecompositionOpsList = _get_default_decomposition_ops()
 
 # The table of default decompositions.
 DEFAULT_DECOMPOSITION_TABLE: DecompositionTable = get_decompositions(

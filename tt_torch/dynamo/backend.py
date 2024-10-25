@@ -75,7 +75,7 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs):
         "Lowering TorchFX IR -> Torch Backend IR",
     )
     lower_mlir_module(True, OutputType.STABLEHLO, importer.module)
-    binary = tt_mlir.compile(importer.module.__str__())
+    binary = tt_mlir.compile(importer.module.operation.get_asm())
     executor = Executor(binary)
     return executor
 

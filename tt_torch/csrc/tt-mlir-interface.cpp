@@ -35,10 +35,10 @@
 #include "stablehlo/transforms/Passes.h"  // from @stablehlo
 
 #define TTMLIR_ENABLE_STABLEHLO
-#include "ttmlir/Conversion/StableHLOToTTIR/StableHLOToTTIR.h"
 #include "ttmlir/Dialect/TTIR/Transforms/Passes.h"
 #include "ttmlir/Dialect/TTNN/Transforms/Passes.h"
 #include "ttmlir/Dialect/TTNN/Pipelines/TTNNPipelines.h"
+#include "ttmlir/Dialect/TTIR/Pipelines/TTIRPipelines.h"
 #include "ttmlir/Target/TTNN/TTNNToFlatbuffer.h"
 
 #include "tt/runtime/runtime.h"
@@ -70,21 +70,14 @@ tt::runtime::Binary Compile(std::string_view code) {
 
   mlir_module->dump();
 
-  mlir::PassManager vhlo_pm(mlir_module.get()->getName());
-  vhlo_pm.addPass(mlir::stablehlo::createVhloLegalizeToStablehloPass());
-  // Run the pass manager.
-  if (mlir::failed(vhlo_pm.run(mlir_module.get())))
-  {
-      throw std::runtime_error("Failed to run VHLO Legalization pass pipeline.");
-  }
-
-  mlir_module->dump();
-
   mlir::tt::ttir::registerPasses();
   mlir::tt::ttnn::registerPasses();
 
   mlir::PassManager shlo_pm(mlir_module.get()->getName());
-  shlo_pm.addPass(mlir::tt::createConvertStableHLOToTTIRPass());
+  mlir::tt::ttir::StableHLOToTTIRPipelineOptions shlo_options;
+  shlo_options.arithDialectConversionsEnabled = true;
+  shlo_options.removeDeadValuesEnabled = true;
+  mlir::tt::ttir::createStableHLOToTTIRPipeline(shlo_pm, shlo_options);
   // Run the pass manager.
   if (mlir::failed(shlo_pm.run(mlir_module.get())))
   {

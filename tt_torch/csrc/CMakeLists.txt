@@ -83,6 +83,7 @@ target_link_libraries(TT_TORCH_MLIR PUBLIC
     MLIR
     TTMLIR
     TTMLIRStableHLOToTTIR
+    MLIRTTIRPipelines
     ${STABLEHLO_LIBS}
 )
 target_link_directories(TT_TORCH_MLIR PUBLIC
