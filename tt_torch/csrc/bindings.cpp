@@ -113,7 +113,8 @@ PYBIND11_MODULE(tt_mlir, m) {
     m.doc() = "tt_mlir";
     py::class_<tt::runtime::Binary>(m, "Binary")
         .def("getProgramInputs", &tt::runtime::Binary::getProgramInputs)
-        .def("getProgramOutputs", &tt::runtime::Binary::getProgramOutputs);
+        .def("getProgramOutputs", &tt::runtime::Binary::getProgramOutputs)
+        .def("as_json", &tt::runtime::Binary::asJson);
     m.def("compile", &compile, "A function that compiles a stableHLO model to a flatbuffer");
     m.def("run", &run, "Push inputs and run binary");
     m.def("get_current_system_desc", &tt::runtime::getCurrentSystemDesc,

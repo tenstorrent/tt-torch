@@ -19,10 +19,18 @@ else
     source $TTMLIR_VENV_DIR/bin/activate
     pip install --upgrade pip
     pip install -r requirements.txt
+    cd third_party
+    git clone https://github.com/pytorch/vision.git
+    cd vision
+    git checkout v0.20.0
+    pip uninstall -y torchvision
+    TORCHVISION_USE_VIDEO_CODEC=0 TORCHVISION_USE_FFMPEG=0 CC=clang CXX=clang++ _GLIBCXX_USE_CXX11_ABI=1 USE_CUDA=OFF python setup.py install
+    cd ../..
   fi
   export TTTORCH_ENV_ACTIVATED=1
   export TTMLIR_ENV_ACTIVATED=1
   export PATH=$TTMLIR_TOOLCHAIN_DIR/bin:$PATH
+  export TOKENIZERS_PARALLELISM=false
   if [ -n "$PROJECT_ROOT" ]; then
       export TT_METAL_HOME="$PROJECT_ROOT/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal"
   else
