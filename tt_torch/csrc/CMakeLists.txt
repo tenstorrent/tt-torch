@@ -21,6 +21,7 @@ target_include_directories(TT_TORCH_MLIR PUBLIC
     ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/stablehlo/
     ${TTMLIR_TOOLCHAIN_DIR}/include
     ${TTMLIR_TOOLCHAIN_DIR}/src/stablehlo
+    ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/include
 )
 
 set(STABLEHLO_LIBS
@@ -82,8 +83,10 @@ target_link_libraries(TT_TORCH_MLIR PUBLIC
     LLVM
     MLIR
     TTMLIR
-    TTMLIRStableHLOToTTIR
+    TTMLIRStatic
+    TTMLIRTosaToTTIR
     MLIRTTIRPipelines
+    TTMLIRStableHLOToTTIR
     ${STABLEHLO_LIBS}
 )
 target_link_directories(TT_TORCH_MLIR PUBLIC

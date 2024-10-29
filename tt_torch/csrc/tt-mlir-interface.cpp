@@ -33,6 +33,7 @@
 #include "stablehlo/dialect/Serialization.h"  // from @stablehlo
 #include "stablehlo/dialect/StablehloOps.h"  // from @stablehlo
 #include "stablehlo/transforms/Passes.h"  // from @stablehlo
+#include "mlir/InitAllPasses.h"
 
 #define TTMLIR_ENABLE_STABLEHLO
 #include "ttmlir/Dialect/TTIR/Transforms/Passes.h"
@@ -40,6 +41,7 @@
 #include "ttmlir/Dialect/TTNN/Pipelines/TTNNPipelines.h"
 #include "ttmlir/Dialect/TTIR/Pipelines/TTIRPipelines.h"
 #include "ttmlir/Target/TTNN/TTNNToFlatbuffer.h"
+#include "ttmlir/RegisterAll.h"
 
 #include "tt/runtime/runtime.h"
 
@@ -56,8 +58,10 @@ tt::runtime::Binary Compile(std::string_view code) {
   registry.insert<mlir::ml_program::MLProgramDialect>();
   registry.insert<mlir::shape::ShapeDialect>();
 
+  mlir::tt::registerAllDialects(registry);
   mlir::stablehlo::registerAllDialects(registry);
   mlir::func::registerAllExtensions(registry);
+  mlir::tt::registerAllExtensions(registry);
 
   context.appendDialectRegistry(registry);
 
@@ -73,10 +77,12 @@ tt::runtime::Binary Compile(std::string_view code) {
   mlir::tt::ttir::registerPasses();
   mlir::tt::ttnn::registerPasses();
 
-  mlir::PassManager shlo_pm(mlir_module.get()->getName());
+  // Implicit nesting required to call the stablehlo.composite --> func.call conversion.
+  mlir::PassManager shlo_pm(mlir_module.get()->getName(), mlir::PassManager::Nesting::Implicit);
   mlir::tt::ttir::StableHLOToTTIRPipelineOptions shlo_options;
   shlo_options.arithDialectConversionsEnabled = true;
   shlo_options.removeDeadValuesEnabled = true;
+  shlo_options.legalizeCompositeToCallEnabled = true;
   mlir::tt::ttir::createStableHLOToTTIRPipeline(shlo_pm, shlo_options);
   // Run the pass manager.
   if (mlir::failed(shlo_pm.run(mlir_module.get())))
