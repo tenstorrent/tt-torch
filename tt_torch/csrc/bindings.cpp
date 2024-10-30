@@ -104,7 +104,8 @@ std::vector<at::Tensor> run(const std::vector<at::Tensor>& inputs, tt::runtime::
         rt_outputs.emplace_back(create_tensor(outputs.back()));
     }
 
-    tt::runtime::Event _ = tt::runtime::submit(device, binary, program_idx, rt_inputs, rt_outputs);
+    tt::runtime::Event event = tt::runtime::submit(device, binary, program_idx, rt_inputs, rt_outputs);
+    (void)event;
     tt::runtime::closeDevice(device);
     return outputs;
 }

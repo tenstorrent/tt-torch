@@ -5,13 +5,13 @@ on:
   workflow_call:
 
 jobs:
-  # build-ttxla:
+  # build-tt-torch:
 
   #   timeout-minutes: 120
   #   strategy:
   #     fail-fast: false
 
-  #   name: Build and test tt-xla
+  #   name: Build and test tt-torch
   #   runs-on: ubuntu-latest
 
   #   container:
