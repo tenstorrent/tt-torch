@@ -35,4 +35,3 @@ else
   export TT_METAL_LOGGER_LEVEL="ERROR"
 
 fi
-

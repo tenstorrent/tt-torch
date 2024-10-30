@@ -13,7 +13,7 @@ add_dependencies(TT_TORCH_MLIR
 set_target_properties(TT_TORCH_MLIR PROPERTIES COMPILE_FLAGS "-fno-rtti")
 install (TARGETS TT_TORCH_MLIR LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
-target_include_directories(TT_TORCH_MLIR PUBLIC 
+target_include_directories(TT_TORCH_MLIR PUBLIC
     ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/include
     ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/include/ttmlir/Target/Common
     ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir/include
@@ -62,12 +62,12 @@ set(STABLEHLO_LIBS
     StablehloRegister
     StablehloBase
     StablehloPasses
-    StablehloReferenceErrors  
+    StablehloReferenceErrors
     StablehloReferenceProcess
-    StablehloReferenceToken   
+    StablehloReferenceToken
     StablehloSerialization
     StablehloBroadcastUtils
-    StablehloPortableApi 
+    StablehloPortableApi
     StablehloReferenceIndex
     StablehloReferenceProcessGrid
     StablehloReferenceTypes
@@ -103,7 +103,7 @@ find_library(TORCH_PYTHON_LIBRARY torch_python PATH "${TORCH_INSTALL_PREFIX}/lib
 set(TARGET_NAME tt_mlir)
 pybind11_add_module(${TARGET_NAME} bindings.cpp)
 
-add_dependencies(${TARGET_NAME} 
+add_dependencies(${TARGET_NAME}
     TT_TORCH_MLIR
     tt-mlir
 )
@@ -116,7 +116,7 @@ target_include_directories(${TARGET_NAME} PUBLIC
     ${TTMLIR_TOOLCHAIN_DIR}/include
     ${TORCH_INCLUDE_DIRS}
 )
-target_link_libraries(${TARGET_NAME} PUBLIC 
+target_link_libraries(${TARGET_NAME} PUBLIC
     TT_TORCH_MLIR
     ${TORCH_LIBRARIES}
     ${TORCH_PYTHON_LIBRARY}

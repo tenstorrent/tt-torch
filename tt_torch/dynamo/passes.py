@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 import torch
 from torch.fx.experimental.proxy_tensor import make_fx
 from torch._decomp import get_decompositions

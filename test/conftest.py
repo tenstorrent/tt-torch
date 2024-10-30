@@ -5,6 +5,7 @@
 import pytest
 import torch
 
+
 @pytest.fixture(autouse=True)
 def run_around_tests():
     yield
