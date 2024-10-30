@@ -15,6 +15,8 @@ else
     [ -f $TTMLIR_VENV_DIR/bin/activate ] && source $TTMLIR_VENV_DIR/bin/activate
   else
     echo "Creating virtual environment in $TTMLIR_VENV_DIR"
+    apt install python3.11-dev -y
+    apt install python3.11-venv -y
     python3.11 -m venv $TTMLIR_VENV_DIR
     source $TTMLIR_VENV_DIR/bin/activate
     pip install --upgrade pip
