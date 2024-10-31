@@ -9,3 +9,9 @@ jobs:
   build-and-test:
     uses: ./.github/workflows/build-and-test.yml
     secrets: inherit
+  pre-commit:
+    uses: ./.github/workflows/pre-commit.yml
+    secrets: inherit
+  spdx:
+    uses: ./.github/workflows/spdx.yml
+    secrets: inherit
