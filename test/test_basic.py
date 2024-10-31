@@ -9,6 +9,17 @@ import tt_torch
 from tt_torch.tools.verify import verify_module
 
 
+def test_abs():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.abs(x)
+
+    verify_module(Basic(), [(256, 256)])
+
+
 def test_add():
     class Basic(nn.Module):
         def __init__(self):
@@ -64,6 +75,65 @@ def test_concat_dim3():
     verify_module(Basic(), [(32, 32, 32, 32), (32, 32, 32, 64)])
 
 
+@pytest.mark.skip(
+    "Torch keeps the 'value' as dialect resource which are not processed."
+)
+def test_constant_ones():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.tensor([1.0, 1.0, 1.0, 1.0])
+
+    verify_module(Basic(), [(1, 1)])
+
+
+def test_convert():
+    class Basic_toFloat(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return x.to(torch.float32)
+
+    class Basic_toInt(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return x.to(torch.int32)
+
+    verify_module(Basic_toFloat(), [(4, 4)], input_data_types=[torch.int32])
+    verify_module(Basic_toFloat(), [(4, 4)], input_data_types=[torch.float32])
+    verify_module(Basic_toInt(), [(4, 4)], input_data_types=[torch.int32])
+    verify_module(
+        Basic_toInt(), [(4, 4)], input_data_types=[torch.float32], input_range=(0, 60)
+    )
+
+
+def test_div():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x, y):
+            return x / y
+
+    verify_module(Basic(), [(2, 2), (2, 2)], required_atol=3e-2)
+
+
+def test_exp():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.exp(x)
+
+    verify_module(Basic(), [(2, 2)], required_atol=3e-2)
+
+
 def test_linear():
     class Basic(nn.Module):
         def __init__(self):
@@ -96,6 +166,63 @@ def test_linear_with_bias():
             return x
 
     verify_module(Basic(), [(32, 32)])
+
+
+def test_maximum():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x, y):
+            return torch.maximum(x, y)
+
+    verify_module(Basic(), [(32, 32), (32, 32)], input_range=(-6, 6))
+
+
+def test_multiply():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x, y):
+            return x * y
+
+    verify_module(Basic(), [(32, 32), (32, 32)])
+
+
+def test_negate():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return -x
+
+    verify_module(Basic(), [(32, 32)], input_range=(-6, 6))
+
+
+@pytest.mark.skip("keepdim=False is not supported")
+def test_reduce_max():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.max(x)
+
+    verify_module(Basic(), [(32, 32)], input_range=(-6, 6))
+
+
+@pytest.mark.skip("keepdim=False is not supported")
+def test_reduce_sum():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.sum(x)
+
+    verify_module(Basic(), [(32, 32)], input_range=(-6, 6))
 
 
 def test_relu():
@@ -175,6 +302,40 @@ def test_slice(begin, end, dim):
     shape = [10, 10, 10, 10]
     shape[dim] = 128
     verify_module(Basic(), [shape])
+
+
+def test_subtract():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x, y):
+            return x - y
+
+    verify_module(Basic(), [(32, 32), (32, 32)], input_range=(-6, 6))
+
+
+def test_transpose_2d():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.transpose(x, 0, 1)
+
+    verify_module(Basic(), [(4, 8)], input_range=(-6, 6))
+
+
+@pytest.mark.skip("TTNN does not support transpose for higher ranks/dimensions.")
+def test_transpose_3d():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.transpose(x, 0, 1)
+
+    verify_module(Basic(), [(4, 8, 4)], input_range=(-6, 6))
 
 
 def test_bert():

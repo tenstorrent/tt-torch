@@ -18,11 +18,12 @@ def verify_module(
 
     if all([dtype.is_floating_point for dtype in input_data_types]):
         low, high = input_range
-        inputs = [
-            (low - high) * torch.rand(shape) + high for shape in input_shapes
-        ]  # uniformly distribute random numbers within the input_range
+        # Uniformly distribute random numbers within the input_range
+        inputs = [(low - high) * torch.rand(shape) + high for shape in input_shapes]
     else:
-        inputs = [torch.randint(0, 1000, shape) for shape in input_shapes]
+        inputs = [
+            torch.randint(0, 1000, shape, dtype=torch.int32) for shape in input_shapes
+        ]
     ret = tt_mod(*inputs)
     golden = mod(*inputs)
 
