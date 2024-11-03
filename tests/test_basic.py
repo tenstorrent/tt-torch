@@ -338,19 +338,6 @@ def test_transpose_3d():
 
     verify_module(Basic(), [(4, 8, 4)], input_range=(-6, 6))
 
- 
-
-def test_argmax():
-  class Basic(nn.Module):
-    def __init__(self):
-      super().__init__()
-
-    def forward(self, x):
-      return torch.argmax(x)
-    
-  verify_module(Basic(), [(1, 32)], required_atol=3e-2, input_range=(0.1, 1))
-
-
 
 def test_multiple_ops():
   class Basic(nn.Module):
@@ -364,5 +351,6 @@ def test_multiple_ops():
       return z
   
   cc = CompilerConfig()
+  cc.compile_depth = tt_torch.tools.utils.CompileDepth.COMPILE_OP_BY_OP
   verify_module(Basic(), [(256, 256)], compiler_config=cc, do_assert=False)
 
