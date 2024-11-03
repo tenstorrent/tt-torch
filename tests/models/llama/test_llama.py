@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 import torch
 import pytest
 
@@ -10,7 +13,9 @@ class ThisTester(ModelTester):
     def _load_model(self):
         # Download model from cloud
         model_name = "huggyllama/llama-7b"
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left", torch_dtype=torch.bfloat16)
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            model_name, padding_side="left", torch_dtype=torch.bfloat16
+        )
         self.tokenizer.pad_token = self.tokenizer.eos_token
         m = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.bfloat16)
         for param in m.parameters():

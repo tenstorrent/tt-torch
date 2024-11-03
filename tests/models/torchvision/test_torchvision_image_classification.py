@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 from torchvision import models, transforms
 from PIL import Image
 import torch
@@ -49,14 +52,30 @@ model_info_and_mode_list = [
     [("resnext50_32x4d", "ResNeXt50_32X4D_Weights"), "eval"],
     [("resnext101_32x8d", "ResNeXt101_32X8D_Weights"), "eval"],
     [("resnext101_64x4d", "ResNeXt101_64X4D_Weights"), "eval"],
-    pytest.param([("vgg11", "VGG11_Weights"), "eval"], marks=pytest.mark.compilation_xfail),
-    pytest.param([("vgg11_bn", "VGG11_BN_Weights"), "eval"], marks=pytest.mark.compilation_xfail),
-    pytest.param([("vgg13", "VGG13_Weights"), "eval"], marks=pytest.mark.compilation_xfail),
-    pytest.param([("vgg13_bn", "VGG13_BN_Weights"), "eval"], marks=pytest.mark.compilation_xfail),
-    pytest.param([("vgg16", "VGG16_Weights"), "eval"], marks=pytest.mark.compilation_xfail),
-    pytest.param([("vgg16_bn", "VGG16_BN_Weights"), "eval"], marks=pytest.mark.compilation_xfail),
-    pytest.param([("vgg19", "VGG19_Weights"), "eval"], marks=pytest.mark.compilation_xfail),
-    pytest.param([("vgg19_bn", "VGG19_BN_Weights"), "eval"], marks=pytest.mark.compilation_xfail),
+    pytest.param(
+        [("vgg11", "VGG11_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+    ),
+    pytest.param(
+        [("vgg11_bn", "VGG11_BN_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+    ),
+    pytest.param(
+        [("vgg13", "VGG13_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+    ),
+    pytest.param(
+        [("vgg13_bn", "VGG13_BN_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+    ),
+    pytest.param(
+        [("vgg16", "VGG16_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+    ),
+    pytest.param(
+        [("vgg16_bn", "VGG16_BN_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+    ),
+    pytest.param(
+        [("vgg19", "VGG19_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+    ),
+    pytest.param(
+        [("vgg19_bn", "VGG19_BN_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+    ),
     [("vit_b_16", "ViT_B_16_Weights"), "eval"],
     [("vit_b_32", "ViT_B_32_Weights"), "eval"],
     [("vit_l_16", "ViT_L_16_Weights"), "eval"],
@@ -79,12 +98,27 @@ model_info_and_mode_list = [
     [("regnet_x_8gf", "RegNet_X_8GF_Weights"), "eval"],
     [("regnet_x_16gf", "RegNet_X_16GF_Weights"), "eval"],
     [("regnet_x_32gf", "RegNet_X_32GF_Weights"), "eval"],
-    pytest.param([("swin_t", "Swin_T_Weights"), "eval"], marks=pytest.mark.compilation_xfail),
-    pytest.param([("swin_s", "Swin_S_Weights"), "eval"], marks=pytest.mark.compilation_xfail),
-    pytest.param([("swin_b", "Swin_B_Weights"), "eval"], marks=pytest.mark.compilation_xfail),
-    pytest.param([("swin_v2_t", "Swin_V2_T_Weights"), "eval"], marks=pytest.mark.compilation_xfail),
-    pytest.param([("swin_v2_s", "Swin_V2_S_Weights"), "eval"], marks=pytest.mark.compilation_xfail),
-    pytest.param([("swin_v2_b", "Swin_V2_B_Weights"), "eval"], marks=pytest.mark.compilation_xfail),
+    pytest.param(
+        [("swin_t", "Swin_T_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+    ),
+    pytest.param(
+        [("swin_s", "Swin_S_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+    ),
+    pytest.param(
+        [("swin_b", "Swin_B_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+    ),
+    pytest.param(
+        [("swin_v2_t", "Swin_V2_T_Weights"), "eval"],
+        marks=pytest.mark.compilation_xfail,
+    ),
+    pytest.param(
+        [("swin_v2_s", "Swin_V2_S_Weights"), "eval"],
+        marks=pytest.mark.compilation_xfail,
+    ),
+    pytest.param(
+        [("swin_v2_b", "Swin_V2_B_Weights"), "eval"],
+        marks=pytest.mark.compilation_xfail,
+    ),
 ]
 
 

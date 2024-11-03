@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 import torch
 import pytest
 
@@ -10,8 +13,12 @@ class ThisTester(ModelTester):
     def _load_model(self):
         # Download model from cloud
         model_name = "mnoukhov/gpt2-imdb-sentiment-classifier"
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left", torch_dtype=torch.bfloat16)
-        m = AutoModelForSequenceClassification.from_pretrained(model_name, torch_dtype=torch.bfloat16)
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            model_name, padding_side="left", torch_dtype=torch.bfloat16
+        )
+        m = AutoModelForSequenceClassification.from_pretrained(
+            model_name, torch_dtype=torch.bfloat16
+        )
         return m
 
     def _load_inputs(self):
@@ -25,7 +32,6 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-
 def test_gpt2(record_property, mode):
     model_name = "GPT-2"
     record_property("model_name", model_name)

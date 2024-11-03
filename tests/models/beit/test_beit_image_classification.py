@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 from transformers import BeitImageProcessor, BeitForImageClassification
 from PIL import Image
 import requests
@@ -35,8 +38,10 @@ class ThisTester(ModelTester):
     "mode",
     ["train", "eval"],
 )
-@pytest.mark.parametrize("model_name", ["microsoft/beit-base-patch16-224", "microsoft/beit-large-patch16-224"])
-
+@pytest.mark.parametrize(
+    "model_name",
+    ["microsoft/beit-base-patch16-224", "microsoft/beit-large-patch16-224"],
+)
 def test_beit_image_classification(record_property, model_name, mode):
     record_property("model_name", model_name)
     record_property("mode", mode)

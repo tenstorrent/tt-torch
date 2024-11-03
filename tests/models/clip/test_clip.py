@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 from PIL import Image
 import requests
 import torch
@@ -8,8 +11,12 @@ from tests.utils import ModelTester
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32", torch_dtype=torch.bfloat16)
-        self.processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32", torch_dtype=torch.bfloat16)
+        model = CLIPModel.from_pretrained(
+            "openai/clip-vit-base-patch32", torch_dtype=torch.bfloat16
+        )
+        self.processor = CLIPProcessor.from_pretrained(
+            "openai/clip-vit-base-patch32", torch_dtype=torch.bfloat16
+        )
         return model
 
     def _load_inputs(self):
@@ -60,7 +67,11 @@ def test_clip(record_property, mode):
     results = tester.test_model()
 
     if mode == "eval":
-        logits_per_image = results.logits_per_image  # this is the image-text similarity score
-        probs = logits_per_image.softmax(dim=1)  # we can take the softmax to get the label probabilities
+        logits_per_image = (
+            results.logits_per_image
+        )  # this is the image-text similarity score
+        probs = logits_per_image.softmax(
+            dim=1
+        )  # we can take the softmax to get the label probabilities
 
     record_property("torch_ttnn", (tester, results))

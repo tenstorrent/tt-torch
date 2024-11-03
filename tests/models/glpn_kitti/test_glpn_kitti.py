@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 import torch
 import numpy as np
 from PIL import Image
@@ -10,7 +13,9 @@ from tests.utils import ModelTester
 class ThisTester(ModelTester):
     def _load_model(self):
         self.processor = GLPNImageProcessor.from_pretrained("vinvino02/glpn-kitti")
-        model = GLPNForDepthEstimation.from_pretrained("vinvino02/glpn-kitti", torch_dtype=torch.bfloat16)
+        model = GLPNForDepthEstimation.from_pretrained(
+            "vinvino02/glpn-kitti", torch_dtype=torch.bfloat16
+        )
         return model
 
     def _load_inputs(self):
@@ -26,7 +31,6 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-
 def test_glpn_kitti(record_property, mode):
     model_name = "GLPN-KITTI"
     record_property("model_name", model_name)

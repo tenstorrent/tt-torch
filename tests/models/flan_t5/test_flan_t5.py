@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/docs/transformers/en/model_doc/flan-t5
 
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, GenerationConfig
@@ -9,11 +12,15 @@ import torch
 class ThisTester(ModelTester):
     def _load_model(self):
         self.tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-small")
-        model = AutoModelForSeq2SeqLM.from_pretrained("google/flan-t5-small", torch_dtype=torch.bfloat16)
+        model = AutoModelForSeq2SeqLM.from_pretrained(
+            "google/flan-t5-small", torch_dtype=torch.bfloat16
+        )
         return model.generate
 
     def _load_inputs(self):
-        inputs = self.tokenizer("A step by step recipe to make bolognese pasta:", return_tensors="pt")
+        inputs = self.tokenizer(
+            "A step by step recipe to make bolognese pasta:", return_tensors="pt"
+        )
         return inputs
 
     def set_model_eval(self, model):
@@ -24,9 +31,10 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-
 def test_flan_t5(record_property, mode):
-    pytest.xfail("Fails due to pt2 compile issue when finishing generation, but we can still generate a graph")
+    pytest.xfail(
+        "Fails due to pt2 compile issue when finishing generation, but we can still generate a graph"
+    )
     model_name = "FLAN-T5"
     record_property("model_name", model_name)
     record_property("mode", mode)

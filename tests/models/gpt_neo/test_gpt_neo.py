@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/docs/transformers/v4.44.2/en/model_doc/gpt_neo#overview
 
 from transformers import GPTNeoForCausalLM, GPT2Tokenizer, GenerationConfig
@@ -8,7 +11,9 @@ import torch
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model = GPTNeoForCausalLM.from_pretrained("EleutherAI/gpt-neo-125M", torch_dtype=torch.bfloat16)
+        model = GPTNeoForCausalLM.from_pretrained(
+            "EleutherAI/gpt-neo-125M", torch_dtype=torch.bfloat16
+        )
         self.tokenizer = GPT2Tokenizer.from_pretrained("EleutherAI/gpt-neo-125M")
         return model.generate
 
@@ -20,7 +25,9 @@ class ThisTester(ModelTester):
         )
 
         input_ids = self.tokenizer(prompt, return_tensors="pt").input_ids
-        generation_config = GenerationConfig(max_length=100, do_sample=True, temperature=0.9)
+        generation_config = GenerationConfig(
+            max_length=100, do_sample=True, temperature=0.9
+        )
         arguments = {"input_ids": input_ids, "generation_config": generation_config}
         return arguments
 
@@ -33,7 +40,9 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 def test_gpt_neo(record_property, mode):
-    pytest.xfail("Fails due to pt2 compile issue when finishing generation, but we can still generate a graph")
+    pytest.xfail(
+        "Fails due to pt2 compile issue when finishing generation, but we can still generate a graph"
+    )
     model_name = "GPTNeo"
     record_property("model_name", model_name)
     record_property("mode", mode)

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 import torch
 import pytest
 from PIL import Image
@@ -15,7 +18,9 @@ class ThisTester(ModelTester):
         self.image_processor = AutoImageProcessor.from_pretrained(
             model_name,
         )
-        m = AutoModelForObjectDetection.from_pretrained(model_name, torch_dtype=torch.bfloat16)
+        m = AutoModelForObjectDetection.from_pretrained(
+            model_name, torch_dtype=torch.bfloat16
+        )
         return m
 
     def _load_inputs(self):

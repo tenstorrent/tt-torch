@@ -340,17 +340,16 @@ def test_transpose_3d():
 
 
 def test_multiple_ops():
-  class Basic(nn.Module):
-    def __init__(self):
-      super().__init__()
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
 
-    def forward(self, x):
-      y = x + x
-      z = y + x
-      z = torch.argmax(z)
-      return z
-  
-  cc = CompilerConfig()
-  cc.compile_depth = tt_torch.tools.utils.CompileDepth.COMPILE_OP_BY_OP
-  verify_module(Basic(), [(256, 256)], compiler_config=cc, do_assert=False)
+        def forward(self, x):
+            y = x + x
+            z = y + x
+            z = torch.argmax(z)
+            return z
 
+    cc = CompilerConfig()
+    cc.compile_depth = tt_torch.tools.utils.CompileDepth.COMPILE_OP_BY_OP
+    verify_module(Basic(), [(256, 256)], compiler_config=cc, do_assert=False)

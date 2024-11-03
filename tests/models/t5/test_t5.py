@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 import pytest
 from tests.utils import ModelTester
@@ -7,7 +10,9 @@ import torch
 class ThisTester(ModelTester):
     def _load_model(self):
         self.tokenizer = T5Tokenizer.from_pretrained(self.model_name)
-        model = T5ForConditionalGeneration.from_pretrained(self.model_name, torch_dtype=torch.bfloat16)
+        model = T5ForConditionalGeneration.from_pretrained(
+            self.model_name, torch_dtype=torch.bfloat16
+        )
         return model.generate
 
     def _load_inputs(self):
@@ -24,9 +29,10 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.parametrize("model_name", ["t5-small", "t5-base", "t5-large"])
-
 def test_t5(record_property, model_name, mode):
-    pytest.xfail("Fails due to pt2 compile issue when finishing generation, but we can still generate a graph")
+    pytest.xfail(
+        "Fails due to pt2 compile issue when finishing generation, but we can still generate a graph"
+    )
     record_property("model_name", model_name)
     record_property("mode", mode)
 
@@ -34,6 +40,8 @@ def test_t5(record_property, model_name, mode):
     results = tester.test_model()
     if mode == "eval":
         output_text = tester.tokenizer.decode(results[0], skip_special_tokens=True)
-        print(f"Model: {model_name} | Input: {tester.input_text} | Output: {output_text}")
+        print(
+            f"Model: {model_name} | Input: {tester.input_text} | Output: {output_text}"
+        )
 
     record_property("torch_ttnn", (tester, results))

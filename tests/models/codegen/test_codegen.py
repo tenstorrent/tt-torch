@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/docs/transformers/model_doc/codegen#usage-example
 
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -9,7 +12,9 @@ import torch
 class ThisTester(ModelTester):
     def _load_model(self):
         checkpoint = "Salesforce/codegen-350M-mono"
-        model = AutoModelForCausalLM.from_pretrained(checkpoint, torch_dtype=torch.bfloat16)
+        model = AutoModelForCausalLM.from_pretrained(
+            checkpoint, torch_dtype=torch.bfloat16
+        )
         self.tokenizer = AutoTokenizer.from_pretrained(checkpoint)
         return model.generate
 
@@ -26,9 +31,10 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-
 def test_codegen(record_property, mode):
-    pytest.xfail("Fails due to pt2 compile issue when finishing generation, but we can still generate a graph")
+    pytest.xfail(
+        "Fails due to pt2 compile issue when finishing generation, but we can still generate a graph"
+    )
     model_name = "codegen"
     record_property("model_name", model_name)
     record_property("mode", mode)

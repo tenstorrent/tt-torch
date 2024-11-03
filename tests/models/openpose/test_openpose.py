@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/lllyasviel/control_v11p_sd15_openpose
 
 import torch
@@ -18,7 +21,9 @@ class ThisTester(ModelTester):
         return model
 
     def _load_inputs(self):
-        image = load_image("https://huggingface.co/lllyasviel/control_v11p_sd15_openpose/resolve/main/images/input.png")
+        image = load_image(
+            "https://huggingface.co/lllyasviel/control_v11p_sd15_openpose/resolve/main/images/input.png"
+        )
         arguments = {"input_image": image, "hand_and_face": True}
         return arguments
 

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 # Reference: https://github.com/tenstorrent/tt-buda-demos/blob/main/model_demos/cv_demos/yolo_v3/pytorch_yolov3_holli.py
 
 import torch
@@ -37,9 +40,13 @@ class ThisTester(ModelTester):
 
     def _load_inputs(self):
         # Image preprocessing
-        image_url = "https://raw.githubusercontent.com/pytorch/hub/master/images/dog.jpg"
+        image_url = (
+            "https://raw.githubusercontent.com/pytorch/hub/master/images/dog.jpg"
+        )
         image = Image.open(requests.get(image_url, stream=True).raw)
-        transform = transforms.Compose([transforms.Resize((512, 512)), transforms.ToTensor()])
+        transform = transforms.Compose(
+            [transforms.Resize((512, 512)), transforms.ToTensor()]
+        )
         img_tensor = [transform(image).unsqueeze(0)]
         batch_tensor = torch.cat(img_tensor, dim=0).to(torch.bfloat16)
         return batch_tensor
@@ -49,7 +56,6 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-
 def test_yolov3(record_property, mode):
     model_name = "YOLOv3"
     record_property("model_name", model_name)

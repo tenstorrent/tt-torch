@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/docs/transformers/v4.44.2/en/model_doc/albert#transformers.AlbertForQuestionAnswering
 
 from transformers import AutoTokenizer, AlbertForQuestionAnswering
@@ -8,11 +11,15 @@ from tests.utils import ModelTester
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model = AlbertForQuestionAnswering.from_pretrained(self.model_name, torch_dtype=torch.bfloat16)
+        model = AlbertForQuestionAnswering.from_pretrained(
+            self.model_name, torch_dtype=torch.bfloat16
+        )
         return model
 
     def _load_inputs(self):
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name, torch_dtype=torch.bfloat16)
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            self.model_name, torch_dtype=torch.bfloat16
+        )
         self.question, self.text = "Who was Jim Henson?", "Jim Henson was a nice puppet"
         inputs = self.tokenizer(self.question, self.text, return_tensors="pt")
         return inputs
@@ -23,7 +30,6 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.parametrize("model_name", ["twmkn9/albert-base-v2-squad2"])
-
 def test_albert_question_answering(record_property, model_name, mode):
     record_property("model_name", model_name)
     record_property("mode", mode)
@@ -35,9 +41,15 @@ def test_albert_question_answering(record_property, model_name, mode):
         answer_start_index = results.start_logits.argmax()
         answer_end_index = results.end_logits.argmax()
 
-        predict_answer_tokens = tester.inputs.input_ids[0, answer_start_index : answer_end_index + 1]
-        answer = tester.tokenizer.decode(predict_answer_tokens, skip_special_tokens=True)
+        predict_answer_tokens = tester.inputs.input_ids[
+            0, answer_start_index : answer_end_index + 1
+        ]
+        answer = tester.tokenizer.decode(
+            predict_answer_tokens, skip_special_tokens=True
+        )
 
-        print(f"Model: {model_name} | Question: {tester.question} | Text: {tester.text} | Answer: {answer}")
+        print(
+            f"Model: {model_name} | Question: {tester.question} | Text: {tester.text} | Answer: {answer}"
+        )
 
     record_property("torch_ttnn", (tester, results))

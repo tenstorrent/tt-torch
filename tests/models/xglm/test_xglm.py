@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/facebook/xglm-564M
 
 import torch
@@ -11,12 +14,15 @@ from tests.utils import ModelTester
 class ThisTester(ModelTester):
     def _load_model(self):
         self.tokenizer = XGLMTokenizer.from_pretrained("facebook/xglm-564M")
-        model = XGLMForCausalLM.from_pretrained("facebook/xglm-564M", torch_dtype=torch.bfloat16)
+        model = XGLMForCausalLM.from_pretrained(
+            "facebook/xglm-564M", torch_dtype=torch.bfloat16
+        )
         return model
 
     def _load_inputs(self):
         inputs = self.tokenizer(
-            "I wanted to conserve energy.\nI swept the floor in the unoccupied room.", return_tensors="pt"
+            "I wanted to conserve energy.\nI swept the floor in the unoccupied room.",
+            return_tensors="pt",
         )
         inputs["labels"] = inputs["input_ids"]
         return inputs
@@ -26,7 +32,6 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-
 def test_xglm(record_property, mode):
     model_name = "XGLM"
     record_property("model_name", model_name)

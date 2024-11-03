@@ -1,5 +1,12 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 import torch
-from diffusers import StableDiffusionPipeline, UNet2DConditionModel, LMSDiscreteScheduler
+from diffusers import (
+    StableDiffusionPipeline,
+    UNet2DConditionModel,
+    LMSDiscreteScheduler,
+)
 from transformers import CLIPTextModel, CLIPTokenizer
 import pytest
 from tests.utils import ModelTester
@@ -9,11 +16,17 @@ class ThisTester(ModelTester):
     def _load_model(self):
         # Load the pre-trained model and tokenizer
         self.tokenizer = CLIPTokenizer.from_pretrained("openai/clip-vit-large-patch14")
-        self.text_encoder = CLIPTextModel.from_pretrained("openai/clip-vit-large-patch14")
-        unet = UNet2DConditionModel.from_pretrained(
-            "CompVis/stable-diffusion-v1-4", subfolder="unet", torch_dtype=torch.bfloat16
+        self.text_encoder = CLIPTextModel.from_pretrained(
+            "openai/clip-vit-large-patch14"
         )
-        self.scheduler = LMSDiscreteScheduler.from_pretrained("CompVis/stable-diffusion-v1-4", subfolder="scheduler")
+        unet = UNet2DConditionModel.from_pretrained(
+            "CompVis/stable-diffusion-v1-4",
+            subfolder="unet",
+            torch_dtype=torch.bfloat16,
+        )
+        self.scheduler = LMSDiscreteScheduler.from_pretrained(
+            "CompVis/stable-diffusion-v1-4", subfolder="scheduler"
+        )
         return unet
 
     def _load_inputs(self):
@@ -25,7 +38,9 @@ class ThisTester(ModelTester):
         # Generate noise
         batch_size = text_embeddings.shape[0]
         height, width = 512, 512  # Output image size
-        latents = torch.randn((batch_size, self.model.in_channels, height // 8, width // 8))
+        latents = torch.randn(
+            (batch_size, self.model.in_channels, height // 8, width // 8)
+        )
 
         # Set number of diffusion steps
         num_inference_steps = 1
@@ -48,7 +63,6 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-
 def test_stable_diffusion_v2(record_property, mode):
     model_name = "Stable Diffusion V2"
     record_property("model_name", model_name)
