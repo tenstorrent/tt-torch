@@ -76,7 +76,7 @@ class Op:
 
 class CompilerConfig:
     def __init__(self):
-        self.compile_depth = CompileDepth.COMPILE_OP_BY_OP
+        self.compile_depth = CompileDepth.EXECUTE
         self.profile_ops = True
         self.torch_mlir_module = None
         self.stablehlo_mlir_module = None
@@ -84,6 +84,14 @@ class CompilerConfig:
         self.stable_hlo_ops = []
         self.model_name = ""
         self.results_path = "results/models/"
+
+        self.apply_environment_overrides()
+    
+    
+    def apply_environment_overrides(self):
+        compile_depth = os.environ.get('TT_TORCH_COMPILE_DEPTH')
+        if compile_depth:
+            self.compile_depth = CompileDepth[compile_depth]
 
     def save_unique_ops(self):
         unique_op_dict = {}
