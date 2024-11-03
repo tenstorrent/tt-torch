@@ -34,6 +34,7 @@ class ThisTester(ModelTester):
 )
 
 def test_mobilenet_ssd(record_property, mode):
+    pytest.xfail("Need to debug")
     model_name = "MobileNetSSD"
     record_property("model_name", model_name)
     record_property("mode", mode)

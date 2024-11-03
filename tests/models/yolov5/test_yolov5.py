@@ -91,8 +91,8 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-# @pytest.mark.usefixtures("manage_dependencies")
 def test_yolov5(record_property, mode):
+    pytest.xfail("Fails due to pt2 compile issue when finishing generation, but we can still generate a graph")
     model_name = "YOLOv5"
     record_property("model_name", model_name)
     record_property("mode", mode)

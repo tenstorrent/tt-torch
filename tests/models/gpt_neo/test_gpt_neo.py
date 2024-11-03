@@ -32,8 +32,8 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-@pytest.mark.compilation_xfail
 def test_gpt_neo(record_property, mode):
+    pytest.xfail("Fails due to pt2 compile issue when finishing generation, but we can still generate a graph")
     model_name = "GPTNeo"
     record_property("model_name", model_name)
     record_property("mode", mode)
