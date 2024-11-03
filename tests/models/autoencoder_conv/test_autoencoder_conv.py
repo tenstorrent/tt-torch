@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 import torch
 from diffusers import DiffusionPipeline, AutoencoderTiny
 import pytest
@@ -6,11 +9,13 @@ from tests.utils import ModelTester
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        pipe = DiffusionPipeline.from_pretrained("stabilityai/stable-diffusion-2-1-base")
+        pipe = DiffusionPipeline.from_pretrained(
+            "stabilityai/stable-diffusion-2-1-base"
+        )
         pipe.vae = AutoencoderTiny.from_pretrained("madebyollin/taesd")
         """
 Since this test is about the Conv version of model Autoencoder, we need to prove
-that the model under test indeed contains Convolutions. Hence we print out the 
+that the model under test indeed contains Convolutions. Hence we print out the
 content of the model where you can find Conv2d in use.
 >>> print(pipe.vae)
 AutoencoderTiny(

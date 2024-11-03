@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/facebook/dpr-reader-single-nq-base
 
 from transformers import DPRReader, DPRReaderTokenizer
@@ -8,8 +11,12 @@ import torch
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.tokenizer = DPRReaderTokenizer.from_pretrained("facebook/dpr-reader-single-nq-base")
-        model = DPRReader.from_pretrained("facebook/dpr-reader-single-nq-base", torch_dtype=torch.bfloat16)
+        self.tokenizer = DPRReaderTokenizer.from_pretrained(
+            "facebook/dpr-reader-single-nq-base"
+        )
+        model = DPRReader.from_pretrained(
+            "facebook/dpr-reader-single-nq-base", torch_dtype=torch.bfloat16
+        )
         return model
 
     def _load_inputs(self):
@@ -26,7 +33,6 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-
 def test_dpr(record_property, mode):
     model_name = "DPR"
     record_property("model_name", model_name)

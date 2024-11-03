@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/microsoft/speecht5_tts
 
 from transformers import SpeechT5Processor, SpeechT5ForTextToSpeech, SpeechT5HifiGan
@@ -10,15 +13,25 @@ from tests.utils import ModelTester
 class ThisTester(ModelTester):
     def _load_model(self):
         self.processor = SpeechT5Processor.from_pretrained("microsoft/speecht5_tts")
-        model = SpeechT5ForTextToSpeech.from_pretrained("microsoft/speecht5_tts", torch_dtype=torch.bfloat16)
-        self.vocoder = SpeechT5HifiGan.from_pretrained("microsoft/speecht5_hifigan", torch_dtype=torch.bfloat16)
+        model = SpeechT5ForTextToSpeech.from_pretrained(
+            "microsoft/speecht5_tts", torch_dtype=torch.bfloat16
+        )
+        self.vocoder = SpeechT5HifiGan.from_pretrained(
+            "microsoft/speecht5_hifigan", torch_dtype=torch.bfloat16
+        )
         return model.generate_speech
 
     def _load_inputs(self):
         inputs = self.processor(text="Hello, my dog is cute.", return_tensors="pt")
         # load xvector containing speaker's voice characteristics from a dataset
-        embeddings_dataset = load_dataset("Matthijs/cmu-arctic-xvectors", split="validation")
-        speaker_embeddings = torch.tensor(embeddings_dataset[7306]["xvector"]).unsqueeze(0).to(torch.bfloat16)
+        embeddings_dataset = load_dataset(
+            "Matthijs/cmu-arctic-xvectors", split="validation"
+        )
+        speaker_embeddings = (
+            torch.tensor(embeddings_dataset[7306]["xvector"])
+            .unsqueeze(0)
+            .to(torch.bfloat16)
+        )
         arguments = {
             "input_ids": inputs["input_ids"],
             "speaker_embeddings": speaker_embeddings,
@@ -34,9 +47,8 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-
 def test_speecht5_tts(record_property, mode):
-    pytest.skip() # crashes in lowering to stable hlo
+    pytest.skip()  # crashes in lowering to stable hlo
     model_name = "speecht5-tts"
     record_property("model_name", model_name)
     record_property("mode", mode)

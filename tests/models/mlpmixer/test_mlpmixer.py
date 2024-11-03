@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 import torch
 from mlp_mixer_pytorch import MLPMixer
 import pytest
@@ -9,7 +12,14 @@ class ThisTester(ModelTester):
         """
         https://github.com/lucidrains/mlp-mixer-pytorch
         """
-        model = MLPMixer(image_size=256, channels=3, patch_size=16, dim=512, depth=12, num_classes=1000)
+        model = MLPMixer(
+            image_size=256,
+            channels=3,
+            patch_size=16,
+            dim=512,
+            depth=12,
+            num_classes=1000,
+        )
         model = model.to(torch.bfloat16)
         return model
 
@@ -23,7 +33,6 @@ class ThisTester(ModelTester):
     "mode",
     ["train", "eval"],
 )
-
 def test_mlpmixer(record_property, mode):
     model_name = "MLPMixer"
     record_property("model_name", model_name)

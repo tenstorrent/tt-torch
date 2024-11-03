@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 # https://huggingface.co/runwayml/stable-diffusion-v1-5
 from diffusers import StableDiffusionPipeline
 import torch

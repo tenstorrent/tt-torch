@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/dandelin/vilt-b32-finetuned-vqa
 
 from transformers import ViltProcessor, ViltForQuestionAnswering
@@ -10,8 +13,12 @@ import torch
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.processor = ViltProcessor.from_pretrained("dandelin/vilt-b32-finetuned-vqa")
-        model = ViltForQuestionAnswering.from_pretrained("dandelin/vilt-b32-finetuned-vqa", torch_dtype=torch.bfloat16)
+        self.processor = ViltProcessor.from_pretrained(
+            "dandelin/vilt-b32-finetuned-vqa"
+        )
+        model = ViltForQuestionAnswering.from_pretrained(
+            "dandelin/vilt-b32-finetuned-vqa", torch_dtype=torch.bfloat16
+        )
         return model
 
     def _load_inputs(self):
@@ -29,7 +36,6 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-
 def test_vilt(record_property, mode):
     model_name = "ViLT"
     record_property("model_name", model_name)

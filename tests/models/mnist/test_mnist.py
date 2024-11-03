@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 import torch
 import pytest
 from torchvision import transforms, datasets
@@ -43,7 +46,9 @@ class ThisTester(ModelTester):
 
     def _load_inputs(self):
         transform = transforms.Compose([transforms.ToTensor()])
-        test_dataset = datasets.MNIST(root="./data", train=False, transform=transform, download=True)
+        test_dataset = datasets.MNIST(
+            root="./data", train=False, transform=transform, download=True
+        )
         dataloader = DataLoader(test_dataset, batch_size=1)
         test_input, _ = next(iter(dataloader))
         test_input = test_input.to(torch.bfloat16)

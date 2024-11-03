@@ -8,6 +8,7 @@ from pathlib import Path
 import os
 import torch
 
+
 class CompileDepth(Enum):
     TORCH_MLIR = 1
     STABLEHLO = 2
@@ -25,6 +26,8 @@ class OpCompilationStatus(IntEnum):
     CONVERTED_TO_STABLE_HLO = 4
     CONVERTED_TO_TTNN_IR = 5
     EXECUTED = 6
+
+
 class Op:
     def __init__(self, torch_name, input_shapes):
         self.torch_name = torch_name
@@ -54,7 +57,7 @@ class Op:
             "stable_hlo_graph": self.stable_hlo_graph,
             "stable_hlo_ops": self.stable_hlo_ops,
         }
-    
+
     def unique_key(self):
         key = self.torch_name
         for shape in self.input_shapes:
@@ -86,16 +89,15 @@ class CompilerConfig:
         self.results_path = "results/models/"
 
         self.apply_environment_overrides()
-    
-    
+
     def apply_environment_overrides(self):
-        compile_depth = os.environ.get('TT_TORCH_COMPILE_DEPTH')
+        compile_depth = os.environ.get("TT_TORCH_COMPILE_DEPTH")
         if compile_depth:
             self.compile_depth = CompileDepth[compile_depth]
 
     def save_unique_ops(self):
         unique_op_dict = {}
-        pytest_test = os.environ.get('PYTEST_CURRENT_TEST')
+        pytest_test = os.environ.get("PYTEST_CURRENT_TEST")
         pytest_test = pytest_test.replace("::", "_").replace(".", "_")
         pytest_test = pytest_test.replace("[", "_").replace("]", "_")
         for key, op in self.unique_ops.items():
@@ -105,6 +107,7 @@ class CompilerConfig:
         output_file.parent.mkdir(exist_ok=True, parents=True)
         with open(output_file, "w") as f:
             json.dump(unique_op_dict, f)
+
     def set_compile_depth(self, compile_depth: CompileDepth):
         self.compile_depth = compile_depth
 

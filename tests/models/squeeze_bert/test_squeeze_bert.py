@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/docs/transformers/en/model_doc/squeezebert#transformers.SqueezeBertForSequenceClassification
 
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
@@ -8,7 +11,9 @@ from tests.utils import ModelTester
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.tokenizer = AutoTokenizer.from_pretrained("squeezebert/squeezebert-mnli", torch_dtype=torch.bfloat16)
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            "squeezebert/squeezebert-mnli", torch_dtype=torch.bfloat16
+        )
         model = AutoModelForSequenceClassification.from_pretrained(
             "squeezebert/squeezebert-mnli", torch_dtype=torch.bfloat16
         )

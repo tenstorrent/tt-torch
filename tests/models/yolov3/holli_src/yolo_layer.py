@@ -23,7 +23,9 @@ class YoloLayer(nn.Module):
         if output.dim() == 3:
             output = output.unsqueeze(0)
         device = output.device  # torch.device(torch_device)
-        anchors = torch.from_numpy(self.get_masked_anchors().astype(np.float32)).to(device)
+        anchors = torch.from_numpy(self.get_masked_anchors().astype(np.float32)).to(
+            device
+        )
 
         nB = output.size(0)
         nA = len(anchors)
@@ -34,13 +36,34 @@ class YoloLayer(nn.Module):
 
         assert output.size(1) == (5 + nC) * nA
 
-        output = output.view(nB * nA, 5 + nC, nH * nW).transpose(0, 1).contiguous().view(5 + nC, cls_anchor_dim)
+        output = (
+            output.view(nB * nA, 5 + nC, nH * nW)
+            .transpose(0, 1)
+            .contiguous()
+            .view(5 + nC, cls_anchor_dim)
+        )
 
-        grid_x = torch.linspace(0, nW - 1, nW).repeat(nB * nA, nH, 1).view(cls_anchor_dim).to(device)
-        grid_y = torch.linspace(0, nH - 1, nH).repeat(nW, 1).t().repeat(nB * nA, 1, 1).view(cls_anchor_dim).to(device)
+        grid_x = (
+            torch.linspace(0, nW - 1, nW)
+            .repeat(nB * nA, nH, 1)
+            .view(cls_anchor_dim)
+            .to(device)
+        )
+        grid_y = (
+            torch.linspace(0, nH - 1, nH)
+            .repeat(nW, 1)
+            .t()
+            .repeat(nB * nA, 1, 1)
+            .view(cls_anchor_dim)
+            .to(device)
+        )
         ix = torch.LongTensor(range(0, 2)).to(device)
-        anchor_w = anchors.index_select(1, ix[0]).repeat(1, nB, nH * nW).view(cls_anchor_dim)
-        anchor_h = anchors.index_select(1, ix[1]).repeat(1, nB, nH * nW).view(cls_anchor_dim)
+        anchor_w = (
+            anchors.index_select(1, ix[0]).repeat(1, nB, nH * nW).view(cls_anchor_dim)
+        )
+        anchor_h = (
+            anchors.index_select(1, ix[1]).repeat(1, nB, nH * nW).view(cls_anchor_dim)
+        )
 
         xs, ys = (
             torch.sigmoid(output[0]) + grid_x,
@@ -122,7 +145,9 @@ class YoloLayer(nn.Module):
                     break
                 gx, gy = tbox[t][1] * nW, tbox[t][2] * nH
                 gw, gh = tbox[t][3] * twidth, tbox[t][4] * theight
-                cur_gt_boxes = torch.FloatTensor([gx, gy, gw, gh]).repeat(nAnchors, 1).t()
+                cur_gt_boxes = (
+                    torch.FloatTensor([gx, gy, gw, gh]).repeat(nAnchors, 1).t()
+                )
                 cur_ious = torch.max(
                     cur_ious,
                     multi_bbox_ious(cur_pred_boxes, cur_gt_boxes, x1y1x2y2=False),
@@ -160,7 +185,9 @@ class YoloLayer(nn.Module):
     def get_loss(self, output, target, return_single_value=True):
         device = output.device
 
-        anchors = torch.from_numpy(self.get_masked_anchors().astype(np.float32)).to(device)
+        anchors = torch.from_numpy(self.get_masked_anchors().astype(np.float32)).to(
+            device
+        )
 
         nB = output.data.size(0)  # batch size
         nA = len(anchors)
@@ -182,10 +209,26 @@ class YoloLayer(nn.Module):
         coord[0:2] = coord[0:2].sigmoid()  # x, y:   bx = σ(tx) (+ cx)
         conf = output.index_select(2, ix[4]).view(nB, nA, nH, nW).sigmoid()
 
-        grid_x = torch.linspace(0, nW - 1, nW).repeat(nB * nA, nH, 1).view(cls_anchor_dim).to(device)
-        grid_y = torch.linspace(0, nH - 1, nH).repeat(nW, 1).t().repeat(nB * nA, 1, 1).view(cls_anchor_dim).to(device)
-        anchor_w = anchors.index_select(1, ix[0]).repeat(1, nB * nH * nW).view(cls_anchor_dim)
-        anchor_h = anchors.index_select(1, ix[1]).repeat(1, nB * nH * nW).view(cls_anchor_dim)
+        grid_x = (
+            torch.linspace(0, nW - 1, nW)
+            .repeat(nB * nA, nH, 1)
+            .view(cls_anchor_dim)
+            .to(device)
+        )
+        grid_y = (
+            torch.linspace(0, nH - 1, nH)
+            .repeat(nW, 1)
+            .t()
+            .repeat(nB * nA, 1, 1)
+            .view(cls_anchor_dim)
+            .to(device)
+        )
+        anchor_w = (
+            anchors.index_select(1, ix[0]).repeat(1, nB * nH * nW).view(cls_anchor_dim)
+        )
+        anchor_h = (
+            anchors.index_select(1, ix[1]).repeat(1, nB * nH * nW).view(cls_anchor_dim)
+        )
 
         pred_boxes = torch.FloatTensor(4, cls_anchor_dim).to(device)
         pred_boxes[0] = coord[0] + grid_x  # bx = σ(tx) + cx
@@ -194,18 +237,18 @@ class YoloLayer(nn.Module):
         pred_boxes[3] = coord[3].exp() * anchor_h
         pred_boxes = pred_boxes.transpose(0, 1).contiguous().view(-1, 4)
 
-        (
-            coord_mask,
-            conf_mask,
-            cls_mask,
-            tcoord,
-            tconf,
-            tcls,
-        ) = self.build_targets(pred_boxes.detach(), target.detach(), anchors.detach(), nH, nW)
+        (coord_mask, conf_mask, cls_mask, tcoord, tconf, tcls,) = self.build_targets(
+            pred_boxes.detach(), target.detach(), anchors.detach(), nH, nW
+        )
 
         cls_grid = torch.linspace(5, 5 + nC - 1, nC).long().to(device)
         cls = output.index_select(2, cls_grid)
-        cls = cls.view(nB * nA, nC, nH * nW).transpose(1, 2).contiguous().view(cls_anchor_dim, nC)
+        cls = (
+            cls.view(nB * nA, nC, nH * nW)
+            .transpose(1, 2)
+            .contiguous()
+            .view(cls_anchor_dim, nC)
+        )
         cls_mask = cls_mask == 1
         tcls = tcls[cls_mask].long().view(-1)
         cls_mask = cls_mask.view(-1, 1).repeat(1, nC).to(device)
@@ -213,11 +256,17 @@ class YoloLayer(nn.Module):
 
         tcoord = tcoord.view(4, cls_anchor_dim).to(device)
         tconf, tcls = tconf.to(device), tcls.to(device)
-        coord_mask, conf_mask = coord_mask.view(cls_anchor_dim).to(device), conf_mask.to(device)
+        coord_mask, conf_mask = coord_mask.view(cls_anchor_dim).to(
+            device
+        ), conf_mask.to(device)
 
-        loss_coord = nn.MSELoss(size_average=False)(coord * coord_mask, tcoord * coord_mask) / 2
+        loss_coord = (
+            nn.MSELoss(size_average=False)(coord * coord_mask, tcoord * coord_mask) / 2
+        )
         loss_conf = nn.MSELoss(size_average=False)(conf * conf_mask, tconf * conf_mask)
-        loss_cls = nn.CrossEntropyLoss(size_average=False)(cls, tcls) if cls.size(0) > 0 else 0
+        loss_cls = (
+            nn.CrossEntropyLoss(size_average=False)(cls, tcls) if cls.size(0) > 0 else 0
+        )
         loss = loss_coord + loss_conf + loss_cls
 
         if math.isnan(loss.item()):

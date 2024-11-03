@@ -14,7 +14,9 @@ class Yolov3(Yolov3Base):
         self.backbone = Darknet([1, 2, 8, 8, 4])
 
         anchors_per_region = 3
-        self.yolo_0_pre = Yolov3UpsamplePrep([512, 1024], 1024, anchors_per_region * (5 + num_classes))
+        self.yolo_0_pre = Yolov3UpsamplePrep(
+            [512, 1024], 1024, anchors_per_region * (5 + num_classes)
+        )
         self.yolo_0 = YoloLayer(
             anchors=[(116.0, 90.0), (156.0, 198.0), (373.0, 326.0)],
             stride=32,
@@ -22,7 +24,9 @@ class Yolov3(Yolov3Base):
         )
 
         self.yolo_1_c = ConvBN(512, 256, 1)
-        self.yolo_1_prep = Yolov3UpsamplePrep([256, 512], 512 + 256, anchors_per_region * (5 + num_classes))
+        self.yolo_1_prep = Yolov3UpsamplePrep(
+            [256, 512], 512 + 256, anchors_per_region * (5 + num_classes)
+        )
         self.yolo_1 = YoloLayer(
             anchors=[(30.0, 61.0), (62.0, 45.0), (59.0, 119.0)],
             stride=16,
@@ -30,7 +34,9 @@ class Yolov3(Yolov3Base):
         )
 
         self.yolo_2_c = ConvBN(256, 128, 1)
-        self.yolo_2_prep = Yolov3UpsamplePrep([128, 256], 256 + 128, anchors_per_region * (5 + num_classes))
+        self.yolo_2_prep = Yolov3UpsamplePrep(
+            [128, 256], 256 + 128, anchors_per_region * (5 + num_classes)
+        )
         self.yolo_2 = YoloLayer(
             anchors=[(10.0, 13.0), (16.0, 30.0), (33.0, 23.0)],
             stride=8,

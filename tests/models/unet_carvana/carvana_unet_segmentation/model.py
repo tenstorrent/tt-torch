@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 # Import libraries
 import torch
 import torch.nn as nn
@@ -23,7 +26,9 @@ class DoubleConv(nn.Module):
 
 class UNET(nn.Module):
     # def __init__(self, in_channels=3, out_channels=1, list_feature_size=[64,128,256,512]):
-    def __init__(self, in_channels=3, out_channels=1, list_feature_size=[64, 128, 256, 512]):
+    def __init__(
+        self, in_channels=3, out_channels=1, list_feature_size=[64, 128, 256, 512]
+    ):
         super(UNET, self).__init__()
         self.ups = nn.ModuleList()
         self.downs = nn.ModuleList()
@@ -36,7 +41,11 @@ class UNET(nn.Module):
 
         # Up part of unet
         for feature_size in reversed(list_feature_size):
-            self.ups.append(nn.ConvTranspose2d(feature_size * 2, feature_size, kernel_size=2, stride=2))
+            self.ups.append(
+                nn.ConvTranspose2d(
+                    feature_size * 2, feature_size, kernel_size=2, stride=2
+                )
+            )
 
             self.ups.append(DoubleConv(feature_size * 2, feature_size))
             in_channels = feature_size

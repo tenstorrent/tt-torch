@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/deepmind/language-perceiver
 
 from transformers import PerceiverTokenizer, PerceiverForMaskedLM
@@ -8,8 +11,12 @@ import torch
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.tokenizer = PerceiverTokenizer.from_pretrained("deepmind/language-perceiver")
-        model = PerceiverForMaskedLM.from_pretrained("deepmind/language-perceiver", torch_dtype=torch.bfloat16)
+        self.tokenizer = PerceiverTokenizer.from_pretrained(
+            "deepmind/language-perceiver"
+        )
+        model = PerceiverForMaskedLM.from_pretrained(
+            "deepmind/language-perceiver", torch_dtype=torch.bfloat16
+        )
         return model
 
     def _load_inputs(self):
@@ -20,7 +27,10 @@ class ThisTester(ModelTester):
         encoding.input_ids[0, 52:61] = self.tokenizer.mask_token_id
         ######inputs, input_mask = encoding.input_ids.to(device), encoding.attention_mask.to(device)
 
-        arguments = {"inputs": encoding.input_ids, "attention_mask": encoding.attention_mask}
+        arguments = {
+            "inputs": encoding.input_ids,
+            "attention_mask": encoding.attention_mask,
+        }
         return arguments
 
 

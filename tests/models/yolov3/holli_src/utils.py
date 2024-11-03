@@ -148,7 +148,9 @@ def plot_multi_detections(imgs, results, figsize=None, **kwargs):
             # break
             plt.delaxes(ax)
         else:
-            plot_img_boxes(imgs[j], boxes[j], classes[j], extras[j], plt_ax=ax, **kwargs)
+            plot_img_boxes(
+                imgs[j], boxes[j], classes[j], extras[j], plt_ax=ax, **kwargs
+            )
 
     plt.tight_layout()
 
@@ -194,7 +196,9 @@ def plot_img_boxes(
 ):
     if not plt_ax:
         _, plt_ax = plt.subplots(figsize=figsize)
-    colors = np.array([[1, 0, 1], [0, 0, 1], [0, 1, 1], [0, 1, 0], [1, 1, 0], [1, 0, 0]])
+    colors = np.array(
+        [[1, 0, 1], [0, 0, 1], [0, 1, 1], [0, 1, 0], [1, 1, 0], [1, 0, 0]]
+    )
 
     if type(img) == PIL.Image.Image:
         width = img.width
@@ -206,7 +210,9 @@ def plot_img_boxes(
         height = img.shape[1]
         img = img.transpose(1, 2, 0)
         if (img < 1.01).all() and (img >= 0).all():
-            img = img.clip(0, 1)  # avoid "Clipping input data to the valid range" warning after tensor roundings
+            img = img.clip(
+                0, 1
+            )  # avoid "Clipping input data to the valid range" warning after tensor roundings
     else:
         raise (f"Unkown type for image: {type(img)}")
 
@@ -230,7 +236,9 @@ def plot_img_boxes(
             x, y = b[0], b[1]
             w, h = b[2], b[3]
 
-        patch = plt_ax.add_patch(patches.Rectangle([x, y], w, h, fill=False, edgecolor=color, lw=2))
+        patch = plt_ax.add_patch(
+            patches.Rectangle([x, y], w, h, fill=False, edgecolor=color, lw=2)
+        )
         patch.set_path_effects(
             [
                 patheffects.Stroke(linewidth=3, foreground="black", alpha=0.5),

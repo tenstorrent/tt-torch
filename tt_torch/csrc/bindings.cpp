@@ -125,16 +125,16 @@ std::vector<at::Tensor> run(const std::vector<at::Tensor> &inputs,
 }
 
 PYBIND11_MODULE(tt_mlir, m) {
-    m.doc() = "tt_mlir";
-    py::class_<tt::runtime::Binary>(m, "Binary")
-        .def("getProgramInputs", &tt::runtime::Binary::getProgramInputs)
-        .def("getProgramOutputs", &tt::runtime::Binary::getProgramOutputs)
-        .def("as_json", &tt::runtime::Binary::asJson);
-    m.def("compile", &compile,
-          "A function that compiles a stableHLO model to a flatbuffer");
-    m.def("run", &run, "Push inputs and run binary");
-    m.def("get_current_system_desc", &tt::runtime::getCurrentSystemDesc,
-            "Get the current system descriptor");
-    m.def("get_num_available_devices", &tt::runtime::getNumAvailableDevices,
-            "Get the number of available devices");
+  m.doc() = "tt_mlir";
+  py::class_<tt::runtime::Binary>(m, "Binary")
+      .def("getProgramInputs", &tt::runtime::Binary::getProgramInputs)
+      .def("getProgramOutputs", &tt::runtime::Binary::getProgramOutputs)
+      .def("as_json", &tt::runtime::Binary::asJson);
+  m.def("compile", &compile,
+        "A function that compiles a stableHLO model to a flatbuffer");
+  m.def("run", &run, "Push inputs and run binary");
+  m.def("get_current_system_desc", &tt::runtime::getCurrentSystemDesc,
+        "Get the current system descriptor");
+  m.def("get_num_available_devices", &tt::runtime::getNumAvailableDevices,
+        "Get the number of available devices");
 }

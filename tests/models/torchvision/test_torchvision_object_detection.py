@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 from torchvision import models, transforms
 from PIL import Image
 import torch
@@ -20,7 +23,9 @@ class ThisTester(ModelTester):
     def _load_model(self):
         model_name, weights_name = self.model_info
         self.weights = getattr(models.detection, weights_name).DEFAULT
-        model = getattr(models.detection, model_name)(weights=self.weights)  # .to(torch.bfloat16)
+        model = getattr(models.detection, model_name)(
+            weights=self.weights
+        )  # .to(torch.bfloat16)
         return model
 
     def _load_inputs(self):
@@ -46,7 +51,6 @@ class ThisTester(ModelTester):
         ("retinanet_resnet50_fpn_v2", "RetinaNet_ResNet50_FPN_V2_Weights"),
     ],
 )
-
 def test_torchvision_object_detection(record_property, model_info, mode):
     pytest.skip()
     model_name, _ = model_info

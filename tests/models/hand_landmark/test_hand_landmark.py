@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 # Reference: https://colab.research.google.com/github/googlesamples/mediapipe/blob/main/examples/hand_landmarker/python/hand_landmarker.ipynb
 
 import subprocess
@@ -47,7 +50,9 @@ def test_hand_landmark(record_property, mode):
     """
      Forcely do `git lfs pull` to make sure the LFS files needed by this test are available.
     """
-    subprocess.run(["git", "lfs", "pull"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.run(
+        ["git", "lfs", "pull"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+    )
 
     """
     Workaround!
@@ -68,7 +73,17 @@ def test_hand_landmark(record_property, mode):
     workaround I can think of.
     """
     # Uninstall the GPU version of opencv packages.
-    subprocess.check_call([sys.executable, "-m", "pip", "uninstall", "-y", "opencv-python", "opencv-contrib-python"])
+    subprocess.check_call(
+        [
+            sys.executable,
+            "-m",
+            "pip",
+            "uninstall",
+            "-y",
+            "opencv-python",
+            "opencv-contrib-python",
+        ]
+    )
     # Install the CPU version of opencv package.
     # Need `--force-reinstall` to handle the case that this CPU opencv has been
     # installed before this test, which leads to the ignorance of the following
@@ -77,7 +92,14 @@ def test_hand_landmark(record_property, mode):
     # because some of the common dependencies between GPU and CPU opencv were
     # uninstalled by the above uninstallation of GPU opencv.
     subprocess.check_call(
-        [sys.executable, "-m", "pip", "install", "--force-reinstall", "opencv-python-headless==4.8.0.74"]
+        [
+            sys.executable,
+            "-m",
+            "pip",
+            "install",
+            "--force-reinstall",
+            "opencv-python-headless==4.8.0.74",
+        ]
     )
 
     tester = ThisTester(model_name, mode)

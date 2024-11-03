@@ -76,7 +76,9 @@ class Yolov3Tiny(Yolov3Base):
         else:
             yolo_1_anchors = [(10.0, 14.0), (23.0, 27.0), (37.0, 58.0)]
 
-        self.yolo_1 = YoloLayer(anchors=yolo_1_anchors, stride=16.0, num_classes=num_classes)
+        self.yolo_1 = YoloLayer(
+            anchors=yolo_1_anchors, stride=16.0, num_classes=num_classes
+        )
 
     def get_loss_layers(self):
         return [self.yolo_0, self.yolo_1]

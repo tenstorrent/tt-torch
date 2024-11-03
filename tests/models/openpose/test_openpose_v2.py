@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 # Reference: https://github.com/tenstorrent/tt-buda-demos/blob/main/model_demos/cv_demos/openpose/pytorch_lwopenpose_2d_osmr.py
 
 import requests
@@ -22,7 +25,9 @@ def get_image_tensor():
         ]
     )
     input_tensor = preprocess(input_image)
-    input_batch = input_tensor.unsqueeze(0)  # create a mini-batch as expected by the model
+    input_batch = input_tensor.unsqueeze(
+        0
+    )  # create a mini-batch as expected by the model
     return input_batch
 
 

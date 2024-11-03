@@ -5,6 +5,7 @@ import torch
 import numpy as np
 from tt_torch.dynamo.backend import backend
 
+
 def verify_module(
     mod,
     input_shapes,
@@ -29,10 +30,12 @@ def verify_module(
     golden = mod(*inputs)
 
     atol = torch.max(torch.abs(golden - ret)).item()
-    assert (do_assert and atol) <= required_atol, f"ATOL too high: {atol} vs {required_atol}"
+    assert (
+        do_assert and atol
+    ) <= required_atol, f"ATOL too high: {atol} vs {required_atol}"
 
     if np.prod(golden.shape) == 1:
-       return
+        return
     pcc = np.min(
         np.ma.corrcoef(
             np.ma.masked_invalid(torch.squeeze(ret).detach().numpy()).flatten(),

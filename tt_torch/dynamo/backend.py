@@ -32,7 +32,9 @@ def run_shape_prop(gm, example_inputs):
     shape_prop = torch.fx.passes.shape_prop.ShapeProp(gm)
     if shape_prop.fake_mode is not None:
         fake_args = [
-            shape_prop.fake_mode.from_tensor(act, static_shapes=True) if isinstance(act, torch.Tensor) else act
+            shape_prop.fake_mode.from_tensor(act, static_shapes=True)
+            if isinstance(act, torch.Tensor)
+            else act
             for act in example_inputs
         ]
     else:
@@ -75,12 +77,14 @@ def reduce_graph(module_or_graph: Union[torch.fx.Graph, torch.fx.GraphModule]):
                 # Remove the output node if it's the only one
                 graph.erase_node(node)
 
+
 def import_graph(graph: torch.fx.GraphModule):
     context = Context()
     torch_dialect.register_dialect(context)
     importer = FxImporter(context=context)
     importer.import_stateless_graph(graph)
     return importer.module
+
 
 def lower_to_stable_hlo(module, op=None):
     run_pipeline_with_repro_report(
@@ -94,6 +98,7 @@ def lower_to_stable_hlo(module, op=None):
     if op is not None:
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
 
+
 def compile_process(receiver, sender):
     obj = receiver.get()
     faulthandler.disable()
@@ -103,17 +108,18 @@ def compile_process(receiver, sender):
     sender.put({"binary": result})
     sys.exit(0)
 
-class Executor():
+
+class Executor:
     def __init__(self, gm, compiler_config=None):
         self.gm = gm
         self.binary = None
         if compiler_config is None:
             compiler_config = CompilerConfig()
         self.compiler_config = compiler_config
-    
+
     def set_binary(self, binary):
         self.binary = binary
-    
+
     def compile_op(self, node, *inputs, **kwargs):
         input_shapes_and_constants = []
         for inp in inputs:
@@ -154,14 +160,23 @@ class Executor():
             if isinstance(inp, torch.Tensor):
                 placeholders.append(graph.placeholder("input"))
             elif isinstance(inp, (list, tuple)):
-                inps = torch.fx.immutable_collections.immutable_list([graph.placeholder(f"input_{idx}") if isinstance(sub_inp, torch.Tensor) else sub_inp for idx, sub_inp in enumerate(inp)])
+                inps = torch.fx.immutable_collections.immutable_list(
+                    [
+                        graph.placeholder(f"input_{idx}")
+                        if isinstance(sub_inp, torch.Tensor)
+                        else sub_inp
+                        for idx, sub_inp in enumerate(inp)
+                    ]
+                )
                 placeholders.append(inps)
             else:
                 placeholders.append(inp)
         placeholders = tuple(placeholders)
 
         if len(placeholders) != len(node.args):
-            raise ValueError (f"Placeholders and args must be the same length: {len(placeholders)} != {len(node.args)}")
+            raise ValueError(
+                f"Placeholders and args must be the same length: {len(placeholders)} != {len(node.args)}"
+            )
 
         for placeholder, arg in zip(placeholders, node.args):
             if isinstance(placeholder, torch.fx.node.Node):
@@ -169,17 +184,23 @@ class Executor():
             elif isinstance(placeholder, (list, tuple)):
                 for sub_placeholder, sub_arg in zip(placeholder, arg):
                     if isinstance(sub_placeholder, torch.fx.node.Node):
-                        sub_placeholder.meta["tensor_meta"] = sub_arg.meta["tensor_meta"]
-            
+                        sub_placeholder.meta["tensor_meta"] = sub_arg.meta[
+                            "tensor_meta"
+                        ]
+
         graph_node = graph.call_function(node.target, placeholders, kwargs)
         graph_node.meta["tensor_meta"] = node.meta["tensor_meta"]
 
         # if the node has multiple outputs, add a getitem for each and append to graph
-        if not isinstance(node.meta["tensor_meta"], torch.fx.passes.shape_prop.TensorMetadata):
+        if not isinstance(
+            node.meta["tensor_meta"], torch.fx.passes.shape_prop.TensorMetadata
+        ):
             getitem_nodes = []
             graph_node.meta["val"] = node.meta["val"]
             for idx, _ in enumerate(node.meta["tensor_meta"]):
-                getitem_node = graph.call_function(operator.getitem, args=(graph_node, idx))
+                getitem_node = graph.call_function(
+                    operator.getitem, args=(graph_node, idx)
+                )
                 # getitem_node.meta["val"] = graph_node.meta["val"]
                 getitem_nodes.append(getitem_node)
             out = graph.output(tuple(getitem_nodes))
@@ -196,7 +217,7 @@ class Executor():
             out_meta = (out_meta,)
         for out in out_meta:
             op.output_shapes.append([dim for dim in out.shape])
-        
+
         module = import_graph(graph)
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_TORCH_IR
         lower_to_stable_hlo(module, op=op)
@@ -226,7 +247,7 @@ class Executor():
             time.sleep(0.01)
         process.join()
         return result["binary"], op
-    
+
     def run_op(self, binary, *inputs):
         pid = os.fork()
         if pid == 0:
@@ -237,7 +258,6 @@ class Executor():
             pid, status = os.wait()
         return outputs
 
-        
     def run_gm_op_by_op(self, *inputs):
         node_to_tensor = {}
         input_index = 0
@@ -259,7 +279,14 @@ class Executor():
                     if isinstance(arg, torch.fx.node.Node):
                         args.append(node_to_tensor[arg])
                     elif isinstance(arg, list):
-                        args.append([node_to_tensor[a] if isinstance(a, torch.fx.node.Node) else a for a in arg])
+                        args.append(
+                            [
+                                node_to_tensor[a]
+                                if isinstance(a, torch.fx.node.Node)
+                                else a
+                                for a in arg
+                            ]
+                        )
                     else:
                         args.append(arg)
                 # if idx == 103:
@@ -267,7 +294,11 @@ class Executor():
                 #     binary, op = self.compile_op(node, *args, **node.kwargs)
                 try:
                     binary, op = self.compile_op(node, *args, **node.kwargs)
-                    if self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP and binary is not None:
+                    if (
+                        self.compiler_config.compile_depth
+                        == CompileDepth.EXECUTE_OP_BY_OP
+                        and binary is not None
+                    ):
                         tensor = self.run_op(binary, *args)
                         op.compilation_status = OpCompilationStatus.EXECUTED
                     else:
@@ -281,35 +312,41 @@ class Executor():
                 args = node.args[0]
                 output_tensors = [node_to_tensor[arg] for arg in args]
                 outputs = output_tensors
-        
+
         self.compiler_config.save_unique_ops()
         return outputs
-    
+
     def __call__(self, *inputs):
         if self.compiler_config.compile_depth == CompileDepth.EXECUTE:
             assert self.binary is not None, "Binary must be set for EXECUTE mode"
             return tt_mlir.run(inputs, self.binary)
-        elif self.compiler_config.compile_depth in (CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.COMPILE_OP_BY_OP):
+        elif self.compiler_config.compile_depth in (
+            CompileDepth.EXECUTE_OP_BY_OP,
+            CompileDepth.COMPILE_OP_BY_OP,
+        ):
             return self.run_gm_op_by_op(*inputs)
         else:
-            return self.gm(*inputs)   
-        
+            return self.gm(*inputs)
+
+
 def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     gm = pass_pipeline(gm, example_inputs)
     reduce_graph(gm)
     gm.graph.print_tabular()
     run_shape_prop(gm, example_inputs)
     executor = Executor(gm, compiler_config)
-    if compiler_config.compile_depth in (CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.COMPILE_OP_BY_OP):
+    if compiler_config.compile_depth in (
+        CompileDepth.EXECUTE_OP_BY_OP,
+        CompileDepth.COMPILE_OP_BY_OP,
+    ):
         return executor
 
-    
     module = import_graph(gm.graph)
     if compiler_config.profile_ops:
         compiler_config.set_torch_mlir_module(module.operation.get_asm())
     if compiler_config.compile_depth == CompileDepth.TORCH_MLIR:
         return executor
-    
+
     lower_to_stable_hlo(module)
     if compiler_config.profile_ops:
         compiler_config.set_stablehlo_mlir_module(module.operation.get_asm())
@@ -329,4 +366,6 @@ def backend(gm, example_inputs, options=None):
     # aten = make_fx(gm, tracing_mode="symbolic", decomposition_table={}, _allow_non_fake_inputs=True)(*example_inputs)
     # return _base_backend(aten, example_inputs)
     return _base_backend(gm, example_inputs, compiler_config=options)
+
+
 # backend = aot_autograd(fw_compiler=_base_backend)

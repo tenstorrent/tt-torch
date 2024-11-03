@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 import torch
 import numpy as np
 import collections
@@ -7,6 +10,7 @@ from tt_torch.dynamo.backend import backend
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, parse_mlir
 import json
 from pathlib import Path
+
 
 class ModelTester:
     def __init__(self, model_name, mode, compiler_config=None):
@@ -22,10 +26,14 @@ class ModelTester:
         self.compiler_config.model_name = model_name
 
     def _load_model(self):
-        raise NotImplementedError("This method should be implemented in the derived class")
+        raise NotImplementedError(
+            "This method should be implemented in the derived class"
+        )
 
     def _load_inputs(self):
-        raise NotImplementedError("This method should be implemented in the derived class")
+        raise NotImplementedError(
+            "This method should be implemented in the derived class"
+        )
 
     def set_model_train(self, model):
         model.train()
@@ -53,14 +61,16 @@ class ModelTester:
             # For further details, refer to the file `conftest.py` regarding the rationale behind.
             inputs.requires_grad_(True)
         else:
-            raise ValueError(f"set_inputs_train: Current inputs type is not supported: {type(inputs)}")
+            raise ValueError(
+                f"set_inputs_train: Current inputs type is not supported: {type(inputs)}"
+            )
         return inputs
 
     def set_inputs_eval(self, inputs):
         return inputs
 
     def compile_model(self, model, compiler_config):
-        # Compile model 
+        # Compile model
         model = torch.compile(model, backend=backend, options=compiler_config)
         return model
 
@@ -82,10 +92,15 @@ class ModelTester:
         # Since our goal is to verify gradient computation rather than to
         # train a high-performing model, applying `torch.mean` uniformly
         # across all models under test eases the testing procedure.
-        if str(type(outputs)) in ["<class 'torch.Tensor'>", "<class 'core.TorchTensor'>"]:
+        if str(type(outputs)) in [
+            "<class 'torch.Tensor'>",
+            "<class 'core.TorchTensor'>",
+        ]:
             return torch.mean(outputs)
         else:
-            raise ValueError(f"append_fake_loss_function: Current outputs type is not supported: {type(outputs)}")
+            raise ValueError(
+                f"append_fake_loss_function: Current outputs type is not supported: {type(outputs)}"
+            )
 
     def get_results_train(self, model, inputs, outputs):
         # Why `inputs.requires_grad`?
@@ -104,7 +119,9 @@ class ModelTester:
         elif type(inputs) == dict:
             results = {k: v.grad for k, v in inputs.items()}
         else:
-            raise ValueError(f"get_results_train: Current inputs type is not supported: {type(inputs)}")
+            raise ValueError(
+                f"get_results_train: Current inputs type is not supported: {type(inputs)}"
+            )
         return results
 
     def get_results_eval(self, model, inputs, outputs):
@@ -204,7 +221,9 @@ def comp_pcc(golden, calculated, pcc=0.99):
     return cal_pcc >= pcc, cal_pcc
 
 
-def construct_pcc_assert_message(message, expected_pytorch_result, actual_pytorch_result):
+def construct_pcc_assert_message(
+    message, expected_pytorch_result, actual_pytorch_result
+):
     messages = []
     messages.append(message)
     # messages.append("Expected")
@@ -219,8 +238,12 @@ def assert_with_pcc(expected_pytorch_result, actual_pytorch_result, pcc=0.999):
     assert list(expected_pytorch_result.shape) == list(
         actual_pytorch_result.shape
     ), f"list(expected_pytorch_result.shape)={list(expected_pytorch_result.shape)} vs list(actual_pytorch_result.shape)={list(actual_pytorch_result.shape)}"
-    pcc_passed, pcc_message = comp_pcc(expected_pytorch_result, actual_pytorch_result, pcc)
-    assert pcc_passed, construct_pcc_assert_message(pcc_message, expected_pytorch_result, actual_pytorch_result)
+    pcc_passed, pcc_message = comp_pcc(
+        expected_pytorch_result, actual_pytorch_result, pcc
+    )
+    assert pcc_passed, construct_pcc_assert_message(
+        pcc_message, expected_pytorch_result, actual_pytorch_result
+    )
     return pcc_passed, pcc_message
 
 
@@ -230,8 +253,12 @@ def check_with_pcc(expected_pytorch_result, actual_pytorch_result, pcc=0.999):
             False,
             f"list(expected_pytorch_result.shape)={list(expected_pytorch_result.shape)} vs list(actual_pytorch_result.shape)={list(actual_pytorch_result.shape)}",
         )
-    pcc_passed, pcc_message = comp_pcc(expected_pytorch_result, actual_pytorch_result, pcc)
-    return pcc_passed, construct_pcc_assert_message(pcc_message, expected_pytorch_result, actual_pytorch_result)
+    pcc_passed, pcc_message = comp_pcc(
+        expected_pytorch_result, actual_pytorch_result, pcc
+    )
+    return pcc_passed, construct_pcc_assert_message(
+        pcc_message, expected_pytorch_result, actual_pytorch_result
+    )
 
 
 def calculate_accuracy(original_outputs, compiled_outputs):
@@ -244,33 +271,43 @@ def calculate_accuracy(original_outputs, compiled_outputs):
             f"Original and compiled output do not have the same set of keys."
             f"original keys:\n{original_outputs.keys()}\ncompiled keys:\n{compiled_outputs.keys()}"
         )
-        for original_outputs, compiled_outputs in zip(original_outputs.values(), compiled_outputs.values()):
+        for original_outputs, compiled_outputs in zip(
+            original_outputs.values(), compiled_outputs.values()
+        ):
             # TODO: Support other sequence types
-            if isinstance(original_outputs, torch.Tensor) and isinstance(compiled_outputs, torch.Tensor):
+            if isinstance(original_outputs, torch.Tensor) and isinstance(
+                compiled_outputs, torch.Tensor
+            ):
                 _, pcc = comp_pcc(original_outputs, compiled_outputs)
                 output_pccs.append(pcc)
         assert (
             output_pccs
         ), f"No comparable outputs:\noriginal_outputs:\n{original_outputs}\ncompiled_outputs:\n{compiled_outputs}"
         accuracy = torch.mean(torch.tensor(output_pccs)).item()
-    elif (isinstance(original_outputs, list) and isinstance(compiled_outputs, list)) or (
-        isinstance(original_outputs, tuple) and isinstance(compiled_outputs, tuple)
-    ):
+    elif (
+        isinstance(original_outputs, list) and isinstance(compiled_outputs, list)
+    ) or (isinstance(original_outputs, tuple) and isinstance(compiled_outputs, tuple)):
         # Handle case where outputs are lists
         output_pccs = []
         assert len(original_outputs) == len(compiled_outputs), (
             f"Original and compiled output do not have the same length."
             f"original length: {len(original_outputs)}\ncompiled length: {len(compiled_outputs)}"
         )
-        for original_outputs, compiled_outputs in zip(original_outputs, compiled_outputs):
-            if isinstance(original_outputs, torch.Tensor) and isinstance(compiled_outputs, torch.Tensor):
+        for original_outputs, compiled_outputs in zip(
+            original_outputs, compiled_outputs
+        ):
+            if isinstance(original_outputs, torch.Tensor) and isinstance(
+                compiled_outputs, torch.Tensor
+            ):
                 _, pcc = comp_pcc(original_outputs, compiled_outputs)
                 output_pccs.append(pcc)
         assert (
             output_pccs
         ), f"No comparable outputs:\noriginal_outputs:\n{original_outputs}\ncompiled_outputs:\n{compiled_outputs}"
         accuracy = torch.mean(torch.tensor(output_pccs)).item()
-    elif isinstance(original_outputs, torch.Tensor) and isinstance(compiled_outputs, torch.Tensor):
+    elif isinstance(original_outputs, torch.Tensor) and isinstance(
+        compiled_outputs, torch.Tensor
+    ):
         # Handle case where outputs are Pytorch Tensors
         _, accuracy = comp_pcc(original_outputs, compiled_outputs)
     else:
@@ -439,14 +476,18 @@ class MetricStringListHandler:
     def _adjust_masked_fill_Scalar(self, input_vals):
         for input_val in input_vals:
             if input_val["name"] == "mask":
-                input_val["val"] = torch.randint(0, 2, input_val["val"].shape).type(torch.bool)
+                input_val["val"] = torch.randint(0, 2, input_val["val"].shape).type(
+                    torch.bool
+                )
                 break
         return input_vals
 
     def _adjust_where_self(self, input_vals):
         for input_val in input_vals:
             if input_val["name"] == "condition":
-                input_val["val"] = torch.randint(0, 2, input_val["val"].shape).type(torch.bool)
+                input_val["val"] = torch.randint(0, 2, input_val["val"].shape).type(
+                    torch.bool
+                )
                 break
         return input_vals
 
@@ -457,7 +498,9 @@ class MetricStringListHandler:
                 break
         for input_val in input_vals:
             if input_val["name"] == "indices":
-                input_val["val"] = torch.randint(0, weight_shape0, input_val["val"].shape)
+                input_val["val"] = torch.randint(
+                    0, weight_shape0, input_val["val"].shape
+                )
                 break
         return input_vals
 
@@ -468,7 +511,9 @@ class MetricStringListHandler:
                 break
         for input_val in input_vals:
             if input_val["name"] == "indices":
-                input_val["val"] = torch.randint(0, grad_output_shape0, input_val["val"].shape)
+                input_val["val"] = torch.randint(
+                    0, grad_output_shape0, input_val["val"].shape
+                )
                 break
         return input_vals
 
@@ -483,7 +528,9 @@ class MetricStringListHandler:
                 break
         for input_val in input_vals:
             if input_val["name"] == "index":
-                input_val["val"] = torch.randint(0, self_shape[dim], input_val["val"].shape)
+                input_val["val"] = torch.randint(
+                    0, self_shape[dim], input_val["val"].shape
+                )
                 break
         return input_vals
 
@@ -513,7 +560,9 @@ class MetricStringListHandler:
         has_self = any(input_val["name"] == "self" for input_val in input_vals)
 
         if not has_self:
-            input_kwargs = {input_val["name"]: input_val["val"] for input_val in input_vals}
+            input_kwargs = {
+                input_val["name"]: input_val["val"] for input_val in input_vals
+            }
         else:
             before_self = True
             for input_val in input_vals:
@@ -540,6 +589,8 @@ class MetricStringListHandler:
         return input_args, input_kwargs, True
 
 
-def render_metric_string_list_to_input_args_kwargs(op_name, input_strings) -> Tuple[List, Dict, bool]:
+def render_metric_string_list_to_input_args_kwargs(
+    op_name, input_strings
+) -> Tuple[List, Dict, bool]:
     handler = MetricStringListHandler(op_name, input_strings)
     return handler.render_input_args_kwargs()

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/nvidia/segformer-b0-finetuned-ade-512-512
 
 from transformers import SegformerImageProcessor, SegformerForSemanticSegmentation
@@ -10,8 +13,12 @@ import torch
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.processor = SegformerImageProcessor.from_pretrained("nvidia/segformer-b0-finetuned-ade-512-512")
-        model = SegformerForSemanticSegmentation.from_pretrained("nvidia/segformer-b0-finetuned-ade-512-512")
+        self.processor = SegformerImageProcessor.from_pretrained(
+            "nvidia/segformer-b0-finetuned-ade-512-512"
+        )
+        model = SegformerForSemanticSegmentation.from_pretrained(
+            "nvidia/segformer-b0-finetuned-ade-512-512"
+        )
         model = model.to(torch.bfloat16)
         return model
 
@@ -37,7 +44,6 @@ class ThisTester(ModelTester):
     "mode",
     ["train", "eval"],
 )
-
 def test_segformer(record_property, mode):
     model_name = "SegFormer"
     record_property("model_name", model_name)

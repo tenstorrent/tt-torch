@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/docs/transformers/en/model_doc/opt
 
 import torch
@@ -8,14 +11,14 @@ from tests.utils import ModelTester
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model = OPTForCausalLM.from_pretrained("facebook/opt-350m", torch_dtype=torch.bfloat16)
+        model = OPTForCausalLM.from_pretrained(
+            "facebook/opt-350m", torch_dtype=torch.bfloat16
+        )
         self.tokenizer = GPT2Tokenizer.from_pretrained("facebook/opt-350m")
         return model.generate
 
     def _load_inputs(self):
-        prompt = (
-            "A chat between a curious"
-        )
+        prompt = "A chat between a curious"
 
         model_inputs = self.tokenizer([prompt], return_tensors="pt")
 
