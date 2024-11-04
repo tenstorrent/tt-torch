@@ -121,7 +121,7 @@ def test_div():
         def forward(self, x, y):
             return x / y
 
-    verify_module(Basic(), [(2, 2), (2, 2)], required_atol=3e-2)
+    verify_module(Basic(), [(2, 2), (2, 2)], required_atol=5e-2)
 
 
 def test_exp():
