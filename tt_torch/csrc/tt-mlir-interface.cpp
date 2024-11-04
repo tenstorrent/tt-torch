@@ -70,8 +70,6 @@ tt::runtime::Binary Compile(std::string_view code) {
           // instead of DenseArray. We rectify that below and verify after.
           mlir::ParserConfig{&context, /*verifyAfterParse=*/true});
 
-  //   mlir_module->dump();
-
   mlir::tt::ttir::registerPasses();
   mlir::tt::ttnn::registerPasses();
 
@@ -89,8 +87,6 @@ tt::runtime::Binary Compile(std::string_view code) {
     throw std::runtime_error("Failed to run MLIR compiler pass pipeline.");
   }
 
-  //   mlir_module->dump();
-
   mlir::PassManager pm(mlir_module.get()->getName());
   mlir::tt::ttnn::TTIRToTTNNBackendPipelineOptions options;
   mlir::tt::ttnn::createTTIRToTTNNBackendPipeline(pm, options);
@@ -99,7 +95,6 @@ tt::runtime::Binary Compile(std::string_view code) {
   if (mlir::failed(pm.run(mlir_module.get()))) {
     throw std::runtime_error("Failed to run MLIR compiler pass pipeline.");
   }
-  //   mlir_module->dump();
 
   std::shared_ptr<void> binary_ptr =
       mlir::tt::ttnn::ttnnToFlatbuffer(mlir_module.get());

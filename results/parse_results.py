@@ -8,6 +8,8 @@ import csv
 import xlsxwriter
 
 
+# Script to parse the results of the unique ops json files and combine them into a spreadsheet
+# This script parses models compiled into stable hlo / TTIR in one shot (as opposed to op by op)
 def find_json_files(directory="results"):
     json_files = []
     for root, dirs, files in os.walk(directory):
