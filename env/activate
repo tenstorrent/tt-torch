@@ -7,8 +7,8 @@ if [ -z "$TTMLIR_TOOLCHAIN_DIR" ]; then
   echo "TTMLIR_TOOLCHAIN_DIR not set. Please set it and re-run"
 else
 
-  export TT_MLIR_HOME="$(pwd)"
-  export LD_LIBRARY_PATH=$TT_MLIR_HOME/env/venv/lib/python3.11/site-packages/torch/lib:$TTMLIR_TOOLCHAIN_DIR/lib:$LD_LIBRRARY_PATH
+  export TT_TORCH_HOME="$(pwd)"
+  export LD_LIBRARY_PATH=$TT_TORCH_HOME/env/venv/lib/python3.11/site-packages/torch/lib:$TTMLIR_TOOLCHAIN_DIR/lib:$LD_LIBRRARY_PATH
 
   export TTMLIR_VENV_DIR="$(pwd)/env/venv"
   if [ -d $TTMLIR_VENV_DIR/bin ]; then
@@ -22,13 +22,13 @@ else
     pip install --upgrade pip
 
     python3.11 -m pip install -r requirements.txt
-    cd third_party
+    cd $TT_TORCH_HOME/third_party
     git clone https://github.com/pytorch/vision.git
     cd vision
     git checkout v0.20.0
     pip uninstall -y torchvision
     TORCHVISION_USE_VIDEO_CODEC=0 TORCHVISION_USE_FFMPEG=0 CC=clang CXX=clang++ _GLIBCXX_USE_CXX11_ABI=1 USE_CUDA=OFF python setup.py install
-    cd ../..
+    cd $TT_TORCH_HOME
   fi
   export TTTORCH_ENV_ACTIVATED=1
   export TTMLIR_ENV_ACTIVATED=1

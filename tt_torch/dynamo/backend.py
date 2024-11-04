@@ -241,7 +241,7 @@ class Executor:
                 break
             except mp.queues.Empty:
                 pass
-            if time.time() - start > 5:
+            if time.time() - start > self.compiler_config.single_op_timeout:
                 process.terminate()
                 break
             time.sleep(0.01)
@@ -289,9 +289,6 @@ class Executor:
                         )
                     else:
                         args.append(arg)
-                # if idx == 103:
-                #     breakpoint()
-                #     binary, op = self.compile_op(node, *args, **node.kwargs)
                 try:
                     binary, op = self.compile_op(node, *args, **node.kwargs)
                     if (

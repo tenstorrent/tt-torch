@@ -87,6 +87,7 @@ class CompilerConfig:
         self.stable_hlo_ops = []
         self.model_name = ""
         self.results_path = "results/models/"
+        self.single_op_timeout = 5
 
         self.apply_environment_overrides()
 
