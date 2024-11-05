@@ -9,5 +9,5 @@
 #include "tt/runtime/runtime.h"
 
 namespace tt::torch {
-tt::runtime::Binary Compile(std::string_view code);
+std::shared_ptr<void>* Compile(std::string_view code);
 } // namespace tt::torch

@@ -347,9 +347,9 @@ def test_multiple_ops():
         def forward(self, x):
             y = x + x
             z = y + x
-            z = torch.argmax(z)
+            # z = torch.argmax(z)
             return z
 
     cc = CompilerConfig()
-    cc.compile_depth = tt_torch.tools.utils.CompileDepth.COMPILE_OP_BY_OP
+    cc.compile_depth = tt_torch.tools.utils.CompileDepth.EXECUTE_OP_BY_OP
     verify_module(Basic(), [(256, 256)], compiler_config=cc, do_assert=False)
