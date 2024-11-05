@@ -263,8 +263,10 @@ class Executor:
         input_index = 0
         outputs = []
         num_nodes = len(self.gm.graph.nodes)
+        out_degree = {}
         for idx, node in enumerate(self.gm.graph.nodes):
             print(f"Compiling {idx}/{num_nodes}: {node.target}")
+            out_degree[node] = len(node.users)
             if node.op == "placeholder":
                 node_to_tensor[node] = inputs[input_index]
                 input_index += 1
@@ -309,6 +311,16 @@ class Executor:
                 args = node.args[0]
                 output_tensors = [node_to_tensor[arg] for arg in args]
                 outputs = output_tensors
+            args_set = set()
+            for arg in node.args:
+                if arg in args_set:
+                    continue
+                args_set.add(arg)
+                if isinstance(arg, torch.fx.node.Node):
+                    out_degree[arg] -= 1
+                    if out_degree[arg] == 0 and arg.op != "output":
+                        del node_to_tensor[arg]
+                        out_degree.pop(arg)
 
         self.compiler_config.save_unique_ops()
         return outputs
