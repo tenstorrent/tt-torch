@@ -1,0 +1,7 @@
+
+### stablehlo.dynamic_iota::ttnn.arange
+
+
+||STABLE HLO Input Variations|ttnn op|Torch Name|Status|
+| :--- | :--- | :--- | :--- | :--- |
+|0|Tensor<[1]>,<br>dim: 0<br>|ttnn.arange|aten::arange|4|
