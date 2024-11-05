@@ -34,9 +34,8 @@ def _verify_torch_module(
     golden = mod(*inputs)
 
     atol = torch.max(torch.abs(golden - ret)).item()
-    assert (
-        do_assert and atol
-    ) <= required_atol, f"ATOL too high: {atol} vs {required_atol}"
+    if do_assert:
+        assert atol <= required_atol, f"ATOL too high: {atol} vs {required_atol}"
 
     if np.prod(golden.shape) == 1:
         return
@@ -46,7 +45,8 @@ def _verify_torch_module(
             np.ma.masked_invalid(torch.squeeze(golden).detach().numpy()).flatten(),
         )
     )
-    assert (do_assert and pcc) >= required_pcc, f"PCC too low: {pcc} vs {required_pcc}"
+    if do_assert:
+        assert pcc >= required_pcc, f"PCC too low: {pcc} vs {required_pcc}"
 
 
 def _verify_onnx_module(

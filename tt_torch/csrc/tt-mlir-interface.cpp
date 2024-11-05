@@ -46,7 +46,7 @@
 
 namespace tt::torch {
 
-tt::runtime::Binary Compile(std::string_view code) {
+std::shared_ptr<void> *Compile(std::string_view code) {
 
   mlir::MLIRContext context;
   mlir::DialectRegistry registry;
@@ -96,14 +96,13 @@ tt::runtime::Binary Compile(std::string_view code) {
     throw std::runtime_error("Failed to run MLIR compiler pass pipeline.");
   }
 
-  std::shared_ptr<void> binary_ptr =
-      mlir::tt::ttnn::ttnnToFlatbuffer(mlir_module.get());
+  std::shared_ptr<void> *binary = new std::shared_ptr<void>();
+  *binary = mlir::tt::ttnn::ttnnToFlatbuffer(mlir_module.get());
 
-  if (binary_ptr == nullptr) {
+  if (binary == nullptr) {
     throw std::runtime_error("Failed to generate flatbuffer binary.");
   }
 
-  tt::runtime::Binary binary(binary_ptr);
   return binary;
 }
 

@@ -8,9 +8,6 @@
 
 namespace py = pybind11;
 
-tt::runtime::Binary compile(std::string_view code) {
-  return tt::torch::Compile(code);
-}
 
 static tt::target::DataType torch_scalar_type_to_dt(torch::ScalarType st) {
   switch (st) {
@@ -88,8 +85,20 @@ std::vector<int64_t> as_vec_int64(std::vector<T> const &vec) {
   }
   return result;
 }
+
 std::vector<at::Tensor> run(const std::vector<at::Tensor> &inputs,
-                            tt::runtime::Binary binary) {
+                            py::bytes byte_stream) {
+
+
+  std::string data_str = byte_stream;
+  auto binary_ptr = std::shared_ptr<void>(
+      new char[data_str.size()],
+      [](void* ptr) { delete[] static_cast<char*>(ptr); }  // Custom deleter
+  );
+  // Copy data into the allocated memory
+  std::memcpy(binary_ptr.get(), data_str.data(), data_str.size());
+  tt::runtime::Binary binary = tt::runtime::Binary(binary_ptr);
+
   auto [system_desc, chip_ids] = tt::runtime::getCurrentSystemDesc();
   int dev_0 = chip_ids[0];
   auto device = tt::runtime::openDevice({dev_0});
@@ -124,13 +133,22 @@ std::vector<at::Tensor> run(const std::vector<at::Tensor> &inputs,
   return outputs;
 }
 
+py::bytes compile_to_bytestream(std::string_view code) {
+  auto binary = tt::torch::Compile(code);
+  auto size = ::flatbuffers::GetSizePrefixedBufferLength(
+    static_cast<const uint8_t *>(binary->get()));
+  
+  std::string data_str(static_cast<const char*>(binary->get()), size);
+  delete binary;
+  return py::bytes(data_str);
+}
+
 PYBIND11_MODULE(tt_mlir, m) {
   m.doc() = "tt_mlir";
   py::class_<tt::runtime::Binary>(m, "Binary")
       .def("getProgramInputs", &tt::runtime::Binary::getProgramInputs)
-      .def("getProgramOutputs", &tt::runtime::Binary::getProgramOutputs)
-      .def("as_json", &tt::runtime::Binary::asJson);
-  m.def("compile", &compile,
+      .def("getProgramOutputs", &tt::runtime::Binary::getProgramOutputs);
+  m.def("compile", &compile_to_bytestream,
         "A function that compiles a stableHLO model to a flatbuffer");
   m.def("run", &run, "Push inputs and run binary");
   m.def("get_current_system_desc", &tt::runtime::getCurrentSystemDesc,

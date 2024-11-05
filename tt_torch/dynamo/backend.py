@@ -106,8 +106,18 @@ def compile_process(receiver, sender):
     faulthandler.disable()
     asm = obj["asm"]
     binary = tt_mlir.compile(asm)
-    result = {"binary": binary.as_json()}
-    sender.put({"binary": result})
+    sender.put({"binary": binary})
+    time.sleep(0.1)
+    sys.exit(0)
+
+def execute_process(receiver, sender):
+    obj = receiver.get()
+    faulthandler.disable()
+    binary = obj["binary"]
+    inputs = obj["inputs"]
+    outputs = tt_mlir.run(inputs, binary)
+    sender.put({"outputs": outputs})
+    time.sleep(0.1)
     sys.exit(0)
 
 
@@ -233,10 +243,7 @@ class Executor:
         sender.put(obj)
         start = time.time()
         result = {}
-        result["binary"] = ""
         while True:
-            if not process.is_alive():
-                break
             try:
                 result = receiver.get_nowait()
                 op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTNN_IR
@@ -246,18 +253,39 @@ class Executor:
             if time.time() - start > self.compiler_config.single_op_timeout:
                 process.terminate()
                 break
+            if not process.is_alive():
+                break
             time.sleep(0.01)
         process.join()
         return result["binary"], op
 
     def run_op(self, binary, *inputs):
-        pid = os.fork()
-        if pid == 0:
-            outputs = tt_mlir.run(inputs, binary)
-            if len(outputs) == 1:
-                outputs = outputs[0]
-        else:
-            pid, status = os.wait()
+        sender = mp.Queue()
+        receiver = mp.Queue()
+        obj = {"binary": binary, "inputs": inputs}
+
+        process = mp.Process(target=execute_process, args=(sender, receiver))
+        process.start()
+        sender.put(obj)
+        result = {}
+        start = time.time()
+        while True:
+            if not process.is_alive():
+                break
+            try:
+                result = receiver.get_nowait()
+                break
+            except mp.queues.Empty:
+                pass
+            if time.time() - start > self.compiler_config.single_op_timeout:
+                process.terminate()
+                print("Timeout")
+                break
+            time.sleep(0.05)
+        process.join()
+        outputs = result["outputs"]
+        if len(outputs) == 1:
+            outputs = outputs[0]
         return outputs
 
     def run_gm_op_by_op(self, *inputs):
