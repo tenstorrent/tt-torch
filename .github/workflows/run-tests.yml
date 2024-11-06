@@ -1,4 +1,4 @@
-name: Test
+name: Run Tests
 
 on:
   workflow_dispatch:
@@ -80,5 +80,6 @@ jobs:
     - name: Run ONNX tests
       shell: bash
       run: |
+        source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
         pytest -v tests/onnx

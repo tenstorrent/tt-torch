@@ -1,4 +1,4 @@
-name: Build and Test
+name: Build
 
 on:
   workflow_dispatch:
@@ -84,7 +84,7 @@ jobs:
 
   # # Run tests on TT hardware
 
-  build-and-run-tests:
+  build:
     timeout-minutes: 120
     strategy:
       fail-fast: false
@@ -151,22 +151,11 @@ jobs:
     - name: Copy tt-metal binaries
       shell: bash
       working-directory: ${{ steps.strings.outputs.install-output-dir }}
-      run: cp ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal-build/lib/*.so lib/
-
-    - name: Copy libfmt
-      shell: bash
-      working-directory: ${{ steps.strings.outputs.install-output-dir }}
-      run: cp ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal-build/_deps/fmt-build/*.so* lib/
-
-    - name: Copy libnng
-      shell: bash
-      working-directory: ${{ steps.strings.outputs.install-output-dir }}
-      run: cp ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal-build/_deps/nanomsg-build/*.so* lib/
-
-    - name: Copy libuv
-      shell: bash
-      working-directory: ${{ steps.strings.outputs.install-output-dir }}
-      run: cp ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal-build/_deps/libuv-build/*.so* lib/
+      run: |
+        cp ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal-build/lib/*.so lib/
+        cp ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal-build/_deps/fmt-build/*.so* lib/
+        cp ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal-build/_deps/nanomsg-build/*.so* lib/
+        cp ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal-build/_deps/libuv-build/*.so* lib/
 
     - name: Copy tt-metal directories
       shell: bash
