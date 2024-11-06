@@ -346,8 +346,8 @@ def test_multiple_ops():
 
         def forward(self, x):
             y = x + x
-            z = y + x
-            # z = torch.argmax(z)
+            z = y + y
+            z = torch.argmax(z)
             return z
 
     cc = CompilerConfig()

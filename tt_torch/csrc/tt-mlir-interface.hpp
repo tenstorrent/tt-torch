@@ -10,4 +10,6 @@
 
 namespace tt::torch {
 std::shared_ptr<void>* Compile(std::string_view code);
+std::string compileStableHLOToTTIR(std::string_view code);
+std::tuple<std::shared_ptr<void> *, std::string_view> compileTTIRToTTNN(std::string_view code);
 } // namespace tt::torch

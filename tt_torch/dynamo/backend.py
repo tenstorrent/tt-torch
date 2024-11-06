@@ -105,8 +105,10 @@ def compile_process(receiver, sender):
     obj = receiver.get()
     faulthandler.disable()
     asm = obj["asm"]
-    binary = tt_mlir.compile(asm)
-    sender.put({"binary": binary})
+    ttir = tt_mlir.compile_stable_hlo_to_ttir(asm)
+    sender.put({"ttir": ttir})
+    binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
+    sender.put({"binary": binary, "ttnn": ttnn})
     time.sleep(0.1)
     sys.exit(0)
 
@@ -183,13 +185,14 @@ class Executor:
                 placeholders.append(inps)
             else:
                 placeholders.append(inp)
-        placeholders = tuple(placeholders)
 
         if len(placeholders) != len(node.args):
-            raise ValueError(
-                f"Placeholders and args must be the same length: {len(placeholders)} != {len(node.args)}"
-            )
+            # are any of the args duplicates? If so, we need to duplicate the placeholders
+            for idx, arg in enumerate(node.args):
+                if arg in node.args[idx + 1:]:
+                    placeholders.append(placeholders[idx])
 
+        placeholders = tuple(placeholders)
         for placeholder, arg in zip(placeholders, node.args):
             if isinstance(placeholder, torch.fx.node.Node):
                 placeholder.meta["tensor_meta"] = arg.meta["tensor_meta"]
@@ -246,8 +249,14 @@ class Executor:
         while True:
             try:
                 result = receiver.get_nowait()
-                op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTNN_IR
-                break
+                if "ttir" in result:
+                    op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTIR
+                    op.add_ttir_graph(result["ttir"])
+                if "binary" in result:
+                    op.binary = result["binary"]
+                    op.add_ttnn_graph(result["ttnn"])
+                    op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTNN
+                    break
             except mp.queues.Empty:
                 pass
             if time.time() - start > self.compiler_config.single_op_timeout:
