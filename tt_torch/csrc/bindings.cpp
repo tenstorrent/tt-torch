@@ -133,7 +133,22 @@ std::vector<at::Tensor> run(const std::vector<at::Tensor> &inputs,
   return outputs;
 }
 
-py::bytes compile_to_bytestream(std::string_view code) {
+std::string compile_stable_hlo_to_ttir(std::string_view code) {
+  auto ret = tt::torch::compileStableHLOToTTIR(code);
+  return ret;
+}
+
+std::tuple<py::bytes, std::string_view> compile_ttir_to_bytestream(std::string_view code) {
+  auto [binary, ttnn] = tt::torch::compileTTIRToTTNN(code);
+  auto size = ::flatbuffers::GetSizePrefixedBufferLength(
+    static_cast<const uint8_t *>(binary->get()));
+  
+  std::string data_str(static_cast<const char*>(binary->get()), size);
+  delete binary;
+  return std::make_tuple(py::bytes(data_str), ttnn);
+}
+
+py::bytes compile_stablehlo_to_bytestream(std::string_view code) {
   auto binary = tt::torch::Compile(code);
   auto size = ::flatbuffers::GetSizePrefixedBufferLength(
     static_cast<const uint8_t *>(binary->get()));
@@ -148,8 +163,12 @@ PYBIND11_MODULE(tt_mlir, m) {
   py::class_<tt::runtime::Binary>(m, "Binary")
       .def("getProgramInputs", &tt::runtime::Binary::getProgramInputs)
       .def("getProgramOutputs", &tt::runtime::Binary::getProgramOutputs);
-  m.def("compile", &compile_to_bytestream,
-        "A function that compiles a stableHLO model to a flatbuffer");
+  m.def("compile", &compile_stablehlo_to_bytestream,
+        "A function that compiles stableHLO to a bytestream");
+  m.def("compile_ttir_to_bytestream", &compile_ttir_to_bytestream,
+        "A function that compiles TTIR to a bytestream");
+  m.def("compile_stable_hlo_to_ttir", &compile_stable_hlo_to_ttir,
+        "A function that compiles stableHLO to TTIR");
   m.def("run", &run, "Push inputs and run binary");
   m.def("get_current_system_desc", &tt::runtime::getCurrentSystemDesc,
         "Get the current system descriptor");

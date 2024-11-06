@@ -24,8 +24,9 @@ class OpCompilationStatus(IntEnum):
     CONVERTED_TO_TORCH_IR = 2
     CONVERTED_TO_TORCH_BACKEND_IR = 3
     CONVERTED_TO_STABLE_HLO = 4
-    CONVERTED_TO_TTNN_IR = 5
-    EXECUTED = 6
+    CONVERTED_TO_TTIR = 5
+    CONVERTED_TO_TTNN = 6
+    EXECUTED = 7
 
 
 class Op:
@@ -37,6 +38,8 @@ class Op:
 
         self.stable_hlo_graph = ""
         self.stable_hlo_ops = []
+        self.ttir_graph = ""
+        self.ttnn_graph = ""
         self.compilation_status = OpCompilationStatus.NOT_STARTED
         self.parsed_stable_hlo_ops = False
 
@@ -56,6 +59,8 @@ class Op:
             "parsed_stable_hlo_ops": self.parsed_stable_hlo_ops,
             "stable_hlo_graph": self.stable_hlo_graph,
             "stable_hlo_ops": self.stable_hlo_ops,
+            "ttir_graph": self.ttir_graph,
+            "ttnn_graph": self.ttnn_graph,
         }
 
     def unique_key(self):
@@ -76,6 +81,12 @@ class Op:
         except:
             self.parsed_stable_hlo_ops = False
 
+
+    def add_ttir_graph(self, ttir_graph: str):
+        self.ttir_graph = ttir_graph
+
+    def add_ttnn_graph(self, ttnn_graph: str):
+        self.ttnn_graph = ttnn_graph
 
 class CompilerConfig:
     def __init__(self):
