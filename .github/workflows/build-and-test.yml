@@ -144,9 +144,16 @@ jobs:
         cmake --build ${{ steps.strings.outputs.build-output-dir }}
         cmake --install ${{ steps.strings.outputs.build-output-dir }}
 
-    - name: Run tests
+    - name: Run PyTorch tests
       shell: bash
       run: |
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${LD_LIBRARY_PATH}"
         source env/activate
-        pytest -v tests --ignore=tests/models
+        pytest -v tests/torch
+
+    - name: Run ONNX tests
+      shell: bash
+      run: |
+        export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${LD_LIBRARY_PATH}"
+        source env/activate
+        pytest -v tests/onnx
