@@ -22,3 +22,5 @@ matplotlib
 mlp_mixer_pytorch
 opencv-python
 xlsxwriter
+onnx
+onnxruntime

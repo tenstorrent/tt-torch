@@ -26,10 +26,10 @@ def test_add():
         def __init__(self):
             super().__init__()
 
-        def forward(self, x):
-            return x + x
+        def forward(self, x, y):
+            return torch.add(x, y)
 
-    verify_module(Basic(), [(256, 256)])
+    verify_module(Basic(), [(256, 256)] * 2)
 
 
 def test_concat_dim0():
