@@ -9,7 +9,14 @@ from torch._functorch.compile_utils import strip_overloads
 import operator
 
 from tt_torch.dynamo.passes import pass_pipeline
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, Op, OpCompilationStatus
+from tt_torch.tools.utils import (
+    CompilerConfig,
+    CompileDepth,
+    Op,
+    OpCompilationStatus,
+    calculate_atol,
+    calculate_pcc,
+)
 
 import tt_mlir
 from torch_mlir.ir import Context
@@ -126,12 +133,14 @@ def execute_process(receiver, sender, exec_event):
 
 
 class Executor:
-    def __init__(self, gm, compiler_config=None):
+    def __init__(self, gm, compiler_config=None, required_pcc=0.99, required_atol=1e-2):
         self.gm = gm
         self.binary = None
         if compiler_config is None:
             compiler_config = CompilerConfig()
         self.compiler_config = compiler_config
+        self.required_atol = required_atol
+        self.required_pcc = required_pcc
 
     def set_binary(self, binary):
         self.binary = binary
@@ -351,13 +360,19 @@ class Executor:
                         and binary is not None
                     ):
                         tensor = self.run_op(binary, *args)
+                        golden_tensor = node.target(*args, **node.kwargs)
+                        atol = calculate_atol(tensor, golden_tensor)
+                        if atol > self.required_atol:
+                            print(f"atol too high for {idx}: {atol}")
+                        pcc = calculate_pcc(tensor, golden_tensor)
+                        if pcc < self.required_pcc:
+                            print(f"pcc too low for {idx}: {pcc}")
                         op.compilation_status = OpCompilationStatus.EXECUTED
                     else:
                         tensor = node.target(*args, **node.kwargs)
                 except Exception as e:
                     print(f"Failed to compile {idx}/{num_nodes}: {node.target}: {e}")
                     tensor = node.target(*args, **node.kwargs)
-
                 node_to_tensor[node] = tensor
             elif node.op == "output":
                 args = node.args[0]

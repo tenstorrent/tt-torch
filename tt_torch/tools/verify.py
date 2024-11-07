@@ -8,6 +8,7 @@ import numpy as np
 import tt_mlir
 from tt_torch.onnx_compile import compile_onnx
 from tt_torch.dynamo.backend import backend
+from tt_torch.tools.utils import calculate_atol, calculate_pcc
 
 
 def _verify_torch_module(
@@ -58,7 +59,7 @@ def _verify_torch_module(
         golden = golden.to(torch.float)
         ret = ret.to(torch.float)
 
-    atol = torch.max(torch.abs(golden - ret)).item()
+    atol = calculate_atol(ret, golden)
     if do_assert:
         assert atol <= required_atol, f"ATOL too high: {atol} vs {required_atol}"
 
@@ -67,12 +68,9 @@ def _verify_torch_module(
 
     ret = ret.to(torch.float32) if ret.dtype == torch.bfloat16 else ret
     golden = golden.to(torch.float32) if golden.dtype == torch.bfloat16 else golden
-    pcc = np.min(
-        np.ma.corrcoef(
-            np.ma.masked_invalid(torch.squeeze(ret).detach().numpy()).flatten(),
-            np.ma.masked_invalid(torch.squeeze(golden).detach().numpy()).flatten(),
-        )
-    )
+
+    pcc = calculate_pcc(ret, golden)
+
     if do_assert:
         assert pcc >= required_pcc, f"PCC too low: {pcc} vs {required_pcc}"
 
@@ -128,7 +126,7 @@ def _verify_onnx_module(
     ), f"Number of outputs mismatch between golden and compiled: {len(golden)} vs {len(ret)}"
 
     for golden_out, tt_out in zip(golden, ret):
-        atol = torch.max(torch.abs(golden_out - tt_out)).item()
+        atol = calculate_atol(tt_out, golden_out)
         assert (
             do_assert and atol
         ) <= required_atol, f"ATOL too high: {atol} vs {required_atol}"
@@ -142,14 +140,9 @@ def _verify_onnx_module(
             if golden_out.dtype == torch.bfloat16
             else golden_out
         )
-        pcc = np.min(
-            np.ma.corrcoef(
-                np.ma.masked_invalid(torch.squeeze(tt_out).detach().numpy()).flatten(),
-                np.ma.masked_invalid(
-                    torch.squeeze(golden_out).detach().numpy()
-                ).flatten(),
-            )
-        )
+
+        pcc = calculate_pcc(tt_out, golden_out)
+        
         assert (
             do_assert and pcc
         ) >= required_pcc, f"PCC too low: {pcc} vs {required_pcc}"
