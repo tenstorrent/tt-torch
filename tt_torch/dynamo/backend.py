@@ -126,12 +126,13 @@ def execute_process(receiver, sender, exec_event):
 
 
 class Executor:
-    def __init__(self, gm, compiler_config=None):
+    def __init__(self, gm, compiler_config=None, required_atol=1e-2):
         self.gm = gm
         self.binary = None
         if compiler_config is None:
             compiler_config = CompilerConfig()
         self.compiler_config = compiler_config
+        self.required_atol = required_atol
 
     def set_binary(self, binary):
         self.binary = binary
@@ -350,7 +351,10 @@ class Executor:
                         == CompileDepth.EXECUTE_OP_BY_OP
                         and binary is not None
                     ):
-                        tensor = self.run_op(binary, *args)
+                        tt_tensor = self.run_op(binary, *args)
+                        golden_tensor = node.target(*args, **node.kwargs)
+                        atol = torch.max(torch.abs(golden_tensor - tt_tensor)).item()
+                        assert (atol <= self.required_atol), f"ATOL too high: {atol}"
                         op.compilation_status = OpCompilationStatus.EXECUTED
                     else:
                         tensor = node.target(*args, **node.kwargs)
