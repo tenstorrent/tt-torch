@@ -124,7 +124,7 @@ model_info_and_mode_list = [
 
 @pytest.mark.parametrize("model_info_and_mode", model_info_and_mode_list)
 def test_torchvision_image_classification(record_property, model_info_and_mode):
-    pytest.skip()
+    pytest.skip("torchvision modules not supported.")
     model_info = model_info_and_mode[0]
     mode = model_info_and_mode[1]
     model_name, _ = model_info

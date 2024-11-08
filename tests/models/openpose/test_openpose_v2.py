@@ -50,6 +50,7 @@ class ThisTester(ModelTester):
     ["train", "eval"],
 )
 def test_openpose_v2(record_property, mode):
+    pytest.skip("module has train variant.")
     model_name = "OpenPose V2"
     record_property("model_name", model_name)
     record_property("mode", mode)

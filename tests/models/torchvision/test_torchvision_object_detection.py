@@ -52,7 +52,7 @@ class ThisTester(ModelTester):
     ],
 )
 def test_torchvision_object_detection(record_property, model_info, mode):
-    pytest.skip()
+    pytest.skip("torchvision modules not supported.")
     model_name, _ = model_info
     record_property("model_name", model_name)
     record_property("mode", mode)
