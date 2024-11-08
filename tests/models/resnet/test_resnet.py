@@ -24,7 +24,8 @@ class ThisTester(ModelTester):
     ["train", "eval"],
 )
 def test_resnet(record_property, mode):
-    pytest.skip("module has train variant.")
+    if mode == "train":
+        pytest.skip()
     model_name = "ResNet18"
     record_property("model_name", model_name)
     record_property("mode", mode)

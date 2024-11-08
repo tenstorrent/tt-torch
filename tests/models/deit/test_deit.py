@@ -47,7 +47,8 @@ class ThisTester(ModelTester):
 )
 @pytest.mark.parametrize("model_name", ["facebook/deit-base-patch16-224"])
 def test_deit(record_property, model_name, mode):
-    pytest.skip("module has train variant.")
+    if mode == "train":
+        pytest.skip()
     record_property("model_name", model_name)
     record_property("mode", mode)
 

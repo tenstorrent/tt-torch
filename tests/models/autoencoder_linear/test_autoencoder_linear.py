@@ -84,7 +84,8 @@ class ThisTester(ModelTester):
     ["train", "eval"],
 )
 def test_autoencoder_linear(record_property, mode):
-    pytest.skip("module has train variant.")
+    if mode == "train":
+        pytest.skip()
     model_name = "Autoencoder (linear)"
     record_property("model_name", model_name)
     record_property("mode", mode)

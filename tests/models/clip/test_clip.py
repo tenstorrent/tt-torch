@@ -59,7 +59,8 @@ class ThisTester(ModelTester):
     ],
 )
 def test_clip(record_property, mode):
-    pytest.skip("module has train variant.")
+    if mode == "train":
+        pytest.skip()
     model_name = "CLIP"
     record_property("model_name", model_name)
     record_property("mode", mode)
