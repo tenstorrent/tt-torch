@@ -103,6 +103,7 @@ model_and_mode_list = [
 ]
 
 
+@pytest.mark.skip  # skipped due to missing manage_dependencies package
 @pytest.mark.usefixtures("manage_dependencies")
 @pytest.mark.parametrize("model_and_mode", model_and_mode_list)
 def test_timm_image_classification(record_property, model_and_mode):

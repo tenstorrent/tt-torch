@@ -50,6 +50,7 @@ class ThisTester(ModelTester):
     ["train", "eval"],
 )
 def test_hardnet(record_property, mode):
+    pytest.skip("module has train variant.")
     model_name = "HardNet"
     record_property("model_name", model_name)
     record_property("mode", mode)

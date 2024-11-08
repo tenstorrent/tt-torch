@@ -48,7 +48,7 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 def test_speecht5_tts(record_property, mode):
-    pytest.skip()  # crashes in lowering to stable hlo
+    pytest.skip("crashes in lowering to stable hlo.")
     model_name = "speecht5-tts"
     record_property("model_name", model_name)
     record_property("mode", mode)

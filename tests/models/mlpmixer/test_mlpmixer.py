@@ -34,6 +34,7 @@ class ThisTester(ModelTester):
     ["train", "eval"],
 )
 def test_mlpmixer(record_property, mode):
+    pytest.skip("module has train variant.")
     model_name = "MLPMixer"
     record_property("model_name", model_name)
     record_property("mode", mode)
