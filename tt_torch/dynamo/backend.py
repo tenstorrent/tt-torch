@@ -141,6 +141,9 @@ class Executor:
         self.compiler_config = compiler_config
         self.required_atol = required_atol
         self.required_pcc = required_pcc
+        # Dictionary to keep track of the type conversion for unsupported hardware
+        # types and use it to convert the input arguments to supported types.
+        self.type_conversion = {torch.bool: torch.bfloat16}
 
     def set_binary(self, binary):
         self.binary = binary
@@ -394,6 +397,19 @@ class Executor:
         return outputs
 
     def __call__(self, *inputs):
+        new_inputs = ()
+        for input in inputs:
+            input_type = input.dtype
+            if input_type in self.type_conversion.keys():
+                new_inputs = new_inputs + (
+                    (input.to(dtype=self.type_conversion[input_type])),
+                )
+                continue
+
+            new_inputs = new_inputs + ((input),)
+
+        inputs = new_inputs
+
         if self.compiler_config.compile_depth == CompileDepth.EXECUTE:
             assert self.binary is not None, "Binary must be set for EXECUTE mode"
             return tt_mlir.run(inputs, self.binary)
