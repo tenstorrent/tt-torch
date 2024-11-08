@@ -8,6 +8,8 @@ import csv
 import xlsxwriter
 from mdutils.mdutils import MdUtils
 
+import subprocess
+
 # Script to parse the results of the unique ops json files and combine them into a spreadsheet
 # This script parses models compiled into stable hlo / TTIR op by op
 def find_json_files(directory="results"):
@@ -92,6 +94,10 @@ def process_json_files():
             "Status",
             "Ops",
             "Raw SHLO",
+            "Raw TTIR",
+            "Raw TTNNIR",
+            "Compile Error",
+            "Trace dump",
         )
         worksheet.write_row(row, 0, header, bold)
         row += 1
@@ -112,6 +118,9 @@ def process_json_files():
                     "status": value["compilation_status"],
                     "stable_hlo_graph": value["stable_hlo_graph"],
                     "ops": value["stable_hlo_ops"],
+                    "ttir_graph": value["ttir_graph"],
+                    "ttnn_graph": value["ttnn_graph"],
+                    "key": key,
                 }
             )
         ops_per_model[model_name] = list(torch_ops.keys())
@@ -124,6 +133,7 @@ def process_json_files():
         for torch_name, torch_op in sorted(torch_ops.items()):
             stable_hlo_ops_per_torch_op[torch_name] = set()
             name = torch_name
+            test_num = 0
             for op in torch_op:
                 num_ops = op["num_ops"]
                 input_shapes = extract_shape(op["input_shapes"])
@@ -131,11 +141,66 @@ def process_json_files():
                 status = op["status"]
                 raw_shlo = op["stable_hlo_graph"]
                 ops = op["ops"]
-                row_data = [name, input_shapes, output_shapes, num_ops, status]
+                error = ""
+                trace_dump = ""
+                if status == 5 or status == 4:
+                    if status == 5:
+                        # Does not compile to TTNNIR, create unit test
+                        test_name = f"{torch_name}_{test_num}.mlir"
+                        test_num += 1
+                        with open(f"results/mlir_tests/ttir/{test_name}", "w") as f:
+                            f.write(op["ttir_graph"])
+
+                        result = subprocess.run(
+                            [
+                                "ttmlir-opt",
+                                "--ttir-to-ttnn-backend-pipeline",
+                                f"results/mlir_tests/ttir/{test_name}",
+                            ],
+                            capture_output=True,
+                            text=True,
+                        )
+                    elif status == 4:
+                        # Does not compile to TTIR, create unit test
+                        test_name = f"{torch_name}_{test_num}.mlir"
+                        test_num += 1
+                        with open(
+                            f"results/mlir_tests/stable_hlo/{test_name}", "w"
+                        ) as f:
+                            f.write(op["stable_hlo_graph"])
+
+                        result = subprocess.run(
+                            [
+                                "ttmlir-opt",
+                                "--stablehlo-to-ttir-pipeline=enable-remove-dead-values=true",
+                                f"results/mlir_tests/stable_hlo/{test_name}",
+                            ],
+                            capture_output=True,
+                            text=True,
+                        )
+                    if result.returncode != 0:
+                        error = result.stderr.split("\n")[0]
+                        trace_dump = result.stderr
+                        print(error)
+                row_data = [
+                    name,
+                    input_shapes,
+                    output_shapes,
+                    num_ops,
+                    status,
+                    "",
+                    raw_shlo,
+                    op["ttir_graph"],
+                    op["ttnn_graph"],
+                    error,
+                    trace_dump,
+                ]
+                all_ops[op["key"]]["error"] = error
+                all_ops[op["key"]]["trace_dump"] = trace_dump
                 worksheet.write_row(row, 0, row_data)
                 name = ""
                 row += 1
-                row_data = ["", "", "", "", "", raw_shlo]
+                row_data = ["", "", "", "", "", "", raw_shlo]
                 worksheet.write_row(row, 0, row_data)
                 worksheet.set_row(row, None, None, {"hidden": True})
                 row += 1
@@ -171,6 +236,10 @@ def process_json_files():
         "Status",
         "Ops",
         "Raw SHLO",
+        "Raw TTIR",
+        "Raw TTNNIR",
+        "Compile Error",
+        "Trace dump",
     )
     worksheet.write_row(row, 0, header, bold)
     row += 1
@@ -191,6 +260,10 @@ def process_json_files():
                     "status": value["compilation_status"],
                     "stable_hlo_graph": value["stable_hlo_graph"],
                     "ops": value["stable_hlo_ops"],
+                    "ttir_graph": value["ttir_graph"],
+                    "ttnn_graph": value["ttnn_graph"],
+                    "error": value["error"],
+                    "trace_dump": value["trace_dump"],
                 }
             )
 
@@ -203,11 +276,27 @@ def process_json_files():
             status = op["status"]
             raw_shlo = op["stable_hlo_graph"]
             ops = op["ops"]
-            row_data = [name, input_shapes, output_shapes, num_ops, status]
+            ttir_graph = op["ttir_graph"]
+            ttnn_graph = op["ttnn_graph"]
+            error = op["error"]
+            trace_dump = op["trace_dump"]
+            row_data = [
+                name,
+                input_shapes,
+                output_shapes,
+                num_ops,
+                status,
+                "",
+                raw_shlo,
+                ttir_graph,
+                ttnn_graph,
+                error,
+                trace_dump,
+            ]
             name = ""
             worksheet.write_row(row, 0, row_data)
             row += 1
-            row_data = ["", "", "", "", "", raw_shlo]
+            row_data = ["", "", "", "", "", "", raw_shlo, ttir_graph, ttnn_graph]
             worksheet.write_row(row, 0, row_data)
             worksheet.set_row(row, None, None, {"hidden": True})
             row += 1
@@ -217,7 +306,7 @@ def process_json_files():
                 worksheet.set_row(row, None, None, {"hidden": True})
                 row += 1
 
-    worksheet.autofit()
+    # worksheet.autofit()
 
     ops = list(models_per_op.keys())
     ops.sort()

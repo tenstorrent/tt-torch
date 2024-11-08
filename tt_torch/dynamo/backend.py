@@ -112,6 +112,7 @@ def compile_process(receiver, sender):
     time.sleep(0.1)
     sys.exit(0)
 
+
 def execute_process(receiver, sender):
     obj = receiver.get()
     faulthandler.disable()
@@ -189,7 +190,7 @@ class Executor:
         if len(placeholders) != len(node.args):
             # are any of the args duplicates? If so, we need to duplicate the placeholders
             for idx, arg in enumerate(node.args):
-                if arg in node.args[idx + 1:]:
+                if arg in node.args[idx + 1 :]:
                     placeholders.append(placeholders[idx])
 
         placeholders = tuple(placeholders)
