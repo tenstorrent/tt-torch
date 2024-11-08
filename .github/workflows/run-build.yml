@@ -121,6 +121,9 @@ jobs:
         echo "build-output-dir=$(pwd)/build" >> "$GITHUB_OUTPUT"
         echo "install-output-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
 
+    - name: Git safe dir
+      run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
+
     - name: ccache
       uses: hendrikmuhs/ccache-action@v1.2
       with:
@@ -134,6 +137,7 @@ jobs:
         source env/activate
         cmake -G Ninja \
         -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+        -DCMAKE_INSTALL_PREFIX=${{ steps.strings.outputs.install-output-dir }} \
         -B ${{ steps.strings.outputs.build-output-dir }} \
         -S ${{ steps.strings.outputs.work-dir }}
 
@@ -144,16 +148,42 @@ jobs:
         cmake --build ${{ steps.strings.outputs.build-output-dir }}
         cmake --install ${{ steps.strings.outputs.build-output-dir }}
 
-    - name: Run PyTorch tests
+    - name: Copy tt-metal binaries
       shell: bash
-      run: |
-        export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${LD_LIBRARY_PATH}"
-        source env/activate
-        pytest -v tests/torch
+      working-directory: ${{ steps.strings.outputs.install-output-dir }}
+      run: cp ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal-build/lib/*.so lib/
 
-    - name: Run ONNX tests
+    - name: Copy libfmt
       shell: bash
+      working-directory: ${{ steps.strings.outputs.install-output-dir }}
+      run: cp ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal-build/_deps/fmt-build/*.so* lib/
+
+    - name: Copy libnng
+      shell: bash
+      working-directory: ${{ steps.strings.outputs.install-output-dir }}
+      run: cp ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal-build/_deps/nanomsg-build/*.so* lib/
+
+    - name: Copy libuv
+      shell: bash
+      working-directory: ${{ steps.strings.outputs.install-output-dir }}
+      run: cp ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal-build/_deps/libuv-build/*.so* lib/
+
+    - name: Copy tt-metal directories
+      shell: bash
+      working-directory: ${{ steps.strings.outputs.install-output-dir }}
       run: |
-        export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${LD_LIBRARY_PATH}"
-        source env/activate
-        pytest -v tests/onnx
+        mkdir tt-metal
+        cp -r ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/tt_metal tt-metal/
+        cp -r ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/ttnn tt-metal/
+        cp -r ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/runtime tt-metal/
+
+    - name: 'Tar install directory'
+      shell: bash
+      working-directory: ${{ steps.strings.outputs.install-output-dir }}
+      run: tar cvf artifact.tar .
+
+    - name: Upload install folder to archive
+      uses: actions/upload-artifact@v4
+      with:
+        name: install-artifacts
+        path: ${{ steps.strings.outputs.install-output-dir }}/artifact.tar
