@@ -107,6 +107,7 @@ def compile_process(receiver, sender):
     asm = obj["asm"]
     ttir = tt_mlir.compile_stable_hlo_to_ttir(asm)
     sender.put({"ttir": ttir})
+    time.sleep(0.1)
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
     sender.put({"binary": binary, "ttnn": ttnn})
     time.sleep(0.1)
@@ -246,7 +247,7 @@ class Executor:
         process.start()
         sender.put(obj)
         start = time.time()
-        result = {}
+        binary = None
         while True:
             try:
                 result = receiver.get_nowait()
@@ -254,7 +255,8 @@ class Executor:
                     op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTIR
                     op.add_ttir_graph(result["ttir"])
                 if "binary" in result:
-                    op.binary = result["binary"]
+                    binary = result["binary"]
+                    op.binary = binary
                     op.add_ttnn_graph(result["ttnn"])
                     op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTNN
                     break
@@ -267,7 +269,7 @@ class Executor:
                 break
             time.sleep(0.01)
         process.join()
-        return result["binary"], op
+        return binary, op
 
     def run_op(self, binary, *inputs):
         sender = mp.Queue()

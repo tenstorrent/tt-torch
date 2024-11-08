@@ -136,7 +136,7 @@ std::string compile_stable_hlo_to_ttir(std::string_view code) {
   return ret;
 }
 
-std::tuple<py::bytes, std::string_view>
+std::tuple<py::bytes, std::string>
 compile_ttir_to_bytestream(std::string_view code) {
   auto [binary, ttnn] = tt::torch::compileTTIRToTTNN(code);
   auto size = ::flatbuffers::GetSizePrefixedBufferLength(
@@ -144,6 +144,7 @@ compile_ttir_to_bytestream(std::string_view code) {
 
   std::string data_str(static_cast<const char *>(binary->get()), size);
   delete binary;
+
   return std::make_tuple(py::bytes(data_str), ttnn);
 }
 

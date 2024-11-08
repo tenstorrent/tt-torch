@@ -94,7 +94,7 @@ std::string compileStableHLOToTTIR(std::string_view code) {
   return buffer;
 }
 
-std::tuple<std::shared_ptr<void> *, std::string_view>
+std::tuple<std::shared_ptr<void> *, std::string>
 compileTTIRToTTNN(std::string_view code) {
 
   mlir::MLIRContext context;
@@ -141,10 +141,10 @@ compileTTIRToTTNN(std::string_view code) {
 
   std::string buffer;
   llvm::raw_string_ostream os(buffer);
-  mlir_module.get()->print(os);
+  mlir_module->print(os);
   os.flush();
 
-  return std::make_tuple(binary, std::string_view(buffer));
+  return std::make_tuple(binary, buffer);
 }
 
 std::shared_ptr<void> *Compile(std::string_view code) {
