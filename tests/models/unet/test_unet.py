@@ -46,7 +46,8 @@ class ThisTester(ModelTester):
     ["train", "eval"],
 )
 def test_unet(record_property, mode):
-    pytest.skip("module has train variant.")
+    if mode == "train":
+        pytest.skip()
     model_name = "U-Net"
     record_property("model_name", model_name)
     record_property("mode", mode)

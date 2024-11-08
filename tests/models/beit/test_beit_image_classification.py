@@ -43,7 +43,8 @@ class ThisTester(ModelTester):
     ["microsoft/beit-base-patch16-224", "microsoft/beit-large-patch16-224"],
 )
 def test_beit_image_classification(record_property, model_name, mode):
-    pytest.skip("module has train variant.")
+    if mode == "train":
+        pytest.skip()
     record_property("model_name", model_name)
     record_property("mode", mode)
 
