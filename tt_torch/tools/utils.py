@@ -81,12 +81,12 @@ class Op:
         except:
             self.parsed_stable_hlo_ops = False
 
-
     def add_ttir_graph(self, ttir_graph: str):
         self.ttir_graph = ttir_graph
 
     def add_ttnn_graph(self, ttnn_graph: str):
         self.ttnn_graph = ttnn_graph
+
 
 class CompilerConfig:
     def __init__(self):

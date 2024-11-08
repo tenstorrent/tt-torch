@@ -32,7 +32,7 @@ else
   fi
   export TTTORCH_ENV_ACTIVATED=1
   export TTMLIR_ENV_ACTIVATED=1
-  export PATH=$TTMLIR_TOOLCHAIN_DIR/bin:$PATH
+  export PATH=$TT_TORCH_HOME/third_party/tt-mlir/src/tt-mlir-build/bin:$TTMLIR_TOOLCHAIN_DIR/bin:$PATH
   export TOKENIZERS_PARALLELISM=false
   if [ -n "$PROJECT_ROOT" ]; then
       export TT_METAL_HOME="$PROJECT_ROOT/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal"

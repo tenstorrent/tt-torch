@@ -46,7 +46,6 @@
 
 namespace tt::torch {
 
-
 std::string compileStableHLOToTTIR(std::string_view code) {
   mlir::MLIRContext context;
   mlir::DialectRegistry registry;
@@ -84,20 +83,19 @@ std::string compileStableHLOToTTIR(std::string_view code) {
   mlir::tt::ttir::createStableHLOToTTIRPipeline(shlo_pm, shlo_options);
   // Run the pass manager.
   if (mlir::failed(shlo_pm.run(mlir_module.get()))) {
-    throw std::runtime_error("Failed to run StableHLO to TTIR compiler pass pipeline.");
+    throw std::runtime_error(
+        "Failed to run StableHLO to TTIR compiler pass pipeline.");
   }
   std::string buffer;
   llvm::raw_string_ostream os(buffer);
   mlir_module.get()->print(os);
   os.flush();
 
-
   return buffer;
-
 }
 
-
-std::tuple<std::shared_ptr<void> *, std::string_view> compileTTIRToTTNN(std::string_view code) {
+std::tuple<std::shared_ptr<void> *, std::string_view>
+compileTTIRToTTNN(std::string_view code) {
 
   mlir::MLIRContext context;
   mlir::DialectRegistry registry;
@@ -124,14 +122,14 @@ std::tuple<std::shared_ptr<void> *, std::string_view> compileTTIRToTTNN(std::str
   mlir::tt::ttir::registerPasses();
   mlir::tt::ttnn::registerPasses();
 
-
   mlir::PassManager pm(mlir_module.get()->getName());
   mlir::tt::ttnn::TTIRToTTNNBackendPipelineOptions options;
   mlir::tt::ttnn::createTTIRToTTNNBackendPipeline(pm, options);
 
   // Run the pass manager.
   if (mlir::failed(pm.run(mlir_module.get()))) {
-    throw std::runtime_error("Failed to run TTIR TO TTNN compiler pass pipeline.");
+    throw std::runtime_error(
+        "Failed to run TTIR TO TTNN compiler pass pipeline.");
   }
 
   std::shared_ptr<void> *binary = new std::shared_ptr<void>();
@@ -148,7 +146,6 @@ std::tuple<std::shared_ptr<void> *, std::string_view> compileTTIRToTTNN(std::str
 
   return std::make_tuple(binary, std::string_view(buffer));
 }
-
 
 std::shared_ptr<void> *Compile(std::string_view code) {
 
@@ -188,7 +185,8 @@ std::shared_ptr<void> *Compile(std::string_view code) {
   mlir::tt::ttir::createStableHLOToTTIRPipeline(shlo_pm, shlo_options);
   // Run the pass manager.
   if (mlir::failed(shlo_pm.run(mlir_module.get()))) {
-    throw std::runtime_error("Failed to run StableHLO to TTIR compiler pass pipeline.");
+    throw std::runtime_error(
+        "Failed to run StableHLO to TTIR compiler pass pipeline.");
   }
 
   mlir::PassManager pm(mlir_module.get()->getName());
@@ -197,7 +195,8 @@ std::shared_ptr<void> *Compile(std::string_view code) {
 
   // Run the pass manager.
   if (mlir::failed(pm.run(mlir_module.get()))) {
-    throw std::runtime_error("Failed to run TTIR TO TTNN compiler pass pipeline.");
+    throw std::runtime_error(
+        "Failed to run TTIR TO TTNN compiler pass pipeline.");
   }
 
   std::shared_ptr<void> *binary = new std::shared_ptr<void>();

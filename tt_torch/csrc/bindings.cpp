@@ -8,7 +8,6 @@
 
 namespace py = pybind11;
 
-
 static tt::target::DataType torch_scalar_type_to_dt(torch::ScalarType st) {
   switch (st) {
   case torch::ScalarType::Byte:
@@ -89,11 +88,10 @@ std::vector<int64_t> as_vec_int64(std::vector<T> const &vec) {
 std::vector<at::Tensor> run(const std::vector<at::Tensor> &inputs,
                             py::bytes byte_stream) {
 
-
   std::string data_str = byte_stream;
   auto binary_ptr = std::shared_ptr<void>(
       new char[data_str.size()],
-      [](void* ptr) { delete[] static_cast<char*>(ptr); }  // Custom deleter
+      [](void *ptr) { delete[] static_cast<char *>(ptr); } // Custom deleter
   );
   // Copy data into the allocated memory
   std::memcpy(binary_ptr.get(), data_str.data(), data_str.size());
@@ -138,12 +136,13 @@ std::string compile_stable_hlo_to_ttir(std::string_view code) {
   return ret;
 }
 
-std::tuple<py::bytes, std::string_view> compile_ttir_to_bytestream(std::string_view code) {
+std::tuple<py::bytes, std::string_view>
+compile_ttir_to_bytestream(std::string_view code) {
   auto [binary, ttnn] = tt::torch::compileTTIRToTTNN(code);
   auto size = ::flatbuffers::GetSizePrefixedBufferLength(
-    static_cast<const uint8_t *>(binary->get()));
-  
-  std::string data_str(static_cast<const char*>(binary->get()), size);
+      static_cast<const uint8_t *>(binary->get()));
+
+  std::string data_str(static_cast<const char *>(binary->get()), size);
   delete binary;
   return std::make_tuple(py::bytes(data_str), ttnn);
 }
@@ -151,9 +150,9 @@ std::tuple<py::bytes, std::string_view> compile_ttir_to_bytestream(std::string_v
 py::bytes compile_stablehlo_to_bytestream(std::string_view code) {
   auto binary = tt::torch::Compile(code);
   auto size = ::flatbuffers::GetSizePrefixedBufferLength(
-    static_cast<const uint8_t *>(binary->get()));
-  
-  std::string data_str(static_cast<const char*>(binary->get()), size);
+      static_cast<const uint8_t *>(binary->get()));
+
+  std::string data_str(static_cast<const char *>(binary->get()), size);
   delete binary;
   return py::bytes(data_str);
 }
