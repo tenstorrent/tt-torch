@@ -42,6 +42,7 @@ class Op:
         self.ttnn_graph = ""
         self.compilation_status = OpCompilationStatus.NOT_STARTED
         self.parsed_stable_hlo_ops = False
+        self.parsed_ttnn_ops = False
 
     def print_shapes(self, shapes):
         output = []
@@ -76,7 +77,7 @@ class Op:
         self.stable_hlo_graph = stable_hlo_graph
         self.converted_to_stable_hlo = True
         try:
-            self.stable_hlo_ops, _ = parse_mlir(stable_hlo_graph)
+            self.stable_hlo_ops, _ = parse_shlo_mlir(stable_hlo_graph)
             self.parsed_stable_hlo_ops = True
         except:
             self.parsed_stable_hlo_ops = False
@@ -131,7 +132,7 @@ class CompilerConfig:
 
     def set_stablehlo_mlir_module(self, mlir_module):
         self.stablehlo_mlir_module = mlir_module
-        self.stable_hlo_ops, _ = parse_mlir(mlir_module)
+        self.stable_hlo_ops, _ = parse_shlo_mlir(mlir_module)
 
 
 def extract_shape(shape_str):
@@ -187,7 +188,7 @@ def are_brackets_balanced(string):
     return all(count["open"] == count["closed"] for count in counts.values())
 
 
-def parse_mlir(mlir_code, verbose=False):
+def parse_shlo_mlir(mlir_code, verbose=False):
     ops = []
     unique_ops = {}
     opBegin = False
