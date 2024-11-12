@@ -15,6 +15,9 @@ from torch_mlir.compiler_utils import (
 
 
 def compile_onnx(module: onnx.ModelProto):
+    # Infer onnx shapes incase that information is missing
+    module = onnx.shape_inference.infer_shapes(module)
+
     context = Context()
     torch_dialect.register_dialect(context)
     module_info = onnx_importer.ModelInfo(module)
