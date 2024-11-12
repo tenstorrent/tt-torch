@@ -12,6 +12,7 @@ from tt_torch.dynamo.backend import backend
 
 def _verify_torch_module(
     mod,
+    inputs,
     input_shapes,
     input_data_types,
     required_pcc,
@@ -21,15 +22,17 @@ def _verify_torch_module(
     do_assert,
 ):
     tt_mod = torch.compile(mod, backend=backend, options=compiler_config)
+    if inputs is None:
+        if all([dtype.is_floating_point for dtype in input_data_types]):
+            low, high = input_range
+            # Uniformly distribute random numbers within the input_range
+            inputs = [(low - high) * torch.rand(shape) + high for shape in input_shapes]
+        else:
+            inputs = [
+                torch.randint(0, 1000, shape, dtype=torch.int32)
+                for shape in input_shapes
+            ]
 
-    if all([dtype.is_floating_point for dtype in input_data_types]):
-        low, high = input_range
-        # Uniformly distribute random numbers within the input_range
-        inputs = [(low - high) * torch.rand(shape) + high for shape in input_shapes]
-    else:
-        inputs = [
-            torch.randint(0, 1000, shape, dtype=torch.int32) for shape in input_shapes
-        ]
     ret = tt_mod(*inputs)
     golden = mod(*inputs)
 
@@ -51,6 +54,7 @@ def _verify_torch_module(
 
 def _verify_onnx_module(
     filename,
+    inputs,
     input_data_types,
     required_pcc,
     required_atol,
@@ -61,15 +65,16 @@ def _verify_onnx_module(
 
     sess = InferenceSession(filename)
     input_shapes = [nodearg.shape for nodearg in sess.get_inputs()]
-
-    if all([dtype.is_floating_point for dtype in input_data_types]):
-        low, high = input_range
-        # Uniformly distribute random numbers within the input_range
-        inputs = [(low - high) * torch.rand(shape) + high for shape in input_shapes]
-    else:
-        inputs = [
-            torch.randint(0, 1000, shape, dtype=torch.int32) for shape in input_shapes
-        ]
+    if inputs is None:
+        if all([dtype.is_floating_point for dtype in input_data_types]):
+            low, high = input_range
+            # Uniformly distribute random numbers within the input_range
+            inputs = [(low - high) * torch.rand(shape) + high for shape in input_shapes]
+        else:
+            inputs = [
+                torch.randint(0, 1000, shape, dtype=torch.int64)
+                for shape in input_shapes
+            ]
 
     inputs_dict = {
         nodearg.name: input.numpy().astype(np.float32)
@@ -113,6 +118,7 @@ def _verify_onnx_module(
 
 def verify_module(
     mod,
+    inputs=None,
     input_shapes=None,
     input_data_types=[torch.float32],
     required_pcc=0.99,
@@ -127,6 +133,7 @@ def verify_module(
         ), "Verifying a torch module requires that you provide input_shapes"
         _verify_torch_module(
             mod,
+            inputs,
             input_shapes,
             input_data_types,
             required_pcc,
@@ -141,6 +148,7 @@ def verify_module(
         ), "When verifying an ONNX module, input_shapes must be None as they are inferred from the ONNX model"
         _verify_onnx_module(
             mod,
+            inputs,
             input_data_types,
             required_pcc,
             required_atol,

@@ -18,7 +18,7 @@ def test_abs():
         def forward(self, x):
             return torch.abs(x)
 
-    verify_module(Basic(), [(256, 256)])
+    verify_module(Basic(), input_shapes=[(256, 256)])
 
 
 def test_add():
@@ -29,7 +29,7 @@ def test_add():
         def forward(self, x, y):
             return torch.add(x, y)
 
-    verify_module(Basic(), [(256, 256)] * 2)
+    verify_module(Basic(), input_shapes=[(256, 256)] * 2)
 
 
 def test_concat_dim0():
@@ -40,7 +40,7 @@ def test_concat_dim0():
         def forward(self, x, y):
             return torch.cat((x, y), dim=0)
 
-    verify_module(Basic(), [(32, 32), (64, 32)])
+    verify_module(Basic(), input_shapes=[(32, 32), (64, 32)])
 
 
 def test_concat_dim1():
@@ -51,7 +51,7 @@ def test_concat_dim1():
         def forward(self, x, y):
             return torch.cat((x, y), dim=1)
 
-    verify_module(Basic(), [(32, 32), (32, 64)])
+    verify_module(Basic(), input_shapes=[(32, 32), (32, 64)])
 
 
 def test_concat_dim2():
@@ -62,7 +62,7 @@ def test_concat_dim2():
         def forward(self, x, y):
             return torch.cat((x, y), dim=2)
 
-    verify_module(Basic(), [(32, 32, 32), (32, 32, 64)])
+    verify_module(Basic(), input_shapes=[(32, 32, 32), (32, 32, 64)])
 
 
 def test_concat_dim3():
@@ -73,7 +73,7 @@ def test_concat_dim3():
         def forward(self, x, y):
             return torch.cat((x, y), dim=3)
 
-    verify_module(Basic(), [(32, 32, 32, 32), (32, 32, 32, 64)])
+    verify_module(Basic(), input_shapes=[(32, 32, 32, 32), (32, 32, 32, 64)])
 
 
 @pytest.mark.skip(
@@ -87,7 +87,7 @@ def test_constant_ones():
         def forward(self, x):
             return torch.tensor([1.0, 1.0, 1.0, 1.0])
 
-    verify_module(Basic(), [(1, 1)])
+    verify_module(Basic(), input_shapes=[(1, 1)])
 
 
 def test_convert():
@@ -105,11 +105,18 @@ def test_convert():
         def forward(self, x):
             return x.to(torch.int32)
 
-    verify_module(Basic_toFloat(), [(4, 4)], input_data_types=[torch.int32])
-    verify_module(Basic_toFloat(), [(4, 4)], input_data_types=[torch.float32])
-    verify_module(Basic_toInt(), [(4, 4)], input_data_types=[torch.int32])
     verify_module(
-        Basic_toInt(), [(4, 4)], input_data_types=[torch.float32], input_range=(0, 60)
+        Basic_toFloat(), input_shapes=[(4, 4)], input_data_types=[torch.int32]
+    )
+    verify_module(
+        Basic_toFloat(), input_shapes=[(4, 4)], input_data_types=[torch.float32]
+    )
+    verify_module(Basic_toInt(), input_shapes=[(4, 4)], input_data_types=[torch.int32])
+    verify_module(
+        Basic_toInt(),
+        input_shapes=[(4, 4)],
+        input_data_types=[torch.float32],
+        input_range=(0, 60),
     )
 
 
@@ -121,7 +128,7 @@ def test_div():
         def forward(self, x, y):
             return x / y
 
-    verify_module(Basic(), [(2, 2), (2, 2)], required_atol=5e-2)
+    verify_module(Basic(), input_shapes=[(2, 2), (2, 2)], required_atol=5e-2)
 
 
 def test_exp():
@@ -132,7 +139,7 @@ def test_exp():
         def forward(self, x):
             return torch.exp(x)
 
-    verify_module(Basic(), [(2, 2)], required_atol=3e-2)
+    verify_module(Basic(), input_shapes=[(2, 2)], required_atol=3e-2)
 
 
 def test_linear():
@@ -147,7 +154,7 @@ def test_linear():
             x = self.linear_b(x)
             return x
 
-    verify_module(Basic(), [(32, 32)])
+    verify_module(Basic(), input_shapes=[(32, 32)])
 
 
 from torch_mlir import fx
@@ -166,7 +173,7 @@ def test_linear_with_bias():
             x = self.linear_a(x)
             return x
 
-    verify_module(Basic(), [(32, 32)])
+    verify_module(Basic(), input_shapes=[(32, 32)])
 
 
 def test_maximum():
@@ -177,7 +184,7 @@ def test_maximum():
         def forward(self, x, y):
             return torch.maximum(x, y)
 
-    verify_module(Basic(), [(32, 32), (32, 32)], input_range=(-6, 6))
+    verify_module(Basic(), input_shapes=[(32, 32), (32, 32)], input_range=(-6, 6))
 
 
 def test_multiply():
@@ -188,7 +195,7 @@ def test_multiply():
         def forward(self, x, y):
             return x * y
 
-    verify_module(Basic(), [(32, 32), (32, 32)])
+    verify_module(Basic(), input_shapes=[(32, 32), (32, 32)])
 
 
 def test_negate():
@@ -199,7 +206,7 @@ def test_negate():
         def forward(self, x):
             return -x
 
-    verify_module(Basic(), [(32, 32)], input_range=(-6, 6))
+    verify_module(Basic(), input_shapes=[(32, 32)], input_range=(-6, 6))
 
 
 @pytest.mark.skip("keepdim=False is not supported")
@@ -211,7 +218,7 @@ def test_reduce_max():
         def forward(self, x):
             return torch.max(x)
 
-    verify_module(Basic(), [(32, 32)], input_range=(-6, 6))
+    verify_module(Basic(), input_shapes=[(32, 32)], input_range=(-6, 6))
 
 
 @pytest.mark.skip("keepdim=False is not supported")
@@ -223,7 +230,7 @@ def test_reduce_sum():
         def forward(self, x):
             return torch.sum(x)
 
-    verify_module(Basic(), [(32, 32)], input_range=(-6, 6))
+    verify_module(Basic(), input_shapes=[(32, 32)], input_range=(-6, 6))
 
 
 def test_relu():
@@ -236,7 +243,7 @@ def test_relu():
         def forward(self, x):
             return torch.relu(x)
 
-    verify_module(Basic(), [(32, 32)])
+    verify_module(Basic(), input_shapes=[(32, 32)])
 
 
 def test_rsqrt():
@@ -247,7 +254,9 @@ def test_rsqrt():
         def forward(self, x):
             return torch.rsqrt(x)
 
-    verify_module(Basic(), [(32, 32)], required_atol=3e-2, input_range=(0.1, 1))
+    verify_module(
+        Basic(), input_shapes=[(32, 32)], required_atol=3e-2, input_range=(0.1, 1)
+    )
 
 
 def test_sqrt():
@@ -258,7 +267,9 @@ def test_sqrt():
         def forward(self, x):
             return torch.sqrt(x)
 
-    verify_module(Basic(), [(32, 32)], required_atol=3e-2, input_range=(0.1, 1))
+    verify_module(
+        Basic(), input_shapes=[(32, 32)], required_atol=3e-2, input_range=(0.1, 1)
+    )
 
 
 dim0_cases = []
@@ -306,7 +317,7 @@ def test_slice(begin, end, dim):
 
     shape = [10, 10, 10, 10]
     shape[dim] = 128
-    verify_module(Basic(), [shape])
+    verify_module(Basic(), input_shapes=[shape])
 
 
 def test_subtract():
@@ -317,7 +328,7 @@ def test_subtract():
         def forward(self, x, y):
             return x - y
 
-    verify_module(Basic(), [(32, 32), (32, 32)], input_range=(-6, 6))
+    verify_module(Basic(), input_shapes=[(32, 32), (32, 32)], input_range=(-6, 6))
 
 
 def test_transpose_2d():
@@ -328,7 +339,7 @@ def test_transpose_2d():
         def forward(self, x):
             return torch.transpose(x, 0, 1)
 
-    verify_module(Basic(), [(4, 8)], input_range=(-6, 6))
+    verify_module(Basic(), input_shapes=[(4, 8)], input_range=(-6, 6))
 
 
 @pytest.mark.skip("TTNN does not support transpose for higher ranks/dimensions.")
@@ -340,7 +351,7 @@ def test_transpose_3d():
         def forward(self, x):
             return torch.transpose(x, 0, 1)
 
-    verify_module(Basic(), [(4, 8, 4)], input_range=(-6, 6))
+    verify_module(Basic(), input_shapes=[(4, 8, 4)], input_range=(-6, 6))
 
 
 def test_multiple_ops():
@@ -356,4 +367,6 @@ def test_multiple_ops():
 
     cc = CompilerConfig()
     cc.compile_depth = tt_torch.tools.utils.CompileDepth.EXECUTE_OP_BY_OP
-    verify_module(Basic(), [(256, 256)], compiler_config=cc, do_assert=False)
+    verify_module(
+        Basic(), input_shapes=[(256, 256)], compiler_config=cc, do_assert=False
+    )
