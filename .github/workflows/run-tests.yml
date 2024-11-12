@@ -12,14 +12,9 @@ jobs:
     timeout-minutes: 120
     strategy:
       fail-fast: false
-      matrix:
-        build: [
-          {runs-on: n150, name: "run"},
-        ]
 
     runs-on:
-      - in-service
-      - ${{ matrix.build.runs-on }}
+      - n150
 
     container:
       image: ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:latest
@@ -37,10 +32,41 @@ jobs:
         submodules: recursive
         lfs: true
 
+    - name: Set GH
+      id: GH
+      shell: bash
+      env:
+        job-name: "${{ github.job }} (${{ matrix.build.runs-on }}, ${{ matrix.test_group_id }})"
+      run: |
+        apt-get install jq -y
+        apt-get install curl -y
+        # Github job context unfortunately doesn't contain job_id, this is the workaround how to fetch it using GH API
+        echo "Expected job name: ${{ env.job-name }}"
+        JOB_ID=$(curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}/jobs" | \
+          jq -r '.jobs[] | select(.name | contains("${{ env.job-name }}")) | .id ')
+
     - name: Set reusable strings
       id: strings
       shell: bash
       run: |
+        apt-get install jq -y
+        apt-get install curl -y
+        # Github job context unfortunately doesn't contain job_id, this is the workaround how to fetch it using GH API
+        jobs=$(curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}/jobs")
+
+        job_id=$(echo $jobs | jq -r '.jobs[] | select(.runner_name=="${{ runner.name }}") | .id')
+        job_name=$(echo $jobs | jq -r '.jobs[] | select(.runner_name=="${{ runner.name }}") | .name')
+        echo "job_name=$job_name"
+        searchfront="test ("
+        searchback=") / tests"
+        job_name="${job_name#*$searchfront}"
+        job_name="${job_name%%$searchback*}"
+        echo "job_id=$job_id"
+        echo "job_name=$job_name"
+        echo "job_name=$job_name" >> "$GITHUB_OUTPUT"
+
         echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
         echo "build-output-dir=$(pwd)/build" >> "$GITHUB_OUTPUT"
         echo "install-output-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
@@ -73,13 +99,11 @@ jobs:
     - name: Run PyTorch tests
       shell: bash
       run: |
+        echo ${{ steps.strings.outputs.work-dir }}
+        echo ${{ steps.strings.outputs.test-dir }}
+        echo ${{ steps.strings.outputs.build-output-dir }}
+        echo ${{ steps.strings.outputs.install-output-dir }}
         source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
-        pytest -v tests/torch
-
-    - name: Run ONNX tests
-      shell: bash
-      run: |
-        source env/activate
-        export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
-        pytest -v tests/onnx
+        export TT_TORCH_COMPILE_DEPTH=COMPILE_OP_BY_OP
+        pytest -v ${{ steps.strings.outputs.job_name }}

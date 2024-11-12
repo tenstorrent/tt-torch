@@ -145,6 +145,7 @@ jobs:
       shell: bash
       run: |
         source env/activate
+        apt-get install jq -y
         cmake --build ${{ steps.strings.outputs.build-output-dir }}
         cmake --install ${{ steps.strings.outputs.build-output-dir }}
 
