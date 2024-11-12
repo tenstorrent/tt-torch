@@ -370,3 +370,47 @@ def test_multiple_ops():
     verify_module(
         Basic(), input_shapes=[(256, 256)], compiler_config=cc, do_assert=False
     )
+
+
+@pytest.mark.parametrize(
+    ("input_range", "input_shapes"),
+    [
+        ((1, 10), [(32, 32), (32, 32)]),
+        pytest.param(
+            (1, 10),
+            [(3, 3), (3, 3)],
+            marks=pytest.mark.skip(
+                reason="Fails due to https://github.com/tenstorrent/tt-metal/issues/15131"
+            ),
+        ),
+        pytest.param(
+            (1, 100),
+            [(32, 32), (32, 32)],
+            marks=pytest.mark.skip(
+                reason="Fails due to https://github.com/tenstorrent/tt-metal/issues/15130"
+            ),
+        ),
+        pytest.param(
+            (-100, 100),
+            [(32, 32), (32, 32)],
+            marks=pytest.mark.skip(
+                reason="Fails due to https://github.com/tenstorrent/tt-metal/issues/15130"
+            ),
+        ),
+    ],
+)
+def test_remainder_op(input_range, input_shapes):
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x, y):
+            return torch.remainder(x, y)
+
+    verify_module(
+        Basic(),
+        input_shapes=input_shapes,
+        input_data_types=[torch.float32, torch.float32],
+        input_range=input_range,
+        required_atol=1,
+    )
