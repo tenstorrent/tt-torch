@@ -31,10 +31,10 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
+@pytest.mark.xfail(
+    reason="Fails due to pt2 compile issue when finishing generation, but we can still generate a graph"
+)
 def test_codegen(record_property, mode):
-    pytest.xfail(
-        "Fails due to pt2 compile issue when finishing generation, but we can still generate a graph"
-    )
     model_name = "codegen"
     record_property("model_name", model_name)
     record_property("mode", mode)
