@@ -35,8 +35,8 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
+@pytest.mark.xfail(reason="Need to debug")
 def test_opt(record_property, mode):
-    pytest.xfail("Need to debug")
     model_name = "OPT"
     record_property("model_name", model_name)
     record_property("mode", mode)

@@ -41,8 +41,8 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
+@pytest.mark.xfail(reason="Need to debud")
 def test_hand_landmark(record_property, mode):
-    pytest.xfail("Need to debug")
     model_name = "Hand Landmark"
     record_property("model_name", model_name)
     record_property("mode", mode)

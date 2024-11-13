@@ -101,27 +101,27 @@ def lower_to_stable_hlo(module, op=None):
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
 
 
-def compile_process(receiver, sender):
+def compile_process(receiver, sender, ttir_event, ttnn_event):
     obj = receiver.get()
     faulthandler.disable()
     asm = obj["asm"]
     ttir = tt_mlir.compile_stable_hlo_to_ttir(asm)
     sender.put({"ttir": ttir})
-    time.sleep(0.1)
+    ttir_event.wait()
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
     sender.put({"binary": binary, "ttnn": ttnn})
-    time.sleep(0.1)
+    ttnn_event.wait()
     sys.exit(0)
 
 
-def execute_process(receiver, sender):
+def execute_process(receiver, sender, exec_event):
     obj = receiver.get()
     faulthandler.disable()
     binary = obj["binary"]
     inputs = obj["inputs"]
     outputs = tt_mlir.run(inputs, binary)
     sender.put({"outputs": outputs})
-    time.sleep(0.1)
+    exec_event.wait()
     sys.exit(0)
 
 
@@ -242,8 +242,12 @@ class Executor:
 
         sender = mp.Queue()
         receiver = mp.Queue()
+        ttir_event = mp.Event()
+        ttnn_event = mp.Event()
         obj = {"asm": module.operation.get_asm()}
-        process = mp.Process(target=compile_process, args=(sender, receiver))
+        process = mp.Process(
+            target=compile_process, args=(sender, receiver, ttir_event, ttnn_event)
+        )
         process.start()
         sender.put(obj)
         start = time.time()
@@ -254,10 +258,12 @@ class Executor:
                 if "ttir" in result:
                     op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTIR
                     op.add_ttir_graph(result["ttir"])
+                    ttir_event.set()
                 if "binary" in result:
                     binary = result["binary"]
                     op.binary = binary
                     op.add_ttnn_graph(result["ttnn"])
+                    ttnn_event.set()
                     op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTNN
                     break
             except mp.queues.Empty:
@@ -276,7 +282,10 @@ class Executor:
         receiver = mp.Queue()
         obj = {"binary": binary, "inputs": inputs}
 
-        process = mp.Process(target=execute_process, args=(sender, receiver))
+        exec_event = mp.Event()
+        process = mp.Process(
+            target=execute_process, args=(sender, receiver, exec_event)
+        )
         process.start()
         sender.put(obj)
         result = {}
@@ -286,6 +295,7 @@ class Executor:
                 break
             try:
                 result = receiver.get_nowait()
+                exec_event.set()
                 break
             except mp.queues.Empty:
                 pass

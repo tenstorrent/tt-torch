@@ -181,7 +181,6 @@ def process_json_files():
                     if result.returncode != 0:
                         error = result.stderr.split("\n")[0]
                         trace_dump = result.stderr
-                        print(error)
                 row_data = [
                     name,
                     input_shapes,
