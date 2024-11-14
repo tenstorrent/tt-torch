@@ -12,7 +12,11 @@ jobs:
   spdx:
     uses: ./.github/workflows/spdx.yml
     secrets: inherit
-  build-and-test:
+  build:
     needs: [pre-commit, spdx]
-    uses: ./.github/workflows/build-and-test.yml
+    uses: ./.github/workflows/run-build.yml
+    secrets: inherit
+  test:
+    needs: build
+    uses: ./.github/workflows/run-tests.yml
     secrets: inherit
