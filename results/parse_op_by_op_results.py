@@ -7,6 +7,7 @@ import json
 import csv
 import xlsxwriter
 from mdutils.mdutils import MdUtils
+from pathlib import Path
 
 import subprocess
 
@@ -49,8 +50,14 @@ def extract_shapes_md(shape_list):
     return shape_str
 
 
+def create_test_dirs():
+    Path("results/mlir_tests/ttir").mkdir(parents=True, exist_ok=True)
+    Path("results/mlir_tests/stable_hlo").mkdir(parents=True, exist_ok=True)
+
+
 def process_json_files():
     json_files = find_json_files()
+    create_test_dirs()
 
     ops_per_model = {}
     stable_hlo_ops_per_model = {}
