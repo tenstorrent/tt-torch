@@ -47,9 +47,7 @@ def test_bert(record_property, mode):
     record_property("model_name", model_name)
     record_property("mode", mode)
 
-    compiler_config = CompilerConfig()
-    compiler_config.set_compile_depth(CompileDepth.STABLEHLO)
-    tester = ThisTester(model_name, mode, compiler_config)
+    tester = ThisTester(model_name, mode)
     results = tester.test_model()
 
     if mode == "eval":
