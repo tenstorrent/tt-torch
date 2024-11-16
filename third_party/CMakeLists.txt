@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-set(TT_MLIR_VERSION "5fd26305487fd4b28eabd3f5de826f35d65b09d0")
+set(TT_MLIR_VERSION "52275fa634437a3b390763e75e7f64d5c3f7f2f8")
 
 if (TOOLCHAIN STREQUAL "ON")
     cmake_minimum_required(VERSION 3.20)
