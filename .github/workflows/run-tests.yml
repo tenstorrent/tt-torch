@@ -70,6 +70,13 @@ jobs:
       run: |
         cp -r ${{ steps.strings.outputs.install-output-dir }}/tt-metal/* ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal
 
+    - name: Run Model tests
+      shell: bash
+      run: |
+        source env/activate
+        export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
+        pytest -v tests/models
+
     - name: Run PyTorch tests
       shell: bash
       run: |
