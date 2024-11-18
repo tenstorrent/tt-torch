@@ -1,4 +1,4 @@
-name: Run Model Tests
+name: Generate Model Reports
 
 on:
   workflow_dispatch:
@@ -12,14 +12,9 @@ jobs:
     timeout-minutes: 120
     strategy:
       fail-fast: false
-      matrix:
-        build: [
-          {runs-on: n150, name: "run1", test_names: "stable_diffusion"},
-          {runs-on: n150, name: "run2", test_names: "MobileNetV2, clip, flan_t5, mlpmixer, resnet, vilt, albert, codegen, glpn_kitti, mnist, resnet50, t5, whisper, autoencoder_conv, deit, gpt2, mobilenet_ssd, roberta, timm, xglm, autoencoder_linear, detr, gpt_neo, musicgen_small, segformer, torchvision, yolos"},
-          {runs-on: n300, name: "run3", test_names: "beit, distilbert, hand_landmark, openpose, segment_anything, unet, yolov3, bert, dpr, hardnet, opt, speecht5_tts, unet_brain, yolov5, bloom, falcon, llama, perceiver_io, squeeze_bert, unet_carvana"},
-        ]
+
     runs-on:
-      - ${{ matrix.build.runs-on }}
+      - n150
 
     container:
       image: ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:latest
@@ -58,7 +53,8 @@ jobs:
     - name: 'Untar install directory'
       shell: bash
       working-directory: ${{ steps.strings.outputs.install-output-dir }}
-      run: tar xvf artifact.tar
+      run: |
+        tar xvf artifact.tar
 
     - name: make tt-metal directory
       shell: bash
@@ -71,30 +67,43 @@ jobs:
       run: |
         cp -r ${{ steps.strings.outputs.install-output-dir }}/tt-metal/* ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal
 
-    - name: Run Model Tests
+    - name: make tests directory
       shell: bash
-      run: |
-        echo ${{ steps.strings.outputs.work-dir }}
-        echo ${{ steps.strings.outputs.test-output-dir }}
-        echo ${{ steps.strings.outputs.build-output-dir }}
-        echo ${{ steps.strings.outputs.install-output-dir }}
-        source env/activate
-        export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
-        export TT_TORCH_COMPILE_DEPTH=COMPILE_OP_BY_OP
-        for testname in ${{ matrix.build.test_names }}; do
-        testname=${testname//,/}
-        echo "running test: $testname"
-        pytest -v tests/models/$testname
-        done
+      working-directory: ${{ steps.strings.outputs.work-dir }}
+      run: mkdir -p ${{ steps.strings.outputs.work-dir }}/results/models/tests/
 
-    - name: Tar results
+    - name: Use build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: ${{ steps.strings.outputs.test-output-dir }}
+        merge-multiple: true
+
+    - name: Display structure of downloaded file
+      working-directory: ${{ steps.strings.outputs.test-output-dir }}
+      run: |
+        ls -R ${{ steps.strings.outputs.test-output-dir }}
+
+    - name: Untar tests
       shell: bash
       working-directory: ${{ steps.strings.outputs.test-output-dir }}
       run: |
-        tar cvf ${{ matrix.build.name }}.tar .
+        rm artifact.tar
+        for a in `ls -1 *.tar`; do tar -xvf $a; rm $a; done
+
+    - name: Run Model Tests
+      shell: bash
+      working-directory: ${{ steps.strings.outputs.work-dir }}
+      run: |
+        source env/activate
+        export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
+        export TT_TORCH_COMPILE_DEPTH=COMPILE_OP_BY_OP
+        mkdir -p ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/
+        cp ${{ steps.strings.outputs.install-output-dir }}/lib/ttmlir-opt ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/
+        chmod +x ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/ttmlir-opt
+        python results/parse_op_by_op_results.py
 
     - name: Upload test folder to archive
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ matrix.build.name }}.tar
-        path: ${{ steps.strings.outputs.test-output-dir }}/${{ matrix.build.name }}.tar
+        name: models_op_per_op.xlsx
+        path: "${{ steps.strings.outputs.work-dir }}/results/models_op_per_op.xlsx"
