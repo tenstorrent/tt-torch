@@ -1,0 +1,93 @@
+name: Run Model Tests
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  workflow_run:
+    workflows: [Build]
+    types: [completed]
+
+jobs:
+  tests:
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+
+    runs-on:
+      - n150
+
+    container:
+      image: ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:latest
+      options: --user root --device /dev/tenstorrent/0
+      volumes:
+        - /dev/hugepages:/dev/hugepages
+        - /dev/hugepages-1G:/dev/hugepages-1G
+        - /etc/udev/rules.d:/etc/udev/rules.d
+        - /lib/modules:/lib/modules
+        - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        lfs: true
+
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: |
+        apt-get install jq -y
+        apt-get install curl -y
+        jobs=$(curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}/jobs")
+        job_id=$(echo $jobs | jq -r '.jobs[] | select(.runner_name=="${{ runner.name }}") | .id')
+        job_name=$(echo $jobs | jq -r '.jobs[] | select(.runner_name=="${{ runner.name }}") | .name')
+        echo "job_name=$job_name"
+        searchfront="test ("
+        searchback=") / tests"
+        job_name="${job_name#*$searchfront}"
+        job_name="${job_name%%$searchback*}"
+        echo "job_id=$job_id"
+        echo "job_name=$job_name"
+
+        echo "job_name=$job_name" >> "$GITHUB_OUTPUT"
+        echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
+        echo "build-output-dir=$(pwd)/build" >> "$GITHUB_OUTPUT"
+        echo "install-output-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
+
+    - name: Git safe dir
+      run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
+
+    - name: Use build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: install-artifacts
+        path: ${{ steps.strings.outputs.install-output-dir }}
+
+    - name: 'Untar install directory'
+      shell: bash
+      working-directory: ${{ steps.strings.outputs.install-output-dir }}
+      run: tar xvf artifact.tar
+
+    - name: make tt-metal directory
+      shell: bash
+      working-directory: ${{ steps.strings.outputs.install-output-dir }}
+      run: mkdir -p ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal
+
+    - name: copy tt-metal dirs
+      shell: bash
+      working-directory: ${{ steps.strings.outputs.install-output-dir }}
+      run: |
+        cp -r ${{ steps.strings.outputs.install-output-dir }}/tt-metal/* ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal
+
+    - name: Run Model Tests
+      shell: bash
+      run: |
+        echo ${{ steps.strings.outputs.work-dir }}
+        echo ${{ steps.strings.outputs.test-dir }}
+        echo ${{ steps.strings.outputs.build-output-dir }}
+        echo ${{ steps.strings.outputs.install-output-dir }}
+        source env/activate
+        export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
+        export TT_TORCH_COMPILE_DEPTH=COMPILE_OP_BY_OP
+        pytest -v ${{ steps.strings.outputs.job_name }}
