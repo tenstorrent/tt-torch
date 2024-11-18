@@ -21,12 +21,20 @@ def _verify_torch_module(
     compiler_config,
     do_assert,
 ):
+    if input_data_types is None:
+        input_data_types = [torch.float32] * (
+            len(input_shapes) if input_shapes is not None else len(inputs)
+        )
+
     tt_mod = torch.compile(mod, backend=backend, options=compiler_config)
     if inputs is None:
         if all([dtype.is_floating_point for dtype in input_data_types]):
             low, high = input_range
             # Uniformly distribute random numbers within the input_range
-            inputs = [(low - high) * torch.rand(shape) + high for shape in input_shapes]
+            inputs = [
+                (low - high) * torch.rand(shape, dtype=dtype) + high
+                for shape, dtype in zip(input_shapes, input_data_types)
+            ]
         else:
             inputs = [
                 torch.randint(0, 1000, shape, dtype=torch.int32)
@@ -42,6 +50,9 @@ def _verify_torch_module(
 
     if np.prod(golden.shape) == 1:
         return
+
+    ret = ret.to(torch.float32) if ret.dtype == torch.bfloat16 else ret
+    golden = golden.to(torch.float32) if golden.dtype == torch.bfloat16 else golden
     pcc = np.min(
         np.ma.corrcoef(
             np.ma.masked_invalid(torch.squeeze(ret).detach().numpy()).flatten(),
@@ -65,11 +76,18 @@ def _verify_onnx_module(
 
     sess = InferenceSession(filename)
     input_shapes = [nodearg.shape for nodearg in sess.get_inputs()]
+    if input_data_types is None:
+        input_data_types = [torch.float32] * (
+            len(input_shapes) if input_shapes is not None else len(inputs)
+        )
     if inputs is None:
         if all([dtype.is_floating_point for dtype in input_data_types]):
             low, high = input_range
             # Uniformly distribute random numbers within the input_range
-            inputs = [(low - high) * torch.rand(shape) + high for shape in input_shapes]
+            inputs = [
+                (low - high) * torch.rand(shape, dtype=dtype) + high
+                for shape, dtype in zip(input_shapes, input_data_types)
+            ]
         else:
             inputs = [
                 torch.randint(0, 1000, shape, dtype=torch.int64)
@@ -103,6 +121,13 @@ def _verify_onnx_module(
 
         if np.prod(golden_out.shape) == 1:
             return
+
+        tt_out = tt_out.to(torch.float32) if tt_out.dtype == torch.bfloat16 else tt_out
+        golden_out = (
+            golden_out.to(torch.float32)
+            if golden_out.dtype == torch.bfloat16
+            else golden_out
+        )
         pcc = np.min(
             np.ma.corrcoef(
                 np.ma.masked_invalid(torch.squeeze(tt_out).detach().numpy()).flatten(),
@@ -120,17 +145,18 @@ def verify_module(
     mod,
     inputs=None,
     input_shapes=None,
-    input_data_types=[torch.float32],
+    input_data_types=None,
     required_pcc=0.99,
     required_atol=1e-2,
     input_range=(-0.5, 0.5),
     compiler_config=None,
     do_assert=True,
 ):
+
     if isinstance(mod, torch.nn.Module):
         assert (
-            input_shapes is not None
-        ), "Verifying a torch module requires that you provide input_shapes"
+            input_shapes is not None or inputs is not None
+        ), "Either input_shapes or inputs must be provided"
         _verify_torch_module(
             mod,
             inputs,
