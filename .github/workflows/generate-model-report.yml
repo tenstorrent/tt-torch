@@ -1,4 +1,4 @@
-name: Run Model Tests
+name: Generate Model Reports
 
 on:
   workflow_dispatch:
@@ -36,32 +36,10 @@ jobs:
       id: strings
       shell: bash
       run: |
-        apt-get update
-        apt-get install jq -y
-        apt-get install curl -y
-        jobs=$(curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
-          "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}/jobs")
-        job_id=$(echo $jobs | jq -r '.jobs[] | select(.runner_name=="${{ runner.name }}") | .id')
-        job_name=$(echo $jobs | jq -r '.jobs[] | select(.runner_name=="${{ runner.name }}") | .name')
-        searchfront="test ("
-        searchback=") / tests"
-        job_name="${job_name#*$searchfront}"
-        job_name="${job_name%%$searchback*}"
-        echo "job_id=$job_id"
-        echo "job_name=$job_name"
-
-        echo "job_name=$job_name" >> "$GITHUB_OUTPUT"
         echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
         echo "build-output-dir=$(pwd)/build" >> "$GITHUB_OUTPUT"
         echo "install-output-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
         echo "test-output-dir=$(pwd)/results/models/tests/" >> "$GITHUB_OUTPUT"
-
-        artifactname=$job_name
-        searchfront="tests/models/"
-        artifactname="${artifactname#*$searchfront}"
-        artifactname="${artifactname%%/*}.tar"
-        echo "artifactname=$artifactname"
-        echo "artifactname=$artifactname" >> "$GITHUB_OUTPUT"
 
     - name: Git safe dir
       run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
@@ -75,7 +53,8 @@ jobs:
     - name: 'Untar install directory'
       shell: bash
       working-directory: ${{ steps.strings.outputs.install-output-dir }}
-      run: tar xvf artifact.tar
+      run: |
+        tar xvf artifact.tar
 
     - name: make tt-metal directory
       shell: bash
@@ -88,26 +67,43 @@ jobs:
       run: |
         cp -r ${{ steps.strings.outputs.install-output-dir }}/tt-metal/* ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal
 
-    - name: Run Model Tests
+    - name: make tests directory
       shell: bash
-      run: |
-        echo ${{ steps.strings.outputs.work-dir }}
-        echo ${{ steps.strings.outputs.test-output-dir }}
-        echo ${{ steps.strings.outputs.build-output-dir }}
-        echo ${{ steps.strings.outputs.install-output-dir }}
-        source env/activate
-        export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
-        export TT_TORCH_COMPILE_DEPTH=COMPILE_OP_BY_OP
-        pytest -v ${{ steps.strings.outputs.job_name }}
+      working-directory: ${{ steps.strings.outputs.work-dir }}
+      run: mkdir -p ${{ steps.strings.outputs.work-dir }}/results/models/tests/
 
-    - name: Tar results
+    - name: Use build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: ${{ steps.strings.outputs.test-output-dir }}
+        merge-multiple: true
+
+    - name: Display structure of downloaded file
+      working-directory: ${{ steps.strings.outputs.test-output-dir }}
+      run: |
+        ls -R ${{ steps.strings.outputs.test-output-dir }}
+
+    - name: Untar tests
       shell: bash
       working-directory: ${{ steps.strings.outputs.test-output-dir }}
       run: |
-        tar cvf ${{ steps.strings.outputs.artifactname }} .
+        rm artifact.tar
+        for a in `ls -1 *.tar`; do tar -xvf $a; rm $a; done
+
+    - name: Run Model Tests
+      shell: bash
+      working-directory: ${{ steps.strings.outputs.work-dir }}
+      run: |
+        source env/activate
+        export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
+        export TT_TORCH_COMPILE_DEPTH=COMPILE_OP_BY_OP
+        mkdir -p ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/
+        cp ${{ steps.strings.outputs.install-output-dir }}/lib/ttmlir-opt ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/
+        chmod +x ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/ttmlir-opt
+        python results/parse_op_by_op_results.py
 
     - name: Upload test folder to archive
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ steps.strings.outputs.artifactname }}
-        path: ${{ steps.strings.outputs.test-output-dir }}/${{ steps.strings.outputs.artifactname }}
+        name: models_op_per_op.xlsx
+        path: "${{ steps.strings.outputs.work-dir }}/results/models_op_per_op.xlsx"
