@@ -7,7 +7,7 @@ import collections
 import re
 from typing import List, Dict, Tuple
 from tt_torch.dynamo.backend import backend
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, parse_mlir
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 import json
 from pathlib import Path
 

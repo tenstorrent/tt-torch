@@ -1,0 +1,36 @@
+# This workflow automates running model tests.
+
+name: Nighty Tests
+
+on:
+  schedule:
+    - cron: '0 4 * * *'  # Runs at 04:00 UTC every day
+  workflow_dispatch:  # Manual trigger
+
+
+jobs:
+  pre-commit:
+    uses: ./.github/workflows/pre-commit.yml
+    secrets: inherit
+  spdx:
+    uses: ./.github/workflows/spdx.yml
+    secrets: inherit
+  build:
+    needs: [pre-commit, spdx]
+    uses: ./.github/workflows/run-build.yml
+    secrets: inherit
+  collect_dirs:
+    runs-on: ubuntu-latest
+    outputs:
+      dirs: ${{ steps.dirs.outputs.dirs }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: dirs
+        run: echo "dirs=$(ls -d tests/models/*/ | jq --raw-input --slurp --compact-output 'split("\n")[:-1]')" >> ${GITHUB_OUTPUT}
+  test:
+    needs: [build, collect_dirs]
+    strategy:
+      matrix:
+        dir: ${{ fromJson(needs.collect_dirs.outputs.dirs) }}
+    uses: ./.github/workflows/run-model-tests.yml
+    secrets: inherit
