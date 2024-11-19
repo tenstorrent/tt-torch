@@ -399,6 +399,7 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     if compiler_config.compile_depth in (
         CompileDepth.EXECUTE_OP_BY_OP,
         CompileDepth.COMPILE_OP_BY_OP,
+        CompileDepth.TORCH_DYNAMO,
     ):
         return executor
 

@@ -3,30 +3,30 @@
 # SPDX-License-Identifier: Apache-2.0
 import re
 import json
-from enum import Enum, IntEnum
+from enum import Enum, IntEnum, auto
 from pathlib import Path
 import os
 import torch
 
-
 class CompileDepth(Enum):
-    TORCH_MLIR = 1
-    STABLEHLO = 2
-    TTNN_IR = 3
-    COMPILE_OP_BY_OP = 4
-    EXECUTE_OP_BY_OP = 5
-    EXECUTE = 6
+    TORCH_DYNAMO = auto()
+    TORCH_MLIR = auto()
+    STABLEHLO = auto()
+    TTNN_IR = auto()
+    COMPILE_OP_BY_OP = auto()
+    EXECUTE_OP_BY_OP = auto()
+    EXECUTE = auto()
 
 
 class OpCompilationStatus(IntEnum):
-    NOT_STARTED = 0
-    CREATED_GRAPH = 1
-    CONVERTED_TO_TORCH_IR = 2
-    CONVERTED_TO_TORCH_BACKEND_IR = 3
-    CONVERTED_TO_STABLE_HLO = 4
-    CONVERTED_TO_TTIR = 5
-    CONVERTED_TO_TTNN = 6
-    EXECUTED = 7
+    NOT_STARTED = auto()
+    CREATED_GRAPH = auto()
+    CONVERTED_TO_TORCH_IR = auto()
+    CONVERTED_TO_TORCH_BACKEND_IR = auto()
+    CONVERTED_TO_STABLE_HLO = auto()
+    CONVERTED_TO_TTIR = auto()
+    CONVERTED_TO_TTNN = auto()
+    EXECUTED = auto()
 
 
 class Op:
