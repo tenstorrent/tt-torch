@@ -25,3 +25,4 @@ opencv-python
 xlsxwriter
 onnx
 onnxruntime
+mdutils
