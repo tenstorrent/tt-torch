@@ -4,6 +4,7 @@
 from TTNNOps import TTNNOps
 import re
 import os
+import getpass
 
 #########################################################
 # Helper functions
@@ -184,10 +185,10 @@ class AllOps:
                         )
 
 
-# if Run:
-TTNNOpExamples = "dir-to-ttnn-files"
-resultsDir = "dir-to-print-all-ops-in-one-txt"
-mdDir = "dir-to-save-md-files-at"  # /localdev/$USER/tt-torch/docs/ops/ttnn
+user = getpass.getuser()
+TTNNOpExamples = "/localdev/" + user + "/tt-torch/tt_torch/tools/AllOps/"
+resultsDir = "/localdev/" + user + "/tt-torch/tt_torch/tools/AllOps/"  # optional
+mdDir = "/localdev/" + user + "/tt-torch/docs/ops/ttnn"
 myOps = AllOps(TTNNOpExamples)
-myOps.print_all_ops(resultsDir)
+myOps.print_all_ops(resultsDir)  # optional
 myOps.create_md_files(mdDir)
