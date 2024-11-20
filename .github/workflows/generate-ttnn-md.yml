@@ -1,0 +1,56 @@
+name: Generate TTNN MD Files
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  workflow_run:
+    workflows: [Build]
+    types: [completed]
+
+jobs:
+  generate_md:
+    # needs: tests # models_op_per_op.xlsx to be completed
+    timeout-minutes: 120
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setpyenv
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.11
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install -r requirements.txt
+
+    - name: Download artifacts
+      id: download-artifact
+      continue-on-error: true
+      uses: actions/download-artifact@v4
+      with:
+        name: models_op_per_op.xlsx
+        path: ${{ steps.strings.outputs.install-output-dir }}
+
+    - name: Check artifact download
+      if: steps.download-artifact.outcome == 'failure'
+      run: |
+        echo "Failed to download artifact"
+        exit 1
+
+    - name: Generate TTNN MD Files
+      if: steps.download-artifact.outcome == 'success'
+      shell: bash
+      run: |
+        source env/activate
+        export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
+        mkdir -p ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/
+        cp ${{ steps.strings.outputs.install-output-dir }}/lib/ttmlir-opt ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/
+        chmod +x ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/ttmlir-opt
+        python tt_torch/tools/generate_md.py --excel_path results/models_op_per_op.xlsx
+
+    - name: Upload TTNN MD Files to archive
+      uses: actions/upload-artifact@v4
+      with:
+        name: ttnn-md
+        path: "${{ steps.strings.outputs.work-dir }}/docs/ops/ttnn"

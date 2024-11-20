@@ -7,6 +7,8 @@ ninja
 pre-commit
 pybind11
 pytest
+argparse
+pandas
 tabulate
 transformers
 protobuf

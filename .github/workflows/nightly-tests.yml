@@ -7,7 +7,6 @@ on:
     - cron: '0 4 * * *'  # Runs at 04:00 UTC every day
   workflow_dispatch:  # Manual trigger
 
-
 jobs:
   pre-commit:
     uses: ./.github/workflows/pre-commit.yml
@@ -26,4 +25,8 @@ jobs:
   download-report:
     needs: test
     uses: ./.github/workflows/generate-model-report.yml
+    secrets: inherit
+  generate-ttnn-md:
+    needs: download-report
+    uses: ./.github/workflows/generate-ttnn-md.yml
     secrets: inherit
