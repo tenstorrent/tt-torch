@@ -12,9 +12,14 @@ jobs:
     timeout-minutes: 120
     strategy:
       fail-fast: false
-
+      matrix:
+        build: [
+          {runs-on: n150, name: "run1", test_names: "stable_diffusion"},
+          {runs-on: n150, name: "run2", test_names: "MobileNetV2, clip, flan_t5, mlpmixer, resnet, vilt, albert, codegen, glpn_kitti, mnist, resnet50, t5, whisper, autoencoder_conv, deit, gpt2, mobilenet_ssd, roberta, timm, xglm, autoencoder_linear, detr, gpt_neo, musicgen_small, segformer, torchvision, yolos"},
+          {runs-on: n300, name: "run3", test_names: "beit, distilbert, hand_landmark, openpose, segment_anything, unet, yolov3, bert, dpr, hardnet, opt, speecht5_tts, unet_brain, yolov5, bloom, falcon, llama, perceiver_io, squeeze_bert, unet_carvana"},
+        ]
     runs-on:
-      - n150
+      - ${{ matrix.build.runs-on }}
 
     container:
       image: ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:latest
@@ -36,32 +41,10 @@ jobs:
       id: strings
       shell: bash
       run: |
-        apt-get update
-        apt-get install jq -y
-        apt-get install curl -y
-        jobs=$(curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
-          "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}/jobs")
-        job_id=$(echo $jobs | jq -r '.jobs[] | select(.runner_name=="${{ runner.name }}") | .id')
-        job_name=$(echo $jobs | jq -r '.jobs[] | select(.runner_name=="${{ runner.name }}") | .name')
-        searchfront="test ("
-        searchback=") / tests"
-        job_name="${job_name#*$searchfront}"
-        job_name="${job_name%%$searchback*}"
-        echo "job_id=$job_id"
-        echo "job_name=$job_name"
-
-        echo "job_name=$job_name" >> "$GITHUB_OUTPUT"
         echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
         echo "build-output-dir=$(pwd)/build" >> "$GITHUB_OUTPUT"
         echo "install-output-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
         echo "test-output-dir=$(pwd)/results/models/tests/" >> "$GITHUB_OUTPUT"
-
-        artifactname=$job_name
-        searchfront="tests/models/"
-        artifactname="${artifactname#*$searchfront}"
-        artifactname="${artifactname%%/*}.tar"
-        echo "artifactname=$artifactname"
-        echo "artifactname=$artifactname" >> "$GITHUB_OUTPUT"
 
     - name: Git safe dir
       run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
@@ -98,16 +81,20 @@ jobs:
         source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
         export TT_TORCH_COMPILE_DEPTH=COMPILE_OP_BY_OP
-        pytest -v ${{ steps.strings.outputs.job_name }}
+        for testname in ${{ matrix.build.test_names }}; do
+        testname=${testname//,/}
+        echo "running test: $testname"
+        pytest -v tests/models/$testname
+        done
 
     - name: Tar results
       shell: bash
       working-directory: ${{ steps.strings.outputs.test-output-dir }}
       run: |
-        tar cvf ${{ steps.strings.outputs.artifactname }} .
+        tar cvf ${{ matrix.build.name }}.tar .
 
     - name: Upload test folder to archive
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ steps.strings.outputs.artifactname }}
-        path: ${{ steps.strings.outputs.test-output-dir }}/${{ steps.strings.outputs.artifactname }}
+        name: ${{ matrix.build.name }}.tar
+        path: ${{ steps.strings.outputs.test-output-dir }}/${{ matrix.build.name }}.tar
