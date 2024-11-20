@@ -4,6 +4,7 @@
 from TTNNOps import TTNNOps
 import re
 import os
+import pandas as pd
 
 #########################################################
 # Helper functions
@@ -58,26 +59,60 @@ def convert_tensor_format(input_str):
 
 
 class AllOps:
-    def __init__(self, input_dir):
+    def __init__(self):
         self.ops = {}
-        self.parse_input_dir(input_dir)
 
-    def parse_input_dir(self, input_dir):
-        for filename in os.listdir(input_dir):
-            if filename.endswith(".txt"):
-                input_file_path = os.path.join(input_dir, filename)
-                self.process_ops(input_file_path)
+    def parse_xlsx(self, excel_path):
+        # Read all sheets in the Excel file
+        xls = pd.ExcelFile(excel_path)
 
-    def process_ops(self, input_file_path):
-        with open(input_file_path, "r") as file:
-            ttnn_code = file.read()
-        ttnn_parser = TTNNOps(ttnn_code)
+        # Iterate through all sheets
+        for sheet_name in xls.sheet_names:
+            # Read the current sheet
+            df = pd.read_excel(excel_path, sheet_name=sheet_name)
+
+            # Check if required columns exist
+            required_columns = ["Raw TTNNIR", "Torch Name"]
+            missing_columns = [col for col in required_columns if col not in df.columns]
+
+            if missing_columns:
+                print(
+                    f"Skipping sheet '{sheet_name}'. Missing columns: {missing_columns}"
+                )
+                continue
+
+            # Clean the DataFrame
+            df_cleaned = df.dropna(subset=["Raw TTNNIR"])
+            df_final = df_cleaned[["Torch Name", "Raw TTNNIR"]]
+
+            # Check if DataFrame is empty after cleaning
+            if df_final.empty:
+                print(f"Skipping sheet '{sheet_name}'. No valid data after cleaning.")
+                continue
+
+            # Initialize last torch name
+            last_torch_name = None
+
+            # Iterate through the DataFrame and write to files
+            for index, row in df_final.iterrows():
+                torch_name = (
+                    row["Torch Name"]
+                    if pd.notna(row["Torch Name"])
+                    else last_torch_name
+                )
+                raw_ttnnir = row["Raw TTNNIR"]
+
+                # Remove quotes if present
+                if raw_ttnnir.startswith('"') and raw_ttnnir.endswith('"'):
+                    raw_ttnnir = raw_ttnnir[1:-1]
+                    process_ops(raw_ttnir)
+
+    def process_ops(self, ttnnir_string):
+        ttnn_parser = TTNNOps(ttnnir_string)
         for op in ttnn_parser.ops:
             input_shapes = []
             for elem in op["input_shapes"]:
                 input_shapes.append(convert_tensor_format(elem))
-                print(elem)
-                print(input_shapes[-1])
             output_shapes = []
             for elem in op["output_shapes"]:
                 output_shapes.append(convert_tensor_format(elem))
@@ -93,12 +128,22 @@ class AllOps:
                     if "layout" in i_shape:
                         match = re.search(r"#layout\d*", i_shape)
                         layout_id = match.group(0) if match else None
-                        input_layout = ttnn_parser.layouts[layout_id]
-                        layout = {
-                            "mapping_from": input_layout.mapping_from,
-                            "mapping_to": input_layout.mapping_to,
-                            "memory_config": input_layout.memory_config,
-                        }
+                        if layout_id in ttnn_parser.layouts:
+                            input_layout = ttnn_parser.layouts[layout_id]
+                            layout = {
+                                "mapping_from": input_layout.mapping_from,
+                                "mapping_to": input_layout.mapping_to,
+                                "memory_config": input_layout.memory_config,
+                            }
+                        else:
+                            print(
+                                f"{op} using {layout_id} which is not defined in existing layouts: {ttnn_parser.layouts}\n"
+                            )
+                            layout = {
+                                "mapping_from": "N/A",
+                                "mapping_to": "N/A",
+                                "memory_config": "N/A",
+                            }
                         input_layouts.append(layout)
             output_layouts = []
             if op["output_shapes"] is not None:
@@ -106,12 +151,22 @@ class AllOps:
                     if "layout" in o_shape:
                         match = re.search(r"#layout\d*", o_shape)
                         layout_id = match.group(0) if match else None
-                        output_layout = ttnn_parser.layouts[layout_id]
-                        layout = {
-                            "mapping_from": output_layout.mapping_from,
-                            "mapping_to": output_layout.mapping_to,
-                            "memory_config": output_layout.memory_config,
-                        }
+                        if layout_id in ttnn_parser.layouts:
+                            output_layout = ttnn_parser.layouts[layout_id]
+                            layout = {
+                                "mapping_from": output_layout.mapping_from,
+                                "mapping_to": output_layout.mapping_to,
+                                "memory_config": output_layout.memory_config,
+                            }
+                        else:
+                            print(
+                                f"{op} using {layout_id} which is not defined in existing layouts: {ttnn_parser.layouts}\n"
+                            )
+                            layout = {
+                                "mapping_from": "N/A",
+                                "mapping_to": "N/A",
+                                "memory_config": "N/A",
+                            }
                         output_layouts.append(layout)
             opToWrite["input_layouts"] = input_layouts
             opToWrite["output_layouts"] = output_layouts
@@ -184,10 +239,9 @@ class AllOps:
                         )
 
 
-# if Run:
-TTNNOpExamples = "dir-to-ttnn-files"
-resultsDir = "dir-to-print-all-ops-in-one-txt"
-mdDir = "dir-to-save-md-files-at"  # /localdev/$USER/tt-torch/docs/ops/ttnn
-myOps = AllOps(TTNNOpExamples)
-myOps.print_all_ops(resultsDir)
+current_path = os.getcwd()
+mdDir = current_path + "/docs/ops/ttnn"
+myOps = AllOps()
+myOps.parse_xlsx("path-to-xlsx")
+# myOps.print_all_ops(resultsDir) # optional
 myOps.create_md_files(mdDir)

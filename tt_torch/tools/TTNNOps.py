@@ -185,8 +185,8 @@ class TTNNOps:
                             "output_shapes": output_shapes,
                         }
                         self.ops.append(current_op)
-                    else:
-                        print(f"Line did not match expected pattern: {line}")
+                    # else:
+                    #     print(f"Line did not match expected pattern: {line}")
 
     def parse_attributes(self, attr_str):
         attributes = {}
