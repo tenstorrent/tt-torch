@@ -78,11 +78,6 @@ jobs:
         path: ${{ steps.strings.outputs.test-output-dir }}
         merge-multiple: true
 
-    - name: Display structure of downloaded file
-      working-directory: ${{ steps.strings.outputs.test-output-dir }}
-      run: |
-        ls -R ${{ steps.strings.outputs.test-output-dir }}
-
     - name: Untar tests
       shell: bash
       working-directory: ${{ steps.strings.outputs.test-output-dir }}
@@ -90,19 +85,23 @@ jobs:
         rm artifact.tar
         for a in `ls -1 *.tar`; do tar -xvf $a; rm $a; done
 
-    - name: Run Model Tests
+    - name: Display structure of downloaded file
+      working-directory: ${{ steps.strings.outputs.test-output-dir }}
+      run: |
+        ls -R ${{ steps.strings.outputs.test-output-dir }}
+
+    - name: Parse Tests
       shell: bash
       working-directory: ${{ steps.strings.outputs.work-dir }}
       run: |
         source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
-        export TT_TORCH_COMPILE_DEPTH=COMPILE_OP_BY_OP
         mkdir -p ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/
         cp ${{ steps.strings.outputs.install-output-dir }}/lib/ttmlir-opt ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/
         chmod +x ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/ttmlir-opt
         python results/parse_op_by_op_results.py
 
-    - name: Upload test folder to archive
+    - name: Upload report to archive
       uses: actions/upload-artifact@v4
       with:
         name: models_op_per_op.xlsx
