@@ -289,7 +289,20 @@ class Executor:
         process.join()
         return binary, op
 
+    def pre_process_inputs(self, *inputs):
+        # Remove scalar constants as they're absorbed into the binary
+        # Convert torch.nn.Parameter to torch.Tensor
+        processed_inputs = []
+        for inp in inputs:
+            if isinstance(inp, torch.nn.Parameter):
+                processed_inputs.append(inp.data)
+            elif isinstance(inp, torch.Tensor):
+                processed_inputs.append(inp)
+
+        return processed_inputs
+
     def run_op(self, binary, *inputs):
+        inputs = self.pre_process_inputs(*inputs)
         sender = mp.Queue()
         receiver = mp.Queue()
         obj = {"binary": binary, "inputs": inputs}
@@ -302,11 +315,13 @@ class Executor:
         sender.put(obj)
         result = {}
         start = time.time()
+        outputs = [None]
         while True:
             if not process.is_alive():
                 break
             try:
                 result = receiver.get_nowait()
+                outputs = result["outputs"]
                 exec_event.set()
                 break
             except mp.queues.Empty:
@@ -317,7 +332,6 @@ class Executor:
                 break
             time.sleep(0.05)
         process.join()
-        outputs = result["outputs"]
         if len(outputs) == 1:
             outputs = outputs[0]
         return outputs
@@ -357,25 +371,32 @@ class Executor:
                         args.append(arg)
                 try:
                     binary, op = self.compile_op(node, *args, **node.kwargs)
-                    if (
-                        self.compiler_config.compile_depth
-                        == CompileDepth.EXECUTE_OP_BY_OP
-                        and binary is not None
-                    ):
-                        tensor = self.run_op(binary, *args)
-                        if self.compiler_config.enable_intermediate_verification:
-                            golden_tensor = node.target(*args, **node.kwargs)
-                            atol = calculate_atol(tensor, golden_tensor)
-                            if atol > self.required_atol:
-                                print(f"atol too high for {idx}: {atol}")
-                            pcc = calculate_pcc(tensor, golden_tensor)
-                            if pcc < self.required_pcc:
-                                print(f"pcc too low for {idx}: {pcc}")
-                        op.compilation_status = OpCompilationStatus.EXECUTED
-                    else:
-                        tensor = node.target(*args, **node.kwargs)
                 except Exception as e:
                     print(f"Failed to compile {idx}/{num_nodes}: {node.target}: {e}")
+
+                if (
+                    self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
+                    and binary is not None
+                ):
+                    try:
+                        calculated = self.run_op(binary, *args)
+                        if calculated is None:
+                            raise ValueError("Failed to execute")
+                        op.compilation_status = OpCompilationStatus.EXECUTED
+                        tensor = node.target(*args, **node.kwargs)
+                        if self.compiler_config.enable_intermediate_verification:
+                            atol = calculate_atol(calculated, tensor)
+                            if atol > self.required_atol:
+                                print(f"atol too high for {idx}: {atol}")
+                            pcc = calculate_pcc(calculated, tensor)
+                            if pcc < self.required_pcc:
+                                print(f"pcc too low for {idx}: {pcc}")
+                    except Exception as e:
+                        print(
+                            f"Failed to execute {idx}/{num_nodes}: {node.target}: {e}"
+                        )
+                        tensor = node.target(*args, **node.kwargs)
+                else:
                     tensor = node.target(*args, **node.kwargs)
                 node_to_tensor[node] = tensor
             elif node.op == "output":

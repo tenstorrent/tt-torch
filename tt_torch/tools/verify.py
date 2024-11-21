@@ -51,20 +51,6 @@ def _verify_torch_module(
     ret = tt_mod(*inputs)
     golden = mod(*inputs)
 
-    # TTNN does not support all the data types. So convert 'ret' tensor type to
-    # match 'golden' tensor type.
-    if golden.dtype != ret.dtype:
-        ret = ret.to(golden.dtype)
-
-    # Return if both tensors are identical; continue the verification otherwise.
-    if torch.equal(golden, ret):
-        return
-
-    # Convert boolean tensors to float; so ATOL can be calculated.
-    if golden.dtype == torch.bool:
-        golden = golden.to(torch.float)
-        ret = ret.to(torch.float)
-
     atol = calculate_atol(ret, golden)
     if do_assert:
         assert atol <= required_atol, f"ATOL too high: {atol} vs {required_atol}"
