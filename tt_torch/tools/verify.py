@@ -142,7 +142,7 @@ def _verify_onnx_module(
         )
 
         pcc = calculate_pcc(tt_out, golden_out)
-        
+
         assert (
             do_assert and pcc
         ) >= required_pcc, f"PCC too low: {pcc} vs {required_pcc}"
