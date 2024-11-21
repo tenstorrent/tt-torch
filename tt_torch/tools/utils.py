@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import re
 import json
+import numpy as np
 from enum import Enum, IntEnum
 from pathlib import Path
 import os
@@ -100,6 +101,7 @@ class CompilerConfig:
         self.model_name = ""
         self.results_path = "results/models/"
         self.single_op_timeout = 5
+        self.enable_intermediate_verification = False
 
         self.apply_environment_overrides()
 
@@ -291,3 +293,18 @@ def parse_shlo_mlir(mlir_code, verbose=False):
         opBegin = False
         opString = ""
     return ops, unique_ops
+
+
+def calculate_atol(tensor, golden_tensor):
+    return torch.max(torch.abs(golden_tensor - tensor)).item()
+
+
+def calculate_pcc(tensor, golden_tensor):
+    return np.min(
+        np.ma.corrcoef(
+            np.ma.masked_invalid(torch.squeeze(tensor).detach().numpy()).flatten(),
+            np.ma.masked_invalid(
+                torch.squeeze(golden_tensor).detach().numpy()
+            ).flatten(),
+        )
+    )
