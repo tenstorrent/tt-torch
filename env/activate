@@ -6,6 +6,11 @@
 if [ -z "$TTMLIR_TOOLCHAIN_DIR" ]; then
   echo "TTMLIR_TOOLCHAIN_DIR not set. Please set it and re-run"
 else
+  if command -v sudo > /dev/null 2>&1; then
+    sudo apt-get install -y python3.11-dev python3.11-venv
+  else
+   apt-get install -y python3.11-dev python3.11-venv
+  fi
 
   export TT_TORCH_HOME="$(pwd)"
   export LD_LIBRARY_PATH=$TT_TORCH_HOME/env/venv/lib/python3.11/site-packages/torch/lib:$TTMLIR_TOOLCHAIN_DIR/lib:$LD_LIBRRARY_PATH
@@ -15,8 +20,6 @@ else
     [ -f $TTMLIR_VENV_DIR/bin/activate ] && source $TTMLIR_VENV_DIR/bin/activate
   else
     echo "Creating virtual environment in $TTMLIR_VENV_DIR"
-    apt install python3.11-dev -y
-    apt install python3.11-venv -y
     python3.11 -m venv $TTMLIR_VENV_DIR
     source $TTMLIR_VENV_DIR/bin/activate
     pip install --upgrade pip
