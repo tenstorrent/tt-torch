@@ -19,6 +19,7 @@ def _verify_torch_module(
     required_pcc,
     required_atol,
     input_range,
+    input_range_int,
     compiler_config,
     do_assert,
 ):
@@ -36,9 +37,14 @@ def _verify_torch_module(
                 (low - high) * torch.rand(shape, dtype=dtype) + high
                 for shape, dtype in zip(input_shapes, input_data_types)
             ]
-        else:
+        elif all([dtype == torch.bool for dtype in input_data_types]):
             inputs = [
-                torch.randint(0, 1000, shape, dtype=torch.int32)
+                torch.randint(0, 2, shape, dtype=torch.bool) for shape in input_shapes
+            ]
+        else:
+            low, high = input_range_int
+            inputs = [
+                torch.randint(low, high, shape, dtype=torch.int32)
                 for shape in input_shapes
             ]
 
@@ -82,6 +88,7 @@ def _verify_onnx_module(
     required_pcc,
     required_atol,
     input_range,
+    input_range_int,
     compiler_config,
     do_assert,
 ):
@@ -101,8 +108,9 @@ def _verify_onnx_module(
                 for shape, dtype in zip(input_shapes, input_data_types)
             ]
         else:
+            low, high = input_range_int
             inputs = [
-                torch.randint(0, 1000, shape, dtype=torch.int64)
+                torch.randint(low, high, shape, dtype=torch.int64)
                 for shape in input_shapes
             ]
 
@@ -156,6 +164,7 @@ def verify_module(
     required_pcc=0.99,
     required_atol=1e-2,
     input_range=(-0.5, 0.5),
+    input_range_int=(0, 1000),
     compiler_config=None,
     do_assert=True,
 ):
@@ -172,6 +181,7 @@ def verify_module(
             required_pcc,
             required_atol,
             input_range,
+            input_range_int,
             compiler_config,
             do_assert,
         )
@@ -186,6 +196,7 @@ def verify_module(
             required_pcc,
             required_atol,
             input_range,
+            input_range_int,
             compiler_config,
             do_assert,
         )
