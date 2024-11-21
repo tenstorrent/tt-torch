@@ -488,6 +488,9 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
 def backend(gm, example_inputs, options=None):
     if options is None:
         options = CompilerConfig()
+    concrete_inputs = [
+        x.view(x.shape) if isinstance(x, torch.Tensor) else x for x in example_inputs
+    ]
     # fake_tensor_mode = torch._dynamo.utils.detect_fake_mode(example_inputs)
     # fake_tensor_mode.allow_non_fake_inputs = True
     # aten = make_fx(gm, tracing_mode="symbolic", decomposition_table={}, _allow_non_fake_inputs=True)(*example_inputs)
