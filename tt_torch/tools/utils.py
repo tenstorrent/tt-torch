@@ -295,11 +295,32 @@ def parse_shlo_mlir(mlir_code, verbose=False):
     return ops, unique_ops
 
 
+def prepare_tensors(ret, golden):
+    # Convert boolean tensors to float; so ATOL can be calculated.
+    if golden.dtype == torch.bool:
+        golden = golden.to(torch.float)
+
+    # TTNN does not support all the data types. So convert 'ret' tensor type to
+    # match 'golden' tensor type.
+    if golden.dtype != ret.dtype:
+        ret = ret.to(golden.dtype)
+
+    return ret, golden
+
+
 def calculate_atol(tensor, golden_tensor):
+    if torch.equal(golden_tensor, tensor):
+        return 0.0
+
+    tensor, golden_tensor = prepare_tensors(tensor, golden_tensor)
     return torch.max(torch.abs(golden_tensor - tensor)).item()
 
 
 def calculate_pcc(tensor, golden_tensor):
+    if torch.equal(golden_tensor, tensor):
+        return 1.0
+
+    tensor, golden_tensor = prepare_tensors(tensor, golden_tensor)
     return np.min(
         np.ma.corrcoef(
             np.ma.masked_invalid(torch.squeeze(tensor).detach().numpy()).flatten(),
