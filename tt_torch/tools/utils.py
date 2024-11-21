@@ -101,6 +101,7 @@ class CompilerConfig:
         self.model_name = ""
         self.results_path = "results/models/"
         self.single_op_timeout = 5
+        self.enable_intermediate_verification = False
 
         self.apply_environment_overrides()
 

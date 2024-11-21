@@ -360,13 +360,14 @@ class Executor:
                         and binary is not None
                     ):
                         tensor = self.run_op(binary, *args)
-                        golden_tensor = node.target(*args, **node.kwargs)
-                        atol = calculate_atol(tensor, golden_tensor)
-                        if atol > self.required_atol:
-                            print(f"atol too high for {idx}: {atol}")
-                        pcc = calculate_pcc(tensor, golden_tensor)
-                        if pcc < self.required_pcc:
-                            print(f"pcc too low for {idx}: {pcc}")
+                        if self.compiler_config.enable_intermediate_verification:
+                            golden_tensor = node.target(*args, **node.kwargs)
+                            atol = calculate_atol(tensor, golden_tensor)
+                            if atol > self.required_atol:
+                                print(f"atol too high for {idx}: {atol}")
+                            pcc = calculate_pcc(tensor, golden_tensor)
+                            if pcc < self.required_pcc:
+                                print(f"pcc too low for {idx}: {pcc}")
                         op.compilation_status = OpCompilationStatus.EXECUTED
                     else:
                         tensor = node.target(*args, **node.kwargs)
