@@ -422,6 +422,15 @@ class Executor:
     def __call__(self, *inputs):
         new_inputs = ()
         for input in inputs:
+            # Handle scalar inputs.
+            if not hasattr(input, "dtype"):
+                assert (
+                    type(a) is not bool
+                ), "Conversion for scalar boolean is not supported."
+                new_inputs = new_inputs + ((input),)
+                continue
+
+            # Apply type conversion if required.
             input_type = input.dtype
             if input_type in self.type_conversion.keys():
                 new_inputs = new_inputs + (
@@ -429,6 +438,7 @@ class Executor:
                 )
                 continue
 
+            # No conversion required.
             new_inputs = new_inputs + ((input),)
 
         inputs = new_inputs
