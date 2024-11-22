@@ -99,6 +99,8 @@ def process_json_files():
             "Output Shapes",
             "NumOps",
             "Status",
+            "PCC",
+            "ATOL",
             "Ops",
             "Raw SHLO",
             "Raw TTIR",
@@ -128,6 +130,8 @@ def process_json_files():
                     "ttir_graph": value["ttir_graph"],
                     "ttnn_graph": value["ttnn_graph"],
                     "key": key,
+                    "pcc": value["pcc"],
+                    "atol": value["atol"],
                 }
             )
         ops_per_model[model_name] = list(torch_ops.keys())
@@ -150,6 +154,8 @@ def process_json_files():
                 ops = op["ops"]
                 error = ""
                 trace_dump = ""
+                pcc = op["pcc"]
+                atol = op["atol"]
                 if status == 5 or status == 4:
                     if status == 5:
                         # Does not compile to TTNNIR, create unit test
@@ -194,6 +200,8 @@ def process_json_files():
                     output_shapes,
                     num_ops,
                     status,
+                    pcc,
+                    atol,
                     "",
                     raw_shlo,
                     op["ttir_graph"],
@@ -240,6 +248,8 @@ def process_json_files():
         "Output Shapes",
         "NumOps",
         "Status",
+        "PCC",
+        "ATOL",
         "Ops",
         "Raw SHLO",
         "Raw TTIR",
@@ -264,6 +274,8 @@ def process_json_files():
                     "output_shapes": value["output_shapes"],
                     "num_ops": value["num_ops"],
                     "status": value["compilation_status"],
+                    "pcc": value["pcc"],
+                    "atol": value["atol"],
                     "stable_hlo_graph": value["stable_hlo_graph"],
                     "ops": value["stable_hlo_ops"],
                     "ttir_graph": value["ttir_graph"],
@@ -280,6 +292,8 @@ def process_json_files():
             input_shapes = extract_shape(op["input_shapes"])
             output_shapes = extract_shape(op["output_shapes"])
             status = op["status"]
+            pcc = op["pcc"]
+            atol = op["atol"]
             raw_shlo = op["stable_hlo_graph"]
             ops = op["ops"]
             ttir_graph = op["ttir_graph"]
@@ -292,6 +306,8 @@ def process_json_files():
                 output_shapes,
                 num_ops,
                 status,
+                pcc,
+                atol,
                 "",
                 raw_shlo,
                 ttir_graph,
@@ -302,7 +318,19 @@ def process_json_files():
             name = ""
             worksheet.write_row(row, 0, row_data)
             row += 1
-            row_data = ["", "", "", "", "", "", raw_shlo, ttir_graph, ttnn_graph]
+            row_data = [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                raw_shlo,
+                ttir_graph,
+                ttnn_graph,
+            ]
             worksheet.write_row(row, 0, row_data)
             worksheet.set_row(row, None, None, {"hidden": True})
             row += 1

@@ -386,9 +386,11 @@ class Executor:
                         tensor = node.target(*args, **node.kwargs)
                         if self.compiler_config.enable_intermediate_verification:
                             atol = calculate_atol(calculated, tensor)
+                            op.atol = atol
                             if atol > self.required_atol:
                                 print(f"atol too high for {idx}: {atol}")
                             pcc = calculate_pcc(calculated, tensor)
+                            op.pcc = pcc
                             if pcc < self.required_pcc:
                                 print(f"pcc too low for {idx}: {pcc}")
                     except Exception as e:
