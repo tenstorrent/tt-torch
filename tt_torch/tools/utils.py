@@ -8,6 +8,7 @@ from enum import Enum, IntEnum
 from pathlib import Path
 import os
 import torch
+import math
 
 
 class CompileDepth(Enum):
@@ -44,6 +45,8 @@ class Op:
         self.compilation_status = OpCompilationStatus.NOT_STARTED
         self.parsed_stable_hlo_ops = False
         self.parsed_ttnn_ops = False
+        self.pcc = None
+        self.atol = None
 
     def print_shapes(self, shapes):
         output = []
@@ -52,6 +55,21 @@ class Op:
         return output
 
     def to_dict(self):
+        def scrub_nan_inf(value):
+            if isinstance(value, float):
+                if math.isnan(value):
+                    ret = "NaN"
+                elif math.isinf(value):
+                    ret = "Inf"
+                else:
+                    ret = f"{value:.2f}"
+            else:
+                ret = ""
+            return ret
+
+        pcc = scrub_nan_inf(self.pcc)
+        atol = scrub_nan_inf(self.atol)
+
         return {
             "torch_name": self.torch_name,
             "input_shapes": self.print_shapes(self.input_shapes),
@@ -63,6 +81,8 @@ class Op:
             "stable_hlo_ops": self.stable_hlo_ops,
             "ttir_graph": self.ttir_graph,
             "ttnn_graph": self.ttnn_graph,
+            "pcc": pcc,
+            "atol": atol,
         }
 
     def unique_key(self):
@@ -109,6 +129,9 @@ class CompilerConfig:
         compile_depth = os.environ.get("TT_TORCH_COMPILE_DEPTH")
         if compile_depth:
             self.compile_depth = CompileDepth[compile_depth]
+        verify_intermediates = os.environ.get("TT_TORCH_VERIFY_INTERMEDIATES")
+        if verify_intermediates:
+            self.enable_intermediate_verification = True
 
     def save_unique_ops(self):
         unique_op_dict = {}
@@ -321,11 +344,15 @@ def calculate_pcc(tensor, golden_tensor):
         return 1.0
 
     tensor, golden_tensor = prepare_tensors(tensor, golden_tensor)
-    return np.min(
-        np.ma.corrcoef(
-            np.ma.masked_invalid(torch.squeeze(tensor).detach().numpy()).flatten(),
-            np.ma.masked_invalid(
-                torch.squeeze(golden_tensor).detach().numpy()
-            ).flatten(),
+    return float(
+        np.min(
+            np.ma.corrcoef(
+                np.ma.masked_invalid(
+                    torch.squeeze(tensor).detach().float().numpy()
+                ).flatten(),
+                np.ma.masked_invalid(
+                    torch.squeeze(golden_tensor).detach().float().numpy()
+                ).flatten(),
+            )
         )
     )
