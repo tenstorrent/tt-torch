@@ -2,11 +2,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import torch
+import traceback
 from torch.fx.experimental.proxy_tensor import make_fx
 from torch._decomp import get_decompositions
 from torch.func import functionalize
 from typing import List, Optional
-import traceback
 
 from .decompositions import DEFAULT_DECOMPOSITIONS
 
