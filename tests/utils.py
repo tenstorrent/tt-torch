@@ -71,7 +71,10 @@ class ModelTester:
 
     def compile_model(self, model, compiler_config):
         # Compile model
-        model = torch.compile(model, backend=backend, options=compiler_config)
+        model = torch.compile(
+            model, backend=backend, dynamic=False, options=compiler_config
+        )
+        # model = torch.compile(model, backend=backend, options=compiler_config)
         return model
 
     def run_model(self, model, inputs):
