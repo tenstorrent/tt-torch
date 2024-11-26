@@ -113,6 +113,7 @@ class Layout:
 class TTNNOps:
     def __init__(self, ttnn_str):
         self.system_desc = None
+        self.do_assert = False
         self.layouts = {}
         self.ops = []
 
@@ -185,7 +186,7 @@ class TTNNOps:
                             "output_shapes": output_shapes,
                         }
                         self.ops.append(current_op)
-                    else:
+                    elif self.do_assert:
                         print(f"Line did not match expected pattern: {line}")
 
     def parse_attributes(self, attr_str):
