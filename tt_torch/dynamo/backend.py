@@ -425,7 +425,7 @@ class Executor:
             # Handle scalar inputs.
             if not hasattr(input, "dtype"):
                 assert (
-                    type(a) is not bool
+                    type(input) is not bool
                 ), "Conversion for scalar boolean is not supported."
                 new_inputs = new_inputs + ((input),)
                 continue
