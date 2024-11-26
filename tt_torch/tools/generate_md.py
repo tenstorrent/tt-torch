@@ -4,10 +4,18 @@
 from TTNNOps import TTNNOps
 import re
 import os
+import pandas as pd
+import argparse
 
 #########################################################
 # Helper functions
 #########################################################
+def validate_file(f):
+    if not os.path.exists(f):
+        # Argparse uses the ArgumentTypeError to give a rejection message like:
+        # error: argument input: x does not exist
+        raise argparse.ArgumentTypeError("{0} does not exist".format(f))
+    return f
 
 
 def convert_tensor_format(input_str):
@@ -58,26 +66,71 @@ def convert_tensor_format(input_str):
 
 
 class AllOps:
-    def __init__(self, input_dir):
+    def __init__(self):
         self.ops = {}
-        self.parse_input_dir(input_dir)
+        self.do_assert = False
 
-    def parse_input_dir(self, input_dir):
-        for filename in os.listdir(input_dir):
-            if filename.endswith(".txt"):
-                input_file_path = os.path.join(input_dir, filename)
-                self.process_ops(input_file_path)
+    def parse_xlsx(self, excel_path):
+        # Read all sheets in the Excel file
+        xls = pd.ExcelFile(excel_path)
 
-    def process_ops(self, input_file_path):
-        with open(input_file_path, "r") as file:
-            ttnn_code = file.read()
-        ttnn_parser = TTNNOps(ttnn_code)
+        # Iterate through all sheets
+        for sheet_name in xls.sheet_names:
+            if sheet_name == "All Ops":
+                continue
+            # Read the current sheet
+            df = pd.read_excel(excel_path, sheet_name=sheet_name)
+
+            # Check if required columns exist
+            required_columns = ["Raw TTNNIR", "Torch Name", "Status", "PCC", "ATOL"]
+            missing_columns = [col for col in required_columns if col not in df.columns]
+
+            if missing_columns:
+                print(
+                    f"Skipping sheet '{sheet_name}'. Missing columns: {missing_columns}"
+                )
+                continue
+
+            # Clean the DataFrame
+            df_cleaned = df.dropna(subset=["Raw TTNNIR"])
+            df_final = df_cleaned[["Torch Name", "Raw TTNNIR", "Status", "PCC", "ATOL"]]
+
+            # Check if DataFrame is empty after cleaning
+            if df_final.empty and self.do_assert:
+                print(f"Skipping sheet '{sheet_name}'. No valid data after cleaning.")
+                continue
+
+            # Initialize last torch name
+            last_torch_name = None
+
+            # Iterate through the DataFrame and write to files
+            for index, row in df_final.iterrows():
+                torch_name = (
+                    row["Torch Name"]
+                    if pd.notna(row["Torch Name"])
+                    else last_torch_name
+                )
+                raw_ttnnir = row["Raw TTNNIR"]
+                status = row["Status"]
+                pcc = row["PCC"]
+                atol = row["ATOL"]
+                # Remove quotes if present
+                if raw_ttnnir.startswith("'") and raw_ttnnir.endswith("'"):
+                    raw_ttnnir = raw_ttnnir[1:-1]
+                    self.process_ops(raw_ttnir, status, pcc, atol)
+                elif raw_ttnnir.startswith('"') and raw_ttnnir.endswith('"'):
+                    raw_ttnnir = raw_ttnnir[1:-1]
+                    self.process_ops(raw_ttnir, status, pcc, atol)
+                else:
+                    self.process_ops(raw_ttnnir, status, pcc, atol)
+                print(f"Finished {sheet_name}, {torch_name}")
+
+    def process_ops(self, ttnnir_string, status, pcc, atol):
+        ttnn_parser = TTNNOps(ttnnir_string)
         for op in ttnn_parser.ops:
             input_shapes = []
             for elem in op["input_shapes"]:
                 input_shapes.append(convert_tensor_format(elem))
-                print(elem)
-                print(input_shapes[-1])
             output_shapes = []
             for elem in op["output_shapes"]:
                 output_shapes.append(convert_tensor_format(elem))
@@ -93,12 +146,23 @@ class AllOps:
                     if "layout" in i_shape:
                         match = re.search(r"#layout\d*", i_shape)
                         layout_id = match.group(0) if match else None
-                        input_layout = ttnn_parser.layouts[layout_id]
-                        layout = {
-                            "mapping_from": input_layout.mapping_from,
-                            "mapping_to": input_layout.mapping_to,
-                            "memory_config": input_layout.memory_config,
-                        }
+                        if layout_id in ttnn_parser.layouts:
+                            input_layout = ttnn_parser.layouts[layout_id]
+                            layout = {
+                                "mapping_from": input_layout.mapping_from,
+                                "mapping_to": input_layout.mapping_to,
+                                "memory_config": input_layout.memory_config,
+                            }
+                        else:
+                            if self.do_assert:
+                                print(
+                                    f"{op} using {layout_id} which is not defined in existing layouts: {ttnn_parser.layouts}\n"
+                                )
+                            layout = {
+                                "mapping_from": "N/A",
+                                "mapping_to": "N/A",
+                                "memory_config": "N/A",
+                            }
                         input_layouts.append(layout)
             output_layouts = []
             if op["output_shapes"] is not None:
@@ -106,15 +170,34 @@ class AllOps:
                     if "layout" in o_shape:
                         match = re.search(r"#layout\d*", o_shape)
                         layout_id = match.group(0) if match else None
-                        output_layout = ttnn_parser.layouts[layout_id]
-                        layout = {
-                            "mapping_from": output_layout.mapping_from,
-                            "mapping_to": output_layout.mapping_to,
-                            "memory_config": output_layout.memory_config,
-                        }
+                        if layout_id in ttnn_parser.layouts:
+                            output_layout = ttnn_parser.layouts[layout_id]
+                            layout = {
+                                "mapping_from": output_layout.mapping_from,
+                                "mapping_to": output_layout.mapping_to,
+                                "memory_config": output_layout.memory_config,
+                            }
+                        else:
+                            if self.do_assert:
+                                print(
+                                    f"{op} using {layout_id} which is not defined in existing layouts: {ttnn_parser.layouts}\n"
+                                )
+                            layout = {
+                                "mapping_from": "N/A",
+                                "mapping_to": "N/A",
+                                "memory_config": "N/A",
+                            }
                         output_layouts.append(layout)
             opToWrite["input_layouts"] = input_layouts
             opToWrite["output_layouts"] = output_layouts
+            if status == 6.0:
+                opToWrite["runs_on_ttnn"] = "no"
+            elif status == 7.0:
+                opToWrite["runs_on_ttnn"] = "yes"
+            else:
+                opToWrite["runs_on_ttnn"] = "N/A"
+            opToWrite["pcc"] = pcc
+            opToWrite["atol"] = atol
             if self.ops.get(opToWrite["name"]) is None:
                 self.ops[opToWrite["name"]] = [opToWrite]
             else:
@@ -144,15 +227,18 @@ class AllOps:
                 if dict_list:
                     # Write the table header
                     file.write(
-                        "| Name | Input Shapes | Input Layouts | Attributes | Output Shapes | Output Layouts |\n"
+                        "| Name | Input Shapes | Input Layouts | Attributes | Output Shapes | Output Layouts | Runs on TTNN | PCC | ATOL |\n"
                     )
                     file.write(
-                        "|------|--------------|---------------|------------|---------------|----------------|\n"
+                        "|------|--------------|---------------|------------|---------------|----------------|--------------|-----|------|\n"
                     )
 
                     # Write each dictionary in the array to the table
                     for item in dict_list:
                         name = item.get("name", "")
+                        runs_on_ttnn = item.get("runs_on_ttnn", "")
+                        pcc = item.get("pcc", "")
+                        atol = item.get("atol", "")
 
                         # Join shapes with <br> for line breaks
                         input_shapes = " <br> ".join(item.get("input_shapes", []))
@@ -180,14 +266,28 @@ class AllOps:
                         output_shapes = " <br> ".join(item.get("output_shapes", []))
 
                         file.write(
-                            f"| {name} | {input_shapes} | {input_layouts_str} | {attributes} | {output_shapes} | {output_layouts_str} |\n"
+                            f"| {name} | {input_shapes} | {input_layouts_str} | {attributes} | {output_shapes} | {output_layouts_str} | {runs_on_ttnn} | {pcc} | {atol} |\n"
                         )
 
 
-# if Run:
-TTNNOpExamples = "dir-to-ttnn-files"
-resultsDir = "dir-to-print-all-ops-in-one-txt"
-mdDir = "dir-to-save-md-files-at"  # /localdev/$USER/tt-torch/docs/ops/ttnn
-myOps = AllOps(TTNNOpExamples)
-myOps.print_all_ops(resultsDir)
-myOps.create_md_files(mdDir)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Create ttnn ops md files")
+    parser.add_argument(
+        "-i",
+        "--excel_path",
+        dest="excel_path",
+        required=True,
+        type=validate_file,
+        help="the path to models_op_per_op.xlsx file",
+        metavar="FILE",
+    )
+    args = parser.parse_args()
+    print(args.excel_path)
+    current_path = os.getcwd()
+    mdDir = current_path + "/docs/ops/ttnn"
+    try:
+        myOps = AllOps()
+        myOps.parse_xlsx(args.excel_path)
+        myOps.create_md_files(mdDir)
+    except Exception as e:
+        print(f"Exception occured at generate_md.py: {e}")
