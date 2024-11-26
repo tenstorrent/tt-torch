@@ -1,0 +1,65 @@
+name: Generate TTNN MD Files
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  workflow_run:
+    workflows: [Build]
+    types: [completed]
+
+jobs:
+  generate_md:
+    timeout-minutes: 120
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setpyenv
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.11
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install -r requirements.txt
+
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: |
+        echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
+        echo "install-output-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
+        echo "test-output-dir=$(pwd)/results/models/tests/" >> "$GITHUB_OUTPUT"
+
+    - name: Git safe dir
+      run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
+
+    - name: Download artifacts
+      id: download-artifact
+      continue-on-error: true
+      uses: actions/download-artifact@v4
+      with:
+        name: models_op_per_op.xlsx
+        path: ${{ steps.strings.outputs.work-dir }}/results
+
+    - name: Check artifact download
+      if: steps.download-artifact.outcome == 'failure'
+      run: |
+        echo "Failed to download artifact"
+        exit 1
+
+    - name: Generate TTNN MD Files
+      if: steps.download-artifact.outcome == 'success'
+      shell: bash
+      run: |
+        source env/activate
+        echo "${{ steps.strings.outputs.work-dir }}/tt_torch/tools/generate_md.py"
+        echo "${{ steps.strings.outputs.work-dir }}/results/models_op_per_op.xlsx"
+        python ${{ steps.strings.outputs.work-dir }}/tt_torch/tools/generate_md.py --excel_path ${{ steps.strings.outputs.work-dir }}/results/models_op_per_op.xlsx
+
+    - name: Upload TTNN MD Files to archive
+      uses: actions/upload-artifact@v4
+      with:
+        name: ttnn-md
+        path: ${{ steps.strings.outputs.work-dir }}/docs/ops/ttnn
