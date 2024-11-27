@@ -1,0 +1,102 @@
+[
+  {
+    "name": "ttnn.abs",
+    "input_shapes": [
+      "tensor<[10,10,i32]>",
+      "tensor<[10,10,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[10,10,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": -0.18,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.abs",
+    "input_shapes": [
+      "tensor<[15,15,i32]>",
+      "tensor<[15,15,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[15,15,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": -0.27,
+    "atol": NaN
+  }
+]

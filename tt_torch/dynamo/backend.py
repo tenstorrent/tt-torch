@@ -35,6 +35,7 @@ import multiprocessing as mp
 import time
 import faulthandler
 import sys
+import json
 
 
 def run_shape_prop(gm, example_inputs):
@@ -274,6 +275,7 @@ class Executor:
                 if "binary" in result:
                     binary = result["binary"]
                     op.binary = binary
+                    op.json = tt_mlir.bytestream_to_json(binary)
                     op.add_ttnn_graph(result["ttnn"])
                     ttnn_event.set()
                     op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTNN

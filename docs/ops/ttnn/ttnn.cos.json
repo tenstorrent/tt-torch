@@ -1,0 +1,202 @@
+[
+  {
+    "name": "ttnn.cos",
+    "input_shapes": [
+      "tensor<[1,32,128,f32]>",
+      "tensor<[1,32,128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 32 + d1, d2)",
+        "memory_config": [
+          1,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 32 + d1, d2)",
+        "memory_config": [
+          1,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,32,128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 32 + d1, d2)",
+        "memory_config": [
+          1,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.cos",
+    "input_shapes": [
+      "tensor<[1,23,40,64,f32]>",
+      "tensor<[1,23,40,64,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 920 + d1 * 40 + d2, d3)",
+        "memory_config": [
+          29,
+          2,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 920 + d1 * 40 + d2, d3)",
+        "memory_config": [
+          29,
+          2,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,23,40,64,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 920 + d1 * 40 + d2, d3)",
+        "memory_config": [
+          29,
+          2,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 0.39,
+    "atol": "2.00"
+  },
+  {
+    "name": "ttnn.cos",
+    "input_shapes": [
+      "tensor<[1,160,f32]>",
+      "tensor<[1,160,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          5,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          5,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,160,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          5,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.cos",
+    "input_shapes": [
+      "tensor<[1,7,64,f32]>",
+      "tensor<[1,7,64,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 7 + d1, d2)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 7 + d1, d2)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,7,64,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 7 + d1, d2)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  }
+]

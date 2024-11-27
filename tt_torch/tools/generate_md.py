@@ -6,16 +6,29 @@ import re
 import os
 import pandas as pd
 import argparse
+import json
 
 #########################################################
 # Helper functions
 #########################################################
+
+
 def validate_file(f):
     if not os.path.exists(f):
         # Argparse uses the ArgumentTypeError to give a rejection message like:
         # error: argument input: x does not exist
         raise argparse.ArgumentTypeError("{0} does not exist".format(f))
     return f
+
+
+def validate_directory(directory):
+    if not os.path.exists(directory):
+        raise argparse.ArgumentTypeError(f"{directory} does not exist")
+
+    if not os.path.isdir(directory):
+        raise argparse.ArgumentTypeError(f"{directory} is not a directory")
+
+    return directory
 
 
 def convert_tensor_format(input_str):
@@ -33,7 +46,7 @@ def convert_tensor_format(input_str):
     # Check if it starts with 'tensor<'
     if not input_str.startswith("tensor<"):
         # If there's a layout in non-tensor type, remove it
-        if ", #layout" in input_str:
+        if ", #ttnn_layout" in input_str:
             base = input_str.split(",")[0]
             return f"{base}>"
         return input_str
@@ -70,12 +83,31 @@ class AllOps:
         self.ops = {}
         self.do_assert = False
 
+    def parse_json(self, json_path):
+        with open(json_path, "r") as file:
+            json_string = json.load(file)
+            if isinstance(json_string, dict):
+                ajs = json_string
+            elif isinstance(json_string, str):
+                ajs = json.loads(json_string)
+            else:
+                raise ValueError("Invalid json format")
+            # is there any case we index anything besides 0th programs?
+            # if yes, this needs to be revised
+            # this indexing hasn't been tested with many json files
+            ttnn_mlir = ajs["programs"][0]["debug_info"]["mlir"]["source"]
+            status = "N/A"
+            pcc = "N/A"
+            atol = "N/A"
+            self.process_ops(ttnn_mlir, status, pcc, atol)
+
     def parse_xlsx(self, excel_path):
         # Read all sheets in the Excel file
         xls = pd.ExcelFile(excel_path)
 
         # Iterate through all sheets
         for sheet_name in xls.sheet_names:
+            # skip the sheet named "All Ops" since all other sheets are parsed
             if sheet_name == "All Ops":
                 continue
             # Read the current sheet
@@ -144,7 +176,7 @@ class AllOps:
             if op["input_shapes"] is not None:
                 for i_shape in op["input_shapes"]:
                     if "layout" in i_shape:
-                        match = re.search(r"#layout\d*", i_shape)
+                        match = re.search(r"#ttnn_layout\d*", i_shape)
                         layout_id = match.group(0) if match else None
                         if layout_id in ttnn_parser.layouts:
                             input_layout = ttnn_parser.layouts[layout_id]
@@ -168,7 +200,7 @@ class AllOps:
             if op["output_shapes"] is not None:
                 for o_shape in op["output_shapes"]:
                     if "layout" in o_shape:
-                        match = re.search(r"#layout\d*", o_shape)
+                        match = re.search(r"#ttnn_layout\d*", o_shape)
                         layout_id = match.group(0) if match else None
                         if layout_id in ttnn_parser.layouts:
                             output_layout = ttnn_parser.layouts[layout_id]
@@ -269,25 +301,147 @@ class AllOps:
                             f"| {name} | {input_shapes} | {input_layouts_str} | {attributes} | {output_shapes} | {output_layouts_str} | {runs_on_ttnn} | {pcc} | {atol} |\n"
                         )
 
+    def create_json_data(self):
+        # Create a dictionary to store JSON data for each key
+        json_data = {}
+
+        for key, dict_list in self.ops.items():
+            # Create a list to store processed items for each key
+            processed_items = []
+
+            for item in dict_list:
+                # Process input layouts
+                input_layouts = item.get("input_layouts", [])
+                processed_input_layouts = [
+                    {
+                        "mapping_from": d.get("mapping_from", ""),
+                        "mapping_to": d.get("mapping_to", ""),
+                        "memory_config": d.get("memory_config", ""),
+                    }
+                    for d in input_layouts
+                ]
+
+                # Process output layouts
+                output_layouts = item.get("output_layouts", [])
+                processed_output_layouts = [
+                    {
+                        "mapping_from": d.get("mapping_from", ""),
+                        "mapping_to": d.get("mapping_to", ""),
+                        "memory_config": d.get("memory_config", ""),
+                    }
+                    for d in output_layouts
+                ]
+
+                # Create a processed item dictionary
+                processed_item = {
+                    "name": item.get("name", ""),
+                    "input_shapes": item.get("input_shapes", []),
+                    "input_layouts": processed_input_layouts,
+                    "attributes": item.get("attributes", {}),
+                    "output_shapes": item.get("output_shapes", []),
+                    "output_layouts": processed_output_layouts,
+                    "runs_on_ttnn": item.get("runs_on_ttnn", ""),
+                    "pcc": item.get("pcc", ""),
+                    "atol": item.get("atol", ""),
+                }
+
+                processed_items.append(processed_item)
+
+            # Store processed items for each key
+            json_data[key] = processed_items
+
+        return json_data
+
+    def save_json_files(self, output_dir):
+        # Ensure the output directory exists
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Get the JSON data
+        json_data = self.create_json_data()
+
+        # Save JSON files
+        for key, data in json_data.items():
+            file_path = os.path.join(output_dir, f"{key}.json")
+            with open(file_path, "w") as file:
+                json.dump(data, file, indent=2)
+                file.write("\n")  # add a new line at the end of json
+
+        return json_data
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Create ttnn ops md files")
     parser.add_argument(
-        "-i",
         "--excel_path",
         dest="excel_path",
-        required=True,
+        required=False,
         type=validate_file,
         help="the path to models_op_per_op.xlsx file",
         metavar="FILE",
     )
+    parser.add_argument(
+        "--json_path",
+        dest="json_path",
+        required=False,
+        type=validate_file,
+        help="the path to model.json file",
+        metavar="FILE",
+    )
+    parser.add_argument(
+        "--md_dir",
+        dest="md_dir",
+        required=False,
+        type=validate_directory,
+        help="the path to the directory where markdown files will be created.",
+        metavar="DIR",
+    )
+    parser.add_argument(
+        "--json_dir",
+        dest="json_dir",
+        required=False,
+        type=validate_directory,
+        help="the path to the directory where json files will be created.",
+        metavar="DIR",
+    )
+
     args = parser.parse_args()
-    print(args.excel_path)
-    current_path = os.getcwd()
-    mdDir = current_path + "/docs/ops/ttnn"
-    try:
-        myOps = AllOps()
-        myOps.parse_xlsx(args.excel_path)
-        myOps.create_md_files(mdDir)
-    except Exception as e:
-        print(f"Exception occured at generate_md.py: {e}")
+    if args.excel_path is None and args.json_path is None:
+        # if neither paths are provided
+        print("Please provide either excel_path or json_path")
+        exit(1)
+    if args.excel_path is not None and args.json_path is not None:
+        # if both paths are provided
+        print("Please provide either excel_path or json_path")
+        exit(1)
+
+    if args.excel_path is not None:
+        try:
+            myOps = AllOps()
+            myOps.parse_xlsx(args.excel_path)
+        except Exception as e:
+            print(f"Exception occured at generate_md.py: {e}")
+    if args.json_path is not None:
+        try:
+            myOps = AllOps()
+            myOps.parse_json(args.json_path)
+            myOps.create_md_files(mdDir)
+            myOps.save_json_files(os.getcwd())
+        except Exception as e:
+            print(f"Exception occured at generate_md.py: {e}")
+
+    if args.md_dir is None and args.json_dir is None:
+        # if neither directories are provided
+        print("Please provide either md_dir or json_dir")
+        exit(1)
+
+    if args.md_dir is not None:
+        try:
+            myOps.create_md_files(args.md_dir)
+        except Exception as e:
+            print(f"Exception occured at generate_md.py: {e}")
+
+    if args.json_dir is not None:
+        try:
+            myOps.save_json_files(args.json_dir)
+        except Exception as e:
+            print(f"Exception occured at generate_md.py: {e}")

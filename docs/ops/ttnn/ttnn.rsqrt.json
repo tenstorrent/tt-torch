@@ -1,0 +1,3652 @@
+[
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,32,1,f32]>",
+      "tensor<[1,32,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 32 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 32 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,32,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 32 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,7,1,f32]>",
+      "tensor<[1,7,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 7 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 7 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,7,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 7 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,1024,512,bf16]>",
+      "tensor<[1,1024,512,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1024 + d1, d2)",
+        "memory_config": [
+          32,
+          16,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1024 + d1, d2)",
+        "memory_config": [
+          32,
+          16,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,1024,512,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1024 + d1, d2)",
+        "memory_config": [
+          32,
+          16,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,256,256,bf16]>",
+      "tensor<[1,256,256,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          8,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          8,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,256,256,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          8,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,256,1,f32]>",
+      "tensor<[1,256,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,256,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,64,1,1,bf16]>",
+      "tensor<[1,64,1,1,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 64 + d1 + d2, d3)",
+        "memory_config": [
+          2,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 64 + d1 + d2, d3)",
+        "memory_config": [
+          2,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,64,1,1,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 64 + d1 + d2, d3)",
+        "memory_config": [
+          2,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 0.21,
+    "atol": "Inf"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,256,1,1,bf16]>",
+      "tensor<[1,256,1,1,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 256 + d1 + d2, d3)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 256 + d1 + d2, d3)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,256,1,1,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 256 + d1 + d2, d3)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 0.5,
+    "atol": "Inf"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,128,1,1,bf16]>",
+      "tensor<[1,128,1,1,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 128 + d1 + d2, d3)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 128 + d1 + d2, d3)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,128,1,1,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 128 + d1 + d2, d3)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 0.34,
+    "atol": "Inf"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,512,1,1,bf16]>",
+      "tensor<[1,512,1,1,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 512 + d1 + d2, d3)",
+        "memory_config": [
+          16,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 512 + d1 + d2, d3)",
+        "memory_config": [
+          16,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,512,1,1,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 512 + d1 + d2, d3)",
+        "memory_config": [
+          16,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 0.21,
+    "atol": "Inf"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,1024,1,1,bf16]>",
+      "tensor<[1,1024,1,1,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 1024 + d1 + d2, d3)",
+        "memory_config": [
+          32,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 1024 + d1 + d2, d3)",
+        "memory_config": [
+          32,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,1024,1,1,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 1024 + d1 + d2, d3)",
+        "memory_config": [
+          32,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": -0.01,
+    "atol": "Inf"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,2048,1,1,bf16]>",
+      "tensor<[1,2048,1,1,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 2048 + d1 + d2, d3)",
+        "memory_config": [
+          64,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 2048 + d1 + d2, d3)",
+        "memory_config": [
+          64,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,2048,1,1,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 2048 + d1 + d2, d3)",
+        "memory_config": [
+          64,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": -0.04,
+    "atol": "Inf"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[920,1,1,f32]>",
+      "tensor<[920,1,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          29,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          29,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[920,1,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          29,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[100,1,1,f32]>",
+      "tensor<[100,1,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[100,1,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": NaN,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,6,1,f32]>",
+      "tensor<[1,6,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 6 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 6 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,6,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 6 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,256,4096,bf16]>",
+      "tensor<[1,256,4096,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          128,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          128,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,256,4096,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          128,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,10,3072,bf16]>",
+      "tensor<[1,10,3072,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 10 + d1, d2)",
+        "memory_config": [
+          1,
+          96,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 10 + d1, d2)",
+        "memory_config": [
+          1,
+          96,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,10,3072,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 10 + d1, d2)",
+        "memory_config": [
+          1,
+          96,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,10,768,bf16]>",
+      "tensor<[1,10,768,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 10 + d1, d2)",
+        "memory_config": [
+          1,
+          24,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 10 + d1, d2)",
+        "memory_config": [
+          1,
+          24,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,10,768,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 10 + d1, d2)",
+        "memory_config": [
+          1,
+          24,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,10,1,f32]>",
+      "tensor<[1,10,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 10 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 10 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,10,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 10 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,4096,1280,bf16]>",
+      "tensor<[1,4096,1280,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 4096 + d1, d2)",
+        "memory_config": [
+          128,
+          40,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 4096 + d1, d2)",
+        "memory_config": [
+          128,
+          40,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,4096,1280,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 4096 + d1, d2)",
+        "memory_config": [
+          128,
+          40,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,1024,2560,bf16]>",
+      "tensor<[1,1024,2560,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1024 + d1, d2)",
+        "memory_config": [
+          32,
+          80,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1024 + d1, d2)",
+        "memory_config": [
+          32,
+          80,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,1024,2560,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1024 + d1, d2)",
+        "memory_config": [
+          32,
+          80,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,256,5120,bf16]>",
+      "tensor<[1,256,5120,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          160,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          160,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,256,5120,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          160,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,64,5120,bf16]>",
+      "tensor<[1,64,5120,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 64 + d1, d2)",
+        "memory_config": [
+          2,
+          160,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 64 + d1, d2)",
+        "memory_config": [
+          2,
+          160,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,64,5120,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 64 + d1, d2)",
+        "memory_config": [
+          2,
+          160,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,32,1,1,f32]>",
+      "tensor<[1,32,1,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 32 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 32 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,32,1,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 32 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,4096,1,f32]>",
+      "tensor<[1,4096,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 4096 + d1, d2)",
+        "memory_config": [
+          128,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 4096 + d1, d2)",
+        "memory_config": [
+          128,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,4096,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 4096 + d1, d2)",
+        "memory_config": [
+          128,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,1024,1,f32]>",
+      "tensor<[1,1024,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1024 + d1, d2)",
+        "memory_config": [
+          32,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1024 + d1, d2)",
+        "memory_config": [
+          32,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,1024,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1024 + d1, d2)",
+        "memory_config": [
+          32,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,64,1,f32]>",
+      "tensor<[1,64,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 64 + d1, d2)",
+        "memory_config": [
+          2,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 64 + d1, d2)",
+        "memory_config": [
+          2,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,64,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 64 + d1, d2)",
+        "memory_config": [
+          2,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,25,3072,bf16]>",
+      "tensor<[1,25,3072,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 25 + d1, d2)",
+        "memory_config": [
+          1,
+          96,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 25 + d1, d2)",
+        "memory_config": [
+          1,
+          96,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,25,3072,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 25 + d1, d2)",
+        "memory_config": [
+          1,
+          96,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,25,1,f32]>",
+      "tensor<[1,25,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 25 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 25 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,25,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 25 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,1445,768,bf16]>",
+      "tensor<[1,1445,768,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1445 + d1, d2)",
+        "memory_config": [
+          46,
+          24,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1445 + d1, d2)",
+        "memory_config": [
+          46,
+          24,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,1445,768,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1445 + d1, d2)",
+        "memory_config": [
+          46,
+          24,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,1445,1,f32]>",
+      "tensor<[1,1445,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1445 + d1, d2)",
+        "memory_config": [
+          46,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1445 + d1, d2)",
+        "memory_config": [
+          46,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,1445,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1445 + d1, d2)",
+        "memory_config": [
+          46,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,3072,8,bf16]>",
+      "tensor<[1,3072,8,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 3072 + d1, d2)",
+        "memory_config": [
+          96,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 3072 + d1, d2)",
+        "memory_config": [
+          96,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,3072,8,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 3072 + d1, d2)",
+        "memory_config": [
+          96,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,8,1,f32]>",
+      "tensor<[1,8,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 8 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 8 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,8,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 8 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,256,1280,bf16]>",
+      "tensor<[1,256,1280,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          40,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          40,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,256,1280,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          40,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,2048,768,bf16]>",
+      "tensor<[1,2048,768,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 2048 + d1, d2)",
+        "memory_config": [
+          64,
+          24,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 2048 + d1, d2)",
+        "memory_config": [
+          64,
+          24,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,2048,768,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 2048 + d1, d2)",
+        "memory_config": [
+          64,
+          24,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,2048,1,f32]>",
+      "tensor<[1,2048,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 2048 + d1, d2)",
+        "memory_config": [
+          64,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 2048 + d1, d2)",
+        "memory_config": [
+          64,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,2048,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 2048 + d1, d2)",
+        "memory_config": [
+          64,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,201,3072,bf16]>",
+      "tensor<[1,201,3072,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 201 + d1, d2)",
+        "memory_config": [
+          7,
+          96,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 201 + d1, d2)",
+        "memory_config": [
+          7,
+          96,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,201,3072,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 201 + d1, d2)",
+        "memory_config": [
+          7,
+          96,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,1536,bf16]>",
+      "tensor<[1,1536,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          48,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          48,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,1536,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          48,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,201,1,f32]>",
+      "tensor<[1,201,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 201 + d1, d2)",
+        "memory_config": [
+          7,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 201 + d1, d2)",
+        "memory_config": [
+          7,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,201,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 201 + d1, d2)",
+        "memory_config": [
+          7,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,1,f32]>",
+      "tensor<[1,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": NaN,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,19,4096,bf16]>",
+      "tensor<[1,19,4096,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 19 + d1, d2)",
+        "memory_config": [
+          1,
+          128,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 19 + d1, d2)",
+        "memory_config": [
+          1,
+          128,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,19,4096,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 19 + d1, d2)",
+        "memory_config": [
+          1,
+          128,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,19,1,f32]>",
+      "tensor<[1,19,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 19 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 19 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,19,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 19 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,16,3072,bf16]>",
+      "tensor<[1,16,3072,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 16 + d1, d2)",
+        "memory_config": [
+          1,
+          96,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 16 + d1, d2)",
+        "memory_config": [
+          1,
+          96,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,16,3072,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 16 + d1, d2)",
+        "memory_config": [
+          1,
+          96,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,16,1,f32]>",
+      "tensor<[1,16,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 16 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 16 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,16,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 16 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,1,1,f32]>",
+      "tensor<[1,1,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,1,1,f32]>",
+      "tensor<[1,1,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": NaN,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,19200,256,bf16]>",
+      "tensor<[1,19200,256,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 19200 + d1, d2)",
+        "memory_config": [
+          600,
+          8,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 19200 + d1, d2)",
+        "memory_config": [
+          600,
+          8,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,19200,256,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 19200 + d1, d2)",
+        "memory_config": [
+          600,
+          8,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,4800,512,bf16]>",
+      "tensor<[1,4800,512,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 4800 + d1, d2)",
+        "memory_config": [
+          150,
+          16,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 4800 + d1, d2)",
+        "memory_config": [
+          150,
+          16,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,4800,512,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 4800 + d1, d2)",
+        "memory_config": [
+          150,
+          16,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,1200,1280,bf16]>",
+      "tensor<[1,1200,1280,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1200 + d1, d2)",
+        "memory_config": [
+          38,
+          40,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1200 + d1, d2)",
+        "memory_config": [
+          38,
+          40,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,1200,1280,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1200 + d1, d2)",
+        "memory_config": [
+          38,
+          40,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,300,2048,bf16]>",
+      "tensor<[1,300,2048,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 300 + d1, d2)",
+        "memory_config": [
+          10,
+          64,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 300 + d1, d2)",
+        "memory_config": [
+          10,
+          64,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,300,2048,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 300 + d1, d2)",
+        "memory_config": [
+          10,
+          64,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,19200,1,f32]>",
+      "tensor<[1,19200,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 19200 + d1, d2)",
+        "memory_config": [
+          600,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 19200 + d1, d2)",
+        "memory_config": [
+          600,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,19200,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 19200 + d1, d2)",
+        "memory_config": [
+          600,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,300,1,f32]>",
+      "tensor<[1,300,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 300 + d1, d2)",
+        "memory_config": [
+          10,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 300 + d1, d2)",
+        "memory_config": [
+          10,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,300,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 300 + d1, d2)",
+        "memory_config": [
+          10,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,4800,1,f32]>",
+      "tensor<[1,4800,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 4800 + d1, d2)",
+        "memory_config": [
+          150,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 4800 + d1, d2)",
+        "memory_config": [
+          150,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,4800,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 4800 + d1, d2)",
+        "memory_config": [
+          150,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,1200,1,f32]>",
+      "tensor<[1,1200,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1200 + d1, d2)",
+        "memory_config": [
+          38,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1200 + d1, d2)",
+        "memory_config": [
+          38,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,1200,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1200 + d1, d2)",
+        "memory_config": [
+          38,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,197,3072,bf16]>",
+      "tensor<[1,197,3072,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 197 + d1, d2)",
+        "memory_config": [
+          7,
+          96,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 197 + d1, d2)",
+        "memory_config": [
+          7,
+          96,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,197,3072,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 197 + d1, d2)",
+        "memory_config": [
+          7,
+          96,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,197,1,f32]>",
+      "tensor<[1,197,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 197 + d1, d2)",
+        "memory_config": [
+          7,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 197 + d1, d2)",
+        "memory_config": [
+          7,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,197,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 197 + d1, d2)",
+        "memory_config": [
+          7,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,16384,128,bf16]>",
+      "tensor<[1,16384,128,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 16384 + d1, d2)",
+        "memory_config": [
+          512,
+          4,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 16384 + d1, d2)",
+        "memory_config": [
+          512,
+          4,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,16384,128,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 16384 + d1, d2)",
+        "memory_config": [
+          512,
+          4,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,4096,256,bf16]>",
+      "tensor<[1,4096,256,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 4096 + d1, d2)",
+        "memory_config": [
+          128,
+          8,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 4096 + d1, d2)",
+        "memory_config": [
+          128,
+          8,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,4096,256,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 4096 + d1, d2)",
+        "memory_config": [
+          128,
+          8,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,1024,640,bf16]>",
+      "tensor<[1,1024,640,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1024 + d1, d2)",
+        "memory_config": [
+          32,
+          20,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1024 + d1, d2)",
+        "memory_config": [
+          32,
+          20,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,1024,640,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1024 + d1, d2)",
+        "memory_config": [
+          32,
+          20,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,256,1024,bf16]>",
+      "tensor<[1,256,1024,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          32,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          32,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,256,1024,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          32,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,16384,1,f32]>",
+      "tensor<[1,16384,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 16384 + d1, d2)",
+        "memory_config": [
+          512,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 16384 + d1, d2)",
+        "memory_config": [
+          512,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,16384,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 16384 + d1, d2)",
+        "memory_config": [
+          512,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,7,18176,bf16]>",
+      "tensor<[1,7,18176,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 7 + d1, d2)",
+        "memory_config": [
+          1,
+          568,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 7 + d1, d2)",
+        "memory_config": [
+          1,
+          568,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,7,18176,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 7 + d1, d2)",
+        "memory_config": [
+          1,
+          568,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,12,1,f32]>",
+      "tensor<[1,12,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 12 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 12 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,12,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 12 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,9,1,f32]>",
+      "tensor<[1,9,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 9 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 9 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,9,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 9 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,14,1,f32]>",
+      "tensor<[1,14,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 14 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 14 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,14,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 14 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,50,1,f32]>",
+      "tensor<[1,50,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 50 + d1, d2)",
+        "memory_config": [
+          2,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 50 + d1, d2)",
+        "memory_config": [
+          2,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,50,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 50 + d1, d2)",
+        "memory_config": [
+          2,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,1,f32]>",
+      "tensor<[1,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[2,7,1,f32]>",
+      "tensor<[2,7,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 7 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 7 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[2,7,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 7 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,15,1,f32]>",
+      "tensor<[1,15,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 15 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 15 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,15,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 15 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,1,1,f32]>",
+      "tensor<[1,1,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": NaN,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,197,4096,bf16]>",
+      "tensor<[1,197,4096,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 197 + d1, d2)",
+        "memory_config": [
+          7,
+          128,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 197 + d1, d2)",
+        "memory_config": [
+          7,
+          128,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,197,4096,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 197 + d1, d2)",
+        "memory_config": [
+          7,
+          128,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,1,f32]>",
+      "tensor<[1,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": NaN,
+    "atol": "0.00"
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,197,3072,bf16]>",
+      "tensor<[1,197,3072,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 197 + d1, d2)",
+        "memory_config": [
+          7,
+          96,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 197 + d1, d2)",
+        "memory_config": [
+          7,
+          96,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,197,3072,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 197 + d1, d2)",
+        "memory_config": [
+          7,
+          96,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.rsqrt",
+    "input_shapes": [
+      "tensor<[1,5,1,f32]>",
+      "tensor<[1,5,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 5 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 5 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 1, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,5,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 5 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": "0.00"
+  }
+]
