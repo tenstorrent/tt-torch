@@ -25,10 +25,7 @@ opencv-python
 xlsxwriter
 onnx
 onnxruntime
-<<<<<<< HEAD
 openpyxl
-=======
 pillow
 kornia
 timm
->>>>>>> cdbafb5 (Initial commit RMBG)
