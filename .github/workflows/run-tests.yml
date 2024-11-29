@@ -103,7 +103,7 @@ jobs:
       run: |
         source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
-        pytest -v tests/onnx
+        pytest -v tests/onnx \
             --junit-xml=${{ steps.strings.outputs.test_report_path_onnx }}
 
     - name: Upload Test Report Onnx
