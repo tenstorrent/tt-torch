@@ -40,10 +40,23 @@ jobs:
     - name: Set reusable strings
       id: strings
       shell: bash
+      env:
+        job-name: "${{ github.job }} (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
       run: |
         echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
         echo "build-output-dir=$(pwd)/build" >> "$GITHUB_OUTPUT"
         echo "install-output-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
+
+        # Github job context unfortunately doesn't contain job_id, this is the workaround how to fetch it using GH API
+        echo "Expected job name: ${{ env.job-name }}"
+        JOB_ID=$(curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}/jobs" | \
+          jq -r '.jobs[] | select(.name | contains("${{ env.job-name }}")) | .id ')
+        echo "Current job id: $JOB_ID"
+
+        echo "job-id=$JOB_ID" >> "$GITHUB_OUTPUT"
+        echo "test_report_path_torch=report_torch_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+        echo "test_report_path_onnx=report_onnx_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
 
     - name: Git safe dir
       run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
@@ -75,7 +88,15 @@ jobs:
       run: |
         source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
-        pytest -v tests/torch
+        pytest -v tests/torch \
+           --junit-xml=${{ steps.strings.outputs.test_report_path_torch }}
+
+    - name: Upload Test Report Torch
+      uses: actions/upload-artifact@v4
+      if: success() || failure()
+      with:
+        name: test-reports-torch-${{ matrix.build.runs-on }}-${{ matrix.build.name }}
+        path: ${{ steps.strings.outputs.test_report_path_torch }}
 
     - name: Run ONNX tests
       shell: bash
@@ -83,3 +104,11 @@ jobs:
         source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
         pytest -v tests/onnx
+            --junit-xml=${{ steps.strings.outputs.test_report_path_onnx }}
+
+    - name: Upload Test Report Onnx
+      uses: actions/upload-artifact@v4
+      if: success() || failure()
+      with:
+        name: test-reports-onnx-${{ matrix.build.runs-on }}-${{ matrix.build.name }}
+        path: ${{ steps.strings.outputs.test_report_path_onnx }}
