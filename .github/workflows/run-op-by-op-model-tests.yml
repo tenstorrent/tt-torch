@@ -94,6 +94,7 @@ jobs:
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-swin_b]
               tests/models/gpt_neo/test_gpt_neo.py::test_gpt_neo
               tests/models/falcon/test_falcon.py::test_falcon
+              tests/models/mamba/test_mamba.py::test_mamba[state-spaces/mamba-790m-hf]
               "
           },
         ]
