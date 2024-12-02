@@ -2,6 +2,1226 @@
   {
     "name": "ttnn.subtract",
     "input_shapes": [
+      "tensor<[1,12,1,1,f32]>",
+      "tensor<[1,12,1,1,f32]>",
+      "tensor<[1,12,1,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 12 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 12 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 12 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,12,1,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 12 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,12,1,1,f32]>",
+      "tensor<[1,12,1,1,f32]>",
+      "tensor<[1,12,1,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 12 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 12 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 12 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,12,1,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 12 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,16,1,1,f32]>",
+      "tensor<[1,16,1,1,f32]>",
+      "tensor<[1,16,1,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 16 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 16 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 16 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,16,1,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 16 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,16,1,1,f32]>",
+      "tensor<[1,16,1,1,f32]>",
+      "tensor<[1,16,1,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 16 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 16 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 16 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,16,1,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 16 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,6,1,1,f32]>",
+      "tensor<[1,6,1,1,f32]>",
+      "tensor<[1,6,1,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 6 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 6 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 6 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,6,1,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 6 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,6,1,1,f32]>",
+      "tensor<[1,6,1,1,f32]>",
+      "tensor<[1,6,1,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 6 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 6 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 6 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,6,1,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 6 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,8,1,1,f32]>",
+      "tensor<[1,8,1,1,f32]>",
+      "tensor<[1,8,1,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 8 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 8 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 8 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,8,1,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 8 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,8,1,1,f32]>",
+      "tensor<[1,8,1,1,f32]>",
+      "tensor<[1,8,1,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 8 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 8 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 8 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,8,1,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 8 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[120,1,f32]>",
+      "tensor<[120,1,f32]>",
+      "tensor<[120,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[120,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": -0.43,
+    "atol": 59.0
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[120,1,f32]>",
+      "tensor<[120,1,f32]>",
+      "tensor<[120,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[120,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[128,f32]>",
+      "tensor<[128,f32]>",
+      "tensor<[128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": 127.0
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[128,f32]>",
+      "tensor<[128,f32]>",
+      "tensor<[128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[128,1,f32]>",
+      "tensor<[128,1,f32]>",
+      "tensor<[128,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[128,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": 127.0
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[128,1,f32]>",
+      "tensor<[128,1,f32]>",
+      "tensor<[128,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[128,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[160,f32]>",
+      "tensor<[160,f32]>",
+      "tensor<[160,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          5,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          5,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          5,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[160,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          5,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": -0.44,
+    "atol": 79.0
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[160,f32]>",
+      "tensor<[160,f32]>",
+      "tensor<[160,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          5,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          5,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          5,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[160,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          5,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[197,i32]>",
+      "tensor<[197,i32]>",
+      "tensor<[197,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          7,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          7,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          7,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[197,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          7,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[197,i32]>",
+      "tensor<[197,i32]>",
+      "tensor<[197,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          7,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          7,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          7,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[197,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          7,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[19,i32]>",
+      "tensor<[19,i32]>",
+      "tensor<[19,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[19,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[19,i32]>",
+      "tensor<[19,i32]>",
+      "tensor<[19,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[19,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
       "tensor<[1,i32]>",
       "tensor<[1,i32]>",
       "tensor<[1,i32]>"
@@ -57,6 +1277,1775 @@
       }
     ],
     "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,i32]>",
+      "tensor<[1,i32]>",
+      "tensor<[1,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,1024,1,1,bf16]>",
+      "tensor<[1,1024,1,1,bf16]>",
+      "tensor<[1,1024,1,1,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 1024 + d1 + d2, d3)",
+        "memory_config": [
+          32,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 1024 + d1 + d2, d3)",
+        "memory_config": [
+          32,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 1024 + d1 + d2, d3)",
+        "memory_config": [
+          32,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,1024,1,1,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 1024 + d1 + d2, d3)",
+        "memory_config": [
+          32,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 0.0,
+    "atol": 1.01
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,1024,1,1,bf16]>",
+      "tensor<[1,1024,1,1,bf16]>",
+      "tensor<[1,1024,1,1,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 1024 + d1 + d2, d3)",
+        "memory_config": [
+          32,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 1024 + d1 + d2, d3)",
+        "memory_config": [
+          32,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 1024 + d1 + d2, d3)",
+        "memory_config": [
+          32,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,1024,1,1,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 1024 + d1 + d2, d3)",
+        "memory_config": [
+          32,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,128,1,1,bf16]>",
+      "tensor<[1,128,1,1,bf16]>",
+      "tensor<[1,128,1,1,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 128 + d1 + d2, d3)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 128 + d1 + d2, d3)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 128 + d1 + d2, d3)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,128,1,1,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 128 + d1 + d2, d3)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": -0.12,
+    "atol": 0.74
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,128,1,1,bf16]>",
+      "tensor<[1,128,1,1,bf16]>",
+      "tensor<[1,128,1,1,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 128 + d1 + d2, d3)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 128 + d1 + d2, d3)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 128 + d1 + d2, d3)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,128,1,1,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 128 + d1 + d2, d3)",
+        "memory_config": [
+          4,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,12,27,27,f32]>",
+      "tensor<[1,12,27,27,f32]>",
+      "tensor<[1,12,27,27,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 324 + d1 * 27 + d2, d3)",
+        "memory_config": [
+          11,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 324 + d1 * 27 + d2, d3)",
+        "memory_config": [
+          11,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 324 + d1 * 27 + d2, d3)",
+        "memory_config": [
+          11,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,12,27,27,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 324 + d1 * 27 + d2, d3)",
+        "memory_config": [
+          11,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": 0.0
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,12,27,27,f32]>",
+      "tensor<[1,12,27,27,f32]>",
+      "tensor<[1,12,27,27,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 324 + d1 * 27 + d2, d3)",
+        "memory_config": [
+          11,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 324 + d1 * 27 + d2, d3)",
+        "memory_config": [
+          11,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 324 + d1 * 27 + d2, d3)",
+        "memory_config": [
+          11,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,12,27,27,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 324 + d1 * 27 + d2, d3)",
+        "memory_config": [
+          11,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,16,27,27,f32]>",
+      "tensor<[1,16,27,27,f32]>",
+      "tensor<[1,16,27,27,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 432 + d1 * 27 + d2, d3)",
+        "memory_config": [
+          14,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 432 + d1 * 27 + d2, d3)",
+        "memory_config": [
+          14,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 432 + d1 * 27 + d2, d3)",
+        "memory_config": [
+          14,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,16,27,27,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 432 + d1 * 27 + d2, d3)",
+        "memory_config": [
+          14,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": 0.0
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,16,27,27,f32]>",
+      "tensor<[1,16,27,27,f32]>",
+      "tensor<[1,16,27,27,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 432 + d1 * 27 + d2, d3)",
+        "memory_config": [
+          14,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 432 + d1 * 27 + d2, d3)",
+        "memory_config": [
+          14,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 432 + d1 * 27 + d2, d3)",
+        "memory_config": [
+          14,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,16,27,27,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 432 + d1 * 27 + d2, d3)",
+        "memory_config": [
+          14,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,1,i32]>",
+      "tensor<[1,1,i32]>",
+      "tensor<[1,1,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,1,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": 0.0
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,1,i32]>",
+      "tensor<[1,1,i32]>",
+      "tensor<[1,1,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,1,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,2048,1,1,bf16]>",
+      "tensor<[1,2048,1,1,bf16]>",
+      "tensor<[1,2048,1,1,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 2048 + d1 + d2, d3)",
+        "memory_config": [
+          64,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 2048 + d1 + d2, d3)",
+        "memory_config": [
+          64,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 2048 + d1 + d2, d3)",
+        "memory_config": [
+          64,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,2048,1,1,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 2048 + d1 + d2, d3)",
+        "memory_config": [
+          64,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 0.01,
+    "atol": 1.38
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,2048,1,1,bf16]>",
+      "tensor<[1,2048,1,1,bf16]>",
+      "tensor<[1,2048,1,1,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 2048 + d1 + d2, d3)",
+        "memory_config": [
+          64,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 2048 + d1 + d2, d3)",
+        "memory_config": [
+          64,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 2048 + d1 + d2, d3)",
+        "memory_config": [
+          64,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,2048,1,1,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 2048 + d1 + d2, d3)",
+        "memory_config": [
+          64,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,256,128,128,f32]>",
+      "tensor<[1,256,128,128,f32]>",
+      "tensor<[1,256,128,128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 32768 + d1 * 128 + d2, d3)",
+        "memory_config": [
+          1024,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 32768 + d1 * 128 + d2, d3)",
+        "memory_config": [
+          1024,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 32768 + d1 * 128 + d2, d3)",
+        "memory_config": [
+          1024,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,256,128,128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 32768 + d1 * 128 + d2, d3)",
+        "memory_config": [
+          1024,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": 0.0
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,256,128,128,f32]>",
+      "tensor<[1,256,128,128,f32]>",
+      "tensor<[1,256,128,128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 32768 + d1 * 128 + d2, d3)",
+        "memory_config": [
+          1024,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 32768 + d1 * 128 + d2, d3)",
+        "memory_config": [
+          1024,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 32768 + d1 * 128 + d2, d3)",
+        "memory_config": [
+          1024,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,256,128,128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 32768 + d1 * 128 + d2, d3)",
+        "memory_config": [
+          1024,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,256,1,1,bf16]>",
+      "tensor<[1,256,1,1,bf16]>",
+      "tensor<[1,256,1,1,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 256 + d1 + d2, d3)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 256 + d1 + d2, d3)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 256 + d1 + d2, d3)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,256,1,1,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 256 + d1 + d2, d3)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": -0.04,
+    "atol": 0.7
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,256,1,1,bf16]>",
+      "tensor<[1,256,1,1,bf16]>",
+      "tensor<[1,256,1,1,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 256 + d1 + d2, d3)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 256 + d1 + d2, d3)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 256 + d1 + d2, d3)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,256,1,1,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 256 + d1 + d2, d3)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,32,i32]>",
+      "tensor<[1,32,i32]>",
+      "tensor<[1,32,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,32,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,32,i32]>",
+      "tensor<[1,32,i32]>",
+      "tensor<[1,32,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,32,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,3,320,320,f32]>",
+      "tensor<[1,3,320,320,f32]>",
+      "tensor<[1,3,320,320,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 960 + d1 * 320 + d2, d3)",
+        "memory_config": [
+          30,
+          10,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 960 + d1 * 320 + d2, d3)",
+        "memory_config": [
+          30,
+          10,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 960 + d1 * 320 + d2, d3)",
+        "memory_config": [
+          30,
+          10,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,3,320,320,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 960 + d1 * 320 + d2, d3)",
+        "memory_config": [
+          30,
+          10,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": 0.0
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,3,320,320,f32]>",
+      "tensor<[1,3,320,320,f32]>",
+      "tensor<[1,3,320,320,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 960 + d1 * 320 + d2, d3)",
+        "memory_config": [
+          30,
+          10,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 960 + d1 * 320 + d2, d3)",
+        "memory_config": [
+          30,
+          10,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 960 + d1 * 320 + d2, d3)",
+        "memory_config": [
+          30,
+          10,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,3,320,320,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 960 + d1 * 320 + d2, d3)",
+        "memory_config": [
+          30,
+          10,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,45,i32]>",
+      "tensor<[1,45,i32]>",
+      "tensor<[1,45,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,45,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,45,i32]>",
+      "tensor<[1,45,i32]>",
+      "tensor<[1,45,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,45,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,512,1,1,bf16]>",
+      "tensor<[1,512,1,1,bf16]>",
+      "tensor<[1,512,1,1,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 512 + d1 + d2, d3)",
+        "memory_config": [
+          16,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 512 + d1 + d2, d3)",
+        "memory_config": [
+          16,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 512 + d1 + d2, d3)",
+        "memory_config": [
+          16,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,512,1,1,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 512 + d1 + d2, d3)",
+        "memory_config": [
+          16,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": -0.05,
+    "atol": 1.421391265023909e+35
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,512,1,1,bf16]>",
+      "tensor<[1,512,1,1,bf16]>",
+      "tensor<[1,512,1,1,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 512 + d1 + d2, d3)",
+        "memory_config": [
+          16,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 512 + d1 + d2, d3)",
+        "memory_config": [
+          16,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 512 + d1 + d2, d3)",
+        "memory_config": [
+          16,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,512,1,1,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 512 + d1 + d2, d3)",
+        "memory_config": [
+          16,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,5,i32]>",
+      "tensor<[1,5,i32]>",
+      "tensor<[1,5,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,5,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,5,i32]>",
+      "tensor<[1,5,i32]>",
+      "tensor<[1,5,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,5,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,64,120,160,f32]>",
+      "tensor<[1,64,120,160,f32]>",
+      "tensor<[1,64,120,160,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 7680 + d1 * 120 + d2, d3)",
+        "memory_config": [
+          240,
+          5,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 7680 + d1 * 120 + d2, d3)",
+        "memory_config": [
+          240,
+          5,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 7680 + d1 * 120 + d2, d3)",
+        "memory_config": [
+          240,
+          5,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,64,120,160,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 7680 + d1 * 120 + d2, d3)",
+        "memory_config": [
+          240,
+          5,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": 0.0
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,64,120,160,f32]>",
+      "tensor<[1,64,120,160,f32]>",
+      "tensor<[1,64,120,160,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 7680 + d1 * 120 + d2, d3)",
+        "memory_config": [
+          240,
+          5,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 7680 + d1 * 120 + d2, d3)",
+        "memory_config": [
+          240,
+          5,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 7680 + d1 * 120 + d2, d3)",
+        "memory_config": [
+          240,
+          5,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,64,120,160,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 7680 + d1 * 120 + d2, d3)",
+        "memory_config": [
+          240,
+          5,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
     "pcc": NaN,
     "atol": NaN
   },
@@ -119,21 +3108,21 @@
     ],
     "runs_on_ttnn": "yes",
     "pcc": 0.16,
-    "atol": "0.85"
+    "atol": 0.85
   },
   {
     "name": "ttnn.subtract",
     "input_shapes": [
-      "tensor<[1,256,1,1,bf16]>",
-      "tensor<[1,256,1,1,bf16]>",
-      "tensor<[1,256,1,1,bf16]>"
+      "tensor<[1,64,1,1,bf16]>",
+      "tensor<[1,64,1,1,bf16]>",
+      "tensor<[1,64,1,1,bf16]>"
     ],
     "input_layouts": [
       {
         "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 256 + d1 + d2, d3)",
+        "mapping_to": "(d0 * 64 + d1 + d2, d3)",
         "memory_config": [
-          8,
+          2,
           1,
           "tile<32x32, bf16>",
           "dram"
@@ -141,9 +3130,9 @@
       },
       {
         "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 256 + d1 + d2, d3)",
+        "mapping_to": "(d0 * 64 + d1 + d2, d3)",
         "memory_config": [
-          8,
+          2,
           1,
           "tile<32x32, bf16>",
           "dram"
@@ -151,9 +3140,9 @@
       },
       {
         "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 256 + d1 + d2, d3)",
+        "mapping_to": "(d0 * 64 + d1 + d2, d3)",
         "memory_config": [
-          8,
+          2,
           1,
           "tile<32x32, bf16>",
           "dram"
@@ -164,59 +3153,59 @@
       "operandSegmentSizes": "array<i32: 2, 1>"
     },
     "output_shapes": [
-      "tensor<[1,256,1,1,bf16]>"
+      "tensor<[1,64,1,1,bf16]>"
     ],
     "output_layouts": [
       {
         "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 256 + d1 + d2, d3)",
+        "mapping_to": "(d0 * 64 + d1 + d2, d3)",
         "memory_config": [
-          8,
+          2,
           1,
           "tile<32x32, bf16>",
           "dram"
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.04,
-    "atol": "0.70"
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
   },
   {
     "name": "ttnn.subtract",
     "input_shapes": [
-      "tensor<[1,128,1,1,bf16]>",
-      "tensor<[1,128,1,1,bf16]>",
-      "tensor<[1,128,1,1,bf16]>"
+      "tensor<[1,64,240,320,f32]>",
+      "tensor<[1,64,240,320,f32]>",
+      "tensor<[1,64,240,320,f32]>"
     ],
     "input_layouts": [
       {
         "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 128 + d1 + d2, d3)",
+        "mapping_to": "(d0 * 15360 + d1 * 240 + d2, d3)",
         "memory_config": [
-          4,
-          1,
-          "tile<32x32, bf16>",
+          480,
+          10,
+          "tile<32x32, f32>",
           "dram"
         ]
       },
       {
         "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 128 + d1 + d2, d3)",
+        "mapping_to": "(d0 * 15360 + d1 * 240 + d2, d3)",
         "memory_config": [
-          4,
-          1,
-          "tile<32x32, bf16>",
+          480,
+          10,
+          "tile<32x32, f32>",
           "dram"
         ]
       },
       {
         "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 128 + d1 + d2, d3)",
+        "mapping_to": "(d0 * 15360 + d1 * 240 + d2, d3)",
         "memory_config": [
-          4,
-          1,
-          "tile<32x32, bf16>",
+          480,
+          10,
+          "tile<32x32, f32>",
           "dram"
         ]
       }
@@ -225,59 +3214,59 @@
       "operandSegmentSizes": "array<i32: 2, 1>"
     },
     "output_shapes": [
-      "tensor<[1,128,1,1,bf16]>"
+      "tensor<[1,64,240,320,f32]>"
     ],
     "output_layouts": [
       {
         "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 128 + d1 + d2, d3)",
+        "mapping_to": "(d0 * 15360 + d1 * 240 + d2, d3)",
         "memory_config": [
-          4,
-          1,
-          "tile<32x32, bf16>",
+          480,
+          10,
+          "tile<32x32, f32>",
           "dram"
         ]
       }
     ],
     "runs_on_ttnn": "yes",
-    "pcc": -0.12,
-    "atol": "0.74"
+    "pcc": 1.0,
+    "atol": 0.0
   },
   {
     "name": "ttnn.subtract",
     "input_shapes": [
-      "tensor<[1,512,1,1,bf16]>",
-      "tensor<[1,512,1,1,bf16]>",
-      "tensor<[1,512,1,1,bf16]>"
+      "tensor<[1,64,240,320,f32]>",
+      "tensor<[1,64,240,320,f32]>",
+      "tensor<[1,64,240,320,f32]>"
     ],
     "input_layouts": [
       {
         "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 512 + d1 + d2, d3)",
+        "mapping_to": "(d0 * 15360 + d1 * 240 + d2, d3)",
         "memory_config": [
-          16,
-          1,
-          "tile<32x32, bf16>",
+          480,
+          10,
+          "tile<32x32, f32>",
           "dram"
         ]
       },
       {
         "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 512 + d1 + d2, d3)",
+        "mapping_to": "(d0 * 15360 + d1 * 240 + d2, d3)",
         "memory_config": [
-          16,
-          1,
-          "tile<32x32, bf16>",
+          480,
+          10,
+          "tile<32x32, f32>",
           "dram"
         ]
       },
       {
         "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 512 + d1 + d2, d3)",
+        "mapping_to": "(d0 * 15360 + d1 * 240 + d2, d3)",
         "memory_config": [
-          16,
-          1,
-          "tile<32x32, bf16>",
+          480,
+          10,
+          "tile<32x32, f32>",
           "dram"
         ]
       }
@@ -286,59 +3275,59 @@
       "operandSegmentSizes": "array<i32: 2, 1>"
     },
     "output_shapes": [
-      "tensor<[1,512,1,1,bf16]>"
+      "tensor<[1,64,240,320,f32]>"
     ],
     "output_layouts": [
       {
         "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 512 + d1 + d2, d3)",
+        "mapping_to": "(d0 * 15360 + d1 * 240 + d2, d3)",
         "memory_config": [
-          16,
-          1,
-          "tile<32x32, bf16>",
+          480,
+          10,
+          "tile<32x32, f32>",
           "dram"
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.05,
-    "atol": "142139126502390906331022337012400128.00"
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
   },
   {
     "name": "ttnn.subtract",
     "input_shapes": [
-      "tensor<[1,1024,1,1,bf16]>",
-      "tensor<[1,1024,1,1,bf16]>",
-      "tensor<[1,1024,1,1,bf16]>"
+      "tensor<[1,64,30,40,f32]>",
+      "tensor<[1,64,30,40,f32]>",
+      "tensor<[1,64,30,40,f32]>"
     ],
     "input_layouts": [
       {
         "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 1024 + d1 + d2, d3)",
+        "mapping_to": "(d0 * 1920 + d1 * 30 + d2, d3)",
         "memory_config": [
-          32,
-          1,
-          "tile<32x32, bf16>",
+          60,
+          2,
+          "tile<32x32, f32>",
           "dram"
         ]
       },
       {
         "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 1024 + d1 + d2, d3)",
+        "mapping_to": "(d0 * 1920 + d1 * 30 + d2, d3)",
         "memory_config": [
-          32,
-          1,
-          "tile<32x32, bf16>",
+          60,
+          2,
+          "tile<32x32, f32>",
           "dram"
         ]
       },
       {
         "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 1024 + d1 + d2, d3)",
+        "mapping_to": "(d0 * 1920 + d1 * 30 + d2, d3)",
         "memory_config": [
-          32,
-          1,
-          "tile<32x32, bf16>",
+          60,
+          2,
+          "tile<32x32, f32>",
           "dram"
         ]
       }
@@ -347,59 +3336,59 @@
       "operandSegmentSizes": "array<i32: 2, 1>"
     },
     "output_shapes": [
-      "tensor<[1,1024,1,1,bf16]>"
+      "tensor<[1,64,30,40,f32]>"
     ],
     "output_layouts": [
       {
         "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 1024 + d1 + d2, d3)",
+        "mapping_to": "(d0 * 1920 + d1 * 30 + d2, d3)",
         "memory_config": [
-          32,
-          1,
-          "tile<32x32, bf16>",
+          60,
+          2,
+          "tile<32x32, f32>",
           "dram"
         ]
       }
     ],
     "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": "1.01"
+    "pcc": 1.0,
+    "atol": 0.0
   },
   {
     "name": "ttnn.subtract",
     "input_shapes": [
-      "tensor<[1,2048,1,1,bf16]>",
-      "tensor<[1,2048,1,1,bf16]>",
-      "tensor<[1,2048,1,1,bf16]>"
+      "tensor<[1,64,30,40,f32]>",
+      "tensor<[1,64,30,40,f32]>",
+      "tensor<[1,64,30,40,f32]>"
     ],
     "input_layouts": [
       {
         "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 2048 + d1 + d2, d3)",
+        "mapping_to": "(d0 * 1920 + d1 * 30 + d2, d3)",
         "memory_config": [
-          64,
-          1,
-          "tile<32x32, bf16>",
+          60,
+          2,
+          "tile<32x32, f32>",
           "dram"
         ]
       },
       {
         "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 2048 + d1 + d2, d3)",
+        "mapping_to": "(d0 * 1920 + d1 * 30 + d2, d3)",
         "memory_config": [
-          64,
-          1,
-          "tile<32x32, bf16>",
+          60,
+          2,
+          "tile<32x32, f32>",
           "dram"
         ]
       },
       {
         "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 2048 + d1 + d2, d3)",
+        "mapping_to": "(d0 * 1920 + d1 * 30 + d2, d3)",
         "memory_config": [
-          64,
-          1,
-          "tile<32x32, bf16>",
+          60,
+          2,
+          "tile<32x32, f32>",
           "dram"
         ]
       }
@@ -408,35 +3397,279 @@
       "operandSegmentSizes": "array<i32: 2, 1>"
     },
     "output_shapes": [
-      "tensor<[1,2048,1,1,bf16]>"
+      "tensor<[1,64,30,40,f32]>"
     ],
     "output_layouts": [
       {
         "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 2048 + d1 + d2, d3)",
+        "mapping_to": "(d0 * 1920 + d1 * 30 + d2, d3)",
         "memory_config": [
-          64,
-          1,
-          "tile<32x32, bf16>",
+          60,
+          2,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,64,480,640,f32]>",
+      "tensor<[1,64,480,640,f32]>",
+      "tensor<[1,64,480,640,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 30720 + d1 * 480 + d2, d3)",
+        "memory_config": [
+          960,
+          20,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 30720 + d1 * 480 + d2, d3)",
+        "memory_config": [
+          960,
+          20,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 30720 + d1 * 480 + d2, d3)",
+        "memory_config": [
+          960,
+          20,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,64,480,640,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 30720 + d1 * 480 + d2, d3)",
+        "memory_config": [
+          960,
+          20,
+          "tile<32x32, f32>",
           "dram"
         ]
       }
     ],
     "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": "1.38"
+    "pcc": 1.0,
+    "atol": 0.0
   },
   {
     "name": "ttnn.subtract",
     "input_shapes": [
-      "tensor<[6,i32]>",
-      "tensor<[6,i32]>",
-      "tensor<[6,i32]>"
+      "tensor<[1,64,480,640,f32]>",
+      "tensor<[1,64,480,640,f32]>",
+      "tensor<[1,64,480,640,f32]>"
     ],
     "input_layouts": [
       {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 30720 + d1 * 480 + d2, d3)",
+        "memory_config": [
+          960,
+          20,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 30720 + d1 * 480 + d2, d3)",
+        "memory_config": [
+          960,
+          20,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 30720 + d1 * 480 + d2, d3)",
+        "memory_config": [
+          960,
+          20,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,64,480,640,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 30720 + d1 * 480 + d2, d3)",
+        "memory_config": [
+          960,
+          20,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,64,60,80,f32]>",
+      "tensor<[1,64,60,80,f32]>",
+      "tensor<[1,64,60,80,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 3840 + d1 * 60 + d2, d3)",
+        "memory_config": [
+          120,
+          3,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 3840 + d1 * 60 + d2, d3)",
+        "memory_config": [
+          120,
+          3,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 3840 + d1 * 60 + d2, d3)",
+        "memory_config": [
+          120,
+          3,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,64,60,80,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 3840 + d1 * 60 + d2, d3)",
+        "memory_config": [
+          120,
+          3,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": 0.0
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,64,60,80,f32]>",
+      "tensor<[1,64,60,80,f32]>",
+      "tensor<[1,64,60,80,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 3840 + d1 * 60 + d2, d3)",
+        "memory_config": [
+          120,
+          3,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 3840 + d1 * 60 + d2, d3)",
+        "memory_config": [
+          120,
+          3,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 3840 + d1 * 60 + d2, d3)",
+        "memory_config": [
+          120,
+          3,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[1,64,60,80,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 3840 + d1 * 60 + d2, d3)",
+        "memory_config": [
+          120,
+          3,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[1,6,i32]>",
+      "tensor<[1,6,i32]>",
+      "tensor<[1,6,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
         "memory_config": [
           1,
           1,
@@ -445,8 +3678,8 @@
         ]
       },
       {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
         "memory_config": [
           1,
           1,
@@ -455,8 +3688,8 @@
         ]
       },
       {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
         "memory_config": [
           1,
           1,
@@ -469,12 +3702,12 @@
       "operandSegmentSizes": "array<i32: 2, 1>"
     },
     "output_shapes": [
-      "tensor<[6,i32]>"
+      "tensor<[1,6,i32]>"
     ],
     "output_layouts": [
       {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
         "memory_config": [
           1,
           1,
@@ -544,7 +3777,495 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[240,1,f32]>",
+      "tensor<[240,1,f32]>",
+      "tensor<[240,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[240,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": -0.45,
+    "atol": 119.0
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[240,1,f32]>",
+      "tensor<[240,1,f32]>",
+      "tensor<[240,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[240,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          8,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[27,f32]>",
+      "tensor<[27,f32]>",
+      "tensor<[27,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[27,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": 25.0
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[27,f32]>",
+      "tensor<[27,f32]>",
+      "tensor<[27,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[27,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[27,1,f32]>",
+      "tensor<[27,1,f32]>",
+      "tensor<[27,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[27,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": 1.0,
+    "atol": 25.0
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[27,1,f32]>",
+      "tensor<[27,1,f32]>",
+      "tensor<[27,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[27,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[30,1,f32]>",
+      "tensor<[30,1,f32]>",
+      "tensor<[30,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[30,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "yes",
+    "pcc": -0.27,
+    "atol": 14.0
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[30,1,f32]>",
+      "tensor<[30,1,f32]>",
+      "tensor<[30,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[30,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
     "pcc": NaN,
     "atol": NaN
   },
@@ -607,41 +4328,41 @@
     ],
     "runs_on_ttnn": "yes",
     "pcc": 1.0,
-    "atol": "319.00"
+    "atol": 319.0
   },
   {
     "name": "ttnn.subtract",
     "input_shapes": [
-      "tensor<[1,3,320,320,f32]>",
-      "tensor<[1,3,320,320,f32]>",
-      "tensor<[1,3,320,320,f32]>"
+      "tensor<[320,f32]>",
+      "tensor<[320,f32]>",
+      "tensor<[320,f32]>"
     ],
     "input_layouts": [
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 960 + d1 * 320 + d2, d3)",
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
         "memory_config": [
-          30,
+          1,
           10,
           "tile<32x32, f32>",
           "dram"
         ]
       },
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 960 + d1 * 320 + d2, d3)",
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
         "memory_config": [
-          30,
+          1,
           10,
           "tile<32x32, f32>",
           "dram"
         ]
       },
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 960 + d1 * 320 + d2, d3)",
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
         "memory_config": [
-          30,
+          1,
           10,
           "tile<32x32, f32>",
           "dram"
@@ -652,23 +4373,23 @@
       "operandSegmentSizes": "array<i32: 2, 1>"
     },
     "output_shapes": [
-      "tensor<[1,3,320,320,f32]>"
+      "tensor<[320,f32]>"
     ],
     "output_layouts": [
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 960 + d1 * 320 + d2, d3)",
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
         "memory_config": [
-          30,
+          1,
           10,
           "tile<32x32, f32>",
           "dram"
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": "0.00"
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
   },
   {
     "name": "ttnn.subtract",
@@ -729,21 +4450,21 @@
     ],
     "runs_on_ttnn": "yes",
     "pcc": 1.0,
-    "atol": "319.00"
+    "atol": 319.0
   },
   {
     "name": "ttnn.subtract",
     "input_shapes": [
-      "tensor<[3234,2,f32]>",
-      "tensor<[3234,2,f32]>",
-      "tensor<[3234,2,f32]>"
+      "tensor<[320,1,f32]>",
+      "tensor<[320,1,f32]>",
+      "tensor<[320,1,f32]>"
     ],
     "input_layouts": [
       {
         "mapping_from": "(d0, d1)",
         "mapping_to": "(d0, d1)",
         "memory_config": [
-          102,
+          10,
           1,
           "tile<32x32, f32>",
           "dram"
@@ -753,7 +4474,7 @@
         "mapping_from": "(d0, d1)",
         "mapping_to": "(d0, d1)",
         "memory_config": [
-          102,
+          10,
           1,
           "tile<32x32, f32>",
           "dram"
@@ -763,7 +4484,7 @@
         "mapping_from": "(d0, d1)",
         "mapping_to": "(d0, d1)",
         "memory_config": [
-          102,
+          10,
           1,
           "tile<32x32, f32>",
           "dram"
@@ -774,23 +4495,23 @@
       "operandSegmentSizes": "array<i32: 2, 1>"
     },
     "output_shapes": [
-      "tensor<[3234,2,f32]>"
+      "tensor<[320,1,f32]>"
     ],
     "output_layouts": [
       {
         "mapping_from": "(d0, d1)",
         "mapping_to": "(d0, d1)",
         "memory_config": [
-          102,
+          10,
           1,
           "tile<32x32, f32>",
           "dram"
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.32,
-    "atol": "0.86"
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
   },
   {
     "name": "ttnn.subtract",
@@ -851,7 +4572,68 @@
     ],
     "runs_on_ttnn": "yes",
     "pcc": 0.06,
-    "atol": "548.24"
+    "atol": 548.24
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[3234,f32]>",
+      "tensor<[3234,f32]>",
+      "tensor<[3234,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          102,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          102,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          102,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[3234,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          102,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
   },
   {
     "name": "ttnn.subtract",
@@ -912,346 +4694,41 @@
     ],
     "runs_on_ttnn": "yes",
     "pcc": 1.0,
-    "atol": "0.36"
+    "atol": 0.36
   },
   {
     "name": "ttnn.subtract",
     "input_shapes": [
-      "tensor<[45,i32]>",
-      "tensor<[45,i32]>",
-      "tensor<[45,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          2,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          2,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          2,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[45,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          2,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[1,45,i32]>",
-      "tensor<[1,45,i32]>",
-      "tensor<[1,45,i32]>"
+      "tensor<[3234,1,f32]>",
+      "tensor<[3234,1,f32]>",
+      "tensor<[3234,1,f32]>"
     ],
     "input_layouts": [
       {
         "mapping_from": "(d0, d1)",
         "mapping_to": "(d0, d1)",
         "memory_config": [
-          1,
-          2,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          2,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          2,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[1,45,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          2,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[1,192,i32]>",
-      "tensor<[1,192,i32]>",
-      "tensor<[1,192,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          6,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          6,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          6,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[1,192,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          6,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[19,i32]>",
-      "tensor<[19,i32]>",
-      "tensor<[19,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[19,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[1,32,i32]>",
-      "tensor<[1,32,i32]>",
-      "tensor<[1,32,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[1,32,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[1,16,1,1,f32]>",
-      "tensor<[1,16,1,1,f32]>",
-      "tensor<[1,16,1,1,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 16 + d1 + d2, d3)",
-        "memory_config": [
-          1,
+          102,
           1,
           "tile<32x32, f32>",
           "dram"
         ]
       },
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 16 + d1 + d2, d3)",
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
         "memory_config": [
-          1,
+          102,
           1,
           "tile<32x32, f32>",
           "dram"
         ]
       },
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 16 + d1 + d2, d3)",
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
         "memory_config": [
-          1,
+          102,
           1,
           "tile<32x32, f32>",
           "dram"
@@ -1262,59 +4739,59 @@
       "operandSegmentSizes": "array<i32: 2, 1>"
     },
     "output_shapes": [
-      "tensor<[1,16,1,1,f32]>"
+      "tensor<[3234,1,f32]>"
     ],
     "output_layouts": [
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 16 + d1 + d2, d3)",
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
         "memory_config": [
-          1,
+          102,
           1,
           "tile<32x32, f32>",
           "dram"
         ]
       }
     ],
-    "runs_on_ttnn": "no",
+    "runs_on_ttnn": "N/A",
     "pcc": NaN,
     "atol": NaN
   },
   {
     "name": "ttnn.subtract",
     "input_shapes": [
-      "tensor<[1,i32]>",
-      "tensor<[1,i32]>",
-      "tensor<[1,i32]>"
+      "tensor<[3234,2,f32]>",
+      "tensor<[3234,2,f32]>",
+      "tensor<[3234,2,f32]>"
     ],
     "input_layouts": [
       {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
         "memory_config": [
+          102,
           1,
-          1,
-          "tile<32x32, u32>",
+          "tile<32x32, f32>",
           "dram"
         ]
       },
       {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
         "memory_config": [
+          102,
           1,
-          1,
-          "tile<32x32, u32>",
+          "tile<32x32, f32>",
           "dram"
         ]
       },
       {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
         "memory_config": [
+          102,
           1,
-          1,
-          "tile<32x32, u32>",
+          "tile<32x32, f32>",
           "dram"
         ]
       }
@@ -1323,118 +4800,57 @@
       "operandSegmentSizes": "array<i32: 2, 1>"
     },
     "output_shapes": [
-      "tensor<[1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[1,1,i32]>",
-      "tensor<[1,1,i32]>",
-      "tensor<[1,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[1,1,i32]>"
+      "tensor<[3234,2,f32]>"
     ],
     "output_layouts": [
       {
         "mapping_from": "(d0, d1)",
         "mapping_to": "(d0, d1)",
         "memory_config": [
+          102,
           1,
-          1,
-          "tile<32x32, u32>",
+          "tile<32x32, f32>",
           "dram"
         ]
       }
     ],
     "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": "0.00"
+    "pcc": 0.32,
+    "atol": 0.86
   },
   {
     "name": "ttnn.subtract",
     "input_shapes": [
-      "tensor<[1,8,1,1,f32]>",
-      "tensor<[1,8,1,1,f32]>",
-      "tensor<[1,8,1,1,f32]>"
+      "tensor<[3234,2,f32]>",
+      "tensor<[3234,2,f32]>",
+      "tensor<[3234,2,f32]>"
     ],
     "input_layouts": [
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 8 + d1 + d2, d3)",
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
         "memory_config": [
-          1,
+          102,
           1,
           "tile<32x32, f32>",
           "dram"
         ]
       },
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 8 + d1 + d2, d3)",
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
         "memory_config": [
-          1,
+          102,
           1,
           "tile<32x32, f32>",
           "dram"
         ]
       },
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 8 + d1 + d2, d3)",
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
         "memory_config": [
-          1,
+          102,
           1,
           "tile<32x32, f32>",
           "dram"
@@ -1445,204 +4861,21 @@
       "operandSegmentSizes": "array<i32: 2, 1>"
     },
     "output_shapes": [
-      "tensor<[1,8,1,1,f32]>"
+      "tensor<[3234,2,f32]>"
     ],
     "output_layouts": [
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 8 + d1 + d2, d3)",
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
         "memory_config": [
-          1,
+          102,
           1,
           "tile<32x32, f32>",
           "dram"
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[1,i32]>",
-      "tensor<[1,i32]>",
-      "tensor<[1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[1,12,1,1,f32]>",
-      "tensor<[1,12,1,1,f32]>",
-      "tensor<[1,12,1,1,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 12 + d1 + d2, d3)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 12 + d1 + d2, d3)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 12 + d1 + d2, d3)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[1,12,1,1,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 12 + d1 + d2, d3)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[1,i32]>",
-      "tensor<[1,i32]>",
-      "tensor<[1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "no",
+    "runs_on_ttnn": "N/A",
     "pcc": NaN,
     "atol": NaN
   },
@@ -1705,41 +4938,41 @@
     ],
     "runs_on_ttnn": "yes",
     "pcc": -0.32,
-    "atol": "19.00"
+    "atol": 19.0
   },
   {
     "name": "ttnn.subtract",
     "input_shapes": [
-      "tensor<[1,64,30,40,f32]>",
-      "tensor<[1,64,30,40,f32]>",
-      "tensor<[1,64,30,40,f32]>"
+      "tensor<[40,f32]>",
+      "tensor<[40,f32]>",
+      "tensor<[40,f32]>"
     ],
     "input_layouts": [
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 1920 + d1 * 30 + d2, d3)",
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
         "memory_config": [
-          60,
+          1,
           2,
           "tile<32x32, f32>",
           "dram"
         ]
       },
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 1920 + d1 * 30 + d2, d3)",
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
         "memory_config": [
-          60,
+          1,
           2,
           "tile<32x32, f32>",
           "dram"
         ]
       },
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 1920 + d1 * 30 + d2, d3)",
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
         "memory_config": [
-          60,
+          1,
           2,
           "tile<32x32, f32>",
           "dram"
@@ -1750,47 +4983,159 @@
       "operandSegmentSizes": "array<i32: 2, 1>"
     },
     "output_shapes": [
-      "tensor<[1,64,30,40,f32]>"
+      "tensor<[40,f32]>"
     ],
     "output_layouts": [
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 1920 + d1 * 30 + d2, d3)",
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
         "memory_config": [
-          60,
+          1,
           2,
           "tile<32x32, f32>",
           "dram"
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": "0.00"
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
   },
   {
     "name": "ttnn.subtract",
     "input_shapes": [
-      "tensor<[30,1,f32]>",
-      "tensor<[30,1,f32]>",
-      "tensor<[30,1,f32]>"
+      "tensor<[45,i32]>",
+      "tensor<[45,i32]>",
+      "tensor<[45,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[45,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[45,i32]>",
+      "tensor<[45,i32]>",
+      "tensor<[45,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[45,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[480,1,f32]>",
+      "tensor<[480,1,f32]>",
+      "tensor<[480,1,f32]>"
     ],
     "input_layouts": [
       {
         "mapping_from": "(d0, d1)",
         "mapping_to": "(d0, d1)",
         "memory_config": [
-          1,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
+          15,
           1,
           "tile<32x32, f32>",
           "dram"
@@ -1800,7 +5145,17 @@
         "mapping_from": "(d0, d1)",
         "mapping_to": "(d0, d1)",
         "memory_config": [
+          15,
           1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          15,
           1,
           "tile<32x32, f32>",
           "dram"
@@ -1811,14 +5166,14 @@
       "operandSegmentSizes": "array<i32: 2, 1>"
     },
     "output_shapes": [
-      "tensor<[30,1,f32]>"
+      "tensor<[480,1,f32]>"
     ],
     "output_layouts": [
       {
         "mapping_from": "(d0, d1)",
         "mapping_to": "(d0, d1)",
         "memory_config": [
-          1,
+          15,
           1,
           "tile<32x32, f32>",
           "dram"
@@ -1826,43 +5181,43 @@
       }
     ],
     "runs_on_ttnn": "yes",
-    "pcc": -0.27,
-    "atol": "14.00"
+    "pcc": -0.47,
+    "atol": 239.0
   },
   {
     "name": "ttnn.subtract",
     "input_shapes": [
-      "tensor<[80,f32]>",
-      "tensor<[80,f32]>",
-      "tensor<[80,f32]>"
+      "tensor<[480,1,f32]>",
+      "tensor<[480,1,f32]>",
+      "tensor<[480,1,f32]>"
     ],
     "input_layouts": [
       {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
         "memory_config": [
+          15,
           1,
-          3,
           "tile<32x32, f32>",
           "dram"
         ]
       },
       {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
         "memory_config": [
+          15,
           1,
-          3,
           "tile<32x32, f32>",
           "dram"
         ]
       },
       {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
         "memory_config": [
+          15,
           1,
-          3,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -1872,59 +5227,59 @@
       "operandSegmentSizes": "array<i32: 2, 1>"
     },
     "output_shapes": [
-      "tensor<[80,f32]>"
+      "tensor<[480,1,f32]>"
     ],
     "output_layouts": [
       {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
         "memory_config": [
+          15,
           1,
-          3,
           "tile<32x32, f32>",
           "dram"
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.4,
-    "atol": "39.00"
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
   },
   {
     "name": "ttnn.subtract",
     "input_shapes": [
-      "tensor<[1,64,60,80,f32]>",
-      "tensor<[1,64,60,80,f32]>",
-      "tensor<[1,64,60,80,f32]>"
+      "tensor<[5,i32]>",
+      "tensor<[5,i32]>",
+      "tensor<[5,i32]>"
     ],
     "input_layouts": [
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 3840 + d1 * 60 + d2, d3)",
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
         "memory_config": [
-          120,
-          3,
-          "tile<32x32, f32>",
+          1,
+          1,
+          "tile<32x32, u32>",
           "dram"
         ]
       },
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 3840 + d1 * 60 + d2, d3)",
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
         "memory_config": [
-          120,
-          3,
-          "tile<32x32, f32>",
+          1,
+          1,
+          "tile<32x32, u32>",
           "dram"
         ]
       },
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 3840 + d1 * 60 + d2, d3)",
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
         "memory_config": [
-          120,
-          3,
-          "tile<32x32, f32>",
+          1,
+          1,
+          "tile<32x32, u32>",
           "dram"
         ]
       }
@@ -1933,23 +5288,84 @@
       "operandSegmentSizes": "array<i32: 2, 1>"
     },
     "output_shapes": [
-      "tensor<[1,64,60,80,f32]>"
+      "tensor<[5,i32]>"
     ],
     "output_layouts": [
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 3840 + d1 * 60 + d2, d3)",
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
         "memory_config": [
-          120,
-          3,
-          "tile<32x32, f32>",
+          1,
+          1,
+          "tile<32x32, u32>",
           "dram"
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": "0.00"
+    "runs_on_ttnn": "no",
+    "pcc": NaN,
+    "atol": NaN
+  },
+  {
+    "name": "ttnn.subtract",
+    "input_shapes": [
+      "tensor<[5,i32]>",
+      "tensor<[5,i32]>",
+      "tensor<[5,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "operandSegmentSizes": "array<i32: 2, 1>"
+    },
+    "output_shapes": [
+      "tensor<[5,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
   },
   {
     "name": "ttnn.subtract",
@@ -2010,143 +5426,21 @@
     ],
     "runs_on_ttnn": "yes",
     "pcc": -0.37,
-    "atol": "29.00"
+    "atol": 29.0
   },
   {
     "name": "ttnn.subtract",
     "input_shapes": [
-      "tensor<[160,f32]>",
-      "tensor<[160,f32]>",
-      "tensor<[160,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          5,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          5,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          5,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[160,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          5,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.44,
-    "atol": "79.00"
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[1,64,120,160,f32]>",
-      "tensor<[1,64,120,160,f32]>",
-      "tensor<[1,64,120,160,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 7680 + d1 * 120 + d2, d3)",
-        "memory_config": [
-          240,
-          5,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 7680 + d1 * 120 + d2, d3)",
-        "memory_config": [
-          240,
-          5,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 7680 + d1 * 120 + d2, d3)",
-        "memory_config": [
-          240,
-          5,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[1,64,120,160,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 7680 + d1 * 120 + d2, d3)",
-        "memory_config": [
-          240,
-          5,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": "0.00"
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[120,1,f32]>",
-      "tensor<[120,1,f32]>",
-      "tensor<[120,1,f32]>"
+      "tensor<[60,1,f32]>",
+      "tensor<[60,1,f32]>",
+      "tensor<[60,1,f32]>"
     ],
     "input_layouts": [
       {
         "mapping_from": "(d0, d1)",
         "mapping_to": "(d0, d1)",
         "memory_config": [
-          4,
+          2,
           1,
           "tile<32x32, f32>",
           "dram"
@@ -2156,7 +5450,7 @@
         "mapping_from": "(d0, d1)",
         "mapping_to": "(d0, d1)",
         "memory_config": [
-          4,
+          2,
           1,
           "tile<32x32, f32>",
           "dram"
@@ -2166,7 +5460,7 @@
         "mapping_from": "(d0, d1)",
         "mapping_to": "(d0, d1)",
         "memory_config": [
-          4,
+          2,
           1,
           "tile<32x32, f32>",
           "dram"
@@ -2177,206 +5471,23 @@
       "operandSegmentSizes": "array<i32: 2, 1>"
     },
     "output_shapes": [
-      "tensor<[120,1,f32]>"
+      "tensor<[60,1,f32]>"
     ],
     "output_layouts": [
       {
         "mapping_from": "(d0, d1)",
         "mapping_to": "(d0, d1)",
         "memory_config": [
-          4,
+          2,
           1,
           "tile<32x32, f32>",
           "dram"
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.43,
-    "atol": "59.00"
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[320,f32]>",
-      "tensor<[320,f32]>",
-      "tensor<[320,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          10,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          10,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          10,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[320,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          10,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.46,
-    "atol": "159.00"
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[1,64,240,320,f32]>",
-      "tensor<[1,64,240,320,f32]>",
-      "tensor<[1,64,240,320,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 15360 + d1 * 240 + d2, d3)",
-        "memory_config": [
-          480,
-          10,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 15360 + d1 * 240 + d2, d3)",
-        "memory_config": [
-          480,
-          10,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 15360 + d1 * 240 + d2, d3)",
-        "memory_config": [
-          480,
-          10,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[1,64,240,320,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 15360 + d1 * 240 + d2, d3)",
-        "memory_config": [
-          480,
-          10,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": "0.00"
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[240,1,f32]>",
-      "tensor<[240,1,f32]>",
-      "tensor<[240,1,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          8,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          8,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          8,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[240,1,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          8,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.45,
-    "atol": "119.00"
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
+    "atol": NaN
   },
   {
     "name": "ttnn.subtract",
@@ -2437,41 +5548,41 @@
     ],
     "runs_on_ttnn": "yes",
     "pcc": -0.47,
-    "atol": "319.00"
+    "atol": 319.0
   },
   {
     "name": "ttnn.subtract",
     "input_shapes": [
-      "tensor<[1,64,480,640,f32]>",
-      "tensor<[1,64,480,640,f32]>",
-      "tensor<[1,64,480,640,f32]>"
+      "tensor<[640,f32]>",
+      "tensor<[640,f32]>",
+      "tensor<[640,f32]>"
     ],
     "input_layouts": [
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 30720 + d1 * 480 + d2, d3)",
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
         "memory_config": [
-          960,
+          1,
           20,
           "tile<32x32, f32>",
           "dram"
         ]
       },
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 30720 + d1 * 480 + d2, d3)",
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
         "memory_config": [
-          960,
+          1,
           20,
           "tile<32x32, f32>",
           "dram"
         ]
       },
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 30720 + d1 * 480 + d2, d3)",
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
         "memory_config": [
-          960,
+          1,
           20,
           "tile<32x32, f32>",
           "dram"
@@ -2482,335 +5593,30 @@
       "operandSegmentSizes": "array<i32: 2, 1>"
     },
     "output_shapes": [
-      "tensor<[1,64,480,640,f32]>"
+      "tensor<[640,f32]>"
     ],
     "output_layouts": [
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 30720 + d1 * 480 + d2, d3)",
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
         "memory_config": [
-          960,
+          1,
           20,
           "tile<32x32, f32>",
           "dram"
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": "0.00"
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[480,1,f32]>",
-      "tensor<[480,1,f32]>",
-      "tensor<[480,1,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          15,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          15,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          15,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[480,1,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          15,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.47,
-    "atol": "239.00"
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[128,f32]>",
-      "tensor<[128,f32]>",
-      "tensor<[128,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          4,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          4,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          4,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[128,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          4,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": "127.00"
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[1,256,128,128,f32]>",
-      "tensor<[1,256,128,128,f32]>",
-      "tensor<[1,256,128,128,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 32768 + d1 * 128 + d2, d3)",
-        "memory_config": [
-          1024,
-          4,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 32768 + d1 * 128 + d2, d3)",
-        "memory_config": [
-          1024,
-          4,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 32768 + d1 * 128 + d2, d3)",
-        "memory_config": [
-          1024,
-          4,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[1,256,128,128,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 32768 + d1 * 128 + d2, d3)",
-        "memory_config": [
-          1024,
-          4,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": "0.00"
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[128,1,f32]>",
-      "tensor<[128,1,f32]>",
-      "tensor<[128,1,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[128,1,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": "127.00"
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[1,6,1,1,f32]>",
-      "tensor<[1,6,1,1,f32]>",
-      "tensor<[1,6,1,1,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 6 + d1 + d2, d3)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 6 + d1 + d2, d3)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 6 + d1 + d2, d3)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[1,6,1,1,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 6 + d1 + d2, d3)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "no",
+    "runs_on_ttnn": "N/A",
     "pcc": NaN,
     "atol": NaN
   },
   {
     "name": "ttnn.subtract",
     "input_shapes": [
-      "tensor<[1,i32]>",
-      "tensor<[1,i32]>",
-      "tensor<[1,i32]>"
+      "tensor<[6,i32]>",
+      "tensor<[6,i32]>",
+      "tensor<[6,i32]>"
     ],
     "input_layouts": [
       {
@@ -2848,7 +5654,7 @@
       "operandSegmentSizes": "array<i32: 2, 1>"
     },
     "output_shapes": [
-      "tensor<[1,i32]>"
+      "tensor<[6,i32]>"
     ],
     "output_layouts": [
       {
@@ -2869,9 +5675,9 @@
   {
     "name": "ttnn.subtract",
     "input_shapes": [
-      "tensor<[27,f32]>",
-      "tensor<[27,f32]>",
-      "tensor<[27,f32]>"
+      "tensor<[6,i32]>",
+      "tensor<[6,i32]>",
+      "tensor<[6,i32]>"
     ],
     "input_layouts": [
       {
@@ -2880,189 +5686,6 @@
         "memory_config": [
           1,
           1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[27,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": "25.00"
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[1,16,27,27,f32]>",
-      "tensor<[1,16,27,27,f32]>",
-      "tensor<[1,16,27,27,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 432 + d1 * 27 + d2, d3)",
-        "memory_config": [
-          14,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 432 + d1 * 27 + d2, d3)",
-        "memory_config": [
-          14,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 432 + d1 * 27 + d2, d3)",
-        "memory_config": [
-          14,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[1,16,27,27,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 432 + d1 * 27 + d2, d3)",
-        "memory_config": [
-          14,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": "0.00"
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[27,1,f32]>",
-      "tensor<[27,1,f32]>",
-      "tensor<[27,1,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[27,1,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": "25.00"
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[197,i32]>",
-      "tensor<[197,i32]>",
-      "tensor<[197,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          7,
           "tile<32x32, u32>",
           "dram"
         ]
@@ -3072,7 +5695,7 @@
         "mapping_to": "(0, d0)",
         "memory_config": [
           1,
-          7,
+          1,
           "tile<32x32, u32>",
           "dram"
         ]
@@ -3082,7 +5705,7 @@
         "mapping_to": "(0, d0)",
         "memory_config": [
           1,
-          7,
+          1,
           "tile<32x32, u32>",
           "dram"
         ]
@@ -3092,7 +5715,7 @@
       "operandSegmentSizes": "array<i32: 2, 1>"
     },
     "output_shapes": [
-      "tensor<[197,i32]>"
+      "tensor<[6,i32]>"
     ],
     "output_layouts": [
       {
@@ -3100,50 +5723,50 @@
         "mapping_to": "(0, d0)",
         "memory_config": [
           1,
-          7,
+          1,
           "tile<32x32, u32>",
           "dram"
         ]
       }
     ],
-    "runs_on_ttnn": "no",
+    "runs_on_ttnn": "N/A",
     "pcc": NaN,
     "atol": NaN
   },
   {
     "name": "ttnn.subtract",
     "input_shapes": [
-      "tensor<[1,12,27,27,f32]>",
-      "tensor<[1,12,27,27,f32]>",
-      "tensor<[1,12,27,27,f32]>"
+      "tensor<[80,f32]>",
+      "tensor<[80,f32]>",
+      "tensor<[80,f32]>"
     ],
     "input_layouts": [
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 324 + d1 * 27 + d2, d3)",
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
         "memory_config": [
-          11,
           1,
+          3,
           "tile<32x32, f32>",
           "dram"
         ]
       },
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 324 + d1 * 27 + d2, d3)",
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
         "memory_config": [
-          11,
           1,
+          3,
           "tile<32x32, f32>",
           "dram"
         ]
       },
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 324 + d1 * 27 + d2, d3)",
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
         "memory_config": [
-          11,
           1,
+          3,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -3153,30 +5776,30 @@
       "operandSegmentSizes": "array<i32: 2, 1>"
     },
     "output_shapes": [
-      "tensor<[1,12,27,27,f32]>"
+      "tensor<[80,f32]>"
     ],
     "output_layouts": [
       {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 324 + d1 * 27 + d2, d3)",
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
         "memory_config": [
-          11,
           1,
+          3,
           "tile<32x32, f32>",
           "dram"
         ]
       }
     ],
     "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": "0.00"
+    "pcc": -0.4,
+    "atol": 39.0
   },
   {
     "name": "ttnn.subtract",
     "input_shapes": [
-      "tensor<[197,i32]>",
-      "tensor<[197,i32]>",
-      "tensor<[197,i32]>"
+      "tensor<[80,f32]>",
+      "tensor<[80,f32]>",
+      "tensor<[80,f32]>"
     ],
     "input_layouts": [
       {
@@ -3184,8 +5807,8 @@
         "mapping_to": "(0, d0)",
         "memory_config": [
           1,
-          7,
-          "tile<32x32, u32>",
+          3,
+          "tile<32x32, f32>",
           "dram"
         ]
       },
@@ -3194,8 +5817,8 @@
         "mapping_to": "(0, d0)",
         "memory_config": [
           1,
-          7,
-          "tile<32x32, u32>",
+          3,
+          "tile<32x32, f32>",
           "dram"
         ]
       },
@@ -3204,8 +5827,8 @@
         "mapping_to": "(0, d0)",
         "memory_config": [
           1,
-          7,
-          "tile<32x32, u32>",
+          3,
+          "tile<32x32, f32>",
           "dram"
         ]
       }
@@ -3214,7 +5837,7 @@
       "operandSegmentSizes": "array<i32: 2, 1>"
     },
     "output_shapes": [
-      "tensor<[197,i32]>"
+      "tensor<[80,f32]>"
     ],
     "output_layouts": [
       {
@@ -3222,135 +5845,13 @@
         "mapping_to": "(0, d0)",
         "memory_config": [
           1,
-          7,
-          "tile<32x32, u32>",
+          3,
+          "tile<32x32, f32>",
           "dram"
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[5,i32]>",
-      "tensor<[5,i32]>",
-      "tensor<[5,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[5,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
-  },
-  {
-    "name": "ttnn.subtract",
-    "input_shapes": [
-      "tensor<[1,5,i32]>",
-      "tensor<[1,5,i32]>",
-      "tensor<[1,5,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "operandSegmentSizes": "array<i32: 2, 1>"
-    },
-    "output_shapes": [
-      "tensor<[1,5,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "no",
+    "runs_on_ttnn": "N/A",
     "pcc": NaN,
     "atol": NaN
   }

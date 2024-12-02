@@ -35,7 +35,6 @@ import multiprocessing as mp
 import time
 import faulthandler
 import sys
-import json
 
 
 def run_shape_prop(gm, example_inputs):

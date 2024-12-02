@@ -108,7 +108,8 @@ class AllOps:
         # Iterate through all sheets
         for sheet_name in xls.sheet_names:
             # skip the sheet named "All Ops" since all other sheets are parsed
-            if sheet_name == "All Ops":
+            if sheet_name != "All Ops":
+                # disregard any sheet that is not "All Ops" - could be subject to change
                 continue
             # Read the current sheet
             df = pd.read_excel(excel_path, sheet_name=sheet_name)
@@ -155,7 +156,6 @@ class AllOps:
                     self.process_ops(raw_ttnir, status, pcc, atol)
                 else:
                     self.process_ops(raw_ttnnir, status, pcc, atol)
-                print(f"Finished {sheet_name}, {torch_name}")
 
     def process_ops(self, ttnnir_string, status, pcc, atol):
         ttnn_parser = TTNNOps(ttnnir_string)
@@ -264,7 +264,6 @@ class AllOps:
                     file.write(
                         "|------|--------------|---------------|------------|---------------|----------------|--------------|-----|------|\n"
                     )
-
                     # Write each dictionary in the array to the table
                     for item in dict_list:
                         name = item.get("name", "")

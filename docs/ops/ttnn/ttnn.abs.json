@@ -2,8 +2,8 @@
   {
     "name": "ttnn.abs",
     "input_shapes": [
-      "tensor<[10,10,i32]>",
-      "tensor<[10,10,i32]>"
+      "tensor<[15,15,i32]>",
+      "tensor<[15,15,i32]>"
     ],
     "input_layouts": [
       {
@@ -31,7 +31,7 @@
       "operandSegmentSizes": "array<i32: 1, 1>"
     },
     "output_shapes": [
-      "tensor<[10,10,i32]>"
+      "tensor<[15,15,i32]>"
     ],
     "output_layouts": [
       {
@@ -46,7 +46,7 @@
       }
     ],
     "runs_on_ttnn": "yes",
-    "pcc": -0.18,
+    "pcc": -0.27,
     "atol": NaN
   },
   {
@@ -95,8 +95,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.27,
+    "runs_on_ttnn": "N/A",
+    "pcc": NaN,
     "atol": NaN
   }
 ]
