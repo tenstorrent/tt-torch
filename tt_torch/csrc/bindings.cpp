@@ -158,11 +158,24 @@ py::bytes compile_stablehlo_to_bytestream(std::string_view code) {
   return py::bytes(data_str);
 }
 
+std::string bytestream_to_json(py::bytes byte_stream) {
+  std::string data_str = byte_stream;
+  auto binary_ptr = std::shared_ptr<void>(
+      new char[data_str.size()],
+      [](void *ptr) { delete[] static_cast<char *>(ptr); } // Custom deleter
+  );
+  // Copy data into the allocated memory
+  std::memcpy(binary_ptr.get(), data_str.data(), data_str.size());
+  tt::runtime::Binary binary = tt::runtime::Binary(binary_ptr);
+  return binary.asJson();
+}
+
 PYBIND11_MODULE(tt_mlir, m) {
   m.doc() = "tt_mlir";
   py::class_<tt::runtime::Binary>(m, "Binary")
       .def("getProgramInputs", &tt::runtime::Binary::getProgramInputs)
-      .def("getProgramOutputs", &tt::runtime::Binary::getProgramOutputs);
+      .def("getProgramOutputs", &tt::runtime::Binary::getProgramOutputs)
+      .def("asJson", &tt::runtime::Binary::asJson);
   m.def("compile", &compile_stablehlo_to_bytestream,
         "A function that compiles stableHLO to a bytestream");
   m.def("compile_ttir_to_bytestream", &compile_ttir_to_bytestream,
@@ -174,4 +187,6 @@ PYBIND11_MODULE(tt_mlir, m) {
         "Get the current system descriptor");
   m.def("get_num_available_devices", &tt::runtime::getNumAvailableDevices,
         "Get the number of available devices");
+  m.def("bytestream_to_json", &bytestream_to_json,
+        "Convert the bytestream to json");
 }

@@ -71,19 +71,31 @@ class Layout:
         self.parse(layout_str)
 
     def parse(self, layout_str):
-        id_match = re.search(r"#layout\d*", layout_str)
+        # Adjust for the new layout format
+        id_match = re.search(r"#ttnn_layout\d*", layout_str)
         if id_match:
             self.id = id_match.group(0)
 
-        match = re.search(r"#tt\.layout<\((.*?)\) -> \((.*?)\)", layout_str)
-        if match:
-            self.mapping_from = tuple(arg.strip() for arg in match.group(1).split(","))
-            self.mapping_to = tuple(arg.strip() for arg in match.group(2).split(","))
-        else:
-            self.mapping_from = None
-            self.mapping_to = None
+        right_hand = re.search(
+            r"#ttnn_layout\d*\s*=\s*(#ttnn\.ttnn_layout<.*>)", layout_str
+        )
+        if right_hand:
+            layout_content = right_hand.group(1)
+            outermost_match = re.search(r"#ttnn\.ttnn_layout<(.*)>", layout_content)
+            if outermost_match:
+                inner_content = outermost_match.group(1)
+                map_match = re.search(r"\(([^>]*)\)\s*->\s*\(([^>]*)\)", inner_content)
+                if map_match:
+                    self.mapping_from = (
+                        "(" + map_match.group(1).strip() + ")"
+                    )  # Left side of the '->'
+                    self.mapping_to = (
+                        "(" + map_match.group(2).strip() + ")"
+                    )  # Right side of the '->'
 
-        self.undef = "undef" in layout_str
+                else:
+                    self.mapping_from = None
+                    self.mapping_to = None
 
         match = re.search(r"<1x1>, memref<(\d+)x(\d+)x(\w+), #(\w+)>", layout_str)
         if match:
@@ -95,7 +107,7 @@ class Layout:
             )
         else:
             match = re.search(
-                r"memref<(\d+)x(\d+)x!tt.tile<(\d+)x(\d+), (\w+)>, #(\w+)>", layout_str
+                r"memref<(\d+)x(\d+)x!tt\.tile<(\d+)x(\d+), (\w+)>, #(\w+)>", layout_str
             )
             if match:
                 self.memory_config = (
@@ -107,6 +119,7 @@ class Layout:
             else:
                 self.memory_config = None
 
+        # Buffer type detection (still based on "interleaved")
         self.buffer_type = "interleaved" if "interleaved" in layout_str else None
 
 
@@ -132,7 +145,7 @@ class TTNNOps:
         self.system_desc = SystemDesc("".join(system_desc_lines))
 
         # Parse layouts
-        layout_pattern = r"#layout\d* = #tt.layout<(.*)>"
+        layout_pattern = layout_pattern = r"#\w+_layout\d* = #ttnn?\.ttnn_layout<(.*)>"
         for line in lines:
             match = re.search(layout_pattern, line)
             if match:

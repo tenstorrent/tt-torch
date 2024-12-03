@@ -274,6 +274,7 @@ class Executor:
                 if "binary" in result:
                     binary = result["binary"]
                     op.binary = binary
+                    op.json = tt_mlir.bytestream_to_json(binary)
                     op.add_ttnn_graph(result["ttnn"])
                     ttnn_event.set()
                     op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTNN

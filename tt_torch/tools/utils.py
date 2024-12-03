@@ -42,6 +42,8 @@ class Op:
         self.stable_hlo_ops = []
         self.ttir_graph = ""
         self.ttnn_graph = ""
+        self.json = ""
+        self.binary = ""
         self.compilation_status = OpCompilationStatus.NOT_STARTED
         self.parsed_stable_hlo_ops = False
         self.parsed_ttnn_ops = False
@@ -83,6 +85,7 @@ class Op:
             "ttnn_graph": self.ttnn_graph,
             "pcc": pcc,
             "atol": atol,
+            "compiled_json": self.json,
         }
 
     def unique_key(self):

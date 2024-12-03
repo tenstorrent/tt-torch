@@ -105,6 +105,7 @@ def process_json_files():
             "Raw SHLO",
             "Raw TTIR",
             "Raw TTNNIR",
+            "Compiled Json",
             "Compile Error",
             "Trace dump",
         )
@@ -129,6 +130,7 @@ def process_json_files():
                     "ops": value["stable_hlo_ops"],
                     "ttir_graph": value["ttir_graph"],
                     "ttnn_graph": value["ttnn_graph"],
+                    "compiled_json": value["compiled_json"],
                     "key": key,
                     "pcc": value["pcc"],
                     "atol": value["atol"],
@@ -206,6 +208,7 @@ def process_json_files():
                     raw_shlo,
                     op["ttir_graph"],
                     op["ttnn_graph"],
+                    op["compiled_json"],
                     error,
                     trace_dump,
                 ]
@@ -254,6 +257,7 @@ def process_json_files():
         "Raw SHLO",
         "Raw TTIR",
         "Raw TTNNIR",
+        "Compiled JSON",
         "Compile Error",
         "Trace dump",
     )
@@ -280,6 +284,7 @@ def process_json_files():
                     "ops": value["stable_hlo_ops"],
                     "ttir_graph": value["ttir_graph"],
                     "ttnn_graph": value["ttnn_graph"],
+                    "compiled_json": value["compiled_json"],
                     "error": value["error"],
                     "trace_dump": value["trace_dump"],
                 }
@@ -298,6 +303,7 @@ def process_json_files():
             ops = op["ops"]
             ttir_graph = op["ttir_graph"]
             ttnn_graph = op["ttnn_graph"]
+            compiled_json = op["compiled_json"]
             error = op["error"]
             trace_dump = op["trace_dump"]
             row_data = [
@@ -312,6 +318,7 @@ def process_json_files():
                 raw_shlo,
                 ttir_graph,
                 ttnn_graph,
+                compiled_json,
                 error,
                 trace_dump,
             ]
@@ -330,6 +337,7 @@ def process_json_files():
                 raw_shlo,
                 ttir_graph,
                 ttnn_graph,
+                compiled_json,
             ]
             worksheet.write_row(row, 0, row_data)
             worksheet.set_row(row, None, None, {"hidden": True})
