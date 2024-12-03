@@ -41,7 +41,7 @@ jobs:
       id: strings
       shell: bash
       env:
-        job-name: "${{ github.job }} (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
+        job-name: "${{ github.job }} (${{ matrix.build.runs-on }}, ${{ matrix.build.name }}, ${{ matrix.build.test_names }})"
       run: |
         echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
         echo "build-output-dir=$(pwd)/build" >> "$GITHUB_OUTPUT"
@@ -49,7 +49,6 @@ jobs:
         echo "test-output-dir=$(pwd)/results/models/tests/" >> "$GITHUB_OUTPUT"
         # Github job context unfortunately doesn't contain job_id, this is the workaround how to fetch it using GH API
         echo "Expected job name: ${{ env.job-name }}"
-        curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}/jobs" | cat
         JOB_ID=$(curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
           "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}/jobs" | \
           jq -r '.jobs[] | select(.name | contains("${{ env.job-name }}")) | .id ')
