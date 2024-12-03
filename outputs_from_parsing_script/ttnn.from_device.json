@@ -1,0 +1,39 @@
+[
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[1,256,51200,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          256,
+          51200,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[1,256,51200,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          256,
+          51200,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": "N/A",
+    "atol": "N/A"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "name": "ttnn.sum",
+    "input_shapes": [
+      "tensor<[1,256,1024,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          256,
+          1024,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "dim_arg": "[-1 : i32]",
+      "keep_dim": true
+    },
+    "output_shapes": [
+      "tensor<[1,256,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          256,
+          1,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": "N/A",
+    "atol": "N/A"
+  }
+]

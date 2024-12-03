@@ -1,0 +1,61 @@
+[
+  {
+    "name": "ttnn.embedding",
+    "input_shapes": [
+      "tensor<[1,256,i32]>",
+      "tensor<[1,256,1024,f32]>",
+      "tensor<[51200,1024,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          256,
+          "i32",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          256,
+          1024,
+          "f32",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          51200,
+          1024,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[1,256,1024,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          256,
+          1024,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": "N/A",
+    "atol": "N/A"
+  }
+]

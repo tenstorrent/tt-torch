@@ -1,0 +1,587 @@
+[
+  {
+    "name": "ttnn.reshape",
+    "input_shapes": [
+      "tensor<[1,256,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          8,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[1 : i32, 256 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[1,256,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          256,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.reshape",
+    "input_shapes": [
+      "tensor<[1,256,1024,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          256,
+          1024,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[256 : i32, 1024 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[256,1024,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          256,
+          1024,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.reshape",
+    "input_shapes": [
+      "tensor<[256,1024,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          256,
+          1024,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[1 : i32, 256 : i32, 16 : i32, 64 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[1,256,16,64,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 4096 + d1 * 16 + d2, d3)",
+        "memory_config": [
+          4096,
+          64,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.reshape",
+    "input_shapes": [
+      "tensor<[1,256,16,16,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 4096 + d1 * 16 + d2, d3)",
+        "memory_config": [
+          4096,
+          16,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[1 : i32, 256 : i32, 16 : i32, 16 : i32, 1 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[1,256,16,16,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3, d4)",
+        "mapping_to": "(d0 * 65536 + d1 * 256 + d2 * 16 + d3, d4)",
+        "memory_config": [
+          65536,
+          1,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.reshape",
+    "input_shapes": [
+      "tensor<[1,256,16,16,2,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3, d4)",
+        "mapping_to": "(d0 * 65536 + d1 * 256 + d2 * 16 + d3, d4)",
+        "memory_config": [
+          65536,
+          2,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[1 : i32, 256 : i32, 16 : i32, 32 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[1,256,16,32,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 4096 + d1 * 16 + d2, d3)",
+        "memory_config": [
+          4096,
+          32,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.reshape",
+    "input_shapes": [
+      "tensor<[1,16,256,64,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 4096 + d1 * 256 + d2, d3)",
+        "memory_config": [
+          4096,
+          64,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[16 : i32, 256 : i32, 64 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[16,256,64,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          4096,
+          64,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.reshape",
+    "input_shapes": [
+      "tensor<[16,256,256,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          4096,
+          256,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[1 : i32, 16 : i32, 256 : i32, 256 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[1,16,256,256,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 4096 + d1 * 256 + d2, d3)",
+        "memory_config": [
+          4096,
+          256,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.reshape",
+    "input_shapes": [
+      "tensor<[1,256,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          8,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[1 : i32, 1 : i32, 256 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[1,1,256,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          1,
+          256,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.reshape",
+    "input_shapes": [
+      "tensor<[1,1,256,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          1,
+          256,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[1 : i32, 1 : i32, 1 : i32, 256 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,256,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          256,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.reshape",
+    "input_shapes": [
+      "tensor<[1,16,256,256,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 4096 + d1 * 256 + d2, d3)",
+        "memory_config": [
+          4096,
+          256,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[16 : i32, 256 : i32, 256 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[16,256,256,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          4096,
+          256,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.reshape",
+    "input_shapes": [
+      "tensor<[1,16,64,256,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 1024 + d1 * 64 + d2, d3)",
+        "memory_config": [
+          1024,
+          256,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[16 : i32, 64 : i32, 256 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[16,64,256,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 64 + d1, d2)",
+        "memory_config": [
+          1024,
+          256,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.reshape",
+    "input_shapes": [
+      "tensor<[16,256,64,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          4096,
+          64,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[1 : i32, 16 : i32, 256 : i32, 64 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[1,16,256,64,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 4096 + d1 * 256 + d2, d3)",
+        "memory_config": [
+          4096,
+          64,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.reshape",
+    "input_shapes": [
+      "tensor<[1,256,16,64,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 4096 + d1 * 16 + d2, d3)",
+        "memory_config": [
+          4096,
+          64,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[256 : i32, 1024 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[256,1024,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          256,
+          1024,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.reshape",
+    "input_shapes": [
+      "tensor<[256,1024,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          256,
+          1024,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[1 : i32, 256 : i32, 1024 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[1,256,1024,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          256,
+          1024,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.reshape",
+    "input_shapes": [
+      "tensor<[256,4096,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          256,
+          4096,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[1 : i32, 256 : i32, 4096 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[1,256,4096,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          256,
+          4096,
+          "f32",
+          "dram"
+        ]
+      }
+    ],
+    "runs_on_ttnn": "N/A",
+    "pcc": "N/A",
+    "atol": "N/A"
+  }
+]

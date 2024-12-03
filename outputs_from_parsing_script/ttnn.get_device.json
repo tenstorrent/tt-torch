@@ -1,0 +1,17 @@
+[
+  {
+    "name": "ttnn.get_device",
+    "input_shapes": [],
+    "input_layouts": [],
+    "attributes": {
+      "mesh_shape": "#ttnn<mesh_shape 1x1>"
+    },
+    "output_shapes": [
+      "!tt.device<#device>"
+    ],
+    "output_layouts": [],
+    "runs_on_ttnn": "N/A",
+    "pcc": "N/A",
+    "atol": "N/A"
+  }
+]
