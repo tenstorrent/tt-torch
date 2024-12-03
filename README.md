@@ -1,7 +1,9 @@
-Make sure to install
-`sudo apt-get install python3.11-dev python3.11-venv`
+# tt-torch
 
-Steps:
+The tt-torch project requires environment setup from tt-mlir project. https://github.com/tenstorrent/tt-mlir/
+See documentation of tt-mlir and follow Environment setup. https://docs.tenstorrent.com/tt-mlir/build.html
+
+## Steps:
 ```
 source env/activate
 cmake -G Ninja -B build
@@ -9,7 +11,7 @@ cmake --build build
 cmake --install build
 ```
 
-### Pre-Commit
+## Pre-Commit
 Pre-Commit applies a git hook to the local repository such that linting is checked and applied on every `git commit` action. Install from the root of the repository using:
 
 ```bash
