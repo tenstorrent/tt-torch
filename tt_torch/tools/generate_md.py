@@ -423,7 +423,7 @@ if __name__ == "__main__":
         try:
             myOps = AllOps()
             myOps.parse_json(args.json_path)
-            myOps.create_md_files(mdDir)
+            myOps.create_md_files(args.md_dir)
             myOps.save_json_files(os.getcwd())
         except Exception as e:
             print(f"Exception occured at generate_md.py: {e}")
