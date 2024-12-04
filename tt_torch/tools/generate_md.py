@@ -85,6 +85,7 @@ class AllOps:
 
     def parse_json(self, json_path):
         with open(json_path, "r") as file:
+            self.input_filename = os.path.splitext(os.path.basename(json_path))[0]
             json_string = json.load(file)
             if isinstance(json_string, dict):
                 ajs = json_string
@@ -104,6 +105,7 @@ class AllOps:
     def parse_xlsx(self, excel_path):
         # Read all sheets in the Excel file
         xls = pd.ExcelFile(excel_path)
+        self.input_filename = os.path.splitext(os.path.basename(excel_path))[0]
 
         # Iterate through all sheets
         for sheet_name in xls.sheet_names:
@@ -333,6 +335,7 @@ class AllOps:
 
                 # Create a processed item dictionary
                 processed_item = {
+                    "model_name": self.input_filename,
                     "name": item.get("name", ""),
                     "input_shapes": item.get("input_shapes", []),
                     "input_layouts": processed_input_layouts,
@@ -360,7 +363,9 @@ class AllOps:
 
         # Save JSON files
         for key, data in json_data.items():
-            file_path = os.path.join(output_dir, f"{key}.json")
+            file_path = os.path.join(output_dir, self.input_filename, f"{key}.json")
+            # Ensure the directory exists
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
             with open(file_path, "w") as file:
                 json.dump(data, file, indent=2)
                 file.write("\n")  # add a new line at the end of json
@@ -379,11 +384,19 @@ if __name__ == "__main__":
         metavar="FILE",
     )
     parser.add_argument(
-        "--json_path",
-        dest="json_path",
+        "--input_json_path",
+        dest="input_json_path",
         required=False,
         type=validate_file,
         help="the path to model.json file",
+        metavar="FILE",
+    )
+    parser.add_argument(
+        "--input_json_dir",
+        dest="input_json_dir",
+        required=False,
+        type=validate_file,
+        help="the dir to file containing multiple json files",
         metavar="FILE",
     )
     parser.add_argument(
@@ -395,52 +408,85 @@ if __name__ == "__main__":
         metavar="DIR",
     )
     parser.add_argument(
-        "--json_dir",
-        dest="json_dir",
+        "--out_json_dir",
+        dest="out_json_dir",
         required=False,
         type=validate_directory,
         help="the path to the directory where json files will be created.",
         metavar="DIR",
     )
-
+    myOps_list = []  # list to store AllOps objects for each input json file
     args = parser.parse_args()
-    if args.excel_path is None and args.json_path is None:
+    if (
+        args.excel_path is None
+        and args.input_json_path is None
+        and args.input_json_dir is None
+    ):
         # if neither paths are provided
-        print("Please provide either excel_path or json_path")
+        print("Please provide either excel_path or input_json_path or input_json_dir")
         exit(1)
-    if args.excel_path is not None and args.json_path is not None:
-        # if both paths are provided
-        print("Please provide either excel_path or json_path")
+    if (
+        sum(
+            arg is not None
+            for arg in [args.excel_path, args.input_json_path, args.input_json_dir]
+        )
+        > 1
+    ):
+        print(
+            "Please provide only one of excel_path, input_json_path, or input_json_dir"
+        )
+        exit(1)
+    if args.md_dir is None and args.out_json_dir is None:
+        # if neither directories are provided
+        print("Please provide either md_dir or out_json_dir")
         exit(1)
 
     if args.excel_path is not None:
         try:
             myOps = AllOps()
             myOps.parse_xlsx(args.excel_path)
+            myOps_list.append(myOps)
         except Exception as e:
             print(f"Exception occured at generate_md.py: {e}")
-    if args.json_path is not None:
+    elif args.input_json_path is not None:
         try:
             myOps = AllOps()
-            myOps.parse_json(args.json_path)
-            myOps.create_md_files(args.md_dir)
-            myOps.save_json_files(os.getcwd())
+            myOps.parse_json(args.input_json_path)
+            myOps_list.append(myOps)
         except Exception as e:
             print(f"Exception occured at generate_md.py: {e}")
+    elif args.input_json_dir is not None:
+        try:
+            # Iterate through all files in the directory
+            for filename in os.listdir(args.input_json_dir):
+                # Build the full path to the file
+                file_path = os.path.join(args.input_json_dir, filename)
 
-    if args.md_dir is None and args.json_dir is None:
-        # if neither directories are provided
-        print("Please provide either md_dir or json_dir")
-        exit(1)
+                # Check if it's a JSON file
+                if filename.endswith(".json") and os.path.isfile(file_path):
+                    print(f"Parsing JSON file: {file_path}")
+
+                    # Create a new AllOps object for each JSON file
+                    myOps = AllOps()
+                    myOps.parse_json(file_path)
+
+                    # Add the parsed object to the array
+                    myOps_list.append(myOps)
+        except Exception as e:
+            print(
+                f"Exception occurred while parsing directory {args.input_json_dir}: {e}"
+            )
 
     if args.md_dir is not None:
         try:
-            myOps.create_md_files(args.md_dir)
+            for myOps in myOps_list:
+                myOps.create_md_files(args.md_dir)
         except Exception as e:
             print(f"Exception occured at generate_md.py: {e}")
 
-    if args.json_dir is not None:
+    if args.out_json_dir is not None:
         try:
-            myOps.save_json_files(args.json_dir)
+            for myOps in myOps_list:
+                myOps.save_json_files(args.out_json_dir)
         except Exception as e:
             print(f"Exception occured at generate_md.py: {e}")
