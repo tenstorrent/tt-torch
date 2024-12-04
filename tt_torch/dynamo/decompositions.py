@@ -114,10 +114,10 @@ def _get_default_decomposition_ops() -> DecompositionOpsList:
         aten.lift_fresh_copy.default,
         aten._unsafe_index.Tensor,
         aten.unbind.int,
-        aten.linspace.Tensor_Tensor,
-        aten._scaled_dot_product_flash_attention_for_cpu.default,
-        aten.upsample_bilinear2d,
-        aten.slice_scatter,
+        # aten.linspace.Tensor_Tensor,
+        # aten._scaled_dot_product_flash_attention_for_cpu.default,
+        # aten.upsample_bilinear2d,
+        # aten.slice_scatter,
     ]
 
 
