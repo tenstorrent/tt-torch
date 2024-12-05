@@ -264,6 +264,7 @@ def process_json_files():
     worksheet.write_row(row, 0, header, bold)
     row += 1
     torch_ops = {}
+    file_counter = 0
     for key, value in sorted(all_ops.items()):
         if key in unique_ops:
             continue
@@ -289,6 +290,13 @@ def process_json_files():
                     "trace_dump": value["trace_dump"],
                 }
             )
+            with open(
+                f"results/mlir_tests/ttir/{value['torch_name']}_{file_counter}.mlir",
+                "w",
+            ) as f:
+                print(f"file_name: {value['torch_name']}_{file_counter}.mlir")
+                file_counter += 1
+                f.write(value["ttir_graph"])
 
     for torch_name, torch_op in sorted(torch_ops.items()):
         name = torch_name
