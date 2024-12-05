@@ -226,12 +226,12 @@ class Executor:
         ):
             getitem_nodes = []
             graph_node.meta["val"] = node.meta["val"]
-            for idx, _ in enumerate(node.meta["tensor_meta"]):
+            for idx, tensor_meta in enumerate(node.meta["tensor_meta"]):
                 getitem_node = graph.call_function(
                     operator.getitem, args=(graph_node, idx)
                 )
-                # getitem_node.meta["val"] = graph_node.meta["val"]
                 getitem_nodes.append(getitem_node)
+                getitem_node.meta["tensor_meta"] = tensor_meta
             out = graph.output(tuple(getitem_nodes))
         else:
             out = graph.output((graph_node,))
