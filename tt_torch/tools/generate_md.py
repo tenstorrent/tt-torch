@@ -1,6 +1,17 @@
 # SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
+
+"""
+TTNN Operations Parser and Markdown/JSON Generator
+
+This script parses TTNN operation information from Excel or JSON files
+and generates documentation in Markdown and JSON formats. It supports:
+- Parsing operation details from spreadsheets or JSON files
+- Converting formats
+- Creating documentation with operation attributes, shapes, and layouts
+"""
+
 from TTNNOps import TTNNOps
 import re
 import os
@@ -102,62 +113,49 @@ class AllOps:
             self.process_ops(ttnn_mlir, status, pcc, atol)
 
     def parse_xlsx(self, excel_path):
-        # Read all sheets in the Excel file
-        xls = pd.ExcelFile(excel_path)
+        """
+        Parse the 'All Ops' sheet from an Excel file, extracting operation details.
 
-        # Iterate through all sheets
-        for sheet_name in xls.sheet_names:
-            # skip the sheet named "All Ops" since all other sheets are parsed
-            if sheet_name != "All Ops":
-                # disregard any sheet that is not "All Ops" - could be subject to change
-                continue
-            # Read the current sheet
-            df = pd.read_excel(excel_path, sheet_name=sheet_name)
+        Args:
+            excel_path (str): Path to the Excel file containing operation data
+        """
+        # Read only the 'All Ops' sheet specifically
+        df = pd.read_excel(excel_path, sheet_name="All Ops")
 
-            # Check if required columns exist
-            required_columns = ["Raw TTNNIR", "Torch Name", "Status", "PCC", "ATOL"]
-            missing_columns = [col for col in required_columns if col not in df.columns]
+        # Validate required columns are present
+        required_columns = ["Raw TTNNIR", "Torch Name", "Status", "PCC", "ATOL"]
+        missing_columns = [col for col in required_columns if col not in df.columns]
 
-            if missing_columns:
-                print(
-                    f"Skipping sheet '{sheet_name}'. Missing columns: {missing_columns}"
-                )
-                continue
+        if missing_columns:
+            raise ValueError(f"Missing columns in 'All Ops' sheet: {missing_columns}")
 
-            # Clean the DataFrame
-            df_cleaned = df.dropna(subset=["Raw TTNNIR"])
-            df_final = df_cleaned[["Torch Name", "Raw TTNNIR", "Status", "PCC", "ATOL"]]
+        # Clean DataFrame, removing rows with missing Raw TTNNIR
+        df_cleaned = df.dropna(subset=["Raw TTNNIR"])
 
-            # Check if DataFrame is empty after cleaning
-            if df_final.empty and self.do_assert:
-                print(f"Skipping sheet '{sheet_name}'. No valid data after cleaning.")
-                continue
+        # Process each row in the cleaned DataFrame
+        for index, row in df_cleaned.iterrows():
+            # Remove quotes from Raw TTNNIR if present
+            raw_ttnnir = row["Raw TTNNIR"].strip("'\"")
 
-            # Initialize last torch name
-            last_torch_name = None
+            # Extract row details
+            status = row["Status"]
+            pcc = row["PCC"]
+            atol = row["ATOL"]
 
-            # Iterate through the DataFrame and write to files
-            for index, row in df_final.iterrows():
-                torch_name = (
-                    row["Torch Name"]
-                    if pd.notna(row["Torch Name"])
-                    else last_torch_name
-                )
-                raw_ttnnir = row["Raw TTNNIR"]
-                status = row["Status"]
-                pcc = row["PCC"]
-                atol = row["ATOL"]
-                # Remove quotes if present
-                if raw_ttnnir.startswith("'") and raw_ttnnir.endswith("'"):
-                    raw_ttnnir = raw_ttnnir[1:-1]
-                    self.process_ops(raw_ttnir, status, pcc, atol)
-                elif raw_ttnnir.startswith('"') and raw_ttnnir.endswith('"'):
-                    raw_ttnnir = raw_ttnnir[1:-1]
-                    self.process_ops(raw_ttnir, status, pcc, atol)
-                else:
-                    self.process_ops(raw_ttnnir, status, pcc, atol)
+            # Process operation details
+            self.process_ops(raw_ttnnir, status, pcc, atol)
 
     def process_ops(self, ttnnir_string, status, pcc, atol):
+        """
+        Process TTNN operations from an IR string, extracting shapes, layouts, and metadata.
+
+        Args:
+            ttnnir_string: TTNN Intermediate Representation string
+            status: Operation status code
+            pcc: Percent Correct Classification metric
+            atol: Absolute tolerance for numerical comparisons
+        """
+
         ttnn_parser = TTNNOps(ttnnir_string)
         for op in ttnn_parser.ops:
             input_shapes = []
@@ -369,6 +367,35 @@ class AllOps:
 
 
 if __name__ == "__main__":
+    """
+    This script is used to create Markdown (.md) and JSON (.json) files
+    based on the provided Excel (.xlsx) or JSON (.json) input files.
+
+    Usage:
+        python generate_md.py [OPTIONS]
+
+    Options:
+        --excel_path FILE
+            The path to the models_op_per_op.xlsx file.
+            Provide this option if you want to generate files based on an Excel input.
+
+        --json_path FILE
+            The path to the model.json file.
+            Provide this option if you want to generate files based on a JSON input.
+
+        --md_dir DIR
+            The path to the directory where the generated Markdown files will be saved.
+
+        --json_dir DIR
+            The path to the directory where the generated JSON files will be saved.
+
+    Examples:
+        python generate_md.py --excel_path /path/to/models_op_per_op.xlsx --md_dir /path/to/md/output/
+        python generate_md.py --json_path /path/to/model.json --json_dir /path/to/json/output/
+
+    Notes:
+        - You must provide either --excel_path or --json_path, but not both.
+    """
     parser = argparse.ArgumentParser(description="Create ttnn ops md files")
     parser.add_argument(
         "--excel_path",
@@ -423,8 +450,6 @@ if __name__ == "__main__":
         try:
             myOps = AllOps()
             myOps.parse_json(args.json_path)
-            myOps.create_md_files(mdDir)
-            myOps.save_json_files(os.getcwd())
         except Exception as e:
             print(f"Exception occured at generate_md.py: {e}")
 
