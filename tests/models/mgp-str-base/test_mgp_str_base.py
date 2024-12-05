@@ -32,7 +32,7 @@ class ThisTester(ModelTester):
         return inputs
 
 
-@pytest.skip("https://github.com/tenstorrent/tt-torch/issues/96")
+@pytest.mark.skip("https://github.com/tenstorrent/tt-torch/issues/96")
 @pytest.mark.parametrize(
     "mode",
     ["train", "eval"],
