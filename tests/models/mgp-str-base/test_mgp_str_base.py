@@ -32,12 +32,13 @@ class ThisTester(ModelTester):
         return inputs
 
 
-@pytest.mark.skip("https://github.com/tenstorrent/tt-torch/issues/96")
 @pytest.mark.parametrize(
     "mode",
     ["train", "eval"],
 )
 def test_mgp_str_base(record_property, mode):
+    if mode == "train":
+        pytest.skip()
     model_name = "alibaba-damo/mgp-str-base"
     record_property("model_name", model_name)
     record_property("mode", mode)
