@@ -5,6 +5,13 @@ import re
 
 
 class SystemDesc:
+    """
+    Parses and represents system hardware description details.
+
+    Extracts system architecture, grid configuration, memory specifications,
+    physical cores, supported data types, and other hardware characteristics.
+    """
+
     def __init__(self, system_desc_str):
         self.arch = None
         self.grid = None
@@ -27,6 +34,9 @@ class SystemDesc:
         self.parse(system_desc_str)
 
     def parse(self, system_desc_str):
+        """
+        Extracts system details from a descriptive string using regex patterns.
+        """
         # Parse the system description string and populate the class attributes
         match = re.search(r"arch = <(\w+)>", system_desc_str)
         self.arch = match.group(1) if match else None
@@ -60,6 +70,19 @@ class SystemDesc:
 
 
 class Layout:
+    """
+    Represents a tensor layout configuration with detailed parsing capabilities.
+
+    Extracts and stores layout mapping information, memory configurations,
+    and buffer characteristics from complex layout description strings.
+
+    Attributes:
+        id: Unique layout identifier (i.e. #ttnn_layout1)
+        mapping_from: Source tensor layout (i.e. (0, d1))
+        mapping_to: Target tensor layout (i.e. (0, d1))
+        memory_config: Memory allocation details
+    """
+
     def __init__(self, layout_str):
         self.id = None
         self.mapping_from = None
@@ -124,6 +147,20 @@ class Layout:
 
 
 class TTNNOps:
+    """
+    Parses and represents TTNN (Tenstorrent Neural Network) operations.
+
+    Comprehensive parser that extracts:
+    - System description
+    - Layout configurations
+    - Operation details from TTNN intermediate representation
+
+    Attributes:
+        system_desc: Parsed system hardware description
+        layouts: Dictionary of layout configurations
+        ops: List of parsed operations
+    """
+
     def __init__(self, ttnn_str):
         self.system_desc = None
         self.do_assert = False
