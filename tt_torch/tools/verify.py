@@ -50,21 +50,28 @@ def _verify_torch_module(
 
     ret = tt_mod(*inputs)
     golden = mod(*inputs)
+    breakpoint()
+    for golden_out, tt_out in zip(golden, ret):
+        atol = calculate_atol(tt_out, golden_out)
+        assert (
+            do_assert and atol
+        ) <= required_atol, f"ATOL too high: {atol} vs {required_atol}"
 
-    atol = calculate_atol(ret, golden)
-    if do_assert:
-        assert atol <= required_atol, f"ATOL too high: {atol} vs {required_atol}"
+        if np.prod(golden_out.shape) == 1:
+            return
 
-    if np.prod(golden.shape) == 1:
-        return
+        tt_out = tt_out.to(torch.float32) if tt_out.dtype == torch.bfloat16 else tt_out
+        golden_out = (
+            golden_out.to(torch.float32)
+            if golden_out.dtype == torch.bfloat16
+            else golden_out
+        )
 
-    ret = ret.to(torch.float32) if ret.dtype == torch.bfloat16 else ret
-    golden = golden.to(torch.float32) if golden.dtype == torch.bfloat16 else golden
+        pcc = calculate_pcc(tt_out, golden_out)
 
-    pcc = calculate_pcc(ret, golden)
-
-    if do_assert:
-        assert pcc >= required_pcc, f"PCC too low: {pcc} vs {required_pcc}"
+        assert (
+            do_assert and pcc
+        ) >= required_pcc, f"PCC too low: {pcc} vs {required_pcc}"
 
 
 def _verify_onnx_module(

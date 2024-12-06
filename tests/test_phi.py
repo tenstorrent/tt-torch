@@ -3,6 +3,35 @@ from transformers import PhiForCausalLM, PhiConfig, AutoTokenizer, StaticCache
 
 from tt_torch.dynamo.backend import backend
 from tt_torch.tools.utils import CompilerConfig, CompileDepth
+from tt_torch.tools.verify import verify_module
+
+
+def test_cache():
+    config = PhiConfig()
+    config.use_cache=True
+    config.num_hidden_layers = 1
+
+    class Basic(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+        
+        def forward(self, key_states, value_states, cache_position, static_cache):
+            cache_kwargs = {"cache_position" : cache_position}
+            k_out, v_out = static_cache.update(key_states, value_states, 0, cache_kwargs)
+            return k_out + 0, v_out + 0
+
+    
+    state_shape = (1, 32, 1, 64)
+    cache_positon = torch.tensor([0]).reshape(1).to(torch.int64)
+    key_states = torch.randn(state_shape).to(torch.bfloat16)
+    value_states = torch.randn(state_shape).to(torch.bfloat16)
+
+    static_cache = StaticCache(config, batch_size=1, max_cache_len=64, dtype=torch.bfloat16)
+    model = Basic()
+    
+    inputs = (key_states, value_states, cache_positon, static_cache)
+    ret = model(*inputs)
+    verify_module(model, inputs=inputs)
 
 def test_phi():
     config = PhiConfig()
@@ -15,13 +44,13 @@ def test_phi():
     prompt = "I like to"
     
     inputs = tokenizer(prompt, return_tensors="pt")
-    # model.generate(**inputs)
+    
 
     max_new_tokens = 50
     inputs['position_ids'] = torch.arange(inputs.input_ids.shape[1]).reshape(1, -1)
     inputs['past_key_values'] = StaticCache(config, batch_size=1, max_cache_len=(inputs.input_ids.shape[1] + max_new_tokens), dtype=torch.bfloat16)
     inputs['cache_position'] = torch.arange(inputs.input_ids.shape[1])
-
+    model.generate(**inputs)
     cc = CompilerConfig()
     cc.compile_depth = CompileDepth.TORCH_MLIR
 

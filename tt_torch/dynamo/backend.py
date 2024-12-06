@@ -475,6 +475,7 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         return executor
 
     lower_to_stable_hlo(module)
+    module.dump()
     if compiler_config.profile_ops:
         compiler_config.set_stablehlo_mlir_module(module.operation.get_asm())
     if compiler_config.compile_depth == CompileDepth.STABLEHLO:

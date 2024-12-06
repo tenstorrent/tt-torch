@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-set(TT_MLIR_VERSION "c4b3dffcc449c9fc318a0620ba0158a7c6d8d635")
+set(TT_MLIR_VERSION "266c6f68ecd650f8ef61c0e681a52c781c36c2e1")
 
 if (TOOLCHAIN STREQUAL "ON")
     cmake_minimum_required(VERSION 3.20)
@@ -28,10 +28,9 @@ else()
         PREFIX ${TTTORCH_SOURCE_DIR}/third_party/tt-mlir
         CMAKE_GENERATOR Ninja
         CMAKE_ARGS
-          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_BUILD_TYPE=Debug
           -DCMAKE_C_COMPILER=clang-17
           -DCMAKE_CXX_COMPILER=clang++-17
-          -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           -DTT_RUNTIME_ENABLE_TTNN=ON
           -DTT_RUNTIME_ENABLE_TTMETAL=OFF
           -DTTMLIR_ENABLE_STABLEHLO=ON
