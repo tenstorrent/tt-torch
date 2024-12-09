@@ -9,6 +9,7 @@ import threading
 import torch
 from torch._decomp import get_decompositions, remove_decompositions
 from torch_mlir.extras.fx_decomp_util import get_decomposition_table
+import numpy as np
 
 DecompositionTable = Dict[torch._ops.OperatorBase, Callable]
 DecompositionOpsList = Sequence[
@@ -67,6 +68,85 @@ def _extend_context_manager(
         ), "contextmanager unbalanced: popped different that pushed"
 
 
+# This method is derived from the implementation of jax.image.resize in JAX:
+#     https://github.com/jax-ml/jax/blob/354bd5271077654af983965c8e01ee462ce4ce91/jax/_src/image/scale.py#L52
+#
+# I've modified it to use numpy rather than JAX. I've also added the ability
+# to generate a weight matrix that allows the matmul to be identical to to
+# torch's upsample_bilinear2d when align_corners=True.
+# This logic was derived from @brentyi's implementation in:
+#    https://github.com/jax-ml/jax/issues/11206#issuecomment-1423140760
+def compute_bilinear_weight(input_size, output_size, scale, align_corners, dtype):
+    translation = 0
+    if align_corners:
+        scale = (output_size - 1) / (input_size - 1)
+        translation = 0.5 - (scale / 2)
+
+    inv_scale = 1 / scale
+    sample_f = (
+        (torch.arange(output_size, dtype=torch.float64) + 0.5) * inv_scale
+        - translation * inv_scale
+        - 0.5
+    )
+    x = torch.abs(sample_f - torch.arange(input_size, dtype=torch.float64).unsqueeze(1))
+
+    weights = torch.relu(1 - torch.abs(x))
+
+    total_weight_sum = torch.sum(weights, axis=0, keepdims=True)
+    weights = torch.divide(
+        weights,
+        torch.where(total_weight_sum != 0, total_weight_sum, 1),
+    )
+
+    weights = torch.where(
+        torch.logical_and(sample_f >= -0.5, sample_f <= input_size - 0.5),
+        weights,
+        0,
+    )
+    weights = weights.squeeze()
+    return weights.to(dtype)
+
+
+def upsample_bilinear2d(
+    input: torch.Tensor,
+    output_size: List[int],
+    align_corners: bool,
+    scales_h: Optional[float] = None,
+    scales_w: Optional[float] = None,
+):
+    input_size = input.shape[-2:]
+    res = None
+
+    if scales_h is None:
+        scales_h = float(output_size[0]) / float(input_size[0])
+
+    if scales_w is None:
+        scales_w = float(output_size[1]) / float(input_size[1])
+
+    scales = [scales_h, scales_w]
+    if (
+        scales_h == scales_w
+        and input_size[0] == input_size[1]
+        and output_size[0] == output_size[1]
+    ):
+        weight_w = compute_bilinear_weight(
+            input_size[1], output_size[1], scales[1], False, input.dtype
+        )
+        weight_h = weight_w.transpose(-1, -2)
+    else:
+        weight_w = compute_bilinear_weight(
+            input_size[1], output_size[1], scales[1], align_corners, input.dtype
+        )
+        weight_h = compute_bilinear_weight(
+            input_size[0], output_size[0], scales[0], align_corners, input.dtype
+        ).transpose(-1, -2)
+
+    res = (input.transpose(-1, -2) @ weight_h.transpose(-1, -2)).transpose(
+        -1, -2
+    ) @ weight_w
+    return res
+
+
 # TODO: DO we ever need this?
 def _get_default_decomposition_ops() -> DecompositionOpsList:
     aten = torch.ops.aten
@@ -78,7 +158,6 @@ def _get_default_decomposition_ops() -> DecompositionOpsList:
         aten.select_backward,
         aten.norm.ScalarOpt_dim,
         aten.native_group_norm,
-        aten.upsample_bilinear2d.vec,
         aten.split.Tensor,
         aten.split_with_sizes,
         aten.native_layer_norm,
@@ -116,9 +195,15 @@ def _get_default_decomposition_ops() -> DecompositionOpsList:
         aten.unbind.int,
         aten.linspace.Tensor_Tensor,
         aten._scaled_dot_product_flash_attention_for_cpu.default,
-        aten.upsample_bilinear2d,
         aten.slice_scatter,
     ]
+
+
+def _get_custom_decopositions() -> DecompositionTable:
+    aten = torch.ops.aten
+    return {
+        aten.upsample_bilinear2d.default: upsample_bilinear2d,
+    }
 
 
 # Some older APIs still use an op list instead of a table.
@@ -128,3 +213,5 @@ DEFAULT_DECOMPOSITIONS: DecompositionOpsList = _get_default_decomposition_ops()
 DEFAULT_DECOMPOSITION_TABLE: DecompositionTable = get_decompositions(
     DEFAULT_DECOMPOSITIONS
 )
+
+CUSTOM_DECOMPOSITION_TABLE = _get_custom_decopositions()
