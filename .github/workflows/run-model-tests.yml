@@ -89,7 +89,7 @@ jobs:
         echo ${{ steps.strings.outputs.install-output-dir }}
         source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
-        export TT_TORCH_COMPILE_DEPTH=COMPILE_OP_BY_OP
+        export TT_TORCH_COMPILE_DEPTH=EXECUTE_OP_BY_OP
         for testname in ${{ matrix.build.test_names }}; do
         testname=${testname//,/}
         echo "running test: $testname"
