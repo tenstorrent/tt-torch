@@ -236,3 +236,4 @@ distributed as part of the software:
 - pillow - Custom License (https://github.com/python-pillow/Pillow/blob/main/LICENSE)
 - kornia - Apache v2.0 (https://github.com/kornia/kornia/blob/main/LICENSE)
 - timm - MIT License (https://github.com/guigrpa/timm/blob/master/LICENSE)
+- jax - Apache v2.0 (https://github.com/jax-ml/jax/blob/main/LICENSE)

@@ -9,7 +9,11 @@ from torch._decomp import get_decompositions
 from torch.func import functionalize
 from typing import List, Optional, Union
 
-from .decompositions import DEFAULT_DECOMPOSITIONS
+from .decompositions import (
+    DecompositionTable,
+    DEFAULT_DECOMPOSITION_TABLE,
+    CUSTOM_DECOMPOSITION_TABLE,
+)
 
 
 def run_shape_prop(gm, example_inputs):
@@ -65,17 +69,16 @@ def reduce_graph(module_or_graph: Union[torch.fx.Graph, torch.fx.GraphModule]):
 def apply_decompositions(
     gm: torch.fx.GraphModule,
     example_inputs,
-    decompose_ops: Optional[List[torch._ops.OpOverload]] = None,
+    decompositions: Optional[DecompositionTable] = None,
 ):
     concrete_inputs = [
         x.view(tuple(int(dim) for dim in x.shape)) if isinstance(x, torch.Tensor) else x
         for x in example_inputs
     ]
-    if decompose_ops is None:
+    if decompositions is None:
         return gm
 
     with torch.no_grad():
-        decompositions = get_decompositions(decompose_ops)
         gm = make_fx(
             functionalize(gm),
             decomposition_table=decompositions,
@@ -186,8 +189,9 @@ def order_constant_inputs(gm, parameters, constants):
 
 
 def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
-    decompose_ops = DEFAULT_DECOMPOSITIONS
-    gm = apply_decompositions(gm, example_inputs, decompose_ops)  # type: ignore
+    decompositions = DEFAULT_DECOMPOSITION_TABLE
+    decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
+    gm = apply_decompositions(gm, example_inputs, decompositions)  # type: ignore
     if compiler_config.enable_consteval:
         gm, constants = constant_fold(gm, example_inputs)
     elif compiler_config.consteval_parameters:
