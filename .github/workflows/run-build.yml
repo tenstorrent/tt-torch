@@ -153,8 +153,6 @@ jobs:
       working-directory: ${{ steps.strings.outputs.install-output-dir }}
       run: |
         cp ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal-build/lib/*.so lib/
-        cp ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal-build/_deps/nanomsg-build/*.so* lib/
-        cp ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal-build/_deps/libuv-build/*.so* lib/
         cp ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/ttmlir-opt lib/
 
     - name: Copy tt-metal directories
