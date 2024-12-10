@@ -26,3 +26,6 @@ xlsxwriter
 onnx
 onnxruntime
 openpyxl
+pillow
+kornia
+timm
