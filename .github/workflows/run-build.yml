@@ -164,6 +164,13 @@ jobs:
         cp -r ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/ttnn tt-metal/
         cp -r ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/runtime tt-metal/
 
+    - name: Copy venv directory
+      shell: bash
+      working-directory: ${{ steps.strings.outputs.install-output-dir }}
+      run: |
+        mkdir env
+        cp -r ${{ steps.strings.outputs.work-dir }}/env env
+
     - name: 'Tar install directory'
       shell: bash
       working-directory: ${{ steps.strings.outputs.install-output-dir }}
