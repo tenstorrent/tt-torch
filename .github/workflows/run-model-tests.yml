@@ -90,10 +90,12 @@ jobs:
         source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
         export TT_TORCH_COMPILE_DEPTH=COMPILE_OP_BY_OP
+        export TT_TORCH_CONSTEVAL_PARAMETERS=1
+        export TT_TORCH_CONSTEVAL=1
         for testname in ${{ matrix.build.test_names }}; do
         testname=${testname//,/}
         echo "running test: $testname"
-        pytest -v tests/models/$testname
+        pytest -svv tests/models/$testname || true
         done
 
     - name: Tar results

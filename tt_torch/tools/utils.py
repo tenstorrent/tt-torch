@@ -12,12 +12,13 @@ import math
 
 
 class CompileDepth(Enum):
-    TORCH_MLIR = 1
-    STABLEHLO = 2
-    TTNN_IR = 3
-    COMPILE_OP_BY_OP = 4
-    EXECUTE_OP_BY_OP = 5
-    EXECUTE = 6
+    TORCH_FX = 1
+    TORCH_MLIR = 2
+    STABLEHLO = 3
+    TTNN_IR = 4
+    COMPILE_OP_BY_OP = 5
+    EXECUTE_OP_BY_OP = 6
+    EXECUTE = 7
 
 
 class OpCompilationStatus(IntEnum):
@@ -125,16 +126,31 @@ class CompilerConfig:
         self.results_path = "results/models/"
         self.single_op_timeout = 5
         self.enable_intermediate_verification = False
+        self.enable_consteval = False
+        self.consteval_parameters = False
 
         self.apply_environment_overrides()
+        self.post_init()
 
     def apply_environment_overrides(self):
         compile_depth = os.environ.get("TT_TORCH_COMPILE_DEPTH")
         if compile_depth:
             self.compile_depth = CompileDepth[compile_depth]
         verify_intermediates = os.environ.get("TT_TORCH_VERIFY_INTERMEDIATES")
-        if verify_intermediates:
+        if verify_intermediates and int(verify_intermediates):
             self.enable_intermediate_verification = True
+        enable_consteval = os.environ.get("TT_TORCH_CONSTEVAL")
+        if enable_consteval and int(enable_consteval):
+            self.enable_consteval = True
+        consteval_parameters = os.environ.get("TT_TORCH_CONSTEVAL_PARAMETERS")
+        if consteval_parameters and int(consteval_parameters):
+            self.consteval_parameters = True
+
+    def post_init(self):
+        if self.consteval_parameters:
+            torch._dynamo.config.inline_inbuilt_nn_modules = False
+        else:
+            torch._dynamo.config.inline_inbuilt_nn_modules = True
 
     def save_unique_ops(self):
         unique_op_dict = {}

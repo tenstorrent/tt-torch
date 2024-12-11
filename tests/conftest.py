@@ -8,6 +8,7 @@ import torch
 
 @pytest.fixture(autouse=True)
 def run_around_tests():
+    torch._dynamo.config.inline_inbuilt_nn_modules = False
     torch.manual_seed(0)
     yield
     torch._dynamo.reset()
