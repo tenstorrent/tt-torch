@@ -37,56 +37,6 @@ import faulthandler
 import sys
 
 
-def run_shape_prop(gm, example_inputs):
-    shape_prop = torch.fx.passes.shape_prop.ShapeProp(gm)
-    if shape_prop.fake_mode is not None:
-        fake_args = [
-            shape_prop.fake_mode.from_tensor(act, static_shapes=True)
-            if isinstance(act, torch.Tensor)
-            else act
-            for act in example_inputs
-        ]
-    else:
-        fake_args = example_inputs
-    shape_prop.run(*fake_args)
-
-
-def reduce_graph(module_or_graph: Union[torch.fx.Graph, torch.fx.GraphModule]):
-    # Reduce the graph to only the nodes that are used
-
-    # Traverse up the graph from output nodes to populate consumed nodes set
-    graph = (
-        module_or_graph.graph
-        if isinstance(module_or_graph, torch.fx.GraphModule)
-        else module_or_graph
-    )
-    consumed = set()
-    working_nodes = []
-    for node in graph.nodes:
-        if node.op == "output":
-            working_nodes.append(node)
-            consumed.add(node)
-
-    while len(working_nodes) > 0:
-        node = working_nodes.pop(0)
-        if not isinstance(node, torch.fx.Node):
-            continue
-        for arg in node.all_input_nodes:
-            if arg not in consumed:
-                consumed.add(arg)
-                working_nodes.append(arg)
-
-    for node in reversed(graph.nodes):
-        if node not in consumed:
-            graph.erase_node(node)
-
-    if len(graph.nodes) == 1:
-        for node in graph.nodes:
-            if node.op == "output":
-                # Remove the output node if it's the only one
-                graph.erase_node(node)
-
-
 def import_graph(graph: torch.fx.GraphModule):
     context = Context()
     torch_dialect.register_dialect(context)
@@ -133,9 +83,17 @@ def execute_process(receiver, sender, exec_event):
 
 
 class Executor:
-    def __init__(self, gm, compiler_config=None, required_pcc=0.99, required_atol=1e-2):
+    def __init__(
+        self,
+        gm,
+        graph_constants,
+        compiler_config=None,
+        required_pcc=0.99,
+        required_atol=1e-2,
+    ):
         self.gm = gm
         self.binary = None
+        self.graph_constants = tuple(graph_constants)
         if compiler_config is None:
             compiler_config = CompilerConfig()
         self.compiler_config = compiler_config
@@ -446,25 +404,24 @@ class Executor:
 
         if self.compiler_config.compile_depth == CompileDepth.EXECUTE:
             assert self.binary is not None, "Binary must be set for EXECUTE mode"
-            return tt_mlir.run(inputs, self.binary)
+            return tt_mlir.run(inputs + self.graph_constants, self.binary)
         elif self.compiler_config.compile_depth in (
             CompileDepth.EXECUTE_OP_BY_OP,
             CompileDepth.COMPILE_OP_BY_OP,
         ):
-            return self.run_gm_op_by_op(*inputs)
+            return self.run_gm_op_by_op(*(inputs + self.graph_constants))
         else:
             return self.gm(*inputs)
 
 
 def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
-    gm = pass_pipeline(gm, example_inputs)
-    reduce_graph(gm)
-    gm.graph.print_tabular()
-    run_shape_prop(gm, example_inputs)
-    executor = Executor(gm, compiler_config)
+    with torch.no_grad():
+        gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
+    executor = Executor(gm, graph_constants, compiler_config)
     if compiler_config.compile_depth in (
         CompileDepth.EXECUTE_OP_BY_OP,
         CompileDepth.COMPILE_OP_BY_OP,
+        CompileDepth.TORCH_FX,
     ):
         return executor
 
@@ -480,7 +437,8 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     if compiler_config.compile_depth == CompileDepth.STABLEHLO:
         return executor
 
-    binary = tt_mlir.compile(module.operation.get_asm())
+    ttir = tt_mlir.compile_stable_hlo_to_ttir(module.operation.get_asm())
+    binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
     executor.set_binary(binary)
     return executor
 
