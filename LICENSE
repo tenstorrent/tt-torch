@@ -200,3 +200,39 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+---------------------------------------------------------------------------
+
+Third-Party Dependencies:
+
+The following dependencies are utilized by this project but are not explicitly
+distributed as part of the software:
+
+- tt-mlir - Apache v2.0 License (https://github.com/tenstorrent/tt-mlir/blob/main/LICENSE)
+- llvm-project - Apache v2.0 License with LLVM Exceptions (https://github.com/llvm/llvm-project/blob/main/LICENSE.TXT)
+- flatbuffers - Apache v2.0 License (https://github.com/google/flatbuffers/blob/master/LICENSE)
+- stablehlo - Apache v2.0 License (https://github.com/openxla/stablehlo/blob/main/LICENSE)
+- torch-mlir - Apache v2.0 License with LLVM Exceptions and a BSD-style License (https://github.com/llvm/torch-mlir/blob/main/LICENSE)
+- torch - Custom License (https://github.com/intel/torch/blob/master/LICENSE.md)
+- black - MIT License (https://github.com/psf/black/blob/main/LICENSE)
+- mdutils - MIT License (https://github.com/didix21/mdutils/blob/master/LICENSE.txt)
+- tabulate - MIT License (https://github.com/openai/tabulate/blob/master/LICENSE)
+- transformers - Apache v2.0 License (https://github.com/huggingface/transformers/blob/main/LICENSE)
+- protobuf - Custom License (https://github.com/protocolbuffers/protobuf/blob/main/LICENSE)
+- tiktoken - MIT License (https://github.com/openai/tiktoken/blob/main/LICENSE)
+- sentencepiece - Apache v2.0 License (https://github.com/google/sentencepiece/blob/master/LICENSE)
+- pytorchcv - Apache v2.0 License (https://github.com/donnyyou/PyTorchCV/blob/master/LICENSE)
+- diffusers - Apache v2.0 License (https://github.com/huggingface/diffusers/blob/main/LICENSE)
+- scipy - Custom License (https://github.com/scipy/scipy/blob/main/LICENSE.txt)
+- datasets - Apache v2.0 License (https://github.com/huggingface/datasets/blob/main/LICENSE)
+- accelerate - Apache v2.0 License (https://github.com/huggingface/accelerate/blob/main/LICENSE)
+- librosa - ISC License (https://github.com/librosa/librosa/blob/main/LICENSE.md)
+- soundfile - Custom License (https://github.com/bastibe/python-soundfile/blob/master/LICENSE)
+- matplotlib - Custom License (https://github.com/matplotlib/matplotlib/blob/main/LICENSE/LICENSE)
+- mlp_mixer_pytorch - MIT License (https://github.com/lucidrains/mlp-mixer-pytorch/blob/main/LICENSE)
+- opencv-python - MIT License (https://github.com/opencv/opencv-python/blob/4.x/LICENSE.txt)
+- onnx - Apache v2.0 (https://github.com/onnx/onnx/blob/main/LICENSE)
+- openpyxl - MIT License (https://github.com/fluidware/openpyxl/blob/master/LICENCE)
+- pillow - Custom License (https://github.com/python-pillow/Pillow/blob/main/LICENSE)
+- kornia - Apache v2.0 (https://github.com/kornia/kornia/blob/main/LICENSE)
+- timm - MIT License (https://github.com/guigrpa/timm/blob/master/LICENSE)
