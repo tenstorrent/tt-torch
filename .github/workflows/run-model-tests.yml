@@ -16,7 +16,7 @@ jobs:
         build: [
           {runs-on: n150, n300, name: "run1", test_names: "stable_diffusion"},
           {runs-on: n150, n300, name: "run2", test_names: "MobileNetV2, clip, flan_t5, mlpmixer, resnet, vilt, albert, codegen, glpn_kitti, mnist, resnet50, t5, whisper, autoencoder_conv, deit, gpt2, mobilenet_ssd, roberta, timm, xglm, autoencoder_linear, detr, gpt_neo, musicgen_small, segformer, torchvision, yolos, RMBG"},
-          {runs-on: n300, n150, name: "run3", test_names: "beit, distilbert, hand_landmark, openpose, segment_anything, unet, yolov3, bert, dpr, hardnet, opt, speecht5_tts, unet_brain, yolov5, bloom, falcon, llama, perceiver_io, squeeze_bert, unet_carvana, mgp-str-base"},
+          {runs-on: n300, n150, name: "run3", test_names: "beit, distilbert, hand_landmark, openpose, segment_anything, unet, yolov3, bert, dpr, hardnet, opt, speecht5_tts, unet_brain, yolov5, bloom, falcon, llama, perceiver_io, squeeze_bert, unet_carvana, mgp-str-base, Qwen"},
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
