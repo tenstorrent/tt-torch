@@ -85,6 +85,22 @@ std::vector<int64_t> as_vec_int64(std::vector<T> const &vec) {
   return result;
 }
 
+static torch::Tensor create_torch_tensor(const tt::runtime::Tensor &tensor,
+                                         const tt::runtime::TensorDesc &desc) {
+  const std::vector<std::int64_t> shape = as_vec_int64(desc.shape);
+  const std::vector<std::int64_t> stride = as_vec_int64((desc.stride));
+
+  const tt::target::DataType rt_datatype =
+      tt::runtime::getTensorDataType(tensor);
+  const torch::ScalarType dataType = dt_to_torch_scalar_type(rt_datatype);
+
+  at::Tensor torch_tensor = at::empty_strided(shape, stride, dataType);
+  tt::runtime::Tensor rt_tensor = create_tensor(torch_tensor);
+  tt::runtime::memcpy(rt_tensor, tensor);
+
+  return torch_tensor;
+}
+
 std::vector<at::Tensor> run(const std::vector<at::Tensor> &inputs,
                             py::bytes byte_stream) {
 
@@ -109,25 +125,21 @@ std::vector<at::Tensor> run(const std::vector<at::Tensor> &inputs,
     rt_inputs.emplace_back(create_tensor(input));
   }
 
-  std::vector<at::Tensor> outputs;
-  std::vector<tt::runtime::Tensor> rt_outputs;
-  std::vector<tt::runtime::TensorDesc> output_descs =
-      binary.getProgramOutputs(program_idx);
-  outputs.reserve(output_descs.size());
-  for (auto const &desc : output_descs) {
-    std::vector<std::int64_t> shape = as_vec_int64(desc.shape);
-    std::vector<std::int64_t> stride = as_vec_int64(desc.stride);
+  std::vector<tt::runtime::Tensor> rt_outputs =
+      tt::runtime::submit(device, binary, program_idx, rt_inputs);
 
-    at::Tensor output = at::empty_strided(
-        shape, stride, dt_to_torch_scalar_type(desc.dataType));
-    outputs.emplace_back(std::move(output));
-    rt_outputs.emplace_back(create_tensor(outputs.back()));
+  std::vector<at::Tensor> outputs;
+  outputs.reserve(rt_outputs.size());
+  const auto output_descs = binary.getProgramOutputs(program_idx);
+
+  for (size_t i = 0; i < rt_outputs.size(); ++i) {
+    const auto &rt_output = rt_outputs.at(i);
+    const auto &output_desc = output_descs.at(i);
+    outputs.emplace_back(create_torch_tensor(rt_output, output_desc));
   }
 
-  tt::runtime::Event event =
-      tt::runtime::submit(device, binary, program_idx, rt_inputs, rt_outputs);
-  (void)event;
   tt::runtime::closeDevice(device);
+
   return outputs;
 }
 
