@@ -9,6 +9,7 @@ import requests
 import pytest
 from tests.utils import ModelTester
 import torch
+from tt_torch.tools.utils import CompilerConfig
 
 
 class ThisTester(ModelTester):
@@ -51,7 +52,11 @@ def test_segformer(record_property, mode):
     record_property("model_name", model_name)
     record_property("mode", mode)
 
-    tester = ThisTester(model_name, mode)
+    cc = CompilerConfig()
+    cc.enable_consteval = True
+    cc.consteval_parameters = True
+
+    tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()
     if mode == "eval":
         logits = results.logits  # shape (batch_size, num_labels, height/4, width/4)

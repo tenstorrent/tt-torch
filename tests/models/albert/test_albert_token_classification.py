@@ -8,6 +8,8 @@ import torch
 import pytest
 from tests.utils import ModelTester
 
+from tt_torch.tools.utils import CompilerConfig
+
 
 class ThisTester(ModelTester):
     def _load_model(self):
@@ -35,7 +37,11 @@ def test_albert_token_classification(record_property, model_name, mode):
     record_property("model_name", f"{model_name}-classification")
     record_property("mode", mode)
 
-    tester = ThisTester(model_name, mode)
+    cc = CompilerConfig()
+    cc.enable_consteval = True
+    cc.consteval_parameters = True
+
+    tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()
 
     if mode == "eval":
