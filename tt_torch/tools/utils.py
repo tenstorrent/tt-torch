@@ -38,6 +38,7 @@ class Op:
         self.input_shapes = input_shapes
         self.output_shapes = []
 
+        self.torch_ir_graph = ""
         self.stable_hlo_graph = ""
         self.stable_hlo_ops = []
         self.ttir_graph = ""
@@ -79,6 +80,7 @@ class Op:
             "num_ops": self.num_ops,
             "compilation_status": self.compilation_status,
             "parsed_stable_hlo_ops": self.parsed_stable_hlo_ops,
+            "torch_ir_graph": self.torch_ir_graph,
             "stable_hlo_graph": self.stable_hlo_graph,
             "stable_hlo_ops": self.stable_hlo_ops,
             "ttir_graph": self.ttir_graph,
@@ -96,6 +98,9 @@ class Op:
             else:
                 key += f"_{shape}"
         return key
+
+    def add_torch_ir_graph(self, torch_ir_graph: str):
+        self.torch_ir_graph = torch_ir_graph
 
     def add_stable_hlo_graph(self, stable_hlo_graph: str):
         self.stable_hlo_graph = stable_hlo_graph
