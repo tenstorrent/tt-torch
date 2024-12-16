@@ -10,6 +10,7 @@ from pytorchcv.model_provider import get_model as ptcv_get_model
 from torchvision import transforms
 import pytest
 from tests.utils import ModelTester
+from tt_torch.tools.utils import CompilerConfig
 
 
 def get_image_tensor():
@@ -56,7 +57,11 @@ def test_openpose_v2(record_property, mode):
     record_property("model_name", model_name)
     record_property("mode", mode)
 
-    tester = ThisTester(model_name, mode)
+    cc = CompilerConfig()
+    cc.enable_consteval = True
+    cc.consteval_parameters = True
+
+    tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()
     if mode == "eval":
         print(f"Output: {results}")

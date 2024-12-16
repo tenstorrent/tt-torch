@@ -9,6 +9,7 @@ from PIL import Image
 import torch
 import pytest
 from tests.utils import ModelTester
+from tt_torch.tools.utils import CompilerConfig
 
 dependencies = ["timm==1.0.9"]
 
@@ -112,7 +113,11 @@ def test_timm_image_classification(record_property, model_and_mode):
     record_property("model_name", model_name)
     record_property("mode", mode)
 
-    tester = ThisTester(model_name, mode)
+    cc = CompilerConfig()
+    cc.enable_consteval = True
+    cc.consteval_parameters = True
+
+    tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()
     if mode == "eval":
         top5_probabilities, top5_class_indices = torch.topk(
