@@ -1,0 +1,509 @@
+module @IrToHlo.1582 attributes {mhlo.cross_program_prefetches = [], mhlo.is_dynamic = false, mhlo.use_auto_spmd_partitioning = false} {
+  func.func @main(%arg0: tensor<80xf32>, %arg1: tensor<80x96x1x1xf32>, %arg2: tensor<96xf32>, %arg3: tensor<96xf32>, %arg4: tensor<96xf32>, %arg5: tensor<96xf32>, %arg6: tensor<96x96x3x3xf32>, %arg7: tensor<96xf32>, %arg8: tensor<96xf32>, %arg9: tensor<96xf32>, %arg10: tensor<96xf32>, %arg11: tensor<96x96x3x3xf32>, %arg12: tensor<96xf32>, %arg13: tensor<96xf32>, %arg14: tensor<96xf32>, %arg15: tensor<96xf32>, %arg16: tensor<96x96x3x3xf32>, %arg17: tensor<96xf32>, %arg18: tensor<96xf32>, %arg19: tensor<96xf32>, %arg20: tensor<96xf32>, %arg21: tensor<96x96x1x1xf32>, %arg22: tensor<48xf32>, %arg23: tensor<48xf32>, %arg24: tensor<48xf32>, %arg25: tensor<48xf32>, %arg26: tensor<48x192x1x1xf32>, %arg27: tensor<96xf32>, %arg28: tensor<96xf32>, %arg29: tensor<96xf32>, %arg30: tensor<96xf32>, %arg31: tensor<96x96x1x1xf32>, %arg32: tensor<f32>, %arg33: tensor<f32>, %arg34: tensor<f32>, %arg35: tensor<f32>, %arg36: tensor<96xf32>, %arg37: tensor<96x96x1x1xf32>, %arg38: tensor<48xf32>, %arg39: tensor<48xf32>, %arg40: tensor<48xf32>, %arg41: tensor<48xf32>, %arg42: tensor<48x96x1x1xf32>, %arg43: tensor<96xf32>, %arg44: tensor<96xf32>, %arg45: tensor<96xf32>, %arg46: tensor<96xf32>, %arg47: tensor<96x48x3x3xf32>, %arg48: tensor<48xf32>, %arg49: tensor<48xf32>, %arg50: tensor<48xf32>, %arg51: tensor<48xf32>, %arg52: tensor<48x48x1x1xf32>, %arg53: tensor<48xf32>, %arg54: tensor<48x48x1x1xf32>, %arg55: tensor<24xf32>, %arg56: tensor<24xf32>, %arg57: tensor<24xf32>, %arg58: tensor<24xf32>, %arg59: tensor<24x48x1x1xf32>, %arg60: tensor<48xf32>, %arg61: tensor<48xf32>, %arg62: tensor<48xf32>, %arg63: tensor<48xf32>, %arg64: tensor<48x24x3x3xf32>, %arg65: tensor<24xf32>, %arg66: tensor<24xf32>, %arg67: tensor<24xf32>, %arg68: tensor<24xf32>, %arg69: tensor<24x12x3x3xf32>, %arg70: tensor<12xf32>, %arg71: tensor<12xf32>, %arg72: tensor<12xf32>, %arg73: tensor<12xf32>, %arg74: tensor<12x12x3x3xf32>, %arg75: tensor<12xf32>, %arg76: tensor<12xf32>, %arg77: tensor<12xf32>, %arg78: tensor<12xf32>, %arg79: tensor<12x3x3x3xf32>, %arg80: tensor<1x3x640x640xf32>, %arg81: tensor<24xf32>, %arg82: tensor<24xf32>, %arg83: tensor<24xf32>, %arg84: tensor<24xf32>, %arg85: tensor<24x48x1x1xf32>, %arg86: tensor<24xf32>, %arg87: tensor<24xf32>, %arg88: tensor<24xf32>, %arg89: tensor<24xf32>, %arg90: tensor<24x24x1x1xf32>, %arg91: tensor<24xf32>, %arg92: tensor<24xf32>, %arg93: tensor<24xf32>, %arg94: tensor<24xf32>, %arg95: tensor<24x1x5x5xf32>, %arg96: tensor<24xf32>, %arg97: tensor<24xf32>, %arg98: tensor<24xf32>, %arg99: tensor<24xf32>, %arg100: tensor<24x24x3x3xf32>, %arg101: tensor<48xf32>, %arg102: tensor<48xf32>, %arg103: tensor<48xf32>, %arg104: tensor<48xf32>, %arg105: tensor<48x96x1x1xf32>, %arg106: tensor<48xf32>, %arg107: tensor<48xf32>, %arg108: tensor<48xf32>, %arg109: tensor<48xf32>, %arg110: tensor<48x48x1x1xf32>, %arg111: tensor<48xf32>, %arg112: tensor<48xf32>, %arg113: tensor<48xf32>, %arg114: tensor<48xf32>, %arg115: tensor<48x1x5x5xf32>, %arg116: tensor<48xf32>, %arg117: tensor<48xf32>, %arg118: tensor<48xf32>, %arg119: tensor<48xf32>, %arg120: tensor<48x48x3x3xf32>, %arg121: tensor<f32>, %arg122: tensor<i64>, %arg123: tensor<96xf32>, %arg124: tensor<96xf32>, %arg125: tensor<96xf32>, %arg126: tensor<96xf32>, %arg127: tensor<96x192x1x1xf32>, %arg128: tensor<192xf32>, %arg129: tensor<192xf32>, %arg130: tensor<192xf32>, %arg131: tensor<192xf32>, %arg132: tensor<192x192x1x1xf32>, %arg133: tensor<96xf32>, %arg134: tensor<96xf32>, %arg135: tensor<96xf32>, %arg136: tensor<96xf32>, %arg137: tensor<96x384x1x1xf32>, %arg138: tensor<192xf32>, %arg139: tensor<192xf32>, %arg140: tensor<192xf32>, %arg141: tensor<192xf32>, %arg142: tensor<192x192x1x1xf32>, %arg143: tensor<192xf32>, %arg144: tensor<192x192x1x1xf32>, %arg145: tensor<96xf32>, %arg146: tensor<96xf32>, %arg147: tensor<96xf32>, %arg148: tensor<96xf32>, %arg149: tensor<96x192x1x1xf32>, %arg150: tensor<192xf32>, %arg151: tensor<192xf32>, %arg152: tensor<192xf32>, %arg153: tensor<192xf32>, %arg154: tensor<192x96x3x3xf32>, %arg155: tensor<96xf32>, %arg156: tensor<96xf32>, %arg157: tensor<96xf32>, %arg158: tensor<96xf32>, %arg159: tensor<96x192x1x1xf32>, %arg160: tensor<96xf32>, %arg161: tensor<96xf32>, %arg162: tensor<96xf32>, %arg163: tensor<96xf32>, %arg164: tensor<96x96x1x1xf32>, %arg165: tensor<96xf32>, %arg166: tensor<96xf32>, %arg167: tensor<96xf32>, %arg168: tensor<96xf32>, %arg169: tensor<96x1x5x5xf32>, %arg170: tensor<96xf32>, %arg171: tensor<96xf32>, %arg172: tensor<96xf32>, %arg173: tensor<96xf32>, %arg174: tensor<96x96x3x3xf32>, %arg175: tensor<i64>, %arg176: tensor<192xf32>, %arg177: tensor<192xf32>, %arg178: tensor<192xf32>, %arg179: tensor<192xf32>, %arg180: tensor<192x384x1x1xf32>, %arg181: tensor<384xf32>, %arg182: tensor<384xf32>, %arg183: tensor<384xf32>, %arg184: tensor<384xf32>, %arg185: tensor<384x384x1x1xf32>, %arg186: tensor<384xf32>, %arg187: tensor<384x384x1x1xf32>, %arg188: tensor<192xf32>, %arg189: tensor<192xf32>, %arg190: tensor<192xf32>, %arg191: tensor<192xf32>, %arg192: tensor<192x384x1x1xf32>, %arg193: tensor<384xf32>, %arg194: tensor<384xf32>, %arg195: tensor<384xf32>, %arg196: tensor<384xf32>, %arg197: tensor<384x768x1x1xf32>, %arg198: tensor<192xf32>, %arg199: tensor<192xf32>, %arg200: tensor<192xf32>, %arg201: tensor<192xf32>, %arg202: tensor<192x384x1x1xf32>, %arg203: tensor<384xf32>, %arg204: tensor<384xf32>, %arg205: tensor<384xf32>, %arg206: tensor<384xf32>, %arg207: tensor<384x192x3x3xf32>, %arg208: tensor<192xf32>, %arg209: tensor<192xf32>, %arg210: tensor<192xf32>, %arg211: tensor<192xf32>, %arg212: tensor<192x192x1x1xf32>, %arg213: tensor<192xf32>, %arg214: tensor<192xf32>, %arg215: tensor<192xf32>, %arg216: tensor<192xf32>, %arg217: tensor<192x1x5x5xf32>, %arg218: tensor<192xf32>, %arg219: tensor<192xf32>, %arg220: tensor<192xf32>, %arg221: tensor<192xf32>, %arg222: tensor<192x192x3x3xf32>, %arg223: tensor<192xf32>, %arg224: tensor<192xf32>, %arg225: tensor<192xf32>, %arg226: tensor<192xf32>, %arg227: tensor<192x384x1x1xf32>, %arg228: tensor<96xf32>, %arg229: tensor<96xf32>, %arg230: tensor<96xf32>, %arg231: tensor<96xf32>, %arg232: tensor<96x96x1x1xf32>, %arg233: tensor<96xf32>, %arg234: tensor<96xf32>, %arg235: tensor<96xf32>, %arg236: tensor<96xf32>, %arg237: tensor<96x1x5x5xf32>, %arg238: tensor<96xf32>, %arg239: tensor<96xf32>, %arg240: tensor<96xf32>, %arg241: tensor<96xf32>, %arg242: tensor<96x96x3x3xf32>, %arg243: tensor<96xf32>, %arg244: tensor<96xf32>, %arg245: tensor<96xf32>, %arg246: tensor<96xf32>, %arg247: tensor<96x384x1x1xf32>, %arg248: tensor<48xf32>, %arg249: tensor<48xf32>, %arg250: tensor<48xf32>, %arg251: tensor<48xf32>, %arg252: tensor<48x48x1x1xf32>, %arg253: tensor<48xf32>, %arg254: tensor<48xf32>, %arg255: tensor<48xf32>, %arg256: tensor<48xf32>, %arg257: tensor<48x1x5x5xf32>, %arg258: tensor<48xf32>, %arg259: tensor<48xf32>, %arg260: tensor<48xf32>, %arg261: tensor<48xf32>, %arg262: tensor<48x48x3x3xf32>, %arg263: tensor<48xf32>, %arg264: tensor<48xf32>, %arg265: tensor<48xf32>, %arg266: tensor<48xf32>, %arg267: tensor<48x192x1x1xf32>, %arg268: tensor<80xf32>, %arg269: tensor<80x96x1x1xf32>, %arg270: tensor<96xf32>, %arg271: tensor<96xf32>, %arg272: tensor<96xf32>, %arg273: tensor<96xf32>, %arg274: tensor<96xf32>, %arg275: tensor<96xf32>, %arg276: tensor<96xf32>, %arg277: tensor<96xf32>, %arg278: tensor<96xf32>, %arg279: tensor<96xf32>, %arg280: tensor<96xf32>, %arg281: tensor<96xf32>, %arg282: tensor<96x192x3x3xf32>, %arg283: tensor<192xf32>, %arg284: tensor<192xf32>, %arg285: tensor<192xf32>, %arg286: tensor<192xf32>, %arg287: tensor<192x192x1x1xf32>, %arg288: tensor<96xf32>, %arg289: tensor<96xf32>, %arg290: tensor<96xf32>, %arg291: tensor<96xf32>, %arg292: tensor<96x192x1x1xf32>, %arg293: tensor<96xf32>, %arg294: tensor<96xf32>, %arg295: tensor<96xf32>, %arg296: tensor<96xf32>, %arg297: tensor<96x96x3x3xf32>, %arg298: tensor<96xf32>, %arg299: tensor<96xf32>, %arg300: tensor<96xf32>, %arg301: tensor<96xf32>, %arg302: tensor<96x96x1x1xf32>, %arg303: tensor<96xf32>, %arg304: tensor<96xf32>, %arg305: tensor<96xf32>, %arg306: tensor<96xf32>, %arg307: tensor<96x1x5x5xf32>, %arg308: tensor<96xf32>, %arg309: tensor<96xf32>, %arg310: tensor<96xf32>, %arg311: tensor<96xf32>, %arg312: tensor<96x96x3x3xf32>, %arg313: tensor<96xf32>, %arg314: tensor<96xf32>, %arg315: tensor<96xf32>, %arg316: tensor<96xf32>, %arg317: tensor<96x192x1x1xf32>, %arg318: tensor<80xf32>, %arg319: tensor<80x96x1x1xf32>, %arg320: tensor<96xf32>, %arg321: tensor<96xf32>, %arg322: tensor<96xf32>, %arg323: tensor<96xf32>, %arg324: tensor<96xf32>, %arg325: tensor<96xf32>, %arg326: tensor<96xf32>, %arg327: tensor<96xf32>, %arg328: tensor<96xf32>, %arg329: tensor<96xf32>, %arg330: tensor<96xf32>, %arg331: tensor<96xf32>, %arg332: tensor<96x384x3x3xf32>, %arg333: tensor<384xf32>, %arg334: tensor<384xf32>, %arg335: tensor<384xf32>, %arg336: tensor<384xf32>, %arg337: tensor<384x384x1x1xf32>, %arg338: tensor<192xf32>, %arg339: tensor<192xf32>, %arg340: tensor<192xf32>, %arg341: tensor<192xf32>, %arg342: tensor<192x384x1x1xf32>, %arg343: tensor<192xf32>, %arg344: tensor<192xf32>, %arg345: tensor<192xf32>, %arg346: tensor<192xf32>, %arg347: tensor<192x192x3x3xf32>, %arg348: tensor<192xf32>, %arg349: tensor<192xf32>, %arg350: tensor<192xf32>, %arg351: tensor<192xf32>, %arg352: tensor<192x192x1x1xf32>, %arg353: tensor<192xf32>, %arg354: tensor<192xf32>, %arg355: tensor<192xf32>, %arg356: tensor<192xf32>, %arg357: tensor<192x1x5x5xf32>, %arg358: tensor<192xf32>, %arg359: tensor<192xf32>, %arg360: tensor<192xf32>, %arg361: tensor<192xf32>, %arg362: tensor<192x192x3x3xf32>, %arg363: tensor<192xf32>, %arg364: tensor<192xf32>, %arg365: tensor<192xf32>, %arg366: tensor<192xf32>, %arg367: tensor<192x384x1x1xf32>, %arg368: tensor<f32>, %arg369: tensor<4xf32>, %arg370: tensor<4x96x1x1xf32>, %arg371: tensor<96xf32>, %arg372: tensor<96xf32>, %arg373: tensor<96xf32>, %arg374: tensor<96xf32>, %arg375: tensor<96x96x3x3xf32>, %arg376: tensor<96xf32>, %arg377: tensor<96xf32>, %arg378: tensor<96xf32>, %arg379: tensor<96xf32>, %arg380: tensor<96x96x3x3xf32>, %arg381: tensor<f32>, %arg382: tensor<4xf32>, %arg383: tensor<4x96x1x1xf32>, %arg384: tensor<96xf32>, %arg385: tensor<96xf32>, %arg386: tensor<96xf32>, %arg387: tensor<96xf32>, %arg388: tensor<96xf32>, %arg389: tensor<96xf32>, %arg390: tensor<96xf32>, %arg391: tensor<96xf32>, %arg392: tensor<f32>, %arg393: tensor<4xf32>, %arg394: tensor<4x96x1x1xf32>, %arg395: tensor<96xf32>, %arg396: tensor<96xf32>, %arg397: tensor<96xf32>, %arg398: tensor<96xf32>, %arg399: tensor<96xf32>, %arg400: tensor<96xf32>, %arg401: tensor<96xf32>, %arg402: tensor<96xf32>) -> (tensor<1x80x80x80xf32>, tensor<1x80x40x40xf32>, tensor<1x80x20x20xf32>, tensor<1x4x80x80xf32>, tensor<1x4x40x40xf32>, tensor<1x4x20x20xf32>) {
+    %0 = stablehlo.constant dense<0> : tensor<80x80xi64>
+    %1 = stablehlo.constant dense<0> : tensor<40x40xi64>
+    %2 = stablehlo.constant dense<2.500000e-03> : tensor<1x384xf32>
+    %3 = stablehlo.constant dense<0.000000e+00> : tensor<1x384x1x1xf32>
+    %4 = stablehlo.constant dense<6.250000e-04> : tensor<1x192xf32>
+    %5 = stablehlo.constant dense<0.000000e+00> : tensor<1x192x1x1xf32>
+    %6 = stablehlo.constant dense<1.562500e-04> : tensor<1x96xf32>
+    %7 = stablehlo.constant dense<0.000000e+00> : tensor<1x96x1x1xf32>
+    %8 = stablehlo.constant dense<3.906250e-05> : tensor<1x48xf32>
+    %9 = stablehlo.constant dense<0.000000e+00> : tensor<1x48x1x1xf32>
+    %10 = stablehlo.constant dense<[0.000000e+00, 1.000000e+00, 2.000000e+00, 3.000000e+00, 4.000000e+00, 5.000000e+00, 6.000000e+00, 7.000000e+00, 8.000000e+00, 9.000000e+00, 1.000000e+01, 1.100000e+01, 1.200000e+01, 1.300000e+01, 1.400000e+01, 1.500000e+01, 1.600000e+01, 1.700000e+01, 1.800000e+01, 1.900000e+01, 2.000000e+01, 2.100000e+01, 2.200000e+01, 2.300000e+01, 2.400000e+01, 2.500000e+01, 2.600000e+01, 2.700000e+01, 2.800000e+01, 2.900000e+01, 3.000000e+01, 3.100000e+01, 3.200000e+01, 3.300000e+01, 3.400000e+01, 3.500000e+01, 3.600000e+01, 3.700000e+01, 3.800000e+01, 3.900000e+01, 4.000000e+01, 4.100000e+01, 4.200000e+01, 4.300000e+01, 4.400000e+01, 4.500000e+01, 4.600000e+01, 4.700000e+01, 4.800000e+01, 4.900000e+01, 5.000000e+01, 5.100000e+01, 5.200000e+01, 5.300000e+01, 5.400000e+01, 5.500000e+01, 5.600000e+01, 5.700000e+01, 5.800000e+01, 5.900000e+01, 6.000000e+01, 6.100000e+01, 6.200000e+01, 6.300000e+01, 6.400000e+01, 6.500000e+01, 6.600000e+01, 6.700000e+01, 6.800000e+01, 6.900000e+01, 7.000000e+01, 7.100000e+01, 7.200000e+01, 7.300000e+01, 7.400000e+01, 7.500000e+01, 7.600000e+01, 7.700000e+01, 7.800000e+01, 7.900000e+01]> : tensor<80xf32>
+    %11 = stablehlo.constant dense<[0.000000e+00, 1.000000e+00, 2.000000e+00, 3.000000e+00, 4.000000e+00, 5.000000e+00, 6.000000e+00, 7.000000e+00, 8.000000e+00, 9.000000e+00, 1.000000e+01, 1.100000e+01, 1.200000e+01, 1.300000e+01, 1.400000e+01, 1.500000e+01, 1.600000e+01, 1.700000e+01, 1.800000e+01, 1.900000e+01, 2.000000e+01, 2.100000e+01, 2.200000e+01, 2.300000e+01, 2.400000e+01, 2.500000e+01, 2.600000e+01, 2.700000e+01, 2.800000e+01, 2.900000e+01, 3.000000e+01, 3.100000e+01, 3.200000e+01, 3.300000e+01, 3.400000e+01, 3.500000e+01, 3.600000e+01, 3.700000e+01, 3.800000e+01, 3.900000e+01]> : tensor<40xf32>
+    %12 = stablehlo.constant dense<0xFF800000> : tensor<f32>
+    %13 = stablehlo.constant dense<0.000000e+00> : tensor<f32>
+    %14 = stablehlo.convolution(%arg80, %arg79) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [2, 2], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x3x640x640xf32>, tensor<12x3x3x3xf32>) -> tensor<1x12x320x320xf32>
+    %15 = "stablehlo.batch_norm_inference"(%14, %arg78, %arg77, %arg76, %arg75) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x12x320x320xf32>, tensor<12xf32>, tensor<12xf32>, tensor<12xf32>, tensor<12xf32>) -> tensor<1x12x320x320xf32>
+    %16 = stablehlo.logistic %15 : tensor<1x12x320x320xf32>
+    %17 = stablehlo.multiply %15, %16 : tensor<1x12x320x320xf32>
+    %18 = stablehlo.convolution(%17, %arg74) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x12x320x320xf32>, tensor<12x12x3x3xf32>) -> tensor<1x12x320x320xf32>
+    %19 = "stablehlo.batch_norm_inference"(%18, %arg73, %arg72, %arg71, %arg70) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x12x320x320xf32>, tensor<12xf32>, tensor<12xf32>, tensor<12xf32>, tensor<12xf32>) -> tensor<1x12x320x320xf32>
+    %20 = stablehlo.logistic %19 : tensor<1x12x320x320xf32>
+    %21 = stablehlo.multiply %19, %20 : tensor<1x12x320x320xf32>
+    %22 = stablehlo.convolution(%21, %arg69) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x12x320x320xf32>, tensor<24x12x3x3xf32>) -> tensor<1x24x320x320xf32>
+    %23 = "stablehlo.batch_norm_inference"(%22, %arg68, %arg67, %arg66, %arg65) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x24x320x320xf32>, tensor<24xf32>, tensor<24xf32>, tensor<24xf32>, tensor<24xf32>) -> tensor<1x24x320x320xf32>
+    %24 = stablehlo.logistic %23 : tensor<1x24x320x320xf32>
+    %25 = stablehlo.multiply %23, %24 : tensor<1x24x320x320xf32>
+    %26 = stablehlo.convolution(%25, %arg64) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [2, 2], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x24x320x320xf32>, tensor<48x24x3x3xf32>) -> tensor<1x48x160x160xf32>
+    %27 = "stablehlo.batch_norm_inference"(%26, %arg63, %arg62, %arg61, %arg60) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x48x160x160xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>) -> tensor<1x48x160x160xf32>
+    %28 = stablehlo.logistic %27 : tensor<1x48x160x160xf32>
+    %29 = stablehlo.multiply %27, %28 : tensor<1x48x160x160xf32>
+    %30 = stablehlo.convolution(%29, %arg85) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x48x160x160xf32>, tensor<24x48x1x1xf32>) -> tensor<1x24x160x160xf32>
+    %31 = "stablehlo.batch_norm_inference"(%30, %arg84, %arg83, %arg82, %arg81) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x24x160x160xf32>, tensor<24xf32>, tensor<24xf32>, tensor<24xf32>, tensor<24xf32>) -> tensor<1x24x160x160xf32>
+    %32 = stablehlo.logistic %31 : tensor<1x24x160x160xf32>
+    %33 = stablehlo.multiply %31, %32 : tensor<1x24x160x160xf32>
+    %34 = stablehlo.convolution(%33, %arg100) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x24x160x160xf32>, tensor<24x24x3x3xf32>) -> tensor<1x24x160x160xf32>
+    %35 = "stablehlo.batch_norm_inference"(%34, %arg99, %arg98, %arg97, %arg96) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x24x160x160xf32>, tensor<24xf32>, tensor<24xf32>, tensor<24xf32>, tensor<24xf32>) -> tensor<1x24x160x160xf32>
+    %36 = stablehlo.logistic %35 : tensor<1x24x160x160xf32>
+    %37 = stablehlo.multiply %35, %36 : tensor<1x24x160x160xf32>
+    %38 = stablehlo.convolution(%37, %arg95) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[2, 2], [2, 2]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 24 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x24x160x160xf32>, tensor<24x1x5x5xf32>) -> tensor<1x24x160x160xf32>
+    %39 = "stablehlo.batch_norm_inference"(%38, %arg94, %arg93, %arg92, %arg91) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x24x160x160xf32>, tensor<24xf32>, tensor<24xf32>, tensor<24xf32>, tensor<24xf32>) -> tensor<1x24x160x160xf32>
+    %40 = stablehlo.logistic %39 : tensor<1x24x160x160xf32>
+    %41 = stablehlo.multiply %39, %40 : tensor<1x24x160x160xf32>
+    %42 = stablehlo.convolution(%41, %arg90) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x24x160x160xf32>, tensor<24x24x1x1xf32>) -> tensor<1x24x160x160xf32>
+    %43 = "stablehlo.batch_norm_inference"(%42, %arg89, %arg88, %arg87, %arg86) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x24x160x160xf32>, tensor<24xf32>, tensor<24xf32>, tensor<24xf32>, tensor<24xf32>) -> tensor<1x24x160x160xf32>
+    %44 = stablehlo.logistic %43 : tensor<1x24x160x160xf32>
+    %45 = stablehlo.multiply %43, %44 : tensor<1x24x160x160xf32>
+    %46 = stablehlo.add %45, %33 : tensor<1x24x160x160xf32>
+    %47 = stablehlo.convolution(%29, %arg59) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x48x160x160xf32>, tensor<24x48x1x1xf32>) -> tensor<1x24x160x160xf32>
+    %48 = "stablehlo.batch_norm_inference"(%47, %arg58, %arg57, %arg56, %arg55) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x24x160x160xf32>, tensor<24xf32>, tensor<24xf32>, tensor<24xf32>, tensor<24xf32>) -> tensor<1x24x160x160xf32>
+    %49 = stablehlo.logistic %48 : tensor<1x24x160x160xf32>
+    %50 = stablehlo.multiply %48, %49 : tensor<1x24x160x160xf32>
+    %51 = stablehlo.concatenate %46, %50, dim = 1 : (tensor<1x24x160x160xf32>, tensor<1x24x160x160xf32>) -> tensor<1x48x160x160xf32>
+    %52 = stablehlo.broadcast_in_dim %arg33, dims = [] : (tensor<f32>) -> tensor<1x48x1x1xf32>
+    %53 = stablehlo.reduce(%51 init: %13) across dimensions = [3, 2] : (tensor<1x48x160x160xf32>, tensor<f32>) -> tensor<1x48xf32>
+     reducer(%arg403: tensor<f32>, %arg404: tensor<f32>)  {
+      %476 = stablehlo.add %arg403, %arg404 : tensor<f32>
+      stablehlo.return %476 : tensor<f32>
+    }
+    %54 = stablehlo.multiply %53, %8 : tensor<1x48xf32>
+    %55 = stablehlo.reshape %54 : (tensor<1x48xf32>) -> tensor<1x48x1x1xf32>
+    %56 = stablehlo.convolution(%55, %arg54) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x48x1x1xf32>, tensor<48x48x1x1xf32>) -> tensor<1x48x1x1xf32>
+    %57 = stablehlo.reshape %arg53 : (tensor<48xf32>) -> tensor<1x48x1x1xf32>
+    %58 = stablehlo.add %56, %57 : tensor<1x48x1x1xf32>
+    %59 = stablehlo.broadcast_in_dim %arg35, dims = [] : (tensor<f32>) -> tensor<1x48x1x1xf32>
+    %60 = stablehlo.add %58, %59 : tensor<1x48x1x1xf32>
+    %61 = stablehlo.broadcast_in_dim %arg34, dims = [] : (tensor<f32>) -> tensor<1x48x1x1xf32>
+    %62 = stablehlo.clamp %9, %60, %61 : tensor<1x48x1x1xf32>
+    %63 = stablehlo.broadcast_in_dim %arg32, dims = [] : (tensor<f32>) -> tensor<1x48x1x1xf32>
+    %64 = stablehlo.clamp %52, %62, %63 : tensor<1x48x1x1xf32>
+    %65 = stablehlo.broadcast_in_dim %arg32, dims = [] : (tensor<f32>) -> tensor<1x48x1x1xf32>
+    %66 = stablehlo.divide %64, %65 : tensor<1x48x1x1xf32>
+    %67 = stablehlo.reshape %66 : (tensor<1x48x1x1xf32>) -> tensor<1x48xf32>
+    %68 = stablehlo.broadcast_in_dim %67, dims = [0, 1] : (tensor<1x48xf32>) -> tensor<1x48x160x160xf32>
+    %69 = stablehlo.multiply %51, %68 : tensor<1x48x160x160xf32>
+    %70 = stablehlo.convolution(%69, %arg52) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x48x160x160xf32>, tensor<48x48x1x1xf32>) -> tensor<1x48x160x160xf32>
+    %71 = "stablehlo.batch_norm_inference"(%70, %arg51, %arg50, %arg49, %arg48) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x48x160x160xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>) -> tensor<1x48x160x160xf32>
+    %72 = stablehlo.logistic %71 : tensor<1x48x160x160xf32>
+    %73 = stablehlo.multiply %71, %72 : tensor<1x48x160x160xf32>
+    %74 = stablehlo.convolution(%73, %arg47) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [2, 2], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x48x160x160xf32>, tensor<96x48x3x3xf32>) -> tensor<1x96x80x80xf32>
+    %75 = "stablehlo.batch_norm_inference"(%74, %arg46, %arg45, %arg44, %arg43) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x80x80xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x80x80xf32>
+    %76 = stablehlo.logistic %75 : tensor<1x96x80x80xf32>
+    %77 = stablehlo.multiply %75, %76 : tensor<1x96x80x80xf32>
+    %78 = stablehlo.convolution(%77, %arg105) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x80x80xf32>, tensor<48x96x1x1xf32>) -> tensor<1x48x80x80xf32>
+    %79 = "stablehlo.batch_norm_inference"(%78, %arg104, %arg103, %arg102, %arg101) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x48x80x80xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>) -> tensor<1x48x80x80xf32>
+    %80 = stablehlo.logistic %79 : tensor<1x48x80x80xf32>
+    %81 = stablehlo.multiply %79, %80 : tensor<1x48x80x80xf32>
+    %82 = stablehlo.convolution(%81, %arg120) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x48x80x80xf32>, tensor<48x48x3x3xf32>) -> tensor<1x48x80x80xf32>
+    %83 = "stablehlo.batch_norm_inference"(%82, %arg119, %arg118, %arg117, %arg116) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x48x80x80xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>) -> tensor<1x48x80x80xf32>
+    %84 = stablehlo.logistic %83 : tensor<1x48x80x80xf32>
+    %85 = stablehlo.multiply %83, %84 : tensor<1x48x80x80xf32>
+    %86 = stablehlo.convolution(%85, %arg115) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[2, 2], [2, 2]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 48 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x48x80x80xf32>, tensor<48x1x5x5xf32>) -> tensor<1x48x80x80xf32>
+    %87 = "stablehlo.batch_norm_inference"(%86, %arg114, %arg113, %arg112, %arg111) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x48x80x80xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>) -> tensor<1x48x80x80xf32>
+    %88 = stablehlo.logistic %87 : tensor<1x48x80x80xf32>
+    %89 = stablehlo.multiply %87, %88 : tensor<1x48x80x80xf32>
+    %90 = stablehlo.convolution(%89, %arg110) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x48x80x80xf32>, tensor<48x48x1x1xf32>) -> tensor<1x48x80x80xf32>
+    %91 = "stablehlo.batch_norm_inference"(%90, %arg109, %arg108, %arg107, %arg106) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x48x80x80xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>) -> tensor<1x48x80x80xf32>
+    %92 = stablehlo.logistic %91 : tensor<1x48x80x80xf32>
+    %93 = stablehlo.multiply %91, %92 : tensor<1x48x80x80xf32>
+    %94 = stablehlo.add %93, %81 : tensor<1x48x80x80xf32>
+    %95 = stablehlo.convolution(%77, %arg42) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x80x80xf32>, tensor<48x96x1x1xf32>) -> tensor<1x48x80x80xf32>
+    %96 = "stablehlo.batch_norm_inference"(%95, %arg41, %arg40, %arg39, %arg38) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x48x80x80xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>) -> tensor<1x48x80x80xf32>
+    %97 = stablehlo.logistic %96 : tensor<1x48x80x80xf32>
+    %98 = stablehlo.multiply %96, %97 : tensor<1x48x80x80xf32>
+    %99 = stablehlo.concatenate %94, %98, dim = 1 : (tensor<1x48x80x80xf32>, tensor<1x48x80x80xf32>) -> tensor<1x96x80x80xf32>
+    %100 = stablehlo.broadcast_in_dim %arg33, dims = [] : (tensor<f32>) -> tensor<1x96x1x1xf32>
+    %101 = stablehlo.reduce(%99 init: %13) across dimensions = [3, 2] : (tensor<1x96x80x80xf32>, tensor<f32>) -> tensor<1x96xf32>
+     reducer(%arg403: tensor<f32>, %arg404: tensor<f32>)  {
+      %476 = stablehlo.add %arg403, %arg404 : tensor<f32>
+      stablehlo.return %476 : tensor<f32>
+    }
+    %102 = stablehlo.multiply %101, %6 : tensor<1x96xf32>
+    %103 = stablehlo.reshape %102 : (tensor<1x96xf32>) -> tensor<1x96x1x1xf32>
+    %104 = stablehlo.convolution(%103, %arg37) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x1x1xf32>, tensor<96x96x1x1xf32>) -> tensor<1x96x1x1xf32>
+    %105 = stablehlo.reshape %arg36 : (tensor<96xf32>) -> tensor<1x96x1x1xf32>
+    %106 = stablehlo.add %104, %105 : tensor<1x96x1x1xf32>
+    %107 = stablehlo.broadcast_in_dim %arg35, dims = [] : (tensor<f32>) -> tensor<1x96x1x1xf32>
+    %108 = stablehlo.add %106, %107 : tensor<1x96x1x1xf32>
+    %109 = stablehlo.broadcast_in_dim %arg34, dims = [] : (tensor<f32>) -> tensor<1x96x1x1xf32>
+    %110 = stablehlo.clamp %7, %108, %109 : tensor<1x96x1x1xf32>
+    %111 = stablehlo.broadcast_in_dim %arg32, dims = [] : (tensor<f32>) -> tensor<1x96x1x1xf32>
+    %112 = stablehlo.clamp %100, %110, %111 : tensor<1x96x1x1xf32>
+    %113 = stablehlo.broadcast_in_dim %arg32, dims = [] : (tensor<f32>) -> tensor<1x96x1x1xf32>
+    %114 = stablehlo.divide %112, %113 : tensor<1x96x1x1xf32>
+    %115 = stablehlo.reshape %114 : (tensor<1x96x1x1xf32>) -> tensor<1x96xf32>
+    %116 = stablehlo.broadcast_in_dim %115, dims = [0, 1] : (tensor<1x96xf32>) -> tensor<1x96x80x80xf32>
+    %117 = stablehlo.multiply %99, %116 : tensor<1x96x80x80xf32>
+    %118 = stablehlo.convolution(%117, %arg31) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x80x80xf32>, tensor<96x96x1x1xf32>) -> tensor<1x96x80x80xf32>
+    %119 = "stablehlo.batch_norm_inference"(%118, %arg30, %arg29, %arg28, %arg27) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x80x80xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x80x80xf32>
+    %120 = stablehlo.logistic %119 : tensor<1x96x80x80xf32>
+    %121 = stablehlo.multiply %119, %120 : tensor<1x96x80x80xf32>
+    %122 = stablehlo.convolution(%121, %arg154) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [2, 2], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x80x80xf32>, tensor<192x96x3x3xf32>) -> tensor<1x192x40x40xf32>
+    %123 = "stablehlo.batch_norm_inference"(%122, %arg153, %arg152, %arg151, %arg150) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x192x40x40xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>) -> tensor<1x192x40x40xf32>
+    %124 = stablehlo.logistic %123 : tensor<1x192x40x40xf32>
+    %125 = stablehlo.multiply %123, %124 : tensor<1x192x40x40xf32>
+    %126 = stablehlo.convolution(%125, %arg159) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x192x40x40xf32>, tensor<96x192x1x1xf32>) -> tensor<1x96x40x40xf32>
+    %127 = "stablehlo.batch_norm_inference"(%126, %arg158, %arg157, %arg156, %arg155) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %128 = stablehlo.logistic %127 : tensor<1x96x40x40xf32>
+    %129 = stablehlo.multiply %127, %128 : tensor<1x96x40x40xf32>
+    %130 = stablehlo.convolution(%129, %arg174) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x40x40xf32>, tensor<96x96x3x3xf32>) -> tensor<1x96x40x40xf32>
+    %131 = "stablehlo.batch_norm_inference"(%130, %arg173, %arg172, %arg171, %arg170) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %132 = stablehlo.logistic %131 : tensor<1x96x40x40xf32>
+    %133 = stablehlo.multiply %131, %132 : tensor<1x96x40x40xf32>
+    %134 = stablehlo.convolution(%133, %arg169) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[2, 2], [2, 2]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 96 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x40x40xf32>, tensor<96x1x5x5xf32>) -> tensor<1x96x40x40xf32>
+    %135 = "stablehlo.batch_norm_inference"(%134, %arg168, %arg167, %arg166, %arg165) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %136 = stablehlo.logistic %135 : tensor<1x96x40x40xf32>
+    %137 = stablehlo.multiply %135, %136 : tensor<1x96x40x40xf32>
+    %138 = stablehlo.convolution(%137, %arg164) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x40x40xf32>, tensor<96x96x1x1xf32>) -> tensor<1x96x40x40xf32>
+    %139 = "stablehlo.batch_norm_inference"(%138, %arg163, %arg162, %arg161, %arg160) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %140 = stablehlo.logistic %139 : tensor<1x96x40x40xf32>
+    %141 = stablehlo.multiply %139, %140 : tensor<1x96x40x40xf32>
+    %142 = stablehlo.add %141, %129 : tensor<1x96x40x40xf32>
+    %143 = stablehlo.convolution(%125, %arg149) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x192x40x40xf32>, tensor<96x192x1x1xf32>) -> tensor<1x96x40x40xf32>
+    %144 = "stablehlo.batch_norm_inference"(%143, %arg148, %arg147, %arg146, %arg145) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %145 = stablehlo.logistic %144 : tensor<1x96x40x40xf32>
+    %146 = stablehlo.multiply %144, %145 : tensor<1x96x40x40xf32>
+    %147 = stablehlo.concatenate %142, %146, dim = 1 : (tensor<1x96x40x40xf32>, tensor<1x96x40x40xf32>) -> tensor<1x192x40x40xf32>
+    %148 = stablehlo.broadcast_in_dim %arg33, dims = [] : (tensor<f32>) -> tensor<1x192x1x1xf32>
+    %149 = stablehlo.reduce(%147 init: %13) across dimensions = [3, 2] : (tensor<1x192x40x40xf32>, tensor<f32>) -> tensor<1x192xf32>
+     reducer(%arg403: tensor<f32>, %arg404: tensor<f32>)  {
+      %476 = stablehlo.add %arg403, %arg404 : tensor<f32>
+      stablehlo.return %476 : tensor<f32>
+    }
+    %150 = stablehlo.multiply %149, %4 : tensor<1x192xf32>
+    %151 = stablehlo.reshape %150 : (tensor<1x192xf32>) -> tensor<1x192x1x1xf32>
+    %152 = stablehlo.convolution(%151, %arg144) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x192x1x1xf32>, tensor<192x192x1x1xf32>) -> tensor<1x192x1x1xf32>
+    %153 = stablehlo.reshape %arg143 : (tensor<192xf32>) -> tensor<1x192x1x1xf32>
+    %154 = stablehlo.add %152, %153 : tensor<1x192x1x1xf32>
+    %155 = stablehlo.broadcast_in_dim %arg35, dims = [] : (tensor<f32>) -> tensor<1x192x1x1xf32>
+    %156 = stablehlo.add %154, %155 : tensor<1x192x1x1xf32>
+    %157 = stablehlo.broadcast_in_dim %arg34, dims = [] : (tensor<f32>) -> tensor<1x192x1x1xf32>
+    %158 = stablehlo.clamp %5, %156, %157 : tensor<1x192x1x1xf32>
+    %159 = stablehlo.broadcast_in_dim %arg32, dims = [] : (tensor<f32>) -> tensor<1x192x1x1xf32>
+    %160 = stablehlo.clamp %148, %158, %159 : tensor<1x192x1x1xf32>
+    %161 = stablehlo.broadcast_in_dim %arg32, dims = [] : (tensor<f32>) -> tensor<1x192x1x1xf32>
+    %162 = stablehlo.divide %160, %161 : tensor<1x192x1x1xf32>
+    %163 = stablehlo.reshape %162 : (tensor<1x192x1x1xf32>) -> tensor<1x192xf32>
+    %164 = stablehlo.broadcast_in_dim %163, dims = [0, 1] : (tensor<1x192xf32>) -> tensor<1x192x40x40xf32>
+    %165 = stablehlo.multiply %147, %164 : tensor<1x192x40x40xf32>
+    %166 = stablehlo.convolution(%165, %arg142) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x192x40x40xf32>, tensor<192x192x1x1xf32>) -> tensor<1x192x40x40xf32>
+    %167 = "stablehlo.batch_norm_inference"(%166, %arg141, %arg140, %arg139, %arg138) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x192x40x40xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>) -> tensor<1x192x40x40xf32>
+    %168 = stablehlo.logistic %167 : tensor<1x192x40x40xf32>
+    %169 = stablehlo.multiply %167, %168 : tensor<1x192x40x40xf32>
+    %170 = stablehlo.convolution(%169, %arg207) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [2, 2], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x192x40x40xf32>, tensor<384x192x3x3xf32>) -> tensor<1x384x20x20xf32>
+    %171 = "stablehlo.batch_norm_inference"(%170, %arg206, %arg205, %arg204, %arg203) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x384x20x20xf32>, tensor<384xf32>, tensor<384xf32>, tensor<384xf32>, tensor<384xf32>) -> tensor<1x384x20x20xf32>
+    %172 = stablehlo.logistic %171 : tensor<1x384x20x20xf32>
+    %173 = stablehlo.multiply %171, %172 : tensor<1x384x20x20xf32>
+    %174 = stablehlo.convolution(%173, %arg202) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x384x20x20xf32>, tensor<192x384x1x1xf32>) -> tensor<1x192x20x20xf32>
+    %175 = "stablehlo.batch_norm_inference"(%174, %arg201, %arg200, %arg199, %arg198) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x192x20x20xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>) -> tensor<1x192x20x20xf32>
+    %176 = stablehlo.logistic %175 : tensor<1x192x20x20xf32>
+    %177 = stablehlo.multiply %175, %176 : tensor<1x192x20x20xf32>
+    %178 = stablehlo.pad %177, %12, low = [0, 0, 6, 6], high = [0, 0, 6, 6], interior = [0, 0, 0, 0] : (tensor<1x192x20x20xf32>, tensor<f32>) -> tensor<1x192x32x32xf32>
+    %179 = "stablehlo.reduce_window"(%178, %12) ({
+    ^bb0(%arg403: tensor<f32>, %arg404: tensor<f32>):
+      %476 = stablehlo.maximum %arg403, %arg404 : tensor<f32>
+      stablehlo.return %476 : tensor<f32>
+    }) {base_dilations = dense<1> : tensor<4xi64>, padding = dense<0> : tensor<4x2xi64>, window_dilations = dense<1> : tensor<4xi64>, window_dimensions = dense<[1, 1, 13, 13]> : tensor<4xi64>, window_strides = dense<1> : tensor<4xi64>} : (tensor<1x192x32x32xf32>, tensor<f32>) -> tensor<1x192x20x20xf32>
+    %180 = stablehlo.pad %177, %12, low = [0, 0, 4, 4], high = [0, 0, 4, 4], interior = [0, 0, 0, 0] : (tensor<1x192x20x20xf32>, tensor<f32>) -> tensor<1x192x28x28xf32>
+    %181 = "stablehlo.reduce_window"(%180, %12) ({
+    ^bb0(%arg403: tensor<f32>, %arg404: tensor<f32>):
+      %476 = stablehlo.maximum %arg403, %arg404 : tensor<f32>
+      stablehlo.return %476 : tensor<f32>
+    }) {base_dilations = dense<1> : tensor<4xi64>, padding = dense<0> : tensor<4x2xi64>, window_dilations = dense<1> : tensor<4xi64>, window_dimensions = dense<[1, 1, 9, 9]> : tensor<4xi64>, window_strides = dense<1> : tensor<4xi64>} : (tensor<1x192x28x28xf32>, tensor<f32>) -> tensor<1x192x20x20xf32>
+    %182 = stablehlo.pad %177, %12, low = [0, 0, 2, 2], high = [0, 0, 2, 2], interior = [0, 0, 0, 0] : (tensor<1x192x20x20xf32>, tensor<f32>) -> tensor<1x192x24x24xf32>
+    %183 = "stablehlo.reduce_window"(%182, %12) ({
+    ^bb0(%arg403: tensor<f32>, %arg404: tensor<f32>):
+      %476 = stablehlo.maximum %arg403, %arg404 : tensor<f32>
+      stablehlo.return %476 : tensor<f32>
+    }) {base_dilations = dense<1> : tensor<4xi64>, padding = dense<0> : tensor<4x2xi64>, window_dilations = dense<1> : tensor<4xi64>, window_dimensions = dense<[1, 1, 5, 5]> : tensor<4xi64>, window_strides = dense<1> : tensor<4xi64>} : (tensor<1x192x24x24xf32>, tensor<f32>) -> tensor<1x192x20x20xf32>
+    %184 = stablehlo.concatenate %177, %183, %181, %179, dim = 1 : (tensor<1x192x20x20xf32>, tensor<1x192x20x20xf32>, tensor<1x192x20x20xf32>, tensor<1x192x20x20xf32>) -> tensor<1x768x20x20xf32>
+    %185 = stablehlo.convolution(%184, %arg197) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x768x20x20xf32>, tensor<384x768x1x1xf32>) -> tensor<1x384x20x20xf32>
+    %186 = "stablehlo.batch_norm_inference"(%185, %arg196, %arg195, %arg194, %arg193) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x384x20x20xf32>, tensor<384xf32>, tensor<384xf32>, tensor<384xf32>, tensor<384xf32>) -> tensor<1x384x20x20xf32>
+    %187 = stablehlo.logistic %186 : tensor<1x384x20x20xf32>
+    %188 = stablehlo.multiply %186, %187 : tensor<1x384x20x20xf32>
+    %189 = stablehlo.convolution(%188, %arg227) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x384x20x20xf32>, tensor<192x384x1x1xf32>) -> tensor<1x192x20x20xf32>
+    %190 = "stablehlo.batch_norm_inference"(%189, %arg226, %arg225, %arg224, %arg223) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x192x20x20xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>) -> tensor<1x192x20x20xf32>
+    %191 = stablehlo.logistic %190 : tensor<1x192x20x20xf32>
+    %192 = stablehlo.multiply %190, %191 : tensor<1x192x20x20xf32>
+    %193 = stablehlo.convolution(%192, %arg222) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x192x20x20xf32>, tensor<192x192x3x3xf32>) -> tensor<1x192x20x20xf32>
+    %194 = "stablehlo.batch_norm_inference"(%193, %arg221, %arg220, %arg219, %arg218) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x192x20x20xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>) -> tensor<1x192x20x20xf32>
+    %195 = stablehlo.logistic %194 : tensor<1x192x20x20xf32>
+    %196 = stablehlo.multiply %194, %195 : tensor<1x192x20x20xf32>
+    %197 = stablehlo.convolution(%196, %arg217) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[2, 2], [2, 2]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 192 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x192x20x20xf32>, tensor<192x1x5x5xf32>) -> tensor<1x192x20x20xf32>
+    %198 = "stablehlo.batch_norm_inference"(%197, %arg216, %arg215, %arg214, %arg213) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x192x20x20xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>) -> tensor<1x192x20x20xf32>
+    %199 = stablehlo.logistic %198 : tensor<1x192x20x20xf32>
+    %200 = stablehlo.multiply %198, %199 : tensor<1x192x20x20xf32>
+    %201 = stablehlo.convolution(%200, %arg212) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x192x20x20xf32>, tensor<192x192x1x1xf32>) -> tensor<1x192x20x20xf32>
+    %202 = "stablehlo.batch_norm_inference"(%201, %arg211, %arg210, %arg209, %arg208) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x192x20x20xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>) -> tensor<1x192x20x20xf32>
+    %203 = stablehlo.logistic %202 : tensor<1x192x20x20xf32>
+    %204 = stablehlo.multiply %202, %203 : tensor<1x192x20x20xf32>
+    %205 = stablehlo.convolution(%188, %arg192) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x384x20x20xf32>, tensor<192x384x1x1xf32>) -> tensor<1x192x20x20xf32>
+    %206 = "stablehlo.batch_norm_inference"(%205, %arg191, %arg190, %arg189, %arg188) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x192x20x20xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>) -> tensor<1x192x20x20xf32>
+    %207 = stablehlo.logistic %206 : tensor<1x192x20x20xf32>
+    %208 = stablehlo.multiply %206, %207 : tensor<1x192x20x20xf32>
+    %209 = stablehlo.concatenate %204, %208, dim = 1 : (tensor<1x192x20x20xf32>, tensor<1x192x20x20xf32>) -> tensor<1x384x20x20xf32>
+    %210 = stablehlo.broadcast_in_dim %arg33, dims = [] : (tensor<f32>) -> tensor<1x384x1x1xf32>
+    %211 = stablehlo.reduce(%209 init: %13) across dimensions = [3, 2] : (tensor<1x384x20x20xf32>, tensor<f32>) -> tensor<1x384xf32>
+     reducer(%arg403: tensor<f32>, %arg404: tensor<f32>)  {
+      %476 = stablehlo.add %arg403, %arg404 : tensor<f32>
+      stablehlo.return %476 : tensor<f32>
+    }
+    %212 = stablehlo.multiply %211, %2 : tensor<1x384xf32>
+    %213 = stablehlo.reshape %212 : (tensor<1x384xf32>) -> tensor<1x384x1x1xf32>
+    %214 = stablehlo.convolution(%213, %arg187) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x384x1x1xf32>, tensor<384x384x1x1xf32>) -> tensor<1x384x1x1xf32>
+    %215 = stablehlo.reshape %arg186 : (tensor<384xf32>) -> tensor<1x384x1x1xf32>
+    %216 = stablehlo.add %214, %215 : tensor<1x384x1x1xf32>
+    %217 = stablehlo.broadcast_in_dim %arg35, dims = [] : (tensor<f32>) -> tensor<1x384x1x1xf32>
+    %218 = stablehlo.add %216, %217 : tensor<1x384x1x1xf32>
+    %219 = stablehlo.broadcast_in_dim %arg34, dims = [] : (tensor<f32>) -> tensor<1x384x1x1xf32>
+    %220 = stablehlo.clamp %3, %218, %219 : tensor<1x384x1x1xf32>
+    %221 = stablehlo.broadcast_in_dim %arg32, dims = [] : (tensor<f32>) -> tensor<1x384x1x1xf32>
+    %222 = stablehlo.clamp %210, %220, %221 : tensor<1x384x1x1xf32>
+    %223 = stablehlo.broadcast_in_dim %arg32, dims = [] : (tensor<f32>) -> tensor<1x384x1x1xf32>
+    %224 = stablehlo.divide %222, %223 : tensor<1x384x1x1xf32>
+    %225 = stablehlo.reshape %224 : (tensor<1x384x1x1xf32>) -> tensor<1x384xf32>
+    %226 = stablehlo.broadcast_in_dim %225, dims = [0, 1] : (tensor<1x384xf32>) -> tensor<1x384x20x20xf32>
+    %227 = stablehlo.multiply %209, %226 : tensor<1x384x20x20xf32>
+    %228 = stablehlo.convolution(%227, %arg185) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x384x20x20xf32>, tensor<384x384x1x1xf32>) -> tensor<1x384x20x20xf32>
+    %229 = "stablehlo.batch_norm_inference"(%228, %arg184, %arg183, %arg182, %arg181) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x384x20x20xf32>, tensor<384xf32>, tensor<384xf32>, tensor<384xf32>, tensor<384xf32>) -> tensor<1x384x20x20xf32>
+    %230 = stablehlo.logistic %229 : tensor<1x384x20x20xf32>
+    %231 = stablehlo.multiply %229, %230 : tensor<1x384x20x20xf32>
+    %232 = stablehlo.convolution(%231, %arg180) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x384x20x20xf32>, tensor<192x384x1x1xf32>) -> tensor<1x192x20x20xf32>
+    %233 = "stablehlo.batch_norm_inference"(%232, %arg179, %arg178, %arg177, %arg176) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x192x20x20xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>) -> tensor<1x192x20x20xf32>
+    %234 = stablehlo.logistic %233 : tensor<1x192x20x20xf32>
+    %235 = stablehlo.multiply %233, %234 : tensor<1x192x20x20xf32>
+    %236 = stablehlo.broadcast_in_dim %arg121, dims = [] : (tensor<f32>) -> tensor<40xf32>
+    %237 = stablehlo.multiply %236, %11 : tensor<40xf32>
+    %238 = stablehlo.convert %237 : (tensor<40xf32>) -> tensor<40xi64>
+    %239 = stablehlo.broadcast_in_dim %238, dims = [0] : (tensor<40xi64>) -> tensor<40x40xi64>
+    %240 = stablehlo.compare  LT, %239, %1 : (tensor<40x40xi64>, tensor<40x40xi64>) -> tensor<40x40xi1>
+    %241 = stablehlo.broadcast_in_dim %arg175, dims = [] : (tensor<i64>) -> tensor<40x40xi64>
+    %242 = stablehlo.add %239, %241 : tensor<40x40xi64>
+    %243 = stablehlo.select %240, %242, %239 : tensor<40x40xi1>, tensor<40x40xi64>
+    %244 = stablehlo.reshape %243 : (tensor<40x40xi64>) -> tensor<40x40x1xi64>
+    %245 = stablehlo.broadcast_in_dim %arg121, dims = [] : (tensor<f32>) -> tensor<40xf32>
+    %246 = stablehlo.multiply %245, %11 : tensor<40xf32>
+    %247 = stablehlo.convert %246 : (tensor<40xf32>) -> tensor<40xi64>
+    %248 = stablehlo.broadcast_in_dim %247, dims = [1] : (tensor<40xi64>) -> tensor<40x40xi64>
+    %249 = stablehlo.compare  LT, %248, %1 : (tensor<40x40xi64>, tensor<40x40xi64>) -> tensor<40x40xi1>
+    %250 = stablehlo.broadcast_in_dim %arg175, dims = [] : (tensor<i64>) -> tensor<40x40xi64>
+    %251 = stablehlo.add %248, %250 : tensor<40x40xi64>
+    %252 = stablehlo.select %249, %251, %248 : tensor<40x40xi1>, tensor<40x40xi64>
+    %253 = stablehlo.reshape %252 : (tensor<40x40xi64>) -> tensor<40x40x1xi64>
+    %254 = stablehlo.concatenate %244, %253, dim = 2 : (tensor<40x40x1xi64>, tensor<40x40x1xi64>) -> tensor<40x40x2xi64>
+    %255 = "stablehlo.gather"(%235, %254) {dimension_numbers = #stablehlo.gather<offset_dims = [0, 1], collapsed_slice_dims = [2, 3], start_index_map = [2, 3], index_vector_dim = 2>, indices_are_sorted = false, slice_sizes = dense<[1, 192, 1, 1]> : tensor<4xi64>} : (tensor<1x192x20x20xf32>, tensor<40x40x2xi64>) -> tensor<1x192x40x40xf32>
+    %256 = stablehlo.concatenate %255, %169, dim = 1 : (tensor<1x192x40x40xf32>, tensor<1x192x40x40xf32>) -> tensor<1x384x40x40xf32>
+    %257 = stablehlo.convolution(%256, %arg247) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x384x40x40xf32>, tensor<96x384x1x1xf32>) -> tensor<1x96x40x40xf32>
+    %258 = "stablehlo.batch_norm_inference"(%257, %arg246, %arg245, %arg244, %arg243) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %259 = stablehlo.logistic %258 : tensor<1x96x40x40xf32>
+    %260 = stablehlo.multiply %258, %259 : tensor<1x96x40x40xf32>
+    %261 = stablehlo.convolution(%260, %arg242) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x40x40xf32>, tensor<96x96x3x3xf32>) -> tensor<1x96x40x40xf32>
+    %262 = "stablehlo.batch_norm_inference"(%261, %arg241, %arg240, %arg239, %arg238) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %263 = stablehlo.logistic %262 : tensor<1x96x40x40xf32>
+    %264 = stablehlo.multiply %262, %263 : tensor<1x96x40x40xf32>
+    %265 = stablehlo.convolution(%264, %arg237) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[2, 2], [2, 2]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 96 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x40x40xf32>, tensor<96x1x5x5xf32>) -> tensor<1x96x40x40xf32>
+    %266 = "stablehlo.batch_norm_inference"(%265, %arg236, %arg235, %arg234, %arg233) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %267 = stablehlo.logistic %266 : tensor<1x96x40x40xf32>
+    %268 = stablehlo.multiply %266, %267 : tensor<1x96x40x40xf32>
+    %269 = stablehlo.convolution(%268, %arg232) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x40x40xf32>, tensor<96x96x1x1xf32>) -> tensor<1x96x40x40xf32>
+    %270 = "stablehlo.batch_norm_inference"(%269, %arg231, %arg230, %arg229, %arg228) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %271 = stablehlo.logistic %270 : tensor<1x96x40x40xf32>
+    %272 = stablehlo.multiply %270, %271 : tensor<1x96x40x40xf32>
+    %273 = stablehlo.convolution(%256, %arg137) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x384x40x40xf32>, tensor<96x384x1x1xf32>) -> tensor<1x96x40x40xf32>
+    %274 = "stablehlo.batch_norm_inference"(%273, %arg136, %arg135, %arg134, %arg133) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %275 = stablehlo.logistic %274 : tensor<1x96x40x40xf32>
+    %276 = stablehlo.multiply %274, %275 : tensor<1x96x40x40xf32>
+    %277 = stablehlo.concatenate %272, %276, dim = 1 : (tensor<1x96x40x40xf32>, tensor<1x96x40x40xf32>) -> tensor<1x192x40x40xf32>
+    %278 = stablehlo.convolution(%277, %arg132) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x192x40x40xf32>, tensor<192x192x1x1xf32>) -> tensor<1x192x40x40xf32>
+    %279 = "stablehlo.batch_norm_inference"(%278, %arg131, %arg130, %arg129, %arg128) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x192x40x40xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>) -> tensor<1x192x40x40xf32>
+    %280 = stablehlo.logistic %279 : tensor<1x192x40x40xf32>
+    %281 = stablehlo.multiply %279, %280 : tensor<1x192x40x40xf32>
+    %282 = stablehlo.convolution(%281, %arg127) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x192x40x40xf32>, tensor<96x192x1x1xf32>) -> tensor<1x96x40x40xf32>
+    %283 = "stablehlo.batch_norm_inference"(%282, %arg126, %arg125, %arg124, %arg123) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %284 = stablehlo.logistic %283 : tensor<1x96x40x40xf32>
+    %285 = stablehlo.multiply %283, %284 : tensor<1x96x40x40xf32>
+    %286 = stablehlo.broadcast_in_dim %arg121, dims = [] : (tensor<f32>) -> tensor<80xf32>
+    %287 = stablehlo.multiply %286, %10 : tensor<80xf32>
+    %288 = stablehlo.convert %287 : (tensor<80xf32>) -> tensor<80xi64>
+    %289 = stablehlo.broadcast_in_dim %288, dims = [0] : (tensor<80xi64>) -> tensor<80x80xi64>
+    %290 = stablehlo.compare  LT, %289, %0 : (tensor<80x80xi64>, tensor<80x80xi64>) -> tensor<80x80xi1>
+    %291 = stablehlo.broadcast_in_dim %arg122, dims = [] : (tensor<i64>) -> tensor<80x80xi64>
+    %292 = stablehlo.add %289, %291 : tensor<80x80xi64>
+    %293 = stablehlo.select %290, %292, %289 : tensor<80x80xi1>, tensor<80x80xi64>
+    %294 = stablehlo.reshape %293 : (tensor<80x80xi64>) -> tensor<80x80x1xi64>
+    %295 = stablehlo.broadcast_in_dim %arg121, dims = [] : (tensor<f32>) -> tensor<80xf32>
+    %296 = stablehlo.multiply %295, %10 : tensor<80xf32>
+    %297 = stablehlo.convert %296 : (tensor<80xf32>) -> tensor<80xi64>
+    %298 = stablehlo.broadcast_in_dim %297, dims = [1] : (tensor<80xi64>) -> tensor<80x80xi64>
+    %299 = stablehlo.compare  LT, %298, %0 : (tensor<80x80xi64>, tensor<80x80xi64>) -> tensor<80x80xi1>
+    %300 = stablehlo.broadcast_in_dim %arg122, dims = [] : (tensor<i64>) -> tensor<80x80xi64>
+    %301 = stablehlo.add %298, %300 : tensor<80x80xi64>
+    %302 = stablehlo.select %299, %301, %298 : tensor<80x80xi1>, tensor<80x80xi64>
+    %303 = stablehlo.reshape %302 : (tensor<80x80xi64>) -> tensor<80x80x1xi64>
+    %304 = stablehlo.concatenate %294, %303, dim = 2 : (tensor<80x80x1xi64>, tensor<80x80x1xi64>) -> tensor<80x80x2xi64>
+    %305 = "stablehlo.gather"(%285, %304) {dimension_numbers = #stablehlo.gather<offset_dims = [0, 1], collapsed_slice_dims = [2, 3], start_index_map = [2, 3], index_vector_dim = 2>, indices_are_sorted = false, slice_sizes = dense<[1, 96, 1, 1]> : tensor<4xi64>} : (tensor<1x96x40x40xf32>, tensor<80x80x2xi64>) -> tensor<1x96x80x80xf32>
+    %306 = stablehlo.concatenate %305, %121, dim = 1 : (tensor<1x96x80x80xf32>, tensor<1x96x80x80xf32>) -> tensor<1x192x80x80xf32>
+    %307 = stablehlo.convolution(%306, %arg267) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x192x80x80xf32>, tensor<48x192x1x1xf32>) -> tensor<1x48x80x80xf32>
+    %308 = "stablehlo.batch_norm_inference"(%307, %arg266, %arg265, %arg264, %arg263) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x48x80x80xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>) -> tensor<1x48x80x80xf32>
+    %309 = stablehlo.logistic %308 : tensor<1x48x80x80xf32>
+    %310 = stablehlo.multiply %308, %309 : tensor<1x48x80x80xf32>
+    %311 = stablehlo.convolution(%310, %arg262) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x48x80x80xf32>, tensor<48x48x3x3xf32>) -> tensor<1x48x80x80xf32>
+    %312 = "stablehlo.batch_norm_inference"(%311, %arg261, %arg260, %arg259, %arg258) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x48x80x80xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>) -> tensor<1x48x80x80xf32>
+    %313 = stablehlo.logistic %312 : tensor<1x48x80x80xf32>
+    %314 = stablehlo.multiply %312, %313 : tensor<1x48x80x80xf32>
+    %315 = stablehlo.convolution(%314, %arg257) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[2, 2], [2, 2]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 48 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x48x80x80xf32>, tensor<48x1x5x5xf32>) -> tensor<1x48x80x80xf32>
+    %316 = "stablehlo.batch_norm_inference"(%315, %arg256, %arg255, %arg254, %arg253) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x48x80x80xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>) -> tensor<1x48x80x80xf32>
+    %317 = stablehlo.logistic %316 : tensor<1x48x80x80xf32>
+    %318 = stablehlo.multiply %316, %317 : tensor<1x48x80x80xf32>
+    %319 = stablehlo.convolution(%318, %arg252) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x48x80x80xf32>, tensor<48x48x1x1xf32>) -> tensor<1x48x80x80xf32>
+    %320 = "stablehlo.batch_norm_inference"(%319, %arg251, %arg250, %arg249, %arg248) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x48x80x80xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>) -> tensor<1x48x80x80xf32>
+    %321 = stablehlo.logistic %320 : tensor<1x48x80x80xf32>
+    %322 = stablehlo.multiply %320, %321 : tensor<1x48x80x80xf32>
+    %323 = stablehlo.convolution(%306, %arg26) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x192x80x80xf32>, tensor<48x192x1x1xf32>) -> tensor<1x48x80x80xf32>
+    %324 = "stablehlo.batch_norm_inference"(%323, %arg25, %arg24, %arg23, %arg22) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x48x80x80xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>) -> tensor<1x48x80x80xf32>
+    %325 = stablehlo.logistic %324 : tensor<1x48x80x80xf32>
+    %326 = stablehlo.multiply %324, %325 : tensor<1x48x80x80xf32>
+    %327 = stablehlo.concatenate %322, %326, dim = 1 : (tensor<1x48x80x80xf32>, tensor<1x48x80x80xf32>) -> tensor<1x96x80x80xf32>
+    %328 = stablehlo.convolution(%327, %arg21) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x80x80xf32>, tensor<96x96x1x1xf32>) -> tensor<1x96x80x80xf32>
+    %329 = "stablehlo.batch_norm_inference"(%328, %arg20, %arg19, %arg18, %arg17) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x80x80xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x80x80xf32>
+    %330 = stablehlo.logistic %329 : tensor<1x96x80x80xf32>
+    %331 = stablehlo.multiply %329, %330 : tensor<1x96x80x80xf32>
+    %332 = stablehlo.convolution(%331, %arg16) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x80x80xf32>, tensor<96x96x3x3xf32>) -> tensor<1x96x80x80xf32>
+    %333 = "stablehlo.batch_norm_inference"(%332, %arg15, %arg14, %arg13, %arg12) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x80x80xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x80x80xf32>
+    %334 = stablehlo.logistic %333 : tensor<1x96x80x80xf32>
+    %335 = stablehlo.multiply %333, %334 : tensor<1x96x80x80xf32>
+    %336 = stablehlo.convolution(%335, %arg11) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x80x80xf32>, tensor<96x96x3x3xf32>) -> tensor<1x96x80x80xf32>
+    %337 = "stablehlo.batch_norm_inference"(%336, %arg10, %arg9, %arg8, %arg7) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x80x80xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x80x80xf32>
+    %338 = stablehlo.logistic %337 : tensor<1x96x80x80xf32>
+    %339 = stablehlo.multiply %337, %338 : tensor<1x96x80x80xf32>
+    %340 = stablehlo.convolution(%339, %arg6) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x80x80xf32>, tensor<96x96x3x3xf32>) -> tensor<1x96x80x80xf32>
+    %341 = "stablehlo.batch_norm_inference"(%340, %arg5, %arg4, %arg3, %arg2) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x80x80xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x80x80xf32>
+    %342 = stablehlo.logistic %341 : tensor<1x96x80x80xf32>
+    %343 = stablehlo.multiply %341, %342 : tensor<1x96x80x80xf32>
+    %344 = stablehlo.convolution(%343, %arg1) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x80x80xf32>, tensor<80x96x1x1xf32>) -> tensor<1x80x80x80xf32>
+    %345 = stablehlo.broadcast_in_dim %arg0, dims = [1] : (tensor<80xf32>) -> tensor<1x80x80x80xf32>
+    %346 = stablehlo.add %344, %345 : tensor<1x80x80x80xf32>
+    %347 = stablehlo.convolution(%331, %arg297) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [2, 2], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x80x80xf32>, tensor<96x96x3x3xf32>) -> tensor<1x96x40x40xf32>
+    %348 = "stablehlo.batch_norm_inference"(%347, %arg296, %arg295, %arg294, %arg293) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %349 = stablehlo.logistic %348 : tensor<1x96x40x40xf32>
+    %350 = stablehlo.multiply %348, %349 : tensor<1x96x40x40xf32>
+    %351 = stablehlo.concatenate %350, %285, dim = 1 : (tensor<1x96x40x40xf32>, tensor<1x96x40x40xf32>) -> tensor<1x192x40x40xf32>
+    %352 = stablehlo.convolution(%351, %arg317) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x192x40x40xf32>, tensor<96x192x1x1xf32>) -> tensor<1x96x40x40xf32>
+    %353 = "stablehlo.batch_norm_inference"(%352, %arg316, %arg315, %arg314, %arg313) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %354 = stablehlo.logistic %353 : tensor<1x96x40x40xf32>
+    %355 = stablehlo.multiply %353, %354 : tensor<1x96x40x40xf32>
+    %356 = stablehlo.convolution(%355, %arg312) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x40x40xf32>, tensor<96x96x3x3xf32>) -> tensor<1x96x40x40xf32>
+    %357 = "stablehlo.batch_norm_inference"(%356, %arg311, %arg310, %arg309, %arg308) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %358 = stablehlo.logistic %357 : tensor<1x96x40x40xf32>
+    %359 = stablehlo.multiply %357, %358 : tensor<1x96x40x40xf32>
+    %360 = stablehlo.convolution(%359, %arg307) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[2, 2], [2, 2]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 96 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x40x40xf32>, tensor<96x1x5x5xf32>) -> tensor<1x96x40x40xf32>
+    %361 = "stablehlo.batch_norm_inference"(%360, %arg306, %arg305, %arg304, %arg303) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %362 = stablehlo.logistic %361 : tensor<1x96x40x40xf32>
+    %363 = stablehlo.multiply %361, %362 : tensor<1x96x40x40xf32>
+    %364 = stablehlo.convolution(%363, %arg302) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x40x40xf32>, tensor<96x96x1x1xf32>) -> tensor<1x96x40x40xf32>
+    %365 = "stablehlo.batch_norm_inference"(%364, %arg301, %arg300, %arg299, %arg298) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %366 = stablehlo.logistic %365 : tensor<1x96x40x40xf32>
+    %367 = stablehlo.multiply %365, %366 : tensor<1x96x40x40xf32>
+    %368 = stablehlo.convolution(%351, %arg292) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x192x40x40xf32>, tensor<96x192x1x1xf32>) -> tensor<1x96x40x40xf32>
+    %369 = "stablehlo.batch_norm_inference"(%368, %arg291, %arg290, %arg289, %arg288) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %370 = stablehlo.logistic %369 : tensor<1x96x40x40xf32>
+    %371 = stablehlo.multiply %369, %370 : tensor<1x96x40x40xf32>
+    %372 = stablehlo.concatenate %367, %371, dim = 1 : (tensor<1x96x40x40xf32>, tensor<1x96x40x40xf32>) -> tensor<1x192x40x40xf32>
+    %373 = stablehlo.convolution(%372, %arg287) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x192x40x40xf32>, tensor<192x192x1x1xf32>) -> tensor<1x192x40x40xf32>
+    %374 = "stablehlo.batch_norm_inference"(%373, %arg286, %arg285, %arg284, %arg283) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x192x40x40xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>) -> tensor<1x192x40x40xf32>
+    %375 = stablehlo.logistic %374 : tensor<1x192x40x40xf32>
+    %376 = stablehlo.multiply %374, %375 : tensor<1x192x40x40xf32>
+    %377 = stablehlo.convolution(%376, %arg282) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x192x40x40xf32>, tensor<96x192x3x3xf32>) -> tensor<1x96x40x40xf32>
+    %378 = "stablehlo.batch_norm_inference"(%377, %arg281, %arg280, %arg279, %arg278) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %379 = stablehlo.logistic %378 : tensor<1x96x40x40xf32>
+    %380 = stablehlo.multiply %378, %379 : tensor<1x96x40x40xf32>
+    %381 = stablehlo.convolution(%380, %arg11) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x40x40xf32>, tensor<96x96x3x3xf32>) -> tensor<1x96x40x40xf32>
+    %382 = "stablehlo.batch_norm_inference"(%381, %arg277, %arg276, %arg275, %arg274) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %383 = stablehlo.logistic %382 : tensor<1x96x40x40xf32>
+    %384 = stablehlo.multiply %382, %383 : tensor<1x96x40x40xf32>
+    %385 = stablehlo.convolution(%384, %arg6) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x40x40xf32>, tensor<96x96x3x3xf32>) -> tensor<1x96x40x40xf32>
+    %386 = "stablehlo.batch_norm_inference"(%385, %arg273, %arg272, %arg271, %arg270) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %387 = stablehlo.logistic %386 : tensor<1x96x40x40xf32>
+    %388 = stablehlo.multiply %386, %387 : tensor<1x96x40x40xf32>
+    %389 = stablehlo.convolution(%388, %arg269) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x40x40xf32>, tensor<80x96x1x1xf32>) -> tensor<1x80x40x40xf32>
+    %390 = stablehlo.broadcast_in_dim %arg268, dims = [1] : (tensor<80xf32>) -> tensor<1x80x40x40xf32>
+    %391 = stablehlo.add %389, %390 : tensor<1x80x40x40xf32>
+    %392 = stablehlo.convolution(%376, %arg347) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [2, 2], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x192x40x40xf32>, tensor<192x192x3x3xf32>) -> tensor<1x192x20x20xf32>
+    %393 = "stablehlo.batch_norm_inference"(%392, %arg346, %arg345, %arg344, %arg343) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x192x20x20xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>) -> tensor<1x192x20x20xf32>
+    %394 = stablehlo.logistic %393 : tensor<1x192x20x20xf32>
+    %395 = stablehlo.multiply %393, %394 : tensor<1x192x20x20xf32>
+    %396 = stablehlo.concatenate %395, %235, dim = 1 : (tensor<1x192x20x20xf32>, tensor<1x192x20x20xf32>) -> tensor<1x384x20x20xf32>
+    %397 = stablehlo.convolution(%396, %arg367) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x384x20x20xf32>, tensor<192x384x1x1xf32>) -> tensor<1x192x20x20xf32>
+    %398 = "stablehlo.batch_norm_inference"(%397, %arg366, %arg365, %arg364, %arg363) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x192x20x20xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>) -> tensor<1x192x20x20xf32>
+    %399 = stablehlo.logistic %398 : tensor<1x192x20x20xf32>
+    %400 = stablehlo.multiply %398, %399 : tensor<1x192x20x20xf32>
+    %401 = stablehlo.convolution(%400, %arg362) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x192x20x20xf32>, tensor<192x192x3x3xf32>) -> tensor<1x192x20x20xf32>
+    %402 = "stablehlo.batch_norm_inference"(%401, %arg361, %arg360, %arg359, %arg358) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x192x20x20xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>) -> tensor<1x192x20x20xf32>
+    %403 = stablehlo.logistic %402 : tensor<1x192x20x20xf32>
+    %404 = stablehlo.multiply %402, %403 : tensor<1x192x20x20xf32>
+    %405 = stablehlo.convolution(%404, %arg357) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[2, 2], [2, 2]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 192 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x192x20x20xf32>, tensor<192x1x5x5xf32>) -> tensor<1x192x20x20xf32>
+    %406 = "stablehlo.batch_norm_inference"(%405, %arg356, %arg355, %arg354, %arg353) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x192x20x20xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>) -> tensor<1x192x20x20xf32>
+    %407 = stablehlo.logistic %406 : tensor<1x192x20x20xf32>
+    %408 = stablehlo.multiply %406, %407 : tensor<1x192x20x20xf32>
+    %409 = stablehlo.convolution(%408, %arg352) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x192x20x20xf32>, tensor<192x192x1x1xf32>) -> tensor<1x192x20x20xf32>
+    %410 = "stablehlo.batch_norm_inference"(%409, %arg351, %arg350, %arg349, %arg348) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x192x20x20xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>) -> tensor<1x192x20x20xf32>
+    %411 = stablehlo.logistic %410 : tensor<1x192x20x20xf32>
+    %412 = stablehlo.multiply %410, %411 : tensor<1x192x20x20xf32>
+    %413 = stablehlo.convolution(%396, %arg342) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x384x20x20xf32>, tensor<192x384x1x1xf32>) -> tensor<1x192x20x20xf32>
+    %414 = "stablehlo.batch_norm_inference"(%413, %arg341, %arg340, %arg339, %arg338) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x192x20x20xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>, tensor<192xf32>) -> tensor<1x192x20x20xf32>
+    %415 = stablehlo.logistic %414 : tensor<1x192x20x20xf32>
+    %416 = stablehlo.multiply %414, %415 : tensor<1x192x20x20xf32>
+    %417 = stablehlo.concatenate %412, %416, dim = 1 : (tensor<1x192x20x20xf32>, tensor<1x192x20x20xf32>) -> tensor<1x384x20x20xf32>
+    %418 = stablehlo.convolution(%417, %arg337) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x384x20x20xf32>, tensor<384x384x1x1xf32>) -> tensor<1x384x20x20xf32>
+    %419 = "stablehlo.batch_norm_inference"(%418, %arg336, %arg335, %arg334, %arg333) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x384x20x20xf32>, tensor<384xf32>, tensor<384xf32>, tensor<384xf32>, tensor<384xf32>) -> tensor<1x384x20x20xf32>
+    %420 = stablehlo.logistic %419 : tensor<1x384x20x20xf32>
+    %421 = stablehlo.multiply %419, %420 : tensor<1x384x20x20xf32>
+    %422 = stablehlo.convolution(%421, %arg332) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x384x20x20xf32>, tensor<96x384x3x3xf32>) -> tensor<1x96x20x20xf32>
+    %423 = "stablehlo.batch_norm_inference"(%422, %arg331, %arg330, %arg329, %arg328) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x20x20xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x20x20xf32>
+    %424 = stablehlo.logistic %423 : tensor<1x96x20x20xf32>
+    %425 = stablehlo.multiply %423, %424 : tensor<1x96x20x20xf32>
+    %426 = stablehlo.convolution(%425, %arg11) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x20x20xf32>, tensor<96x96x3x3xf32>) -> tensor<1x96x20x20xf32>
+    %427 = "stablehlo.batch_norm_inference"(%426, %arg327, %arg326, %arg325, %arg324) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x20x20xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x20x20xf32>
+    %428 = stablehlo.logistic %427 : tensor<1x96x20x20xf32>
+    %429 = stablehlo.multiply %427, %428 : tensor<1x96x20x20xf32>
+    %430 = stablehlo.convolution(%429, %arg6) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x20x20xf32>, tensor<96x96x3x3xf32>) -> tensor<1x96x20x20xf32>
+    %431 = "stablehlo.batch_norm_inference"(%430, %arg323, %arg322, %arg321, %arg320) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x20x20xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x20x20xf32>
+    %432 = stablehlo.logistic %431 : tensor<1x96x20x20xf32>
+    %433 = stablehlo.multiply %431, %432 : tensor<1x96x20x20xf32>
+    %434 = stablehlo.convolution(%433, %arg319) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x20x20xf32>, tensor<80x96x1x1xf32>) -> tensor<1x80x20x20xf32>
+    %435 = stablehlo.broadcast_in_dim %arg318, dims = [1] : (tensor<80xf32>) -> tensor<1x80x20x20xf32>
+    %436 = stablehlo.add %434, %435 : tensor<1x80x20x20xf32>
+    %437 = stablehlo.convolution(%335, %arg380) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x80x80xf32>, tensor<96x96x3x3xf32>) -> tensor<1x96x80x80xf32>
+    %438 = "stablehlo.batch_norm_inference"(%437, %arg379, %arg378, %arg377, %arg376) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x80x80xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x80x80xf32>
+    %439 = stablehlo.logistic %438 : tensor<1x96x80x80xf32>
+    %440 = stablehlo.multiply %438, %439 : tensor<1x96x80x80xf32>
+    %441 = stablehlo.convolution(%440, %arg375) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x80x80xf32>, tensor<96x96x3x3xf32>) -> tensor<1x96x80x80xf32>
+    %442 = "stablehlo.batch_norm_inference"(%441, %arg374, %arg373, %arg372, %arg371) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x80x80xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x80x80xf32>
+    %443 = stablehlo.logistic %442 : tensor<1x96x80x80xf32>
+    %444 = stablehlo.multiply %442, %443 : tensor<1x96x80x80xf32>
+    %445 = stablehlo.convolution(%444, %arg370) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x80x80xf32>, tensor<4x96x1x1xf32>) -> tensor<1x4x80x80xf32>
+    %446 = stablehlo.broadcast_in_dim %arg369, dims = [1] : (tensor<4xf32>) -> tensor<1x4x80x80xf32>
+    %447 = stablehlo.add %445, %446 : tensor<1x4x80x80xf32>
+    %448 = stablehlo.broadcast_in_dim %arg368, dims = [] : (tensor<f32>) -> tensor<1x4x80x80xf32>
+    %449 = stablehlo.multiply %447, %448 : tensor<1x4x80x80xf32>
+    %450 = stablehlo.convolution(%380, %arg380) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x40x40xf32>, tensor<96x96x3x3xf32>) -> tensor<1x96x40x40xf32>
+    %451 = "stablehlo.batch_norm_inference"(%450, %arg391, %arg390, %arg389, %arg388) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %452 = stablehlo.logistic %451 : tensor<1x96x40x40xf32>
+    %453 = stablehlo.multiply %451, %452 : tensor<1x96x40x40xf32>
+    %454 = stablehlo.convolution(%453, %arg375) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x40x40xf32>, tensor<96x96x3x3xf32>) -> tensor<1x96x40x40xf32>
+    %455 = "stablehlo.batch_norm_inference"(%454, %arg387, %arg386, %arg385, %arg384) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
+    %456 = stablehlo.logistic %455 : tensor<1x96x40x40xf32>
+    %457 = stablehlo.multiply %455, %456 : tensor<1x96x40x40xf32>
+    %458 = stablehlo.convolution(%457, %arg383) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x40x40xf32>, tensor<4x96x1x1xf32>) -> tensor<1x4x40x40xf32>
+    %459 = stablehlo.broadcast_in_dim %arg382, dims = [1] : (tensor<4xf32>) -> tensor<1x4x40x40xf32>
+    %460 = stablehlo.add %458, %459 : tensor<1x4x40x40xf32>
+    %461 = stablehlo.broadcast_in_dim %arg381, dims = [] : (tensor<f32>) -> tensor<1x4x40x40xf32>
+    %462 = stablehlo.multiply %460, %461 : tensor<1x4x40x40xf32>
+    %463 = stablehlo.convolution(%425, %arg380) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x20x20xf32>, tensor<96x96x3x3xf32>) -> tensor<1x96x20x20xf32>
+    %464 = "stablehlo.batch_norm_inference"(%463, %arg402, %arg401, %arg400, %arg399) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x20x20xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x20x20xf32>
+    %465 = stablehlo.logistic %464 : tensor<1x96x20x20xf32>
+    %466 = stablehlo.multiply %464, %465 : tensor<1x96x20x20xf32>
+    %467 = stablehlo.convolution(%466, %arg375) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[1, 1], [1, 1]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x20x20xf32>, tensor<96x96x3x3xf32>) -> tensor<1x96x20x20xf32>
+    %468 = "stablehlo.batch_norm_inference"(%467, %arg398, %arg397, %arg396, %arg395) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x20x20xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x20x20xf32>
+    %469 = stablehlo.logistic %468 : tensor<1x96x20x20xf32>
+    %470 = stablehlo.multiply %468, %469 : tensor<1x96x20x20xf32>
+    %471 = stablehlo.convolution(%470, %arg394) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x96x20x20xf32>, tensor<4x96x1x1xf32>) -> tensor<1x4x20x20xf32>
+    %472 = stablehlo.broadcast_in_dim %arg393, dims = [1] : (tensor<4xf32>) -> tensor<1x4x20x20xf32>
+    %473 = stablehlo.add %471, %472 : tensor<1x4x20x20xf32>
+    %474 = stablehlo.broadcast_in_dim %arg392, dims = [] : (tensor<f32>) -> tensor<1x4x20x20xf32>
+    %475 = stablehlo.multiply %473, %474 : tensor<1x4x20x20xf32>
+    return %346, %391, %436, %449, %462, %475 : tensor<1x80x80x80xf32>, tensor<1x80x40x40xf32>, tensor<1x80x20x20xf32>, tensor<1x4x80x80xf32>, tensor<1x4x40x40xf32>, tensor<1x4x20x20xf32>
+  }
+}
