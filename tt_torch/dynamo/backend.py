@@ -53,6 +53,7 @@ def lower_to_stable_hlo(module, op=None):
     )
     if op is not None:
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_TORCH_BACKEND_IR
+
     lower_mlir_module(False, OutputType.STABLEHLO, module)
     if op is not None:
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
@@ -133,6 +134,7 @@ class Executor:
             if "getitem" not in name:
                 raise ValueError(f"Node target is not an OpOverload: {name}")
             return None, None
+
         op = Op(name, input_shapes_and_constants)
         if op.unique_key() not in self.compiler_config.unique_ops:
             self.compiler_config.unique_ops[op.unique_key()] = op
@@ -207,6 +209,7 @@ class Executor:
 
         module = import_graph(graph)
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_TORCH_IR
+        op.add_torch_ir_graph(module.operation.get_asm())
         lower_to_stable_hlo(module, op=op)
         op.add_stable_hlo_graph(module.operation.get_asm())
 

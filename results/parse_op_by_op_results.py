@@ -51,6 +51,7 @@ def extract_shapes_md(shape_list):
 
 
 def create_test_dirs():
+    Path("results/mlir_tests/torch_ir").mkdir(parents=True, exist_ok=True)
     Path("results/mlir_tests/ttir").mkdir(parents=True, exist_ok=True)
     Path("results/mlir_tests/stable_hlo").mkdir(parents=True, exist_ok=True)
 
@@ -102,6 +103,7 @@ def process_json_files():
             "PCC",
             "ATOL",
             "Ops",
+            "Torch IR",
             "Raw SHLO",
             "Raw TTIR",
             "Raw TTNNIR",
@@ -126,6 +128,7 @@ def process_json_files():
                     "output_shapes": value["output_shapes"],
                     "num_ops": value["num_ops"],
                     "status": value["compilation_status"],
+                    "torch_ir_graph": value["torch_ir_graph"],
                     "stable_hlo_graph": value["stable_hlo_graph"],
                     "ops": value["stable_hlo_ops"],
                     "ttir_graph": value["ttir_graph"],
@@ -158,19 +161,21 @@ def process_json_files():
                 trace_dump = ""
                 pcc = op["pcc"]
                 atol = op["atol"]
-                if status == 5 or status == 4:
-                    if status == 5:
-                        # Does not compile to TTNNIR, create unit test
+
+                if 2 <= status <= 5:
+                    if 2 <= status <= 3:
+                        # Does not compile to Torch Backend (status == 2)
+                        # Does not compile to StableHLO (status == 3)
                         test_name = f"{torch_name}_{test_num}.mlir"
                         test_num += 1
-                        with open(f"results/mlir_tests/ttir/{test_name}", "w") as f:
-                            f.write(op["ttir_graph"])
-
+                        filename = f"results/mlir_tests/torch_ir/{test_name}"
+                        with open(filename, "w") as f:
+                            f.write(op["torch_ir_graph"])
                         result = subprocess.run(
                             [
-                                "ttmlir-opt",
-                                "--ttir-to-ttnn-backend-pipeline",
-                                f"results/mlir_tests/ttir/{test_name}",
+                                "python3",
+                                "results/lower_to_stablehlo.py",
+                                filename,
                             ],
                             capture_output=True,
                             text=True,
@@ -193,6 +198,22 @@ def process_json_files():
                             capture_output=True,
                             text=True,
                         )
+                    elif status == 5:
+                        # Does not compile to TTNNIR, create unit test
+                        test_name = f"{torch_name}_{test_num}.mlir"
+                        test_num += 1
+                        with open(f"results/mlir_tests/ttir/{test_name}", "w") as f:
+                            f.write(op["ttir_graph"])
+
+                        result = subprocess.run(
+                            [
+                                "ttmlir-opt",
+                                "--ttir-to-ttnn-backend-pipeline",
+                                f"results/mlir_tests/ttir/{test_name}",
+                            ],
+                            capture_output=True,
+                            text=True,
+                        )
                     if result.returncode != 0:
                         error = result.stderr.split("\n")[0]
                         trace_dump = result.stderr
@@ -205,6 +226,7 @@ def process_json_files():
                     pcc,
                     atol,
                     "",
+                    op["torch_ir_graph"],
                     raw_shlo,
                     op["ttir_graph"],
                     op["ttnn_graph"],
@@ -254,6 +276,7 @@ def process_json_files():
         "PCC",
         "ATOL",
         "Ops",
+        "Torch IR",
         "Raw SHLO",
         "Raw TTIR",
         "Raw TTNNIR",
@@ -280,6 +303,7 @@ def process_json_files():
                     "status": value["compilation_status"],
                     "pcc": value["pcc"],
                     "atol": value["atol"],
+                    "torch_ir_graph": value["torch_ir_graph"],
                     "stable_hlo_graph": value["stable_hlo_graph"],
                     "ops": value["stable_hlo_ops"],
                     "ttir_graph": value["ttir_graph"],
@@ -299,6 +323,7 @@ def process_json_files():
             status = op["status"]
             pcc = op["pcc"]
             atol = op["atol"]
+            torch_ir_graph = op["torch_ir_graph"]
             raw_shlo = op["stable_hlo_graph"]
             ops = op["ops"]
             ttir_graph = op["ttir_graph"]
@@ -315,6 +340,7 @@ def process_json_files():
                 pcc,
                 atol,
                 "",
+                torch_ir_graph,
                 raw_shlo,
                 ttir_graph,
                 ttnn_graph,
@@ -334,6 +360,7 @@ def process_json_files():
                 "",
                 "",
                 "",
+                torch_ir_graph,
                 raw_shlo,
                 ttir_graph,
                 ttnn_graph,
