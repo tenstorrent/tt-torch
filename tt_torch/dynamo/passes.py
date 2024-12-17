@@ -190,11 +190,20 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     gm = apply_decompositions(gm, example_inputs, decompose_ops)  # type: ignore
     if compiler_config.enable_consteval:
         gm, constants = constant_fold(gm, example_inputs)
+    elif compiler_config.consteval_parameters:
+        raise Exception("consteval_parameters is enabled but enable_consteval is not")
     else:
         constants = []
     gm = bypass_redundant_getitem(gm)
     gm, parameters = inline_parameters(gm)
     constant_inputs = order_constant_inputs(gm, parameters, constants)
+
+    # some constant folding operations are preformed by changing tensor strides, we
+    # want all the strides to be 1, so make them contiguous
+    for (i, t) in enumerate(constant_inputs):
+        if not t.is_contiguous():
+            constant_inputs[i] = t.contiguous()
+
     reduce_graph(gm)
     run_shape_prop(gm, example_inputs + constant_inputs)
     return gm, constant_inputs

@@ -128,9 +128,18 @@ class CompilerConfig:
         self.single_op_timeout = 5
         self.enable_intermediate_verification = False
         self.enable_consteval = False
-        self.consteval_parameters = False
+        self._consteval_parameters = False
 
         self.apply_environment_overrides()
+        self.post_init()
+
+    @property
+    def consteval_parameters(self):
+        return self._consteval_parameters
+
+    @consteval_parameters.setter
+    def consteval_parameters(self, value):
+        self._consteval_parameters = value
         self.post_init()
 
     def apply_environment_overrides(self):
