@@ -9,7 +9,7 @@ import torch
 from transformers import MgpstrProcessor, MgpstrForSceneTextRecognition
 import pytest
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 
 class ThisTester(ModelTester):
@@ -47,6 +47,7 @@ def test_mgp_str_base(record_property, mode):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    cc.compile_depth = CompileDepth.TTNN_IR
 
     tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()

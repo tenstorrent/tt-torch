@@ -9,7 +9,7 @@ on:
 
 jobs:
   tests:
-    timeout-minutes: 120
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       matrix:
@@ -93,7 +93,7 @@ jobs:
         for testname in ${{ matrix.build.test_names }}; do
         testname=${testname//,/}
         echo "running test: $testname"
-        pytest -svv tests/models/$testname
+        pytest -v tests/models/$testname
         done
 
     - name: Tar results

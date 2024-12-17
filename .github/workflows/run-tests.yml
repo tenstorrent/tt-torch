@@ -56,6 +56,7 @@ jobs:
 
         echo "job-id=$JOB_ID" >> "$GITHUB_OUTPUT"
         echo "test_report_path_torch=report_torch_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+        echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
         echo "test_report_path_onnx=report_onnx_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
 
     - name: Git safe dir
@@ -83,7 +84,7 @@ jobs:
       run: |
         cp -r ${{ steps.strings.outputs.install-output-dir }}/tt-metal/* ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal
 
-    - name: Run PyTorch tests
+    - name: Run PyTorch Unit tests
       shell: bash
       run: |
         source env/activate
@@ -98,7 +99,28 @@ jobs:
         name: test-reports-torch-${{ matrix.build.runs-on }}-${{ matrix.build.name }}
         path: ${{ steps.strings.outputs.test_report_path_torch }}
 
-    - name: Run ONNX tests
+    - name: Run Supported Models
+      shell: bash
+      run: |
+        source env/activate
+        export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
+        pytest -v tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base[eval] \
+                  tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[eval] \
+                  tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[eval] \
+                  tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[microsoft/beit-base-patch16-224-eval] \
+                  tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[microsoft/beit-large-patch16-224-eval] \
+                  tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io[eval] \
+                  tests/models/openpose/test_openpose_v2.py::test_openpose_v2[eval] \
+           --junit-xml=${{ steps.strings.outputs.test_report_path_models }}
+
+    - name: Upload Test Report Models
+      uses: actions/upload-artifact@v4
+      if: success() || failure()
+      with:
+        name: test-reports-models-${{ matrix.build.runs-on }}-${{ matrix.build.name }}
+        path: ${{ steps.strings.outputs.test_report_path_models }}
+
+    - name: Run ONNX Unit tests
       shell: bash
       run: |
         source env/activate

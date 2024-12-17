@@ -38,8 +38,6 @@ def test_multiple_ops():
 
 
 def test_interp():
-    torch.set_printoptions(linewidth=1000000, threshold=1000000)
-
     class Basic(nn.Module):
         def __init__(self):
             super().__init__()
@@ -73,8 +71,10 @@ def test_linear():
             super().__init__()
             self.linear_a = nn.Linear(32, 64, bias=False)
             self.linear_b = nn.Linear(64, 64, bias=False)
-            self.mm_c_weight = torch.nn.Parameter(torch.rand(64, 256) - 0.5)
-            self.mm_d_weight = torch.nn.Parameter(torch.rand(256, 256) - 0.5)
+
+            # linear weights are typically initialized to have mean 0 and std 0.1
+            self.mm_c_weight = torch.nn.Parameter(torch.randn(64, 256) * 0.1)
+            self.mm_d_weight = torch.nn.Parameter(torch.randn(256, 256) * 0.1)
 
         def forward(self, x):
             x = self.linear_a(x)
