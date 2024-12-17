@@ -27,6 +27,8 @@ def test_multiple_ops():
             return x
 
     cc = CompilerConfig()
+    cc.enable_consteval = True
+    cc.consteval_parameters = True
     verify_module(
         ConstantFoldable(),
         input_shapes=[(256, 256)],
