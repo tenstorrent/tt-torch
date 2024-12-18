@@ -27,3 +27,7 @@ jobs:
     needs: test
     uses: ./.github/workflows/generate-model-report.yml
     secrets: inherit
+  ttrt-test:
+    needs: download-report
+    uses: ./.github/workflows/run-ttrt-tests.yml
+    secrets: inherit

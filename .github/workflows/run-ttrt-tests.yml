@@ -14,9 +14,9 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-          {runs-on: n150, n300, name: "run1", test_names: "bert"},
-          {runs-on: n150, n300, name: "run2", test_names: "clip"},
-          {runs-on: n300, n150, name: "run3", test_names: "beit"},
+          {runs-on: n150, n300, name: "run1", runner_idx: 0, runner_total: 3},
+          {runs-on: n150, n300, name: "run2", runner_idx: 1, runner_total: 3},
+          {runs-on: n300, n150, name: "run3", runner_idx: 2, runner_total: 3},
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
@@ -92,12 +92,13 @@ jobs:
         echo ${{ steps.strings.outputs.install-output-dir }}
         source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
-        export TT_TORCH_COMPILE_DEPTH=COMPILE_OP_BY_OP
-        for testname in ${{ matrix.build.test_names }}; do
-        testname=${testname//,/}
-        echo "running test: $testname"
-        pytest -v tests/models/$testname
-        done
+        #export TT_TORCH_COMPILE_DEPTH=COMPILE_OP_BY_OP
+        #for testname in ${{ matrix.build.test_names }}; do
+        #testname=${testname//,/}
+        #echo "running test: $testname"
+        #pytest -v tests/models/$testname
+        #done
+        python results/run_ttir_test.py --runner_total=${{ matrix.build.runner_total }} --runner_idx=${{ matrix.build.runner_idx }}
 
     - name: Tar results
       shell: bash
