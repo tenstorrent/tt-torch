@@ -16,7 +16,7 @@ jobs:
         build: [
           {runs-on: n150, n300, name: "run1", test_names: "bert"},
           {runs-on: n150, n300, name: "run2", test_names: "clip"},
-          {runs-on: n300, n150, name: "run3", test_names: "beit"},
+          {runs-on: n300, n150, name: "run3", test_names: "bloom"},
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
