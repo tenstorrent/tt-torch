@@ -5,6 +5,7 @@ from transformers import AutoTokenizer, Qwen2ForTokenClassification
 import torch
 import pytest
 from tests.utils import ModelTester
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 
 class ThisTester(ModelTester):
@@ -34,13 +35,17 @@ class ThisTester(ModelTester):
         "Qwen/Qwen2-7B",
     ],
 )
-def test_qwen2_token_classification(record_property, model_name, mode):
+def test_qwen2_token_classification(record_property, model_name, mode, nightly):
     if mode == "train":
         pytest.skip()
     record_property("model_name", model_name)
     record_property("mode", mode)
 
-    tester = ThisTester(model_name, mode)
+    cc = CompilerConfig()
+    if nightly:
+        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
+
+    tester = ThisTester(model_name, mode, compiler_config=cc)
     with torch.no_grad():
         results = tester.test_model()
 

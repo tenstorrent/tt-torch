@@ -9,7 +9,7 @@ import requests
 from PIL import Image
 import pytest
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 
 class ThisTester(ModelTester):
@@ -38,7 +38,7 @@ class ThisTester(ModelTester):
 @pytest.mark.skip(
     reason="Failed to install sam2. sam2 requires Python >=3.10.0 but the default version on Ubuntu 20.04 is 3.8. We found no other pytorch implementation of segment-anything."
 )
-def test_segment_anything(record_property, mode):
+def test_segment_anything(record_property, mode, nightly):
     model_name = "segment-anything"
     record_property("model_name", model_name)
     record_property("mode", mode)
@@ -46,6 +46,8 @@ def test_segment_anything(record_property, mode):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    if nightly:
+        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
 
     tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()

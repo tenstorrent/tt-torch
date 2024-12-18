@@ -10,7 +10,7 @@ import sys
 import os
 import pytest
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 dependencies = ["ultralytics==8.2.92", "ultralytics-thop==2.0.6"]
 
@@ -108,7 +108,7 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.xfail(reason="Fails due to pt2 compile issue")
-def test_yolov5(record_property, mode):
+def test_yolov5(record_property, mode, nightly):
     model_name = "YOLOv5"
     record_property("model_name", model_name)
     record_property("mode", mode)
@@ -116,6 +116,8 @@ def test_yolov5(record_property, mode):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    if nightly:
+        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
 
     tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()

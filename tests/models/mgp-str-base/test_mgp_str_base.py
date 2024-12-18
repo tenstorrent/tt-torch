@@ -37,7 +37,7 @@ class ThisTester(ModelTester):
     "mode",
     ["train", "eval"],
 )
-def test_mgp_str_base(record_property, mode):
+def test_mgp_str_base(record_property, mode, nightly):
     if mode == "train":
         pytest.skip()
     model_name = "alibaba-damo/mgp-str-base"
@@ -47,7 +47,10 @@ def test_mgp_str_base(record_property, mode):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    cc.compile_depth = CompileDepth.TTNN_IR
+    if nightly:
+        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
+    else:
+        cc.compile_depth = CompileDepth.TTNN_IR
 
     tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()

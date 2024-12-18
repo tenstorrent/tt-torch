@@ -11,7 +11,7 @@ from torchvision import transforms
 import requests
 import pytest
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 
 # TODO: RuntimeError: "nms_kernel" not implemented for 'BFloat16'
@@ -39,7 +39,7 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.xfail(reason="Need to debug")
-def test_mobilenet_ssd(record_property, mode):
+def test_mobilenet_ssd(record_property, mode, nightly):
     model_name = "MobileNetSSD"
     record_property("model_name", model_name)
     record_property("mode", mode)
@@ -47,6 +47,8 @@ def test_mobilenet_ssd(record_property, mode):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    if nightly:
+        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
 
     tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()

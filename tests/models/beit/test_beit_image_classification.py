@@ -43,7 +43,7 @@ class ThisTester(ModelTester):
     "model_name",
     ["microsoft/beit-base-patch16-224", "microsoft/beit-large-patch16-224"],
 )
-def test_beit_image_classification(record_property, model_name, mode):
+def test_beit_image_classification(record_property, model_name, mode, nightly):
     if mode == "train":
         pytest.skip()
     record_property("model_name", model_name)
@@ -52,7 +52,10 @@ def test_beit_image_classification(record_property, model_name, mode):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    cc.compile_depth = CompileDepth.TTNN_IR
+    if nightly:
+        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
+    else:
+        cc.compile_depth = CompileDepth.TTNN_IR
 
     tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()

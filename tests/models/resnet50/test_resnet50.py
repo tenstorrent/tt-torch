@@ -9,7 +9,7 @@ from PIL import Image
 
 import pytest
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 
 class ThisTester(ModelTester):
@@ -37,7 +37,7 @@ class ThisTester(ModelTester):
     "mode",
     ["train", "eval"],
 )
-def test_resnet(record_property, mode):
+def test_resnet(record_property, mode, nightly):
     if mode == "train":
         pytest.skip()
     model_name = "ResNet50"
@@ -47,6 +47,8 @@ def test_resnet(record_property, mode):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    if nightly:
+        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
 
     tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()

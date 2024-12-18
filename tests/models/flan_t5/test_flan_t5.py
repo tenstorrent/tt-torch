@@ -7,7 +7,7 @@ from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, GenerationConfig
 import pytest
 from tests.utils import ModelTester
 import torch
-from tt_torch.tools.utils import CompilerConfig
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 
 class ThisTester(ModelTester):
@@ -35,7 +35,7 @@ class ThisTester(ModelTester):
 @pytest.mark.xfail(
     reason="Fails due to pt2 compile issue when finishing generation, but we can still generate a graph"
 )
-def test_flan_t5(record_property, mode):
+def test_flan_t5(record_property, mode, nightly):
     model_name = "FLAN-T5"
     record_property("model_name", model_name)
     record_property("mode", mode)
@@ -43,6 +43,8 @@ def test_flan_t5(record_property, mode):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    if nightly:
+        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
 
     tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()

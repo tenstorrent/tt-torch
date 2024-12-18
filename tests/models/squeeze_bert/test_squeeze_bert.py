@@ -7,7 +7,7 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 import pytest
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 
 class ThisTester(ModelTester):
@@ -29,7 +29,7 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-def test_squeeze_bert(record_property, mode):
+def test_squeeze_bert(record_property, mode, nightly):
     model_name = "SqueezeBERT"
     record_property("model_name", model_name)
     record_property("mode", mode)
@@ -37,6 +37,10 @@ def test_squeeze_bert(record_property, mode):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    if nightly:
+        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
+    else:
+        cc.compile_depth = CompileDepth.TTNN_IR
 
     tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()

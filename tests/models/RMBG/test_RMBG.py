@@ -9,6 +9,7 @@ import requests
 from torchvision import transforms
 from transformers import AutoModelForImageSegmentation
 from tests.utils import ModelTester
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 
 class ThisTester(ModelTester):
@@ -38,13 +39,20 @@ class ThisTester(ModelTester):
     "mode",
     ["train", "eval"],
 )
-def test_RMBG(record_property, mode):
+def test_RMBG(record_property, mode, nightly):
     if mode == "train":
         pytest.skip()
     model_name = "RMBG"
     record_property("model_name", model_name)
     record_property("mode", mode)
-    tester = ThisTester(model_name, mode)
+
+    cc = CompilerConfig()
+    cc.enable_consteval = True
+    cc.consteval_parameters = True
+    if nightly:
+        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
+
+    tester = ThisTester(model_name, mode, compiler_config=cc)
 
     with torch.no_grad():
         results = tester.test_model()
