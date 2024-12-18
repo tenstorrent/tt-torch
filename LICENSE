@@ -186,7 +186,7 @@
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
-   Copyright 2024 Tenstorrent Inc.
+   Copyright 2024 Tenstorrent AI ULC
 
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -205,10 +205,14 @@
 
 Third-Party Dependencies:
 
+The following separate and independent dependencies are utilized by this
+project and are included in a distributed build and are subject to their own license terms listed as follows:
+
+- yolov3 - MIT License (https://github.com/holli/yolov3_pytorch/blob/master/LICENSE)
+
 The following dependencies are utilized by this project but are not explicitly
 distributed as part of the software:
 
-- tt-mlir - Apache v2.0 License (https://github.com/tenstorrent/tt-mlir/blob/main/LICENSE)
 - llvm-project - Apache v2.0 License with LLVM Exceptions (https://github.com/llvm/llvm-project/blob/main/LICENSE.TXT)
 - flatbuffers - Apache v2.0 License (https://github.com/google/flatbuffers/blob/master/LICENSE)
 - stablehlo - Apache v2.0 License (https://github.com/openxla/stablehlo/blob/main/LICENSE)
