@@ -24,5 +24,3 @@ jobs:
     needs: build
     uses: ./.github/workflows/run-tests.yml
     secrets: inherit
-
-    # test cancelation
