@@ -35,14 +35,17 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-def test_MobileNetV2(record_property, mode):
+def test_MobileNetV2(record_property, mode, nightly):
     model_name = "MobileNetV2"
     record_property("model_name", model_name)
     record_property("mode", mode)
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    cc.compile_depth = CompileDepth.TTNN_IR
+    if nightly:
+        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
+    else:
+        cc.compile_depth = CompileDepth.TTNN_IR
 
     tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()

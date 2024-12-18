@@ -96,7 +96,7 @@ jobs:
         for testname in ${{ matrix.build.test_names }}; do
         testname=${testname//,/}
         echo "running test: $testname"
-        pytest -v tests/models/$testname
+        pytest -svv tests/models/$testname --nightly
         done
 
     - name: Tar results

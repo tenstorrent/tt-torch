@@ -24,7 +24,7 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.skip(reason="Dynamo cannot support pipeline.")
-def test_stable_diffusion(record_property, mode):
+def test_stable_diffusion(record_property, mode, nightly):
     model_name = "Stable Diffusion"
     record_property("model_name", model_name)
     record_property("mode", mode)

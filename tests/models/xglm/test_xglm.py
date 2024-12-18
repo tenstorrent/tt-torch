@@ -9,6 +9,7 @@ import torch.nn.functional as F
 from transformers import XGLMTokenizer, XGLMForCausalLM
 import pytest
 from tests.utils import ModelTester
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 
 class ThisTester(ModelTester):
@@ -32,12 +33,20 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-def test_xglm(record_property, mode):
+def test_xglm(record_property, mode, nightly):
     model_name = "XGLM"
     record_property("model_name", model_name)
     record_property("mode", mode)
 
-    tester = ThisTester(model_name, mode)
+    cc = CompilerConfig()
+    cc.enable_consteval = True
+    cc.consteval_parameters = True
+    if nightly:
+        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
+    else:
+        cc.compile_depth = CompileDepth.TTNN_IR
+
+    tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()
 
     record_property("torch_ttnn", (tester, results))

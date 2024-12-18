@@ -8,7 +8,7 @@ import torchvision.transforms as transforms
 from datasets import load_dataset
 import pytest
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 
 class ConvAE(torch.nn.Module):
@@ -75,7 +75,7 @@ class ThisTester(ModelTester):
     "mode",
     ["train", "eval"],
 )
-def test_autoencoder_conv_v2(record_property, mode):
+def test_autoencoder_conv_v2(record_property, mode, nightly):
     model_name = f"Autoencoder (conv)"
     record_property("model_name", model_name)
     record_property("mode", mode)
@@ -83,6 +83,8 @@ def test_autoencoder_conv_v2(record_property, mode):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    if nightly:
+        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
 
     tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()

@@ -9,7 +9,7 @@ import requests
 import torch
 import pytest
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 
 class ThisTester(ModelTester):
@@ -47,7 +47,7 @@ class ThisTester(ModelTester):
     ],
 )
 @pytest.mark.parametrize("model_name", ["facebook/deit-base-patch16-224"])
-def test_deit(record_property, model_name, mode):
+def test_deit(record_property, model_name, mode, nightly):
     if mode == "train":
         pytest.skip()
     record_property("model_name", model_name)
@@ -56,6 +56,8 @@ def test_deit(record_property, model_name, mode):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    if nightly:
+        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
 
     tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()

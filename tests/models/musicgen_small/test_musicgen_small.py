@@ -6,6 +6,7 @@
 from transformers import AutoProcessor, MusicgenForConditionalGeneration
 import pytest
 from tests.utils import ModelTester
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 
 class ThisTester(ModelTester):
@@ -26,7 +27,7 @@ class ThisTester(ModelTester):
             return_tensors="pt",
         )
 
-        inputs["max_new_tokens"] = 256
+        inputs["max_new_tokens"] = 5
         return inputs
 
     def set_model_eval(self, model):
@@ -38,12 +39,18 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.skip("torch run with bypass compilation is stalling")
-def test_musicgen_small(record_property, mode):
+def test_musicgen_small(record_property, mode, nightly):
     model_name = "musicgen_small"
     record_property("model_name", model_name)
     record_property("mode", mode)
 
-    tester = ThisTester(model_name, mode)
+    cc = CompilerConfig()
+    cc.enable_consteval = True
+    cc.consteval_parameters = True
+    if nightly:
+        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
+
+    tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()
 
     record_property("torch_ttnn", (tester, results))

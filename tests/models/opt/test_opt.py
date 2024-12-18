@@ -7,6 +7,7 @@ import torch
 from transformers import OPTForCausalLM, GPT2Tokenizer, GenerationConfig
 import pytest
 from tests.utils import ModelTester
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 
 class ThisTester(ModelTester):
@@ -36,12 +37,15 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.xfail(reason="Need to debug")
-def test_opt(record_property, mode):
+def test_opt(record_property, mode, nightly):
     model_name = "OPT"
     record_property("model_name", model_name)
     record_property("mode", mode)
 
-    tester = ThisTester(model_name, mode)
+    cc = CompilerConfig()
+    if nightly:
+        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
+    tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()
     if mode == "eval":
         tester.tokenizer.batch_decode(results)[0]

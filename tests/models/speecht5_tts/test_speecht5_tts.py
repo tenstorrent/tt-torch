@@ -8,7 +8,7 @@ from datasets import load_dataset
 import torch
 import pytest
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 
 class ThisTester(ModelTester):
@@ -48,7 +48,7 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-def test_speecht5_tts(record_property, mode):
+def test_speecht5_tts(record_property, mode, nightly):
     pytest.skip()  # crashes in lowering to stable hlo
     model_name = "speecht5-tts"
     record_property("model_name", model_name)
@@ -57,6 +57,8 @@ def test_speecht5_tts(record_property, mode):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    if nightly:
+        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
 
     tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()
