@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # Reference: https://colab.research.google.com/github/googlesamples/mediapipe/blob/main/examples/hand_landmarker/python/hand_landmarker.ipynb
 
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -47,12 +48,13 @@ def test_hand_landmark(record_property, mode):
     record_property("model_name", model_name)
     record_property("mode", mode)
 
-    """
-     Forcely do `git lfs pull` to make sure the LFS files needed by this test are available.
-    """
-    subprocess.run(
-        ["git", "lfs", "pull"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-    )
+    # Download required files unless they already exist
+    urls = [
+        "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
+        "https://storage.googleapis.com/mediapipe-tasks/hand_landmarker/woman_hands.jpg",
+    ]
+    for file_url in urls:
+        os.system(f"wget -P {Path(__file__).parent} -nc {file_url}")
 
     """
     Workaround!
