@@ -85,7 +85,7 @@ jobs:
         rm artifact.tar
         for a in `ls -1 *.tar`; do tar -xvf $a; rm $a; done
 
-    - name: Display structure of downloaded file
+    - name: Display structure of downloaded dir
       working-directory: ${{ steps.strings.outputs.test-output-dir }}
       run: |
         ls -R ${{ steps.strings.outputs.test-output-dir }}

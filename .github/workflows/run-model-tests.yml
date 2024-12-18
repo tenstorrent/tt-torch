@@ -69,16 +69,19 @@ jobs:
       working-directory: ${{ steps.strings.outputs.install-output-dir }}
       run: tar xvf artifact.tar
 
-    - name: make tt-metal directory
+    - name: make directories
       shell: bash
       working-directory: ${{ steps.strings.outputs.install-output-dir }}
-      run: mkdir -p ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal
+      run: |
+        mkdir -p ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal
+        mkdir -p ${{ steps.strings.outputs.work-dir }}/env
 
-    - name: copy tt-metal dirs
+    - name: copy tt-metal and env dirs
       shell: bash
       working-directory: ${{ steps.strings.outputs.install-output-dir }}
       run: |
         cp -r ${{ steps.strings.outputs.install-output-dir }}/tt-metal/* ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal
+        cp -r ${{ steps.strings.outputs.install-output-dir }}/env/env/* ${{ steps.strings.outputs.work-dir }}/env
 
     - name: Run Model Tests
       shell: bash

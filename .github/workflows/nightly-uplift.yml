@@ -1,7 +1,7 @@
 # This workflow automates creation of uplift pull requests.
 # Uplift PR is created daily to uplift the submodule to the latest version.
 
-name: Nighty Uplift
+name: Nightly Uplift
 
 on:
   schedule:
