@@ -16,7 +16,7 @@ import torch.nn.functional as F
 @pytest.mark.parametrize("inC", [3])
 @pytest.mark.parametrize("scale_factor", [2, 3])
 @pytest.mark.parametrize("align_corners", [False, True])
-def test_bilinear_interpolation(inH, inW, inC, scale_factor, align_corners):
+def test_bilinear_upsample(inH, inW, inC, scale_factor, align_corners):
     class Interpolate(nn.Module):
         def __init__(self):
             super().__init__()
@@ -38,6 +38,28 @@ def test_bilinear_interpolation(inH, inW, inC, scale_factor, align_corners):
         Interpolate(),
         inputs=[small],
         compiler_config=cc,
-        required_atol=3,
-        required_pcc=0.99 - 0.05 * scale_factor,
+        required_atol=0.07,
     )
+
+
+@pytest.mark.parametrize("inH", [50, 128, 224, 960])
+@pytest.mark.parametrize("inW", [50, 128, 224, 540])
+@pytest.mark.parametrize("inC", [1, 3])
+@pytest.mark.parametrize("scale_factor", [2, 3])
+def test_nearest_upsample(inH, inW, inC, scale_factor):
+    class Interpolate(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return F.interpolate(
+                x,
+                scale_factor=scale_factor,
+            )
+
+    input_shape = (1, inC, inH, inW)
+    small = torch.randn(input_shape, dtype=torch.bfloat16)
+
+    cc = CompilerConfig()
+    cc.enable_consteval = True
+    verify_module(Interpolate(), inputs=[small], compiler_config=cc, required_atol=0.02)
