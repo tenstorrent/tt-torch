@@ -18,6 +18,9 @@ from tt_torch.tools.utils import OpCompilationStatus
 
 
 def check_compiler_requirements():
+    """
+    Check if all the required tools are available.
+    """
     result_ttmlir = shutil.which("ttmlir-opt")
     if result_ttmlir is None:
         # raise FileNotFoundError(
@@ -45,6 +48,9 @@ def create_dir(directory):
 
 
 def generate_ttrt_artifacts(directory):
+    """
+    Generate TTRT artifacts for the current machine to be used by TTRT.
+    """
     cmd = ["ttrt", "query", "--save-artifacts", "--artifact-dir", directory]
     result = subprocess.run(
         cmd,
@@ -55,6 +61,10 @@ def generate_ttrt_artifacts(directory):
 
 
 def run_ttir_to_ttnn_pipeline(file, artifact, output_dir):
+    """
+    Run TTIR to TTNN pipeline for TTIR graph with the generated TTRT artifact.
+    Returns error code and stderr output.
+    """
     cmd = [
         "ttmlir-opt",
         f"--ttir-to-ttnn-backend-pipeline=system-desc-path={artifact}",
@@ -70,6 +80,9 @@ def run_ttir_to_ttnn_pipeline(file, artifact, output_dir):
 
 
 def generate_flatbuffer(file, output_dir):
+    """
+    Generate flatbuffer binary file using TTNN graph.
+    """
     file_name = os.path.basename(file)
     ttnn_file = os.path.join(output_dir, file_name)
     cmd = ["ttmlir-translate", "--ttnn-to-flatbuffer", ttnn_file]
@@ -81,6 +94,9 @@ def generate_flatbuffer(file, output_dir):
 
 
 def execute_ttrt(file, output_dir):
+    """
+    Execute the flatbuffer binary with TTRT.
+    """
     file_name = Path(file).stem
     fbb_file = os.path.join(output_dir, file_name + ".ttnn")
     cmd = ["ttrt", "run", fbb_file]
@@ -89,6 +105,10 @@ def execute_ttrt(file, output_dir):
 
 
 def parse_ttrt_output(result, filename, output_dir):
+    """
+    Parse the TTRT output and determine if a binary is successfully executed or
+    failed.
+    """
     output = result.stderr
     filename = os.path.join(output_dir, filename + ".ttnn")
     pass_string = f"INFO - PASS: test case={filename}"
@@ -258,6 +278,34 @@ def update_model_file(dir, excel_path):
 
 
 if __name__ == "__main__":
+    """
+    This script is used to run TTIR graphs (extracted from models_op_by_op.xlsx
+    Excel sheet) with TTRT and update the Excel sheet. It will update the status
+    if TTRT executes the graph successfully; otherwise add TTRT error message
+    and stack dump in the original sheet.
+    This process is perfromed in two steps.
+    1.  Extract the TTIR graph; execute them with TTRT; and store the TTRT
+        results temporarily as Excel file(s). [Default option]
+    2.  Update the Excel file with TTRT results. [Use '--update_model' option]
+
+    Usage:
+        python run_ttir_test.py [OPTIONS]
+
+    Options:
+        --runner_idx INTEGER
+            Index of the current runner [Index starts with 0]. This option is
+            used to distribute the workload between different runner and is
+            currently used for github workflows.
+
+        --runner_total INTEGER
+            Total number of available runners. This option is used to distribute
+            the workload between different runner and is currently used for
+            github workflows.
+
+        --update_model
+            Update the original Excel sheet with TTRT results (Status, TTRT
+            error, and TTRT stack dump).
+    """
     parser = argparse.ArgumentParser(description="Execute TTIR graphs with TTRT")
     parser.add_argument(
         "--runner_idx",
@@ -266,7 +314,7 @@ if __name__ == "__main__":
         required=False,
         type=int,
         help="Index of the current runner [starting with 0]; use to distribute the workload. Default: 0",
-        metavar="Integer",
+        metavar="INTEGER",
     )
     parser.add_argument(
         "--runner_total",
@@ -275,7 +323,7 @@ if __name__ == "__main__":
         required=False,
         type=int,
         help="Total number of runner for distribution of workload. Default: 1",
-        metavar="Integer",
+        metavar="INTEGER",
     )
     parser.add_argument(
         "--update_model",
