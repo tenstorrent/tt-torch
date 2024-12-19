@@ -278,7 +278,7 @@ if __name__ == "__main__":
         help="Update models excel file with TTRT results.",
     )
 
-    check_compiler_requirements()
+    # check_compiler_requirements()
 
     args = parser.parse_args()
     if args.runner_idx >= args.runner_total:
