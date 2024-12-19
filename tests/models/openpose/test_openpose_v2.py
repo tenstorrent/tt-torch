@@ -61,7 +61,7 @@ def test_openpose_v2(record_property, mode, nightly):
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if nightly:
-        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
+        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
     else:
         cc.compile_depth = CompileDepth.TTNN_IR
 
