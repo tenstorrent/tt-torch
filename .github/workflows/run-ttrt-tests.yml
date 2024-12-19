@@ -92,6 +92,9 @@ jobs:
         echo ${{ steps.strings.outputs.install-output-dir }}
         source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
+        mkdir -p ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/
+        cp ${{ steps.strings.outputs.install-output-dir }}/lib/ttmlir-opt ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/
+        chmod +x ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/ttmlir-opt
         #export TT_TORCH_COMPILE_DEPTH=COMPILE_OP_BY_OP
         #for testname in ${{ matrix.build.test_names }}; do
         #testname=${testname//,/}
