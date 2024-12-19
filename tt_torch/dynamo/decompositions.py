@@ -115,7 +115,6 @@ def upsample_bilinear2d(
     scales_w: Optional[float] = None,
 ):
     input_size = input.shape[-2:]
-    res = None
 
     if scales_h is None:
         scales_h = float(output_size[0]) / float(input_size[0])
@@ -130,20 +129,54 @@ def upsample_bilinear2d(
         and output_size[0] == output_size[1]
     ):
         weight_w = compute_bilinear_weight(
-            input_size[1], output_size[1], scales[1], False, input.dtype
+            input_size[1], output_size[1], scales[1], align_corners, input.dtype
         )
-        weight_h = weight_w.transpose(-1, -2)
+        weight_h = weight_w
     else:
         weight_w = compute_bilinear_weight(
             input_size[1], output_size[1], scales[1], align_corners, input.dtype
         )
         weight_h = compute_bilinear_weight(
             input_size[0], output_size[0], scales[0], align_corners, input.dtype
-        ).transpose(-1, -2)
+        )
 
-    res = (input.transpose(-1, -2) @ weight_h.transpose(-1, -2)).transpose(
-        -1, -2
-    ) @ weight_w
+    res = (input.transpose(-1, -2) @ weight_h).transpose(-1, -2) @ weight_w
+    return res
+
+
+def upsample_nearest2d(
+    input,
+    output_size,
+    scales_h=None,
+    scales_w=None,
+):
+    input_size = input.shape[-2:]
+
+    if scales_h is None or not isinstance(scales_h, int):
+        scales_h = int(output_size[0] / input_size[0])
+
+    if scales_w is None or not isinstance(scales_w, int):
+        scales_w = int(output_size[1] / input_size[1])
+
+    # To perform a nearest neighbor upsample with matrix dot products, we need to
+    # make the right hand side select each element along the columns <scale> times.
+    # We can make this right hand size by creating an identity matrix and computing
+    # the Kronecker product of that with a row of <scale> ones.
+    weight_w = torch.kron(torch.eye(input_size[1]), torch.ones(scales_w)).to(
+        input.dtype
+    )
+    if (
+        scales_w == scales_h
+        and input_size[0] == input_size[1]
+        and output_size[0] == output_size[1]
+    ):
+        weight_h = weight_w
+    else:
+        weight_h = torch.kron(torch.eye(input_size[0]), torch.ones(scales_h)).to(
+            input.dtype
+        )
+
+    res = (input.transpose(-1, -2) @ weight_h).transpose(-1, -2) @ weight_w
     return res
 
 
@@ -202,6 +235,7 @@ def _get_default_decomposition_ops() -> DecompositionOpsList:
 def _get_custom_decopositions() -> DecompositionTable:
     aten = torch.ops.aten
     return {
+        aten.upsample_nearest2d.default: upsample_nearest2d,
         aten.upsample_bilinear2d.default: upsample_bilinear2d,
     }
 
