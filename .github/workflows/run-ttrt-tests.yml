@@ -14,9 +14,9 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-          {runs-on: n150, n300, name: "ttrt_run1", runner_idx: 0, runner_total: 3},
-          {runs-on: n150, n300, name: "ttrt_run2", runner_idx: 1, runner_total: 3},
-          {runs-on: n300, n150, name: "ttrt_run3", runner_idx: 2, runner_total: 3},
+          {runs-on: n150, n300, name: "ttrt_runner_0", runner_idx: 0, runner_total: 3},
+          {runs-on: n150, n300, name: "ttrt_runner_1", runner_idx: 1, runner_total: 3},
+          {runs-on: n300, n150, name: "ttrt_runner_2", runner_idx: 2, runner_total: 3},
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
@@ -106,15 +106,13 @@ jobs:
         #pytest -v tests/models/$testname
         #done
         python results/run_ttir_test.py --runner_total=${{ matrix.build.runner_total }} --runner_idx=${{ matrix.build.runner_idx }}
+        echo ${{ steps.strings.outputs.work-dir }}/result/${{ matrix.build.name }}.xlsx
+        ls ${{ steps.strings.outputs.work-dir }}/result/
 
-    - name: Tar results
-      shell: bash
-      working-directory: ${{ steps.strings.outputs.test-output-dir }}
-      run: |
-        tar cvf ${{ matrix.build.name }}_${{ steps.strings.outputs.job-id }}.tar .
 
-    - name: Upload test folder to archive
+    - name: Upload TTRT reports to archive
       uses: actions/upload-artifact@v4
       with:
-        name: test-reports-${{ matrix.build.name }}.tar
-        path: ${{ steps.strings.outputs.test-output-dir }}/${{ matrix.build.name }}_${{ steps.strings.outputs.job-id }}.tar
+        name: ${{ matrix.build.name }}.xlsx
+        path: ${{ steps.strings.outputs.work-dir }}/result/${{ matrix.build.name }}.xlsx
+        #path: ${{ steps.strings.outputs.work-dir }}/${{ matrix.build.name }}_${{ steps.strings.outputs.job-id }}.tar

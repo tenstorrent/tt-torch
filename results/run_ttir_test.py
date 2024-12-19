@@ -108,6 +108,7 @@ def parse_ttrt_output(result, filename, output_dir):
     """
     Parse the TTRT output and determine if a binary is successfully executed or
     failed.
+    Returns 0 in case of success and 1 in case of error along with error message.
     """
     output = result.stderr
     filename = os.path.join(output_dir, filename + ".ttnn")
