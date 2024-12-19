@@ -107,11 +107,7 @@ class Op:
     def add_stable_hlo_graph(self, stable_hlo_graph: str):
         self.stable_hlo_graph = stable_hlo_graph
         self.converted_to_stable_hlo = True
-        try:
-            self.stable_hlo_ops, _ = parse_shlo_mlir(stable_hlo_graph)
-            self.parsed_stable_hlo_ops = True
-        except:
-            self.parsed_stable_hlo_ops = False
+        self.parsed_stable_hlo_ops = False
 
     def add_ttir_graph(self, ttir_graph: str):
         self.ttir_graph = ttir_graph

@@ -7,7 +7,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 import pytest
 from tests.utils import ModelTester
 import torch
-from tt_torch.tools.utils import CompilerConfig
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 
 class ThisTester(ModelTester):
@@ -41,7 +41,7 @@ def test_codegen(record_property, mode, nightly):
     record_property("mode", mode)
     cc = CompilerConfig()
     if nightly:
-        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
+        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()

@@ -41,7 +41,7 @@ def test_t5(record_property, model_name, mode, nightly):
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if nightly:
-        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
+        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()

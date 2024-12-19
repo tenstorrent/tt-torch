@@ -44,7 +44,7 @@ def test_opt(record_property, mode, nightly):
 
     cc = CompilerConfig()
     if nightly:
-        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
+        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
     tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()
     if mode == "eval":

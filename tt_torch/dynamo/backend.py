@@ -342,6 +342,7 @@ class Executor:
                 ):
                     try:
                         calculated = self.run_op(binary, *args)
+                        print(f"Ran: {idx}/{num_nodes}: {node.target}")
                         if calculated is None:
                             raise ValueError("Failed to execute")
                         op.compilation_status = OpCompilationStatus.EXECUTED
