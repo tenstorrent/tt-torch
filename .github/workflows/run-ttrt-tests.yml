@@ -61,8 +61,9 @@ jobs:
     - name: Use build artifacts
       uses: actions/download-artifact@v4
       with:
-        name: install-artifacts
+        #name: install-artifacts
         path: ${{ steps.strings.outputs.install-output-dir }}
+        merge-multiple: true
 
     - name: 'Untar install directory'
       shell: bash

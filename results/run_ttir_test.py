@@ -229,6 +229,9 @@ def process_excel_sheet(excel_path, runner_idx, runner_total):
 
 def update_model_file(dir, excel_path):
     ttrt_files = glob.glob(f"{dir}/ttrt_runner*")
+    if len(ttrt_files) == 0:
+        raise FileNotFoundError(f"No TTRT result sheet found in {dir}.")
+
     df = pd.read_excel(excel_path, sheet_name="All Ops")
     if "TTRT Error" not in df.columns:
         df["TTRT Error"] = ""
