@@ -98,7 +98,7 @@ jobs:
         chmod +x ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/ttmlir-opt
         cp ${{ steps.strings.outputs.install-output-dir }}/lib/ttmlir-translate ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/
         chmod +x ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/ttmlir-translate
-        cp ${{ steps.strings.outputs.work-dir }}/results/models_op_per_op.xlsx results/
+        cp ${{ steps.strings.outputs.install-output-dir }}/models_op_per_op.xlsx results/
         #export TT_TORCH_COMPILE_DEPTH=COMPILE_OP_BY_OP
         #for testname in ${{ matrix.build.test_names }}; do
         #testname=${testname//,/}
