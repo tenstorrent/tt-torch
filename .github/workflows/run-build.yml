@@ -154,6 +154,7 @@ jobs:
       run: |
         cp ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal-build/lib/*.so lib/
         cp ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/ttmlir-opt lib/
+        cp ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/ttmlir-translate lib/
 
     - name: Copy tt-metal directories
       shell: bash

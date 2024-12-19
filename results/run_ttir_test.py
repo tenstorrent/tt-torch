@@ -20,19 +20,22 @@ from tt_torch.tools.utils import OpCompilationStatus
 def check_compiler_requirements():
     result_ttmlir = shutil.which("ttmlir-opt")
     if result_ttmlir is None:
-        raise FileNotFoundError(
-            "ttmlir-opt not found. Please install tt-mlir compiler."
-        )
+        # raise FileNotFoundError(
+        #   "ttmlir-opt not found. Please install tt-mlir compiler."
+        # )
+        print("ttmlir-opt not found", file=sys.stderr)
 
     result_ttrt = shutil.which("ttrt")
     if result_ttrt is None:
-        raise FileNotFoundError("ttrt not found. Please install tt-mlir compiler.")
+        # raise FileNotFoundError("ttrt not found. Please install tt-mlir compiler.")
+        print("ttrt not found", file=sys.stderr)
 
     result_translate = shutil.which("ttmlir-translate")
     if result_translate is None:
-        raise FileNotFoundError(
-            "ttmlir-translate not found. Please install tt-mlir compiler."
-        )
+        # raise FileNotFoundError(
+        #   "ttmlir-translate not found. Please install tt-mlir compiler."
+        # )
+        print("ttmlir-translate not found", file=sys.stderr)
 
 
 def create_dir(directory):
@@ -278,7 +281,7 @@ if __name__ == "__main__":
         help="Update models excel file with TTRT results.",
     )
 
-    # check_compiler_requirements()
+    check_compiler_requirements()
 
     args = parser.parse_args()
     if args.runner_idx >= args.runner_total:
