@@ -14,9 +14,9 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-          {runs-on: n150, n300, name: "run1", runner_idx: 0, runner_total: 3},
-          {runs-on: n150, n300, name: "run2", runner_idx: 1, runner_total: 3},
-          {runs-on: n300, n150, name: "run3", runner_idx: 2, runner_total: 3},
+          {runs-on: n150, n300, name: "ttrt_run1", runner_idx: 0, runner_total: 3},
+          {runs-on: n150, n300, name: "ttrt_run2", runner_idx: 1, runner_total: 3},
+          {runs-on: n300, n150, name: "ttrt_run3", runner_idx: 2, runner_total: 3},
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
