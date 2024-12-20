@@ -2,7 +2,17 @@ name: Build
 
 on:
   workflow_dispatch:
+    inputs:
+      mlir_override:
+        description: 'Git SHA of commit in tenstorrent/tt-mlir'
+        required: false
+        type: string
   workflow_call:
+    inputs:
+      mlir_override:
+        description: 'Git SHA of commit in tenstorrent/tt-mlir'
+        required: false
+        type: string
 
 jobs:
   build:
@@ -33,6 +43,13 @@ jobs:
       with:
         submodules: recursive
         lfs: true
+
+    - name: Override tt-mlir SHA mlir_override is set
+      if: ${{ inputs.mlir_override }}
+      shell: bash
+      run: |
+          # Update the CMakeLists.txt file with the new SHA
+          sed -i "s/set(TT_MLIR_VERSION \".*\")/set(TT_MLIR_VERSION \"${{ inputs.mlir_override }}\")/" third_party/CMakeLists.txt
 
     - name: Set reusable strings
       id: strings
