@@ -23,7 +23,7 @@ jobs:
 
     container:
       image: ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:latest
-      options: --user root --device /dev/tenstorrent/0
+      options: --user root --device /dev/tenstorrent/0 --shm-size=2gb
       volumes:
         - /dev/hugepages:/dev/hugepages
         - /dev/hugepages-1G:/dev/hugepages-1G
@@ -92,7 +92,7 @@ jobs:
         echo ${{ steps.strings.outputs.install-output-dir }}
         source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
-        export TT_TORCH_COMPILE_DEPTH=COMPILE_OP_BY_OP
+        export TT_TORCH_COMPILE_DEPTH=EXECUTE_OP_BY_OP
         for testname in ${{ matrix.build.test_names }}; do
         testname=${testname//,/}
         echo "running test: $testname"
