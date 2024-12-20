@@ -140,7 +140,6 @@ def constant_fold(gm, example_inputs):
                 placeholder = gm.graph.placeholder(node.target)
                 node.replace_all_uses_with(placeholder)
                 tensor = gm._FX_CONST_FOLDED_ATTRS.data
-                tensor = tensor.unsqueeze(0) if len(tensor.shape) == 0 else tensor
                 graph_constants[node.target] = tensor
             else:
                 # loop through the get_item nodes
@@ -151,7 +150,6 @@ def constant_fold(gm, example_inputs):
                     placeholder = gm.graph.placeholder(name)
                     key.replace_all_uses_with(placeholder)
                     tensor = gm._FX_CONST_FOLDED_ATTRS[idx].data
-                    tensor = tensor.unsqueeze(0) if len(tensor.shape) == 0 else tensor
                     graph_constants[name] = tensor
 
     gm.graph.eliminate_dead_code()

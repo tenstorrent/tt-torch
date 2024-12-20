@@ -263,6 +263,11 @@ class Executor:
 
         return processed_inputs
 
+    def sanitize_floating_point_tensors(self, tensor):
+        if isinstance(tensor, torch.Tensor) and tensor.is_floating_point():
+            return tensor.to(torch.float32)
+        return tensor
+
     def run_op(self, binary, *inputs):
         inputs = self.pre_process_inputs(*inputs)
         sender = mp.Queue()
@@ -319,11 +324,13 @@ class Executor:
                 args = []
                 for arg in node.args:
                     if isinstance(arg, torch.fx.node.Node):
-                        args.append(node_to_tensor[arg])
+                        args.append(
+                            self.sanitize_floating_point_tensors(node_to_tensor[arg])
+                        )
                     elif isinstance(arg, list):
                         args.append(
                             [
-                                node_to_tensor[a]
+                                self.sanitize_floating_point_tensors(node_to_tensor[a])
                                 if isinstance(a, torch.fx.node.Node)
                                 else a
                                 for a in arg
