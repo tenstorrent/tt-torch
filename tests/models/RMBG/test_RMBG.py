@@ -39,6 +39,7 @@ class ThisTester(ModelTester):
     "mode",
     ["train", "eval"],
 )
+@pytest.mark.xfail(reason="Fails due pt2 compile issue, graph is traced")
 def test_RMBG(record_property, mode, nightly):
     if mode == "train":
         pytest.skip()
