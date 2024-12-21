@@ -97,6 +97,12 @@ def bypass_redundant_getitem(gm):
     return gm
 
 
+def sanitize_floating_point_tensors(tensor):
+    if isinstance(tensor, torch.Tensor) and tensor.is_floating_point():
+        return tensor.to(torch.float32)
+    return tensor
+
+
 def run_folding(gm):
     # If there's no const subgraph module or attr output names to use, return
     # early as there is no const folding to perform.
@@ -113,7 +119,7 @@ def run_folding(gm):
 
     def _create_param(i):
         return torch.nn.Parameter(
-            i.detach()
+            sanitize_floating_point_tensors(i.detach())
             if not isinstance(i, int)
             else torch.Tensor([i]).to(device=gm.device_for_folded_attrs),
             requires_grad=i.requires_grad if isinstance(i, torch.Tensor) else False,
