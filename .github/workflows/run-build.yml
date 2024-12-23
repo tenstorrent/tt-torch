@@ -159,6 +159,20 @@ jobs:
         cmake --build ${{ steps.strings.outputs.build-output-dir }}
         cmake --install ${{ steps.strings.outputs.build-output-dir }}
 
+    - name: Verify tt-mlir SHA override
+      if: ${{ inputs.mlir_override }}
+      shell: bash
+      run: |
+          cd third_party/tt-mlir
+          branch_name=$(git rev-parse --abbrev-ref HEAD)
+          commit_sha=$(git rev-parse HEAD)
+          commit_title=$(git log -1 --pretty=%s)
+          echo "Branch name: $branch_name"
+          echo "Commit SHA: $commit_sha"
+          echo "Commit title: $commit_title"
+          echo "::notice::Using tt-mlir: $branch_name, commit: $commit_sha, title: $commit_title"
+          cd ../..
+
     - name: Copy tt-metal binaries
       shell: bash
       working-directory: ${{ steps.strings.outputs.install-output-dir }}
