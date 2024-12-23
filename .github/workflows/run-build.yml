@@ -1,12 +1,6 @@
 name: Build
 
 on:
-  workflow_dispatch:
-    inputs:
-      mlir_override:
-        description: 'Git SHA of commit in tenstorrent/tt-mlir'
-        required: false
-        type: string
   workflow_call:
     inputs:
       mlir_override:
