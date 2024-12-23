@@ -5,7 +5,7 @@ on:
     workflows: # List workflow that we want to collect data for
       - "On PR"
       - "On push"
-      - "Nighty Tests"
+      - "Nightly Tests"
       - "Run Model Tests"
       - "Run Tests"
     types:
