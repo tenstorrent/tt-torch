@@ -100,12 +100,14 @@ jobs:
         done
 
     - name: Tar results
+      if: success() || failure()
       shell: bash
       working-directory: ${{ steps.strings.outputs.test-output-dir }}
       run: |
         tar cvf ${{ matrix.build.name }}_${{ steps.strings.outputs.job-id }}.tar .
 
     - name: Upload test folder to archive
+      if: success() || failure()
       uses: actions/upload-artifact@v4
       with:
         name: test-reports-${{ matrix.build.name }}.tar
