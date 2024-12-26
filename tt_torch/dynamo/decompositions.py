@@ -235,7 +235,7 @@ def _get_default_decomposition_ops() -> DecompositionOpsList:
 def _get_custom_decopositions() -> DecompositionTable:
     aten = torch.ops.aten
     return {
-        aten.upsample_nearest2d.default: upsample_nearest2d,
+        # aten.upsample_nearest2d.default: upsample_nearest2d,    #TODO: https://github.com/tenstorrent/tt-torch/issues/145
         aten.upsample_bilinear2d.default: upsample_bilinear2d,
     }
 

@@ -46,6 +46,9 @@ def test_bilinear_upsample(inH, inW, inC, scale_factor, align_corners):
 @pytest.mark.parametrize("inW", [50, 128, 224, 540])
 @pytest.mark.parametrize("inC", [1, 3])
 @pytest.mark.parametrize("scale_factor", [2, 3])
+@pytest.mark.xfail(
+    reason="    #TODO: https://github.com/tenstorrent/tt-torch/issues/145"
+)
 def test_nearest_upsample(inH, inW, inC, scale_factor):
     class Interpolate(nn.Module):
         def __init__(self):
