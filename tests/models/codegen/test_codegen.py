@@ -7,7 +7,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 import pytest
 from tests.utils import ModelTester
 import torch
-from tt_torch.tools.utils import CompilerConfig
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 
 class ThisTester(ModelTester):
@@ -31,9 +31,6 @@ class ThisTester(ModelTester):
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
-)
-@pytest.mark.xfail(
-    reason="Fails due to pt2 compile issue when finishing generation, but we can still generate a graph"
 )
 def test_codegen(record_property, mode, nightly):
     model_name = "codegen"

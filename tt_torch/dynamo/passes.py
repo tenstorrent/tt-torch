@@ -30,7 +30,7 @@ def run_shape_prop(gm, example_inputs):
     shape_prop.run(*fake_args)
 
 
-def reduce_graph(module_or_graph: Union[torch.fx.Graph, torch.fx.GraphModule]):
+def reduce_graph(module_or_graph: Union[torch.fx.Graph, torch.fx.GraphModule], example_inputs, constant_inputs):
     # Reduce the graph to only the nodes that are used
 
     # Traverse up the graph from output nodes to populate consumed nodes set
@@ -55,8 +55,19 @@ def reduce_graph(module_or_graph: Union[torch.fx.Graph, torch.fx.GraphModule]):
                 consumed.add(arg)
                 working_nodes.append(arg)
 
+    # If a placeholder nod is not consumed then we need to ensure
+    # that it is removed from our example inputs and graph constants
+    placeholder_nodes = graph.find_nodes(op="placeholder")
     for node in reversed(graph.nodes):
         if node not in consumed:
+            if node in placeholder_nodes:
+                placeholder_idx = placeholder_nodes.index(node)
+                if placeholder_idx < len(example_inputs):
+                    example_inputs.pop(placeholder_idx)
+                else:
+                    constant_inputs.pop(placeholder_idx - len(example_inputs))
+                placeholder_nodes.pop(placeholder_idx)
+
             graph.erase_node(node)
 
     if len(graph.nodes) == 1:
@@ -198,13 +209,16 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     gm = apply_decompositions(gm, example_inputs, decompositions)  # type: ignore
     if compiler_config.enable_consteval:
         gm, constants = constant_fold(gm, example_inputs)
+        gm = bypass_redundant_getitem(gm)
+        if compiler_config.consteval_parameters:
+            gm, parameters = inline_parameters(gm)
+        else:
+            parameters = {}
+        constant_inputs = order_constant_inputs(gm, parameters, constants)
     elif compiler_config.consteval_parameters:
         raise Exception("consteval_parameters is enabled but enable_consteval is not")
     else:
-        constants = []
-    gm = bypass_redundant_getitem(gm)
-    gm, parameters = inline_parameters(gm)
-    constant_inputs = order_constant_inputs(gm, parameters, constants)
+        constant_inputs = []
 
     # some constant folding operations are preformed by changing tensor strides, we
     # want all the strides to be 1, so make them contiguous
@@ -212,6 +226,6 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         if not t.is_contiguous():
             constant_inputs[i] = t.contiguous()
 
-    reduce_graph(gm)
+    reduce_graph(gm, example_inputs, constant_inputs)
     run_shape_prop(gm, example_inputs + constant_inputs)
     return gm, constant_inputs

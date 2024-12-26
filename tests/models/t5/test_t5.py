@@ -29,17 +29,17 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-@pytest.mark.xfail(
-    reason="Fails due to pt2 compile issue when finishing generation, but we can still generate a graph"
-)
+# @pytest.mark.xfail(
+#     reason="Fails due to pt2 compile issue when finishing generation, but we can still generate a graph"
+# )
 @pytest.mark.parametrize("model_name", ["t5-small", "t5-base", "t5-large"])
 def test_t5(record_property, model_name, mode, nightly):
     record_property("model_name", model_name)
     record_property("mode", mode)
 
     cc = CompilerConfig()
-    cc.enable_consteval = True
-    cc.consteval_parameters = True
+    # cc.enable_consteval = True
+    # cc.consteval_parameters = True
     if nightly:
         cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
 

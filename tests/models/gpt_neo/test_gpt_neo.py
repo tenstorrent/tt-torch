@@ -40,9 +40,6 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-@pytest.mark.xfail(
-    reason="Fails due to pt2 compile issue when finishing generation, but we can still generate a graph"
-)
 def test_gpt_neo(record_property, mode, nightly):
     model_name = "GPTNeo"
     record_property("model_name", model_name)
