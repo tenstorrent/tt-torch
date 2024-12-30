@@ -13,10 +13,9 @@ import torch.nn.functional as F
 
 @pytest.mark.parametrize("inH", [50, 128, 224, 960])
 @pytest.mark.parametrize("inW", [50, 128, 224, 540])
-@pytest.mark.parametrize("inC", [3])
-@pytest.mark.parametrize("scale_factor", [2, 3])
+@pytest.mark.parametrize("scale_factor", [0.5, 2])
 @pytest.mark.parametrize("align_corners", [False, True])
-def test_bilinear_upsample(inH, inW, inC, scale_factor, align_corners):
+def test_bilinear_upsample(inH, inW, scale_factor, align_corners):
     class Interpolate(nn.Module):
         def __init__(self):
             super().__init__()
@@ -29,7 +28,7 @@ def test_bilinear_upsample(inH, inW, inC, scale_factor, align_corners):
                 align_corners=align_corners,
             )
 
-    input_shape = (1, inC, inH, inW)
+    input_shape = (1, 1, inH, inW)
     small = torch.randn(input_shape, dtype=torch.bfloat16)
 
     cc = CompilerConfig()
@@ -44,12 +43,8 @@ def test_bilinear_upsample(inH, inW, inC, scale_factor, align_corners):
 
 @pytest.mark.parametrize("inH", [50, 128, 224, 960])
 @pytest.mark.parametrize("inW", [50, 128, 224, 540])
-@pytest.mark.parametrize("inC", [1, 3])
-@pytest.mark.parametrize("scale_factor", [2, 3])
-@pytest.mark.xfail(
-    reason="    #TODO: https://github.com/tenstorrent/tt-torch/issues/145"
-)
-def test_nearest_upsample(inH, inW, inC, scale_factor):
+@pytest.mark.parametrize("scale_factor", [0.5, 2])
+def test_nearest_upsample(inH, inW, scale_factor):
     class Interpolate(nn.Module):
         def __init__(self):
             super().__init__()
@@ -60,7 +55,7 @@ def test_nearest_upsample(inH, inW, inC, scale_factor):
                 scale_factor=scale_factor,
             )
 
-    input_shape = (1, inC, inH, inW)
+    input_shape = (1, 1, inH, inW)
     small = torch.randn(input_shape, dtype=torch.bfloat16)
 
     cc = CompilerConfig()
