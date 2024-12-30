@@ -151,30 +151,54 @@ def upsample_nearest2d(
     scales_w=None,
 ):
     input_size = input.shape[-2:]
+    scales = [scales_h, scales_w]
 
-    if scales_h is None or not isinstance(scales_h, int):
-        scales_h = int(output_size[0] / input_size[0])
+    # Find the indices which we should gather from the input tensor
+    # but use them to construct weight matrices to perform the interpolation
+    # rather than simply gather.
+    indices = []
+    for (scale, in_size, out_size) in zip(scales, input_size, output_size):
+        # To map from output indices to input indices we need to multiply
+        # the output index by the reciprocal of the scale
+        scale = 1 / scale if scale is not None else in_size / out_size
 
-    if scales_w is None or not isinstance(scales_w, int):
-        scales_w = int(output_size[1] / input_size[1])
-
-    # To perform a nearest neighbor upsample with matrix dot products, we need to
-    # make the right hand side select each element along the columns <scale> times.
-    # We can make this right hand size by creating an identity matrix and computing
-    # the Kronecker product of that with a row of <scale> ones.
-    weight_w = torch.kron(torch.eye(input_size[1]), torch.ones(scales_w)).to(
-        input.dtype
-    )
-    if (
-        scales_w == scales_h
-        and input_size[0] == input_size[1]
-        and output_size[0] == output_size[1]
-    ):
-        weight_h = weight_w
-    else:
-        weight_h = torch.kron(torch.eye(input_size[0]), torch.ones(scales_h)).to(
-            input.dtype
+        all_output_indices = torch.arange(out_size)
+        input_indices = (
+            torch.floor(all_output_indices * scale)
+            .to(torch.int64)
+            .unsqueeze(0)
+            .transpose(-2, -1)
         )
+        # input_indices currently contains which indices to gather from the
+        # input tensor for each output index we are going to concatenate the
+        # output indices to this tensor so that we can use it to map from
+        # output indices to input indices.
+        input_indices = torch.cat(
+            [
+                input_indices,
+                torch.arange(out_size).unsqueeze(0).transpose(-2, -1),
+            ],
+            dim=-1,
+        )
+
+        # input_indices is in the form [input_index, output_index]. That is to say
+        # that for the nth output index, input_index[n, 0] is the index to gather
+        # from the input tensor, and input_index[n, 1] is the output index (n).
+        indices.append(input_indices)
+
+    indices_h, indices_w = indices
+    # Must use torch.ones so this input is consteval-able
+    one = torch.ones(1, dtype=input.dtype)
+
+    weight_w_ = torch.zeros(input_size[1], output_size[1], dtype=input.dtype)
+    weight_w = weight_w_.index_put(
+        (indices_w[:, 0], indices_w[:, 1]), one
+    )  # use out-of-place index_put so graph remains consteval-able
+
+    weight_h_ = torch.zeros(input_size[0], output_size[0], dtype=input.dtype)
+    weight_h = weight_h_.index_put(
+        (indices_h[:, 0], indices_h[:, 1]), one
+    )  # use out-of-place index_put so graph remains consteval-able
 
     res = (input.transpose(-1, -2) @ weight_h).transpose(-1, -2) @ weight_w
     return res
@@ -235,7 +259,7 @@ def _get_default_decomposition_ops() -> DecompositionOpsList:
 def _get_custom_decopositions() -> DecompositionTable:
     aten = torch.ops.aten
     return {
-        # aten.upsample_nearest2d.default: upsample_nearest2d,    #TODO: https://github.com/tenstorrent/tt-torch/issues/145
+        aten.upsample_nearest2d.default: upsample_nearest2d,
         aten.upsample_bilinear2d.default: upsample_bilinear2d,
     }
 
