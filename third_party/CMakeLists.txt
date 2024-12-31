@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-set(TT_MLIR_VERSION "dca29f42409990b8bce2e9fc1a37a0a52aae45b4")
+set(TT_MLIR_VERSION uaziz/broadcast-repeat-lowering)
 
 if (TOOLCHAIN STREQUAL "ON")
     cmake_minimum_required(VERSION 3.20)
