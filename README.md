@@ -35,7 +35,7 @@ You can use the following environment variables to override default behaviour:
 | Environment Variable | Behaviour | Default |
 | -------------------- | --------- | --------
 | TT_TORCH_COMPILE_DEPTH | Sets the maximum compile depth, see `tt_torch/tools/utils.py` for options. | `EXECUTE` |
-| TT_TORCH_VERIFY_INTERMEDIATES | Sets whether to verify intermediate tensors agains pytorch when running with compile depth `EXECUTE_OP_BY_OP`. | False |
-| TT_TORCH_CONSTEVAL | Sets whether to enable consteval on the torch fx graph before compiling. | False |
-| TT_TORCH_CONSTEVAL_PARAMETERS | Sets whether to also consteval the parameters, not only the embedded constants. | False |
-| TT_TORCH_ENABLE_IR_PRINTING | Sets whether to enable printing MLIR for all conversion steps from StableHLO to TTNN. Be warned, this forces single core compile, so is much slower. | False |
+| TT_TORCH_VERIFY_INTERMEDIATES | Sets whether to verify intermediate tensors against pytorch when running with compile depth `EXECUTE_OP_BY_OP`. | False |
+| TT_TORCH_CONSTEVAL | Enables evaluation of constant expressions (consteval) in the Torch FX graph prior to compilation. | False |
+| TT_TORCH_CONSTEVAL_PARAMETERS | Extends consteval to include parameters (e.g., model weights) as well as embedded constants. | False |
+| TT_TORCH_ENABLE_IR_PRINTING | Enables printing MLIR for all conversion steps from StableHLO to TTNN. Be warned, this forces single core compile, so is much slower. | False |
