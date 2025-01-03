@@ -94,10 +94,9 @@ def test_autoencoder_linear(record_property, mode, nightly):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    cc.remove_embedded_constants = True
     if nightly:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-    else:
-        cc.compile_depth = CompileDepth.TTNN_IR
 
     tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()

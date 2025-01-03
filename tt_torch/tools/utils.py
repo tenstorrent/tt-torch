@@ -129,6 +129,7 @@ class CompilerConfig:
         self.single_op_timeout = 5
         self.enable_intermediate_verification = False
         self.enable_consteval = False
+        self.remove_embedded_constants = False
         self._consteval_parameters = False
 
         self.apply_environment_overrides()
@@ -156,6 +157,9 @@ class CompilerConfig:
         consteval_parameters = os.environ.get("TT_TORCH_CONSTEVAL_PARAMETERS")
         if consteval_parameters and int(consteval_parameters):
             self.consteval_parameters = True
+        remove_embedded_constants = os.environ.get("TT_TORCH_EMBEDDEDD_CONSTANTS")
+        if remove_embedded_constants and int(remove_embedded_constants):
+            self.remove_embedded_constants = True
 
     def post_init(self):
         if self.consteval_parameters:

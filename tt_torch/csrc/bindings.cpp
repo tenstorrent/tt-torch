@@ -67,8 +67,15 @@ static tt::runtime::Tensor create_tensor(const torch::Tensor &tensor) {
 
   auto shape =
       std::vector<uint32_t>(tensor.sizes().begin(), tensor.sizes().end());
+  if (shape.empty()) {
+    shape.push_back(1);
+  }
+
   auto stride =
       std::vector<uint32_t>(tensor.strides().begin(), tensor.strides().end());
+  if (stride.empty()) {
+    stride.push_back(1);
+  }
 
   return tt::runtime::createTensor(
       data, shape, stride, tensor.element_size(),
