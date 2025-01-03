@@ -10,6 +10,7 @@ from mdutils.mdutils import MdUtils
 from pathlib import Path
 
 import subprocess
+import re
 
 # Script to parse the results of the unique ops json files and combine them into a spreadsheet
 # This script parses models compiled into stable hlo / TTIR op by op
@@ -48,6 +49,31 @@ def extract_shapes_md(shape_list):
             shape_str += "Scalar,<br>"
 
     return shape_str
+
+
+def parse_runtime_output(output):
+    """
+    Parse the runtime stack dump to extract the error message
+    """
+    error_message = re.search(r"Error.*?TT_FATAL.*?\n", output)
+    if error_message is not None:
+        error_message = error_message.group(0)
+        info_available = re.search(r"\ninfo:\n.*?\n", output)
+        if info_available:
+            error_message += info_available.group(0)
+
+        return error_message
+
+    error_message = re.search(r"Error.*TT_THROW.*\n", output)
+    if error_message is not None:
+        error_message = error_message.group(0)
+        info_available = re.search(r"\ninfo:\n.*\n", output)
+        if info_available:
+            error_message += info_available.group(0)
+
+        return error_message
+
+    return "Error message not extracted."
 
 
 def create_test_dirs():
@@ -94,6 +120,8 @@ def process_json_files():
         keys = list(data.keys())
         keys.sort()
         row = 0
+        # xlsxwriter fails to write anything after 'Compiled Json' field; so it
+        # is being written to the last column.
         header = (
             "Torch Name",
             "Input Shapes",
@@ -107,9 +135,9 @@ def process_json_files():
             "Raw SHLO",
             "Raw TTIR",
             "Raw TTNNIR",
-            "Compiled Json",
             "Compile Error",
             "Trace dump",
+            "Compiled Json",
         )
         worksheet.write_row(row, 0, header, bold)
         row += 1
@@ -134,6 +162,7 @@ def process_json_files():
                     "ttir_graph": value["ttir_graph"],
                     "ttnn_graph": value["ttnn_graph"],
                     "compiled_json": value["compiled_json"],
+                    "runtime_stack_error": value["runtime_stack_dump"],
                     "key": key,
                     "pcc": value["pcc"],
                     "atol": value["atol"],
@@ -217,6 +246,12 @@ def process_json_files():
                     if result.returncode != 0:
                         error = result.stderr.split("\n")[0]
                         trace_dump = result.stderr
+                elif status == 6:
+                    trace_dump = op["runtime_stack_error"]
+                    trace_dump = trace_dump.replace("\\n", "\n")
+                    error = parse_runtime_output(trace_dump)
+                    trace_dump = re.sub(r"[^\x20-\x7E]", "", trace_dump)
+
                 row_data = [
                     name,
                     input_shapes,
@@ -230,18 +265,14 @@ def process_json_files():
                     raw_shlo,
                     op["ttir_graph"],
                     op["ttnn_graph"],
-                    op["compiled_json"],
                     error,
                     trace_dump,
+                    op["compiled_json"],
                 ]
                 all_ops[op["key"]]["error"] = error
                 all_ops[op["key"]]["trace_dump"] = trace_dump
                 worksheet.write_row(row, 0, row_data)
                 name = ""
-                row += 1
-                row_data = ["", "", "", "", "", "", raw_shlo]
-                worksheet.write_row(row, 0, row_data)
-                worksheet.set_row(row, None, None, {"hidden": True})
                 row += 1
                 for shlo_op in ops:
                     if shlo_op[1] not in stable_hlo_ops:
@@ -267,6 +298,8 @@ def process_json_files():
     row = 0
     unique_ops = set()
     worksheet = workbook.add_worksheet("All Ops")
+    # xlsxwriter fails to write anything after 'Compiled Json' field; so it is
+    # being written to the last column.
     header = (
         "Torch Name",
         "Input Shapes",
@@ -280,9 +313,9 @@ def process_json_files():
         "Raw SHLO",
         "Raw TTIR",
         "Raw TTNNIR",
-        "Compiled JSON",
         "Compile Error",
         "Trace dump",
+        "Compiled JSON",
     )
     worksheet.write_row(row, 0, header, bold)
     row += 1
@@ -344,26 +377,8 @@ def process_json_files():
                 raw_shlo,
                 ttir_graph,
                 ttnn_graph,
-                compiled_json,
                 error,
                 trace_dump,
-            ]
-            name = ""
-            worksheet.write_row(row, 0, row_data)
-            row += 1
-            row_data = [
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                torch_ir_graph,
-                raw_shlo,
-                ttir_graph,
-                ttnn_graph,
                 compiled_json,
             ]
             worksheet.write_row(row, 0, row_data)
