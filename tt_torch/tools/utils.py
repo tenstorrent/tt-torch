@@ -47,6 +47,7 @@ class Op:
         self.ttnn_graph = ""
         self.json = ""
         self.binary = ""
+        self.runtime_stack_dump = ""
         self.compilation_status = OpCompilationStatus.NOT_STARTED
         self.parsed_stable_hlo_ops = False
         self.parsed_ttnn_ops = False
@@ -87,6 +88,7 @@ class Op:
             "stable_hlo_ops": self.stable_hlo_ops,
             "ttir_graph": self.ttir_graph,
             "ttnn_graph": self.ttnn_graph,
+            "runtime_stack_dump": self.runtime_stack_dump,
             "pcc": pcc,
             "atol": atol,
             "compiled_json": self.json,

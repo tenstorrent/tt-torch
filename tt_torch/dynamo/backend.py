@@ -269,6 +269,10 @@ class Executor:
         receiver = mp.Queue()
         obj = {"binary": binary, "inputs": inputs}
 
+        stderr_file_name = "stderr.txt"
+        old_stderr = sys.stderr
+        sys.stderr = f_stderr = open(stderr_file_name, "w")
+
         exec_event = mp.Event()
         process = mp.Process(
             target=execute_process, args=(sender, receiver, exec_event)
@@ -296,7 +300,17 @@ class Executor:
         process.join()
         if len(outputs) == 1:
             outputs = outputs[0]
-        return outputs
+
+        sys.stderr = old_stderr
+        f_stderr.close()
+        stderr_data = ""
+        if outputs is None:
+            f_stderr = open(stderr_file_name, "r")
+            stderr_data = f_stderr.read()
+            f_stderr.close()
+        os.unlink(stderr_file_name)
+
+        return outputs, stderr_data
 
     def run_gm_op_by_op(self, *inputs):
         node_to_tensor = {}
@@ -341,7 +355,11 @@ class Executor:
                     and binary is not None
                 ):
                     try:
-                        calculated = self.run_op(binary, *args)
+                        calculated, runtime_stack_dump = self.run_op(binary, *args)
+                        self.compiler_config.unique_ops[
+                            op.unique_key()
+                        ].runtime_stack_dump = runtime_stack_dump
+
                         print(f"Ran: {idx}/{num_nodes}: {node.target}")
                         if calculated is None:
                             raise ValueError("Failed to execute")
