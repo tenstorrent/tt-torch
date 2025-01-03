@@ -21,6 +21,18 @@ if (TOOLCHAIN STREQUAL "ON")
         COMMAND /bin/bash -c "cd ${PROJECT_SOURCE_DIR}/tt-mlir/src/tt-mlir && git checkout ${TT_MLIR_VERSION}"
     )
 else()
+    set(TT_RUNTIME_DEBUG OFF CACHE BOOL "Enable runtime debugging")
+    message(STATUS "TT_RUNTIME_DEBUG is set to: ${TT_RUNTIME_DEBUG}")
+    set(BUILD_TTRT ON CACHE BOOL "Build the ttrt target")
+    # Set the build command based on the BUILD_TTRT variable
+    if(BUILD_TTRT)
+        message(STATUS "Building ttrt")
+        set(BUILD_COMMAND "${CMAKE_COMMAND}" --build . -- ttrt)
+    else()
+        message(STATUS "Not building ttrt")
+        set(BUILD_COMMAND "")
+    endif()
+
     include(ExternalProject)
     set(TTMLIR_LIB_DIR ${TTTORCH_SOURCE_DIR}/install)
     ExternalProject_Add(
@@ -36,8 +48,9 @@ else()
           -DTT_RUNTIME_ENABLE_TTMETAL=OFF
           -DTTMLIR_ENABLE_STABLEHLO=ON
           -DTTMLIR_ENABLE_RUNTIME=ON
+          -DTT_RUNTIME_DEBUG=${TT_RUNTIME_DEBUG}
           -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
-        BUILD_COMMAND "${CMAKE_COMMAND}" --build . -- ttrt
+        BUILD_COMMAND ${BUILD_COMMAND}
         GIT_REPOSITORY https://github.com/tenstorrent/tt-mlir.git
         GIT_TAG ${TT_MLIR_VERSION}
         GIT_PROGRESS ON
