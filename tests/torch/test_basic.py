@@ -178,13 +178,11 @@ def test_linear():
     verify_module(Basic(), input_shapes=[(32, 32)])
 
 
-from torch_mlir import fx
-from torch_mlir.compiler_utils import OutputType
-
-
+@pytest.mark.xfail(
+    strict=True,
+    reason="Embedded constants currently broken, see https://github.com/tenstorrent/tt-torch/issues/152",
+)
 def test_linear_with_bias():
-    pytest.xfail()
-
     class Basic(nn.Module):
         def __init__(self):
             super().__init__()
@@ -195,6 +193,34 @@ def test_linear_with_bias():
             return x
 
     verify_module(Basic(), input_shapes=[(32, 32)])
+
+
+def test_linear_with_bias_no_embedded_constants():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.linear_a = nn.Linear(32, 32)
+
+        def forward(self, x):
+            x = self.linear_a(x)
+            return x
+
+    cc = CompilerConfig()
+    cc.remove_embedded_constants = True
+    verify_module(Basic(), input_shapes=[(32, 32)], compiler_config=cc)
+
+
+def test_constant():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return x + 1.0
+
+    cc = CompilerConfig()
+    cc.remove_embedded_constants = True
+    verify_module(Basic(), input_shapes=[(1, 768)], compiler_config=cc)
 
 
 def test_maximum():
