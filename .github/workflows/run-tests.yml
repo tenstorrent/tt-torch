@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-          {runs-on: n150, name: "run"},
+          {runs-on: n150, n300, name: "run"},
         ]
 
     runs-on:
