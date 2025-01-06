@@ -123,14 +123,7 @@ def test_convert():
 @pytest.mark.parametrize(
     ("input_range", "input_shapes", "input_type"),
     [
-        pytest.param(
-            (-0.5, 0.5),
-            [(2, 2), (2, 2)],
-            [torch.float32, torch.float32],
-            marks=pytest.mark.xfail(
-                reason="Fails due to https://github.com/tenstorrent/tt-torch/issues/147"
-            ),
-        ),
+        ((-0.5, 0.5), [(2, 2), (2, 2)], [torch.float32, torch.float32]),
         ((1, 10), [(32, 32), (32, 32)], [torch.bfloat16, torch.bfloat16]),
         ((1, 10), [(32, 32), (32, 32)], [torch.float32, torch.float32]),
     ],
@@ -422,40 +415,14 @@ def test_multiple_ops():
 @pytest.mark.parametrize(
     ("input_range", "input_shapes", "input_type"),
     [
-        pytest.param(
-            (1, 10),
-            [(32, 32), (32, 32)],
-            [torch.float32, torch.float32],
-            marks=pytest.mark.xfail(
-                reason="Fails due to https://github.com/tenstorrent/tt-torch/issues/147"
-            ),
-        ),
-        ((1, 10), [(32, 32), (32, 32)], [torch.bfloat16, torch.bfloat16]),
         ((1, 10), [(32, 32), (32, 32)], [torch.float32, torch.float32]),
-        pytest.param(
-            (1, 10),
-            [(3, 3), (3, 3)],
-            [torch.float32, torch.float32],
-            marks=pytest.mark.skip(
-                reason="Fails due to https://github.com/tenstorrent/tt-metal/issues/15131"
-            ),
-        ),
-        pytest.param(
-            (1, 100),
-            [(32, 32), (32, 32)],
-            [torch.float32, torch.float32],
-            marks=pytest.mark.skip(
-                reason="Fails due to https://github.com/tenstorrent/tt-metal/issues/15130"
-            ),
-        ),
-        pytest.param(
-            (-100, 100),
-            [(32, 32), (32, 32)],
-            [torch.float32, torch.float32],
-            marks=pytest.mark.skip(
-                reason="Fails due to https://github.com/tenstorrent/tt-metal/issues/15130"
-            ),
-        ),
+        ((1, 10), [(32, 32), (32, 32)], [torch.bfloat16, torch.bfloat16]),
+        ((1, 10), [(3, 3), (3, 3)], [torch.float32, torch.float32]),
+        ((1, 100), [(32, 32), (32, 32)], [torch.float32, torch.float32]),
+        # This set of parameter can fail when we generate a right hand operand
+        # which contains a 0. TTNN returns LHS operand instead of NaN in such
+        # case. Issue: https://github.com/tenstorrent/tt-metal/issues/16394
+        ((-100, 100), [(32, 32), (32, 32)], [torch.float32, torch.float32]),
     ],
 )
 def test_remainder_op(input_range, input_shapes, input_type):
@@ -473,3 +440,19 @@ def test_remainder_op(input_range, input_shapes, input_type):
         input_range=input_range,
         required_atol=1,
     )
+
+
+@pytest.mark.xfail(
+    reason="TTNN returns LHS operand instead of NaN if divisor is 0, see https://github.com/tenstorrent/tt-metal/issues/16394",
+)
+def test_remainder_op_zero():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x, y):
+            return torch.remainder(x, y)
+
+    input1 = torch.tensor([1, -2, 3, -4, 5, 6, -7, 18], dtype=torch.float32)
+    input2 = torch.tensor([1, 0, 3, 0, -9, 10, -7, 12], dtype=torch.float32)
+    verify_module(Basic(), inputs=[input1, input2])
