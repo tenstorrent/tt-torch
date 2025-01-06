@@ -419,6 +419,7 @@ class Executor:
 
 
 def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
+    print("TAPSSSS")
     with torch.no_grad():
         gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
     executor = Executor(gm, graph_constants, compiler_config)
@@ -429,6 +430,15 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     ):
         return executor
 
+    if bool(os.environ.get('TT_TORCH_ENABLE_IR_DUMP')):
+        with open("gm_graph.txt", 'w') as file:
+            original_stdout = sys.stdout
+            sys.stdout = file
+            try:
+                gm.graph.print_tabular()
+            finally:
+                sys.stdout = original_stdout
+
     module = import_graph(gm.graph)
     if compiler_config.profile_ops:
         compiler_config.set_torch_mlir_module(module.operation.get_asm())
@@ -436,13 +446,28 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         return executor
 
     lower_to_stable_hlo(module)
+
+    if bool(os.environ.get('TT_TORCH_ENABLE_IR_DUMP')):
+        with open("stablehlo.mlir", "w") as file:
+            print(module, file=file)
+
     if compiler_config.profile_ops:
         compiler_config.set_stablehlo_mlir_module(module.operation.get_asm())
     if compiler_config.compile_depth == CompileDepth.STABLEHLO:
         return executor
 
     ttir = tt_mlir.compile_stable_hlo_to_ttir(module.operation.get_asm())
+
+    if bool(os.environ.get('TT_TORCH_ENABLE_IR_DUMP')):
+        with open("ttir.mlir", "w") as file:
+            print(ttir, file=file)
+
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
+
+    if bool(os.environ.get('TT_TORCH_ENABLE_IR_DUMP')):
+        with open("ttnn.mlir", "w") as file:
+            print(ttnn, file=file)
+
     executor.set_binary(binary)
     return executor
 
