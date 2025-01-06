@@ -376,6 +376,30 @@ def calculate_atol(tensor, golden_tensor):
         return 0.0
 
     tensor, golden_tensor = prepare_tensors(tensor, golden_tensor)
+
+    # Handle NaN and Inf by verifying if NaN and Inf exists at same location in
+    # both tensors.
+    tensor_nan_mask = torch.isnan(tensor)
+    golden_nan_mask = torch.isnan(golden_tensor)
+    tensor_inf_mask = torch.isinf(tensor)
+    golden_inf_mask = torch.isinf(golden_tensor)
+
+    # Compare NaN values (NaN == NaN is considered True)
+    if not torch.all(tensor_nan_mask == golden_nan_mask):
+        return torch.nan
+
+    # Compare Inf values (Inf == Inf is considered True)
+    if not torch.all(tensor_inf_mask == golden_inf_mask):
+        return torch.nan
+
+    # Replace NaN values with 0 to avoid having NaN as ATOL
+    tensor[tensor_nan_mask] = 0
+    golden_tensor[golden_nan_mask]
+
+    # Replace Inf values with 0 to avoid having NaN as ATOL
+    tensor[tensor_inf_mask] = 0
+    golden_tensor[golden_inf_mask] = 0
+
     return torch.max(torch.abs(golden_tensor - tensor)).item()
 
 
