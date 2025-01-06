@@ -108,7 +108,7 @@ static torch::Tensor create_torch_tensor(const tt::runtime::Tensor &tensor,
   return torch_tensor;
 }
 
-std::vector<at::Tensor> run(const std::vector<at::Tensor> &inputs,
+std::vector<at::Tensor> run(std::vector<at::Tensor> &inputs,
                             py::bytes byte_stream) {
 
   std::string data_str = byte_stream;
@@ -126,6 +126,15 @@ std::vector<at::Tensor> run(const std::vector<at::Tensor> &inputs,
 
   int program_idx = 0;
   auto input_descs = binary.getProgramInputs(program_idx);
+
+  for (int idx = 0; idx < inputs.size(); idx++) {
+    if (!inputs[idx].is_contiguous()) {
+      std::cout << "WARINING: Input " << idx
+                << " is not contiguous. Converting to contiguous in-place."
+                << std::endl;
+      inputs[idx].set_(inputs[idx].contiguous());
+    }
+  }
 
   std::vector<tt::runtime::Tensor> rt_inputs;
   for (auto const &input : inputs) {
