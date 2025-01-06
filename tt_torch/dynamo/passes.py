@@ -203,7 +203,7 @@ def inline_constants(gm, example_inputs):
             # start appending after last placeholder
             gm.graph.inserting_after(node)
 
-        if node.op != "call_function" or node.target._overloadname != "Tensor":
+        if not isinstance(node.target, torch._ops.OpOverload) or node.target._overloadname != "Tensor":
             continue
 
         for idx, arg in enumerate(node.args):
