@@ -34,7 +34,9 @@ import os
 import multiprocessing as mp
 import time
 import faulthandler
+import re
 import sys
+import tempfile
 
 
 def import_graph(graph: torch.fx.GraphModule):
@@ -269,9 +271,9 @@ class Executor:
         receiver = mp.Queue()
         obj = {"binary": binary, "inputs": inputs}
 
-        stderr_file_name = "stderr.txt"
+        f_stderr = tempfile.TemporaryFile(mode="w+t")
         old_stderr = sys.stderr
-        sys.stderr = f_stderr = open(stderr_file_name, "w")
+        sys.stderr = f_stderr
 
         exec_event = mp.Event()
         process = mp.Process(
@@ -302,13 +304,13 @@ class Executor:
             outputs = outputs[0]
 
         sys.stderr = old_stderr
-        f_stderr.close()
         stderr_data = ""
         if outputs is None:
-            f_stderr = open(stderr_file_name, "r")
+            f_stderr.seek(0)
             stderr_data = f_stderr.read()
-            f_stderr.close()
-        os.unlink(stderr_file_name)
+            stderr_data = stderr_data.replace("\n", "\\n")
+            stderr_data = re.sub(r"[^\x20-\x7E]", "", stderr_data)
+        f_stderr.close()
 
         return outputs, stderr_data
 
