@@ -54,9 +54,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -113,9 +112,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -172,9 +170,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -231,9 +228,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -290,9 +286,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 18.36
+    "pcc": "-0.0",
+    "atol": "18.36"
   },
   {
     "name": "ttnn.matmul",
@@ -349,9 +344,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -408,9 +402,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.13,
-    "atol": 6.95
+    "pcc": "0.13",
+    "atol": "6.95"
   },
   {
     "name": "ttnn.matmul",
@@ -467,9 +460,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -526,9 +518,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.04,
-    "atol": 20.6
+    "pcc": "0.04",
+    "atol": "20.6"
   },
   {
     "name": "ttnn.matmul",
@@ -585,9 +576,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -644,9 +634,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.04,
-    "atol": 7.18
+    "pcc": "0.04",
+    "atol": "7.18"
   },
   {
     "name": "ttnn.matmul",
@@ -703,9 +692,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -762,9 +750,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 24.86
+    "pcc": "-0.02",
+    "atol": "24.86"
   },
   {
     "name": "ttnn.matmul",
@@ -821,9 +808,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -880,9 +866,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.04,
-    "atol": 4.59
+    "pcc": "0.04",
+    "atol": "4.59"
   },
   {
     "name": "ttnn.matmul",
@@ -939,9 +924,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -998,9 +982,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 11.92
+    "pcc": "-0.01",
+    "atol": "11.92"
   },
   {
     "name": "ttnn.matmul",
@@ -1057,9 +1040,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -1116,9 +1098,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.05,
-    "atol": 3.71
+    "pcc": "0.05",
+    "atol": "3.71"
   },
   {
     "name": "ttnn.matmul",
@@ -1175,9 +1156,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -1234,9 +1214,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 17.61
+    "pcc": "-0.0",
+    "atol": "17.61"
   },
   {
     "name": "ttnn.matmul",
@@ -1293,9 +1272,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -1352,9 +1330,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.07,
-    "atol": 4.25
+    "pcc": "0.07",
+    "atol": "4.25"
   },
   {
     "name": "ttnn.matmul",
@@ -1411,9 +1388,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -1470,9 +1446,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.59,
-    "atol": 1.51
+    "pcc": "0.59",
+    "atol": "1.51"
   },
   {
     "name": "ttnn.matmul",
@@ -1529,9 +1504,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -1588,9 +1562,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.03,
-    "atol": 9.160756290711814e+28
+    "pcc": "0.03",
+    "atol": "9.160756290711814e+28"
   },
   {
     "name": "ttnn.matmul",
@@ -1647,9 +1620,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -1706,9 +1678,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 2.558763891885963e+37
+    "pcc": "-0.02",
+    "atol": "2.558763891885963e+37"
   },
   {
     "name": "ttnn.matmul",
@@ -1765,9 +1736,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -1824,9 +1794,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.03,
-    "atol": 3.97
+    "pcc": "0.03",
+    "atol": "3.97"
   },
   {
     "name": "ttnn.matmul",
@@ -1883,9 +1852,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -1942,9 +1910,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -2001,9 +1968,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -2060,9 +2026,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.07,
-    "atol": 2.34
+    "pcc": "0.07",
+    "atol": "2.34"
   },
   {
     "name": "ttnn.matmul",
@@ -2119,9 +2084,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -2178,9 +2142,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 9.6
+    "pcc": "0.02",
+    "atol": "9.6"
   },
   {
     "name": "ttnn.matmul",
@@ -2237,9 +2200,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -2296,9 +2258,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 4.55
+    "pcc": "0.0",
+    "atol": "4.55"
   },
   {
     "name": "ttnn.matmul",
@@ -2355,9 +2316,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -2414,9 +2374,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 10.03
+    "pcc": "-0.01",
+    "atol": "10.03"
   },
   {
     "name": "ttnn.matmul",
@@ -2473,9 +2432,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -2532,9 +2490,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.04,
-    "atol": 12.39
+    "pcc": "0.04",
+    "atol": "12.39"
   },
   {
     "name": "ttnn.matmul",
@@ -2591,9 +2548,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -2650,9 +2606,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.19,
-    "atol": 1.67
+    "pcc": "0.19",
+    "atol": "1.67"
   },
   {
     "name": "ttnn.matmul",
@@ -2709,9 +2664,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -2768,9 +2722,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 86.0
+    "pcc": "0.02",
+    "atol": "86.0"
   },
   {
     "name": "ttnn.matmul",
@@ -2827,9 +2780,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -2886,9 +2838,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 2.67
+    "pcc": "0.0",
+    "atol": "2.67"
   },
   {
     "name": "ttnn.matmul",
@@ -2945,9 +2896,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -3004,9 +2954,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.03,
-    "atol": 22.1
+    "pcc": "-0.03",
+    "atol": "22.1"
   },
   {
     "name": "ttnn.matmul",
@@ -3063,9 +3012,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -3122,9 +3070,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.06,
-    "atol": 7.28
+    "pcc": "0.06",
+    "atol": "7.28"
   },
   {
     "name": "ttnn.matmul",
@@ -3181,9 +3128,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -3240,9 +3186,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 9077567998918656.0
+    "pcc": "-0.0",
+    "atol": "9077567998918656.0"
   },
   {
     "name": "ttnn.matmul",
@@ -3299,9 +3244,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -3358,9 +3302,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -3417,9 +3360,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -3476,9 +3418,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.03,
-    "atol": 8.31
+    "pcc": "0.03",
+    "atol": "8.31"
   },
   {
     "name": "ttnn.matmul",
@@ -3535,9 +3476,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -3594,9 +3534,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -3653,9 +3592,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -3712,9 +3650,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.15,
-    "atol": 149.0
+    "pcc": "-0.15",
+    "atol": "149.0"
   },
   {
     "name": "ttnn.matmul",
@@ -3771,9 +3708,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -3830,9 +3766,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.03,
-    "atol": 10.5
+    "pcc": "-0.03",
+    "atol": "10.5"
   },
   {
     "name": "ttnn.matmul",
@@ -3889,9 +3824,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -3948,9 +3882,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.04,
-    "atol": 3.02
+    "pcc": "0.04",
+    "atol": "3.02"
   },
   {
     "name": "ttnn.matmul",
@@ -4007,9 +3940,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -4066,9 +3998,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.29,
-    "atol": 1.41
+    "pcc": "0.29",
+    "atol": "1.41"
   },
   {
     "name": "ttnn.matmul",
@@ -4125,9 +4056,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -4184,9 +4114,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.36,
-    "atol": 6.047987380821367e+37
+    "pcc": "0.36",
+    "atol": "6.047987380821367e+37"
   },
   {
     "name": "ttnn.matmul",
@@ -4243,9 +4172,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -4302,9 +4230,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.03,
-    "atol": 7.66
+    "pcc": "-0.03",
+    "atol": "7.66"
   },
   {
     "name": "ttnn.matmul",
@@ -4361,9 +4288,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -4420,9 +4346,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 4.98
+    "pcc": "0.02",
+    "atol": "4.98"
   },
   {
     "name": "ttnn.matmul",
@@ -4479,9 +4404,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -4538,9 +4462,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -4597,9 +4520,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -4656,9 +4578,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.03,
-    "atol": 9.75
+    "pcc": "0.03",
+    "atol": "9.75"
   },
   {
     "name": "ttnn.matmul",
@@ -4715,9 +4636,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -4774,9 +4694,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.05,
-    "atol": 1.94
+    "pcc": "0.05",
+    "atol": "1.94"
   },
   {
     "name": "ttnn.matmul",
@@ -4833,9 +4752,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -4892,9 +4810,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.03,
-    "atol": 92.78
+    "pcc": "-0.03",
+    "atol": "92.78"
   },
   {
     "name": "ttnn.matmul",
@@ -4951,9 +4868,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -5010,9 +4926,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.07,
-    "atol": 6.01
+    "pcc": "-0.07",
+    "atol": "6.01"
   },
   {
     "name": "ttnn.matmul",
@@ -5069,9 +4984,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -5128,9 +5042,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.matmul",
@@ -5187,9 +5100,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -5246,9 +5158,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.matmul",
@@ -5305,9 +5216,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -5364,9 +5274,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.matmul",
@@ -5423,9 +5332,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -5482,9 +5390,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 26.54
+    "pcc": "-0.02",
+    "atol": "26.54"
   },
   {
     "name": "ttnn.matmul",
@@ -5541,9 +5448,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -5600,9 +5506,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 19.03
+    "pcc": "-0.0",
+    "atol": "19.03"
   },
   {
     "name": "ttnn.matmul",
@@ -5659,9 +5564,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -5718,9 +5622,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.05,
-    "atol": 3.38
+    "pcc": "0.05",
+    "atol": "3.38"
   },
   {
     "name": "ttnn.matmul",
@@ -5777,9 +5680,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -5836,9 +5738,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.16,
-    "atol": 5.4
+    "pcc": "0.16",
+    "atol": "5.4"
   },
   {
     "name": "ttnn.matmul",
@@ -5895,9 +5796,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -5954,9 +5854,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 16.12
+    "pcc": "0.0",
+    "atol": "16.12"
   },
   {
     "name": "ttnn.matmul",
@@ -6013,9 +5912,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -6072,9 +5970,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 4.94
+    "pcc": "-0.0",
+    "atol": "4.94"
   },
   {
     "name": "ttnn.matmul",
@@ -6131,9 +6028,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -6190,9 +6086,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 3.39
+    "pcc": "0.0",
+    "atol": "3.39"
   },
   {
     "name": "ttnn.matmul",
@@ -6249,9 +6144,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -6308,9 +6202,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 2.53
+    "pcc": "-0.0",
+    "atol": "2.53"
   },
   {
     "name": "ttnn.matmul",
@@ -6367,9 +6260,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -6426,9 +6318,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.matmul",
@@ -6485,9 +6376,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -6544,9 +6434,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 172.0
+    "pcc": "0.02",
+    "atol": "172.0"
   },
   {
     "name": "ttnn.matmul",
@@ -6603,9 +6492,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -6662,9 +6550,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 2.97
+    "pcc": "-0.0",
+    "atol": "2.97"
   },
   {
     "name": "ttnn.matmul",
@@ -6721,9 +6608,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -6780,9 +6666,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.87,
-    "atol": 0.63
+    "pcc": "0.87",
+    "atol": "0.63"
   },
   {
     "name": "ttnn.matmul",
@@ -6839,9 +6724,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -6898,9 +6782,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 274.0
+    "pcc": "0.0",
+    "atol": "274.0"
   },
   {
     "name": "ttnn.matmul",
@@ -6957,9 +6840,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -7016,9 +6898,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 6.19
+    "pcc": "0.0",
+    "atol": "6.19"
   },
   {
     "name": "ttnn.matmul",
@@ -7075,9 +6956,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -7134,9 +7014,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 37.0
+    "pcc": "0.0",
+    "atol": "37.0"
   },
   {
     "name": "ttnn.matmul",
@@ -7193,9 +7072,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -7252,9 +7130,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 88.0
+    "pcc": "-0.0",
+    "atol": "88.0"
   },
   {
     "name": "ttnn.matmul",
@@ -7311,9 +7188,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -7370,9 +7246,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.matmul",
@@ -7429,9 +7304,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -7488,9 +7362,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 1.8
+    "pcc": "-0.0",
+    "atol": "1.8"
   },
   {
     "name": "ttnn.matmul",
@@ -7547,9 +7420,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -7606,9 +7478,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 5.25
+    "pcc": "-0.0",
+    "atol": "5.25"
   },
   {
     "name": "ttnn.matmul",
@@ -7665,9 +7536,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -7724,9 +7594,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 3.16
+    "pcc": "0.0",
+    "atol": "3.16"
   },
   {
     "name": "ttnn.matmul",
@@ -7783,9 +7652,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -7842,9 +7710,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.matmul",
@@ -7901,9 +7768,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -7960,9 +7826,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.53,
-    "atol": 0.77
+    "pcc": "0.53",
+    "atol": "0.77"
   },
   {
     "name": "ttnn.matmul",
@@ -8019,9 +7884,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -8078,9 +7942,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 68.0
+    "pcc": "0.0",
+    "atol": "68.0"
   },
   {
     "name": "ttnn.matmul",
@@ -8137,9 +8000,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -8196,9 +8058,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.51,
-    "atol": 10.94
+    "pcc": "0.51",
+    "atol": "10.94"
   },
   {
     "name": "ttnn.matmul",
@@ -8255,9 +8116,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -8314,9 +8174,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -8373,9 +8232,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -8432,9 +8290,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 11.6
+    "pcc": "0.02",
+    "atol": "11.6"
   },
   {
     "name": "ttnn.matmul",
@@ -8491,9 +8348,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -8550,9 +8406,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.08,
-    "atol": 1.21
+    "pcc": "0.08",
+    "atol": "1.21"
   },
   {
     "name": "ttnn.matmul",
@@ -8609,9 +8464,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -8668,9 +8522,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.3,
-    "atol": 10.53
+    "pcc": "0.3",
+    "atol": "10.53"
   },
   {
     "name": "ttnn.matmul",
@@ -8727,9 +8580,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -8786,9 +8638,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 28.64
+    "pcc": "-0.0",
+    "atol": "28.64"
   },
   {
     "name": "ttnn.matmul",
@@ -8845,9 +8696,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -8904,9 +8754,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.21,
-    "atol": 1.66
+    "pcc": "0.21",
+    "atol": "1.66"
   },
   {
     "name": "ttnn.matmul",
@@ -8963,9 +8812,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -9022,9 +8870,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 102.5
+    "pcc": "0.0",
+    "atol": "102.5"
   },
   {
     "name": "ttnn.matmul",
@@ -9081,9 +8928,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -9140,9 +8986,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.26,
-    "atol": 0.69
+    "pcc": "0.26",
+    "atol": "0.69"
   },
   {
     "name": "ttnn.matmul",
@@ -9199,9 +9044,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -9258,9 +9102,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -9317,9 +9160,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -9376,9 +9218,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 19.8
+    "pcc": "0.0",
+    "atol": "19.8"
   },
   {
     "name": "ttnn.matmul",
@@ -9435,9 +9276,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -9494,9 +9334,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 3.39
+    "pcc": "0.0",
+    "atol": "3.39"
   },
   {
     "name": "ttnn.matmul",
@@ -9553,9 +9392,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -9612,9 +9450,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -9671,9 +9508,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -9730,9 +9566,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.03,
-    "atol": 48.75
+    "pcc": "-0.03",
+    "atol": "48.75"
   },
   {
     "name": "ttnn.matmul",
@@ -9789,9 +9624,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -9848,9 +9682,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 3.45
+    "pcc": "0.01",
+    "atol": "3.45"
   },
   {
     "name": "ttnn.matmul",
@@ -9907,9 +9740,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -9966,9 +9798,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 16.75
+    "pcc": "-0.0",
+    "atol": "16.75"
   },
   {
     "name": "ttnn.matmul",
@@ -10025,9 +9856,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -10084,9 +9914,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.06,
-    "atol": 1.79
+    "pcc": "-0.06",
+    "atol": "1.79"
   },
   {
     "name": "ttnn.matmul",
@@ -10143,9 +9972,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -10202,9 +10030,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.21,
-    "atol": 1.25
+    "pcc": "0.21",
+    "atol": "1.25"
   },
   {
     "name": "ttnn.matmul",
@@ -10261,9 +10088,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -10320,9 +10146,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.44,
-    "atol": 1.11
+    "pcc": "-0.44",
+    "atol": "1.11"
   },
   {
     "name": "ttnn.matmul",
@@ -10379,9 +10204,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -10438,9 +10262,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.27,
-    "atol": 10.25
+    "pcc": "-0.27",
+    "atol": "10.25"
   },
   {
     "name": "ttnn.matmul",
@@ -10497,9 +10320,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -10556,9 +10378,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 131024.32
+    "pcc": "-0.01",
+    "atol": "131024.32"
   },
   {
     "name": "ttnn.matmul",
@@ -10615,9 +10436,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -10674,9 +10494,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 131008.23
+    "pcc": "0.01",
+    "atol": "131008.23"
   },
   {
     "name": "ttnn.matmul",
@@ -10733,9 +10552,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -10792,9 +10610,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.12,
-    "atol": 0.56
+    "pcc": "0.12",
+    "atol": "0.56"
   },
   {
     "name": "ttnn.matmul",
@@ -10851,9 +10668,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -10910,9 +10726,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 31.25
+    "pcc": "-0.0",
+    "atol": "31.25"
   },
   {
     "name": "ttnn.matmul",
@@ -10969,9 +10784,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -11028,9 +10842,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.1,
-    "atol": 25.88
+    "pcc": "0.1",
+    "atol": "25.88"
   },
   {
     "name": "ttnn.matmul",
@@ -11087,9 +10900,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -11146,9 +10958,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.31,
-    "atol": 1.72
+    "pcc": "0.31",
+    "atol": "1.72"
   },
   {
     "name": "ttnn.matmul",
@@ -11205,9 +11016,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -11264,9 +11074,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 11.59
+    "pcc": "-0.0",
+    "atol": "11.59"
   },
   {
     "name": "ttnn.matmul",
@@ -11323,9 +11132,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -11382,9 +11190,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.04,
-    "atol": 17.11
+    "pcc": "-0.04",
+    "atol": "17.11"
   },
   {
     "name": "ttnn.matmul",
@@ -11441,9 +11248,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -11500,9 +11306,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.1,
-    "atol": 7.13
+    "pcc": "-0.1",
+    "atol": "7.13"
   },
   {
     "name": "ttnn.matmul",
@@ -11559,9 +11364,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -11618,9 +11422,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.06,
-    "atol": 5.53
+    "pcc": "0.06",
+    "atol": "5.53"
   },
   {
     "name": "ttnn.matmul",
@@ -11677,9 +11480,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -11736,9 +11538,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.05,
-    "atol": 12.12
+    "pcc": "0.05",
+    "atol": "12.12"
   },
   {
     "name": "ttnn.matmul",
@@ -11795,9 +11596,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -11854,9 +11654,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.09,
-    "atol": 4.41
+    "pcc": "0.09",
+    "atol": "4.41"
   },
   {
     "name": "ttnn.matmul",
@@ -11913,9 +11712,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -11972,9 +11770,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.33,
-    "atol": 2.69
+    "pcc": "0.33",
+    "atol": "2.69"
   },
   {
     "name": "ttnn.matmul",
@@ -12031,9 +11828,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -12090,9 +11886,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 2.709729923047863e+34
+    "pcc": "-0.01",
+    "atol": "2.709729923047863e+34"
   },
   {
     "name": "ttnn.matmul",
@@ -12149,9 +11944,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -12208,9 +12002,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.16,
-    "atol": 10.0
+    "pcc": "0.16",
+    "atol": "10.0"
   },
   {
     "name": "ttnn.matmul",
@@ -12267,9 +12060,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -12326,9 +12118,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.03,
-    "atol": 1.07
+    "pcc": "-0.03",
+    "atol": "1.07"
   },
   {
     "name": "ttnn.matmul",
@@ -12385,9 +12176,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -12444,9 +12234,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 332.0
+    "pcc": "0.0",
+    "atol": "332.0"
   },
   {
     "name": "ttnn.matmul",
@@ -12503,9 +12292,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -12562,9 +12350,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 9.61
+    "pcc": "0.01",
+    "atol": "9.61"
   },
   {
     "name": "ttnn.matmul",
@@ -12621,9 +12408,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -12680,9 +12466,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 10.76
+    "pcc": "0.01",
+    "atol": "10.76"
   },
   {
     "name": "ttnn.matmul",
@@ -12739,9 +12524,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -12798,9 +12582,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.04,
-    "atol": 0.51
+    "pcc": "-0.04",
+    "atol": "0.51"
   },
   {
     "name": "ttnn.matmul",
@@ -12857,9 +12640,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -12916,9 +12698,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.22,
-    "atol": 2.1
+    "pcc": "0.22",
+    "atol": "2.1"
   },
   {
     "name": "ttnn.matmul",
@@ -12975,9 +12756,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -13034,9 +12814,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.07,
-    "atol": 1.79
+    "pcc": "-0.07",
+    "atol": "1.79"
   },
   {
     "name": "ttnn.matmul",
@@ -13093,9 +12872,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -13152,9 +12930,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 108.0
+    "pcc": "-0.0",
+    "atol": "108.0"
   },
   {
     "name": "ttnn.matmul",
@@ -13211,9 +12988,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -13270,9 +13046,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 196.0
+    "pcc": "0.0",
+    "atol": "196.0"
   },
   {
     "name": "ttnn.matmul",
@@ -13329,9 +13104,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -13388,9 +13162,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.09,
-    "atol": 3.28
+    "pcc": "-0.09",
+    "atol": "3.28"
   },
   {
     "name": "ttnn.matmul",
@@ -13447,9 +13220,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -13506,9 +13278,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 3.11
+    "pcc": "0.0",
+    "atol": "3.11"
   },
   {
     "name": "ttnn.matmul",
@@ -13565,9 +13336,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -13624,9 +13394,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 193.0
+    "pcc": "-0.01",
+    "atol": "193.0"
   },
   {
     "name": "ttnn.matmul",
@@ -13683,9 +13452,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -13742,9 +13510,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.34,
-    "atol": 1.77
+    "pcc": "0.34",
+    "atol": "1.77"
   },
   {
     "name": "ttnn.matmul",
@@ -13801,9 +13568,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -13860,9 +13626,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 17.56
+    "pcc": "0.0",
+    "atol": "17.56"
   },
   {
     "name": "ttnn.matmul",
@@ -13919,9 +13684,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -13978,9 +13742,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.04,
-    "atol": 16.99
+    "pcc": "0.04",
+    "atol": "16.99"
   },
   {
     "name": "ttnn.matmul",
@@ -14037,9 +13800,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -14096,9 +13858,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.03,
-    "atol": 3.03
+    "pcc": "-0.03",
+    "atol": "3.03"
   },
   {
     "name": "ttnn.matmul",
@@ -14155,9 +13916,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -14214,9 +13974,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 6.43
+    "pcc": "-0.02",
+    "atol": "6.43"
   },
   {
     "name": "ttnn.matmul",
@@ -14273,9 +14032,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -14332,9 +14090,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.05,
-    "atol": 9.56
+    "pcc": "0.05",
+    "atol": "9.56"
   },
   {
     "name": "ttnn.matmul",
@@ -14391,9 +14148,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -14450,9 +14206,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.34,
-    "atol": 1.8
+    "pcc": "0.34",
+    "atol": "1.8"
   },
   {
     "name": "ttnn.matmul",
@@ -14509,9 +14264,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -14568,9 +14322,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.13,
-    "atol": 5.03
+    "pcc": "0.13",
+    "atol": "5.03"
   },
   {
     "name": "ttnn.matmul",
@@ -14627,9 +14380,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -14686,9 +14438,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -14745,9 +14496,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -14804,9 +14554,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -14863,9 +14612,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -14922,9 +14670,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 23.91
+    "pcc": "0.0",
+    "atol": "23.91"
   },
   {
     "name": "ttnn.matmul",
@@ -14981,9 +14728,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -15040,9 +14786,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.4,
-    "atol": 36.26
+    "pcc": "0.4",
+    "atol": "36.26"
   },
   {
     "name": "ttnn.matmul",
@@ -15099,9 +14844,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -15158,9 +14902,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.1,
-    "atol": 10.72
+    "pcc": "-0.1",
+    "atol": "10.72"
   },
   {
     "name": "ttnn.matmul",
@@ -15217,9 +14960,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -15276,9 +15018,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 9.96
+    "pcc": "-0.01",
+    "atol": "9.96"
   },
   {
     "name": "ttnn.matmul",
@@ -15335,9 +15076,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -15394,9 +15134,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 7.32
+    "pcc": "0.02",
+    "atol": "7.32"
   },
   {
     "name": "ttnn.matmul",
@@ -15453,9 +15192,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -15512,9 +15250,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 11.13
+    "pcc": "-0.0",
+    "atol": "11.13"
   },
   {
     "name": "ttnn.matmul",
@@ -15571,9 +15308,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -15630,9 +15366,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 26.29
+    "pcc": "-0.02",
+    "atol": "26.29"
   },
   {
     "name": "ttnn.matmul",
@@ -15689,9 +15424,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -15748,9 +15482,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.05,
-    "atol": 3.98
+    "pcc": "-0.05",
+    "atol": "3.98"
   },
   {
     "name": "ttnn.matmul",
@@ -15807,9 +15540,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -15866,9 +15598,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 3.96
+    "pcc": "-0.0",
+    "atol": "3.96"
   },
   {
     "name": "ttnn.matmul",
@@ -15925,9 +15656,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -15984,9 +15714,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.04,
-    "atol": 5.59
+    "pcc": "-0.04",
+    "atol": "5.59"
   },
   {
     "name": "ttnn.matmul",
@@ -16043,9 +15772,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -16102,9 +15830,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 1.05
+    "pcc": "-0.01",
+    "atol": "1.05"
   },
   {
     "name": "ttnn.matmul",
@@ -16161,9 +15888,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -16220,9 +15946,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 13.81
+    "pcc": "-0.0",
+    "atol": "13.81"
   },
   {
     "name": "ttnn.matmul",
@@ -16279,9 +16004,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -16338,9 +16062,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 2672.0
+    "pcc": "-0.0",
+    "atol": "2672.0"
   },
   {
     "name": "ttnn.matmul",
@@ -16397,9 +16120,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -16456,9 +16178,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 45.35
+    "pcc": "0.01",
+    "atol": "45.35"
   },
   {
     "name": "ttnn.matmul",
@@ -16515,9 +16236,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -16574,9 +16294,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 144.0
+    "pcc": "-0.02",
+    "atol": "144.0"
   },
   {
     "name": "ttnn.matmul",
@@ -16633,9 +16352,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -16692,9 +16410,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 159.0
+    "pcc": "0.0",
+    "atol": "159.0"
   },
   {
     "name": "ttnn.matmul",
@@ -16751,9 +16468,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -16810,9 +16526,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 0.74
+    "pcc": "-0.0",
+    "atol": "0.74"
   },
   {
     "name": "ttnn.matmul",
@@ -16869,9 +16584,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -16928,9 +16642,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 95.33
+    "pcc": "0.0",
+    "atol": "95.33"
   },
   {
     "name": "ttnn.matmul",
@@ -16987,9 +16700,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -17046,9 +16758,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 30.29
+    "pcc": "-0.01",
+    "atol": "30.29"
   },
   {
     "name": "ttnn.matmul",
@@ -17105,9 +16816,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -17164,9 +16874,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 6.22
+    "pcc": "-0.01",
+    "atol": "6.22"
   },
   {
     "name": "ttnn.matmul",
@@ -17223,9 +16932,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -17282,9 +16990,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 21.87
+    "pcc": "0.02",
+    "atol": "21.87"
   },
   {
     "name": "ttnn.matmul",
@@ -17341,9 +17048,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -17400,9 +17106,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 8.34
+    "pcc": "0.01",
+    "atol": "8.34"
   },
   {
     "name": "ttnn.matmul",
@@ -17459,9 +17164,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -17518,9 +17222,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 6.88
+    "pcc": "-0.0",
+    "atol": "6.88"
   },
   {
     "name": "ttnn.matmul",
@@ -17577,9 +17280,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -17636,9 +17338,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 8.99
+    "pcc": "0.01",
+    "atol": "8.99"
   },
   {
     "name": "ttnn.matmul",
@@ -17695,9 +17396,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -17754,9 +17454,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.98,
-    "atol": 2.11
+    "pcc": "0.98",
+    "atol": "2.11"
   },
   {
     "name": "ttnn.matmul",
@@ -17813,9 +17512,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -17872,9 +17570,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 20.31
+    "pcc": "-0.01",
+    "atol": "20.31"
   },
   {
     "name": "ttnn.matmul",
@@ -17931,9 +17628,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -17990,9 +17686,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 9.52
+    "pcc": "0.0",
+    "atol": "9.52"
   },
   {
     "name": "ttnn.matmul",
@@ -18049,9 +17744,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -18108,9 +17802,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.03,
-    "atol": 9.11
+    "pcc": "-0.03",
+    "atol": "9.11"
   },
   {
     "name": "ttnn.matmul",
@@ -18167,9 +17860,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -18226,9 +17918,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 11.24
+    "pcc": "0.01",
+    "atol": "11.24"
   },
   {
     "name": "ttnn.matmul",
@@ -18285,9 +17976,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -18344,9 +18034,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.03,
-    "atol": 11.46
+    "pcc": "-0.03",
+    "atol": "11.46"
   },
   {
     "name": "ttnn.matmul",
@@ -18403,9 +18092,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -18462,9 +18150,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 7.05
+    "pcc": "0.01",
+    "atol": "7.05"
   },
   {
     "name": "ttnn.matmul",
@@ -18521,9 +18208,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -18580,9 +18266,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 307.62
+    "pcc": "0.02",
+    "atol": "307.62"
   },
   {
     "name": "ttnn.matmul",
@@ -18639,9 +18324,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -18698,9 +18382,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 192.17
+    "pcc": "-0.02",
+    "atol": "192.17"
   },
   {
     "name": "ttnn.matmul",
@@ -18757,9 +18440,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -18816,9 +18498,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 246.32
+    "pcc": "0.01",
+    "atol": "246.32"
   },
   {
     "name": "ttnn.matmul",
@@ -18875,9 +18556,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -18934,9 +18614,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 5.16
+    "pcc": "0.01",
+    "atol": "5.16"
   },
   {
     "name": "ttnn.matmul",
@@ -18993,9 +18672,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -19052,9 +18730,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.23,
-    "atol": 11.31
+    "pcc": "-0.23",
+    "atol": "11.31"
   },
   {
     "name": "ttnn.matmul",
@@ -19111,9 +18788,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -19170,9 +18846,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 133.64
+    "pcc": "-0.01",
+    "atol": "133.64"
   },
   {
     "name": "ttnn.matmul",
@@ -19229,9 +18904,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -19288,9 +18962,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 9.54
+    "pcc": "-0.01",
+    "atol": "9.54"
   },
   {
     "name": "ttnn.matmul",
@@ -19347,9 +19020,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -19406,9 +19078,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.03,
-    "atol": 4352.0
+    "pcc": "-0.03",
+    "atol": "4352.0"
   },
   {
     "name": "ttnn.matmul",
@@ -19465,9 +19136,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -19524,9 +19194,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 118.5
+    "pcc": "0.01",
+    "atol": "118.5"
   },
   {
     "name": "ttnn.matmul",
@@ -19583,9 +19252,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -19642,9 +19310,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 19.0
+    "pcc": "-0.0",
+    "atol": "19.0"
   },
   {
     "name": "ttnn.matmul",
@@ -19701,9 +19368,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -19760,9 +19426,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 0.77
+    "pcc": "0.01",
+    "atol": "0.77"
   },
   {
     "name": "ttnn.matmul",
@@ -19819,9 +19484,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -19878,9 +19542,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 27.53
+    "pcc": "0.01",
+    "atol": "27.53"
   },
   {
     "name": "ttnn.matmul",
@@ -19937,9 +19600,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -19996,9 +19658,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.15,
-    "atol": 12.13
+    "pcc": "0.15",
+    "atol": "12.13"
   },
   {
     "name": "ttnn.matmul",
@@ -20055,9 +19716,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -20114,9 +19774,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 45.2
+    "pcc": "-0.0",
+    "atol": "45.2"
   },
   {
     "name": "ttnn.matmul",
@@ -20173,9 +19832,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -20232,9 +19890,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 17.42
+    "pcc": "-0.0",
+    "atol": "17.42"
   },
   {
     "name": "ttnn.matmul",
@@ -20291,9 +19948,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -20350,9 +20006,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 5.11
+    "pcc": "-0.0",
+    "atol": "5.11"
   },
   {
     "name": "ttnn.matmul",
@@ -20409,9 +20064,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -20468,9 +20122,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.03,
-    "atol": 17.67
+    "pcc": "0.03",
+    "atol": "17.67"
   },
   {
     "name": "ttnn.matmul",
@@ -20527,9 +20180,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -20586,9 +20238,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.07,
-    "atol": 8.47
+    "pcc": "0.07",
+    "atol": "8.47"
   },
   {
     "name": "ttnn.matmul",
@@ -20645,9 +20296,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -20704,9 +20354,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 13.15
+    "pcc": "-0.02",
+    "atol": "13.15"
   },
   {
     "name": "ttnn.matmul",
@@ -20763,9 +20412,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -20822,9 +20470,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 19.62
+    "pcc": "-0.0",
+    "atol": "19.62"
   },
   {
     "name": "ttnn.matmul",
@@ -20881,9 +20528,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -20940,9 +20586,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 15.3
+    "pcc": "0.01",
+    "atol": "15.3"
   },
   {
     "name": "ttnn.matmul",
@@ -20999,9 +20644,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -21058,9 +20702,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 19.5
+    "pcc": "0.0",
+    "atol": "19.5"
   },
   {
     "name": "ttnn.matmul",
@@ -21117,9 +20760,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -21176,9 +20818,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 9.09
+    "pcc": "-0.0",
+    "atol": "9.09"
   },
   {
     "name": "ttnn.matmul",
@@ -21235,9 +20876,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -21294,9 +20934,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 4.66
+    "pcc": "0.01",
+    "atol": "4.66"
   },
   {
     "name": "ttnn.matmul",
@@ -21353,9 +20992,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -21412,9 +21050,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 9.56
+    "pcc": "-0.0",
+    "atol": "9.56"
   },
   {
     "name": "ttnn.matmul",
@@ -21471,9 +21108,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -21530,9 +21166,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -21589,9 +21224,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -21648,9 +21282,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 14.06
+    "pcc": "-0.0",
+    "atol": "14.06"
   },
   {
     "name": "ttnn.matmul",
@@ -21707,9 +21340,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -21766,9 +21398,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 388.77
+    "pcc": "0.01",
+    "atol": "388.77"
   },
   {
     "name": "ttnn.matmul",
@@ -21825,9 +21456,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -21884,9 +21514,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 11.37
+    "pcc": "-0.02",
+    "atol": "11.37"
   },
   {
     "name": "ttnn.matmul",
@@ -21943,9 +21572,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -22002,9 +21630,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.06,
-    "atol": 0.73
+    "pcc": "0.06",
+    "atol": "0.73"
   },
   {
     "name": "ttnn.matmul",
@@ -22061,9 +21688,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -22120,9 +21746,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 47.0
+    "pcc": "-0.01",
+    "atol": "47.0"
   },
   {
     "name": "ttnn.matmul",
@@ -22179,9 +21804,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -22238,9 +21862,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 61.75
+    "pcc": "-0.01",
+    "atol": "61.75"
   },
   {
     "name": "ttnn.matmul",
@@ -22297,9 +21920,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -22356,9 +21978,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.05,
-    "atol": 928.0
+    "pcc": "0.05",
+    "atol": "928.0"
   },
   {
     "name": "ttnn.matmul",
@@ -22415,9 +22036,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -22474,9 +22094,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 7.44
+    "pcc": "0.01",
+    "atol": "7.44"
   },
   {
     "name": "ttnn.matmul",
@@ -22533,9 +22152,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -22592,9 +22210,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.03,
-    "atol": 3.42
+    "pcc": "-0.03",
+    "atol": "3.42"
   },
   {
     "name": "ttnn.matmul",
@@ -22651,9 +22268,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -22710,9 +22326,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.03,
-    "atol": 3.61
+    "pcc": "0.03",
+    "atol": "3.61"
   },
   {
     "name": "ttnn.matmul",
@@ -22769,9 +22384,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -22828,9 +22442,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.06,
-    "atol": 8.35
+    "pcc": "0.06",
+    "atol": "8.35"
   },
   {
     "name": "ttnn.matmul",
@@ -22887,9 +22500,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -22946,9 +22558,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.19,
-    "atol": 0.06
+    "pcc": "-0.19",
+    "atol": "0.06"
   },
   {
     "name": "ttnn.matmul",
@@ -23005,9 +22616,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -23064,9 +22674,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.1,
-    "atol": 0.36
+    "pcc": "0.1",
+    "atol": "0.36"
   },
   {
     "name": "ttnn.matmul",
@@ -23123,9 +22732,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -23182,9 +22790,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 0.22
+    "pcc": "-0.02",
+    "atol": "0.22"
   },
   {
     "name": "ttnn.matmul",
@@ -23241,9 +22848,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -23300,9 +22906,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.76,
-    "atol": 0.06
+    "pcc": "0.76",
+    "atol": "0.06"
   },
   {
     "name": "ttnn.matmul",
@@ -23359,9 +22964,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -23418,9 +23022,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.06,
-    "atol": 0.31
+    "pcc": "0.06",
+    "atol": "0.31"
   },
   {
     "name": "ttnn.matmul",
@@ -23477,9 +23080,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -23536,9 +23138,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 37.59
+    "pcc": "0.02",
+    "atol": "37.59"
   },
   {
     "name": "ttnn.matmul",
@@ -23595,9 +23196,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -23654,9 +23254,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.03,
-    "atol": 7.81
+    "pcc": "-0.03",
+    "atol": "7.81"
   },
   {
     "name": "ttnn.matmul",
@@ -23713,9 +23312,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -23772,9 +23370,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.03,
-    "atol": 5120.0
+    "pcc": "-0.03",
+    "atol": "5120.0"
   },
   {
     "name": "ttnn.matmul",
@@ -23831,9 +23428,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -23890,9 +23486,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.04,
-    "atol": 2880.0
+    "pcc": "0.04",
+    "atol": "2880.0"
   },
   {
     "name": "ttnn.matmul",
@@ -23949,9 +23544,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -24008,9 +23602,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.03,
-    "atol": 8.39
+    "pcc": "-0.03",
+    "atol": "8.39"
   },
   {
     "name": "ttnn.matmul",
@@ -24067,9 +23660,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -24126,9 +23718,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 30.0
+    "pcc": "-0.02",
+    "atol": "30.0"
   },
   {
     "name": "ttnn.matmul",
@@ -24185,9 +23776,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -24244,9 +23834,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.48,
-    "atol": 0.04
+    "pcc": "0.48",
+    "atol": "0.04"
   },
   {
     "name": "ttnn.matmul",
@@ -24303,9 +23892,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -24362,9 +23950,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 4384.0
+    "pcc": "-0.01",
+    "atol": "4384.0"
   },
   {
     "name": "ttnn.matmul",
@@ -24421,9 +24008,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -24480,9 +24066,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.06,
-    "atol": 0.84
+    "pcc": "0.06",
+    "atol": "0.84"
   },
   {
     "name": "ttnn.matmul",
@@ -24539,9 +24124,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -24598,9 +24182,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 15.75
+    "pcc": "0.01",
+    "atol": "15.75"
   },
   {
     "name": "ttnn.matmul",
@@ -24657,9 +24240,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -24716,9 +24298,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 123.0
+    "pcc": "0.01",
+    "atol": "123.0"
   },
   {
     "name": "ttnn.matmul",
@@ -24775,9 +24356,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -24834,9 +24414,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 76.0
+    "pcc": "-0.0",
+    "atol": "76.0"
   },
   {
     "name": "ttnn.matmul",
@@ -24893,9 +24472,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -24952,9 +24530,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.12,
-    "atol": 0.69
+    "pcc": "-0.12",
+    "atol": "0.69"
   },
   {
     "name": "ttnn.matmul",
@@ -25011,9 +24588,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -25070,9 +24646,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.06,
-    "atol": 0.52
+    "pcc": "-0.06",
+    "atol": "0.52"
   },
   {
     "name": "ttnn.matmul",
@@ -25129,9 +24704,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -25188,9 +24762,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.08,
-    "atol": 0.11
+    "pcc": "0.08",
+    "atol": "0.11"
   },
   {
     "name": "ttnn.matmul",
@@ -25247,9 +24820,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -25306,9 +24878,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.05,
-    "atol": 0.31
+    "pcc": "-0.05",
+    "atol": "0.31"
   },
   {
     "name": "ttnn.matmul",
@@ -25365,9 +24936,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -25424,9 +24994,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": NaN,
-    "atol": 0.0
+    "pcc": "N/A",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.matmul",
@@ -25483,9 +25052,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -25542,9 +25110,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.05,
-    "atol": 6.06
+    "pcc": "0.05",
+    "atol": "6.06"
   },
   {
     "name": "ttnn.matmul",
@@ -25601,9 +25168,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -25660,9 +25226,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.04,
-    "atol": 12.31
+    "pcc": "0.04",
+    "atol": "12.31"
   },
   {
     "name": "ttnn.matmul",
@@ -25719,9 +25284,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -25778,9 +25342,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -1.0,
-    "atol": 1.15
+    "pcc": "-1.0",
+    "atol": "1.15"
   },
   {
     "name": "ttnn.matmul",
@@ -25837,9 +25400,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -25896,9 +25458,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.62,
-    "atol": 1.13
+    "pcc": "-0.62",
+    "atol": "1.13"
   },
   {
     "name": "ttnn.matmul",
@@ -25955,9 +25516,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -26014,9 +25574,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 92.5
+    "pcc": "0.01",
+    "atol": "92.5"
   },
   {
     "name": "ttnn.matmul",
@@ -26073,9 +25632,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -26132,9 +25690,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 62.5
+    "pcc": "0.0",
+    "atol": "62.5"
   },
   {
     "name": "ttnn.matmul",
@@ -26191,9 +25748,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -26250,9 +25806,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 7.28
+    "pcc": "-0.01",
+    "atol": "7.28"
   },
   {
     "name": "ttnn.matmul",
@@ -26309,9 +25864,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -26368,9 +25922,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.06,
-    "atol": 0.53
+    "pcc": "0.06",
+    "atol": "0.53"
   },
   {
     "name": "ttnn.matmul",
@@ -26427,9 +25980,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -26486,9 +26038,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.04,
-    "atol": 1.33
+    "pcc": "-0.04",
+    "atol": "1.33"
   },
   {
     "name": "ttnn.matmul",
@@ -26545,9 +26096,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -26604,9 +26154,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.03,
-    "atol": 0.18
+    "pcc": "-0.03",
+    "atol": "0.18"
   },
   {
     "name": "ttnn.matmul",
@@ -26663,9 +26212,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -26722,9 +26270,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 65.59
+    "pcc": "0.01",
+    "atol": "65.59"
   },
   {
     "name": "ttnn.matmul",
@@ -26781,9 +26328,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -26840,9 +26386,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 9.55
+    "pcc": "0.01",
+    "atol": "9.55"
   },
   {
     "name": "ttnn.matmul",
@@ -26899,9 +26444,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -26958,9 +26502,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.03,
-    "atol": 10.53
+    "pcc": "0.03",
+    "atol": "10.53"
   },
   {
     "name": "ttnn.matmul",
@@ -27017,9 +26560,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -27076,9 +26618,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 0.9
+    "pcc": "-0.02",
+    "atol": "0.9"
   },
   {
     "name": "ttnn.matmul",
@@ -27135,9 +26676,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -27194,9 +26734,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 3.09
+    "pcc": "-0.01",
+    "atol": "3.09"
   },
   {
     "name": "ttnn.matmul",
@@ -27253,9 +26792,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -27312,9 +26850,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.03,
-    "atol": 19.12
+    "pcc": "-0.03",
+    "atol": "19.12"
   },
   {
     "name": "ttnn.matmul",
@@ -27371,9 +26908,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -27430,9 +26966,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.03,
-    "atol": 4.58
+    "pcc": "-0.03",
+    "atol": "4.58"
   },
   {
     "name": "ttnn.matmul",
@@ -27489,9 +27024,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -27548,9 +27082,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 8.82
+    "pcc": "0.01",
+    "atol": "8.82"
   },
   {
     "name": "ttnn.matmul",
@@ -27607,9 +27140,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -27666,9 +27198,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.57,
-    "atol": 10.91
+    "pcc": "0.57",
+    "atol": "10.91"
   },
   {
     "name": "ttnn.matmul",
@@ -27725,9 +27256,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -27784,9 +27314,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -27843,9 +27372,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -27902,9 +27430,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -27961,9 +27488,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -28020,9 +27546,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 3.78
+    "pcc": "-0.0",
+    "atol": "3.78"
   },
   {
     "name": "ttnn.matmul",
@@ -28079,9 +27604,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -28138,9 +27662,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -28197,9 +27720,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -28256,9 +27778,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 3.56
+    "pcc": "0.01",
+    "atol": "3.56"
   },
   {
     "name": "ttnn.matmul",
@@ -28315,9 +27836,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -28374,9 +27894,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.03,
-    "atol": 2.72
+    "pcc": "0.03",
+    "atol": "2.72"
   },
   {
     "name": "ttnn.matmul",
@@ -28433,9 +27952,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -28492,9 +28010,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 24.94
+    "pcc": "0.01",
+    "atol": "24.94"
   },
   {
     "name": "ttnn.matmul",
@@ -28551,9 +28068,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -28610,9 +28126,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -28669,68 +28184,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
-  },
-  {
-    "name": "ttnn.matmul",
-    "input_shapes": [
-      "tensor<[256,256,f32]>",
-      "tensor<[256,512,f32]>",
-      "tensor<[256,512,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          8,
-          8,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          8,
-          16,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          8,
-          16,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {},
-    "output_shapes": [
-      "tensor<[256,512,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          8,
-          16,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 1.3
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -28787,9 +28242,66 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "-0.01",
+    "atol": "1.3"
+  },
+  {
+    "name": "ttnn.matmul",
+    "input_shapes": [
+      "tensor<[256,256,f32]>",
+      "tensor<[256,512,f32]>",
+      "tensor<[256,512,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          8,
+          8,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          8,
+          16,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          8,
+          16,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[256,512,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          8,
+          16,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -28846,9 +28358,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.09,
-    "atol": 4.41
+    "pcc": "-0.09",
+    "atol": "4.41"
   },
   {
     "name": "ttnn.matmul",
@@ -28905,9 +28416,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -28964,9 +28474,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.05,
-    "atol": 39.35
+    "pcc": "-0.05",
+    "atol": "39.35"
   },
   {
     "name": "ttnn.matmul",
@@ -29023,9 +28532,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -29082,9 +28590,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.07,
-    "atol": 6.96
+    "pcc": "0.07",
+    "atol": "6.96"
   },
   {
     "name": "ttnn.matmul",
@@ -29141,9 +28648,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -29200,9 +28706,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -29259,9 +28764,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -29318,9 +28822,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 3.04
+    "pcc": "0.01",
+    "atol": "3.04"
   },
   {
     "name": "ttnn.matmul",
@@ -29377,9 +28880,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -29436,9 +28938,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 4.07
+    "pcc": "-0.0",
+    "atol": "4.07"
   },
   {
     "name": "ttnn.matmul",
@@ -29495,9 +28996,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -29554,9 +29054,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 10.99
+    "pcc": "-0.0",
+    "atol": "10.99"
   },
   {
     "name": "ttnn.matmul",
@@ -29613,9 +29112,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -29672,9 +29170,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.08,
-    "atol": 12.49
+    "pcc": "0.08",
+    "atol": "12.49"
   },
   {
     "name": "ttnn.matmul",
@@ -29731,9 +29228,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -29790,9 +29286,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 18.12
+    "pcc": "0.01",
+    "atol": "18.12"
   },
   {
     "name": "ttnn.matmul",
@@ -29849,9 +29344,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -29908,9 +29402,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 5.56
+    "pcc": "-0.01",
+    "atol": "5.56"
   },
   {
     "name": "ttnn.matmul",
@@ -29967,9 +29460,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -30026,9 +29518,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -1.0,
-    "atol": 0.57
+    "pcc": "-1.0",
+    "atol": "0.57"
   },
   {
     "name": "ttnn.matmul",
@@ -30085,9 +29576,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -30144,9 +29634,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 6.38
+    "pcc": "0.01",
+    "atol": "6.38"
   },
   {
     "name": "ttnn.matmul",
@@ -30203,9 +29692,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -30262,9 +29750,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.04,
-    "atol": 1.68
+    "pcc": "-0.04",
+    "atol": "1.68"
   },
   {
     "name": "ttnn.matmul",
@@ -30321,9 +29808,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -30380,9 +29866,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.04,
-    "atol": 1.42
+    "pcc": "-0.04",
+    "atol": "1.42"
   },
   {
     "name": "ttnn.matmul",
@@ -30439,9 +29924,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -30498,9 +29982,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 28.4
+    "pcc": "0.01",
+    "atol": "28.4"
   },
   {
     "name": "ttnn.matmul",
@@ -30557,9 +30040,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -30616,9 +30098,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.04,
-    "atol": 4.53
+    "pcc": "0.04",
+    "atol": "4.53"
   },
   {
     "name": "ttnn.matmul",
@@ -30675,9 +30156,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -30734,9 +30214,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.05,
-    "atol": 2.6
+    "pcc": "0.05",
+    "atol": "2.6"
   },
   {
     "name": "ttnn.matmul",
@@ -30793,9 +30272,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -30852,9 +30330,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 5.47
+    "pcc": "-0.0",
+    "atol": "5.47"
   },
   {
     "name": "ttnn.matmul",
@@ -30911,9 +30388,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -30970,9 +30446,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 7.66
+    "pcc": "0.02",
+    "atol": "7.66"
   },
   {
     "name": "ttnn.matmul",
@@ -31029,9 +30504,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -31088,9 +30562,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -31147,9 +30620,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -31206,9 +30678,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 6.29
+    "pcc": "-0.01",
+    "atol": "6.29"
   },
   {
     "name": "ttnn.matmul",
@@ -31265,9 +30736,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -31324,9 +30794,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 12.28
+    "pcc": "-0.02",
+    "atol": "12.28"
   },
   {
     "name": "ttnn.matmul",
@@ -31383,9 +30852,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -31442,9 +30910,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 3.73
+    "pcc": "-0.01",
+    "atol": "3.73"
   },
   {
     "name": "ttnn.matmul",
@@ -31501,9 +30968,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -31560,9 +31026,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 31.38
+    "pcc": "-0.01",
+    "atol": "31.38"
   },
   {
     "name": "ttnn.matmul",
@@ -31619,9 +31084,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -31678,9 +31142,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.04,
-    "atol": 5.34
+    "pcc": "0.04",
+    "atol": "5.34"
   },
   {
     "name": "ttnn.matmul",
@@ -31737,9 +31200,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -31796,9 +31258,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 52.71
+    "pcc": "0.0",
+    "atol": "52.71"
   },
   {
     "name": "ttnn.matmul",
@@ -31855,9 +31316,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -31914,9 +31374,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.12,
-    "atol": 1.69
+    "pcc": "-0.12",
+    "atol": "1.69"
   },
   {
     "name": "ttnn.matmul",
@@ -31973,9 +31432,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -32032,9 +31490,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.04,
-    "atol": 7.64
+    "pcc": "-0.04",
+    "atol": "7.64"
   },
   {
     "name": "ttnn.matmul",
@@ -32091,9 +31548,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -32150,9 +31606,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 4.69
+    "pcc": "0.02",
+    "atol": "4.69"
   },
   {
     "name": "ttnn.matmul",
@@ -32209,9 +31664,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -32268,9 +31722,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -32327,9 +31780,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -32386,9 +31838,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.08,
-    "atol": 7.65
+    "pcc": "0.08",
+    "atol": "7.65"
   },
   {
     "name": "ttnn.matmul",
@@ -32445,9 +31896,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -32504,9 +31954,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 5.71
+    "pcc": "0.01",
+    "atol": "5.71"
   },
   {
     "name": "ttnn.matmul",
@@ -32563,9 +32012,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -32622,9 +32070,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 18.88
+    "pcc": "-0.01",
+    "atol": "18.88"
   },
   {
     "name": "ttnn.matmul",
@@ -32681,9 +32128,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -32740,9 +32186,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 2.11
+    "pcc": "-0.02",
+    "atol": "2.11"
   },
   {
     "name": "ttnn.matmul",
@@ -32799,9 +32244,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -32858,9 +32302,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 8.99
+    "pcc": "-0.0",
+    "atol": "8.99"
   },
   {
     "name": "ttnn.matmul",
@@ -32917,9 +32360,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -32976,9 +32418,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 3.94
+    "pcc": "0.01",
+    "atol": "3.94"
   },
   {
     "name": "ttnn.matmul",
@@ -33035,9 +32476,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -33094,9 +32534,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 1.71
+    "pcc": "-0.02",
+    "atol": "1.71"
   },
   {
     "name": "ttnn.matmul",
@@ -33153,9 +32592,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -33212,9 +32650,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 14.06
+    "pcc": "-0.0",
+    "atol": "14.06"
   },
   {
     "name": "ttnn.matmul",
@@ -33271,9 +32708,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -33330,9 +32766,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 5.25
+    "pcc": "-0.01",
+    "atol": "5.25"
   },
   {
     "name": "ttnn.matmul",
@@ -33389,9 +32824,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -33448,9 +32882,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 28.2
+    "pcc": "0.0",
+    "atol": "28.2"
   },
   {
     "name": "ttnn.matmul",
@@ -33507,9 +32940,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -33566,9 +32998,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 1.42
+    "pcc": "0.0",
+    "atol": "1.42"
   },
   {
     "name": "ttnn.matmul",
@@ -33625,9 +33056,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -33684,9 +33114,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 33.75
+    "pcc": "0.01",
+    "atol": "33.75"
   },
   {
     "name": "ttnn.matmul",
@@ -33743,9 +33172,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -33802,9 +33230,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.05,
-    "atol": 13.38
+    "pcc": "-0.05",
+    "atol": "13.38"
   },
   {
     "name": "ttnn.matmul",
@@ -33861,9 +33288,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -33920,9 +33346,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 8.34
+    "pcc": "-0.01",
+    "atol": "8.34"
   },
   {
     "name": "ttnn.matmul",
@@ -33979,9 +33404,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -34038,9 +33462,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 2.78
+    "pcc": "0.0",
+    "atol": "2.78"
   },
   {
     "name": "ttnn.matmul",
@@ -34097,9 +33520,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -34156,9 +33578,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.05,
-    "atol": 5.56
+    "pcc": "0.05",
+    "atol": "5.56"
   },
   {
     "name": "ttnn.matmul",
@@ -34215,9 +33636,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -34274,9 +33694,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 1.82
+    "pcc": "-0.02",
+    "atol": "1.82"
   },
   {
     "name": "ttnn.matmul",
@@ -34333,9 +33752,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -34392,9 +33810,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 8.34
+    "pcc": "0.0",
+    "atol": "8.34"
   },
   {
     "name": "ttnn.matmul",
@@ -34451,9 +33868,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -34510,9 +33926,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 36.25
+    "pcc": "-0.01",
+    "atol": "36.25"
   },
   {
     "name": "ttnn.matmul",
@@ -34569,9 +33984,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -34628,9 +34042,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 19.36
+    "pcc": "-0.02",
+    "atol": "19.36"
   },
   {
     "name": "ttnn.matmul",
@@ -34687,9 +34100,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -34746,9 +34158,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 1.02
+    "pcc": "-0.01",
+    "atol": "1.02"
   },
   {
     "name": "ttnn.matmul",
@@ -34805,9 +34216,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -34864,9 +34274,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 44.5
+    "pcc": "-0.02",
+    "atol": "44.5"
   },
   {
     "name": "ttnn.matmul",
@@ -34923,9 +34332,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -34982,9 +34390,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 13.94
+    "pcc": "-0.01",
+    "atol": "13.94"
   },
   {
     "name": "ttnn.matmul",
@@ -35041,9 +34448,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -35100,9 +34506,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.44
+    "pcc": "1.0",
+    "atol": "0.44"
   },
   {
     "name": "ttnn.matmul",
@@ -35159,9 +34564,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -35218,9 +34622,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 12.88
+    "pcc": "-0.0",
+    "atol": "12.88"
   },
   {
     "name": "ttnn.matmul",
@@ -35277,9 +34680,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -35336,9 +34738,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 4.31
+    "pcc": "0.0",
+    "atol": "4.31"
   },
   {
     "name": "ttnn.matmul",
@@ -35395,9 +34796,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -35454,9 +34854,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 17.12
+    "pcc": "-0.0",
+    "atol": "17.12"
   },
   {
     "name": "ttnn.matmul",
@@ -35513,9 +34912,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -35572,9 +34970,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 78.0
+    "pcc": "0.0",
+    "atol": "78.0"
   },
   {
     "name": "ttnn.matmul",
@@ -35631,9 +35028,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -35690,9 +35086,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.56,
-    "atol": Infinity
+    "pcc": "-0.56",
+    "atol": "inf"
   },
   {
     "name": "ttnn.matmul",
@@ -35749,9 +35144,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -35808,9 +35202,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.matmul",
@@ -35867,9 +35260,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -35926,9 +35318,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.03
+    "pcc": "1.0",
+    "atol": "0.03"
   },
   {
     "name": "ttnn.matmul",
@@ -35985,9 +35376,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -36044,9 +35434,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.05
+    "pcc": "1.0",
+    "atol": "0.05"
   },
   {
     "name": "ttnn.matmul",
@@ -36103,9 +35492,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -36162,9 +35550,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.06,
-    "atol": 7.4
+    "pcc": "-0.06",
+    "atol": "7.4"
   },
   {
     "name": "ttnn.matmul",
@@ -36221,9 +35608,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -36280,9 +35666,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 12.53
+    "pcc": "0.01",
+    "atol": "12.53"
   },
   {
     "name": "ttnn.matmul",
@@ -36339,9 +35724,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -36398,9 +35782,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.06,
-    "atol": 2.93
+    "pcc": "-0.06",
+    "atol": "2.93"
   },
   {
     "name": "ttnn.matmul",
@@ -36457,9 +35840,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -36516,9 +35898,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.03,
-    "atol": 6.05
+    "pcc": "0.03",
+    "atol": "6.05"
   },
   {
     "name": "ttnn.matmul",
@@ -36575,9 +35956,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -36634,9 +36014,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 19.11
+    "pcc": "0.02",
+    "atol": "19.11"
   },
   {
     "name": "ttnn.matmul",
@@ -36693,9 +36072,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -36752,9 +36130,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 8.88
+    "pcc": "-0.0",
+    "atol": "8.88"
   },
   {
     "name": "ttnn.matmul",
@@ -36811,9 +36188,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -36870,9 +36246,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 6.89
+    "pcc": "0.02",
+    "atol": "6.89"
   },
   {
     "name": "ttnn.matmul",
@@ -36929,9 +36304,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -36988,9 +36362,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 5.17
+    "pcc": "0.0",
+    "atol": "5.17"
   },
   {
     "name": "ttnn.matmul",
@@ -37047,9 +36420,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -37106,9 +36478,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 32.97
+    "pcc": "-0.01",
+    "atol": "32.97"
   },
   {
     "name": "ttnn.matmul",
@@ -37165,9 +36536,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -37224,9 +36594,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 2.38
+    "pcc": "-0.0",
+    "atol": "2.38"
   },
   {
     "name": "ttnn.matmul",
@@ -37283,9 +36652,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -37342,9 +36710,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 6.38
+    "pcc": "0.0",
+    "atol": "6.38"
   },
   {
     "name": "ttnn.matmul",
@@ -37401,9 +36768,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -37460,9 +36826,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 809.19
+    "pcc": "0.0",
+    "atol": "809.19"
   },
   {
     "name": "ttnn.matmul",
@@ -37519,9 +36884,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -37578,9 +36942,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 22.29
+    "pcc": "0.02",
+    "atol": "22.29"
   },
   {
     "name": "ttnn.matmul",
@@ -37637,9 +37000,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -37696,9 +37058,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 6.38
+    "pcc": "-0.0",
+    "atol": "6.38"
   },
   {
     "name": "ttnn.matmul",
@@ -37755,9 +37116,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -37814,9 +37174,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 12.46
+    "pcc": "0.0",
+    "atol": "12.46"
   },
   {
     "name": "ttnn.matmul",
@@ -37873,9 +37232,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -37932,9 +37290,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 171.81
+    "pcc": "-0.02",
+    "atol": "171.81"
   },
   {
     "name": "ttnn.matmul",
@@ -37991,9 +37348,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -38050,9 +37406,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 55.87
+    "pcc": "0.0",
+    "atol": "55.87"
   },
   {
     "name": "ttnn.matmul",
@@ -38109,9 +37464,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -38168,9 +37522,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.06,
-    "atol": 17.1
+    "pcc": "-0.06",
+    "atol": "17.1"
   },
   {
     "name": "ttnn.matmul",
@@ -38227,9 +37580,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -38286,9 +37638,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 87.59
+    "pcc": "-0.0",
+    "atol": "87.59"
   },
   {
     "name": "ttnn.matmul",
@@ -38345,9 +37696,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -38404,9 +37754,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 7.29
+    "pcc": "-0.01",
+    "atol": "7.29"
   },
   {
     "name": "ttnn.matmul",
@@ -38463,9 +37812,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -38522,9 +37870,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 8.08
+    "pcc": "-0.02",
+    "atol": "8.08"
   },
   {
     "name": "ttnn.matmul",
@@ -38581,9 +37928,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -38640,9 +37986,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.03,
-    "atol": 13.62
+    "pcc": "0.03",
+    "atol": "13.62"
   },
   {
     "name": "ttnn.matmul",
@@ -38699,9 +38044,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -38758,9 +38102,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 122.41
+    "pcc": "-0.01",
+    "atol": "122.41"
   },
   {
     "name": "ttnn.matmul",
@@ -38817,9 +38160,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -38876,9 +38218,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.05,
-    "atol": 12.88
+    "pcc": "-0.05",
+    "atol": "12.88"
   },
   {
     "name": "ttnn.matmul",
@@ -38935,9 +38276,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -38994,9 +38334,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 12.25
+    "pcc": "-0.02",
+    "atol": "12.25"
   },
   {
     "name": "ttnn.matmul",
@@ -39053,9 +38392,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -39112,9 +38450,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 8.09
+    "pcc": "-0.0",
+    "atol": "8.09"
   },
   {
     "name": "ttnn.matmul",
@@ -39171,9 +38508,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.matmul",
@@ -39230,9 +38566,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 164.66
+    "pcc": "0.01",
+    "atol": "164.66"
   },
   {
     "name": "ttnn.matmul",
@@ -39289,8 +38624,7 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   }
 ]

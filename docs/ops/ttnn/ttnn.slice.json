@@ -47,9 +47,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -99,9 +98,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -151,9 +149,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -203,9 +200,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -255,9 +251,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -307,9 +302,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -359,9 +353,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -411,9 +404,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -463,9 +455,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -515,9 +506,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -567,9 +557,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -619,9 +608,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -671,9 +659,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -723,9 +710,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -775,9 +761,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -827,9 +812,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -879,9 +863,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -931,9 +914,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -983,9 +965,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -1035,9 +1016,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -1087,9 +1067,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -1139,9 +1118,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -1191,9 +1169,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -1243,9 +1220,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -1295,9 +1271,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -1347,9 +1322,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -1399,9 +1373,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -1451,9 +1424,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -1503,9 +1475,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.66,
-    "atol": 0.48
+    "pcc": "0.66",
+    "atol": "0.48"
   },
   {
     "name": "ttnn.slice",
@@ -1555,9 +1526,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -1607,9 +1577,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.31,
-    "atol": 0.76
+    "pcc": "-0.31",
+    "atol": "0.76"
   },
   {
     "name": "ttnn.slice",
@@ -1659,9 +1628,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -1711,9 +1679,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.15,
-    "atol": 0.71
+    "pcc": "0.15",
+    "atol": "0.71"
   },
   {
     "name": "ttnn.slice",
@@ -1763,9 +1730,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -1815,9 +1781,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.27,
-    "atol": 0.82
+    "pcc": "-0.27",
+    "atol": "0.82"
   },
   {
     "name": "ttnn.slice",
@@ -1867,9 +1832,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -1919,9 +1883,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -1971,9 +1934,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -2023,9 +1985,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -2075,9 +2036,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -2127,9 +2087,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -2179,9 +2138,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -2231,9 +2189,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -2283,9 +2240,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -2335,9 +2291,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -2387,9 +2342,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -2439,9 +2393,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -2491,9 +2444,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -2543,9 +2495,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -2595,9 +2546,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -2647,9 +2597,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -2699,9 +2648,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -2751,9 +2699,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -2803,9 +2750,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -2855,9 +2801,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -2907,9 +2852,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -2959,9 +2903,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -3011,9 +2954,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -3063,9 +3005,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -3115,9 +3056,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -3167,9 +3107,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -3219,9 +3158,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -3271,9 +3209,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -3323,9 +3260,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -3375,9 +3311,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.03,
-    "atol": 3.2
+    "pcc": "-0.03",
+    "atol": "3.2"
   },
   {
     "name": "ttnn.slice",
@@ -3427,9 +3362,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -3479,9 +3413,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -3531,9 +3464,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -3583,9 +3515,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -3635,9 +3566,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -3687,9 +3617,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -3739,9 +3668,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -3791,9 +3719,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -3843,9 +3770,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -3895,9 +3821,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -3947,9 +3872,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -3999,9 +3923,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -4051,9 +3974,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -4103,9 +4025,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -4155,9 +4076,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -4207,9 +4127,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -4259,9 +4178,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -4311,9 +4229,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -4363,9 +4280,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -4415,9 +4331,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 1.1
+    "pcc": "0.02",
+    "atol": "1.1"
   },
   {
     "name": "ttnn.slice",
@@ -4467,9 +4382,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -4519,9 +4433,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 1.0
+    "pcc": "0.01",
+    "atol": "1.0"
   },
   {
     "name": "ttnn.slice",
@@ -4571,9 +4484,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -4623,9 +4535,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -4675,9 +4586,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -4727,9 +4637,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -4779,9 +4688,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -4831,9 +4739,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -4883,9 +4790,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -4935,9 +4841,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.14,
-    "atol": NaN
+    "pcc": "-0.14",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -4987,9 +4892,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -5039,9 +4943,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -5091,9 +4994,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -5143,9 +5045,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -5195,9 +5096,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -5247,9 +5147,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -5299,9 +5198,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -5351,9 +5249,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -5403,9 +5300,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -5455,9 +5351,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -5507,9 +5402,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -5559,9 +5453,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -5611,9 +5504,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -5663,9 +5555,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -5715,9 +5606,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -5767,9 +5657,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -5819,9 +5708,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -5871,9 +5759,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -5923,9 +5810,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -5975,9 +5861,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -6027,9 +5912,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -6079,9 +5963,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -6131,9 +6014,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -6183,9 +6065,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -6235,9 +6116,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -6287,9 +6167,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -6339,9 +6218,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -6391,9 +6269,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -6443,9 +6320,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -6495,9 +6371,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -6547,9 +6422,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -6599,9 +6473,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.03,
-    "atol": 8.06
+    "pcc": "0.03",
+    "atol": "8.06"
   },
   {
     "name": "ttnn.slice",
@@ -6651,9 +6524,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -6703,9 +6575,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.03,
-    "atol": 6.38
+    "pcc": "0.03",
+    "atol": "6.38"
   },
   {
     "name": "ttnn.slice",
@@ -6755,9 +6626,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -6807,9 +6677,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -6859,9 +6728,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -6911,9 +6779,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -6963,9 +6830,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -7015,9 +6881,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -7067,9 +6932,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -7119,9 +6983,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -7171,9 +7034,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -7223,9 +7085,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -7275,9 +7136,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -7327,9 +7187,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.38,
-    "atol": NaN
+    "pcc": "0.38",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -7379,9 +7238,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -7431,9 +7289,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.39,
-    "atol": NaN
+    "pcc": "0.39",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -7483,9 +7340,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -7535,9 +7391,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.4,
-    "atol": NaN
+    "pcc": "0.4",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -7587,9 +7442,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -7639,9 +7493,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -7691,9 +7544,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -7743,9 +7595,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.44,
-    "atol": NaN
+    "pcc": "0.44",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -7795,9 +7646,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -7847,9 +7697,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.35,
-    "atol": NaN
+    "pcc": "0.35",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -7899,9 +7748,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -7951,9 +7799,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.59,
-    "atol": NaN
+    "pcc": "0.59",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -8003,9 +7850,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -8055,9 +7901,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -8107,9 +7952,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -8159,9 +8003,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.02,
-    "atol": 15.12
+    "pcc": "-0.02",
+    "atol": "15.12"
   },
   {
     "name": "ttnn.slice",
@@ -8211,61 +8054,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
-  },
-  {
-    "name": "ttnn.slice",
-    "input_shapes": [
-      "tensor<[1,5,16,32,bf16]>",
-      "tensor<[1,5,16,16,bf16]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 80 + d1 * 16 + d2, d3)",
-        "memory_config": [
-          96,
-          32,
-          "bf16",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 80 + d1 * 16 + d2, d3)",
-        "memory_config": [
-          3,
-          1,
-          "tile<32x32, bf16>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "begins": "[0 : i32, 0 : i32, 0 : i32, 1 : i32]",
-      "ends": "[1 : i32, 5 : i32, 16 : i32, 32 : i32]",
-      "step": "[1 : i32, 1 : i32, 1 : i32, 2 : i32]"
-    },
-    "output_shapes": [
-      "tensor<[1,5,16,16,bf16]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 80 + d1 * 16 + d2, d3)",
-        "memory_config": [
-          3,
-          1,
-          "tile<32x32, bf16>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.06,
-    "atol": 13.88
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -8315,9 +8105,59 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "0.06",
+    "atol": "13.88"
+  },
+  {
+    "name": "ttnn.slice",
+    "input_shapes": [
+      "tensor<[1,5,16,32,bf16]>",
+      "tensor<[1,5,16,16,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 80 + d1 * 16 + d2, d3)",
+        "memory_config": [
+          96,
+          32,
+          "bf16",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 80 + d1 * 16 + d2, d3)",
+        "memory_config": [
+          3,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "begins": "[0 : i32, 0 : i32, 0 : i32, 1 : i32]",
+      "ends": "[1 : i32, 5 : i32, 16 : i32, 32 : i32]",
+      "step": "[1 : i32, 1 : i32, 1 : i32, 2 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[1,5,16,16,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 80 + d1 * 16 + d2, d3)",
+        "memory_config": [
+          3,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -8367,9 +8207,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -8419,9 +8258,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -8471,9 +8309,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -8523,9 +8360,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -8575,9 +8411,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -8627,9 +8462,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -8679,9 +8513,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -8731,9 +8564,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -8783,9 +8615,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -8835,9 +8666,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -8887,9 +8717,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -8939,9 +8768,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -8991,9 +8819,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -9043,9 +8870,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -9095,9 +8921,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -9147,9 +8972,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -9199,9 +9023,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -9251,9 +9074,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -9303,9 +9125,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.25,
-    "atol": 18.25
+    "pcc": "0.25",
+    "atol": "18.25"
   },
   {
     "name": "ttnn.slice",
@@ -9355,9 +9176,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -9407,9 +9227,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.16,
-    "atol": 11.06
+    "pcc": "0.16",
+    "atol": "11.06"
   },
   {
     "name": "ttnn.slice",
@@ -9459,9 +9278,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -9511,9 +9329,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.64,
-    "atol": NaN
+    "pcc": "0.64",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -9563,9 +9380,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -9615,9 +9431,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -9667,9 +9482,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -9719,9 +9533,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -9771,9 +9584,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -9823,9 +9635,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -9875,9 +9686,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -9927,9 +9737,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -9979,9 +9788,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -10031,9 +9839,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -10083,9 +9890,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -10135,9 +9941,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -10187,9 +9992,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -10239,9 +10043,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -10291,9 +10094,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -10343,9 +10145,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -10395,9 +10196,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -10447,9 +10247,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -10499,9 +10298,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -10551,9 +10349,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 0.86
+    "pcc": "-0.0",
+    "atol": "0.86"
   },
   {
     "name": "ttnn.slice",
@@ -10603,9 +10400,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -10655,9 +10451,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -10707,9 +10502,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -10759,9 +10553,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -10811,9 +10604,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -10863,9 +10655,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -10915,9 +10706,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -10967,9 +10757,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -11019,9 +10808,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -11071,9 +10859,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -11123,9 +10910,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -11175,9 +10961,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -11227,9 +11012,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -11279,9 +11063,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.79,
-    "atol": 6.91
+    "pcc": "0.79",
+    "atol": "6.91"
   },
   {
     "name": "ttnn.slice",
@@ -11331,9 +11114,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -11383,9 +11165,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.56
+    "pcc": "1.0",
+    "atol": "0.56"
   },
   {
     "name": "ttnn.slice",
@@ -11435,9 +11216,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -11487,9 +11267,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -11539,9 +11318,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -11591,9 +11369,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -11643,9 +11420,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -11695,9 +11471,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -11747,9 +11522,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -11799,9 +11573,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -11851,9 +11624,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -11903,9 +11675,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -11955,9 +11726,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.slice",
@@ -12007,9 +11777,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.slice",
@@ -12059,8 +11828,7 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   }
 ]

@@ -70,9 +70,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 1.744611744467702e+37
+    "pcc": "0.02",
+    "atol": "1.744611744467702e+37"
   },
   {
     "name": "ttnn.conv2d",
@@ -145,9 +144,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -220,9 +218,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -295,9 +292,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -370,9 +366,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.03,
-    "atol": 1.1564283563328768e+38
+    "pcc": "0.03",
+    "atol": "1.1564283563328768e+38"
   },
   {
     "name": "ttnn.conv2d",
@@ -445,9 +440,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -520,9 +514,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.06,
-    "atol": 15.19
+    "pcc": "0.06",
+    "atol": "15.19"
   },
   {
     "name": "ttnn.conv2d",
@@ -595,9 +588,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -670,9 +662,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.1,
-    "atol": 13.25
+    "pcc": "0.1",
+    "atol": "13.25"
   },
   {
     "name": "ttnn.conv2d",
@@ -745,9 +736,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -820,9 +810,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -895,9 +884,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -970,9 +958,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.39,
-    "atol": 4.69
+    "pcc": "0.39",
+    "atol": "4.69"
   },
   {
     "name": "ttnn.conv2d",
@@ -1045,9 +1032,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -1120,9 +1106,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 0.04
+    "pcc": "-0.01",
+    "atol": "0.04"
   },
   {
     "name": "ttnn.conv2d",
@@ -1195,9 +1180,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -1270,9 +1254,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.82,
-    "atol": 0.43
+    "pcc": "0.82",
+    "atol": "0.43"
   },
   {
     "name": "ttnn.conv2d",
@@ -1345,9 +1328,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -1420,9 +1402,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.96,
-    "atol": 1.19
+    "pcc": "0.96",
+    "atol": "1.19"
   },
   {
     "name": "ttnn.conv2d",
@@ -1495,9 +1476,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -1570,9 +1550,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.81,
-    "atol": 0.87
+    "pcc": "0.81",
+    "atol": "0.87"
   },
   {
     "name": "ttnn.conv2d",
@@ -1645,9 +1624,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -1720,9 +1698,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.25,
-    "atol": 6.72
+    "pcc": "0.25",
+    "atol": "6.72"
   },
   {
     "name": "ttnn.conv2d",
@@ -1795,9 +1772,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -1870,9 +1846,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 1.0633823966279325e+38
+    "pcc": "-0.01",
+    "atol": "1.0633823966279325e+38"
   },
   {
     "name": "ttnn.conv2d",
@@ -1945,9 +1920,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -2020,9 +1994,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -2095,9 +2068,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -2170,9 +2142,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.36,
-    "atol": 2.62
+    "pcc": "0.36",
+    "atol": "2.62"
   },
   {
     "name": "ttnn.conv2d",
@@ -2245,9 +2216,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -2320,9 +2290,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.25,
-    "atol": 1.41
+    "pcc": "0.25",
+    "atol": "1.41"
   },
   {
     "name": "ttnn.conv2d",
@@ -2395,9 +2364,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -2470,9 +2438,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -2545,9 +2512,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -2620,9 +2586,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -2695,9 +2660,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -2770,9 +2734,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.05
+    "pcc": "1.0",
+    "atol": "0.05"
   },
   {
     "name": "ttnn.conv2d",
@@ -2845,9 +2808,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -2920,9 +2882,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -2995,9 +2956,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -3070,9 +3030,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.31,
-    "atol": 2.28
+    "pcc": "0.31",
+    "atol": "2.28"
   },
   {
     "name": "ttnn.conv2d",
@@ -3145,9 +3104,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -3220,9 +3178,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -3295,9 +3252,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -3370,9 +3326,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.53,
-    "atol": 9.88
+    "pcc": "0.53",
+    "atol": "9.88"
   },
   {
     "name": "ttnn.conv2d",
@@ -3445,9 +3400,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -3520,9 +3474,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.52,
-    "atol": 3.69
+    "pcc": "0.52",
+    "atol": "3.69"
   },
   {
     "name": "ttnn.conv2d",
@@ -3595,9 +3548,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -3670,9 +3622,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.5,
-    "atol": 21.5
+    "pcc": "0.5",
+    "atol": "21.5"
   },
   {
     "name": "ttnn.conv2d",
@@ -3745,9 +3696,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -3820,9 +3770,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -3895,9 +3844,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -3970,9 +3918,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 14.25
+    "pcc": "1.0",
+    "atol": "14.25"
   },
   {
     "name": "ttnn.conv2d",
@@ -4045,9 +3992,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -4120,9 +4066,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.66
+    "pcc": "1.0",
+    "atol": "0.66"
   },
   {
     "name": "ttnn.conv2d",
@@ -4195,9 +4140,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -4270,9 +4214,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -4345,9 +4288,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -4420,9 +4362,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 1.1497822163539522e+38
+    "pcc": "-0.01",
+    "atol": "1.1497822163539522e+38"
   },
   {
     "name": "ttnn.conv2d",
@@ -4495,9 +4436,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -4570,9 +4510,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 1.0966130965225556e+38
+    "pcc": "-0.0",
+    "atol": "1.0966130965225556e+38"
   },
   {
     "name": "ttnn.conv2d",
@@ -4645,9 +4584,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -4720,9 +4658,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.88,
-    "atol": 0.13
+    "pcc": "0.88",
+    "atol": "0.13"
   },
   {
     "name": "ttnn.conv2d",
@@ -4795,9 +4732,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -4870,9 +4806,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.38
+    "pcc": "1.0",
+    "atol": "0.38"
   },
   {
     "name": "ttnn.conv2d",
@@ -4945,9 +4880,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -5020,9 +4954,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.15,
-    "atol": 16.5
+    "pcc": "0.15",
+    "atol": "16.5"
   },
   {
     "name": "ttnn.conv2d",
@@ -5095,9 +5028,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -5170,9 +5102,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.75
+    "pcc": "1.0",
+    "atol": "0.75"
   },
   {
     "name": "ttnn.conv2d",
@@ -5245,9 +5176,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -5320,9 +5250,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.09
+    "pcc": "1.0",
+    "atol": "0.09"
   },
   {
     "name": "ttnn.conv2d",
@@ -5395,9 +5324,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -5470,9 +5398,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.04
+    "pcc": "1.0",
+    "atol": "0.04"
   },
   {
     "name": "ttnn.conv2d",
@@ -5545,9 +5472,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -5620,9 +5546,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -5695,9 +5620,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -5770,9 +5694,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -5845,9 +5768,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -5920,9 +5842,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -5995,9 +5916,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -6070,9 +5990,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -6145,9 +6064,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -6220,9 +6138,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -6295,9 +6212,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -6370,9 +6286,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.47,
-    "atol": 1.25
+    "pcc": "0.47",
+    "atol": "1.25"
   },
   {
     "name": "ttnn.conv2d",
@@ -6445,9 +6360,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -6520,9 +6434,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -6595,9 +6508,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -6670,9 +6582,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -6745,9 +6656,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -6820,9 +6730,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 3.75
+    "pcc": "1.0",
+    "atol": "3.75"
   },
   {
     "name": "ttnn.conv2d",
@@ -6895,9 +6804,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -6970,9 +6878,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.07,
-    "atol": 2.4059026723706977e+38
+    "pcc": "0.07",
+    "atol": "2.4059026723706977e+38"
   },
   {
     "name": "ttnn.conv2d",
@@ -7045,9 +6952,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -7120,9 +7026,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -7195,9 +7100,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -7270,9 +7174,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.24,
-    "atol": 3.25
+    "pcc": "0.24",
+    "atol": "3.25"
   },
   {
     "name": "ttnn.conv2d",
@@ -7345,9 +7248,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -7420,9 +7322,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -7495,9 +7396,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -7570,9 +7470,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.05,
-    "atol": 18.5
+    "pcc": "-0.05",
+    "atol": "18.5"
   },
   {
     "name": "ttnn.conv2d",
@@ -7645,9 +7544,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -7720,9 +7618,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.25,
-    "atol": 0.61
+    "pcc": "0.25",
+    "atol": "0.61"
   },
   {
     "name": "ttnn.conv2d",
@@ -7795,9 +7692,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -7870,9 +7766,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.21,
-    "atol": 3.0
+    "pcc": "0.21",
+    "atol": "3.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -7945,9 +7840,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -8020,9 +7914,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.14,
-    "atol": 1.02
+    "pcc": "0.14",
+    "atol": "1.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -8095,9 +7988,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -8170,9 +8062,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -8245,9 +8136,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -8320,9 +8210,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.42,
-    "atol": 15.69
+    "pcc": "0.42",
+    "atol": "15.69"
   },
   {
     "name": "ttnn.conv2d",
@@ -8395,9 +8284,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -8470,9 +8358,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -8545,9 +8432,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -8620,9 +8506,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.33,
-    "atol": 22.0
+    "pcc": "-0.33",
+    "atol": "22.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -8695,9 +8580,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -8770,9 +8654,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.04
+    "pcc": "1.0",
+    "atol": "0.04"
   },
   {
     "name": "ttnn.conv2d",
@@ -8845,9 +8728,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -8920,9 +8802,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -8995,9 +8876,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -9070,9 +8950,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -9145,9 +9024,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -9220,9 +9098,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -9295,9 +9172,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -9370,9 +9246,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.23,
-    "atol": 27.38
+    "pcc": "0.23",
+    "atol": "27.38"
   },
   {
     "name": "ttnn.conv2d",
@@ -9445,9 +9320,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -9520,9 +9394,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -9595,9 +9468,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -9670,9 +9542,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -9745,9 +9616,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -9820,9 +9690,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.18,
-    "atol": 0.49
+    "pcc": "0.18",
+    "atol": "0.49"
   },
   {
     "name": "ttnn.conv2d",
@@ -9895,9 +9764,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -9970,9 +9838,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -10045,9 +9912,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -10120,9 +9986,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.18,
-    "atol": 51.25
+    "pcc": "0.18",
+    "atol": "51.25"
   },
   {
     "name": "ttnn.conv2d",
@@ -10195,9 +10060,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -10270,9 +10134,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.86,
-    "atol": 87.5
+    "pcc": "0.86",
+    "atol": "87.5"
   },
   {
     "name": "ttnn.conv2d",
@@ -10345,9 +10208,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -10420,9 +10282,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.39,
-    "atol": 2.67
+    "pcc": "0.39",
+    "atol": "2.67"
   },
   {
     "name": "ttnn.conv2d",
@@ -10495,9 +10356,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -10570,9 +10430,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -10645,9 +10504,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -10720,9 +10578,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.04
+    "pcc": "1.0",
+    "atol": "0.04"
   },
   {
     "name": "ttnn.conv2d",
@@ -10795,9 +10652,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -10870,9 +10726,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.16
+    "pcc": "1.0",
+    "atol": "0.16"
   },
   {
     "name": "ttnn.conv2d",
@@ -10945,9 +10800,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -11020,9 +10874,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.04
+    "pcc": "1.0",
+    "atol": "0.04"
   },
   {
     "name": "ttnn.conv2d",
@@ -11095,9 +10948,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -11170,9 +11022,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -11245,9 +11096,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -11320,9 +11170,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -11395,9 +11244,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -11470,9 +11318,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.35,
-    "atol": 4.31
+    "pcc": "0.35",
+    "atol": "4.31"
   },
   {
     "name": "ttnn.conv2d",
@@ -11545,9 +11392,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -11620,9 +11466,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -11695,9 +11540,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -11770,9 +11614,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.17,
-    "atol": 35.25
+    "pcc": "0.17",
+    "atol": "35.25"
   },
   {
     "name": "ttnn.conv2d",
@@ -11845,9 +11688,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -11920,9 +11762,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.29,
-    "atol": 37.5
+    "pcc": "0.29",
+    "atol": "37.5"
   },
   {
     "name": "ttnn.conv2d",
@@ -11995,9 +11836,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -12070,9 +11910,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 1.3823971156163123e+38
+    "pcc": "0.01",
+    "atol": "1.3823971156163123e+38"
   },
   {
     "name": "ttnn.conv2d",
@@ -12145,9 +11984,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -12220,9 +12058,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.36,
-    "atol": 1.52
+    "pcc": "0.36",
+    "atol": "1.52"
   },
   {
     "name": "ttnn.conv2d",
@@ -12295,9 +12132,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -12370,9 +12206,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.37,
-    "atol": 2.45
+    "pcc": "0.37",
+    "atol": "2.45"
   },
   {
     "name": "ttnn.conv2d",
@@ -12445,9 +12280,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -12520,9 +12354,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.1,
-    "atol": 16.75
+    "pcc": "0.1",
+    "atol": "16.75"
   },
   {
     "name": "ttnn.conv2d",
@@ -12595,9 +12428,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -12670,9 +12502,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 1.0
+    "pcc": "1.0",
+    "atol": "1.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -12745,9 +12576,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -12820,9 +12650,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.03,
-    "atol": 15.62
+    "pcc": "-0.03",
+    "atol": "15.62"
   },
   {
     "name": "ttnn.conv2d",
@@ -12895,9 +12724,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -12970,9 +12798,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -13045,9 +12872,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -13120,9 +12946,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.15,
-    "atol": 99.0
+    "pcc": "0.15",
+    "atol": "99.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -13195,9 +13020,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -13270,9 +13094,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.28,
-    "atol": 1.41
+    "pcc": "0.28",
+    "atol": "1.41"
   },
   {
     "name": "ttnn.conv2d",
@@ -13345,9 +13168,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -13420,9 +13242,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -13495,9 +13316,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -13570,9 +13390,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.32
+    "pcc": "1.0",
+    "atol": "0.32"
   },
   {
     "name": "ttnn.conv2d",
@@ -13645,9 +13464,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -13720,9 +13538,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.04
+    "pcc": "1.0",
+    "atol": "0.04"
   },
   {
     "name": "ttnn.conv2d",
@@ -13795,9 +13612,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -13870,9 +13686,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.62,
-    "atol": 3.62
+    "pcc": "0.62",
+    "atol": "3.62"
   },
   {
     "name": "ttnn.conv2d",
@@ -13945,9 +13760,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -14020,9 +13834,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -14095,9 +13908,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -14170,9 +13982,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -14245,9 +14056,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -14320,9 +14130,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.51,
-    "atol": 2.03
+    "pcc": "0.51",
+    "atol": "2.03"
   },
   {
     "name": "ttnn.conv2d",
@@ -14395,9 +14204,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -14470,9 +14278,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.5,
-    "atol": 17.12
+    "pcc": "0.5",
+    "atol": "17.12"
   },
   {
     "name": "ttnn.conv2d",
@@ -14545,9 +14352,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -14620,9 +14426,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.82,
-    "atol": 44.75
+    "pcc": "0.82",
+    "atol": "44.75"
   },
   {
     "name": "ttnn.conv2d",
@@ -14695,9 +14500,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -14770,9 +14574,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 2.0
+    "pcc": "1.0",
+    "atol": "2.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -14845,9 +14648,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -14920,9 +14722,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -14995,9 +14796,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -15070,9 +14870,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -15145,9 +14944,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -15220,9 +15018,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -15295,9 +15092,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -15370,9 +15166,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.21,
-    "atol": 27.88
+    "pcc": "0.21",
+    "atol": "27.88"
   },
   {
     "name": "ttnn.conv2d",
@@ -15445,9 +15240,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -15520,9 +15314,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -15595,9 +15388,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -15670,9 +15462,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 6.87875487818694e+37
+    "pcc": "0.02",
+    "atol": "6.87875487818694e+37"
   },
   {
     "name": "ttnn.conv2d",
@@ -15745,9 +15536,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -15820,9 +15610,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.37,
-    "atol": 4.44
+    "pcc": "0.37",
+    "atol": "4.44"
   },
   {
     "name": "ttnn.conv2d",
@@ -15895,9 +15684,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -15970,9 +15758,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.58,
-    "atol": 1.28
+    "pcc": "0.58",
+    "atol": "1.28"
   },
   {
     "name": "ttnn.conv2d",
@@ -16045,9 +15832,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -16120,9 +15906,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.04
+    "pcc": "1.0",
+    "atol": "0.04"
   },
   {
     "name": "ttnn.conv2d",
@@ -16195,9 +15980,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -16270,9 +16054,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -16345,9 +16128,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -16420,9 +16202,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 8.307674973655725e+37
+    "pcc": "-0.0",
+    "atol": "8.307674973655725e+37"
   },
   {
     "name": "ttnn.conv2d",
@@ -16495,9 +16276,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -16570,9 +16350,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.09,
-    "atol": 7.44
+    "pcc": "0.09",
+    "atol": "7.44"
   },
   {
     "name": "ttnn.conv2d",
@@ -16645,9 +16424,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -16720,9 +16498,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.24,
-    "atol": 3.7
+    "pcc": "-0.24",
+    "atol": "3.7"
   },
   {
     "name": "ttnn.conv2d",
@@ -16795,9 +16572,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -16870,9 +16646,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 7.244292577027791e+37
+    "pcc": "-0.01",
+    "atol": "7.244292577027791e+37"
   },
   {
     "name": "ttnn.conv2d",
@@ -16945,9 +16720,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -17020,9 +16794,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.21,
-    "atol": 5.34
+    "pcc": "0.21",
+    "atol": "5.34"
   },
   {
     "name": "ttnn.conv2d",
@@ -17095,9 +16868,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -17170,9 +16942,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 7.011677677765431e+37
+    "pcc": "-0.01",
+    "atol": "7.011677677765431e+37"
   },
   {
     "name": "ttnn.conv2d",
@@ -17245,9 +17016,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -17320,9 +17090,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -17395,9 +17164,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -17470,9 +17238,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -17545,9 +17312,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -17620,9 +17386,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -17695,9 +17460,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -17770,9 +17534,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 2.272979872792206e+38
+    "pcc": "0.02",
+    "atol": "2.272979872792206e+38"
   },
   {
     "name": "ttnn.conv2d",
@@ -17845,9 +17608,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -17920,9 +17682,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.42,
-    "atol": 1.91
+    "pcc": "0.42",
+    "atol": "1.91"
   },
   {
     "name": "ttnn.conv2d",
@@ -17995,9 +17756,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -18070,9 +17830,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -18145,9 +17904,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -18220,9 +17978,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.5,
-    "atol": 13.38
+    "pcc": "0.5",
+    "atol": "13.38"
   },
   {
     "name": "ttnn.conv2d",
@@ -18295,9 +18052,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -18370,9 +18126,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.59,
-    "atol": 29.62
+    "pcc": "0.59",
+    "atol": "29.62"
   },
   {
     "name": "ttnn.conv2d",
@@ -18445,9 +18200,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -18520,9 +18274,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 14.38
+    "pcc": "0.02",
+    "atol": "14.38"
   },
   {
     "name": "ttnn.conv2d",
@@ -18595,9 +18348,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -18670,9 +18422,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.12,
-    "atol": 16.62
+    "pcc": "-0.12",
+    "atol": "16.62"
   },
   {
     "name": "ttnn.conv2d",
@@ -18745,9 +18496,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -18820,9 +18570,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 60160.01
+    "pcc": "-0.01",
+    "atol": "60160.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -18895,9 +18644,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -18970,9 +18718,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.88,
-    "atol": 0.06
+    "pcc": "0.88",
+    "atol": "0.06"
   },
   {
     "name": "ttnn.conv2d",
@@ -19045,9 +18792,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -19120,9 +18866,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.32,
-    "atol": 20.25
+    "pcc": "0.32",
+    "atol": "20.25"
   },
   {
     "name": "ttnn.conv2d",
@@ -19195,9 +18940,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -19270,9 +19014,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.75
+    "pcc": "1.0",
+    "atol": "0.75"
   },
   {
     "name": "ttnn.conv2d",
@@ -19345,9 +19088,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -19420,9 +19162,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.42,
-    "atol": 11.12
+    "pcc": "0.42",
+    "atol": "11.12"
   },
   {
     "name": "ttnn.conv2d",
@@ -19495,9 +19236,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -19570,9 +19310,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.32,
-    "atol": 1.27
+    "pcc": "0.32",
+    "atol": "1.27"
   },
   {
     "name": "ttnn.conv2d",
@@ -19645,9 +19384,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -19720,9 +19458,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.1,
-    "atol": 1.06
+    "pcc": "0.1",
+    "atol": "1.06"
   },
   {
     "name": "ttnn.conv2d",
@@ -19795,9 +19532,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -19870,9 +19606,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 1.2095974761642734e+38
+    "pcc": "0.01",
+    "atol": "1.2095974761642734e+38"
   },
   {
     "name": "ttnn.conv2d",
@@ -19945,9 +19680,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -20020,9 +19754,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.82,
-    "atol": 2.42
+    "pcc": "0.82",
+    "atol": "2.42"
   },
   {
     "name": "ttnn.conv2d",
@@ -20095,9 +19828,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -20170,9 +19902,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -20245,9 +19976,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -20320,9 +20050,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -20395,9 +20124,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -20470,9 +20198,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -20545,9 +20272,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -20620,9 +20346,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.25,
-    "atol": 1.84
+    "pcc": "0.25",
+    "atol": "1.84"
   },
   {
     "name": "ttnn.conv2d",
@@ -20695,9 +20420,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -20770,9 +20494,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -20845,9 +20568,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -20920,9 +20642,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -20995,9 +20716,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -21070,9 +20790,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.16,
-    "atol": 20.25
+    "pcc": "0.16",
+    "atol": "20.25"
   },
   {
     "name": "ttnn.conv2d",
@@ -21145,9 +20864,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -21220,9 +20938,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -21295,9 +21012,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -21370,9 +21086,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.11,
-    "atol": 0.53
+    "pcc": "0.11",
+    "atol": "0.53"
   },
   {
     "name": "ttnn.conv2d",
@@ -21445,9 +21160,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -21520,9 +21234,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -21595,9 +21308,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -21670,9 +21382,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -21745,9 +21456,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -21820,9 +21530,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.19
+    "pcc": "1.0",
+    "atol": "0.19"
   },
   {
     "name": "ttnn.conv2d",
@@ -21895,9 +21604,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -21970,9 +21678,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -22045,9 +21752,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -22120,9 +21826,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.03
+    "pcc": "1.0",
+    "atol": "0.03"
   },
   {
     "name": "ttnn.conv2d",
@@ -22195,9 +21900,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -22270,9 +21974,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.07
+    "pcc": "1.0",
+    "atol": "0.07"
   },
   {
     "name": "ttnn.conv2d",
@@ -22345,9 +22048,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -22420,9 +22122,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.41
+    "pcc": "1.0",
+    "atol": "0.41"
   },
   {
     "name": "ttnn.conv2d",
@@ -22495,9 +22196,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -22570,9 +22270,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -22645,9 +22344,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -22720,9 +22418,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -22795,9 +22492,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -22870,9 +22566,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -22945,9 +22640,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -23020,9 +22714,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.24
+    "pcc": "1.0",
+    "atol": "0.24"
   },
   {
     "name": "ttnn.conv2d",
@@ -23095,9 +22788,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -23170,9 +22862,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.95,
-    "atol": 0.44
+    "pcc": "0.95",
+    "atol": "0.44"
   },
   {
     "name": "ttnn.conv2d",
@@ -23245,9 +22936,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -23320,9 +23010,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.95,
-    "atol": 0.84
+    "pcc": "0.95",
+    "atol": "0.84"
   },
   {
     "name": "ttnn.conv2d",
@@ -23395,9 +23084,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -23470,9 +23158,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -23545,9 +23232,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -23620,9 +23306,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.33,
-    "atol": 0.05
+    "pcc": "0.33",
+    "atol": "0.05"
   },
   {
     "name": "ttnn.conv2d",
@@ -23695,9 +23380,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -23770,9 +23454,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -23845,9 +23528,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -23920,9 +23602,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -23995,9 +23676,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -24070,9 +23750,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -24145,9 +23824,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -24220,9 +23898,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.09
+    "pcc": "1.0",
+    "atol": "0.09"
   },
   {
     "name": "ttnn.conv2d",
@@ -24295,9 +23972,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -24370,9 +24046,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.08
+    "pcc": "1.0",
+    "atol": "0.08"
   },
   {
     "name": "ttnn.conv2d",
@@ -24445,9 +24120,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -24520,9 +24194,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -24595,9 +24268,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -24670,9 +24342,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.18,
-    "atol": 12.62
+    "pcc": "0.18",
+    "atol": "12.62"
   },
   {
     "name": "ttnn.conv2d",
@@ -24745,9 +24416,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -24820,9 +24490,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.88
+    "pcc": "1.0",
+    "atol": "0.88"
   },
   {
     "name": "ttnn.conv2d",
@@ -24895,9 +24564,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -24970,9 +24638,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.03
+    "pcc": "1.0",
+    "atol": "0.03"
   },
   {
     "name": "ttnn.conv2d",
@@ -25045,9 +24712,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -25120,9 +24786,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.25,
-    "atol": 2.5
+    "pcc": "0.25",
+    "atol": "2.5"
   },
   {
     "name": "ttnn.conv2d",
@@ -25195,9 +24860,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -25270,9 +24934,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.03,
-    "atol": 7.244292577027791e+37
+    "pcc": "0.03",
+    "atol": "7.244292577027791e+37"
   },
   {
     "name": "ttnn.conv2d",
@@ -25345,9 +25008,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -25420,9 +25082,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.25,
-    "atol": 2.25
+    "pcc": "0.25",
+    "atol": "2.25"
   },
   {
     "name": "ttnn.conv2d",
@@ -25495,9 +25156,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -25570,9 +25230,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 7.643060975763265e+37
+    "pcc": "0.01",
+    "atol": "7.643060975763265e+37"
   },
   {
     "name": "ttnn.conv2d",
@@ -25645,9 +25304,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -25720,9 +25378,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.4,
-    "atol": 4.97
+    "pcc": "0.4",
+    "atol": "4.97"
   },
   {
     "name": "ttnn.conv2d",
@@ -25795,9 +25452,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -25870,9 +25526,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.3,
-    "atol": 2.14
+    "pcc": "0.3",
+    "atol": "2.14"
   },
   {
     "name": "ttnn.conv2d",
@@ -25945,9 +25600,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -26020,9 +25674,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.34,
-    "atol": 1.91
+    "pcc": "0.34",
+    "atol": "1.91"
   },
   {
     "name": "ttnn.conv2d",
@@ -26095,9 +25748,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -26170,9 +25822,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.09,
-    "atol": 1.24
+    "pcc": "0.09",
+    "atol": "1.24"
   },
   {
     "name": "ttnn.conv2d",
@@ -26245,9 +25896,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -26320,9 +25970,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -26395,9 +26044,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -26470,9 +26118,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": Infinity
+    "pcc": "-0.0",
+    "atol": "inf"
   },
   {
     "name": "ttnn.conv2d",
@@ -26545,9 +26192,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -26620,9 +26266,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.07,
-    "atol": 5.81
+    "pcc": "0.07",
+    "atol": "5.81"
   },
   {
     "name": "ttnn.conv2d",
@@ -26695,9 +26340,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -26770,9 +26414,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.16
+    "pcc": "1.0",
+    "atol": "0.16"
   },
   {
     "name": "ttnn.conv2d",
@@ -26845,9 +26488,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -26920,9 +26562,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.38
+    "pcc": "1.0",
+    "atol": "0.38"
   },
   {
     "name": "ttnn.conv2d",
@@ -26995,9 +26636,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -27070,9 +26710,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -27145,9 +26784,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -27220,9 +26858,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -27295,9 +26932,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -27370,9 +27006,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.53
+    "pcc": "1.0",
+    "atol": "0.53"
   },
   {
     "name": "ttnn.conv2d",
@@ -27445,9 +27080,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -27520,9 +27154,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.16
+    "pcc": "1.0",
+    "atol": "0.16"
   },
   {
     "name": "ttnn.conv2d",
@@ -27595,9 +27228,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -27670,9 +27302,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 14.25
+    "pcc": "-0.01",
+    "atol": "14.25"
   },
   {
     "name": "ttnn.conv2d",
@@ -27745,9 +27376,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -27820,9 +27450,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.12,
-    "atol": 2.0
+    "pcc": "0.12",
+    "atol": "2.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -27895,9 +27524,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -27970,9 +27598,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.75,
-    "atol": 22.25
+    "pcc": "0.75",
+    "atol": "22.25"
   },
   {
     "name": "ttnn.conv2d",
@@ -28045,9 +27672,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -28120,9 +27746,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.41,
-    "atol": 10.12
+    "pcc": "0.41",
+    "atol": "10.12"
   },
   {
     "name": "ttnn.conv2d",
@@ -28195,9 +27820,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -28270,9 +27894,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.83,
-    "atol": 62.75
+    "pcc": "0.83",
+    "atol": "62.75"
   },
   {
     "name": "ttnn.conv2d",
@@ -28345,9 +27968,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -28420,9 +28042,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.45,
-    "atol": 11.88
+    "pcc": "0.45",
+    "atol": "11.88"
   },
   {
     "name": "ttnn.conv2d",
@@ -28495,9 +28116,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -28570,9 +28190,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.06
+    "pcc": "1.0",
+    "atol": "0.06"
   },
   {
     "name": "ttnn.conv2d",
@@ -28645,9 +28264,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -28720,9 +28338,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.25,
-    "atol": 69.5
+    "pcc": "0.25",
+    "atol": "69.5"
   },
   {
     "name": "ttnn.conv2d",
@@ -28795,9 +28412,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -28870,9 +28486,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.05
+    "pcc": "1.0",
+    "atol": "0.05"
   },
   {
     "name": "ttnn.conv2d",
@@ -28945,9 +28560,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -29020,9 +28634,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -29095,9 +28708,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -29170,9 +28782,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -29245,9 +28856,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -29320,9 +28930,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -29395,9 +29004,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -29470,9 +29078,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -29545,9 +29152,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -29620,9 +29226,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.19
+    "pcc": "1.0",
+    "atol": "0.19"
   },
   {
     "name": "ttnn.conv2d",
@@ -29695,9 +29300,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -29770,9 +29374,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 7.643060975763265e+37
+    "pcc": "-0.0",
+    "atol": "7.643060975763265e+37"
   },
   {
     "name": "ttnn.conv2d",
@@ -29845,9 +29448,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -29920,9 +29522,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.04,
-    "atol": 33.0
+    "pcc": "0.04",
+    "atol": "33.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -29995,9 +29596,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -30070,9 +29670,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.17,
-    "atol": 6.280602280083728e+37
+    "pcc": "0.17",
+    "atol": "6.280602280083728e+37"
   },
   {
     "name": "ttnn.conv2d",
@@ -30145,9 +29744,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -30220,9 +29818,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.5
+    "pcc": "1.0",
+    "atol": "0.5"
   },
   {
     "name": "ttnn.conv2d",
@@ -30295,9 +29892,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -30370,9 +29966,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.84,
-    "atol": 3.55
+    "pcc": "0.84",
+    "atol": "3.55"
   },
   {
     "name": "ttnn.conv2d",
@@ -30445,9 +30040,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -30520,9 +30114,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.38,
-    "atol": 0.93
+    "pcc": "0.38",
+    "atol": "0.93"
   },
   {
     "name": "ttnn.conv2d",
@@ -30595,9 +30188,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -30670,9 +30262,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.18,
-    "atol": 3.66
+    "pcc": "0.18",
+    "atol": "3.66"
   },
   {
     "name": "ttnn.conv2d",
@@ -30745,9 +30336,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -30820,9 +30410,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.26,
-    "atol": 2.33
+    "pcc": "0.26",
+    "atol": "2.33"
   },
   {
     "name": "ttnn.conv2d",
@@ -30895,9 +30484,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -30970,9 +30558,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -31045,9 +30632,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -31120,9 +30706,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -31195,9 +30780,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -31270,9 +30854,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -31345,9 +30928,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -31420,9 +31002,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.19
+    "pcc": "1.0",
+    "atol": "0.19"
   },
   {
     "name": "ttnn.conv2d",
@@ -31495,9 +31076,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -31570,9 +31150,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -31645,9 +31224,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -31720,9 +31298,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.06
+    "pcc": "1.0",
+    "atol": "0.06"
   },
   {
     "name": "ttnn.conv2d",
@@ -31795,9 +31372,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -31870,9 +31446,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.03
+    "pcc": "1.0",
+    "atol": "0.03"
   },
   {
     "name": "ttnn.conv2d",
@@ -31945,9 +31520,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -32020,9 +31594,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.26
+    "pcc": "1.0",
+    "atol": "0.26"
   },
   {
     "name": "ttnn.conv2d",
@@ -32095,9 +31668,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -32170,9 +31742,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -32245,9 +31816,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -32320,9 +31890,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -32395,9 +31964,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -32470,9 +32038,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -32545,9 +32112,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -32620,9 +32186,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.16
+    "pcc": "1.0",
+    "atol": "0.16"
   },
   {
     "name": "ttnn.conv2d",
@@ -32695,9 +32260,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -32770,9 +32334,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -32845,9 +32408,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -32920,9 +32482,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.12
+    "pcc": "1.0",
+    "atol": "0.12"
   },
   {
     "name": "ttnn.conv2d",
@@ -32995,9 +32556,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -33070,9 +32630,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.09
+    "pcc": "1.0",
+    "atol": "0.09"
   },
   {
     "name": "ttnn.conv2d",
@@ -33145,9 +32704,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -33220,9 +32778,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.11
+    "pcc": "1.0",
+    "atol": "0.11"
   },
   {
     "name": "ttnn.conv2d",
@@ -33295,9 +32852,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -33370,9 +32926,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -33445,9 +33000,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -33520,9 +33074,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -33595,9 +33148,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -33670,9 +33222,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -33745,9 +33296,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -33820,9 +33370,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -33895,9 +33444,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -33970,9 +33518,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 8.340905673550347e+37
+    "pcc": "0.02",
+    "atol": "8.340905673550347e+37"
   },
   {
     "name": "ttnn.conv2d",
@@ -34045,9 +33592,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -34120,9 +33666,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 4.419683085984844e+37
+    "pcc": "0.01",
+    "atol": "4.419683085984844e+37"
   },
   {
     "name": "ttnn.conv2d",
@@ -34195,9 +33740,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -34270,9 +33814,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.36,
-    "atol": 3.27
+    "pcc": "0.36",
+    "atol": "3.27"
   },
   {
     "name": "ttnn.conv2d",
@@ -34345,9 +33888,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -34420,9 +33962,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.31,
-    "atol": 2.06
+    "pcc": "0.31",
+    "atol": "2.06"
   },
   {
     "name": "ttnn.conv2d",
@@ -34495,9 +34036,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -34570,9 +34110,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -34645,9 +34184,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -34720,9 +34258,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -34795,9 +34332,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -34870,9 +34406,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -34945,9 +34480,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -35020,9 +34554,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -35095,9 +34628,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -35170,9 +34702,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.35
+    "pcc": "1.0",
+    "atol": "0.35"
   },
   {
     "name": "ttnn.conv2d",
@@ -35245,9 +34776,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -35320,9 +34850,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -35395,9 +34924,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -35470,9 +34998,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -35545,9 +35072,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -35620,9 +35146,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -35695,9 +35220,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -35770,9 +35294,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -35845,9 +35368,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -35920,9 +35442,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -35995,9 +35516,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -36070,9 +35590,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.15,
-    "atol": 0.46
+    "pcc": "0.15",
+    "atol": "0.46"
   },
   {
     "name": "ttnn.conv2d",
@@ -36145,9 +35664,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -36220,9 +35738,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 7.1113697774493e+37
+    "pcc": "-0.01",
+    "atol": "7.1113697774493e+37"
   },
   {
     "name": "ttnn.conv2d",
@@ -36295,9 +35812,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -36370,9 +35886,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.08,
-    "atol": 13.62
+    "pcc": "0.08",
+    "atol": "13.62"
   },
   {
     "name": "ttnn.conv2d",
@@ -36445,9 +35960,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -36520,9 +36034,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.54,
-    "atol": 11.69
+    "pcc": "0.54",
+    "atol": "11.69"
   },
   {
     "name": "ttnn.conv2d",
@@ -36595,9 +36108,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -36670,9 +36182,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.39,
-    "atol": 4.16
+    "pcc": "0.39",
+    "atol": "4.16"
   },
   {
     "name": "ttnn.conv2d",
@@ -36745,9 +36256,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -36820,9 +36330,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -36895,9 +36404,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -36970,9 +36478,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.44,
-    "atol": 0.3
+    "pcc": "0.44",
+    "atol": "0.3"
   },
   {
     "name": "ttnn.conv2d",
@@ -37045,9 +36552,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -37120,9 +36626,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.05,
-    "atol": 0.39
+    "pcc": "0.05",
+    "atol": "0.39"
   },
   {
     "name": "ttnn.conv2d",
@@ -37195,9 +36700,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -37270,9 +36774,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.33,
-    "atol": 13.81
+    "pcc": "0.33",
+    "atol": "13.81"
   },
   {
     "name": "ttnn.conv2d",
@@ -37345,9 +36848,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -37420,9 +36922,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -37495,9 +36996,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -37570,9 +37070,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.43,
-    "atol": 22.5
+    "pcc": "0.43",
+    "atol": "22.5"
   },
   {
     "name": "ttnn.conv2d",
@@ -37645,9 +37144,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -37720,9 +37218,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -37795,9 +37292,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -37870,9 +37366,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.1,
-    "atol": 20.88
+    "pcc": "0.1",
+    "atol": "20.88"
   },
   {
     "name": "ttnn.conv2d",
@@ -37945,9 +37440,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -38020,9 +37514,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.07,
-    "atol": 0.9
+    "pcc": "0.07",
+    "atol": "0.9"
   },
   {
     "name": "ttnn.conv2d",
@@ -38095,9 +37588,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -38170,9 +37662,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -38245,84 +37736,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
-  },
-  {
-    "name": "ttnn.conv2d",
-    "input_shapes": [
-      "tensor<[1,1,784,512,bf16]>",
-      "tensor<[512,1,3,3,bf16]>",
-      "tensor<[1,1,784,512,bf16]>",
-      "!tt.device<#device>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 784 + d1 * 28 + d2, d3)",
-        "memory_config": [
-          25,
-          16,
-          "tile<32x32, bf16>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 3 + d1 * 3 + d2, d3)",
-        "memory_config": [
-          1536,
-          3,
-          "bf16",
-          "system_memory"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 784 + d1 * 28 + d2, d3)",
-        "memory_config": [
-          25,
-          16,
-          "tile<32x32, bf16>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "batch_size": "1 : i32",
-      "dilation_height": "2 : i32",
-      "dilation_width": "2 : i32",
-      "groups": "512 : i32",
-      "in_channels": "512 : i32",
-      "input_height": "28 : i32",
-      "input_width": "28 : i32",
-      "kernel_height": "3 : i32",
-      "kernel_width": "3 : i32",
-      "out_channels": "512 : i32",
-      "padding_height": "2 : i32",
-      "padding_width": "2 : i32",
-      "stride_height": "1 : i32",
-      "stride_width": "1 : i32"
-    },
-    "output_shapes": [
-      "tensor<[1,1,784,512,bf16]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 784 + d1 * 28 + d2, d3)",
-        "memory_config": [
-          25,
-          16,
-          "tile<32x32, bf16>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -38395,9 +37810,82 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.conv2d",
+    "input_shapes": [
+      "tensor<[1,1,784,512,bf16]>",
+      "tensor<[512,1,3,3,bf16]>",
+      "tensor<[1,1,784,512,bf16]>",
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 784 + d1 * 28 + d2, d3)",
+        "memory_config": [
+          25,
+          16,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 3 + d1 * 3 + d2, d3)",
+        "memory_config": [
+          1536,
+          3,
+          "bf16",
+          "system_memory"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 784 + d1 * 28 + d2, d3)",
+        "memory_config": [
+          25,
+          16,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "batch_size": "1 : i32",
+      "dilation_height": "2 : i32",
+      "dilation_width": "2 : i32",
+      "groups": "512 : i32",
+      "in_channels": "512 : i32",
+      "input_height": "28 : i32",
+      "input_width": "28 : i32",
+      "kernel_height": "3 : i32",
+      "kernel_width": "3 : i32",
+      "out_channels": "512 : i32",
+      "padding_height": "2 : i32",
+      "padding_width": "2 : i32",
+      "stride_height": "1 : i32",
+      "stride_width": "1 : i32"
+    },
+    "output_shapes": [
+      "tensor<[1,1,784,512,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 784 + d1 * 28 + d2, d3)",
+        "memory_config": [
+          25,
+          16,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -38470,9 +37958,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -38545,9 +38032,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -38620,9 +38106,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.11,
-    "atol": 0.02
+    "pcc": "0.11",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -38695,9 +38180,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -38770,9 +38254,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 1.0
+    "pcc": "1.0",
+    "atol": "1.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -38845,9 +38328,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -38920,9 +38402,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -38995,9 +38476,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -39070,9 +38550,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.05
+    "pcc": "1.0",
+    "atol": "0.05"
   },
   {
     "name": "ttnn.conv2d",
@@ -39145,9 +38624,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -39220,9 +38698,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.33
+    "pcc": "1.0",
+    "atol": "0.33"
   },
   {
     "name": "ttnn.conv2d",
@@ -39295,9 +38772,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -39370,9 +38846,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.78,
-    "atol": 0.7
+    "pcc": "0.78",
+    "atol": "0.7"
   },
   {
     "name": "ttnn.conv2d",
@@ -39445,9 +38920,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -39520,9 +38994,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -39595,9 +39068,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -39670,9 +39142,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -39745,9 +39216,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -39820,9 +39290,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -39895,9 +39364,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -39970,9 +39438,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -40045,9 +39512,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -40120,9 +39586,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.31
+    "pcc": "1.0",
+    "atol": "0.31"
   },
   {
     "name": "ttnn.conv2d",
@@ -40195,9 +39660,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -40270,9 +39734,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.25,
-    "atol": 9.5
+    "pcc": "0.25",
+    "atol": "9.5"
   },
   {
     "name": "ttnn.conv2d",
@@ -40345,9 +39808,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -40420,9 +39882,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.14,
-    "atol": 8.31
+    "pcc": "0.14",
+    "atol": "8.31"
   },
   {
     "name": "ttnn.conv2d",
@@ -40495,9 +39956,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -40570,9 +40030,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 1.1830129162485751e+38
+    "pcc": "0.01",
+    "atol": "1.1830129162485751e+38"
   },
   {
     "name": "ttnn.conv2d",
@@ -40645,9 +40104,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -40720,9 +40178,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -40795,9 +40252,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -40870,9 +40326,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -40945,9 +40400,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -41020,9 +40474,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -41095,9 +40548,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -41170,9 +40622,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.0,
-    "atol": 5.981525981032121e+37
+    "pcc": "0.0",
+    "atol": "5.981525981032121e+37"
   },
   {
     "name": "ttnn.conv2d",
@@ -41245,9 +40696,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -41320,9 +40770,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.05,
-    "atol": 6.214140880294482e+37
+    "pcc": "0.05",
+    "atol": "6.214140880294482e+37"
   },
   {
     "name": "ttnn.conv2d",
@@ -41395,9 +40844,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -41470,9 +40918,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -41545,9 +40992,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -41620,9 +41066,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -41695,9 +41140,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -41770,9 +41214,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -41845,9 +41288,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -41920,9 +41362,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -41995,9 +41436,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -42070,9 +41510,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.17,
-    "atol": 1.38
+    "pcc": "0.17",
+    "atol": "1.38"
   },
   {
     "name": "ttnn.conv2d",
@@ -42145,9 +41584,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -42220,9 +41658,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.05,
-    "atol": 4.652297985247206e+37
+    "pcc": "0.05",
+    "atol": "4.652297985247206e+37"
   },
   {
     "name": "ttnn.conv2d",
@@ -42295,9 +41732,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -42370,9 +41806,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.5,
-    "atol": 7.97
+    "pcc": "0.5",
+    "atol": "7.97"
   },
   {
     "name": "ttnn.conv2d",
@@ -42445,9 +41880,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -42520,9 +41954,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.78,
-    "atol": 22.75
+    "pcc": "0.78",
+    "atol": "22.75"
   },
   {
     "name": "ttnn.conv2d",
@@ -42595,9 +42028,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -42670,9 +42102,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.08,
-    "atol": 29.75
+    "pcc": "0.08",
+    "atol": "29.75"
   },
   {
     "name": "ttnn.conv2d",
@@ -42745,9 +42176,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -42820,9 +42250,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.16
+    "pcc": "1.0",
+    "atol": "0.16"
   },
   {
     "name": "ttnn.conv2d",
@@ -42895,9 +42324,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -42970,9 +42398,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.22
+    "pcc": "1.0",
+    "atol": "0.22"
   },
   {
     "name": "ttnn.conv2d",
@@ -43045,9 +42472,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -43120,9 +42546,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 1.62
+    "pcc": "1.0",
+    "atol": "1.62"
   },
   {
     "name": "ttnn.conv2d",
@@ -43195,9 +42620,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -43270,9 +42694,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.11
+    "pcc": "1.0",
+    "atol": "0.11"
   },
   {
     "name": "ttnn.conv2d",
@@ -43345,9 +42768,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -43420,9 +42842,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -43495,9 +42916,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -43570,9 +42990,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -43645,9 +43064,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -43720,9 +43138,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.03,
-    "atol": 9.570441569651394e+37
+    "pcc": "0.03",
+    "atol": "9.570441569651394e+37"
   },
   {
     "name": "ttnn.conv2d",
@@ -43795,9 +43212,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -43870,9 +43286,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.89,
-    "atol": 0.24
+    "pcc": "0.89",
+    "atol": "0.24"
   },
   {
     "name": "ttnn.conv2d",
@@ -43945,9 +43360,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -44020,9 +43434,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.43,
-    "atol": 11.75
+    "pcc": "0.43",
+    "atol": "11.75"
   },
   {
     "name": "ttnn.conv2d",
@@ -44095,9 +43508,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -44170,9 +43582,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.12
+    "pcc": "1.0",
+    "atol": "0.12"
   },
   {
     "name": "ttnn.conv2d",
@@ -44245,9 +43656,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -44320,9 +43730,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.31
+    "pcc": "1.0",
+    "atol": "0.31"
   },
   {
     "name": "ttnn.conv2d",
@@ -44395,9 +43804,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -44470,9 +43878,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.15,
-    "atol": 122.5
+    "pcc": "0.15",
+    "atol": "122.5"
   },
   {
     "name": "ttnn.conv2d",
@@ -44545,9 +43952,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -44620,9 +44026,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.38
+    "pcc": "1.0",
+    "atol": "0.38"
   },
   {
     "name": "ttnn.conv2d",
@@ -44695,84 +44100,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
-  },
-  {
-    "name": "ttnn.conv2d",
-    "input_shapes": [
-      "tensor<[1,1,16384,64,bf16]>",
-      "tensor<[64,64,3,3,bf16]>",
-      "tensor<[1,1,16384,64,bf16]>",
-      "!tt.device<#device>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 16384 + d1 * 128 + d2, d3)",
-        "memory_config": [
-          512,
-          2,
-          "tile<32x32, bf16>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 192 + d1 * 3 + d2, d3)",
-        "memory_config": [
-          12288,
-          3,
-          "bf16",
-          "system_memory"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 16384 + d1 * 128 + d2, d3)",
-        "memory_config": [
-          512,
-          2,
-          "tile<32x32, bf16>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "batch_size": "1 : i32",
-      "dilation_height": "1 : i32",
-      "dilation_width": "1 : i32",
-      "groups": "1 : i32",
-      "in_channels": "64 : i32",
-      "input_height": "128 : i32",
-      "input_width": "128 : i32",
-      "kernel_height": "3 : i32",
-      "kernel_width": "3 : i32",
-      "out_channels": "64 : i32",
-      "padding_height": "1 : i32",
-      "padding_width": "1 : i32",
-      "stride_height": "1 : i32",
-      "stride_width": "1 : i32"
-    },
-    "output_shapes": [
-      "tensor<[1,1,16384,64,bf16]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 16384 + d1 * 128 + d2, d3)",
-        "memory_config": [
-          512,
-          2,
-          "tile<32x32, bf16>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -44845,9 +44174,82 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "0.02"
+  },
+  {
+    "name": "ttnn.conv2d",
+    "input_shapes": [
+      "tensor<[1,1,16384,64,bf16]>",
+      "tensor<[64,64,3,3,bf16]>",
+      "tensor<[1,1,16384,64,bf16]>",
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 16384 + d1 * 128 + d2, d3)",
+        "memory_config": [
+          512,
+          2,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 192 + d1 * 3 + d2, d3)",
+        "memory_config": [
+          12288,
+          3,
+          "bf16",
+          "system_memory"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 16384 + d1 * 128 + d2, d3)",
+        "memory_config": [
+          512,
+          2,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "batch_size": "1 : i32",
+      "dilation_height": "1 : i32",
+      "dilation_width": "1 : i32",
+      "groups": "1 : i32",
+      "in_channels": "64 : i32",
+      "input_height": "128 : i32",
+      "input_width": "128 : i32",
+      "kernel_height": "3 : i32",
+      "kernel_width": "3 : i32",
+      "out_channels": "64 : i32",
+      "padding_height": "1 : i32",
+      "padding_width": "1 : i32",
+      "stride_height": "1 : i32",
+      "stride_width": "1 : i32"
+    },
+    "output_shapes": [
+      "tensor<[1,1,16384,64,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 16384 + d1 * 128 + d2, d3)",
+        "memory_config": [
+          512,
+          2,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -44920,9 +44322,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -44995,9 +44396,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -45070,9 +44470,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.06
+    "pcc": "1.0",
+    "atol": "0.06"
   },
   {
     "name": "ttnn.conv2d",
@@ -45145,9 +44544,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -45220,9 +44618,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -45295,9 +44692,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -45370,9 +44766,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -45445,9 +44840,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -45520,9 +44914,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.03
+    "pcc": "1.0",
+    "atol": "0.03"
   },
   {
     "name": "ttnn.conv2d",
@@ -45595,9 +44988,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -45670,9 +45062,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -45745,9 +45136,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -45820,9 +45210,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -45895,9 +45284,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -45970,9 +45358,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -46045,9 +45432,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -46120,9 +45506,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.5
+    "pcc": "1.0",
+    "atol": "0.5"
   },
   {
     "name": "ttnn.conv2d",
@@ -46195,9 +45580,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -46270,9 +45654,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.12
+    "pcc": "1.0",
+    "atol": "0.12"
   },
   {
     "name": "ttnn.conv2d",
@@ -46345,9 +45728,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -46420,9 +45802,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.06
+    "pcc": "1.0",
+    "atol": "0.06"
   },
   {
     "name": "ttnn.conv2d",
@@ -46495,9 +45876,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -46570,9 +45950,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -46645,9 +46024,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -46720,9 +46098,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.0,
-    "atol": 4.918143584404189e+37
+    "pcc": "-0.0",
+    "atol": "4.918143584404189e+37"
   },
   {
     "name": "ttnn.conv2d",
@@ -46795,9 +46172,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -46870,9 +46246,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -46945,9 +46320,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -47020,9 +46394,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -47095,9 +46468,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -47170,9 +46542,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.33,
-    "atol": 21.88
+    "pcc": "0.33",
+    "atol": "21.88"
   },
   {
     "name": "ttnn.conv2d",
@@ -47245,9 +46616,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -47320,9 +46690,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.57,
-    "atol": 2.28
+    "pcc": "0.57",
+    "atol": "2.28"
   },
   {
     "name": "ttnn.conv2d",
@@ -47395,9 +46764,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -47470,9 +46838,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.03,
-    "atol": 1.2494743160378207e+38
+    "pcc": "-0.03",
+    "atol": "1.2494743160378207e+38"
   },
   {
     "name": "ttnn.conv2d",
@@ -47545,9 +46912,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -47620,9 +46986,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.03,
-    "atol": 5.4469361728556725e+29
+    "pcc": "0.03",
+    "atol": "5.4469361728556725e+29"
   },
   {
     "name": "ttnn.conv2d",
@@ -47695,9 +47060,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -47770,9 +47134,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -47845,9 +47208,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -47920,9 +47282,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.56,
-    "atol": 85.0
+    "pcc": "0.56",
+    "atol": "85.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -47995,9 +47356,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -48070,9 +47430,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.58,
-    "atol": 3.89
+    "pcc": "0.58",
+    "atol": "3.89"
   },
   {
     "name": "ttnn.conv2d",
@@ -48145,9 +47504,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -48220,9 +47578,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.64,
-    "atol": 8.25
+    "pcc": "0.64",
+    "atol": "8.25"
   },
   {
     "name": "ttnn.conv2d",
@@ -48295,9 +47652,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -48370,9 +47726,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -48445,9 +47800,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -48520,9 +47874,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.12
+    "pcc": "1.0",
+    "atol": "0.12"
   },
   {
     "name": "ttnn.conv2d",
@@ -48595,9 +47948,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -48670,9 +48022,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.17,
-    "atol": 32.75
+    "pcc": "0.17",
+    "atol": "32.75"
   },
   {
     "name": "ttnn.conv2d",
@@ -48745,9 +48096,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -48820,9 +48170,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.68,
-    "atol": 7.57
+    "pcc": "0.68",
+    "atol": "7.57"
   },
   {
     "name": "ttnn.conv2d",
@@ -48895,9 +48244,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -48970,9 +48318,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.08,
-    "atol": 1.82
+    "pcc": "0.08",
+    "atol": "1.82"
   },
   {
     "name": "ttnn.conv2d",
@@ -49045,9 +48392,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -49120,9 +48466,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -49195,9 +48540,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -49270,9 +48614,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -49345,9 +48688,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -49420,9 +48762,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -49495,9 +48836,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -49570,9 +48910,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.06
+    "pcc": "1.0",
+    "atol": "0.06"
   },
   {
     "name": "ttnn.conv2d",
@@ -49645,9 +48984,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -49720,9 +49058,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.31
+    "pcc": "1.0",
+    "atol": "0.31"
   },
   {
     "name": "ttnn.conv2d",
@@ -49795,9 +49132,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -49870,9 +49206,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -49945,9 +49280,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -50020,9 +49354,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -50095,9 +49428,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -50170,9 +49502,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.28,
-    "atol": 1.45
+    "pcc": "0.28",
+    "atol": "1.45"
   },
   {
     "name": "ttnn.conv2d",
@@ -50245,9 +49576,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -50320,9 +49650,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.conv2d",
@@ -50395,9 +49724,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -50470,9 +49798,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -50545,9 +49872,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -50620,9 +49946,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -50695,9 +50020,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -50770,9 +50094,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.03
+    "pcc": "1.0",
+    "atol": "0.03"
   },
   {
     "name": "ttnn.conv2d",
@@ -50845,9 +50168,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -50920,9 +50242,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.08
+    "pcc": "1.0",
+    "atol": "0.08"
   },
   {
     "name": "ttnn.conv2d",
@@ -50995,9 +50316,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -51070,9 +50390,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 1.1497822163539522e+38
+    "pcc": "0.02",
+    "atol": "1.1497822163539522e+38"
   },
   {
     "name": "ttnn.conv2d",
@@ -51145,9 +50464,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -51220,9 +50538,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.19
+    "pcc": "1.0",
+    "atol": "0.19"
   },
   {
     "name": "ttnn.conv2d",
@@ -51295,9 +50612,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -51370,9 +50686,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -51445,9 +50760,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -51520,9 +50834,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.51,
-    "atol": 1.58
+    "pcc": "0.51",
+    "atol": "1.58"
   },
   {
     "name": "ttnn.conv2d",
@@ -51595,9 +50908,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -51670,9 +50982,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.48,
-    "atol": 1.18
+    "pcc": "0.48",
+    "atol": "1.18"
   },
   {
     "name": "ttnn.conv2d",
@@ -51745,9 +51056,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -51820,9 +51130,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.34,
-    "atol": 5.31
+    "pcc": "0.34",
+    "atol": "5.31"
   },
   {
     "name": "ttnn.conv2d",
@@ -51895,9 +51204,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -51970,9 +51278,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.01,
-    "atol": 1.136489936396103e+38
+    "pcc": "0.01",
+    "atol": "1.136489936396103e+38"
   },
   {
     "name": "ttnn.conv2d",
@@ -52045,9 +51352,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -52120,9 +51426,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.02
+    "pcc": "1.0",
+    "atol": "0.02"
   },
   {
     "name": "ttnn.conv2d",
@@ -52195,9 +51500,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -52270,9 +51574,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.05
+    "pcc": "1.0",
+    "atol": "0.05"
   },
   {
     "name": "ttnn.conv2d",
@@ -52345,9 +51648,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -52420,9 +51722,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.01
+    "pcc": "1.0",
+    "atol": "0.01"
   },
   {
     "name": "ttnn.conv2d",
@@ -52495,9 +51796,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -52570,9 +51870,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.08
+    "pcc": "1.0",
+    "atol": "0.08"
   },
   {
     "name": "ttnn.conv2d",
@@ -52645,9 +51944,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -52720,9 +52018,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.12,
-    "atol": 2.28
+    "pcc": "0.12",
+    "atol": "2.28"
   },
   {
     "name": "ttnn.conv2d",
@@ -52795,9 +52092,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -52870,9 +52166,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.28
+    "pcc": "1.0",
+    "atol": "0.28"
   },
   {
     "name": "ttnn.conv2d",
@@ -52945,9 +52240,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -53020,9 +52314,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.46
+    "pcc": "1.0",
+    "atol": "0.46"
   },
   {
     "name": "ttnn.conv2d",
@@ -53095,9 +52388,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -53170,9 +52462,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.34
+    "pcc": "1.0",
+    "atol": "0.34"
   },
   {
     "name": "ttnn.conv2d",
@@ -53245,9 +52536,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -53320,9 +52610,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -53395,9 +52684,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -53470,9 +52758,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.12,
-    "atol": 5.88
+    "pcc": "0.12",
+    "atol": "5.88"
   },
   {
     "name": "ttnn.conv2d",
@@ -53545,9 +52832,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -53620,9 +52906,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -53695,9 +52980,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -53770,9 +53054,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.01,
-    "atol": 1.9406728738459768e+38
+    "pcc": "-0.01",
+    "atol": "1.9406728738459768e+38"
   },
   {
     "name": "ttnn.conv2d",
@@ -53845,9 +53128,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -53920,9 +53202,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.72,
-    "atol": 11.5
+    "pcc": "0.72",
+    "atol": "11.5"
   },
   {
     "name": "ttnn.conv2d",
@@ -53995,9 +53276,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -54070,9 +53350,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.02,
-    "atol": 22.25
+    "pcc": "0.02",
+    "atol": "22.25"
   },
   {
     "name": "ttnn.conv2d",
@@ -54145,9 +53424,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -54220,9 +53498,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.28,
-    "atol": 26.75
+    "pcc": "0.28",
+    "atol": "26.75"
   },
   {
     "name": "ttnn.conv2d",
@@ -54295,9 +53572,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.conv2d",
@@ -54370,9 +53646,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 0.15,
-    "atol": 0.85
+    "pcc": "0.15",
+    "atol": "0.85"
   },
   {
     "name": "ttnn.conv2d",
@@ -54445,8 +53720,7 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   }
 ]

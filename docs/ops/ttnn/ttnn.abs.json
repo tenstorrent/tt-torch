@@ -45,9 +45,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": -0.27,
-    "atol": NaN
+    "pcc": "-0.27",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.abs",
@@ -95,8 +94,7 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   }
 ]
