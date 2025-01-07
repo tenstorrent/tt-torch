@@ -145,6 +145,19 @@ def test_div(input_range, input_shapes, input_type):
     )
 
 
+def test_div_zero():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x, y):
+            return x / y
+
+    input1 = torch.tensor([1, -2, 3, -4, 5, 6, -7, 18], dtype=torch.float32)
+    input2 = torch.tensor([1, 0, 3, 0, -9, 10, -7, 12], dtype=torch.float32)
+    verify_module(Basic(), inputs=[input1, input2])
+
+
 def test_exp():
     class Basic(nn.Module):
         def __init__(self):
