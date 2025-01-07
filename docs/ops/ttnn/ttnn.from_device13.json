@@ -1,0 +1,10190 @@
+[
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[25,3072,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          96,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[25,3072,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          25,
+          3072,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[25,3072,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          96,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[25,3072,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          25,
+          3072,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[25,768,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          24,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[25,768,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          25,
+          768,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[25,768,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          24,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[25,768,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          25,
+          768,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[272,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          9,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[272,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          272,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[272,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          9,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[272,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          272,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[27,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[27,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          27,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.5",
+    "atol": "25.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[27,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[27,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          27,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[27,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[27,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          27,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[27,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[27,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          27,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[27,1,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[27,1,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          27,
+          1,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[27,1,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[27,1,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          27,
+          1,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[28,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[28,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          28,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[2,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[2,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          2,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[2,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[2,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          2,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[2,1,7,7,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 7 + d1 * 7 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[2,1,7,7,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 7 + d1 * 7 + d2, d3)",
+        "memory_config": [
+          14,
+          7,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "1.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[2,1,7,7,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 7 + d1 * 7 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[2,1,7,7,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 7 + d1 * 7 + d2, d3)",
+        "memory_config": [
+          14,
+          7,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[2,1,7,7,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 7 + d1 * 7 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[2,1,7,7,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 7 + d1 * 7 + d2, d3)",
+        "memory_config": [
+          14,
+          7,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[2,1,7,7,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 7 + d1 * 7 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[2,1,7,7,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 7 + d1 * 7 + d2, d3)",
+        "memory_config": [
+          14,
+          7,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[2,7,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[2,7,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          7,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.2",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[2,7,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[2,7,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          7,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[2,7,512,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 7 + d1, d2)",
+        "memory_config": [
+          1,
+          16,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[2,7,512,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 7 + d1, d2)",
+        "memory_config": [
+          14,
+          512,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[2,7,512,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 7 + d1, d2)",
+        "memory_config": [
+          1,
+          16,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[2,7,512,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 7 + d1, d2)",
+        "memory_config": [
+          14,
+          512,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[2,8,7,64,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 56 + d1 * 7 + d2, d3)",
+        "memory_config": [
+          4,
+          2,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[2,8,7,64,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 56 + d1 * 7 + d2, d3)",
+        "memory_config": [
+          112,
+          64,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[2,8,7,64,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 56 + d1 * 7 + d2, d3)",
+        "memory_config": [
+          4,
+          2,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[2,8,7,64,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 56 + d1 * 7 + d2, d3)",
+        "memory_config": [
+          112,
+          64,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.01",
+    "atol": "7.3"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[2,8,7,64,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 56 + d1 * 7 + d2, d3)",
+        "memory_config": [
+          4,
+          2,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[2,8,7,64,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 56 + d1 * 7 + d2, d3)",
+        "memory_config": [
+          112,
+          64,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[30000,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          938,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[30000,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          30000,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[30000,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          938,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[30000,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          30000,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[300,128,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          10,
+          4,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[300,128,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          300,
+          128,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[300,128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          10,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[300,128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          300,
+          128,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[300,2048,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          10,
+          64,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[300,2048,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          300,
+          2048,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.06"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[300,2048,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          10,
+          64,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[300,2048,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          300,
+          2048,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[300,320,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          10,
+          10,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[300,320,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          300,
+          320,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[300,320,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          10,
+          10,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[300,320,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          300,
+          320,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[300,512,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          10,
+          16,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[300,512,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          300,
+          512,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.01"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[300,512,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          10,
+          16,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[300,512,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          300,
+          512,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[300,512,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          10,
+          16,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[300,512,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          300,
+          512,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[300,64,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          10,
+          2,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[300,64,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          300,
+          64,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[300,64,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          10,
+          2,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[300,64,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          300,
+          64,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[3072,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          96,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[3072,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          3072,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[3072,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          96,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[3072,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          3072,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[3072,768,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          96,
+          24,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[3072,768,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          3072,
+          768,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[3072,768,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          96,
+          24,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[3072,768,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          3072,
+          768,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[30,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[30,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          30,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.42",
+    "atol": "29.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[30,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[30,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          30,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[30,1,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[30,1,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          30,
+          1,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[30,1,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[30,1,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          30,
+          1,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[3129,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          98,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[3129,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          3129,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[3129,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          98,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[3129,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          3129,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[320,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          10,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[320,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          320,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.44",
+    "atol": "319.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[320,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          10,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[320,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          320,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[320,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          10,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[320,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          320,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[320,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          10,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[320,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          320,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[320,1280,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          10,
+          40,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[320,1280,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          320,
+          1280,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "-0.0",
+    "atol": "0.29"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[320,1280,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          10,
+          40,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[320,1280,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          320,
+          1280,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[320,1,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          10,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[320,1,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          320,
+          1,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[320,1,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          10,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[320,1,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          320,
+          1,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[320,2560,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          10,
+          80,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[320,2560,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          320,
+          2560,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "-0.0",
+    "atol": "0.89"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[320,2560,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          10,
+          80,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[320,2560,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          320,
+          2560,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[320,320,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          10,
+          10,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[320,320,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          320,
+          320,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.0",
+    "atol": "0.3"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[320,320,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          10,
+          10,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[320,320,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          320,
+          320,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[32,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[32,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          32,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[32,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[32,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          32,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[32,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[32,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          32,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[32,128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[32,128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          32,
+          128,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.01",
+    "atol": "0.58"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[32,128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[32,128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          32,
+          128,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[32,1536,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          48,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[32,1536,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          32,
+          1536,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[32,1536,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          48,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[32,1536,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          32,
+          1536,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[32,32,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[32,32,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          32,
+          32,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.05",
+    "atol": "0.79"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[32,32,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[32,32,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          32,
+          32,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[32,4608,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          144,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[32,4608,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          32,
+          4608,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[32,4608,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          144,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[32,4608,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          32,
+          4608,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[32,6144,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          192,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[32,6144,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          32,
+          6144,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[32,6144,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          192,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[32,6144,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          32,
+          6144,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[32,6144,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          192,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[32,6144,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          32,
+          6144,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[334,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          11,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[334,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          334,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[34,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[34,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          34,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[384,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          12,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[384,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          384,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[3,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[3,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          3,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[3,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[3,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          3,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[3,12,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[3,12,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          3,
+          12,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.06",
+    "atol": "0.86"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[3,12,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[3,12,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          3,
+          12,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          128,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          4096,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          128,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          4096,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,1024,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          128,
+          32,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,1024,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4096,
+          1024,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "-0.0",
+    "atol": "0.21"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,1024,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          128,
+          32,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,1024,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4096,
+          1024,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,1280,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          128,
+          40,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,1280,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4096,
+          1280,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,1280,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          128,
+          40,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,1280,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4096,
+          1280,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          128,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4096,
+          128,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "-0.0",
+    "atol": "0.71"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          128,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4096,
+          128,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,16384,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          128,
+          512,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,16384,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4096,
+          16384,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "-0.0",
+    "atol": "1.35"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,16384,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          128,
+          512,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,16384,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4096,
+          16384,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,2560,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          128,
+          80,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,2560,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4096,
+          2560,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.02"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,2560,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          128,
+          80,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,2560,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4096,
+          2560,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,256,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          128,
+          8,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,256,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4096,
+          256,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.03"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,256,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          128,
+          8,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,256,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4096,
+          256,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,320,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          128,
+          10,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,320,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4096,
+          320,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,320,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          128,
+          10,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,320,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4096,
+          320,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,4096,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          128,
+          128,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,4096,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4096,
+          4096,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.0",
+    "atol": "0.95"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,4096,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          128,
+          128,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,4096,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4096,
+          4096,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,64,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          128,
+          2,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,64,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4096,
+          64,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.02"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,64,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          128,
+          2,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,64,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4096,
+          64,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,64,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          128,
+          2,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,64,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4096,
+          64,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4096,64,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          128,
+          2,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4096,64,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4096,
+          64,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[40,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[40,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          40,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[40,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[40,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          40,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4608,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          144,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4608,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          4608,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4608,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          144,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4608,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          4608,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[462,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          15,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[462,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          462,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[46,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[46,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          46,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4800,128,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          150,
+          4,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4800,128,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4800,
+          128,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.01"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4800,128,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          150,
+          4,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4800,128,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4800,
+          128,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4800,128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          150,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4800,128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4800,
+          128,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4800,128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          150,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4800,128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4800,
+          128,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4800,512,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          150,
+          16,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4800,512,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4800,
+          512,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.03"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4800,512,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          150,
+          16,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4800,512,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4800,
+          512,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[480,1,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          15,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[480,1,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          480,
+          1,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[480,1,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          15,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[480,1,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          480,
+          1,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          4,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[4,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[4,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          4,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[50,3072,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          96,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[50,3072,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          50,
+          3072,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[50,3072,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          96,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[50,3072,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          50,
+          3072,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[50,3072,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          96,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[50,3072,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          50,
+          3072,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[50,768,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          24,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[50,768,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          50,
+          768,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[50,768,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          24,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[50,768,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          50,
+          768,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[51200,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1600,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[51200,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          51200,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[51200,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1600,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[51200,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          51200,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[5120,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          160,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[5120,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          5120,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[5120,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          160,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[5120,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          5120,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[5120,1280,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          160,
+          40,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[5120,1280,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          5120,
+          1280,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "-0.0",
+    "atol": "1.02"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[5120,1280,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          160,
+          40,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[5120,1280,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          5120,
+          1280,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[512,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          16,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[512,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          512,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[512,1000,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          16,
+          32,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[512,1000,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          512,
+          1000,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "-0.0",
+    "atol": "0.09"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[512,1000,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          16,
+          32,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[512,1000,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          512,
+          1000,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[512,2048,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          16,
+          64,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[512,2048,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          512,
+          2048,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.0",
+    "atol": "0.59"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[512,2048,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          16,
+          64,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[512,2048,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          512,
+          2048,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[512,256,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          16,
+          8,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[512,256,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          512,
+          256,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.0",
+    "atol": "0.09"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[512,256,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          16,
+          8,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[512,256,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          512,
+          256,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[512,512,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          16,
+          16,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[512,512,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          512,
+          512,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.0",
+    "atol": "0.41"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[512,512,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          16,
+          16,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[512,512,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          512,
+          512,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[576,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          18,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[576,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          576,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[58,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[58,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          58,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[5,1024,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          32,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[5,1024,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          5,
+          1024,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[5,1024,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          32,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[5,1024,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          5,
+          1024,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[5,4096,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          128,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[5,4096,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          5,
+          4096,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[5,4096,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          128,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[5,4096,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          5,
+          4096,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[5,51200,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1600,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[5,51200,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          5,
+          51200,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.03"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[5,51200,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1600,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[5,51200,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          5,
+          51200,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[60,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[60,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          60,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.43",
+    "atol": "59.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[60,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[60,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          60,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[60,1,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[60,1,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          60,
+          1,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[60,1,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          1,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[60,1,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          60,
+          1,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[6144,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          192,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[6144,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          6144,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[6144,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          192,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[6144,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          6144,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[6144,1536,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          192,
+          48,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[6144,1536,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          6144,
+          1536,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "-0.0",
+    "atol": "1.1"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[6144,1536,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          192,
+          48,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[6144,1536,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          6144,
+          1536,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[640,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          20,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[640,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          640,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[640,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          20,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[640,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          640,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[640,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          20,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[640,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          640,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[640,5120,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          20,
+          160,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[640,5120,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          640,
+          5120,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "-0.0",
+    "atol": "0.57"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[640,5120,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          20,
+          160,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[640,5120,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          640,
+          5120,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[640,640,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          20,
+          20,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[640,640,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          640,
+          640,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.0",
+    "atol": "0.39"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[640,640,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          20,
+          20,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[640,640,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          640,
+          640,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[64,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[64,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          64,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[64,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[64,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          64,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[64,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          2,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[64,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          64,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[64,10240,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          320,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[64,10240,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          64,
+          10240,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.01"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[64,10240,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          320,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[64,10240,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          64,
+          10240,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[64,1280,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          40,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[64,1280,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          64,
+          1280,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[64,1280,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          40,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[64,1280,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          64,
+          1280,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[64,128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[64,128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          64,
+          128,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "-0.01",
+    "atol": "0.25"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[64,128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[64,128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          64,
+          128,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[64,12,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[64,12,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          64,
+          12,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.09",
+    "atol": "0.24"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[64,12,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[64,12,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          64,
+          12,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[64,256,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          8,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[64,256,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          64,
+          256,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.0",
+    "atol": "0.52"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[64,256,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          8,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[64,256,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          64,
+          256,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[64,5120,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          160,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[64,5120,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          64,
+          5120,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[64,5120,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          160,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[64,5120,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          64,
+          5120,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[64,64,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          2,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[64,64,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          64,
+          64,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.03",
+    "atol": "0.55"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[64,64,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          2,
+          2,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[64,64,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          64,
+          64,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[68,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          3,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[68,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          68,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[6,1024,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          32,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[6,1024,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          6,
+          1024,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[6,1024,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          32,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[6,1024,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          6,
+          1024,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[6,4096,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          128,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[6,4096,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          6,
+          4096,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[6,4096,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          128,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[6,4096,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          6,
+          4096,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[6,4096,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          128,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[6,4096,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          6,
+          4096,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[6,4096,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          128,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[6,4096,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          6,
+          4096,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[6,6,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[6,6,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          6,
+          6,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[6,6,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[6,6,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          6,
+          6,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          24,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          768,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          24,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          768,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,1000,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          32,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,1000,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          1000,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.0",
+    "atol": "0.26"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,1000,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          32,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,1000,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          1000,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,1280,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          40,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,1280,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          1280,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.0",
+    "atol": "0.61"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,1280,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          40,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,1280,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          1280,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          128,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.0",
+    "atol": "0.3"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          128,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,1536,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          48,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,1536,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          1536,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.0",
+    "atol": "0.7"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,1536,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          48,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,1536,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          1536,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,192,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          6,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,192,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          192,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.0",
+    "atol": "0.68"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,192,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          6,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,192,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          192,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          1,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "-0.04",
+    "atol": "inf"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          1,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,2304,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          72,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,2304,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          2304,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,2304,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          72,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,2304,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          2304,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,250002,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          7813,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,250002,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          250002,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,250002,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          7813,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,250002,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          250002,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,256,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          8,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,256,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          256,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "-0.0",
+    "atol": "1.49"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,256,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          8,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,256,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          256,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,2,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,2,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          2,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "-0.02",
+    "atol": "inf"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,2,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,2,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          2,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,3072,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          96,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,3072,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          3072,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,3072,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          96,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,3072,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          3072,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,3,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,3,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          3,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.05",
+    "atol": "inf"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,3,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,3,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          3,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,512,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          16,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,512,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          512,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "-0.0",
+    "atol": "0.07"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,512,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          16,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,512,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          512,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,768,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          24,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,768,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          768,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[768,768,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          24,
+          24,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[768,768,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          768,
+          768,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[784,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          25,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[784,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          784,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[784,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          25,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[784,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          784,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[784,128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          25,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[784,128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          784,
+          128,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "0.0",
+    "atol": "0.07"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[784,128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          25,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[784,128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          784,
+          128,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[78,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          3,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[78,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          78,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[7,2304,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          72,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[7,2304,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          7,
+          2304,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[7,2304,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          72,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[7,2304,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          7,
+          2304,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[7,3072,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          96,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[7,3072,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          7,
+          3072,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[7,3072,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          96,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[7,3072,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          7,
+          3072,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[7,3072,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          96,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[7,3072,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          7,
+          3072,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[7,768,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          24,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[7,768,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          7,
+          768,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[7,768,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          24,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[7,768,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          7,
+          768,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[7,768,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          24,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[7,768,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          7,
+          768,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[7,7,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[7,7,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          7,
+          7,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[7,7,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[7,7,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          7,
+          7,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[80,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          3,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[80,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          80,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[80,i32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          3,
+          "tile<32x32, u32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[80,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          80,
+          "i32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[8192,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          256,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[8192,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          8192,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[8192,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          256,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[8192,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          8192,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[8192,2048,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          256,
+          64,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[8192,2048,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          8192,
+          2048,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "-0.0",
+    "atol": "1.7"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[8192,2048,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          256,
+          64,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[8192,2048,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          8192,
+          2048,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[920,1,256,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          29,
+          8,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[920,1,256,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          920,
+          256,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[920,1,256,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          29,
+          8,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[920,1,256,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          920,
+          256,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[920,2048,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          29,
+          64,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[920,2048,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          920,
+          2048,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.03"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[920,2048,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          29,
+          64,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[920,2048,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          920,
+          2048,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[920,2048,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          29,
+          64,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[920,2048,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          920,
+          2048,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[920,2048,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          29,
+          64,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[920,2048,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          920,
+          2048,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[920,256,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          29,
+          8,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[920,256,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          920,
+          256,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[920,256,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          29,
+          8,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[920,256,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          920,
+          256,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9216,128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          288,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9216,128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9216,
+          128,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "-0.0",
+    "atol": "0.02"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9216,128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          288,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9216,128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9216,
+          128,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[92,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          3,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[92,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          92,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[92,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          3,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[92,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          92,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[960,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          30,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[960,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          960,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[96,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          3,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[96,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          96,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[98,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[98,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          98,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,1024,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          32,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,1024,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          1024,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,1024,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          32,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,1024,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          1024,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,1024,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          32,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,1024,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          1024,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,128,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          4,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,128,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          128,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          128,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,128,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          4,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,128,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          128,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,16384,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          512,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,16384,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          16384,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.02"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,16384,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          512,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,16384,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          16384,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,16384,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          512,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,16384,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          16384,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,16384,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          512,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,16384,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          16384,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,2048,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          64,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,2048,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          2048,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,2048,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          64,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,2048,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          2048,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,30000,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          938,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,30000,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          30000,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.06"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,30000,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          938,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,30000,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          30000,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,3072,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          96,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,3072,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          3072,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,3072,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          96,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,3072,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          3072,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,3072,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          96,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,3072,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          3072,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,4096,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          128,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,4096,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          4096,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,4096,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          128,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,4096,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          4096,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,4096,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          128,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,4096,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          4096,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,768,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          24,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,768,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          768,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.01"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,768,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          24,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,768,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          768,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,768,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          24,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,768,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          768,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,8192,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          256,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,8192,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          8192,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,8192,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          256,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,8192,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          8192,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "1.0",
+    "atol": "0.0"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[9,8192,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          256,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[9,8192,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          9,
+          8192,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[1,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[1,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.from_device",
+    "input_shapes": [
+      "tensor<[1,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {},
+    "output_shapes": [
+      "tensor<[1,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0)",
+        "mapping_to": "(0, d0)",
+        "memory_config": [
+          1,
+          1,
+          "bf16",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  }
+]

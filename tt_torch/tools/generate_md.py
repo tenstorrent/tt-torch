@@ -236,57 +236,114 @@ class AllOps:
                     file.write(f"{sub_dict}\n")
 
     def create_md_files(self, output_dir):
+        import os
+
+        def write_headers(file):
+            """Helper function to write table headers"""
+            file.write(
+                "\n| Name | Input Shapes | Input Layouts | Attributes | Output Shapes | Output Layouts | Runs on TTNN | PCC | ATOL |\n"
+            )
+            file.write(
+                "| ---- | ------------ | ------------- | ---------- | ------------- | -------------- | ------------ | --- | ---- |\n"
+            )
+
+        def get_row_string(item):
+            """Helper function to generate a row string from an item"""
+            name = item.get("name", "")
+            pcc = item.get("pcc", "")
+            atol = item.get("atol", "")
+            input_shapes = " <br> ".join(item.get("input_shapes", []))
+            input_layouts = item.get("input_layouts", [])
+            input_layouts_str = " <br> ".join(
+                f"mapping_from: {d.get('mapping_from', '')}, mapping_to: {d.get('mapping_to', '')}, memory_config: {d.get('memory_config', '')}"
+                for d in input_layouts
+            )
+            attributes = " <br> ".join(
+                f"{k}: {v}" for k, v in item.get("attributes", {}).items()
+            )
+            output_layouts = item.get("output_layouts", [])
+            output_layouts_str = " <br> ".join(
+                f"mapping_from: {d.get('mapping_from', '')}, mapping_to: {d.get('mapping_to', '')}, memory_config: {d.get('memory_config', '')}"
+                for d in output_layouts
+            )
+            output_shapes = " <br> ".join(item.get("output_shapes", []))
+
+            return f"| {name} | {input_shapes} | {input_layouts_str} | {attributes} | {output_shapes} | {output_layouts_str} | {pcc} | {atol} |\n"
+
         # Ensure the output directory exists
         os.makedirs(output_dir, exist_ok=True)
 
+        MAX_FILE_SIZE = 500 * 1024  # 500 KB in bytes
+        MAX_ROWS_PER_TABLE = 600
+
         for key, dict_list in self.ops.items():
-            # Create a Markdown file for each key
-            file_path = os.path.join(output_dir, f"{key}.md")
-            with open(file_path, "w") as file:
-                file.write(f"# {key}\n\n")
+            if not dict_list:
+                continue
 
-                if dict_list:
-                    # Write the table header
-                    file.write(
-                        "| Name | Input Shapes | Input Layouts | Attributes | Output Shapes | Output Layouts | PCC | ATOL |\n"
+            file_index = 0
+            current_size = 0
+            current_file = None
+            row_count = 0
+
+            for item in dict_list:
+                # Generate the row string
+                row_string = get_row_string(item)
+                row_size = len(row_string.encode("utf-8"))
+
+                # Check if we need a new file due to size limit
+                if current_file is None or current_size + row_size > MAX_FILE_SIZE:
+                    # Close current file if it exists
+                    if current_file is not None:
+                        current_file.close()
+
+                    # Create new file
+                    file_suffix = f"{file_index}" if file_index > 0 else ""
+                    file_path = os.path.join(output_dir, f"{key}{file_suffix}.md")
+                    current_file = open(file_path, "w")
+
+                    # Write initial headers
+                    current_file.write(f"# {key}\n")
+                    write_headers(current_file)
+
+                    # Reset counters
+                    current_size = len(f"# {key}\n".encode("utf-8"))
+                    current_size += len(
+                        "\n| Name | Input Shapes | Input Layouts | Attributes | Output Shapes | Output Layouts | Runs on TTNN | PCC | ATOL |\n".encode(
+                            "utf-8"
+                        )
                     )
-                    file.write(
-                        "|------|--------------|---------------|------------|---------------|----------------|-----|------|\n"
+                    current_size += len(
+                        "| ---- | ------------ | ------------- | ---------- | ------------- | -------------- | ------------ | --- | ---- |\n".encode(
+                            "utf-8"
+                        )
                     )
-                    # Write each dictionary in the array to the table
-                    for item in dict_list:
-                        name = item.get("name", "")
-                        pcc = item.get("pcc", "")
-                        atol = item.get("atol", "")
+                    row_count = 0
+                    file_index += 1
 
-                        # Join shapes with <br> for line breaks
-                        input_shapes = " <br> ".join(item.get("input_shapes", []))
-
-                        # For input layouts (array of dicts)
-                        input_layouts = item.get("input_layouts", [])
-                        input_layouts_str = " <br> ".join(
-                            f"mapping_from: {d.get('mapping_from', '')}, mapping_to: {d.get('mapping_to', '')}, memory_config: {d.get('memory_config', '')}"
-                            for d in input_layouts
+                # Check if we need a new table due to row limit
+                elif row_count >= MAX_ROWS_PER_TABLE:
+                    write_headers(current_file)
+                    row_count = 0
+                    # Add headers size to current_size
+                    current_size += len(
+                        "\n| Name | Input Shapes | Input Layouts | Attributes | Output Shapes | Output Layouts | Runs on TTNN | PCC | ATOL |\n".encode(
+                            "utf-8"
                         )
-
-                        # Join attributes with <br> for line breaks
-                        attributes = " <br> ".join(
-                            f"{k}: {v}" for k, v in item.get("attributes", {}).items()
+                    )
+                    current_size += len(
+                        "| ---- | ------------ | ------------- | ---------- | ------------- | -------------- | ------------ | --- | ---- |\n".encode(
+                            "utf-8"
                         )
+                    )
 
-                        # For output layouts (array of dicts)
-                        output_layouts = item.get("output_layouts", [])
-                        output_layouts_str = " <br> ".join(
-                            f"mapping_from: {d.get('mapping_from', '')}, mapping_to: {d.get('mapping_to', '')}, memory_config: {d.get('memory_config', '')}"
-                            for d in output_layouts
-                        )
+                # Write the row and update counters
+                current_file.write(row_string)
+                current_size += row_size
+                row_count += 1
 
-                        # Join output shapes with <br> for line breaks
-                        output_shapes = " <br> ".join(item.get("output_shapes", []))
-
-                        file.write(
-                            f"| {name} | {input_shapes} | {input_layouts_str} | {attributes} | {output_shapes} | {output_layouts_str} | {pcc} | {atol} |\n"
-                        )
+            # Close the last file
+            if current_file is not None:
+                current_file.close()
 
     def create_json_data(self):
         # Create a dictionary to store JSON data for each key
@@ -350,12 +407,55 @@ class AllOps:
         # Get the JSON data
         json_data = self.create_json_data()
 
+        # Size limit in bytes (500KB)
+        SIZE_LIMIT = 500 * 1024
+
         # Save JSON files
         for key, data in json_data.items():
-            file_path = os.path.join(output_dir, f"{key}.json")
-            with open(file_path, "w") as file:
-                json.dump(data, file, indent=2)
-                file.write("\n")  # add a new line at the end of json
+            if not data:  # Skip empty data
+                continue
+
+            # Initialize variables for splitting
+            current_chunk = []
+            chunk_number = 0
+
+            for item in data:
+                # Try adding item to current chunk
+                test_chunk = current_chunk + [item]
+                # Calculate exact size with JSON formatting
+                chunk_size = (
+                    len(json.dumps(test_chunk, indent=2).encode("utf-8")) + 1
+                )  # +1 for newline
+
+                # If this chunk would exceed limit, save current chunk and start new one
+                if chunk_size > SIZE_LIMIT and current_chunk:
+                    # Save current chunk
+                    chunk_filename = (
+                        f"{key}{chunk_number}.json"
+                        if chunk_number > 0
+                        else f"{key}.json"
+                    )
+                    file_path = os.path.join(output_dir, chunk_filename)
+                    with open(file_path, "w") as file:
+                        json.dump(current_chunk, file, indent=2)
+                        file.write("\n")
+
+                    # Start new chunk
+                    current_chunk = [item]
+                    chunk_number += 1
+                else:
+                    # Add item to current chunk
+                    current_chunk = test_chunk
+
+            # Save the last chunk
+            if current_chunk:
+                chunk_filename = (
+                    f"{key}{chunk_number}.json" if chunk_number > 0 else f"{key}.json"
+                )
+                file_path = os.path.join(output_dir, chunk_filename)
+                with open(file_path, "w") as file:
+                    json.dump(current_chunk, file, indent=2)
+                    file.write("\n")
 
         return json_data
 

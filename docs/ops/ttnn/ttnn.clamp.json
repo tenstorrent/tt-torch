@@ -35,9 +35,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -75,9 +74,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -115,9 +113,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -155,9 +152,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -195,9 +191,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -235,9 +230,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -275,9 +269,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -315,9 +308,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -355,9 +347,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -395,9 +386,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -435,9 +425,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -475,9 +464,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -515,9 +503,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -555,9 +542,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -595,9 +581,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -635,9 +620,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -675,9 +659,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -715,9 +698,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -755,9 +737,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -795,9 +776,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -835,9 +815,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -875,9 +854,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -915,9 +893,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -955,9 +932,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -995,9 +971,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1035,9 +1010,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1075,9 +1049,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1115,9 +1088,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1155,9 +1127,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1195,9 +1166,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1235,9 +1205,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1275,9 +1244,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1315,9 +1283,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1355,9 +1322,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1395,9 +1361,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1435,9 +1400,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1475,9 +1439,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1515,9 +1478,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1555,9 +1517,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1595,9 +1556,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1635,9 +1595,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1675,9 +1634,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1715,9 +1673,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": NaN
+    "pcc": "1.0",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1755,9 +1712,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1795,9 +1751,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1835,9 +1790,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1875,9 +1829,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1915,9 +1868,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1955,9 +1907,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -1995,9 +1946,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2035,9 +1985,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2075,9 +2024,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2115,9 +2063,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2155,9 +2102,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2195,9 +2141,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2235,9 +2180,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2275,9 +2219,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2315,9 +2258,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2355,9 +2297,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2395,9 +2336,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2435,9 +2375,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2475,9 +2414,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2515,9 +2453,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2555,9 +2492,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2595,9 +2531,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2635,9 +2570,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2675,9 +2609,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2715,9 +2648,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2755,9 +2687,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2795,9 +2726,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2835,9 +2765,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2875,9 +2804,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2915,9 +2843,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2955,9 +2882,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -2995,9 +2921,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3035,9 +2960,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3075,9 +2999,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3115,9 +3038,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3155,9 +3077,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3195,9 +3116,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3235,9 +3155,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3275,9 +3194,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3315,9 +3233,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3355,9 +3272,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3395,9 +3311,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3435,9 +3350,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3475,9 +3389,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3515,9 +3428,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3555,9 +3467,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3595,9 +3506,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3635,9 +3545,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3675,9 +3584,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3715,9 +3623,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3755,9 +3662,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3795,9 +3701,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3835,9 +3740,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3875,9 +3779,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3915,9 +3818,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3955,9 +3857,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -3995,9 +3896,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4035,9 +3935,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4075,9 +3974,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4115,9 +4013,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4155,9 +4052,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4195,9 +4091,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4235,9 +4130,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4275,9 +4169,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4315,9 +4208,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4355,9 +4247,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4395,9 +4286,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4435,9 +4325,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4475,9 +4364,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4515,9 +4403,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4555,9 +4442,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4595,9 +4481,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4635,9 +4520,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4675,9 +4559,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4715,9 +4598,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4755,9 +4637,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4795,9 +4676,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4835,9 +4715,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4875,9 +4754,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4915,9 +4793,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4955,9 +4832,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -4995,9 +4871,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5035,9 +4910,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5075,9 +4949,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5115,9 +4988,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5155,9 +5027,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5195,9 +5066,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5235,9 +5105,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5275,9 +5144,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5315,9 +5183,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5355,9 +5222,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5395,9 +5261,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5435,9 +5300,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5475,9 +5339,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5515,9 +5378,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5555,9 +5417,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5595,9 +5456,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5635,9 +5495,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5675,9 +5534,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5715,9 +5573,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5755,9 +5612,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5795,9 +5651,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5835,9 +5690,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5875,9 +5729,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5915,9 +5768,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5955,9 +5807,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -5995,9 +5846,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -6035,9 +5885,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -6075,9 +5924,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -6115,9 +5963,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -6155,9 +6002,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -6195,9 +6041,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.clamp",
@@ -6235,8 +6080,7 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   }
 ]
