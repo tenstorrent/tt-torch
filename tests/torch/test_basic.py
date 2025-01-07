@@ -412,6 +412,29 @@ def test_multiple_ops():
     )
 
 
+def test_unused_output():
+    class Basic_var_only(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            var, mean = torch.var_mean(x)
+            return var
+
+    class Basic_mean_only(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            var, mean = torch.var_mean(x)
+            return mean
+
+    for module in [Basic_var_only, Basic_mean_only]:
+        cc = CompilerConfig()
+        cc.compile_depth = tt_torch.tools.utils.CompileDepth.COMPILE_OP_BY_OP
+        verify_module(module(), input_shapes=[(256, 256)], compiler_config=cc)
+
+
 @pytest.mark.parametrize(
     ("input_range", "input_shapes", "input_type"),
     [
