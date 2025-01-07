@@ -188,7 +188,15 @@ class Executor:
         ):
             getitem_nodes = []
             graph_node.meta["val"] = node.meta["val"]
+
             for idx, tensor_meta in enumerate(node.meta["tensor_meta"]):
+                # filter out unused outputs that do not exist in the reduced graph
+                users = self.gm.graph.find_nodes(
+                    op="call_function", target=operator.getitem
+                )
+                if not any(user_node.args == (node, idx) for user_node in users):
+                    continue
+
                 getitem_node = graph.call_function(
                     operator.getitem, args=(graph_node, idx)
                 )
@@ -199,6 +207,10 @@ class Executor:
             out = graph.output((graph_node,))
         if "tensor_meta" not in node.meta:
             raise ValueError(f"Node {node} does not have tensor_meta")
+        if len(node.users) != len(graph_node.users):
+            raise ValueError(
+                f"Op Node {node} has different number of users({len(graph_node.users)}) from global graph({len(node.users)})"
+            )
 
         op.compilation_status = OpCompilationStatus.CREATED_GRAPH
         out.meta["tensor_meta"] = node.meta["tensor_meta"]
