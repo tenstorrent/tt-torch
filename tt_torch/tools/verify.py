@@ -52,6 +52,11 @@ def _verify_torch_module(
     golden = mod(*inputs)
 
     atol = calculate_atol(ret, golden)
+
+    print("--------------------")
+    print("Atol: ", atol)
+    print("--------------------")
+
     if do_assert:
         assert atol <= required_atol, f"ATOL too high: {atol} vs {required_atol}"
 
@@ -62,6 +67,10 @@ def _verify_torch_module(
     golden = golden.to(torch.float32) if golden.dtype == torch.bfloat16 else golden
 
     pcc = calculate_pcc(ret, golden)
+
+    print("--------------------")
+    print("PCC: ", pcc)
+    print("--------------------")
 
     if do_assert:
         assert pcc >= required_pcc, f"PCC too low: {pcc} vs {required_pcc}"

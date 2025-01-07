@@ -419,7 +419,6 @@ class Executor:
 
 
 def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
-    print("TAPSSSS")
     with torch.no_grad():
         gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
     executor = Executor(gm, graph_constants, compiler_config)
