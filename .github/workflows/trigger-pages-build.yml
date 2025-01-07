@@ -1,0 +1,20 @@
+name: Trigger GitHub Pages Build on Commit
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  trigger-pages-deployment:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the code
+      uses: actions/checkout@v3
+
+    - name: Trigger pages build and deployment
+      uses: peter-evans/workflow-dispatch@v1
+      with:
+        workflow: pages-build-and-deployment.yml
+        ref: main  # Trigger this workflow from the 'main' branch (or specify your default branch)
