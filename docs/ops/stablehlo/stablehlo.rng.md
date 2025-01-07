@@ -4,4 +4,4 @@
 
 ||STABLE HLO Input Variations|ttnn op|Torch Name|Status|
 | :--- | :--- | :--- | :--- | :--- |
-|0|Scalar,<br>Scalar,<br>Tensor<[3]>,<br>distribution: UNIFORM<br>||aten::rand|4|
+|0|Scalar,Scalar,Tensor<[3]>,distribution: UNIFORM||aten::rand|4|

@@ -4,4 +4,4 @@
 
 ||STABLE HLO Input Variations|ttnn op|Torch Name|Status|
 | :--- | :--- | :--- | :--- | :--- |
-|0|Scalar,<br>|ttnn.ceil|aten::arange|4|
+|0|Scalar,|ttnn.ceil|aten::arange|4|
