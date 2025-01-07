@@ -34,7 +34,9 @@ else()
     endif()
 
     include(ExternalProject)
-    set(TTMLIR_LIB_DIR ${TTTORCH_SOURCE_DIR}/install)
+    set(TT_MLIR_LIBRARY_PATH ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/lib/SharedLib/libTTMLIR.so)
+    set(TT_MLIR_SHLO_LIBRARY_PATH ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/lib/libTTMLIRStableHLOToTTIR.a)
+    set(TT_MLIR_PIPELINES_LIBRARY_PATH ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/lib/libMLIRTTIRPipelines.a)
     ExternalProject_Add(
         tt-mlir
         PREFIX ${TTTORCH_SOURCE_DIR}/third_party/tt-mlir
@@ -54,5 +56,21 @@ else()
         GIT_REPOSITORY https://github.com/tenstorrent/tt-mlir.git
         GIT_TAG ${TT_MLIR_VERSION}
         GIT_PROGRESS ON
+        BUILD_BYPRODUCTS ${TT_MLIR_LIBRARY_PATH} ${TT_MLIR_SHLO_LIBRARY_PATH} ${TT_MLIR_PIPELINES_LIBRARY_PATH}
     )
+
+    add_library(TTMLIRShared SHARED IMPORTED GLOBAL)
+    set_target_properties(TTMLIRShared PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_LIBRARY_PATH})
+    add_dependencies(TTMLIRShared tt-mlir)
+
+    add_library(TTMLIRStableHLOToTTIR STATIC IMPORTED GLOBAL)
+    set_target_properties(TTMLIRStableHLOToTTIR PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_SHLO_LIBRARY_PATH})
+    add_dependencies(TTMLIRStableHLOToTTIR tt-mlir)
+
+    add_library(MLIRTTIRPipelines STATIC IMPORTED GLOBAL)
+    set_target_properties(MLIRTTIRPipelines PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_PIPELINES_LIBRARY_PATH})
+    add_dependencies(MLIRTTIRPipelines tt-mlir)
+
+    install(FILES ${TT_MLIR_LIBRARY_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+
 endif()

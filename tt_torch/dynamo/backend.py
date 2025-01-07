@@ -451,6 +451,8 @@ class Executor:
 
 
 def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
+    # Apply environment overrides at start of compilation to allow overriding what was set in the test
+    compiler_config.apply_environment_overrides()
     with torch.no_grad():
         gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
     executor = Executor(gm, graph_constants, compiler_config)
@@ -461,20 +463,34 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     ):
         return executor
 
+    dump_intermediates = os.environ.get("TT_TORCH_ENABLE_IR_PRINTING")
+    dump_intermediates = dump_intermediates and int(dump_intermediates)
+
     module = import_graph(gm.graph)
+    if dump_intermediates:
+        module.dump()
+
     if compiler_config.profile_ops:
         compiler_config.set_torch_mlir_module(module.operation.get_asm())
     if compiler_config.compile_depth == CompileDepth.TORCH_MLIR:
         return executor
 
     lower_to_stable_hlo(module)
+    if dump_intermediates:
+        module.dump()
+
     if compiler_config.profile_ops:
         compiler_config.set_stablehlo_mlir_module(module.operation.get_asm())
     if compiler_config.compile_depth == CompileDepth.STABLEHLO:
         return executor
 
     ttir = tt_mlir.compile_stable_hlo_to_ttir(module.operation.get_asm())
+    if dump_intermediates:
+        print(ttir)
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
+    if dump_intermediates:
+        print(ttnn)
+
     executor.set_binary(binary)
     return executor
 

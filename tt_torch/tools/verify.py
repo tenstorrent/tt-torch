@@ -52,19 +52,21 @@ def _verify_torch_module(
     golden = mod(*inputs)
 
     atol = calculate_atol(ret, golden)
+    error = False
+    if atol > required_atol:
+        error = True
+
+    if np.prod(golden.shape) != 1:
+        ret = ret.to(torch.float32) if ret.dtype == torch.bfloat16 else ret
+        golden = golden.to(torch.float32) if golden.dtype == torch.bfloat16 else golden
+
+        pcc = calculate_pcc(ret, golden)
+
+        if pcc < required_pcc:
+            error = True
+
     if do_assert:
-        assert atol <= required_atol, f"ATOL too high: {atol} vs {required_atol}"
-
-    if np.prod(golden.shape) == 1:
-        return
-
-    ret = ret.to(torch.float32) if ret.dtype == torch.bfloat16 else ret
-    golden = golden.to(torch.float32) if golden.dtype == torch.bfloat16 else golden
-
-    pcc = calculate_pcc(ret, golden)
-
-    if do_assert:
-        assert pcc >= required_pcc, f"PCC too low: {pcc} vs {required_pcc}"
+        assert not error, f"Error in verification: ATOL: {atol}, PCC: {pcc}"
 
 
 def _verify_onnx_module(

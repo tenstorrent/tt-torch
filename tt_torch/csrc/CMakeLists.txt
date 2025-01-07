@@ -8,6 +8,7 @@ add_library(TT_TORCH_MLIR "tt-mlir-interface.cpp")
 
 add_dependencies(TT_TORCH_MLIR
     tt-mlir
+    TTMLIRShared
 )
 
 set_target_properties(TT_TORCH_MLIR PROPERTIES COMPILE_FLAGS "-fno-rtti")
@@ -82,7 +83,7 @@ set(STABLEHLO_LIBS
 target_link_libraries(TT_TORCH_MLIR PUBLIC
     LLVM
     MLIR
-    TTMLIR
+    TTMLIRShared
     TTMLIRStatic
     TTMLIRTosaToTTIR
     MLIRTTIRPipelines
