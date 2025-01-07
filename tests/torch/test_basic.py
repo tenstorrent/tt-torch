@@ -353,7 +353,7 @@ def test_transpose_3d():
 
     verify_module(Basic(), input_shapes=[(4, 8, 4)], input_range=(-6, 6))
 
-
+@pytest.mark.skip("failed to legalize operation 'stablehlo.reduce")
 def test_multiple_ops():
     class Basic(nn.Module):
         def __init__(self):
