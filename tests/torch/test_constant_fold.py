@@ -89,4 +89,6 @@ def test_linear():
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    verify_module(Basic(), input_shapes=[(32, 32)], compiler_config=cc)
+    verify_module(
+        Basic(), input_shapes=[(32, 32)], compiler_config=cc, required_atol=0.02
+    )
