@@ -4,6 +4,7 @@
 import torch
 from torch import nn
 import pytest
+import math
 
 import tt_torch
 from tt_torch.tools.verify import verify_module
@@ -515,7 +516,9 @@ def test_sine_op():
         def forward(self, x):
             return torch.sin(x)
 
-    verify_module(Basic(), input_shapes=[(32, 32)], input_range=(-360, 360))
+    verify_module(
+        Basic(), input_shapes=[(32, 32)], input_range=(-2 * math.pi, 2 * math.pi)
+    )
 
 
 def test_cosine_op():
@@ -526,4 +529,6 @@ def test_cosine_op():
         def forward(self, x):
             return torch.cos(x)
 
-    verify_module(Basic(), input_shapes=[(32, 32)], input_range=(-360, 360))
+    verify_module(
+        Basic(), input_shapes=[(32, 32)], input_range=(-2 * math.pi, 2 * math.pi)
+    )
