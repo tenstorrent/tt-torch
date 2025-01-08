@@ -32,17 +32,19 @@ def get_image_tensor():
     return input_batch
 
 
+# NOTE: If we are to decompose BatchNorm2d (which we must in order to lower to SHLO)
+# we need to run in float32 to maintain precision.
 class ThisTester(ModelTester):
     def _load_model(self):
         # Create PyBuda module from PyTorch model
         model = ptcv_get_model("lwopenpose2d_mobilenet_cmupan_coco", pretrained=True)
-        model = model.to(torch.bfloat16)
+        model = model.to(torch.float32)
         return model
 
     def _load_inputs(self):
         input_batch = [get_image_tensor()]
         batch_input = torch.cat(input_batch, dim=0)
-        batch_input = batch_input.to(torch.bfloat16)
+        batch_input = batch_input.to(torch.float32)
         return batch_input
 
 
