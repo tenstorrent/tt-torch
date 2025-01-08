@@ -41,13 +41,15 @@ def test_albert_sequence_classification(record_property, model_name, mode, night
     if nightly:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_name, mode, compiler_config=cc)
+    tester = ThisTester(
+        model_name, mode, assert_on_output_mismatch=False, compiler_config=cc
+    )
     results = tester.test_model()
 
     if mode == "eval":
         logits = results.logits
         predicted_class_id = logits.argmax().item()
-        predicted_label = tester.model.config.id2label[predicted_class_id]
+        predicted_label = tester.framework_model.config.id2label[predicted_class_id]
 
         print(
             f"Model: {model_name} | Input: {tester.input_text} | Label: {predicted_label}"

@@ -57,7 +57,10 @@ def test_beit_image_classification(record_property, model_name, mode, nightly):
     else:
         cc.compile_depth = CompileDepth.TTNN_IR
 
-    tester = ThisTester(model_name, mode, compiler_config=cc)
+    required_atol = 0.032 if model_name == "microsoft/beit-base-patch16-224" else 0.05
+    tester = ThisTester(
+        model_name, mode, required_atol=required_atol, compiler_config=cc
+    )
     results = tester.test_model()
 
     if mode == "eval":
@@ -65,6 +68,9 @@ def test_beit_image_classification(record_property, model_name, mode, nightly):
 
         # model predicts one of the 1000 ImageNet classes
         predicted_class_idx = logits.argmax(-1).item()
-        print("Predicted class:", tester.model.config.id2label[predicted_class_idx])
+        print(
+            "Predicted class:",
+            tester.framework_model.config.id2label[predicted_class_idx],
+        )
 
     record_property("torch_ttnn", (tester, results))

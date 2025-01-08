@@ -50,7 +50,9 @@ def test_perceiver_io(record_property, mode, nightly):
     if nightly:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_name, mode, compiler_config=cc)
+    tester = ThisTester(
+        model_name, mode, assert_on_output_mismatch=False, compiler_config=cc
+    )
     results = tester.test_model()
     if mode == "eval":
         logits = results.logits

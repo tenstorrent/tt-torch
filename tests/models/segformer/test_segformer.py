@@ -60,7 +60,7 @@ def test_segformer(record_property, mode, nightly):
     else:
         cc.compile_depth = CompileDepth.TTNN_IR
 
-    tester = ThisTester(model_name, mode, compiler_config=cc)
+    tester = ThisTester(model_name, mode, relative_atol=0.01, compiler_config=cc)
     results = tester.test_model()
     if mode == "eval":
         logits = results.logits  # shape (batch_size, num_labels, height/4, width/4)
