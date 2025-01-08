@@ -17,7 +17,7 @@ class ThisTester(ModelTester):
             raise ValueError(f"Current mode is not supported: {mode}")
         self.model_info = model_info
         self.mode = mode
-        self.model = self._load_model()
+        self.framework_model = self._load_model()
         self.inputs = self._load_inputs()
 
     def _load_model(self):

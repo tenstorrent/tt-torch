@@ -66,6 +66,9 @@ def test_deit(record_property, model_name, mode, nightly):
         logits = results.logits
         # model predicts one of the 1000 ImageNet classes
         predicted_class_idx = logits.argmax(-1).item()
-        print("Predicted class:", tester.model.config.id2label[predicted_class_idx])
+        print(
+            "Predicted class:",
+            tester.framework_model.config.id2label[predicted_class_idx],
+        )
 
     record_property("torch_ttnn", (tester, results))
