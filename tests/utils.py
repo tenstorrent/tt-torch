@@ -13,6 +13,7 @@ from tt_torch.dynamo.backend import backend
 from tt_torch.onnx_compile import compile_onnx
 from tt_torch.tools.utils import CompilerConfig, CompileDepth
 import json
+from onnx import version_converter
 from pathlib import Path
 
 
@@ -196,6 +197,7 @@ class OnnxModelTester:
         self.mode = mode
         self.model = self._load_model()
         self.inputs = self._load_inputs()
+        self.inputs = self._fix_inputs()
         self.golden_outputs = None
         if compiler_config is None:
             compiler_config = CompilerConfig()
@@ -251,11 +253,9 @@ class OnnxModelTester:
         # Compile model
         self.get_golden_outputs()
         input_shapes = {}
-        for (input_node), (loaded_input_name, tensor) in zip(
-            model.graph.input, self.inputs.items()
-        ):
-            assert input_node.name == loaded_input_name
-            input_shapes[input_node.name] = list(tensor.shape)
+
+        for input_node in model.graph.input:
+            input_shapes[input_node.name] = self.inputs[input_node.name].shape
 
         output_shapes = {}
         for output_node in model.graph.output:
@@ -273,19 +273,40 @@ class OnnxModelTester:
     def get_golden_outputs(self):
         if self.golden_outputs is not None:
             return self.golden_outputs
-        breakpoint()
+
         self.golden_outputs = self.run_model(self.model, self.inputs)
         return self.golden_outputs
+
+    def _fix_inputs(self):
+        if isinstance(self.inputs, dict):
+            self.inputs = {
+                name: value.numpy()
+                if value.dtype != torch.bfloat16
+                else value.float().numpy()
+                for name, value in self.inputs.items()
+            }
+        elif isinstance(self.inputs, (tuple, list)):
+            self.inputs = {
+                input_node.name: value.numpy()
+                if value.dtype != torch.bfloat16
+                else value.float().numpy()
+                for input_node, value in zip(self.model.graph.input, self.inputs)
+            }
+        elif isinstance(self.inputs, torch.Tensor):
+            self.inputs = {
+                self.model.graph.input[0].name: self.inputs.numpy()
+                if self.inputs.dtype != torch.bfloat16
+                else self.inputs.float().numpy()
+            }
+        else:
+            assert False, f"Unsupported inputs type: {type(self.inputs)}"
+
+        return self.inputs
 
     def run_model(self, model, inputs):
         if isinstance(model, onnx.ModelProto):
             session = onnxruntime.InferenceSession(model.SerializeToString())
-            inputs = {
-                name: value.numpy()
-                if value.dtype != torch.bfloat16
-                else value.float().numpy
-                for name, value in inputs.items()
-            }
+
             outputs = session.run(None, inputs)
             return {
                 output_node.name: torch.tensor(value)
