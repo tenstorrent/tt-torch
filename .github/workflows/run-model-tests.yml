@@ -14,8 +14,13 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-          {runs-on: n150, name: "run1", test_names: "stable_diffusion, Qwen, MobileNetV2, clip, flan_t5, mlpmixer, resnet, vilt, albert, codegen, glpn_kitti, mnist, resnet50, RMBG, unet_carvana, mgp-str-base, musicgen_small, segformer, torchvision, yolos"},
-          {runs-on: n150, name: "run2", test_names: "t5, whisper, autoencoder_conv, deit, gpt2, mobilenet_ssd, roberta, timm, xglm, autoencoder_linear, detr, beit, distilbert, hand_landmark, openpose, segment_anything, unet, yolov3, bert, dpr, hardnet, opt, speecht5_tts, unet_brain, yolov5, bloom, falcon, llama, perceiver_io, squeeze_bert, gpt_neo"},
+          # {runs-on: n150, name: "run1", test_names: "stable_diffusion, Qwen, MobileNetV2, clip, flan_t5, mlpmixer, resnet, vilt, albert, codegen, glpn_kitti, mnist, resnet50, RMBG, unet_carvana, mgp-str-base, musicgen_small, segformer, torchvision, yolos"},
+          # {runs-on: n150, name: "run2", test_names: "t5, whisper, autoencoder_conv, deit, gpt2, mobilenet_ssd, roberta, timm, xglm, autoencoder_linear, detr, beit, distilbert, hand_landmark, openpose, segment_anything, unet, yolov3, bert, dpr, hardnet, opt, speecht5_tts, unet_brain, yolov5, bloom, falcon, llama, perceiver_io, squeeze_bert, gpt_neo"},
+
+          {runs-on: n300, name: "run1", test_names: "stable_diffusion, Qwen, MobileNetV2, clip, flan_t5, mlpmixer, resnet, vilt, albert, codegen"},
+          {runs-on: n300, name: "run2", test_names: "glpn_kitti, mnist, resnet50, RMBG, unet_carvana, mgp-str-base, musicgen_small, segformer, torchvision, yolos"},
+          {runs-on: n300, name: "run3", test_names: "t5, whisper, autoencoder_conv, deit, gpt2, mobilenet_ssd, roberta, timm, xglm, autoencoder_linear, detr, beit, distilbert, hand_landmark, openpose, segment_anything, unet, "},
+          {runs-on: n300, name: "run4", test_names: "yolov3, bert, dpr, hardnet, opt, speecht5_tts, unet_brain, yolov5, bloom, falcon, llama, perceiver_io, squeeze_bert, gpt_neo"},
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
