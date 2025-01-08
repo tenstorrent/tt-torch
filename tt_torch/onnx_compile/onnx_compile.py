@@ -2,10 +2,12 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import onnx
+from onnxruntime.tools.symbolic_shape_infer import SymbolicShapeInference
 from torch_mlir.extras import onnx_importer
 import tt_mlir
 from torch_mlir.ir import Context
 from torch_mlir.dialects import torch as torch_dialect
+from onnx import version_converter
 
 from torch_mlir.compiler_utils import (
     OutputType,
@@ -15,9 +17,18 @@ from torch_mlir.compiler_utils import (
 
 
 def compile_onnx(module: onnx.ModelProto):
-    # Infer onnx shapes incase that information is missing
-    module = onnx.shape_inference.infer_shapes(module)
+    assert isinstance(module, onnx.ModelProto), "Expected onnx.ModelProto object"
 
+    # Infer onnx shapes in case that information is missing
+    module = version_converter.convert_version(module, 13)
+    try:
+        module = SymbolicShapeInference.infer_shapes(module)
+    except Exception as e:
+        raise Exception(
+            f"Failed to infer shapes of onnx.ModelProto, it is possible this issue is caused by dynamic input shapes. \n Exception raised by SymbolicShapeInference.infer_shape: {e}"
+        )
+
+    onnx.checker.check_model(module)
     context = Context()
     torch_dialect.register_dialect(context)
     module_info = onnx_importer.ModelInfo(module)

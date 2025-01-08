@@ -2,11 +2,15 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import torch
+import onnx
+from onnx.tools import update_model_dims
+import onnxruntime
 import numpy as np
 import collections
 import re
 from typing import List, Dict, Tuple
 from tt_torch.dynamo.backend import backend
+from tt_torch.onnx_compile import compile_onnx
 from tt_torch.tools.utils import CompilerConfig, CompileDepth
 import json
 from pathlib import Path
@@ -20,6 +24,7 @@ class ModelTester:
         self.mode = mode
         self.model = self._load_model()
         self.inputs = self._load_inputs()
+        self.golden_outputs = None
         if compiler_config is None:
             compiler_config = CompilerConfig()
         self.compiler_config = compiler_config
@@ -68,6 +73,13 @@ class ModelTester:
 
     def set_inputs_eval(self, inputs):
         return inputs
+
+    def get_golden_outputs(self):
+        if self.golden_outputs is not None:
+            return self.golden_outputs
+
+        self.golden_outputs = self.run_model(self.model, self.inputs)
+        return self.golden_outputs
 
     def compile_model(self, model, compiler_config):
         # Compile model
@@ -156,6 +168,205 @@ class ModelTester:
             model = self.compile_model(model, self.compiler_config)
         outputs = self.run_model(model, inputs)
         results = self.get_results_eval(model, inputs, outputs)
+        pcc_passed, pcc = comp_pcc(self.golden_outputs, results, self.pcc)
+        assert pcc_passed, f"PCC too low: {pcc}, threshold: {self.pcc}"
+        return results
+
+    def test_model(self, on_device=True):
+        if self.mode == "train":
+            return self.test_model_train(on_device)
+        elif self.mode == "eval":
+            return self.test_model_eval(on_device)
+        else:
+            raise ValueError(f"Current mode is not supported: {self.mode}")
+
+
+class OnnxModelTester:
+    def __init__(
+        self, model_name, mode, pcc=0.99, required_atol=0.01, compiler_config=None
+    ):
+        if mode not in ["train", "eval"]:
+            raise ValueError(f"Current mode is not supported: {mode}")
+        self.model_name = model_name
+        self.mode = mode
+        self.model = self._load_model()
+        self.inputs = self._load_inputs()
+        self.golden_outputs = None
+        if compiler_config is None:
+            compiler_config = CompilerConfig()
+        self.compiler_config = compiler_config
+        self.pcc = pcc
+        self.required_atol = required_atol
+        self.compiler_config.model_name = model_name
+
+    def _load_model(self):
+        raise NotImplementedError(
+            "This method should be implemented in the derived class"
+        )
+
+    def _load_inputs(self):
+        raise NotImplementedError(
+            "This method should be implemented in the derived class"
+        )
+
+    def set_model_train(self, model):
+        model.train()
+        model.zero_grad()
+
+        # Eliminating randomness from Dropout to ensure consistent results.
+        #
+        # This is necessary for comparing the two training rounds:
+        # one using PyTorch native code and the other using the PyTorch Dynamo TT backend.
+        # Without this, the results would differ, making it impossible to compare the two implementations.
+        for layer in model.modules():
+            if isinstance(layer, torch.nn.Dropout):
+                layer.p = 0  # Set dropout probability to 0
+        return model
+
+    def set_model_eval(self, model):
+        return model
+
+    def set_inputs_train(self, inputs):
+        if type(inputs) == torch.Tensor:
+            # Setting input tensor's `requires_grad` attribute to true.
+            #
+            # This allows us to use the gradient of the input as the golden result for the training process.
+            # For further details, refer to the file `conftest.py` regarding the rationale behind.
+            inputs.requires_grad_(True)
+        else:
+            raise ValueError(
+                f"set_inputs_train: Current inputs type is not supported: {type(inputs)}"
+            )
+        return inputs
+
+    def set_inputs_eval(self, inputs):
+        return inputs
+
+    def compile_model(self, model, compiler_config):
+        # Compile model
+        self.get_golden_outputs()
+        input_shapes = {}
+        for (input_node), (loaded_input_name, tensor) in zip(
+            model.graph.input, self.inputs.items()
+        ):
+            assert input_node.name == loaded_input_name
+            input_shapes[input_node.name] = list(tensor.shape)
+
+        output_shapes = {}
+        for output_node in model.graph.output:
+            output_shapes[output_node.name] = self.golden_outputs[
+                output_node.name
+            ].shape
+
+        # We need to update the input/output shape in the model so that shapes can be inferred
+        model = update_model_dims.update_inputs_outputs_dims(
+            model, input_shapes, output_shapes
+        )
+        model = compile_onnx(model)
+        return model
+
+    def get_golden_outputs(self):
+        if self.golden_outputs is not None:
+            return self.golden_outputs
+
+        self.golden_outputs = self.run_model(self.model, self.inputs)
+        return self.golden_outputs
+
+    def run_model(self, model, inputs):
+        if isinstance(model, onnx.ModelProto):
+            session = onnxruntime.InferenceSession(model.SerializeToString())
+            inputs = {
+                name: value.numpy()
+                if value.dtype != torch.bfloat16
+                else value.float().numpy
+                for name, value in inputs.items()
+            }
+            outputs = session.run(None, inputs)
+            return {
+                output_node.name: torch.tensor(value)
+                for output_node, value in zip(model.graph.output, self.golden_outputs)
+            }
+        if isinstance(inputs, collections.abc.Mapping):
+            return model(**inputs)
+        elif isinstance(inputs, collections.abc.Sequence):
+            return model(*inputs)
+        else:
+            return model(inputs)
+
+    def append_fake_loss_function(self, outputs):
+        # Using `torch.mean` as the loss function for testing purposes.
+        #
+        # Loss functions typically produce a scalar loss, and `torch.mean`
+        # is one valid option in this category. While it may not be the best
+        # choice for training effective models, it simplifies our testing process.
+        #
+        # Since our goal is to verify gradient computation rather than to
+        # train a high-performing model, applying `torch.mean` uniformly
+        # across all models under test eases the testing procedure.
+        if str(type(outputs)) in [
+            "<class 'torch.Tensor'>",
+            "<class 'core.TorchTensor'>",
+        ]:
+            return torch.mean(outputs)
+        else:
+            raise ValueError(
+                f"append_fake_loss_function: Current outputs type is not supported: {type(outputs)}"
+            )
+
+    def get_results_train(self, model, inputs, outputs):
+        # Why `inputs.requires_grad`?
+        #
+        # Backward pass computes gradients for all trainable weight tensors.
+        # However, verifying every gradient can be costly, especially for
+        # large models with many parameters.
+        #
+        # Instead of checking each gradient, we check the gradient
+        # of the "model input" tensor only. Computing the input gradient
+        # serves as an indicator for the health of all other gradients.
+        # Based on the "chain rule", the input gradient depends on all other
+        # gradients, so any incorrect gradient computation should reflect here.
+        if type(inputs) == torch.Tensor:
+            results = inputs.grad
+        elif type(inputs) == dict:
+            results = {k: v.grad for k, v in inputs.items()}
+        else:
+            raise ValueError(
+                f"get_results_train: Current inputs type is not supported: {type(inputs)}"
+            )
+        return results
+
+    def get_results_eval(self, model, inputs, outputs):
+        return outputs
+
+    def test_model_train(self, on_device=True):
+        # Fixing the random seed for reproducibility to ease debugging.
+        #
+        # Training processes involve more randomness compared to evaluation,
+        # such as random initialization of weights.
+        # Setting a fixed random seed is crucial for consistent testing
+        # and debugging during the training process.
+        torch.manual_seed(99)
+        model = self.set_model_train(self.model)
+        inputs = self.set_inputs_train(self.inputs)
+        if on_device == True:
+            model = self.compile_model(model, self.compiler_config)
+        outputs = self.run_model(model, inputs)
+        loss = self.append_fake_loss_function(outputs)
+        loss.backward()
+        # Again, use the gradient of the input (`test_input.grad`) as the golden result for the training process.
+        results = self.get_results_train(model, inputs, outputs)
+        return results
+
+    @torch.no_grad()
+    def test_model_eval(self, on_device=True):
+        model = self.set_model_eval(self.model)
+        inputs = self.set_inputs_eval(self.inputs)
+        if on_device == True:
+            model = self.compile_model(model, self.compiler_config)
+        outputs = self.run_model(model, inputs)
+        results = self.get_results_eval(model, inputs, outputs)
+        pcc_passed, pcc = comp_pcc(self.golden_outputs, results, self.pcc)
+        assert pcc_passed, f"PCC too low: {pcc}, threshold: {self.pcc}"
         return results
 
     def test_model(self, on_device=True):
