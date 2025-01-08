@@ -34,6 +34,9 @@ class ThisTester(ModelTester):
     def get_results_train(self, model, inputs, outputs):
         return inputs["pixel_values"].grad
 
+    def _extract_outputs(self, output_object):
+        return (output_object.logits,)
+
 
 @pytest.mark.parametrize(
     "mode",

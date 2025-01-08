@@ -45,6 +45,22 @@ class ModelTester:
             "This method should be implemented in the derived class"
         )
 
+    def _extract_outputs(self, output_object):
+        if isinstance(output_object, torch.Tensor):
+            return (output_object,)
+        elif isinstance(output_object, (tuple, list)):
+            is_only_tensors = True
+            for item in output_object:
+                if not isinstance(item, torch.Tensor):
+                    is_only_tensors = False
+                    break
+            if is_only_tensors:
+                return tuple(output_object)
+        breakpoint()
+        raise NotImplementedError(
+            "Output object type is not a torch.Tensor, tuple[torch.Tensor], or list[torch.Tensor]. Please implement _extract_outputs in the derived class."
+        )
+
     def set_model_train(self, model):
         model.train()
         model.zero_grad()
@@ -174,8 +190,18 @@ class ModelTester:
             model = self.compile_model(model, self.compiler_config)
         outputs = self.run_model(model, inputs)
         results = self.get_results_eval(model, inputs, outputs)
-        pcc_passed, pcc = comp_pcc(self.golden_outputs, results, self.pcc)
-        assert pcc_passed, f"PCC too low: {pcc}, threshold: {self.pcc}"
+        pcc_passeds, pccs = comp_all_pcc(self, self.golden_outputs, results, self.pcc)
+        passed = True
+        err_msg = ""
+        for i, (pcc_passed, pcc_) in enumerate(zip(pcc_passeds, pccs)):
+            if not pcc_passed:
+                err_msg = (
+                    err_msg
+                    + f"PCC of output {i} is too low: {pcc_}, threshold: {self.pcc}\n"
+                )
+                passed = False
+
+        assert passed, err_msg
         return results
 
     def test_model(self, on_device=True):
@@ -212,6 +238,11 @@ class OnnxModelTester:
         )
 
     def _load_inputs(self):
+        raise NotImplementedError(
+            "This method should be implemented in the derived class"
+        )
+
+    def _extract_outputs(self, output_object):
         raise NotImplementedError(
             "This method should be implemented in the derived class"
         )
@@ -388,8 +419,17 @@ class OnnxModelTester:
             model = self.compile_model(model, self.compiler_config)
         outputs = self.run_model(model, inputs)
         results = self.get_results_eval(model, inputs, outputs)
-        pcc_passed, pcc = comp_pcc(self.golden_outputs, results, self.pcc)
-        assert pcc_passed, f"PCC too low: {pcc}, threshold: {self.pcc}"
+        pcc_passeds, pccs = comp_all_pcc(self, self.golden_outputs, results, self.pcc)
+        passed = True
+        err_msg = ""
+        for i, (pcc_passed, pcc) in enumerate(zip(pcc_passeds, pccs)):
+            if not pcc_passed:
+                err_msg = (
+                    err_msg + f"PCC of output {i} is too low: {pcc}, threshold: {pcc}\n"
+                )
+                passed = False
+
+        assert passed, err_msg
         return results
 
     def test_model(self, on_device=True):
@@ -401,8 +441,35 @@ class OnnxModelTester:
             raise ValueError(f"Current mode is not supported: {self.mode}")
 
 
+def comp_all_pcc(model_tester, golden_tensors, calculated_tensors, pcc=0.99):
+    assert type(golden_tensors) == type(
+        calculated_tensors
+    ), "Expecting the type of both calculated and golden to be identical. Whether that be a tensor, list, dictonary, etc."
+    golden_tensors = model_tester._extract_outputs(golden_tensors)
+    calculated_tensors = model_tester._extract_outputs(calculated_tensors)
+    assert isinstance(
+        golden_tensors, tuple
+    ), "Expecting the golden tensors to be a tuple of tensors after _extract_outputs."
+    assert isinstance(
+        calculated_tensors, tuple
+    ), "Expecting the calculated tensors to be a tuple of tensors after _extract_outputs."
+    assert len(golden_tensors) == len(
+        calculated_tensors
+    ), "Expecting the number of golden and calculated tensors to be the same."
+
+    pccs, pcc_passeds = [], []
+
+    for golden, calculated in zip(golden_tensors, calculated_tensors):
+        pcc_passed, pcc_ = comp_pcc(golden, calculated, pcc)
+        pccs.append(pcc_)
+        pcc_passeds.append(pcc_passed)
+
+    return pcc_passeds, pccs
+
+
 # Testing utils copied from tt-metal/tests/ttnn/utils_for_testing.py
 def comp_pcc(golden, calculated, pcc=0.99):
+
     golden = torch.Tensor(golden)
     calculated = torch.Tensor(calculated)
 

@@ -34,6 +34,9 @@ class ThisTester(ModelTester):
         }
         return arguments
 
+    def _extract_outputs(self, output_object):
+        return (output_object.logits,)
+
 
 @pytest.mark.parametrize(
     "mode",

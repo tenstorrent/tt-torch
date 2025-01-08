@@ -32,6 +32,9 @@ class ThisTester(ModelTester):
         inputs["pixel_values"] = inputs["pixel_values"].to(torch.bfloat16)
         return inputs
 
+    def _extract_outputs(self, output_object):
+        return output_object.logits
+
 
 @pytest.mark.parametrize(
     "mode",
