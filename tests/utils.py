@@ -17,13 +17,17 @@ from pathlib import Path
 
 
 class ModelTester:
-    def __init__(self, model_name, mode, compiler_config=None):
+    def __init__(
+        self, model_name, mode, pcc=0.99, required_atol=0.01, compiler_config=None
+    ):
         if mode not in ["train", "eval"]:
             raise ValueError(f"Current mode is not supported: {mode}")
         self.model_name = model_name
         self.mode = mode
         self.model = self._load_model()
         self.inputs = self._load_inputs()
+        self.pcc = pcc
+        self.required_atol = required_atol
         self.golden_outputs = None
         if compiler_config is None:
             compiler_config = CompilerConfig()
@@ -162,6 +166,7 @@ class ModelTester:
 
     @torch.no_grad()
     def test_model_eval(self, on_device=True):
+        self.get_golden_outputs()  # set self.golden_outputs
         model = self.set_model_eval(self.model)
         inputs = self.set_inputs_eval(self.inputs)
         if on_device == True:
@@ -268,7 +273,7 @@ class OnnxModelTester:
     def get_golden_outputs(self):
         if self.golden_outputs is not None:
             return self.golden_outputs
-
+        breakpoint()
         self.golden_outputs = self.run_model(self.model, self.inputs)
         return self.golden_outputs
 
@@ -284,14 +289,10 @@ class OnnxModelTester:
             outputs = session.run(None, inputs)
             return {
                 output_node.name: torch.tensor(value)
-                for output_node, value in zip(model.graph.output, self.golden_outputs)
+                for output_node, value in zip(model.graph.output, outputs)
             }
-        if isinstance(inputs, collections.abc.Mapping):
-            return model(**inputs)
-        elif isinstance(inputs, collections.abc.Sequence):
-            return model(*inputs)
         else:
-            return model(inputs)
+            assert False, f"Unsupported model type: {type(model)}"
 
     def append_fake_loss_function(self, outputs):
         # Using `torch.mean` as the loss function for testing purposes.
@@ -359,6 +360,7 @@ class OnnxModelTester:
 
     @torch.no_grad()
     def test_model_eval(self, on_device=True):
+        self.get_golden_outputs()  # set self.golden_outputs
         model = self.set_model_eval(self.model)
         inputs = self.set_inputs_eval(self.inputs)
         if on_device == True:
