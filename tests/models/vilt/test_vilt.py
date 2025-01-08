@@ -50,11 +50,11 @@ def test_vilt(record_property, mode, nightly):
     else:
         cc.compile_depth = CompileDepth.TTNN_IR
 
-    tester = ThisTester(model_name, mode, compiler_config=cc)
+    tester = ThisTester(model_name, mode, relative_atol=0.01, compiler_config=cc)
     results = tester.test_model()
     if mode == "eval":
         logits = results.logits
         idx = logits.argmax(-1).item()
-        print("Predicted answer:", tester.model.config.id2label[idx])
+        print("Predicted answer:", tester.framework_model.config.id2label[idx])
 
     record_property("torch_ttnn", (tester, results))

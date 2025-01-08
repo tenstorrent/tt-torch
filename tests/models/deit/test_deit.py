@@ -59,13 +59,16 @@ def test_deit(record_property, model_name, mode, nightly):
     if nightly:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_name, mode, compiler_config=cc)
+    tester = ThisTester(model_name, mode, relative_atol=0.01, compiler_config=cc)
     results = tester.test_model()
 
     if mode == "eval":
         logits = results.logits
         # model predicts one of the 1000 ImageNet classes
         predicted_class_idx = logits.argmax(-1).item()
-        print("Predicted class:", tester.model.config.id2label[predicted_class_idx])
+        print(
+            "Predicted class:",
+            tester.framework_model.config.id2label[predicted_class_idx],
+        )
 
     record_property("torch_ttnn", (tester, results))

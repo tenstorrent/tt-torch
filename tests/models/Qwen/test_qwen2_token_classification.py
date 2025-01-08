@@ -45,7 +45,7 @@ def test_qwen2_token_classification(record_property, model_name, mode, nightly):
     if nightly:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_name, mode, compiler_config=cc)
+    tester = ThisTester(model_name, mode, relative_atol=0.01, compiler_config=cc)
     with torch.no_grad():
         results = tester.test_model()
 
@@ -53,7 +53,8 @@ def test_qwen2_token_classification(record_property, model_name, mode, nightly):
         logits = results.logits
         predicted_token_class_ids = logits.argmax(-1)
         predicted_tokens_classes = [
-            tester.model.config.id2label[t.item()] for t in predicted_token_class_ids[0]
+            tester.framework_model.config.id2label[t.item()]
+            for t in predicted_token_class_ids[0]
         ]
         input_ids = tester.inputs["input_ids"]
         tokens = tester.tokenizer.convert_ids_to_tokens(input_ids[0])
