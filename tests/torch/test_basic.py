@@ -479,3 +479,51 @@ def test_remainder_op_zero():
     input1 = torch.tensor([1, -2, 3, -4, 5, 6, -7, 18], dtype=torch.float32)
     input2 = torch.tensor([1, 0, 3, 0, -9, 10, -7, 12], dtype=torch.float32)
     verify_module(Basic(), inputs=[input1, input2])
+
+
+def test_log_op():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.log(x)
+
+    verify_module(
+        Basic(), input_shapes=[(32, 32)], input_range=(0.1, 60), required_atol=0.02
+    )
+
+
+def test_ceil_op():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.ceil(x)
+
+    verify_module(
+        Basic(), input_shapes=[(32, 32)], input_range=(-6, 6), required_atol=0.02
+    )
+
+
+def test_sine_op():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.sin(x)
+
+    verify_module(Basic(), input_shapes=[(32, 32)], input_range=(-360, 360))
+
+
+def test_cosine_op():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.cos(x)
+
+    verify_module(Basic(), input_shapes=[(32, 32)], input_range=(-360, 360))
