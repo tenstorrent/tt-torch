@@ -90,7 +90,7 @@ jobs:
         source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
         export TT_TORCH_OP_TIMEOUT=30
-        pytest -svv ests/models/autoencoder_conv/test_autoencoder_conv_v2.py::test_autoencoder_conv_v2 -k eval --nightly \
+        pytest -svv tests/models/autoencoder_conv/test_autoencoder_conv_v2.py::test_autoencoder_conv_v2 --nightly \
            --junit-xml=${{ steps.strings.outputs.test_report_path_torch }}
 
     - name: Upload Test Report Torch
