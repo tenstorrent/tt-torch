@@ -80,7 +80,7 @@ jobs:
       working-directory: ${{ steps.strings.outputs.install-output-dir }}
       run: |
         cp -r ${{ steps.strings.outputs.install-output-dir }}/tt-metal/* ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal
-        cp -r ${{ steps.strings.outputs.install-output-dir }}/env/env/* ${{ steps.strings.outputs.work-dir }}/env
+        cp -r ${{ steps.strings.outputs.install-output-dir }}/env/* ${{ steps.strings.outputs.work-dir }}/env
 
     - name: Run Model Tests
       shell: bash
