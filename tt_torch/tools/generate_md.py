@@ -107,10 +107,9 @@ class AllOps:
             # if yes, this needs to be revised
             # this indexing hasn't been tested with many json files
             ttnn_mlir = ajs["programs"][0]["debug_info"]["mlir"]["source"]
-            status = "N/A"
             pcc = "N/A"
             atol = "N/A"
-            self.process_ops(ttnn_mlir, status, pcc, atol)
+            self.process_ops(ttnn_mlir, pcc, atol)
 
     def parse_xlsx(self, excel_path):
         """
@@ -123,7 +122,7 @@ class AllOps:
         df = pd.read_excel(excel_path, sheet_name="All Ops")
 
         # Validate required columns are present
-        required_columns = ["Raw TTNNIR", "Torch Name", "Status", "PCC", "ATOL"]
+        required_columns = ["Raw TTNNIR", "Torch Name", "PCC", "ATOL"]
         missing_columns = [col for col in required_columns if col not in df.columns]
 
         if missing_columns:
@@ -138,20 +137,18 @@ class AllOps:
             raw_ttnnir = row["Raw TTNNIR"].strip("'\"")
 
             # Extract row details
-            status = row["Status"]
             pcc = row["PCC"]
             atol = row["ATOL"]
 
             # Process operation details
-            self.process_ops(raw_ttnnir, status, pcc, atol)
+            self.process_ops(raw_ttnnir, pcc, atol)
 
-    def process_ops(self, ttnnir_string, status, pcc, atol):
+    def process_ops(self, ttnnir_string, pcc, atol):
         """
         Process TTNN operations from an IR string, extracting shapes, layouts, and metadata.
 
         Args:
             ttnnir_string: TTNN Intermediate Representation string
-            status: Operation status code
             pcc: Percent Correct Classification metric
             atol: Absolute tolerance for numerical comparisons
         """
@@ -220,12 +217,6 @@ class AllOps:
                         output_layouts.append(layout)
             opToWrite["input_layouts"] = input_layouts
             opToWrite["output_layouts"] = output_layouts
-            if status == 6.0:
-                opToWrite["runs_on_ttnn"] = "no"
-            elif status == 7.0:
-                opToWrite["runs_on_ttnn"] = "yes"
-            else:
-                opToWrite["runs_on_ttnn"] = "N/A"
             opToWrite["pcc"] = pcc
             opToWrite["atol"] = atol
             if self.ops.get(opToWrite["name"]) is None:
@@ -257,15 +248,14 @@ class AllOps:
                 if dict_list:
                     # Write the table header
                     file.write(
-                        "| Name | Input Shapes | Input Layouts | Attributes | Output Shapes | Output Layouts | Runs on TTNN | PCC | ATOL |\n"
+                        "| Name | Input Shapes | Input Layouts | Attributes | Output Shapes | Output Layouts | PCC | ATOL |\n"
                     )
                     file.write(
-                        "|------|--------------|---------------|------------|---------------|----------------|--------------|-----|------|\n"
+                        "|------|--------------|---------------|------------|---------------|----------------|-----|------|\n"
                     )
                     # Write each dictionary in the array to the table
                     for item in dict_list:
                         name = item.get("name", "")
-                        runs_on_ttnn = item.get("runs_on_ttnn", "")
                         pcc = item.get("pcc", "")
                         atol = item.get("atol", "")
 
@@ -295,7 +285,7 @@ class AllOps:
                         output_shapes = " <br> ".join(item.get("output_shapes", []))
 
                         file.write(
-                            f"| {name} | {input_shapes} | {input_layouts_str} | {attributes} | {output_shapes} | {output_layouts_str} | {runs_on_ttnn} | {pcc} | {atol} |\n"
+                            f"| {name} | {input_shapes} | {input_layouts_str} | {attributes} | {output_shapes} | {output_layouts_str} | {pcc} | {atol} |\n"
                         )
 
     def create_json_data(self):
@@ -308,6 +298,11 @@ class AllOps:
 
             for item in dict_list:
                 # Process input layouts
+                pcc = "N/A" if pd.isna(item.get("pcc")) else str(item.get("pcc", "N/A"))
+                atol = (
+                    "N/A" if pd.isna(item.get("atol")) else str(item.get("atol", "N/A"))
+                )
+
                 input_layouts = item.get("input_layouts", [])
                 processed_input_layouts = [
                     {
@@ -337,9 +332,8 @@ class AllOps:
                     "attributes": item.get("attributes", {}),
                     "output_shapes": item.get("output_shapes", []),
                     "output_layouts": processed_output_layouts,
-                    "runs_on_ttnn": item.get("runs_on_ttnn", ""),
-                    "pcc": item.get("pcc", ""),
-                    "atol": item.get("atol", ""),
+                    "pcc": pcc,
+                    "atol": atol,
                 }
 
                 processed_items.append(processed_item)
@@ -461,11 +455,13 @@ if __name__ == "__main__":
     if args.md_dir is not None:
         try:
             myOps.create_md_files(args.md_dir)
+            print(f"Successfully generated files in {args.md_dir}")
         except Exception as e:
             print(f"Exception occured at generate_md.py: {e}")
 
     if args.json_dir is not None:
         try:
             myOps.save_json_files(args.json_dir)
+            print(f"Successfully generated files in {args.json_dir}")
         except Exception as e:
             print(f"Exception occured at generate_md.py: {e}")

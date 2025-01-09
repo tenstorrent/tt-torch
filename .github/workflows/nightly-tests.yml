@@ -27,3 +27,7 @@ jobs:
     needs: test
     uses: ./.github/workflows/generate-model-report.yml
     secrets: inherit
+  generate-ttnn-md:
+    needs: download-report
+    uses: ./.github/workflows/generate-ttnn-md.yml
+    secrets: inherit
