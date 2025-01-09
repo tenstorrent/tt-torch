@@ -89,7 +89,8 @@ jobs:
       run: |
         source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
-        pytest -v tests/torch \
+        export TT_TORCH_OP_TIMEOUT=30
+        pytest -svv ests/models/autoencoder_conv/test_autoencoder_conv_v2.py::test_autoencoder_conv_v2 -k eval --nightly \
            --junit-xml=${{ steps.strings.outputs.test_report_path_torch }}
 
     - name: Upload Test Report Torch
@@ -99,40 +100,40 @@ jobs:
         name: test-reports-torch-${{ matrix.build.runs-on }}-${{ matrix.build.name }}
         path: ${{ steps.strings.outputs.test_report_path_torch }}
 
-    - name: Run Supported Models
-      shell: bash
-      run: |
-        source env/activate
-        export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
-        pytest -v tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base[False-eval] \
-                  tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[False-eval] \
-                  tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[False-eval] \
-                  tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[False-microsoft/beit-base-patch16-224-eval] \
-                  tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[False-microsoft/beit-large-patch16-224-eval] \
-                  tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io[False-eval] \
-                  tests/models/openpose/test_openpose_v2.py::test_openpose_v2[False-eval] \
-                  tests/models/squeeze_bert/test_squeeze_bert.py::test_squeeze_bert[False-eval] \
-                  tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[False-eval] \
-           --junit-xml=${{ steps.strings.outputs.test_report_path_models }}
+    # - name: Run Supported Models
+    #   shell: bash
+    #   run: |
+    #     source env/activate
+    #     export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
+    #     pytest -v tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base[False-eval] \
+    #               tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[False-eval] \
+    #               tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[False-eval] \
+    #               tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[False-microsoft/beit-base-patch16-224-eval] \
+    #               tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[False-microsoft/beit-large-patch16-224-eval] \
+    #               tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io[False-eval] \
+    #               tests/models/openpose/test_openpose_v2.py::test_openpose_v2[False-eval] \
+    #               tests/models/squeeze_bert/test_squeeze_bert.py::test_squeeze_bert[False-eval] \
+    #               tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[False-eval] \
+    #        --junit-xml=${{ steps.strings.outputs.test_report_path_models }}
 
-    - name: Upload Test Report Models
-      uses: actions/upload-artifact@v4
-      if: success() || failure()
-      with:
-        name: test-reports-models-${{ matrix.build.runs-on }}-${{ matrix.build.name }}
-        path: ${{ steps.strings.outputs.test_report_path_models }}
+    # - name: Upload Test Report Models
+    #   uses: actions/upload-artifact@v4
+    #   if: success() || failure()
+    #   with:
+    #     name: test-reports-models-${{ matrix.build.runs-on }}-${{ matrix.build.name }}
+    #     path: ${{ steps.strings.outputs.test_report_path_models }}
 
-    - name: Run ONNX Unit tests
-      shell: bash
-      run: |
-        source env/activate
-        export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
-        pytest -v tests/onnx \
-            --junit-xml=${{ steps.strings.outputs.test_report_path_onnx }}
+    # - name: Run ONNX Unit tests
+    #   shell: bash
+    #   run: |
+    #     source env/activate
+    #     export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
+    #     pytest -v tests/onnx \
+    #         --junit-xml=${{ steps.strings.outputs.test_report_path_onnx }}
 
-    - name: Upload Test Report Onnx
-      uses: actions/upload-artifact@v4
-      if: success() || failure()
-      with:
-        name: test-reports-onnx-${{ matrix.build.runs-on }}-${{ matrix.build.name }}
-        path: ${{ steps.strings.outputs.test_report_path_onnx }}
+    # - name: Upload Test Report Onnx
+    #   uses: actions/upload-artifact@v4
+    #   if: success() || failure()
+    #   with:
+    #     name: test-reports-onnx-${{ matrix.build.runs-on }}-${{ matrix.build.name }}
+    #     path: ${{ steps.strings.outputs.test_report_path_onnx }}

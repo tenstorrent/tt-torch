@@ -162,6 +162,9 @@ class CompilerConfig:
         remove_embedded_constants = os.environ.get("TT_TORCH_EMBEDDEDD_CONSTANTS")
         if remove_embedded_constants and int(remove_embedded_constants):
             self.remove_embedded_constants = True
+        op_timeout = os.environ.get("TT_TORCH_OP_TIMEOUT")
+        if op_timeout:
+            self.single_op_timeout = int(op_timeout)
 
     def post_init(self):
         if self.consteval_parameters:
