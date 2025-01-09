@@ -256,6 +256,9 @@ class Executor:
                     break
             except mp.queues.Empty:
                 pass
+            except Exception as e:
+                process.terminate()
+                raise e
             if time.time() - start > self.compiler_config.single_op_timeout:
                 process.terminate()
                 break
@@ -362,6 +365,7 @@ class Executor:
                 try:
                     binary, op = self.compile_op(node, *args, **node.kwargs)
                 except Exception as e:
+                    binary = None
                     print(f"Failed to compile {idx}/{num_nodes}: {node.target}: {e}")
 
                 if (
