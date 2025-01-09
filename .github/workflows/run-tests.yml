@@ -14,6 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         build: [
+          {runs-on: n150, name: "run"},
           {runs-on: n300, name: "run"},
         ]
 
@@ -90,7 +91,8 @@ jobs:
         source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
         export TT_TORCH_OP_TIMEOUT=30
-        pytest -svv tests/models/autoencoder_conv/test_autoencoder_conv_v2.py::test_autoencoder_conv_v2 --nightly \
+        pytest -svv tests/models/MobileNetV2/ \
+                    tests/models/openpose/ --nightly \
            --junit-xml=${{ steps.strings.outputs.test_report_path_torch }}
 
     - name: Upload Test Report Torch
