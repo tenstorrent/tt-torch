@@ -382,16 +382,17 @@ class Executor:
                         if calculated is None:
                             raise ValueError("Failed to execute")
                         op.compilation_status = OpCompilationStatus.EXECUTED
-                        tensor = node.target(*args, **node.kwargs)
+                        golden = node.target(*args, **node.kwargs)
                         if self.compiler_config.enable_intermediate_verification:
-                            atol = calculate_atol(calculated, tensor)
+                            atol = calculate_atol(calculated, golden)
                             op.atol = atol
                             if atol > self.required_atol:
                                 print(f"atol too high for {idx}: {atol}")
-                            pcc = calculate_pcc(calculated, tensor)
+                            pcc = calculate_pcc(calculated, golden)
                             op.pcc = pcc
                             if pcc < self.required_pcc:
                                 print(f"pcc too low for {idx}: {pcc}")
+                        tensor = calculated
                     except Exception as e:
                         print(
                             f"Failed to execute {idx}/{num_nodes}: {node.target}: {e}"
