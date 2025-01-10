@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import torch
+import tt_mlir
 import onnx
 from onnx.tools import update_model_dims
 import onnxruntime
@@ -30,8 +31,8 @@ class ModelTester:
     ):
         if mode not in ["train", "eval"]:
             raise ValueError(f"Current mode is not supported: {mode}")
-        self.model_name = model_name
         self.mode = mode
+        self.model_name = model_name
         self.framework_model = self._load_model()
         self.compiled_model = None
         self.inputs = self._load_inputs()
@@ -81,6 +82,11 @@ class ModelTester:
             f"Output object type: ({type(output_object)}) is not a torch.Tensor, tuple[torch.Tensor], or list[torch.Tensor]. Please implement _extract_outputs in the derived class."
         )
 
+    def run_model(self, model, inputs):
+        raise NotImplementedError(
+            "This method should be implemented in the derived class"
+        )
+
     def get_golden_outputs(self, model, inputs):
         if self.golden_outputs is not None:
             return self.golden_outputs
@@ -89,26 +95,21 @@ class ModelTester:
         return self.golden_outputs
 
     def compile_model(self, model, compiler_config):
-        # Compile model
-        model = torch.compile(
-            model, backend=backend, dynamic=False, options=compiler_config
+        raise NotImplementedError(
+            "This method should be implemented in the derived class"
         )
-        self.compiled_model = model
-        return self.compiled_model
 
-    def run_model(self, model, inputs):
-        if isinstance(inputs, collections.abc.Mapping):
-            return model(**inputs)
-        elif isinstance(inputs, collections.abc.Sequence):
-            return model(*inputs)
+    def test_model(self, on_device=True):
+        if self.mode == "train":
+            raise NotImplementedError("Training mode is not supported for ModelTester")
+        elif self.mode == "eval":
+            return self.test_model_eval(on_device)
         else:
-            return model(inputs)
+            raise ValueError(f"Current mode is not supported: {self.mode}")
 
-    @torch.no_grad()
     def test_model_eval(self, on_device=True):
-        model = self.framework_model.eval()
+        model = self.framework_model
         golden = self.get_golden_outputs(model, self.inputs)  # set self.golden_outputs
-
         if on_device == True:
             model = self.compile_model(model, self.compiler_config)
 
@@ -127,10 +128,49 @@ class ModelTester:
         assert passed, err_msg
         return outputs
 
-    def test_model(self, on_device=True):
-        if self.mode == "train":
-            return self.test_model_train(on_device)
-        elif self.mode == "eval":
-            return self.test_model_eval(on_device)
+
+class TorchModelTester(ModelTester):
+    def compile_model(self, model, compiler_config):
+        # Compile model
+        model = torch.compile(
+            model, backend=backend, dynamic=False, options=compiler_config
+        )
+        self.compiled_model = model
+        return self.compiled_model
+
+    def run_model(self, model, inputs):
+        if isinstance(inputs, collections.abc.Mapping):
+            return model(**inputs)
+        elif isinstance(inputs, collections.abc.Sequence):
+            return model(*inputs)
         else:
-            raise ValueError(f"Current mode is not supported: {self.mode}")
+            return model(inputs)
+
+    @torch.no_grad()
+    def test_model_eval(self, on_device=True):
+        self.framework_model = self.framework_model.eval()
+        super().test_model_eval(on_device)
+
+
+class OnnxModelTester(ModelTester):
+    def compile_model(self, model, compiler_config):
+        assert isinstance(
+            model, onnx.ModelProto
+        ), "Model should be of type onnx.ModelProto"
+        self.compiled_model = compile_onnx(model, self.inputs)
+        return self.compiled_model
+
+    def run_model(self, model, inputs):
+        if isinstance(model, onnx.ModelProto):
+            sess = onnxruntime.InferenceSession(model.SerializeToString())
+            inputs = {
+                name: input.numpy()
+                if input.dtype != torch.bfloat16
+                else input.float().numpy()
+                for name, input in inputs.items()
+            }
+            outputs = sess.run(None, inputs)
+            return outputs
+        else:
+            # Must be a compiled model
+            ret = tt_mlir.run(inputs, model)

@@ -7,6 +7,7 @@ import tt_mlir
 from torch_mlir.ir import Context
 from torch_mlir.dialects import torch as torch_dialect
 
+from onnxruntime.tools.symbolic_shape_infer import SymbolicShapeInference
 from torch_mlir.compiler_utils import (
     OutputType,
     run_pipeline_with_repro_report,
@@ -14,9 +15,17 @@ from torch_mlir.compiler_utils import (
 )
 
 
-def compile_onnx(module: onnx.ModelProto):
+def compile_onnx(module: onnx.ModelProto, inputs):
     # Infer onnx shapes incase that information is missing
-    module = onnx.shape_inference.infer_shapes(module)
+    for input_node in module.graph.input:
+        assert input_node.name in inputs, f"Input {input_node.name} not provided"
+
+        for i, dim in enumerate(input_node.type.tensor_type.shape.dim):
+            dim.Clear()
+            dim.dim_value = inputs[input_node.name].shape[i]
+
+    module = onnx.version_converter.convert_version(module, 17)
+    module = SymbolicShapeInference.infer_shapes(module)
 
     context = Context()
     torch_dialect.register_dialect(context)
