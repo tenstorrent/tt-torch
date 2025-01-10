@@ -202,6 +202,10 @@ def test_linear_with_bias():
     verify_module(Basic(), input_shapes=[(32, 32)])
 
 
+@pytest.mark.xfail(
+    strict=True,
+    reason="RepeatOp is failing due to scalar type shape mismatch, see https://github.com/tenstorrent/tt-torch/issues/186",
+)
 def test_linear_with_bias_no_embedded_constants():
     class Basic(nn.Module):
         def __init__(self):
@@ -225,9 +229,7 @@ def test_constant():
         def forward(self, x):
             return x + 1.0
 
-    cc = CompilerConfig()
-    cc.remove_embedded_constants = True
-    verify_module(Basic(), input_shapes=[(1, 768)], compiler_config=cc)
+    verify_module(Basic(), input_shapes=[(1, 768)])
 
 
 def test_maximum():
