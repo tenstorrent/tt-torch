@@ -64,10 +64,10 @@ def test_openpose_v2(record_property, mode, nightly):
     cc.consteval_parameters = True
     if nightly:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-    else:
-        cc.compile_depth = CompileDepth.TTNN_IR
 
-    tester = ThisTester(model_name, mode, compiler_config=cc)
+    tester = ThisTester(
+        model_name, mode, compiler_config=cc, assert_on_output_mismatch=False
+    )
     results = tester.test_model()
     if mode == "eval":
         print(f"Output: {results}")

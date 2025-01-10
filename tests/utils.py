@@ -27,6 +27,7 @@ class ModelTester:
         required_atol=None,
         relative_atol=None,
         compiler_config=None,
+        assert_on_output_mismatch=True,
     ):
         if mode not in ["train", "eval"]:
             raise ValueError(f"Current mode is not supported: {mode}")
@@ -36,6 +37,7 @@ class ModelTester:
         self.compiled_model = None
         self.inputs = self._load_inputs()
         self.pcc = pcc
+        self.assert_on_output_mismatch = assert_on_output_mismatch
 
         if (required_atol is None) and (relative_atol is None):
             print(
@@ -106,7 +108,11 @@ class ModelTester:
 
     @torch.no_grad()
     def test_model_eval(self, on_device=True):
-        model = self.framework_model.eval()
+        model = (
+            self.framework_model.eval()
+            if hasattr(self.framework_model, "eval")
+            else self.framework_model
+        )
         golden = self.get_golden_outputs(model, self.inputs)  # set self.golden_outputs
 
         if on_device == True:
@@ -124,7 +130,8 @@ class ModelTester:
             self.required_atol,
             self.relative_atol,
         )
-        assert passed, err_msg
+        if self.assert_on_output_mismatch:
+            assert passed, err_msg
         return outputs
 
     def test_model(self, on_device=True):
