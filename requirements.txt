@@ -9,7 +9,7 @@ pre-commit
 pybind11
 pytest
 tabulate
-transformers
+transformers==4.47.1
 protobuf
 tiktoken
 sentencepiece
