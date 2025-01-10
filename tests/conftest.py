@@ -4,6 +4,9 @@
 
 import pytest
 import torch
+import multiprocessing as mp
+
+mp.set_start_method("spawn")
 
 
 @pytest.fixture(autouse=True)
