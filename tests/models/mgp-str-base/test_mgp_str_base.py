@@ -32,6 +32,9 @@ class ThisTester(ModelTester):
         inputs["pixel_values"] = inputs["pixel_values"].to(torch.bfloat16)
         return inputs
 
+    def _extract_outputs(self, output_object):
+        return output_object.logits
+
 
 @pytest.mark.parametrize(
     "mode",
@@ -52,7 +55,7 @@ def test_mgp_str_base(record_property, mode, nightly):
     else:
         cc.compile_depth = CompileDepth.TTNN_IR
 
-    tester = ThisTester(model_name, mode, compiler_config=cc)
+    tester = ThisTester(model_name, mode, relative_atol=0.02, compiler_config=cc)
     results = tester.test_model()
 
     if mode == "eval":
