@@ -47,7 +47,7 @@ def test_MobileNetV2(record_property, mode, nightly):
     else:
         cc.compile_depth = CompileDepth.TTNN_IR
 
-    tester = ThisTester(model_name, mode, compiler_config=cc, required_atol=0.03)
+    tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()
     if mode == "eval":
         # Print the top 5 predictions

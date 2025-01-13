@@ -97,9 +97,7 @@ def test_autoencoder_linear(record_property, mode, nightly):
     if nightly:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(
-        model_name, mode, pcc=0.1, required_atol=0.2, compiler_config=cc
-    )
+    tester = ThisTester(model_name, mode, compiler_config=cc)
     results = tester.test_model()
 
     if mode == "eval":
