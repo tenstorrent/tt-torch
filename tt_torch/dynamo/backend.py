@@ -203,14 +203,14 @@ class Executor:
                 getitem_nodes.append(getitem_node)
                 getitem_node.meta["tensor_meta"] = tensor_meta
             out = graph.output(tuple(getitem_nodes))
+            if len(node.users) != len(graph_node.users):
+                raise ValueError(
+                    f"Op Node {node} has different number of users({len(graph_node.users)}) from global graph({len(node.users)})"
+                )
         else:
             out = graph.output((graph_node,))
         if "tensor_meta" not in node.meta:
             raise ValueError(f"Node {node} does not have tensor_meta")
-        if len(node.users) != len(graph_node.users):
-            raise ValueError(
-                f"Op Node {node} has different number of users({len(graph_node.users)}) from global graph({len(node.users)})"
-            )
 
         op.compilation_status = OpCompilationStatus.CREATED_GRAPH
         out.meta["tensor_meta"] = node.meta["tensor_meta"]

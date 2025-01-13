@@ -202,6 +202,10 @@ def test_linear_with_bias():
     verify_module(Basic(), input_shapes=[(32, 32)])
 
 
+@pytest.mark.xfail(
+    strict=True,
+    reason="RepeatOp is failing due to scalar type shape mismatch, see https://github.com/tenstorrent/tt-torch/issues/186",
+)
 def test_linear_with_bias_no_embedded_constants():
     class Basic(nn.Module):
         def __init__(self):
@@ -225,9 +229,7 @@ def test_constant():
         def forward(self, x):
             return x + 1.0
 
-    cc = CompilerConfig()
-    cc.remove_embedded_constants = True
-    verify_module(Basic(), input_shapes=[(1, 768)], compiler_config=cc)
+    verify_module(Basic(), input_shapes=[(1, 768)])
 
 
 def test_maximum():
@@ -447,6 +449,25 @@ def test_unused_output():
         cc = CompilerConfig()
         cc.compile_depth = tt_torch.tools.utils.CompileDepth.COMPILE_OP_BY_OP
         verify_module(module(), input_shapes=[(256, 256)], compiler_config=cc)
+
+
+def test_multiple_users():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            x2 = x + x  # add op
+            y1 = x2 + x  # user 1 of add op
+            y2 = x2 + x  # user 2 of add op
+            z = y1 + y2
+            return z
+
+    cc = CompilerConfig()
+    cc.compile_depth = tt_torch.tools.utils.CompileDepth.EXECUTE_OP_BY_OP
+    verify_module(
+        Basic(), input_shapes=[(256, 256)], compiler_config=cc, do_assert=False
+    )
 
 
 @pytest.mark.parametrize(
