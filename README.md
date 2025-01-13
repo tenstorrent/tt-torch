@@ -40,3 +40,4 @@ You can use the following environment variables to override default behaviour:
 | TT_TORCH_CONSTEVAL_PARAMETERS | Extends consteval to include parameters (e.g., model weights) as well as embedded constants. | False |
 | TT_TORCH_EMBEDDEDD_CONSTANTS | Remove embedded constants from the Torch FX graph and convert them to constant inputs | False |
 | TT_TORCH_ENABLE_IR_PRINTING | Enables printing MLIR for all conversion steps from StableHLO to TTNN. Be warned, this forces single core compile, so is much slower. | False |
+| TT_TORCH_ENABLE_IR_DUMP | Enables dumping MLIR for all dialect conversion steps : [torch.FX, stablehlo, ttir, ttnn] | False |

@@ -470,6 +470,18 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     dump_intermediates = os.environ.get("TT_TORCH_ENABLE_IR_PRINTING")
     dump_intermediates = dump_intermediates and int(dump_intermediates)
 
+    save_intermediates = os.environ.get("TT_TORCH_ENABLE_IR_DUMP")
+    save_intermediates = save_intermediates and int(save_intermediates)
+
+    if save_intermediates:
+        with open("gm_graph.txt", "w") as file:
+            original_stdout = sys.stdout
+            sys.stdout = file
+            try:
+                gm.graph.print_tabular()
+            finally:
+                sys.stdout = original_stdout
+
     module = import_graph(gm.graph)
     if dump_intermediates:
         module.dump()
@@ -483,6 +495,10 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     if dump_intermediates:
         module.dump()
 
+    if save_intermediates:
+        with open("stablehlo.mlir", "w") as file:
+            print(module, file=file)
+
     if compiler_config.profile_ops:
         compiler_config.set_stablehlo_mlir_module(module.operation.get_asm())
     if compiler_config.compile_depth == CompileDepth.STABLEHLO:
@@ -491,9 +507,18 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     ttir = tt_mlir.compile_stable_hlo_to_ttir(module.operation.get_asm())
     if dump_intermediates:
         print(ttir)
+
+    if save_intermediates:
+        with open("ttir.mlir", "w") as file:
+            print(ttir, file=file)
+
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
     if dump_intermediates:
         print(ttnn)
+
+    if save_intermediates:
+        with open("ttnn.mlir", "w") as file:
+            print(ttnn, file=file)
 
     executor.set_binary(binary)
     return executor
