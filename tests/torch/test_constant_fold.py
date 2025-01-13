@@ -66,16 +66,24 @@ def test_interp():
     verify_module(Basic(), inputs=[small], compiler_config=cc)
 
 
-def test_linear():
+@pytest.mark.parametrize(
+    "input_shape", [(32, 32)]
+)  # , (64, 64), (128, 128), (256, 256)])
+def test_linear(input_shape):
     class Basic(nn.Module):
         def __init__(self):
             super().__init__()
-            self.linear_a = nn.Linear(32, 64, bias=False)
-            self.linear_b = nn.Linear(64, 64, bias=False)
+            input_size = input_shape[0]
+            self.linear_a = nn.Linear(input_size, 2 * input_size, bias=False)
+            self.linear_b = nn.Linear(2 * input_size, 2 * input_size, bias=False)
 
             # linear weights are typically initialized to have mean 0 and std 0.1
-            self.mm_c_weight = torch.nn.Parameter(torch.randn(64, 256) * 0.1)
-            self.mm_d_weight = torch.nn.Parameter(torch.randn(256, 256) * 0.1)
+            self.mm_c_weight = torch.nn.Parameter(
+                torch.randn(2 * input_size, 8 * input_size) * 0.1
+            )
+            self.mm_d_weight = torch.nn.Parameter(
+                torch.randn(8 * input_size, 8 * input_size) * 0.1
+            )
 
         def forward(self, x):
             x = self.linear_a(x)
@@ -89,6 +97,4 @@ def test_linear():
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    verify_module(
-        Basic(), input_shapes=[(32, 32)], compiler_config=cc, required_atol=0.02
-    )
+    verify_module(Basic(), input_shapes=[input_shape], compiler_config=cc)

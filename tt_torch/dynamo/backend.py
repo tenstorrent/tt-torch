@@ -331,6 +331,7 @@ class Executor:
 
     def run_gm_op_by_op(self, *inputs):
         node_to_tensor = {}
+        node_to_golden_tensor = {}
         input_index = 0
         outputs = []
         num_nodes = len(self.gm.graph.nodes)
@@ -362,6 +363,23 @@ class Executor:
                         )
                     else:
                         args.append(arg)
+                golden_args = []
+                for arg in node.args:
+                    if isinstance(arg, torch.fx.node.Node):
+                        golden_args.append(
+                            node_to_golden_tensor.get(arg, node_to_tensor[arg])
+                        )
+                    elif isinstance(arg, list):
+                        golden_args.append(
+                            [
+                                node_to_golden_tensor.get(arg, node_to_tensor[arg])
+                                if isinstance(a, torch.fx.node.Node)
+                                else a
+                                for a in arg
+                            ]
+                        )
+                    else:
+                        golden_args.append(arg)
                 try:
                     binary, op = self.compile_op(node, *args, **node.kwargs)
                 except Exception as e:
@@ -373,6 +391,11 @@ class Executor:
                     and binary is not None
                 ):
                     try:
+                        print("args")
+                        for arg in args:
+                            print(arg.shape)
+                            torch.set_printoptions(threshold=torch.inf)
+                            print(arg)
                         calculated, runtime_stack_dump = self.run_op(binary, *args)
                         self.compiler_config.unique_ops[
                             op.unique_key()
@@ -385,13 +408,16 @@ class Executor:
                         tensor = node.target(*args, **node.kwargs)
                         if self.compiler_config.enable_intermediate_verification:
                             atol = calculate_atol(calculated, tensor)
+                            print("op atol", atol)
                             op.atol = atol
                             if atol > self.required_atol:
                                 print(f"atol too high for {idx}: {atol}")
                             pcc = calculate_pcc(calculated, tensor)
+                            print("op pcc", pcc)
                             op.pcc = pcc
                             if pcc < self.required_pcc:
                                 print(f"pcc too low for {idx}: {pcc}")
+                        tensor = calculated
                     except Exception as e:
                         print(
                             f"Failed to execute {idx}/{num_nodes}: {node.target}: {e}"
@@ -400,6 +426,7 @@ class Executor:
                 else:
                     tensor = node.target(*args, **node.kwargs)
                 node_to_tensor[node] = tensor
+                node_to_golden_tensor[node] = node.target(*golden_args, **node.kwargs)
             elif node.op == "output":
                 args = node.args[0]
                 output_tensors = [node_to_tensor[arg] for arg in args]
@@ -444,6 +471,9 @@ class Executor:
 
         if self.compiler_config.compile_depth == CompileDepth.EXECUTE:
             assert self.binary is not None, "Binary must be set for EXECUTE mode"
+            # print("brata inputs", inputs + self.graph_constants)
+            # print("brata binary", self.binary)
+            print("brata graph", self.gm.graph)
             return tt_mlir.run(inputs + self.graph_constants, self.binary)
         elif self.compiler_config.compile_depth in (
             CompileDepth.EXECUTE_OP_BY_OP,

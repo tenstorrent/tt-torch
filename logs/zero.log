@@ -1,0 +1,17 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.0rc1, pytest-8.3.4, pluggy-1.5.0 -- /localdev/achoudhury/tt-torch/env/venv/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /localdev/achoudhury/tt-torch
+collecting ... collected 249 items / 247 deselected / 2 selected
+
+tests/torch/test_basic.py::test_div_zero
+[32m2025-01-13 16:50:05.466[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 4; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-01-13 16:50:05.467[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [4]
+[32m2025-01-13 16:50:05.467[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-01-13 16:50:05.516[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+PASSED
+tests/torch/test_basic.py::test_remainder_op_zero XPASS (TTNN returns
+LHS operand instead of NaN if divisor is 0, see
+https://github.com/tenstorrent/tt-metal/issues/16394)
+
+================= 1 passed, 247 deselected, 1 xpassed in 8.07s =================
