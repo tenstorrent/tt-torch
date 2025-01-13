@@ -24,9 +24,6 @@ class ThisTester(ModelTester):
         inputs = self.tokenizer("Hello, my dog is cute", return_tensors="pt")
         return inputs
 
-    def _extract_outputs(self, output_object):
-        return (output_object.logits,)
-
 
 @pytest.mark.parametrize(
     "mode",

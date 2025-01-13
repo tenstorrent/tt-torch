@@ -116,7 +116,7 @@ jobs:
       working-directory: ${{ steps.strings.outputs.install-output-dir }}
       run: |
         mkdir env
-        cp -r ${{ steps.strings.outputs.work-dir }}/env env
+        cp -r ${{ steps.strings.outputs.work-dir }}/env/* env
 
     - name: 'Tar install directory'
       shell: bash
