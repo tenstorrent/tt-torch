@@ -31,7 +31,7 @@ class ThisTester(ModelTester):
             )
         )
         # get model specific transforms (normalization, resize)
-        data_config = timm.data.resolve_model_data_config(self.model)
+        data_config = timm.data.resolve_model_data_config(self.framework_model)
         transforms = timm.data.create_transform(**data_config, is_training=False)
         input_batch = transforms(img).unsqueeze(
             0

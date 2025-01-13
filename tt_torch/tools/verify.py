@@ -11,6 +11,82 @@ from tt_torch.dynamo.backend import backend
 from tt_torch.tools.utils import calculate_atol, calculate_pcc
 
 
+def verify_against_golden(
+    golden_tensors,
+    calculated_tensors,
+    pcc=0.99,
+    atol=None,
+    relative_atol=None,
+):
+    assert (atol is not None) != (
+        relative_atol is not None
+    ), "Exactly one of atol or relative_atol should be provided."
+    assert isinstance(
+        golden_tensors, tuple
+    ), "Expecting the golden tensors to be a tuple of tensors after _extract_outputs."
+    assert isinstance(
+        calculated_tensors, tuple
+    ), "Expecting the calculated tensors to be a tuple of tensors after _extract_outputs."
+    assert len(golden_tensors) == len(
+        calculated_tensors
+    ), "Expecting the number of golden and calculated tensors to be the same."
+
+    pccs, pcc_passeds = [], []
+    atols, atol_thresholds, atols_passeds = [], [], []
+
+    for golden, calculated in zip(golden_tensors, calculated_tensors):
+        pcc_ = calculate_pcc(golden, calculated)
+        pccs.append(pcc_)
+        pcc_passeds.append(pcc_ >= pcc)
+
+        if relative_atol is not None:
+            max_value = (torch.max(torch.abs(golden[~torch.isnan(golden)]))).item()
+            atol = max_value * relative_atol
+
+        atol_thresholds.append(atol)
+        atol_ = calculate_atol(golden, calculated)
+        atols.append(atol_)
+        atols_passeds.append(atol_ <= atol)
+
+    check_mark = "\U00002705"
+    red_x = "\U0000274C"
+
+    passed = True
+    err_msg = ""
+    msg = ""
+    for i, ((pcc_passed, pcc_), (atol_passed, atol_), atol_threshold) in enumerate(
+        zip(zip(pcc_passeds, pccs), zip(atols_passeds, atols), atol_thresholds)
+    ):
+        msg = msg + f"Results for output {i}:\n"
+        if pcc_passed:
+            msg = msg + f"  PCC: {pcc_:0,.4f}, threshold: {pcc} {check_mark}\n"
+        else:
+            msg = msg + f"  PCC: {pcc_:0,.4f}, threshold: {pcc} {red_x}\n"
+            err_msg = (
+                err_msg + f"PCC of output {i}: {pcc_:0,.4f}, threshold: {pcc} {red_x}\n"
+            )
+            passed = False
+
+        if atol_passed:
+            msg = (
+                msg
+                + f"  ATOL: {atol_:0,.4f}, threshold: {atol_threshold}{f' (calculated using relative_atol: {relative_atol})' if relative_atol is not None else ''} {check_mark}\n"
+            )
+        else:
+            msg = (
+                msg
+                + f"  ATOL: {atol_:0,.4f}, threshold: {atol_threshold}{f' (calculated using relative_atol: {relative_atol})' if relative_atol is not None else ''} {red_x}\n"
+            )
+            err_msg = (
+                err_msg
+                + f"ATOL of output {i}: {atol_:0,.4f}, threshold: {atol_threshold}{f' (calculated using relative_atol: {relative_atol})' if relative_atol is not None else ''} {red_x}\n"
+            )
+            passed = False
+
+    print(msg)
+    return passed, err_msg
+
+
 def _verify_torch_module(
     mod,
     inputs,
@@ -51,22 +127,20 @@ def _verify_torch_module(
     ret = tt_mod(*inputs)
     golden = mod(*inputs)
 
-    atol = calculate_atol(ret, golden)
-    error = False
-    if atol > required_atol:
-        error = True
+    if isinstance(golden, torch.Tensor):
+        golden = (golden,)
+    if isinstance(ret, torch.Tensor):
+        ret = (ret,)
 
-    if np.prod(golden.shape) != 1:
-        ret = ret.to(torch.float32) if ret.dtype == torch.bfloat16 else ret
-        golden = golden.to(torch.float32) if golden.dtype == torch.bfloat16 else golden
+    # Incase they are lists
+    golden = tuple(golden)
+    ret = tuple(ret)
 
-        pcc = calculate_pcc(ret, golden)
-
-        if pcc < required_pcc:
-            error = True
-
+    passed, err_msg = verify_against_golden(
+        golden, ret, required_pcc, atol=required_atol
+    )
     if do_assert:
-        assert not error, f"Error in verification: ATOL: {atol}, PCC: {pcc}"
+        assert passed, err_msg
 
 
 def _verify_onnx_module(
@@ -121,27 +195,20 @@ def _verify_onnx_module(
         ret
     ), f"Number of outputs mismatch between golden and compiled: {len(golden)} vs {len(ret)}"
 
-    for golden_out, tt_out in zip(golden, ret):
-        atol = calculate_atol(tt_out, golden_out)
-        assert (
-            do_assert and atol
-        ) <= required_atol, f"ATOL too high: {atol} vs {required_atol}"
+    if isinstance(golden, torch.Tensor):
+        golden = (golden,)
+    if isinstance(ret, torch.Tensor):
+        ret = (ret,)
 
-        if np.prod(golden_out.shape) == 1:
-            return
+    # Incase they are lists
+    golden = tuple(golden)
+    ret = tuple(ret)
 
-        tt_out = tt_out.to(torch.float32) if tt_out.dtype == torch.bfloat16 else tt_out
-        golden_out = (
-            golden_out.to(torch.float32)
-            if golden_out.dtype == torch.bfloat16
-            else golden_out
-        )
-
-        pcc = calculate_pcc(tt_out, golden_out)
-
-        assert (
-            do_assert and pcc
-        ) >= required_pcc, f"PCC too low: {pcc} vs {required_pcc}"
+    passed, err_msg = verify_against_golden(
+        golden, ret, required_pcc, atol=required_atol
+    )
+    if do_assert:
+        assert passed, err_msg
 
 
 def verify_module(

@@ -40,7 +40,7 @@ class ThisTester(ModelTester):
         batch_size = text_embeddings.shape[0]
         height, width = 512, 512  # Output image size
         latents = torch.randn(
-            (batch_size, self.model.in_channels, height // 8, width // 8)
+            (batch_size, self.framework_model.in_channels, height // 8, width // 8)
         )
 
         # Set number of diffusion steps
