@@ -358,7 +358,7 @@ def parse_shlo_mlir(mlir_code, verbose=False):
     return ops, unique_ops
 
 
-def prepare_tensors(ret, golden):
+def prepare_tensors(ret: torch.Tensor, golden: torch.Tensor):
     # Convert boolean tensors to float; so ATOL can be calculated.
     if golden.dtype == torch.bool:
         golden = golden.to(torch.float)
@@ -368,7 +368,7 @@ def prepare_tensors(ret, golden):
     if golden.dtype != ret.dtype:
         ret = ret.to(golden.dtype)
 
-    return ret, golden
+    return ret.clone(), golden.clone()
 
 
 def calculate_atol(tensor, golden_tensor):

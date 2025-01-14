@@ -50,6 +50,7 @@ def _verify_torch_module(
 
     ret = tt_mod(*inputs)
     golden = mod(*inputs)
+    print(f"Golden: {golden}", f"TT: {ret}")
 
     atol = calculate_atol(ret, golden)
     error = False
@@ -65,6 +66,7 @@ def _verify_torch_module(
         if pcc < required_pcc:
             error = True
 
+    print(f"ATOL: {atol}, PCC: {pcc}")
     if do_assert:
         assert not error, f"Error in verification: ATOL: {atol}, PCC: {pcc}"
 

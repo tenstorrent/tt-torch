@@ -330,7 +330,7 @@ class Executor:
         return outputs, stderr_data
 
     def run_gm_op_by_op(self, *inputs):
-        node_to_tensor = {}
+        node_to_calculated_tensor = {}
         node_to_golden_tensor = {}
         input_index = 0
         outputs = []
@@ -340,26 +340,31 @@ class Executor:
             print(f"Compiling {idx}/{num_nodes}: {node.target}")
             out_degree[node] = len(node.users)
             if node.op == "placeholder":
-                node_to_tensor[node] = inputs[input_index]
+                node_to_golden_tensor[node] = inputs[input_index]
                 input_index += 1
             elif node.op == "get_attr":
                 for buffer in self.gm.named_buffers():
                     if buffer[0] == node.target:
-                        node_to_tensor[node] = buffer[1]
+                        node_to_golden_tensor[node] = buffer[1]
                         break
             elif node.op == "call_function":
-                args = []
+                calculated_args = []
                 golden_args = []
+                # tensor = None
                 for arg in node.args:
                     if isinstance(arg, torch.fx.node.Node):
-                        args.append(node_to_tensor[arg])
-                        golden_args.append(
-                            node_to_golden_tensor.get(arg, node_to_tensor[arg])
+                        calculated_args.append(
+                            node_to_calculated_tensor.get(
+                                arg, node_to_golden_tensor[arg]
+                            )
                         )
+                        golden_args.append(node_to_golden_tensor[arg])
                     elif isinstance(arg, list):
-                        args.append(
+                        calculated_args.append(
                             [
-                                node_to_tensor[a]
+                                node_to_calculated_tensor.get(
+                                    a, node_to_golden_tensor(a)
+                                )
                                 if isinstance(a, torch.fx.node.Node)
                                 else a
                                 for a in arg
@@ -367,17 +372,17 @@ class Executor:
                         )
                         golden_args.append(
                             [
-                                node_to_golden_tensor.get(a, node_to_tensor[a])
+                                node_to_golden_tensor[a]
                                 if isinstance(a, torch.fx.node.Node)
                                 else a
                                 for a in arg
                             ]
                         )
                     else:
-                        args.append(arg)
+                        calculated_args.append(arg)
                         golden_args.append(arg)
                 try:
-                    binary, op = self.compile_op(node, *args, **node.kwargs)
+                    binary, op = self.compile_op(node, *calculated_args, **node.kwargs)
                 except Exception as e:
                     binary = None
                     print(f"Failed to compile {idx}/{num_nodes}: {node.target}: {e}")
@@ -387,7 +392,10 @@ class Executor:
                     and binary is not None
                 ):
                     try:
-                        calculated, runtime_stack_dump = self.run_op(binary, *args)
+                        calculated, runtime_stack_dump = self.run_op(
+                            binary, *calculated_args
+                        )
+                        node_to_calculated_tensor[node] = calculated
                         self.compiler_config.unique_ops[
                             op.unique_key()
                         ].runtime_stack_dump = runtime_stack_dump
@@ -397,7 +405,10 @@ class Executor:
                             raise ValueError("Failed to execute")
                         op.compilation_status = OpCompilationStatus.EXECUTED
                         golden = node.target(*golden_args, **node.kwargs)
-                        node_to_golden_tensor[node] = golden
+                        print(
+                            "right after copyihng golden", node_to_golden_tensor, golden
+                        )
+                        print(f"GOLDEN: {golden}", f"Calculated: {calculated}")
                         if self.compiler_config.enable_intermediate_verification:
                             atol = calculate_atol(calculated, golden)
                             op.atol = atol
@@ -407,18 +418,23 @@ class Executor:
                             op.pcc = pcc
                             if pcc < self.required_pcc:
                                 print(f"pcc too low for {idx}: {pcc}")
-                        tensor = calculated
+                        tensor = golden
                     except Exception as e:
                         print(
                             f"Failed to execute {idx}/{num_nodes}: {node.target}: {e}"
                         )
-                        tensor = node.target(*args, **node.kwargs)
+                        tensor = node.target(*golden_args, **node.kwargs)
                 else:
-                    tensor = node.target(*args, **node.kwargs)
-                node_to_tensor[node] = tensor
+                    tensor = node.target(*golden_args, **node.kwargs)
+                node_to_golden_tensor[node] = tensor
+                print(f"node_to_tensor: {node_to_calculated_tensor}")
+                print(f"node_to_golden: {node_to_golden_tensor}")
             elif node.op == "output":
                 args = node.args[0]
-                output_tensors = [node_to_tensor[arg] for arg in args]
+                output_tensors = [
+                    node_to_calculated_tensor.get(arg, node_to_golden_tensor[arg])
+                    for arg in args
+                ]
                 outputs = output_tensors
             args_set = set()
             for arg in node.args:
@@ -428,7 +444,9 @@ class Executor:
                 if isinstance(arg, torch.fx.node.Node):
                     out_degree[arg] -= 1
                     if out_degree[arg] == 0 and arg.op != "output":
-                        del node_to_tensor[arg]
+                        del node_to_golden_tensor[arg]
+                        if arg in node_to_calculated_tensor:
+                            del node_to_calculated_tensor[arg]
                         out_degree.pop(arg)
 
         self.compiler_config.save_unique_ops()
