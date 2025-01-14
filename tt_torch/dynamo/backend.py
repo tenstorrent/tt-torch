@@ -353,7 +353,9 @@ class Executor:
                 for arg in node.args:
                     if isinstance(arg, torch.fx.node.Node):
                         args.append(node_to_tensor[arg])
-                        golden_args.append(node_to_golden_tensor.get(arg, node_to_tensor[arg]))
+                        golden_args.append(
+                            node_to_golden_tensor.get(arg, node_to_tensor[arg])
+                        )
                     elif isinstance(arg, list):
                         args.append(
                             [
