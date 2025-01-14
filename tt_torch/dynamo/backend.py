@@ -331,6 +331,7 @@ class Executor:
 
     def run_gm_op_by_op(self, *inputs):
         node_to_tensor = {}
+        node_to_golden_tensor = {}
         input_index = 0
         outputs = []
         num_nodes = len(self.gm.graph.nodes)
@@ -348,9 +349,11 @@ class Executor:
                         break
             elif node.op == "call_function":
                 args = []
+                golden_args = []
                 for arg in node.args:
                     if isinstance(arg, torch.fx.node.Node):
                         args.append(node_to_tensor[arg])
+                        golden_args.append(node_to_golden_tensor.get(arg, node_to_tensor[arg]))
                     elif isinstance(arg, list):
                         args.append(
                             [
@@ -360,8 +363,17 @@ class Executor:
                                 for a in arg
                             ]
                         )
+                        golden_args.append(
+                            [
+                                node_to_golden_tensor.get(a, node_to_tensor[a])
+                                if isinstance(a, torch.fx.node.Node)
+                                else a
+                                for a in arg
+                            ]
+                        )
                     else:
                         args.append(arg)
+                        golden_args.append(arg)
                 try:
                     binary, op = self.compile_op(node, *args, **node.kwargs)
                 except Exception as e:
@@ -382,7 +394,8 @@ class Executor:
                         if calculated is None:
                             raise ValueError("Failed to execute")
                         op.compilation_status = OpCompilationStatus.EXECUTED
-                        golden = node.target(*args, **node.kwargs)
+                        golden = node.target(*golden_args, **node.kwargs)
+                        node_to_golden_tensor[node] = golden
                         if self.compiler_config.enable_intermediate_verification:
                             atol = calculate_atol(calculated, golden)
                             op.atol = atol
