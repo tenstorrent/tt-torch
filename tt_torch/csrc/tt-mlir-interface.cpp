@@ -75,8 +75,8 @@ std::string compileStableHLOToTTIR(std::string_view code) {
   // conversion.
   mlir::PassManager shlo_pm(mlir_module.get()->getName(),
                             mlir::PassManager::Nesting::Implicit);
-  const char *enable_printing = std::getenv("TT_TORCH_ENABLE_IR_PRINTING");
-  if (enable_printing && std::string(enable_printing) == "1") {
+  const char *enable_printing = std::getenv("TT_TORCH_IR_LOG_LEVEL");
+  if (enable_printing && std::string(enable_printing) == "DEBUG") {
     shlo_pm.getContext()->disableMultithreading();
     shlo_pm.enableIRPrinting();
   }
@@ -127,8 +127,8 @@ compileTTIRToTTNN(std::string_view code) {
   mlir::tt::ttnn::registerPasses();
 
   mlir::PassManager pm(mlir_module.get()->getName());
-  const char *enable_printing = std::getenv("TT_TORCH_ENABLE_IR_PRINTING");
-  if (enable_printing && std::string(enable_printing) == "1") {
+  const char *enable_printing = std::getenv("TT_TORCH_IR_LOG_LEVEL");
+  if (enable_printing && std::string(enable_printing) == "DEBUG") {
     pm.getContext()->disableMultithreading();
     pm.enableIRPrinting();
   }
