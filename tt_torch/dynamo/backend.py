@@ -467,11 +467,14 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     ):
         return executor
 
-    dump_intermediates = os.environ.get("TT_TORCH_ENABLE_IR_PRINTING")
-    dump_intermediates = dump_intermediates and int(dump_intermediates)
+    dump_intermediates = os.environ.get("TT_TORCH_IR_LOG_LEVEL")
+    dump_intermediates = dump_intermediates and (
+        dump_intermediates == "INFO" or dump_intermediates == "DEBUG"
+    )
 
     module = import_graph(gm.graph)
     if dump_intermediates:
+        print("Torch module", file=sys.stderr)
         module.dump()
 
     if compiler_config.profile_ops:
@@ -481,6 +484,7 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
 
     lower_to_stable_hlo(module)
     if dump_intermediates:
+        print("StableHLO module", file=sys.stderr)
         module.dump()
 
     if compiler_config.profile_ops:
@@ -490,10 +494,13 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
 
     ttir = tt_mlir.compile_stable_hlo_to_ttir(module.operation.get_asm())
     if dump_intermediates:
-        print(ttir)
+        print("TTIR module", file=sys.stderr)
+        print(ttir, file=sys.stderr)
+
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
     if dump_intermediates:
-        print(ttnn)
+        print("TTNN module", file=sys.stderr)
+        print(ttnn, file=sys.stderr)
 
     executor.set_binary(binary)
     return executor
