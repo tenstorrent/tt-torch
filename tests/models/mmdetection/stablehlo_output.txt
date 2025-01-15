@@ -192,22 +192,40 @@ module @IrToHlo.1582 attributes {mhlo.cross_program_prefetches = [], mhlo.is_dyn
     %177 = stablehlo.multiply %175, %176 : tensor<1x192x20x20xf32>
     %178 = stablehlo.pad %177, %12, low = [0, 0, 6, 6], high = [0, 0, 6, 6], interior = [0, 0, 0, 0] : (tensor<1x192x20x20xf32>, tensor<f32>) -> tensor<1x192x32x32xf32>
     %179 = "stablehlo.reduce_window"(%178, %12) ({
-    ^bb0(%arg403: tensor<f32>, %arg404: tensor<f32>):
-      %476 = stablehlo.maximum %arg403, %arg404 : tensor<f32>
-      stablehlo.return %476 : tensor<f32>
-    }) {base_dilations = dense<1> : tensor<4xi64>, padding = dense<0> : tensor<4x2xi64>, window_dilations = dense<1> : tensor<4xi64>, window_dimensions = dense<[1, 1, 13, 13]> : tensor<4xi64>, window_strides = dense<1> : tensor<4xi64>} : (tensor<1x192x32x32xf32>, tensor<f32>) -> tensor<1x192x20x20xf32>
+      ^bb0(%arg403: tensor<f32>, %arg404: tensor<f32>):
+        %476 = "stablehlo.maximum"(%arg403, %arg404) : (tensor<f32>, tensor<f32>) -> tensor<f32>
+        "stablehlo.return"(%476) : (tensor<f32>) -> ()
+    }) {
+      window_dimensions = array<i64: 1, 1, 13, 13>,
+      window_strides = array<i64: 1, 1, 1, 1>,
+      base_dilations = array<i64: 1, 1, 1, 1>,
+      window_dilations = array<i64: 1, 1, 1, 1>,
+      padding = dense<[[0, 0], [0, 0], [0, 0], [0, 0]]> : tensor<4x2xi64>
+    } : (tensor<1x192x32x32xf32>, tensor<f32>) -> tensor<1x192x20x20xf32>
     %180 = stablehlo.pad %177, %12, low = [0, 0, 4, 4], high = [0, 0, 4, 4], interior = [0, 0, 0, 0] : (tensor<1x192x20x20xf32>, tensor<f32>) -> tensor<1x192x28x28xf32>
     %181 = "stablehlo.reduce_window"(%180, %12) ({
-    ^bb0(%arg403: tensor<f32>, %arg404: tensor<f32>):
-      %476 = stablehlo.maximum %arg403, %arg404 : tensor<f32>
-      stablehlo.return %476 : tensor<f32>
-    }) {base_dilations = dense<1> : tensor<4xi64>, padding = dense<0> : tensor<4x2xi64>, window_dilations = dense<1> : tensor<4xi64>, window_dimensions = dense<[1, 1, 9, 9]> : tensor<4xi64>, window_strides = dense<1> : tensor<4xi64>} : (tensor<1x192x28x28xf32>, tensor<f32>) -> tensor<1x192x20x20xf32>
+      ^bb0(%arg403: tensor<f32>, %arg404: tensor<f32>):
+        %476 = "stablehlo.maximum"(%arg403, %arg404) : (tensor<f32>, tensor<f32>) -> tensor<f32>
+        "stablehlo.return"(%476) : (tensor<f32>) -> ()
+    }) {
+      window_dimensions = array<i64: 1, 1, 9, 9>,
+      window_strides = array<i64: 1, 1, 1, 1>,
+      base_dilations = array<i64: 1, 1, 1, 1>,
+      window_dilations = array<i64: 1, 1, 1, 1>,
+      padding = dense<[[0, 0], [0, 0], [0, 0], [0, 0]]> : tensor<4x2xi64>
+    } : (tensor<1x192x28x28xf32>, tensor<f32>) -> tensor<1x192x20x20xf32>
     %182 = stablehlo.pad %177, %12, low = [0, 0, 2, 2], high = [0, 0, 2, 2], interior = [0, 0, 0, 0] : (tensor<1x192x20x20xf32>, tensor<f32>) -> tensor<1x192x24x24xf32>
     %183 = "stablehlo.reduce_window"(%182, %12) ({
-    ^bb0(%arg403: tensor<f32>, %arg404: tensor<f32>):
-      %476 = stablehlo.maximum %arg403, %arg404 : tensor<f32>
-      stablehlo.return %476 : tensor<f32>
-    }) {base_dilations = dense<1> : tensor<4xi64>, padding = dense<0> : tensor<4x2xi64>, window_dilations = dense<1> : tensor<4xi64>, window_dimensions = dense<[1, 1, 5, 5]> : tensor<4xi64>, window_strides = dense<1> : tensor<4xi64>} : (tensor<1x192x24x24xf32>, tensor<f32>) -> tensor<1x192x20x20xf32>
+      ^bb0(%arg403: tensor<f32>, %arg404: tensor<f32>):
+        %476 = "stablehlo.maximum"(%arg403, %arg404) : (tensor<f32>, tensor<f32>) -> tensor<f32>
+        "stablehlo.return"(%476) : (tensor<f32>) -> ()
+    }) {
+      window_dimensions = array<i64: 1, 1, 5, 5>,
+      window_strides = array<i64: 1, 1, 1, 1>,
+      base_dilations = array<i64: 1, 1, 1, 1>,
+      window_dilations = array<i64: 1, 1, 1, 1>,
+      padding = dense<[[0, 0], [0, 0], [0, 0], [0, 0]]> : tensor<4x2xi64>
+    } : (tensor<1x192x24x24xf32>, tensor<f32>) -> tensor<1x192x20x20xf32>
     %184 = stablehlo.concatenate %177, %183, %181, %179, dim = 1 : (tensor<1x192x20x20xf32>, tensor<1x192x20x20xf32>, tensor<1x192x20x20xf32>, tensor<1x192x20x20xf32>) -> tensor<1x768x20x20xf32>
     %185 = stablehlo.convolution(%184, %arg197) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x768x20x20xf32>, tensor<384x768x1x1xf32>) -> tensor<1x384x20x20xf32>
     %186 = "stablehlo.batch_norm_inference"(%185, %arg196, %arg195, %arg194, %arg193) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x384x20x20xf32>, tensor<384xf32>, tensor<384xf32>, tensor<384xf32>, tensor<384xf32>) -> tensor<1x384x20x20xf32>
@@ -283,7 +301,15 @@ module @IrToHlo.1582 attributes {mhlo.cross_program_prefetches = [], mhlo.is_dyn
     %252 = stablehlo.select %249, %251, %248 : tensor<40x40xi1>, tensor<40x40xi64>
     %253 = stablehlo.reshape %252 : (tensor<40x40xi64>) -> tensor<40x40x1xi64>
     %254 = stablehlo.concatenate %244, %253, dim = 2 : (tensor<40x40x1xi64>, tensor<40x40x1xi64>) -> tensor<40x40x2xi64>
-    %255 = "stablehlo.gather"(%235, %254) {dimension_numbers = #stablehlo.gather<offset_dims = [0, 1], collapsed_slice_dims = [2, 3], start_index_map = [2, 3], index_vector_dim = 2>, indices_are_sorted = false, slice_sizes = dense<[1, 192, 1, 1]> : tensor<4xi64>} : (tensor<1x192x20x20xf32>, tensor<40x40x2xi64>) -> tensor<1x192x40x40xf32>
+    %255 = "stablehlo.gather"(%235, %254) {
+    dimension_numbers = #stablehlo.gather<
+      offset_dims = [0, 1],
+      collapsed_slice_dims = [2, 3],
+      start_index_map = [2, 3],
+      index_vector_dim = 2>,
+    slice_sizes = array<i64: 1, 192, 1, 1>,
+    indices_are_sorted = false
+    } : (tensor<1x192x20x20xf32>, tensor<40x40x2xi64>) -> tensor<1x192x40x40xf32>
     %256 = stablehlo.concatenate %255, %169, dim = 1 : (tensor<1x192x40x40xf32>, tensor<1x192x40x40xf32>) -> tensor<1x384x40x40xf32>
     %257 = stablehlo.convolution(%256, %arg247) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x384x40x40xf32>, tensor<96x384x1x1xf32>) -> tensor<1x96x40x40xf32>
     %258 = "stablehlo.batch_norm_inference"(%257, %arg246, %arg245, %arg244, %arg243) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x96x40x40xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>, tensor<96xf32>) -> tensor<1x96x40x40xf32>
@@ -333,7 +359,15 @@ module @IrToHlo.1582 attributes {mhlo.cross_program_prefetches = [], mhlo.is_dyn
     %302 = stablehlo.select %299, %301, %298 : tensor<80x80xi1>, tensor<80x80xi64>
     %303 = stablehlo.reshape %302 : (tensor<80x80xi64>) -> tensor<80x80x1xi64>
     %304 = stablehlo.concatenate %294, %303, dim = 2 : (tensor<80x80x1xi64>, tensor<80x80x1xi64>) -> tensor<80x80x2xi64>
-    %305 = "stablehlo.gather"(%285, %304) {dimension_numbers = #stablehlo.gather<offset_dims = [0, 1], collapsed_slice_dims = [2, 3], start_index_map = [2, 3], index_vector_dim = 2>, indices_are_sorted = false, slice_sizes = dense<[1, 96, 1, 1]> : tensor<4xi64>} : (tensor<1x96x40x40xf32>, tensor<80x80x2xi64>) -> tensor<1x96x80x80xf32>
+    %305 = "stablehlo.gather"(%285, %304) {
+    dimension_numbers = #stablehlo.gather<
+      offset_dims = [0, 1],
+      collapsed_slice_dims = [2, 3],
+      start_index_map = [2, 3],
+      index_vector_dim = 2>,
+    slice_sizes = array<i64: 1, 96, 1, 1>,
+    indices_are_sorted = false
+    } : (tensor<1x96x40x40xf32>, tensor<80x80x2xi64>) -> tensor<1x96x80x80xf32>
     %306 = stablehlo.concatenate %305, %121, dim = 1 : (tensor<1x96x80x80xf32>, tensor<1x96x80x80xf32>) -> tensor<1x192x80x80xf32>
     %307 = stablehlo.convolution(%306, %arg267) dim_numbers = [b, f, 0, 1]x[o, i, 0, 1]->[b, f, 0, 1], window = {stride = [1, 1], pad = [[0, 0], [0, 0]], lhs_dilate = [1, 1], rhs_dilate = [1, 1], reverse = [0, 0]} {batch_group_count = 1 : i64, feature_group_count = 1 : i64, precision_config = [#stablehlo<precision DEFAULT>, #stablehlo<precision DEFAULT>]} : (tensor<1x192x80x80xf32>, tensor<48x192x1x1xf32>) -> tensor<1x48x80x80xf32>
     %308 = "stablehlo.batch_norm_inference"(%307, %arg266, %arg265, %arg264, %arg263) {epsilon = 9.99999974E-6 : f32, feature_index = 1 : i64} : (tensor<1x48x80x80xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>, tensor<48xf32>) -> tensor<1x48x80x80xf32>
