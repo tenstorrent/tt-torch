@@ -221,7 +221,15 @@ def test_linear_with_bias_no_embedded_constants():
     verify_module(Basic(), input_shapes=[(32, 32)], compiler_config=cc)
 
 
-def test_constant():
+@pytest.mark.parametrize(
+    ("input_type"),
+    [
+        ([torch.float32]),
+        ([torch.bfloat16]),
+        ([torch.int32]),
+    ],
+)
+def test_constant_add(input_type):
     class Basic(nn.Module):
         def __init__(self):
             super().__init__()
@@ -229,7 +237,26 @@ def test_constant():
         def forward(self, x):
             return x + 1.0
 
-    verify_module(Basic(), input_shapes=[(1, 768)])
+    verify_module(Basic(), input_shapes=[(1, 768)], input_data_types=input_type)
+
+
+@pytest.mark.parametrize(
+    ("input_type"),
+    [
+        ([torch.float32]),
+        ([torch.bfloat16]),
+        ([torch.int32]),
+    ],
+)
+def test_constant_multiply(input_type):
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return x * 3.0
+
+    verify_module(Basic(), input_shapes=[(1, 768)], input_data_types=input_type)
 
 
 def test_maximum():
