@@ -363,7 +363,7 @@ class Executor:
                         calculated_args.append(
                             [
                                 node_to_calculated_tensor.get(
-                                    a, node_to_golden_tensor(a)
+                                    a, node_to_golden_tensor[a]
                                 )
                                 if isinstance(a, torch.fx.node.Node)
                                 else a
@@ -395,7 +395,10 @@ class Executor:
                         calculated, runtime_stack_dump = self.run_op(
                             binary, *calculated_args
                         )
-                        node_to_calculated_tensor[node] = calculated
+                        if calculated is None:
+                            print("calculated is None")
+                        if calculated is not None:
+                            node_to_calculated_tensor[node] = calculated
                         self.compiler_config.unique_ops[
                             op.unique_key()
                         ].runtime_stack_dump = runtime_stack_dump
@@ -405,10 +408,7 @@ class Executor:
                             raise ValueError("Failed to execute")
                         op.compilation_status = OpCompilationStatus.EXECUTED
                         golden = node.target(*golden_args, **node.kwargs)
-                        print(
-                            "right after copyihng golden", node_to_golden_tensor, golden
-                        )
-                        print(f"GOLDEN: {golden}", f"Calculated: {calculated}")
+                        # print(f"GOLDEN: {golden}", f"Calculated: {calculated}")
                         if self.compiler_config.enable_intermediate_verification:
                             atol = calculate_atol(calculated, golden)
                             op.atol = atol
@@ -427,8 +427,8 @@ class Executor:
                 else:
                     tensor = node.target(*golden_args, **node.kwargs)
                 node_to_golden_tensor[node] = tensor
-                print(f"node_to_tensor: {node_to_calculated_tensor}")
-                print(f"node_to_golden: {node_to_golden_tensor}")
+                # print(f"node_to_tensor: {node_to_calculated_tensor}")
+                # print(f"node_to_golden: {node_to_golden_tensor}")
             elif node.op == "output":
                 args = node.args[0]
                 output_tensors = [

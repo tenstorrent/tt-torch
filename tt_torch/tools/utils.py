@@ -372,6 +372,11 @@ def prepare_tensors(ret: torch.Tensor, golden: torch.Tensor):
 
 
 def calculate_atol(tensor, golden_tensor):
+    if None in (tensor, golden_tensor):
+        if tensor == golden_tensor:
+            return 0
+        return torch.nan
+
     if torch.equal(golden_tensor, tensor):
         return 0.0
 
