@@ -13,23 +13,6 @@ import mlir.dialects.stablehlo as stablehlo
 from mlir.ir import Context, Location, Module
 
 
-def get_module_from_str(module_str: str):
-    module = None
-    with ir.Context() as ctx:
-        stablehlo.register_dialect(ctx)
-        module = Module.parse(module_str)
-    return module
-
-
-def extract_op_by_op(file_content: str):
-    module = get_module_from_str(file_content)
-    i = 0
-    for op in module.operation:
-        print(i)
-        print(op)
-        i += 1
-
-
 def lower_stablehlo_to_ttnn(stablehlo_ir: str):
     try:
         with ir.Context() as ctx:
