@@ -25,11 +25,17 @@ def get_module_from_str(module_str: str):
 
 
 def lower_stablehlo_to_ttnn(stablehlo_ir: str):
+    module = get_module_from_str(stablehlo_ir)
     try:
-        module = get_module_from_str(stablehlo_ir)
         ttir = tt_mlir.compile_stable_hlo_to_ttir(module.operation.get_asm())
-        binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
-        return ttnn
+        print("ttir done")
+        try:
+            binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
+            print("ttnn done")
+            return ttnn
+        except Exception as e:
+            print("Error: ", e)
+            return None
     except Exception as e:
         print("Error: ", e)
         return None
@@ -54,6 +60,11 @@ def get_ops_in_module(module: mlir.ir.Module):
                 inputs = {}
                 result_type = None
                 if not op.name.startswith(("func.", "return")):
+                    if (
+                        op.name == "stablehlo.pad"
+                        or op.name == "stablehlo.reduce_window"
+                    ):
+                        continue
                     for operand in op.operands:
                         inputs[operand.get_name()] = str(operand.type)
                     args_str = ", ".join(f"{key}: {typ}" for key, typ in inputs.items())
@@ -85,6 +96,8 @@ if __name__ == "__main__":
     module = get_module_from_str(file_content)
     get_ops_in_module(module)
     for key in modules.keys():
+        print(f"\nCompiling {key}")
+        print(modules[key])
         ttnn = lower_stablehlo_to_ttnn(modules[key])
         if ttnn == None:
             print(f"Error compiling {key}")
