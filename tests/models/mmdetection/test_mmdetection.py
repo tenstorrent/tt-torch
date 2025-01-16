@@ -42,21 +42,11 @@ def lower_stablehlo_to_ttnn(stablehlo_ir: str):
 
 
 def get_ops_in_module(module: mlir.ir.Module):
-    """
-    Get all operations in a module, excluding func.func and return ops.
 
-    Args:
-        module: MLIR module
-    Returns:
-        List of operation names
-    """
     # Iterate through all functions in the module
     for func_op in module.body.operations:
-        # Iterate through all blocks in the function
         for block in func_op.regions[0].blocks:
-            # Iterate through all operations in the block
             for op in block.operations:
-                # Skip return operations
                 inputs = {}
                 result_type = None
                 if not op.name.startswith(("func.", "return")):
