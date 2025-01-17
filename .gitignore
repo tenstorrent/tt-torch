@@ -4,3 +4,4 @@ build
 install
 third_party/tt-mlir
 third_party/vision
+.vscode/

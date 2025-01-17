@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
 
 #include "tt-mlir-interface.hpp"
@@ -34,6 +35,7 @@
 #include "stablehlo/transforms/Passes.h"     // from @stablehlo
 
 #define TTMLIR_ENABLE_STABLEHLO
+#include "ttmlir/Conversion/Passes.h"
 #include "ttmlir/Dialect/TTIR/Pipelines/TTIRPipelines.h"
 #include "ttmlir/Dialect/TTIR/Transforms/Passes.h"
 #include "ttmlir/Dialect/TTNN/Pipelines/TTNNPipelines.h"
@@ -60,6 +62,10 @@ std::string compileStableHLOToTTIR(std::string_view code) {
   mlir::tt::registerAllExtensions(registry);
 
   context.appendDialectRegistry(registry);
+
+  mlir::tt::MLIRModuleCacher moduleCacher;
+
+  moduleCacher.attachContext(&context);
 
   mlir::OwningOpRef<mlir::ModuleOp> mlir_module =
       mlir::parseSourceString<mlir::ModuleOp>(
@@ -116,6 +122,10 @@ compileTTIRToTTNN(std::string_view code) {
 
   context.appendDialectRegistry(registry);
 
+  mlir::tt::MLIRModuleCacher moduleCacher;
+
+  moduleCacher.attachContext(&context);
+
   mlir::OwningOpRef<mlir::ModuleOp> mlir_module =
       mlir::parseSourceString<mlir::ModuleOp>(
           llvm::StringRef(code.data(), code.size()),
@@ -140,6 +150,15 @@ compileTTIRToTTNN(std::string_view code) {
     throw std::runtime_error(
         "Failed to run TTIR TO TTNN compiler pass pipeline.");
   }
+
+  std::ofstream fileOut("/home/vprajapati/wh-01-src/tt-torch/runLogs.txt",
+                        std::ios::app);
+
+  for (const auto &item : moduleCacher.moduleCache) {
+    fileOut << "!!!" << item.first << ": " << item.second << "\n\n\n\n";
+  }
+
+  fileOut.close();
 
   std::shared_ptr<void> *binary = new std::shared_ptr<void>();
   *binary = mlir::tt::ttnn::ttnnToFlatbuffer(mlir_module.get());
