@@ -1,0 +1,1351 @@
+2025-01-17 20:39:35,713 - INFO - set log file=ttrt-read.txt
+2025-01-17 20:39:35,713 - INFO - setting artifacts folder path=/home/vprajapati/wh-01-src/tt-torch/ttrt-artifacts
+2025-01-17 20:39:35,713 - DEBUG - ----------------------------starting read API----------------------------
+2025-01-17 20:39:35,713 - DEBUG - ------preprocessing read API
+2025-01-17 20:39:35,713 - DEBUG - creating directory=/home/vprajapati/wh-01-src/tt-torch/ttrt-artifacts
+2025-01-17 20:39:35,713 - WARNING - directory '/home/vprajapati/wh-01-src/tt-torch/ttrt-artifacts' already exists
+2025-01-17 20:39:35,713 - DEBUG - ------finished preprocessing read API
+2025-01-17 20:39:35,714 - DEBUG - ------checking constraints for read API
+2025-01-17 20:39:35,714 - DEBUG - finding all ttsys files from=test_gen.ttnn
+2025-01-17 20:39:35,714 - DEBUG - checking if file=test_gen.ttnn exists
+2025-01-17 20:39:35,714 - DEBUG - getting file extension of=test_gen.ttnn
+2025-01-17 20:39:35,714 - DEBUG - finding all ttnn files from=test_gen.ttnn
+2025-01-17 20:39:35,714 - DEBUG - checking if file=test_gen.ttnn exists
+2025-01-17 20:39:35,714 - DEBUG - getting file extension of=test_gen.ttnn
+2025-01-17 20:39:35,714 - DEBUG - found file=test_gen.ttnn
+2025-01-17 20:39:35,714 - DEBUG - finding all ttmetal files from=test_gen.ttnn
+2025-01-17 20:39:35,714 - DEBUG - checking if file=test_gen.ttnn exists
+2025-01-17 20:39:35,714 - DEBUG - getting file extension of=test_gen.ttnn
+2025-01-17 20:39:35,714 - DEBUG - ttsys_binary_paths=[]
+2025-01-17 20:39:35,714 - DEBUG - ttnn_binary_paths=['test_gen.ttnn']
+2025-01-17 20:39:35,714 - DEBUG - ttmetal_binary_paths=[]
+2025-01-17 20:39:35,714 - DEBUG - getting file name of=test_gen.ttnn
+2025-01-17 20:39:35,714 - DEBUG - getting file extension of=test_gen.ttnn
+2025-01-17 20:39:35,717 - DEBUG - ------finished checking constraints for read API
+2025-01-17 20:39:35,717 - DEBUG - ------executing read API
+2025-01-17 20:39:35,717 - INFO - reading section=all from binary=test_gen.ttnn
+2025-01-17 20:39:35,718 - INFO - {
+  "version": {
+    "major": 0,
+    "minor": 0,
+    "patch": 622
+  },
+  "ttmlir_git_hash": "b71cb5f9ce1266e8981b9abb1a79636f1665e809",
+  "system_desc": {
+    "cpu_descs": [
+      {
+        "role": "Host",
+        "target_triple": "x86_64-pc-linux-gnu"
+      }
+    ],
+    "chip_descs": [
+      {
+        "arch": "Wormhole_b0",
+        "grid_size": {
+          "y": 8,
+          "x": 8
+        },
+        "l1_size": 1499136,
+        "num_dram_channels": 12,
+        "dram_channel_size": 1073741824,
+        "noc_l1_address_align_bytes": 16,
+        "pcie_address_align_bytes": 32,
+        "noc_dram_address_align_bytes": 32,
+        "l1_unreserved_base": 1024,
+        "erisc_l1_unreserved_base": 1024,
+        "dram_unreserved_base": 1024,
+        "dram_unreserved_end": 1073741824,
+        "physical_cores": {
+          "worker": [
+            {
+              "y": 0,
+              "x": 0
+            },
+            {
+              "y": 0,
+              "x": 1
+            },
+            {
+              "y": 0,
+              "x": 2
+            },
+            {
+              "y": 0,
+              "x": 3
+            },
+            {
+              "y": 0,
+              "x": 4
+            },
+            {
+              "y": 0,
+              "x": 5
+            },
+            {
+              "y": 0,
+              "x": 6
+            },
+            {
+              "y": 0,
+              "x": 7
+            },
+            {
+              "y": 1,
+              "x": 0
+            },
+            {
+              "y": 1,
+              "x": 1
+            },
+            {
+              "y": 1,
+              "x": 2
+            },
+            {
+              "y": 1,
+              "x": 3
+            },
+            {
+              "y": 1,
+              "x": 4
+            },
+            {
+              "y": 1,
+              "x": 5
+            },
+            {
+              "y": 1,
+              "x": 6
+            },
+            {
+              "y": 1,
+              "x": 7
+            },
+            {
+              "y": 2,
+              "x": 0
+            },
+            {
+              "y": 2,
+              "x": 1
+            },
+            {
+              "y": 2,
+              "x": 2
+            },
+            {
+              "y": 2,
+              "x": 3
+            },
+            {
+              "y": 2,
+              "x": 4
+            },
+            {
+              "y": 2,
+              "x": 5
+            },
+            {
+              "y": 2,
+              "x": 6
+            },
+            {
+              "y": 2,
+              "x": 7
+            },
+            {
+              "y": 3,
+              "x": 0
+            },
+            {
+              "y": 3,
+              "x": 1
+            },
+            {
+              "y": 3,
+              "x": 2
+            },
+            {
+              "y": 3,
+              "x": 3
+            },
+            {
+              "y": 3,
+              "x": 4
+            },
+            {
+              "y": 3,
+              "x": 5
+            },
+            {
+              "y": 3,
+              "x": 6
+            },
+            {
+              "y": 3,
+              "x": 7
+            },
+            {
+              "y": 4,
+              "x": 0
+            },
+            {
+              "y": 4,
+              "x": 1
+            },
+            {
+              "y": 4,
+              "x": 2
+            },
+            {
+              "y": 4,
+              "x": 3
+            },
+            {
+              "y": 4,
+              "x": 4
+            },
+            {
+              "y": 4,
+              "x": 5
+            },
+            {
+              "y": 4,
+              "x": 6
+            },
+            {
+              "y": 4,
+              "x": 7
+            },
+            {
+              "y": 5,
+              "x": 0
+            },
+            {
+              "y": 5,
+              "x": 1
+            },
+            {
+              "y": 5,
+              "x": 2
+            },
+            {
+              "y": 5,
+              "x": 3
+            },
+            {
+              "y": 5,
+              "x": 4
+            },
+            {
+              "y": 5,
+              "x": 5
+            },
+            {
+              "y": 5,
+              "x": 6
+            },
+            {
+              "y": 5,
+              "x": 7
+            },
+            {
+              "y": 6,
+              "x": 0
+            },
+            {
+              "y": 6,
+              "x": 1
+            },
+            {
+              "y": 6,
+              "x": 2
+            },
+            {
+              "y": 6,
+              "x": 3
+            },
+            {
+              "y": 6,
+              "x": 4
+            },
+            {
+              "y": 6,
+              "x": 5
+            },
+            {
+              "y": 6,
+              "x": 6
+            },
+            {
+              "y": 6,
+              "x": 7
+            },
+            {
+              "y": 7,
+              "x": 0
+            },
+            {
+              "y": 7,
+              "x": 1
+            },
+            {
+              "y": 7,
+              "x": 2
+            },
+            {
+              "y": 7,
+              "x": 3
+            },
+            {
+              "y": 7,
+              "x": 4
+            },
+            {
+              "y": 7,
+              "x": 5
+            },
+            {
+              "y": 7,
+              "x": 6
+            },
+            {
+              "y": 7,
+              "x": 7
+            }
+          ],
+          "dram": [
+            {
+              "y": 8,
+              "x": 0
+            },
+            {
+              "y": 9,
+              "x": 0
+            },
+            {
+              "y": 10,
+              "x": 0
+            },
+            {
+              "y": 8,
+              "x": 1
+            },
+            {
+              "y": 9,
+              "x": 1
+            },
+            {
+              "y": 10,
+              "x": 1
+            },
+            {
+              "y": 8,
+              "x": 2
+            },
+            {
+              "y": 9,
+              "x": 2
+            },
+            {
+              "y": 10,
+              "x": 2
+            },
+            {
+              "y": 8,
+              "x": 3
+            },
+            {
+              "y": 9,
+              "x": 3
+            },
+            {
+              "y": 10,
+              "x": 3
+            }
+          ],
+          "eth": [
+
+          ],
+          "eth_inactive": [
+
+          ]
+        },
+        "supported_data_types": [
+          "Float32",
+          "Float16",
+          "BFloat16",
+          "BFP_Float8",
+          "BFP_BFloat8",
+          "BFP_Float4",
+          "BFP_BFloat4",
+          "BFP_Float2",
+          "BFP_BFloat2",
+          "UInt32",
+          "UInt16",
+          "UInt8"
+        ],
+        "supported_tile_sizes": [
+          {
+            "y": 4,
+            "x": 16
+          },
+          {
+            "y": 16,
+            "x": 16
+          },
+          {
+            "y": 32,
+            "x": 16
+          },
+          {
+            "y": 4,
+            "x": 32
+          },
+          {
+            "y": 16,
+            "x": 32
+          },
+          {
+            "y": 32,
+            "x": 32
+          }
+        ],
+        "num_cbs": 32
+      }
+    ],
+    "chip_desc_indices": [
+      0
+    ],
+    "chip_capabilities": [
+      3
+    ],
+    "chip_coords": [
+      {
+        "rack": 0,
+        "shelf": 0,
+        "y": 0,
+        "x": 0
+      }
+    ],
+    "chip_channels": [
+
+    ]
+  },
+  "programs": [
+    {
+      "name": "main",
+      "inputs": [
+        {
+          "global_id": 1,
+          "address": 0,
+          "size": 0,
+          "desc": {
+            "shape": [
+              256,
+              256
+            ],
+            "layout": {
+              "stride": [
+                256,
+                1
+              ],
+              "oob_val": "Undef",
+              "core_range_set": [
+                {
+                  "loc": {
+                    "y": 0,
+                    "x": 0
+                  },
+                  "size": {
+                    "y": 1,
+                    "x": 1
+                  }
+                }
+              ],
+              "memory_desc": {
+                "shape": [
+                  256,
+                  256
+                ],
+                "tile_shape": {
+                  "y": 1,
+                  "x": 1
+                },
+                "data_type": "Float32",
+                "memory_space": "System",
+                "memory_layout": "None",
+                "size": 262144
+              }
+            }
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "global_id": 6,
+          "address": 0,
+          "size": 0,
+          "desc": {
+            "shape": [
+              256,
+              256
+            ],
+            "layout": {
+              "stride": [
+                256,
+                1
+              ],
+              "oob_val": "Undef",
+              "core_range_set": [
+                {
+                  "loc": {
+                    "y": 0,
+                    "x": 0
+                  },
+                  "size": {
+                    "y": 1,
+                    "x": 1
+                  }
+                }
+              ],
+              "memory_desc": {
+                "shape": [
+                  256,
+                  256
+                ],
+                "tile_shape": {
+                  "y": 1,
+                  "x": 1
+                },
+                "data_type": "Float32",
+                "memory_space": "System",
+                "memory_layout": "None",
+                "size": 262144
+              }
+            }
+          }
+        }
+      ],
+      "operations": [
+        {
+          "type_type": "GetDeviceOp",
+          "type": {
+            "mesh": {
+              "y": 1,
+              "x": 1
+            },
+            "chip_ids": [
+              0
+            ],
+            "out": {
+              "global_id": 0
+            }
+          },
+          "debug_info": "%0 = \"ttnn.get_device\"() <{mesh_shape = #ttnn<mesh_shape 1x1>}> : () -> !tt.device<<workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1)[s0, s1] -> (0, d0 floordiv s0, d1 floordiv s1, (d0 mod s0) * s1 + d1 mod s1), dramMap = (d0, d1)[s0, s1] -> (0, 0, ((((d0 floordiv s0) * 8 + d1 floordiv s1) * (s1 * s0) + (d0 mod s0) * s1 + d1 mod s1) floordiv 8192) mod 12, (((d0 floordiv s0) * 8 + d1 floordiv s1) * (s1 * s0) + (d0 mod s0) * s1 + d1 mod s1) floordiv 98304 + (((d0 floordiv s0) * 8 + d1 floordiv s1) * (s1 * s0) + (d0 mod s0) * s1 + d1 mod s1) mod 8192), meshShape = , chipIds = [0]>> loc(\"-\":4:10)",
+          "loc_info": "loc(\"-\":4:10)"
+        },
+        {
+          "type_type": "ToLayoutOp",
+          "type": {
+            "in": {
+              "global_id": 1,
+              "address": 0,
+              "size": 0,
+              "desc": {
+                "shape": [
+                  256,
+                  256
+                ],
+                "layout": {
+                  "stride": [
+                    256,
+                    1
+                  ],
+                  "oob_val": "Undef",
+                  "core_range_set": [
+                    {
+                      "loc": {
+                        "y": 0,
+                        "x": 0
+                      },
+                      "size": {
+                        "y": 1,
+                        "x": 1
+                      }
+                    }
+                  ],
+                  "memory_desc": {
+                    "shape": [
+                      256,
+                      256
+                    ],
+                    "tile_shape": {
+                      "y": 1,
+                      "x": 1
+                    },
+                    "data_type": "Float32",
+                    "memory_space": "System",
+                    "memory_layout": "None",
+                    "size": 262144
+                  }
+                }
+              }
+            },
+            "layout": "Tile",
+            "dtype": null,
+            "out": {
+              "global_id": 2,
+              "address": 0,
+              "size": 0,
+              "desc": {
+                "shape": [
+                  256,
+                  256
+                ],
+                "layout": {
+                  "stride": [
+                    256,
+                    1
+                  ],
+                  "oob_val": "Undef",
+                  "core_range_set": [
+                    {
+                      "loc": {
+                        "y": 0,
+                        "x": 0
+                      },
+                      "size": {
+                        "y": 1,
+                        "x": 1
+                      }
+                    }
+                  ],
+                  "memory_desc": {
+                    "shape": [
+                      8,
+                      8
+                    ],
+                    "tile_shape": {
+                      "y": 32,
+                      "x": 32
+                    },
+                    "data_type": "Float32",
+                    "memory_space": "DeviceDRAM",
+                    "memory_layout": "Interleaved",
+                    "size": 262144
+                  }
+                }
+              }
+            }
+          },
+          "debug_info": "%1 = \"ttnn.to_layout\"(%arg0) <{layout = #ttnn.layout<tile>}> : (tensor<256x256xf32, #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<256x256xf32, #ttnn.buffer_type<system_memory>>>>) -> tensor<256x256xf32, #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<8x8x!tt.tile<32x32, f32>, #ttnn.buffer_type<dram>>, <interleaved>>> loc(\"-\":4:10)",
+          "loc_info": "loc(\"-\":4:10)"
+        },
+        {
+          "type_type": "ToDeviceOp",
+          "type": {
+            "in": {
+              "global_id": 2,
+              "address": 0,
+              "size": 0,
+              "desc": {
+                "shape": [
+                  256,
+                  256
+                ],
+                "layout": {
+                  "stride": [
+                    256,
+                    1
+                  ],
+                  "oob_val": "Undef",
+                  "core_range_set": [
+                    {
+                      "loc": {
+                        "y": 0,
+                        "x": 0
+                      },
+                      "size": {
+                        "y": 1,
+                        "x": 1
+                      }
+                    }
+                  ],
+                  "memory_desc": {
+                    "shape": [
+                      8,
+                      8
+                    ],
+                    "tile_shape": {
+                      "y": 32,
+                      "x": 32
+                    },
+                    "data_type": "Float32",
+                    "memory_space": "DeviceDRAM",
+                    "memory_layout": "Interleaved",
+                    "size": 262144
+                  }
+                }
+              }
+            },
+            "device": {
+              "global_id": 0
+            },
+            "memcfg": {
+              "tensor_memory_layout": "Interleaved",
+              "buffer_type": "DRAM",
+              "shard_spec": {
+                "shard_shape": [
+                  8,
+                  8
+                ]
+              }
+            },
+            "out": {
+              "global_id": 3,
+              "address": 0,
+              "size": 0,
+              "desc": {
+                "shape": [
+                  256,
+                  256
+                ],
+                "layout": {
+                  "stride": [
+                    256,
+                    1
+                  ],
+                  "oob_val": "Undef",
+                  "core_range_set": [
+                    {
+                      "loc": {
+                        "y": 0,
+                        "x": 0
+                      },
+                      "size": {
+                        "y": 1,
+                        "x": 1
+                      }
+                    }
+                  ],
+                  "memory_desc": {
+                    "shape": [
+                      8,
+                      8
+                    ],
+                    "tile_shape": {
+                      "y": 32,
+                      "x": 32
+                    },
+                    "data_type": "Float32",
+                    "memory_space": "DeviceDRAM",
+                    "memory_layout": "Interleaved",
+                    "size": 262144
+                  }
+                }
+              }
+            }
+          },
+          "debug_info": "%2 = \"ttnn.to_device\"(%1, %0) <{memory_config = #ttnn.memory_config<<dram>, <<8x8>>, <interleaved>>}> : (tensor<256x256xf32, #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<8x8x!tt.tile<32x32, f32>, #ttnn.buffer_type<dram>>, <interleaved>>>, !tt.device<<workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1)[s0, s1] -> (0, d0 floordiv s0, d1 floordiv s1, (d0 mod s0) * s1 + d1 mod s1), dramMap = (d0, d1)[s0, s1] -> (0, 0, ((((d0 floordiv s0) * 8 + d1 floordiv s1) * (s1 * s0) + (d0 mod s0) * s1 + d1 mod s1) floordiv 8192) mod 12, (((d0 floordiv s0) * 8 + d1 floordiv s1) * (s1 * s0) + (d0 mod s0) * s1 + d1 mod s1) floordiv 98304 + (((d0 floordiv s0) * 8 + d1 floordiv s1) * (s1 * s0) + (d0 mod s0) * s1 + d1 mod s1) mod 8192), meshShape = , chipIds = [0]>>) -> tensor<256x256xf32, #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<8x8x!tt.tile<32x32, f32>, #ttnn.buffer_type<dram>>, <interleaved>>> loc(\"-\":4:10)",
+          "loc_info": "loc(\"-\":4:10)"
+        },
+        {
+          "type_type": "DeallocateOp",
+          "type": {
+            "in": {
+              "global_id": 2,
+              "address": 0,
+              "size": 0,
+              "desc": {
+                "shape": [
+                  256,
+                  256
+                ],
+                "layout": {
+                  "stride": [
+                    256,
+                    1
+                  ],
+                  "oob_val": "Undef",
+                  "core_range_set": [
+                    {
+                      "loc": {
+                        "y": 0,
+                        "x": 0
+                      },
+                      "size": {
+                        "y": 1,
+                        "x": 1
+                      }
+                    }
+                  ],
+                  "memory_desc": {
+                    "shape": [
+                      8,
+                      8
+                    ],
+                    "tile_shape": {
+                      "y": 32,
+                      "x": 32
+                    },
+                    "data_type": "Float32",
+                    "memory_space": "DeviceDRAM",
+                    "memory_layout": "Interleaved",
+                    "size": 262144
+                  }
+                }
+              }
+            },
+            "force": false
+          },
+          "debug_info": "\"ttnn.deallocate\"(%1) <{force = false}> : (tensor<256x256xf32, #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<8x8x!tt.tile<32x32, f32>, #ttnn.buffer_type<dram>>, <interleaved>>>) -> () loc(\"-\":4:10)",
+          "loc_info": "loc(\"-\":4:10)"
+        },
+        {
+          "type_type": "EmptyOp",
+          "type": {
+            "shape": [
+              256,
+              256
+            ],
+            "dtype": "Float32",
+            "layout": "Tile",
+            "num_shards": 1,
+            "device": {
+              "global_id": 0
+            },
+            "memcfg": {
+              "tensor_memory_layout": "Interleaved",
+              "buffer_type": "DRAM",
+              "shard_spec": {
+                "shard_shape": [
+                  8,
+                  8
+                ]
+              }
+            },
+            "strategy": {
+              "strategy_type": "NONE"
+            },
+            "out": {
+              "global_id": 4,
+              "address": 0,
+              "size": 0,
+              "desc": {
+                "shape": [
+                  256,
+                  256
+                ],
+                "layout": {
+                  "stride": [
+                    256,
+                    1
+                  ],
+                  "oob_val": "Undef",
+                  "core_range_set": [
+                    {
+                      "loc": {
+                        "y": 0,
+                        "x": 0
+                      },
+                      "size": {
+                        "y": 1,
+                        "x": 1
+                      }
+                    }
+                  ],
+                  "memory_desc": {
+                    "shape": [
+                      8,
+                      8
+                    ],
+                    "tile_shape": {
+                      "y": 32,
+                      "x": 32
+                    },
+                    "data_type": "Float32",
+                    "memory_space": "DeviceDRAM",
+                    "memory_layout": "Interleaved",
+                    "size": 262144
+                  }
+                }
+              }
+            }
+          },
+          "debug_info": "%3 = \"ttnn.empty\"(%0) <{dtype = #tt.supportedDataTypes<f32>, layout = #ttnn.layout<tile>, memory_config = #ttnn.memory_config<<dram>, <<8x8>>, <interleaved>>, shape = #ttnn.shape<256x256>}> : (!tt.device<<workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1)[s0, s1] -> (0, d0 floordiv s0, d1 floordiv s1, (d0 mod s0) * s1 + d1 mod s1), dramMap = (d0, d1)[s0, s1] -> (0, 0, ((((d0 floordiv s0) * 8 + d1 floordiv s1) * (s1 * s0) + (d0 mod s0) * s1 + d1 mod s1) floordiv 8192) mod 12, (((d0 floordiv s0) * 8 + d1 floordiv s1) * (s1 * s0) + (d0 mod s0) * s1 + d1 mod s1) floordiv 98304 + (((d0 floordiv s0) * 8 + d1 floordiv s1) * (s1 * s0) + (d0 mod s0) * s1 + d1 mod s1) mod 8192), meshShape = , chipIds = [0]>>) -> tensor<256x256xf32, #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<8x8x!tt.tile<32x32, f32>, #ttnn.buffer_type<dram>>, <interleaved>>> loc(\"-\":3:10)",
+          "loc_info": "loc(\"-\":3:10)"
+        },
+        {
+          "type_type": "EltwiseOp",
+          "type": {
+            "type": "Abs",
+            "ins": [
+              {
+                "global_id": 3,
+                "address": 0,
+                "size": 0,
+                "desc": {
+                  "shape": [
+                    256,
+                    256
+                  ],
+                  "layout": {
+                    "stride": [
+                      256,
+                      1
+                    ],
+                    "oob_val": "Undef",
+                    "core_range_set": [
+                      {
+                        "loc": {
+                          "y": 0,
+                          "x": 0
+                        },
+                        "size": {
+                          "y": 1,
+                          "x": 1
+                        }
+                      }
+                    ],
+                    "memory_desc": {
+                      "shape": [
+                        8,
+                        8
+                      ],
+                      "tile_shape": {
+                        "y": 32,
+                        "x": 32
+                      },
+                      "data_type": "Float32",
+                      "memory_space": "DeviceDRAM",
+                      "memory_layout": "Interleaved",
+                      "size": 262144
+                    }
+                  }
+                }
+              }
+            ],
+            "out": {
+              "global_id": 4,
+              "address": 0,
+              "size": 0,
+              "desc": {
+                "shape": [
+                  256,
+                  256
+                ],
+                "layout": {
+                  "stride": [
+                    256,
+                    1
+                  ],
+                  "oob_val": "Undef",
+                  "core_range_set": [
+                    {
+                      "loc": {
+                        "y": 0,
+                        "x": 0
+                      },
+                      "size": {
+                        "y": 1,
+                        "x": 1
+                      }
+                    }
+                  ],
+                  "memory_desc": {
+                    "shape": [
+                      8,
+                      8
+                    ],
+                    "tile_shape": {
+                      "y": 32,
+                      "x": 32
+                    },
+                    "data_type": "Float32",
+                    "memory_space": "DeviceDRAM",
+                    "memory_layout": "Interleaved",
+                    "size": 262144
+                  }
+                }
+              }
+            },
+            "params_type": "NONE"
+          },
+          "debug_info": "%4 = \"ttnn.abs\"(%2, %3) <{operandSegmentSizes = array<i32: 1, 1>}> : (tensor<256x256xf32, #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<8x8x!tt.tile<32x32, f32>, #ttnn.buffer_type<dram>>, <interleaved>>>, tensor<256x256xf32, #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<8x8x!tt.tile<32x32, f32>, #ttnn.buffer_type<dram>>, <interleaved>>>) -> tensor<256x256xf32, #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<8x8x!tt.tile<32x32, f32>, #ttnn.buffer_type<dram>>, <interleaved>>> loc(\"-\":4:10)",
+          "loc_info": "loc(\"-\":4:10)"
+        },
+        {
+          "type_type": "DeallocateOp",
+          "type": {
+            "in": {
+              "global_id": 3,
+              "address": 0,
+              "size": 0,
+              "desc": {
+                "shape": [
+                  256,
+                  256
+                ],
+                "layout": {
+                  "stride": [
+                    256,
+                    1
+                  ],
+                  "oob_val": "Undef",
+                  "core_range_set": [
+                    {
+                      "loc": {
+                        "y": 0,
+                        "x": 0
+                      },
+                      "size": {
+                        "y": 1,
+                        "x": 1
+                      }
+                    }
+                  ],
+                  "memory_desc": {
+                    "shape": [
+                      8,
+                      8
+                    ],
+                    "tile_shape": {
+                      "y": 32,
+                      "x": 32
+                    },
+                    "data_type": "Float32",
+                    "memory_space": "DeviceDRAM",
+                    "memory_layout": "Interleaved",
+                    "size": 262144
+                  }
+                }
+              }
+            },
+            "force": false
+          },
+          "debug_info": "\"ttnn.deallocate\"(%2) <{force = false}> : (tensor<256x256xf32, #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<8x8x!tt.tile<32x32, f32>, #ttnn.buffer_type<dram>>, <interleaved>>>) -> () loc(\"-\":4:10)",
+          "loc_info": "loc(\"-\":4:10)"
+        },
+        {
+          "type_type": "FromDeviceOp",
+          "type": {
+            "in": {
+              "global_id": 4,
+              "address": 0,
+              "size": 0,
+              "desc": {
+                "shape": [
+                  256,
+                  256
+                ],
+                "layout": {
+                  "stride": [
+                    256,
+                    1
+                  ],
+                  "oob_val": "Undef",
+                  "core_range_set": [
+                    {
+                      "loc": {
+                        "y": 0,
+                        "x": 0
+                      },
+                      "size": {
+                        "y": 1,
+                        "x": 1
+                      }
+                    }
+                  ],
+                  "memory_desc": {
+                    "shape": [
+                      8,
+                      8
+                    ],
+                    "tile_shape": {
+                      "y": 32,
+                      "x": 32
+                    },
+                    "data_type": "Float32",
+                    "memory_space": "DeviceDRAM",
+                    "memory_layout": "Interleaved",
+                    "size": 262144
+                  }
+                }
+              }
+            },
+            "out": {
+              "global_id": 5,
+              "address": 0,
+              "size": 0,
+              "desc": {
+                "shape": [
+                  256,
+                  256
+                ],
+                "layout": {
+                  "stride": [
+                    256,
+                    1
+                  ],
+                  "oob_val": "Undef",
+                  "core_range_set": [
+                    {
+                      "loc": {
+                        "y": 0,
+                        "x": 0
+                      },
+                      "size": {
+                        "y": 1,
+                        "x": 1
+                      }
+                    }
+                  ],
+                  "memory_desc": {
+                    "shape": [
+                      256,
+                      256
+                    ],
+                    "tile_shape": {
+                      "y": 1,
+                      "x": 1
+                    },
+                    "data_type": "Float32",
+                    "memory_space": "System",
+                    "memory_layout": "None",
+                    "size": 262144
+                  }
+                }
+              }
+            }
+          },
+          "debug_info": "%5 = \"ttnn.from_device\"(%4) : (tensor<256x256xf32, #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<8x8x!tt.tile<32x32, f32>, #ttnn.buffer_type<dram>>, <interleaved>>>) -> tensor<256x256xf32, #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<256x256xf32, #ttnn.buffer_type<system_memory>>>> loc(\"-\":5:5)",
+          "loc_info": "loc(\"-\":5:5)"
+        },
+        {
+          "type_type": "DeallocateOp",
+          "type": {
+            "in": {
+              "global_id": 4,
+              "address": 0,
+              "size": 0,
+              "desc": {
+                "shape": [
+                  256,
+                  256
+                ],
+                "layout": {
+                  "stride": [
+                    256,
+                    1
+                  ],
+                  "oob_val": "Undef",
+                  "core_range_set": [
+                    {
+                      "loc": {
+                        "y": 0,
+                        "x": 0
+                      },
+                      "size": {
+                        "y": 1,
+                        "x": 1
+                      }
+                    }
+                  ],
+                  "memory_desc": {
+                    "shape": [
+                      8,
+                      8
+                    ],
+                    "tile_shape": {
+                      "y": 32,
+                      "x": 32
+                    },
+                    "data_type": "Float32",
+                    "memory_space": "DeviceDRAM",
+                    "memory_layout": "Interleaved",
+                    "size": 262144
+                  }
+                }
+              }
+            },
+            "force": false
+          },
+          "debug_info": "\"ttnn.deallocate\"(%3) <{force = false}> : (tensor<256x256xf32, #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<8x8x!tt.tile<32x32, f32>, #ttnn.buffer_type<dram>>, <interleaved>>>) -> () loc(\"-\":5:5)",
+          "loc_info": "loc(\"-\":5:5)"
+        },
+        {
+          "type_type": "ToLayoutOp",
+          "type": {
+            "in": {
+              "global_id": 5,
+              "address": 0,
+              "size": 0,
+              "desc": {
+                "shape": [
+                  256,
+                  256
+                ],
+                "layout": {
+                  "stride": [
+                    256,
+                    1
+                  ],
+                  "oob_val": "Undef",
+                  "core_range_set": [
+                    {
+                      "loc": {
+                        "y": 0,
+                        "x": 0
+                      },
+                      "size": {
+                        "y": 1,
+                        "x": 1
+                      }
+                    }
+                  ],
+                  "memory_desc": {
+                    "shape": [
+                      256,
+                      256
+                    ],
+                    "tile_shape": {
+                      "y": 1,
+                      "x": 1
+                    },
+                    "data_type": "Float32",
+                    "memory_space": "System",
+                    "memory_layout": "None",
+                    "size": 262144
+                  }
+                }
+              }
+            },
+            "layout": "RowMajor",
+            "dtype": null,
+            "out": {
+              "global_id": 6,
+              "address": 0,
+              "size": 0,
+              "desc": {
+                "shape": [
+                  256,
+                  256
+                ],
+                "layout": {
+                  "stride": [
+                    256,
+                    1
+                  ],
+                  "oob_val": "Undef",
+                  "core_range_set": [
+                    {
+                      "loc": {
+                        "y": 0,
+                        "x": 0
+                      },
+                      "size": {
+                        "y": 1,
+                        "x": 1
+                      }
+                    }
+                  ],
+                  "memory_desc": {
+                    "shape": [
+                      256,
+                      256
+                    ],
+                    "tile_shape": {
+                      "y": 1,
+                      "x": 1
+                    },
+                    "data_type": "Float32",
+                    "memory_space": "System",
+                    "memory_layout": "None",
+                    "size": 262144
+                  }
+                }
+              }
+            }
+          },
+          "debug_info": "%6 = \"ttnn.to_layout\"(%5) <{layout = #ttnn.layout<row_major>}> : (tensor<256x256xf32, #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<256x256xf32, #ttnn.buffer_type<system_memory>>>>) -> tensor<256x256xf32, #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<256x256xf32, #ttnn.buffer_type<system_memory>>>> loc(\"-\":5:5)",
+          "loc_info": "loc(\"-\":5:5)"
+        },
+        {
+          "type_type": "DeallocateOp",
+          "type": {
+            "in": {
+              "global_id": 5,
+              "address": 0,
+              "size": 0,
+              "desc": {
+                "shape": [
+                  256,
+                  256
+                ],
+                "layout": {
+                  "stride": [
+                    256,
+                    1
+                  ],
+                  "oob_val": "Undef",
+                  "core_range_set": [
+                    {
+                      "loc": {
+                        "y": 0,
+                        "x": 0
+                      },
+                      "size": {
+                        "y": 1,
+                        "x": 1
+                      }
+                    }
+                  ],
+                  "memory_desc": {
+                    "shape": [
+                      256,
+                      256
+                    ],
+                    "tile_shape": {
+                      "y": 1,
+                      "x": 1
+                    },
+                    "data_type": "Float32",
+                    "memory_space": "System",
+                    "memory_layout": "None",
+                    "size": 262144
+                  }
+                }
+              }
+            },
+            "force": false
+          },
+          "debug_info": "\"ttnn.deallocate\"(%5) <{force = false}> : (tensor<256x256xf32, #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<256x256xf32, #ttnn.buffer_type<system_memory>>>>) -> () loc(\"-\":5:5)",
+          "loc_info": "loc(\"-\":5:5)"
+        }
+      ],
+      "debug_info": {
+        "mlir": {
+          "name": "ttnn",
+          "source": "#device = #tt.device<workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1)[s0, s1] -> (0, d0 floordiv s0, d1 floordiv s1, (d0 mod s0) * s1 + d1 mod s1), dramMap = (d0, d1)[s0, s1] -> (0, 0, ((((d0 floordiv s0) * 8 + d1 floordiv s1) * (s1 * s0) + (d0 mod s0) * s1 + d1 mod s1) floordiv 8192) mod 12, (((d0 floordiv s0) * 8 + d1 floordiv s1) * (s1 * s0) + (d0 mod s0) * s1 + d1 mod s1) floordiv 98304 + (((d0 floordiv s0) * 8 + d1 floordiv s1) * (s1 * s0) + (d0 mod s0) * s1 + d1 mod s1) mod 8192), meshShape = , chipIds = [0]>\n#dram = #ttnn.buffer_type<dram>\n#loc2 = loc(\"-\":2:19)\n#system_desc = #tt.system_desc<[{role = host, target_triple = \"x86_64-pc-linux-gnu\"}], [{arch = <wormhole_b0>, grid = 8x8, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 1024, erisc_l1_unreserved_base = 1024, dram_unreserved_base = 1024, dram_unreserved_end = 1073741824, physical_cores = {worker = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  1x0,  1x1,  1x2,  1x3,  1x4,  1x5,  1x6,  1x7,  2x0,  2x1,  2x2,  2x3,  2x4,  2x5,  2x6,  2x7,  3x0,  3x1,  3x2,  3x3,  3x4,  3x5,  3x6,  3x7,  4x0,  4x1,  4x2,  4x3,  4x4,  4x5,  4x6,  4x7,  5x0,  5x1,  5x2,  5x3,  5x4,  5x5,  5x6,  5x7,  6x0,  6x1,  6x2,  6x3,  6x4,  6x5,  6x6,  6x7,  7x0,  7x1,  7x2,  7x3,  7x4,  7x5,  7x6,  7x7] dram = [ 8x0,  9x0,  10x0,  8x1,  9x1,  10x1,  8x2,  9x2,  10x2,  8x3,  9x3,  10x3]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32}], [0], [3 : i32], [ 0x0x0x0]>\n#system_memory = #ttnn.buffer_type<system_memory>\n#ttnn_layout = #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<256x256xf32, #system_memory>>\n#ttnn_layout1 = #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<8x8x!tt.tile<32x32, f32>, #dram>, <interleaved>>\nmodule attributes {tt.device = #device, tt.system_desc = #system_desc} {\n  func.func @main(%arg0: tensor<256x256xf32, #ttnn_layout> loc(\"-\":2:19)) -> tensor<256x256xf32, #ttnn_layout> {\n    %0 = \"ttnn.get_device\"() <{mesh_shape = #ttnn<mesh_shape 1x1>}> : () -> !tt.device<#device> loc(#loc3)\n    %1 = \"ttnn.to_layout\"(%arg0) <{layout = #ttnn.layout<tile>}> : (tensor<256x256xf32, #ttnn_layout>) -> tensor<256x256xf32, #ttnn_layout1> loc(#loc3)\n    %2 = \"ttnn.to_device\"(%1, %0) <{memory_config = #ttnn.memory_config<#dram, <<8x8>>, <interleaved>>}> : (tensor<256x256xf32, #ttnn_layout1>, !tt.device<#device>) -> tensor<256x256xf32, #ttnn_layout1> loc(#loc3)\n    \"ttnn.deallocate\"(%1) <{force = false}> : (tensor<256x256xf32, #ttnn_layout1>) -> () loc(#loc3)\n    %3 = \"ttnn.empty\"(%0) <{dtype = #tt.supportedDataTypes<f32>, layout = #ttnn.layout<tile>, memory_config = #ttnn.memory_config<#dram, <<8x8>>, <interleaved>>, shape = #ttnn.shape<256x256>}> : (!tt.device<#device>) -> tensor<256x256xf32, #ttnn_layout1> loc(#loc4)\n    %4 = \"ttnn.abs\"(%2, %3) <{operandSegmentSizes = array<i32: 1, 1>}> : (tensor<256x256xf32, #ttnn_layout1>, tensor<256x256xf32, #ttnn_layout1>) -> tensor<256x256xf32, #ttnn_layout1> loc(#loc3)\n    \"ttnn.deallocate\"(%2) <{force = false}> : (tensor<256x256xf32, #ttnn_layout1>) -> () loc(#loc3)\n    %5 = \"ttnn.from_device\"(%4) : (tensor<256x256xf32, #ttnn_layout1>) -> tensor<256x256xf32, #ttnn_layout> loc(#loc5)\n    \"ttnn.deallocate\"(%3) <{force = false}> : (tensor<256x256xf32, #ttnn_layout1>) -> () loc(#loc5)\n    %6 = \"ttnn.to_layout\"(%5) <{layout = #ttnn.layout<row_major>}> : (tensor<256x256xf32, #ttnn_layout>) -> tensor<256x256xf32, #ttnn_layout> loc(#loc5)\n    \"ttnn.deallocate\"(%5) <{force = false}> : (tensor<256x256xf32, #ttnn_layout>) -> () loc(#loc5)\n    return %6 : tensor<256x256xf32, #ttnn_layout> loc(#loc5)\n  } loc(#loc1)\n} loc(#loc)\n#loc = loc(\"-\":1:1)\n#loc1 = loc(\"-\":2:3)\n#loc3 = loc(\"-\":4:10)\n#loc4 = loc(\"-\":3:10)\n#loc5 = loc(\"-\":5:5)\n"
+        },
+        "cpp": "#include \"ttnn-precompiled.hpp\"\nttnn::Tensor main(ttnn::Tensor v1) {\n  ttnn::IDevice* v2 = ttnn::DeviceGetter::getInstance();\n  ttnn::Tensor v3 = ttnn::to_layout(v1, ttnn::Layout::TILE, std::nullopt, std::nullopt, static_cast<::ttnn::IDevice *>(nullptr));\n  ttnn::MemoryConfig v4 = ttnn::MemoryConfig(ttnn::TensorMemoryLayout::INTERLEAVED, ttnn::BufferType::DRAM);\n  ttnn::Tensor v5 = ttnn::to_device(v3, v2, v4);\n  ttnn::deallocate(v3, false);\n  ttnn::Shape v6 = ttnn::Shape(tt::tt_metal::LegacyShape({256, 256, }));\n  ttnn::MemoryConfig v7 = ttnn::MemoryConfig(ttnn::TensorMemoryLayout::INTERLEAVED, ttnn::BufferType::DRAM);\n  ttnn::Tensor v8 = ttnn::empty(v6, ttnn::DataType::FLOAT32, ttnn::Layout::TILE, v2, v7);\n  ttnn::Tensor v9 = ttnn::abs(v5, v8);\n  ttnn::deallocate(v5, false);\n  ttnn::Tensor v10 = ttnn::from_device(v9);\n  ttnn::deallocate(v8, false);\n  ttnn::Tensor v11 = ttnn::to_layout(v10, ttnn::Layout::ROW_MAJOR, std::nullopt, std::nullopt, static_cast<::ttnn::IDevice *>(nullptr));\n  ttnn::deallocate(v10, false);\n  return v11;\n}\n\n\n",
+        "golden_info": {
+          "golden_map": [
+
+          ]
+        }
+      }
+    }
+  ]
+}
+
+2025-01-17 20:39:35,718 - DEBUG - ------finished executing read API
+2025-01-17 20:39:35,718 - DEBUG - ------postprocessing read API
+2025-01-17 20:39:35,718 - INFO - saving binary=test_gen.ttnn to binary_folder=/home/vprajapati/wh-01-src/tt-torch/ttrt-artifacts/test_gen.ttnn
+2025-01-17 20:39:35,718 - DEBUG - copying file from=test_gen.ttnn to=/home/vprajapati/wh-01-src/tt-torch/ttrt-artifacts/test_gen.ttnn
+2025-01-17 20:39:35,719 - INFO - saving program=0 for binary=test_gen.ttnn to program_folder=/home/vprajapati/wh-01-src/tt-torch/ttrt-artifacts/test_gen.ttnn/run/program_0
+2025-01-17 20:39:35,719 - INFO - PASS: test case=test_gen.ttnn
+2025-01-17 20:39:35,719 - INFO - results saved to=read_results.json
+2025-01-17 20:39:35,722 - DEBUG - ------finished postprocessing read API
+2025-01-17 20:39:35,722 - DEBUG - ----------------------------finished read API----------------------------

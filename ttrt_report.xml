@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuites name="TTRT" tests="1" failures="0" skipped="0"><testsuite name="TTRT" tests="1" failures="0" skipped="0"><testcase name="test_gen.ttnn" file_path="test_gen.ttnn" result="pass" exception="" log_file="ttrt-read.txt" artifacts="/home/vprajapati/wh-01-src/tt-torch/ttrt-artifacts" /></testsuite></testsuites>

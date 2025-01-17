@@ -161,7 +161,8 @@ compileTTIRToTTNN(std::string_view code) {
   fileOut.close();
 
   std::shared_ptr<void> *binary = new std::shared_ptr<void>();
-  *binary = mlir::tt::ttnn::ttnnToFlatbuffer(mlir_module.get());
+  *binary = mlir::tt::ttnn::ttnnToFlatbuffer(mlir_module.get(), {},
+                                             moduleCacher.moduleCache);
 
   if (binary == nullptr) {
     throw std::runtime_error("Failed to generate flatbuffer binary.");

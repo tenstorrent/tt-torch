@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "tt-mlir-interface.hpp"
+#include <fstream>
 #include <pybind11/pybind11.h>
 #include <torch/extension.h>
 
@@ -118,6 +119,11 @@ std::vector<at::Tensor> run(std::vector<at::Tensor> &inputs,
   );
   // Copy data into the allocated memory
   std::memcpy(binary_ptr.get(), data_str.data(), data_str.size());
+  // Write FB Binary into filesystem
+  std::ofstream file("/home/vprajapati/wh-01-src/tt-torch/test_gen.ttnn");
+  file << data_str;
+  file.close();
+
   tt::runtime::Binary binary = tt::runtime::Binary(binary_ptr);
 
   auto [system_desc, chip_ids] = tt::runtime::getCurrentSystemDesc();

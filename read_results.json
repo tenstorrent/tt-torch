@@ -1,0 +1,9 @@
+[
+  {
+    "file_path": "test_gen.ttnn",
+    "result": "pass",
+    "exception": "",
+    "log_file": "ttrt-read.txt",
+    "artifacts": "/home/vprajapati/wh-01-src/tt-torch/ttrt-artifacts"
+  }
+]
