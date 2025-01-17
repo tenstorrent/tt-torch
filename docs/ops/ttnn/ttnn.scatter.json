@@ -67,9 +67,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "yes",
-    "pcc": 1.0,
-    "atol": 0.0
+    "pcc": "1.0",
+    "atol": "0.0"
   },
   {
     "name": "ttnn.scatter",
@@ -139,9 +138,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.scatter",
@@ -211,9 +209,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.scatter",
@@ -283,8 +280,7 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   }
 ]

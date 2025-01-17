@@ -56,9 +56,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -117,9 +116,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -178,9 +176,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -239,9 +236,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -300,9 +296,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -361,9 +356,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -422,9 +416,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -483,9 +476,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -544,9 +536,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -605,9 +596,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -666,9 +656,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -727,9 +716,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -788,9 +776,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -849,9 +836,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -910,9 +896,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -971,9 +956,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -1032,9 +1016,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -1093,9 +1076,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -1154,9 +1136,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -1215,9 +1196,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -1276,9 +1256,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -1337,9 +1316,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -1398,9 +1376,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -1459,9 +1436,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -1520,9 +1496,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -1581,9 +1556,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -1642,9 +1616,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -1703,9 +1676,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -1764,9 +1736,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -1825,9 +1796,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -1886,9 +1856,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -1947,9 +1916,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -2008,9 +1976,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -2069,9 +2036,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -2130,9 +2096,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -2191,9 +2156,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -2252,9 +2216,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -2313,9 +2276,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -2374,9 +2336,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -2435,9 +2396,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -2496,9 +2456,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -2557,9 +2516,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -2618,9 +2576,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -2679,9 +2636,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -2740,9 +2696,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -2801,9 +2756,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -2862,9 +2816,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -2923,9 +2876,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -2984,9 +2936,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -3045,9 +2996,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -3106,9 +3056,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -3167,9 +3116,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -3228,9 +3176,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -3289,9 +3236,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -3350,9 +3296,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -3411,9 +3356,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -3472,9 +3416,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -3533,9 +3476,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -3594,9 +3536,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -3655,9 +3596,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -3716,9 +3656,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -3777,9 +3716,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -3838,9 +3776,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -3899,9 +3836,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -3960,9 +3896,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -4021,9 +3956,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -4082,9 +4016,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -4143,9 +4076,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -4204,9 +4136,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -4265,9 +4196,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -4326,9 +4256,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -4387,9 +4316,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -4448,9 +4376,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -4509,9 +4436,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -4570,9 +4496,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -4631,9 +4556,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -4692,9 +4616,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -4753,9 +4676,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -4814,9 +4736,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -4875,9 +4796,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -4936,9 +4856,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -4997,9 +4916,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -5058,9 +4976,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -5119,9 +5036,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -5180,9 +5096,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -5241,9 +5156,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -5302,9 +5216,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -5363,9 +5276,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -5424,9 +5336,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -5485,9 +5396,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -5546,9 +5456,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -5607,9 +5516,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -5668,9 +5576,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -5729,9 +5636,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -5790,9 +5696,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -5851,9 +5756,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -5912,9 +5816,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -5973,9 +5876,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -6034,9 +5936,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -6095,9 +5996,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -6156,9 +6056,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -6217,9 +6116,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -6278,9 +6176,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -6339,9 +6236,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -6400,9 +6296,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -6461,9 +6356,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -6522,9 +6416,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -6583,9 +6476,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -6644,9 +6536,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -6705,9 +6596,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -6766,9 +6656,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -6827,9 +6716,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -6888,9 +6776,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -6949,9 +6836,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -7010,9 +6896,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -7071,9 +6956,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -7132,9 +7016,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -7193,9 +7076,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -7254,9 +7136,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -7315,9 +7196,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -7376,9 +7256,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -7437,9 +7316,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -7498,9 +7376,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -7559,9 +7436,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -7620,9 +7496,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -7681,9 +7556,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -7742,9 +7616,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -7803,9 +7676,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -7864,9 +7736,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -7925,9 +7796,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -7986,9 +7856,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -8047,9 +7916,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -8108,9 +7976,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -8169,9 +8036,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -8230,9 +8096,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -8291,9 +8156,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -8352,9 +8216,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -8413,9 +8276,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -8474,9 +8336,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -8535,9 +8396,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -8596,9 +8456,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -8657,9 +8516,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -8718,9 +8576,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -8779,9 +8636,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -8840,9 +8696,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -8901,9 +8756,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -8962,9 +8816,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -9023,9 +8876,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -9084,9 +8936,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -9145,9 +8996,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -9206,9 +9056,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -9267,9 +9116,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -9328,9 +9176,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -9389,9 +9236,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -9450,9 +9296,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -9511,9 +9356,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -9572,9 +9416,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -9633,9 +9476,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -9694,9 +9536,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -9755,9 +9596,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -9816,9 +9656,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -9877,9 +9716,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -9938,9 +9776,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -9999,9 +9836,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -10060,9 +9896,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -10121,9 +9956,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -10182,9 +10016,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -10243,9 +10076,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -10304,9 +10136,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -10365,9 +10196,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -10426,9 +10256,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -10487,9 +10316,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -10548,9 +10376,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -10609,9 +10436,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -10670,9 +10496,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -10731,9 +10556,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -10792,9 +10616,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -10853,9 +10676,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -10914,9 +10736,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -10975,9 +10796,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -11036,9 +10856,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -11097,9 +10916,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -11158,9 +10976,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -11219,9 +11036,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -11280,9 +11096,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -11341,9 +11156,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -11402,9 +11216,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -11463,9 +11276,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -11524,9 +11336,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -11585,9 +11396,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -11646,9 +11456,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -11707,9 +11516,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -11768,9 +11576,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -11829,9 +11636,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -11890,9 +11696,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -11951,9 +11756,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -12012,9 +11816,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -12073,9 +11876,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -12134,9 +11936,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -12195,9 +11996,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -12256,9 +12056,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -12317,9 +12116,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -12378,9 +12176,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -12439,9 +12236,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -12500,9 +12296,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -12561,9 +12356,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -12622,9 +12416,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -12683,9 +12476,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -12744,9 +12536,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -12805,9 +12596,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -12866,9 +12656,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -12927,9 +12716,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -12988,9 +12776,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -13049,9 +12836,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -13110,9 +12896,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -13171,9 +12956,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -13232,9 +13016,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -13293,9 +13076,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -13354,9 +13136,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -13415,9 +13196,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -13476,9 +13256,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -13537,9 +13316,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -13598,9 +13376,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -13659,9 +13436,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -13720,9 +13496,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -13781,9 +13556,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -13842,9 +13616,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -13903,9 +13676,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -13964,9 +13736,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -14025,9 +13796,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -14086,9 +13856,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -14147,9 +13916,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -14208,9 +13976,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -14269,9 +14036,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -14330,9 +14096,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -14391,9 +14156,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -14452,9 +14216,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -14513,9 +14276,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -14574,9 +14336,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -14635,9 +14396,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -14696,9 +14456,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -14757,9 +14516,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -14818,9 +14576,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -14879,9 +14636,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -14940,9 +14696,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -15001,9 +14756,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -15062,9 +14816,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -15123,9 +14876,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -15184,9 +14936,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -15245,9 +14996,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -15306,9 +15056,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -15367,9 +15116,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -15428,9 +15176,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -15489,9 +15236,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -15550,9 +15296,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -15611,9 +15356,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -15672,9 +15416,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -15733,9 +15476,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -15794,9 +15536,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -15855,9 +15596,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -15916,9 +15656,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -15977,9 +15716,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -16038,9 +15776,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -16099,9 +15836,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -16160,9 +15896,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -16221,9 +15956,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -16282,9 +16016,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -16343,9 +16076,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -16404,9 +16136,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -16465,9 +16196,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -16526,9 +16256,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -16587,9 +16316,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -16648,9 +16376,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -16709,9 +16436,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -16770,9 +16496,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -16831,9 +16556,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -16892,9 +16616,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -16953,9 +16676,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -17014,9 +16736,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -17075,9 +16796,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -17136,9 +16856,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -17197,9 +16916,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -17258,9 +16976,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -17319,9 +17036,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -17380,9 +17096,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -17441,9 +17156,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -17502,9 +17216,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -17563,9 +17276,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -17624,9 +17336,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -17685,9 +17396,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -17746,9 +17456,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -17807,9 +17516,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -17868,9 +17576,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -17929,9 +17636,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -17990,9 +17696,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -18051,9 +17756,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -18112,9 +17816,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -18173,9 +17876,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -18234,9 +17936,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -18295,9 +17996,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -18356,9 +18056,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -18417,9 +18116,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -18478,9 +18176,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -18539,9 +18236,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -18600,9 +18296,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -18661,9 +18356,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -18722,9 +18416,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -18783,9 +18476,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -18844,9 +18536,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -18905,9 +18596,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -18966,9 +18656,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -19027,9 +18716,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -19088,9 +18776,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -19149,9 +18836,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -19210,9 +18896,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -19271,9 +18956,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -19332,9 +19016,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -19393,9 +19076,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -19454,9 +19136,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -19515,9 +19196,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -19576,9 +19256,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -19637,9 +19316,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -19698,9 +19376,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -19759,9 +19436,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -19820,9 +19496,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -19881,9 +19556,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -19942,9 +19616,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -20003,9 +19676,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -20064,9 +19736,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -20125,9 +19796,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -20186,9 +19856,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -20247,9 +19916,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -20308,9 +19976,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -20369,9 +20036,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -20430,9 +20096,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -20491,9 +20156,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -20552,9 +20216,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -20613,9 +20276,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -20674,9 +20336,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -20735,9 +20396,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -20796,9 +20456,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -20857,9 +20516,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -20918,9 +20576,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.maximum",
@@ -20979,8 +20636,7 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   }
 ]

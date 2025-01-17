@@ -243,18 +243,19 @@ class AllOps:
             # Create a Markdown file for each key
             file_path = os.path.join(output_dir, f"{key}.md")
             with open(file_path, "w") as file:
-                file.write(f"# {key}\n\n")
-
+                file.write(f"# {key}")
                 if dict_list:
-                    # Write the table header
-                    file.write(
-                        "| Name | Input Shapes | Input Layouts | Attributes | Output Shapes | Output Layouts | PCC | ATOL |\n"
-                    )
-                    file.write(
-                        "|------|--------------|---------------|------------|---------------|----------------|-----|------|\n"
-                    )
+                    count = 0
                     # Write each dictionary in the array to the table
                     for item in dict_list:
+                        if count % 600 == 0:
+                            # Write the table header
+                            file.write(
+                                "\n\n| Name | Input Shapes | Input Layouts | Attributes | Output Shapes | Output Layouts | PCC | ATOL |\n"
+                            )
+                            file.write(
+                                "|------|--------------|---------------|------------|---------------|----------------|-----|------|\n"
+                            )
                         name = item.get("name", "")
                         pcc = item.get("pcc", "")
                         atol = item.get("atol", "")
@@ -283,10 +284,10 @@ class AllOps:
 
                         # Join output shapes with <br> for line breaks
                         output_shapes = " <br> ".join(item.get("output_shapes", []))
-
                         file.write(
                             f"| {name} | {input_shapes} | {input_layouts_str} | {attributes} | {output_shapes} | {output_layouts_str} | {pcc} | {atol} |\n"
                         )
+                        count += 1
 
     def create_json_data(self):
         # Create a dictionary to store JSON data for each key

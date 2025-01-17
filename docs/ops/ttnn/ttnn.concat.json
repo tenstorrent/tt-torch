@@ -67,9 +67,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -139,9 +138,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -200,9 +198,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -261,9 +258,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -322,9 +318,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -383,9 +378,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -444,9 +438,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -505,9 +498,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -566,9 +558,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -627,9 +618,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -699,9 +689,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -771,9 +760,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -832,9 +820,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -893,9 +880,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -954,9 +940,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -1015,9 +1000,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -1076,9 +1060,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -1137,9 +1120,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -1198,9 +1180,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -1259,9 +1240,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -1320,9 +1300,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -1381,9 +1360,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -1442,9 +1420,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -1503,9 +1480,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -1597,9 +1573,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -1691,9 +1666,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -1774,9 +1748,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -1857,9 +1830,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -1929,9 +1901,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -2001,9 +1972,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -2062,9 +2032,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -2123,9 +2092,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -2184,9 +2152,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -2245,9 +2212,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -2306,9 +2272,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -2367,9 +2332,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -2505,9 +2469,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -2643,9 +2606,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -2715,9 +2677,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -2787,92 +2748,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
-  },
-  {
-    "name": "ttnn.concat",
-    "input_shapes": [
-      "tensor<[1,16,28,28,bf16]>",
-      "tensor<[1,28,28,28,bf16]>",
-      "tensor<[1,46,28,28,bf16]>",
-      "tensor<[1,128,28,28,bf16]>",
-      "tensor<[1,218,28,28,bf16]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 448 + d1 * 28 + d2, d3)",
-        "memory_config": [
-          14,
-          1,
-          "tile<32x32, bf16>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 784 + d1 * 28 + d2, d3)",
-        "memory_config": [
-          25,
-          1,
-          "tile<32x32, bf16>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 1288 + d1 * 28 + d2, d3)",
-        "memory_config": [
-          41,
-          1,
-          "tile<32x32, bf16>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 3584 + d1 * 28 + d2, d3)",
-        "memory_config": [
-          112,
-          1,
-          "tile<32x32, bf16>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 6104 + d1 * 28 + d2, d3)",
-        "memory_config": [
-          191,
-          1,
-          "tile<32x32, bf16>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "dim": "1 : si32"
-    },
-    "output_shapes": [
-      "tensor<[1,218,28,28,bf16]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 6104 + d1 * 28 + d2, d3)",
-        "memory_config": [
-          191,
-          1,
-          "tile<32x32, bf16>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -2953,9 +2830,90 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.concat",
+    "input_shapes": [
+      "tensor<[1,16,28,28,bf16]>",
+      "tensor<[1,28,28,28,bf16]>",
+      "tensor<[1,46,28,28,bf16]>",
+      "tensor<[1,128,28,28,bf16]>",
+      "tensor<[1,218,28,28,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 448 + d1 * 28 + d2, d3)",
+        "memory_config": [
+          14,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 784 + d1 * 28 + d2, d3)",
+        "memory_config": [
+          25,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 1288 + d1 * 28 + d2, d3)",
+        "memory_config": [
+          41,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 3584 + d1 * 28 + d2, d3)",
+        "memory_config": [
+          112,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 6104 + d1 * 28 + d2, d3)",
+        "memory_config": [
+          191,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "dim": "1 : si32"
+    },
+    "output_shapes": [
+      "tensor<[1,218,28,28,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 6104 + d1 * 28 + d2, d3)",
+        "memory_config": [
+          191,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -3047,9 +3005,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -3141,9 +3098,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -3213,9 +3169,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -3285,9 +3240,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -3346,9 +3300,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -3407,9 +3360,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -3468,9 +3420,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -3529,9 +3480,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -3601,9 +3551,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -3673,9 +3622,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -3745,9 +3693,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -3817,9 +3764,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -3878,9 +3824,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -3939,9 +3884,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -4000,9 +3944,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -4061,9 +4004,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -4199,9 +4141,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -4337,9 +4278,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -4398,9 +4338,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -4459,81 +4398,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
-  },
-  {
-    "name": "ttnn.concat",
-    "input_shapes": [
-      "tensor<[1,20,28,28,bf16]>",
-      "tensor<[1,34,28,28,bf16]>",
-      "tensor<[1,256,28,28,bf16]>",
-      "tensor<[1,310,28,28,bf16]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 560 + d1 * 28 + d2, d3)",
-        "memory_config": [
-          18,
-          1,
-          "tile<32x32, bf16>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 952 + d1 * 28 + d2, d3)",
-        "memory_config": [
-          30,
-          1,
-          "tile<32x32, bf16>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 7168 + d1 * 28 + d2, d3)",
-        "memory_config": [
-          224,
-          1,
-          "tile<32x32, bf16>",
-          "dram"
-        ]
-      },
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 8680 + d1 * 28 + d2, d3)",
-        "memory_config": [
-          272,
-          1,
-          "tile<32x32, bf16>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "dim": "1 : si32"
-    },
-    "output_shapes": [
-      "tensor<[1,310,28,28,bf16]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2, d3)",
-        "mapping_to": "(d0 * 8680 + d1 * 28 + d2, d3)",
-        "memory_config": [
-          272,
-          1,
-          "tile<32x32, bf16>",
-          "dram"
-        ]
-      }
-    ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -4603,9 +4469,79 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.concat",
+    "input_shapes": [
+      "tensor<[1,20,28,28,bf16]>",
+      "tensor<[1,34,28,28,bf16]>",
+      "tensor<[1,256,28,28,bf16]>",
+      "tensor<[1,310,28,28,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 560 + d1 * 28 + d2, d3)",
+        "memory_config": [
+          18,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 952 + d1 * 28 + d2, d3)",
+        "memory_config": [
+          30,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 7168 + d1 * 28 + d2, d3)",
+        "memory_config": [
+          224,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 8680 + d1 * 28 + d2, d3)",
+        "memory_config": [
+          272,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "dim": "1 : si32"
+    },
+    "output_shapes": [
+      "tensor<[1,310,28,28,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 8680 + d1 * 28 + d2, d3)",
+        "memory_config": [
+          272,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -4686,9 +4622,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -4769,9 +4704,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -4863,9 +4797,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -4957,9 +4890,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -5029,9 +4961,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -5101,9 +5032,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -5162,9 +5092,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -5223,9 +5152,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -5284,9 +5212,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -5345,9 +5272,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -5406,9 +5332,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -5467,9 +5392,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -5572,9 +5496,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -5677,9 +5600,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -5782,9 +5704,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -5887,9 +5808,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -5970,9 +5890,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -6053,9 +5972,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -6114,9 +6032,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -6175,9 +6092,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -6236,9 +6152,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -6297,9 +6212,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -6358,9 +6272,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -6419,9 +6332,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -6480,9 +6392,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -6541,9 +6452,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -6602,9 +6512,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -6663,9 +6572,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -6724,9 +6632,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -6785,9 +6692,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -6846,9 +6752,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -6907,9 +6812,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -6968,9 +6872,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -7029,9 +6932,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -7090,9 +6992,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -7151,9 +7052,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -7212,9 +7112,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -7273,9 +7172,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -7411,9 +7309,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -7549,9 +7446,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -7643,9 +7539,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -7737,9 +7632,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -7820,9 +7714,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -7903,9 +7796,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -7975,9 +7867,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -8047,9 +7938,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -8119,9 +8009,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -8191,9 +8080,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -8252,9 +8140,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -8313,9 +8200,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -8374,9 +8260,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -8435,9 +8320,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -8496,9 +8380,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -8557,9 +8440,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -8618,9 +8500,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -8679,9 +8560,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -8740,9 +8620,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -8801,9 +8680,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -8862,9 +8740,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -8923,9 +8800,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -8984,9 +8860,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -9045,9 +8920,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -9106,9 +8980,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -9167,9 +9040,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -9228,9 +9100,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -9289,9 +9160,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -9350,9 +9220,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -9411,9 +9280,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -9472,9 +9340,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -9533,9 +9400,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -9594,9 +9460,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -9655,9 +9520,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -9716,9 +9580,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -9777,9 +9640,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -9838,9 +9700,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -9899,9 +9760,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -9960,9 +9820,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -10021,9 +9880,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -10082,9 +9940,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -10143,9 +10000,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -10204,9 +10060,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -10265,9 +10120,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -10326,9 +10180,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -10387,9 +10240,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -10448,9 +10300,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -10509,9 +10360,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -10614,9 +10464,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -10719,9 +10568,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -10780,9 +10628,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -10841,9 +10688,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -10902,9 +10748,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -10963,9 +10808,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -11024,9 +10868,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -11085,9 +10928,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -11146,9 +10988,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -11207,9 +11048,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -11268,9 +11108,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -11329,9 +11168,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -11390,9 +11228,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -11451,9 +11288,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -11512,9 +11348,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -11573,9 +11408,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -11678,9 +11512,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -11783,9 +11616,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -11954,9 +11786,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -12125,9 +11956,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -12186,9 +12016,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -12247,9 +12076,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -12308,9 +12136,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -12369,9 +12196,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -12540,9 +12366,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -12711,9 +12536,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -12882,9 +12706,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -13053,9 +12876,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -13136,9 +12958,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -13219,9 +13040,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -13280,9 +13100,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -13341,9 +13160,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -13512,9 +13330,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -13683,9 +13500,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -13854,9 +13670,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -14025,9 +13840,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -14196,9 +14010,8 @@
         ]
       }
     ],
-    "runs_on_ttnn": "no",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   },
   {
     "name": "ttnn.concat",
@@ -14367,8 +14180,7 @@
         ]
       }
     ],
-    "runs_on_ttnn": "N/A",
-    "pcc": NaN,
-    "atol": NaN
+    "pcc": "N/A",
+    "atol": "N/A"
   }
 ]
