@@ -498,6 +498,9 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         print(ttir, file=sys.stderr)
 
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
+    print(
+        f"\n****FlatBuffer binary starts****\n{binary}\n****Flatbuffer binary ends****\n"
+    )
     if dump_intermediates:
         print("TTNN module", file=sys.stderr)
         print(ttnn, file=sys.stderr)
