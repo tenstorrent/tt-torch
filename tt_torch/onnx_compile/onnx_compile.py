@@ -29,6 +29,7 @@ def compile_onnx(module: onnx.ModelProto):
         module,
         "builtin.module(torch-onnx-to-torch-backend-pipeline)",
         "Lowering Torch Onnx IR -> Torch Backend IR",
+        enable_ir_printing=True,
     )
     lower_mlir_module(False, OutputType.STABLEHLO, module)
     return tt_mlir.compile(module.operation.get_asm())

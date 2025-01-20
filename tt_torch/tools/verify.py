@@ -86,7 +86,9 @@ def _verify_onnx_module(
 ):
 
     sess = InferenceSession(filename)
-    input_shapes = [nodearg.shape for nodearg in sess.get_inputs()]
+    og_input_shapes = [nodearg.shape for nodearg in sess.get_inputs()]
+    input_shapes = og_input_shapes[0][1:]
+    print(f"og_input_shapes: {og_input_shapes}")
     if input_data_types is None:
         input_data_types = [torch.float32] * (
             len(input_shapes) if input_shapes is not None else len(inputs)
