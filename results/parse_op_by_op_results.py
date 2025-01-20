@@ -23,6 +23,83 @@ def find_json_files(directory="results"):
     return json_files
 
 
+def generate_status_report():
+    json_files = find_json_files()
+    status_report = {}
+    model_names = []
+
+    for json_file in json_files:
+        # Get model name from the parent directory of the json file
+        model_name = (
+            json_file.strip("_unique_ops.json")
+            .split("/")[-1]
+            .split(" ")[0]
+            .split("test")[-1]
+        )
+        if len(model_name) > 28:
+            model_name = model_name[:28]
+        id = 1
+        while model_name in model_names:
+            model_name = model_name + f"_{id}"
+            id += 1
+
+        model_names.append(model_name)
+
+        with open(json_file, "r") as f:
+            data = json.load(f)
+
+        # Initialize status counts
+        status_counts = {i: 0 for i in range(1, 8)}  # Status 1 to 7
+
+        # Count the occurrences of each status in the JSON file
+        for value in data.values():
+            status = value.get("compilation_status", None)
+            if status in status_counts:
+                status_counts[status] += 1
+
+        # Calculate percentages for each status
+        total_ops = sum(status_counts.values())
+        status_percentages = {
+            status: (count / total_ops) * 100 if total_ops > 0 else 0
+            for status, count in status_counts.items()
+        }
+
+        status_report[model_name] = status_percentages
+    sorted_status_report = {
+        model_name: status_percentages
+        for model_name, status_percentages in sorted(
+            status_report.items(), key=lambda item: item[0].lower()
+        )
+    }
+    md_file = MdUtils(file_name="results/models.md")
+
+    # Add a title
+    md_file.new_header(level=1, title="Model Compilation Status Report")
+
+    table_header = [
+        "Model Name",
+        "Compiles Op by Op",
+        "Executes Op by Op",
+        "Runs on Device",
+    ]
+
+    # Prepare rows data: start with the header row
+    table_data = [table_header]
+
+    for model, status_percentages in sorted_status_report.items():
+        row_data = [model]
+        for status in range(5, 8):
+            row_data.append(f"{status_percentages.get(status, 0):.2f}%")
+        table_data.append(row_data)
+
+    # Flatten the table_data to create a single list of strings
+    flat_table_data = [item for row in table_data for item in row]
+    md_file.new_table(
+        columns=len(table_header), rows=len(table_data), text=flat_table_data
+    )
+    md_file.create_md_file()
+
+
 def extract_shape(shape_list):
     def append_shape(shape):
         string = ""
@@ -748,4 +825,5 @@ def process_json_files():
 
 
 if __name__ == "__main__":
+    generate_status_report()
     process_json_files()
