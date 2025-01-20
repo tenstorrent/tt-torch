@@ -25,40 +25,20 @@ jobs:
         id: pages
         uses: actions/configure-pages@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install VuePress
+      - name: Install mdBook
         run: |
-          npm install -g vuepress@next
-
-      - name: Create VuePress config
-        run: |
-          mkdir -p docs/.vuepress
-          cat > docs/.vuepress/config.js << 'EOF'
-          import { defaultTheme } from 'vuepress'
-          export default {
-            title: 'TT-Torch Documentation',
-            description: 'Documentation for TT-Torch',
-            theme: defaultTheme({
-              navbar: true,
-              sidebar: 'auto',
-              sidebarDepth: 3,
-            }),
-          }
-          EOF
+          curl -sSf https://sh.rustup.rs -o sh.rustup && sh sh.rustup -y
+          source $HOME/.cargo/env
+          cargo install mdbook
 
       - name: Build documentation
         run: |
-          cd docs
-          vuepress build
+          mdbook build --output ./docs/.mdbook
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/.vuepress/dist
+          path: docs/.mdbook
 
   deploy:
     environment:
