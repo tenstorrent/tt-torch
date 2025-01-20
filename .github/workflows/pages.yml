@@ -2,7 +2,7 @@ name: docs
 
 on:
   push:
-    branches: ["automate-pages-workflow"]
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
