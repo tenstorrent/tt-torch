@@ -122,7 +122,7 @@ std::vector<at::Tensor> run(std::vector<at::Tensor> &inputs,
 
   auto [system_desc, chip_ids] = tt::runtime::getCurrentSystemDesc();
   int dev_0 = chip_ids[0];
-  auto device = tt::runtime::openDevice({dev_0});
+  auto device = tt::runtime::openDevice({dev_0}, 1, 1 << 14);
 
   int program_idx = 0;
   auto input_descs = binary.getProgramInputs(program_idx);
