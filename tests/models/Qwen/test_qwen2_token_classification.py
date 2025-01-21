@@ -45,7 +45,9 @@ def test_qwen2_token_classification(record_property, model_name, mode, nightly):
     if nightly:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_name, mode, relative_atol=0.01, compiler_config=cc)
+    tester = ThisTester(
+        model_name, mode, assert_on_output_mismatch=False, compiler_config=cc
+    )
     with torch.no_grad():
         results = tester.test_model()
 

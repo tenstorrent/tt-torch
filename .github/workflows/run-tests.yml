@@ -15,6 +15,7 @@ jobs:
       matrix:
         build: [
           {runs-on: n150, name: "run"},
+          {runs-on: n300, name: "run"},
         ]
 
     runs-on:
