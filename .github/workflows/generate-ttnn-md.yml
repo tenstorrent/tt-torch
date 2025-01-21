@@ -45,12 +45,12 @@ jobs:
       - name: Clean existing MD/JSON files
         shell: bash
         run: |
-          # Remove existing files from git tracking
-          git rm -f docs/ops/ttnn/*.md docs/ops/ttnn/*.json || true
-          # Commit the removal
-          git config --global user.name 'GitHub Actions Bot'
-          git config --global user.email 'actions@github.com'
-          git commit -m "Remove old TTNN MD/JSON files before regeneration" || true
+          # Check if any files exist before removing
+          if git ls-files docs/ops/ttnn/*.md docs/ops/ttnn/*.json; then
+            # Remove existing files from git tracking
+            git rm -f docs/ops/ttnn/ttnn*.md docs/ops/ttnn/*.json
+            git commit -m "Remove old TTNN MD/JSON files before regeneration"
+          fi
 
       - name: Create necessary directories
         shell: bash
@@ -61,16 +61,18 @@ jobs:
         shell: bash
         run: |
           source env/activate
-          python ${{ steps.strings.outputs.work-dir }}/tt_torch/tools/generate_md.py --excel_path ${{ steps.strings.outputs.work-dir }}/results/models_op_per_op.xlsx --md_dir ${{ steps.strings.outputs.work-dir }}/docs/ops/ttnn --json_dir ${{ steps.strings.outputs.work-dir }}/docs/ops/ttnn
+          python ${{ steps.strings.outputs.work-dir }}/tt_torch/tools/generate_md.py --excel_path ${{ steps.strings.outputs.work-dir }}/results/models_op_per_op.xlsx --md_dir docs/ops/ttnn --json_dir docs/ops/ttnn
 
       - name: Add and commit new files
         shell: bash
         run: |
           # Add newly generated files
-          git add docs/ops/ttnn/*.md docs/ops/ttnn/*.json
-          # Commit new files
-          git commit -m "Update TTNN MD/JSON files from latest generation"
-          # Push changes
+          git add docs/ops/ttnn/ttnn*.md docs/ops/ttnn/*.json
+
+          # Only commit if there are changes in the index
+          git diff --cached --quiet || git commit -m "Update TTNN MD/JSON files from latest generation"
+
+          # Push changes only if a commit was made
           git push origin ${GITHUB_REF#refs/heads/}
 
       - name: Upload TTNN MD Files to archive
