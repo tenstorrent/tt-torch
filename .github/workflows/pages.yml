@@ -1,10 +1,8 @@
 name: docs
 
 on:
-  # push:
-  #   branches: ["main"]
-  # pull_request:
-  #   branches: ["main"]
+  push:
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:
@@ -35,12 +33,12 @@ jobs:
 
       - name: Build documentation
         run: |
-          mdbook build --output ./docs/.mdbook
+          mdbook build docs
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/.mdbook
+          path: docs/book
 
   deploy:
     environment:
