@@ -22,6 +22,13 @@ class CompileDepth(Enum):
     EXECUTE = 7
 
 
+class FrontEnd(Enum):
+    TORCH_FX = 1
+    TORCH_MLIR = 2
+    STABLEHLO = 3
+    TTNN_IR = 4
+
+
 class OpCompilationStatus(IntEnum):
     NOT_STARTED = 0
     CREATED_GRAPH = 1
@@ -121,6 +128,7 @@ class Op:
 class CompilerConfig:
     def __init__(self):
         self.compile_depth = CompileDepth.EXECUTE
+        self.compiler_front_end = FrontEnd.TORCH_FX
         self.profile_ops = True
         self.torch_mlir_module = None
         self.stablehlo_mlir_module = None
