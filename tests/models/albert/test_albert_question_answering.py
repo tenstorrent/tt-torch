@@ -31,15 +31,15 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.parametrize("model_name", ["twmkn9/albert-base-v2-squad2"])
-@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
-def test_albert_question_answering(record_property, model_name, mode, nightly):
+@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+def test_albert_question_answering(record_property, model_name, mode, op_by_op):
     record_property("model_name", model_name)
     record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if nightly:
+    if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(model_name, mode, relative_atol=0.01, compiler_config=cc)

@@ -52,8 +52,8 @@ class ThisTester(ModelTester):
         ("retinanet_resnet50_fpn_v2", "RetinaNet_ResNet50_FPN_V2_Weights"),
     ],
 )
-@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
-def test_torchvision_object_detection(record_property, model_info, mode, nightly):
+@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+def test_torchvision_object_detection(record_property, model_info, mode, op_by_op):
     pytest.skip("torchvision modules not supported.")
     model_name, _ = model_info
     record_property("model_name", model_name)
@@ -62,7 +62,7 @@ def test_torchvision_object_detection(record_property, model_info, mode, nightly
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if nightly:
+    if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(model_info, mode, compiler_config=cc)

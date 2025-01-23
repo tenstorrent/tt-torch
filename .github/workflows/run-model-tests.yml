@@ -156,7 +156,7 @@ jobs:
         echo ${{ steps.strings.outputs.install-output-dir }}
         source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
-        pytest -svv --nightly ${{ matrix.build.tests }}
+        pytest -svv --op_by_op ${{ matrix.build.tests }}
 
     - name: Tar results
       if: success() || failure()

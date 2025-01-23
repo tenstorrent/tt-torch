@@ -33,15 +33,15 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.parametrize("model_name", ["albert/albert-base-v2"])
-@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
-def test_albert_token_classification(record_property, model_name, mode, nightly):
+@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+def test_albert_token_classification(record_property, model_name, mode, op_by_op):
     record_property("model_name", f"{model_name}-classification")
     record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if nightly:
+    if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(
