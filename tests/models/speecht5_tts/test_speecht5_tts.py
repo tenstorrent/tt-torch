@@ -48,8 +48,8 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
-def test_speecht5_tts(record_property, mode, nightly):
+@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+def test_speecht5_tts(record_property, mode, op_by_op):
     pytest.skip()  # crashes in lowering to stable hlo
     model_name = "speecht5-tts"
     record_property("model_name", model_name)
@@ -58,7 +58,7 @@ def test_speecht5_tts(record_property, mode, nightly):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if nightly:
+    if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(model_name, mode, compiler_config=cc)

@@ -107,8 +107,8 @@ model_and_mode_list = [
 @pytest.mark.skip  # skipped due to missing manage_dependencies package
 @pytest.mark.usefixtures("manage_dependencies")
 @pytest.mark.parametrize("model_and_mode", model_and_mode_list)
-@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
-def test_timm_image_classification(record_property, model_and_mode, nightly):
+@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+def test_timm_image_classification(record_property, model_and_mode, op_by_op):
     model_name = model_and_mode[0]
     mode = model_and_mode[1]
     record_property("model_name", model_name)
@@ -117,7 +117,7 @@ def test_timm_image_classification(record_property, model_and_mode, nightly):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if nightly:
+    if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(model_name, mode, compiler_config=cc)

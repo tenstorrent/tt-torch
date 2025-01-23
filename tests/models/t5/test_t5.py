@@ -33,15 +33,15 @@ class ThisTester(ModelTester):
     reason="Fails due to pt2 compile issue when finishing generation, but we can still generate a graph"
 )
 @pytest.mark.parametrize("model_name", ["t5-small", "t5-base", "t5-large"])
-@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
-def test_t5(record_property, model_name, mode, nightly):
+@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+def test_t5(record_property, model_name, mode, op_by_op):
     record_property("model_name", model_name)
     record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if nightly:
+    if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(model_name, mode, compiler_config=cc)

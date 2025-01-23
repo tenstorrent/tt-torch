@@ -35,13 +35,13 @@ class ThisTester(ModelTester):
 @pytest.mark.xfail(
     reason="Fails due to pt2 compile issue when finishing generation, but we can still generate a graph"
 )
-@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
-def test_codegen(record_property, mode, nightly):
+@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+def test_codegen(record_property, mode, op_by_op):
     model_name = "codegen"
     record_property("model_name", model_name)
     record_property("mode", mode)
     cc = CompilerConfig()
-    if nightly:
+    if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(model_name, mode, compiler_config=cc)
