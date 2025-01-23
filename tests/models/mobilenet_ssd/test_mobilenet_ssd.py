@@ -39,6 +39,7 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.xfail(reason="Need to debug")
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
 def test_mobilenet_ssd(record_property, mode, nightly):
     model_name = "MobileNetSSD"
     record_property("model_name", model_name)

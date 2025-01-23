@@ -50,6 +50,7 @@ AutoencoderTiny(
     ["train", "eval"],
 )
 @pytest.mark.skip(reason="PyTorch compilation flow cannot accept pipeline.")
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
 def test_autoencoder_conv(record_property, mode, nightly):
     model_name = "Autoencoder (convolutional)"
     record_property("model_name", model_name)

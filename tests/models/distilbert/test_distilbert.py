@@ -27,6 +27,7 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.parametrize("model_name", ["distilbert-base-uncased"])
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
 def test_distilbert(record_property, model_name, mode, nightly):
     record_property("model_name", model_name)
     record_property("mode", mode)

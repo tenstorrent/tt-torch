@@ -35,6 +35,7 @@ class ThisTester(ModelTester):
 )
 @pytest.mark.usefixtures("manage_dependencies")
 @pytest.mark.skip(reason="failing during torch run with bypass compilation")
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
 def test_openpose(record_property, mode, nightly):
     model_name = "OpenPose"
     record_property("model_name", model_name)

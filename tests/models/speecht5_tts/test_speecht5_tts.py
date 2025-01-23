@@ -48,6 +48,7 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
 def test_speecht5_tts(record_property, mode, nightly):
     pytest.skip()  # crashes in lowering to stable hlo
     model_name = "speecht5-tts"

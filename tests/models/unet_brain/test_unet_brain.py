@@ -56,6 +56,7 @@ class ThisTester(ModelTester):
     "mode",
     ["train", "eval"],
 )
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
 def test_unet_brain(record_property, mode, nightly):
     if mode == "train":
         pytest.skip()

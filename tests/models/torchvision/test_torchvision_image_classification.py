@@ -7,6 +7,7 @@ import torch
 import requests
 import pytest
 from tests.utils import ModelTester
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 
 class ThisTester(ModelTester):
@@ -123,7 +124,10 @@ model_info_and_mode_list = [
 
 
 @pytest.mark.parametrize("model_info_and_mode", model_info_and_mode_list)
-def test_torchvision_image_classification(record_property, model_info_and_mode):
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
+def test_torchvision_image_classification(
+    record_property, model_info_and_mode, nightly
+):
     pytest.skip("torchvision modules not supported.")
     model_info = model_info_and_mode[0]
     mode = model_info_and_mode[1]
@@ -131,7 +135,13 @@ def test_torchvision_image_classification(record_property, model_info_and_mode):
     record_property("model_name", model_name)
     record_property("mode", mode)
 
-    tester = ThisTester(model_info, mode)
+    cc = CompilerConfig()
+    cc.enable_consteval = True
+    cc.consteval_parameters = True
+    if nightly:
+        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
+
+    tester = ThisTester(model_info, mode, compiler_config=cc)
     results = tester.test_model()
     if mode == "eval":
         # Print the top 5 predictions

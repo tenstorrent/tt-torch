@@ -35,6 +35,7 @@ class ThisTester(ModelTester):
         "Qwen/Qwen2-7B",
     ],
 )
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
 def test_qwen2_token_classification(record_property, model_name, mode, nightly):
     if mode == "train":
         pytest.skip()

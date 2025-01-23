@@ -39,6 +39,7 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
 def test_perceiver_io(record_property, mode, nightly):
     model_name = "Perceiver IO"
     record_property("model_name", model_name)

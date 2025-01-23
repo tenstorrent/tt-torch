@@ -42,6 +42,7 @@ class ThisTester(ModelTester):
         "Qwen/Qwen2.5-1.5B",
     ],
 )
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
 def test_qwen2_casual_lm(record_property, model_name, mode, nightly):
     if mode == "train":
         pytest.skip()

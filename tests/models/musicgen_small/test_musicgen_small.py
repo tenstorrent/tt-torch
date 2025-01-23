@@ -39,6 +39,7 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.skip("torch run with bypass compilation is stalling")
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
 def test_musicgen_small(record_property, mode, nightly):
     model_name = "musicgen_small"
     record_property("model_name", model_name)
