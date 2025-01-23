@@ -5,20 +5,27 @@
 
 set(TT_MLIR_VERSION "390e4edf8709ea99f78b47e21809fd1014b5f8c8")
 
-if (TOOLCHAIN STREQUAL "ON")
+if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
     project(ttmlir-toolchain LANGUAGES CXX C)
-    execute_process(
-        COMMAND git clone --recursive https://github.com/tenstorrent/tt-mlir.git ${PROJECT_SOURCE_DIR}/tt-mlir/src/tt-mlir
-        RESULT_VARIABLE result1
-        OUTPUT_VARIABLE output1
-        ERROR_VARIABLE error_output1
-    )
-    if (NOT ${result1} EQUAL 0)
-        message(FATAL_ERROR "Failed to clone tt-mlir: ${error_output1}")
+    if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tt-mlir/src/tt-mlir)
+        execute_process(
+            COMMAND git clone --recursive https://github.com/tenstorrent/tt-mlir.git ${CMAKE_CURRENT_SOURCE_DIR}/tt-mlir/src/tt-mlir
+        )
     endif()
     execute_process(
-        COMMAND /bin/bash -c "cd ${PROJECT_SOURCE_DIR}/tt-mlir/src/tt-mlir && git checkout ${TT_MLIR_VERSION}"
+        COMMAND /bin/bash -c "git checkout ${TT_MLIR_VERSION}"
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tt-mlir/src/tt-mlir
+    )
+
+    execute_process(
+        COMMAND pwd
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tt-mlir/src/tt-mlir
+    )
+
+    execute_process(
+        COMMAND /bin/bash ../../../build_mlir_env.sh
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tt-mlir/src/tt-mlir
     )
 else()
     set(TT_RUNTIME_DEBUG OFF CACHE BOOL "Enable runtime debugging")
