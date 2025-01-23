@@ -91,11 +91,13 @@ jobs:
         echo ${{ steps.strings.outputs.install-output-dir }}
         source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
+        PYTESTS_LIST=""
         for testname in ${{ matrix.build.test_names }}; do
         testname=${testname//,/}
-        echo "running test: $testname"
-        pytest -svv tests/models/$testname --nightly
+        PYTESTS_LIST="${PYTESTS_LIST} tests/models/$testname --nightly"
         done
+        echo "running tests: ${{ matrix.build.test_names }}"
+        pytest -svv $PYTESTS_LIST
 
     - name: Tar results
       if: success() || failure()
