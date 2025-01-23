@@ -42,6 +42,7 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
 def test_bert(record_property, mode, nightly):
     model_name = "BERT"
     record_property("model_name", model_name)

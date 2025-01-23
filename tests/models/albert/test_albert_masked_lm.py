@@ -48,6 +48,7 @@ class ThisTester(ModelTester):
         "albert/albert-xxlarge-v2",
     ],
 )
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
 def test_albert_masked_lm(record_property, model_name, mode, nightly):
     record_property("model_name", model_name)
     record_property("mode", mode)

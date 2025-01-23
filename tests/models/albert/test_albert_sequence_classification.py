@@ -31,6 +31,7 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.parametrize("model_name", ["textattack/albert-base-v2-imdb"])
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
 def test_albert_sequence_classification(record_property, model_name, mode, nightly):
     record_property("model_name", model_name)
     record_property("mode", mode)

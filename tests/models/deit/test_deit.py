@@ -47,6 +47,7 @@ class ThisTester(ModelTester):
     ],
 )
 @pytest.mark.parametrize("model_name", ["facebook/deit-base-patch16-224"])
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
 def test_deit(record_property, model_name, mode, nightly):
     if mode == "train":
         pytest.skip()

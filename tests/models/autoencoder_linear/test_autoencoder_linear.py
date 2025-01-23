@@ -84,6 +84,7 @@ class ThisTester(ModelTester):
     "mode",
     ["train", "eval"],
 )
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
 def test_autoencoder_linear(record_property, mode, nightly):
     if mode == "train":
         pytest.skip()

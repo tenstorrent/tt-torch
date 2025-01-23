@@ -32,6 +32,7 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
 def test_glpn_kitti(record_property, mode, nightly):
     model_name = "GLPN-KITTI"
     record_property("model_name", model_name)

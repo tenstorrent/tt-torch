@@ -107,7 +107,8 @@ model_and_mode_list = [
 @pytest.mark.skip  # skipped due to missing manage_dependencies package
 @pytest.mark.usefixtures("manage_dependencies")
 @pytest.mark.parametrize("model_and_mode", model_and_mode_list)
-def test_timm_image_classification(record_property, model_and_mode):
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
+def test_timm_image_classification(record_property, model_and_mode, nightly):
     model_name = model_and_mode[0]
     mode = model_and_mode[1]
     record_property("model_name", model_name)

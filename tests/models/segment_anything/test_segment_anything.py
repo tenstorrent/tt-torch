@@ -38,6 +38,7 @@ class ThisTester(ModelTester):
 @pytest.mark.skip(
     reason="Failed to install sam2. sam2 requires Python >=3.10.0 but the default version on Ubuntu 20.04 is 3.8. We found no other pytorch implementation of segment-anything."
 )
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
 def test_segment_anything(record_property, mode, nightly):
     model_name = "segment-anything"
     record_property("model_name", model_name)

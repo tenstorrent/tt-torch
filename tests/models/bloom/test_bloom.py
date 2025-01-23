@@ -38,6 +38,7 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
 def test_bloom(record_property, mode, nightly):
     model_name = "Bloom"
     record_property("model_name", model_name)

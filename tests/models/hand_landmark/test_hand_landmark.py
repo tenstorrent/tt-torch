@@ -43,6 +43,7 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.xfail(reason="Need to debud")
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
 def test_hand_landmark(record_property, mode, nightly):
     model_name = "Hand Landmark"
     record_property("model_name", model_name)

@@ -43,6 +43,7 @@ class ThisTester(ModelTester):
     "model_name",
     ["microsoft/beit-base-patch16-224", "microsoft/beit-large-patch16-224"],
 )
+@pytest.mark.parametrize("nightly", [True, False], ids=["nightly", "push"])
 def test_beit_image_classification(record_property, model_name, mode, nightly):
     if mode == "train":
         pytest.skip()
