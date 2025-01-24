@@ -42,6 +42,11 @@ jobs:
           name: models_op_per_op.xlsx
           path: ${{ steps.strings.outputs.work-dir }}/results
 
+      - name: Configure Git User
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+
       - name: Clean existing MD/JSON files
         shell: bash
         run: |
@@ -57,23 +62,26 @@ jobs:
         run: |
           mkdir -p ${{ steps.strings.outputs.work-dir }}/docs/ops/ttnn
 
-      - name: Generate TTNN MD Files
+      - name: Generate TTNN MD Files and Commit if Changes Exist
         shell: bash
         run: |
           source env/activate
           python ${{ steps.strings.outputs.work-dir }}/tt_torch/tools/generate_md.py --excel_path ${{ steps.strings.outputs.work-dir }}/results/models_op_per_op.xlsx --md_dir docs/ops/ttnn --json_dir docs/ops/ttnn
+          # List newly generated files
+          NEW_FILES=(docs/ops/ttnn/ttnn*.md docs/ops/ttnn/ttnn*.json)
 
-      - name: Add and commit new files
-        shell: bash
-        run: |
-          # Add newly generated files
-          git add docs/ops/ttnn/ttnn*.md docs/ops/ttnn/*.json
+          # Remove files not in the new generation
+          git rm $(git ls-files 'docs/ops/ttnn/ttnn*.md' 'docs/ops/ttnn/ttnn*.json' | \
+            grep -vFf <(printf '%s\n' "${NEW_FILES[@]}"))
 
-          # Only commit if there are changes in the index
-          git diff --cached --quiet || git commit -m "Update TTNN MD/JSON files from latest generation"
+          # Stage new and modified files
+          git add "${NEW_FILES[@]}"
 
-          # Push changes only if a commit was made
-          git push origin ${GITHUB_REF#refs/heads/}
+          # Commit only if changes exist
+          if ! git diff --staged --quiet; then
+            git commit -m "Update TTNN files from latest generation"
+            git push origin ${GITHUB_REF#refs/heads/}
+          fi
 
       - name: Upload TTNN MD Files to archive
         uses: actions/upload-artifact@v4
