@@ -14,11 +14,10 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-          {runs-on: n150, name: "run"},
+          {runs-on: wormhole_b0, name: "run"},
         ]
 
     runs-on:
-      - in-service
       - ${{ matrix.build.runs-on }}
 
     container:
