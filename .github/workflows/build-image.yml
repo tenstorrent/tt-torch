@@ -9,7 +9,7 @@ jobs:
   build:
 
     runs-on:
-      - n150
+      - wormhole_b0
 
     env:
       BASE_IMAGE_NAME:      ghcr.io/${{ github.repository }}/tt-torch-base-ubuntu-22-04
