@@ -20,8 +20,10 @@ target_include_directories(TT_TORCH_MLIR PUBLIC
     ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir/include
     ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir/runtime/include
     ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/stablehlo/
+    ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/shardy/
     ${TTMLIR_TOOLCHAIN_DIR}/include
     ${TTMLIR_TOOLCHAIN_DIR}/src/stablehlo
+    ${TTMLIR_TOOLCHAIN_DIR}/src/shardy
     ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/include
 )
 
@@ -78,6 +80,8 @@ set(STABLEHLO_LIBS
     StablehloReferenceNumPy
     StablehloReferenceScope
     StablehloReferenceValue
+    SdyDialect
+    SdyRegister
 )
 
 target_link_libraries(TT_TORCH_MLIR PUBLIC
