@@ -45,7 +45,7 @@ sudo chown -R $USER /opt/ttmlir-toolchain
 
 
 # Build environment
-cm third_party
+cd third_party
 export TTMLIR_TOOLCHAIN_DIR=/opt/ttmlir-toolchain/
 cmake -B toolchain -DBUILD_TOOLCHAIN=ON
 cd -
