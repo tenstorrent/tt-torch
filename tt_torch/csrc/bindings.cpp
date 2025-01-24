@@ -120,9 +120,7 @@ std::vector<at::Tensor> run(std::vector<at::Tensor> &inputs,
   std::memcpy(binary_ptr.get(), data_str.data(), data_str.size());
   tt::runtime::Binary binary = tt::runtime::Binary(binary_ptr);
 
-  auto [system_desc, chip_ids] = tt::runtime::getCurrentSystemDesc();
-  int dev_0 = chip_ids[0];
-  auto device = tt::runtime::openDevice({dev_0});
+  auto device = tt::runtime::openDevice({0});
 
   int program_idx = 0;
   auto input_descs = binary.getProgramInputs(program_idx);

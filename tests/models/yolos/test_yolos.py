@@ -72,7 +72,7 @@ def test_yolos(record_property, mode, op_by_op):
             ):
                 box = [round(i, 2) for i in box.tolist()]
                 string = (
-                    f"Detected {tester.model.config.id2label[label.item()]} with confidence "
+                    f"Detected {tester.framework_model.config.id2label[label.item()]} with confidence "
                     f"{round(score.item(), 3)} at location {box}"
                 )
                 return string

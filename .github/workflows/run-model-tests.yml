@@ -56,9 +56,7 @@ jobs:
               tests/models/detr/test_detr.py::test_detr \
               tests/models/distilbert/test_distilbert.py::test_distilbert \
               tests/models/dpr/test_dpr.py::test_dpr \
-              tests/models/falcon/test_falcon.py::test_falcon \
               tests/models/gpt2/test_gpt2.py::test_gpt2 \
-              tests/models/gpt_neo/test_gpt_neo.py::test_gpt_neo \
               tests/models/hand_landmark/test_hand_landmark.py::test_hand_landmark \
               tests/models/hardnet/test_hardnet.py::test_hardnet \
               tests/models/llama/test_llama.py::test_llama \
@@ -79,6 +77,8 @@ jobs:
               tests/models/xglm/test_xglm.py::test_xglm \
               tests/models/yolov3/test_yolov3.py::test_yolov3 \
               tests/models/yolov5/test_yolov5.py::test_yolov5 \
+              tests/models/gpt_neo/test_gpt_neo.py::test_gpt_neo \
+              tests/models/falcon/test_falcon.py::test_falcon \
               "
           },
         ]
@@ -87,7 +87,7 @@ jobs:
 
     container:
       image: ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:latest
-      options: --user root --device /dev/tenstorrent/0 --shm-size=2gb
+      options: --user root --device /dev/tenstorrent/0 --shm-size=4gb
       volumes:
         - /dev/hugepages:/dev/hugepages
         - /dev/hugepages-1G:/dev/hugepages-1G
@@ -156,7 +156,7 @@ jobs:
         echo ${{ steps.strings.outputs.install-output-dir }}
         source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
-        pytest -svv --op_by_op ${{ matrix.build.tests }}
+        pytest -v --op_by_op ${{ matrix.build.tests }}
 
     - name: Tar results
       if: success() || failure()

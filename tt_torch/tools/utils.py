@@ -128,7 +128,7 @@ class CompilerConfig:
         self.stable_hlo_ops = []
         self.model_name = ""
         self.results_path = "results/models/"
-        self.single_op_timeout = 5
+        self.single_op_timeout = 30
         self.enable_intermediate_verification = False
         self.enable_consteval = False
         self.remove_embedded_constants = False

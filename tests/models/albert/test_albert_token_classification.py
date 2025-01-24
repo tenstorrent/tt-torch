@@ -57,7 +57,8 @@ def test_albert_token_classification(record_property, model_name, mode, op_by_op
         # there might be more predicted token classes than words.
         # Multiple token classes might account for the same word
         predicted_tokens_classes = [
-            tester.model.config.id2label[t.item()] for t in predicted_token_class_ids[0]
+            tester.framework_model.config.id2label[t.item()]
+            for t in predicted_token_class_ids[0]
         ]
 
         input_ids = tester.inputs["input_ids"]
