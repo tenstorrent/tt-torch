@@ -33,7 +33,6 @@
 #include "stablehlo/dialect/StablehloOps.h"  // from @stablehlo
 #include "stablehlo/transforms/Passes.h"     // from @stablehlo
 
-#define TTMLIR_ENABLE_STABLEHLO
 #include "ttmlir/Dialect/TTIR/Pipelines/TTIRPipelines.h"
 #include "ttmlir/Dialect/TTIR/Transforms/Passes.h"
 #include "ttmlir/Dialect/TTNN/Pipelines/TTNNPipelines.h"
@@ -92,7 +91,7 @@ std::string compileStableHLOToTTIR(std::string_view code) {
   }
   std::string buffer;
   llvm::raw_string_ostream os(buffer);
-  mlir_module.get()->print(os);
+  mlir_module.get()->print(os, mlir::OpPrintingFlags().enableDebugInfo());
   os.flush();
 
   return buffer;
@@ -150,7 +149,7 @@ compileTTIRToTTNN(std::string_view code) {
 
   std::string buffer;
   llvm::raw_string_ostream os(buffer);
-  mlir_module->print(os);
+  mlir_module->print(os, mlir::OpPrintingFlags().enableDebugInfo());
   os.flush();
 
   return std::make_tuple(binary, buffer);

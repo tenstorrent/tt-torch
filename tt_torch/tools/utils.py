@@ -11,6 +11,8 @@ import torch
 import math
 import sys
 
+from tt_mlir import is_runtime_debug_enabled
+
 
 class CompileDepth(Enum):
     TORCH_FX = 1
@@ -129,13 +131,46 @@ class CompilerConfig:
         self.model_name = ""
         self.results_path = "results/models/"
         self.single_op_timeout = 30
-        self.enable_intermediate_verification = False
         self.enable_consteval = False
         self.remove_embedded_constants = False
         self._consteval_parameters = False
+        self._enable_intermediate_verification = False
+        self._verify_op_by_op = False
 
         self.apply_environment_overrides()
         self.post_init()
+
+    @property
+    def verify_op_by_op(self):
+        return self._verify_op_by_op
+
+    @verify_op_by_op.setter
+    def verify_op_by_op(self, value):
+        assert isinstance(
+            value, bool
+        ), "enable_intermediate_verification must be a boolean"
+        if value and self.compile_depth != CompileDepth.EXECUTE_OP_BY_OP:
+            print(
+                "WARNING: Setting verify_op_by_op to True but compile_depth is not set to EXECUTE_OP_BY_OP. This CompilerConfig flag will have no effect."
+            )
+        self._verify_op_by_op = value
+
+    @property
+    def enable_intermediate_verification(self):
+        return self._enable_intermediate_verification
+
+    @enable_intermediate_verification.setter
+    def enable_intermediate_verification(self, value):
+        assert isinstance(
+            value, bool
+        ), "enable_intermediate_verification must be a boolean"
+
+        if value and not is_runtime_debug_enabled():
+            raise RuntimeError(
+                "attempting to set enable_intermediate_verification to True but tt_mlir was not built with runtime debug enabled. Rebuild this project with -DTT_RUNTIME_DEBUG=ON if you wish to verify intermediate results."
+            )
+
+        self._enable_intermediate_verification = True
 
     @property
     def consteval_parameters(self):
@@ -150,6 +185,9 @@ class CompilerConfig:
         compile_depth = os.environ.get("TT_TORCH_COMPILE_DEPTH")
         if compile_depth:
             self.compile_depth = CompileDepth[compile_depth]
+        verify_op_by_op = os.environ.get("TT_TORCH_VERIFY_OP_BY_OP")
+        if verify_op_by_op and int(verify_op_by_op):
+            self.verify_op_by_op = True
         verify_intermediates = os.environ.get("TT_TORCH_VERIFY_INTERMEDIATES")
         if verify_intermediates and int(verify_intermediates):
             self.enable_intermediate_verification = True
