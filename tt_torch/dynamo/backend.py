@@ -118,18 +118,18 @@ class Executor:
         self.type_conversion = {torch.bool: torch.bfloat16}
         self.intermediate_callbacks = {}
 
+        # Opening a device in a new process is very slow as the pcie device needs to be initializes
+        # So we keep the process alive and reuse it. If the process dies, the next call will create a new process
+        self.execute_process = None
+        self.execute_sender = None
+        self.execute_receiver = None
+
     def register_intermediate_callback(self, callback):
         if not is_runtime_debug_enabled():
             raise RuntimeError(
                 "Runtime debug is required to use intermediate callbacks. Please recompile this project with -DTT_RUNTIME_DEBUG=ON."
             )
         tt_mlir.DebugHooks.get_debug_hooks(callback)
-
-        # Opening a device in a new process is very slow as the pcie device needs to be initializes
-        # So we keep the process alive and reuse it. If the process dies, the next call will create a new process
-        self.execute_process = None
-        self.execute_sender = None
-        self.execute_receiver = None
 
     def set_binary(self, binary):
         self.binary = binary
