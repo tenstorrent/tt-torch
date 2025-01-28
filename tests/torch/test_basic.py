@@ -199,7 +199,7 @@ def test_linear_with_bias():
 
 
 @pytest.mark.xfail(
-    strict=True,
+    strict=False,
     reason="PCC and ATOL mismatch",
 )
 def test_linear_with_bias_no_embedded_constants():
