@@ -23,7 +23,6 @@ jobs:
             runs-on: wormhole_b0, name: "qwen", tests: "
               tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm
               tests/models/Qwen/test_qwen2_token_classification.py::test_qwen2_token_classification
-              tests/models/deepseek/test_deepseek_qwen.py::test_deepseek_qwen
               "
           },
           {
@@ -228,6 +227,12 @@ jobs:
           {
             runs-on: wormhole_b0, name: "mistral", tests: "
               tests/models/mistral/test_mistral_7b.py::test_mistral_7b
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "deepseek", tests: "
+              tests/models/deepseek/test_deepseek.py::test_deepseek
+              tests/models/deepseek/test_deepseek_qwen.py::test_deepseek_qwen
               "
           }
         ]
