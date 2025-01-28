@@ -139,7 +139,7 @@ compileTTIRToTTNN(std::string_view code) {
     throw std::runtime_error(
         "Failed to run TTIR TO TTNN compiler pass pipeline.");
   }
-
+  mlir_module->dump();
   std::shared_ptr<void> *binary = new std::shared_ptr<void>();
   *binary = mlir::tt::ttnn::ttnnToFlatbuffer(mlir_module.get());
 

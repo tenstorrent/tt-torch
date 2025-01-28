@@ -232,7 +232,14 @@ PYBIND11_MODULE(tt_mlir, m) {
       .def_readonly("stride", &tt::runtime::TensorDesc::stride)
       .def_readonly("itemsize", &tt::runtime::TensorDesc::itemsize)
       .def_readonly("dataType", &tt::runtime::TensorDesc::dataType);
-  m.def("get_op_output_tensor", &tt::runtime::getOpOutputTensor);
+  py::class_<tt::runtime::Tensor>(m, "Tensor");
+  m.def("get_op_output_tensor",
+        [](tt::runtime::OpContext &opContextHandle,
+           tt::runtime::CallbackContext &programContextHandle) {
+          tt::runtime::Tensor tensor = tt::runtime::getOpOutputTensor(
+              opContextHandle, programContextHandle);
+          return tt::runtime::getTensorData(tensor);
+        });
   m.def("get_op_debug_str", &tt::runtime::getOpDebugString,
         "Get the debug string of the op");
   m.def("get_op_loc_info", &tt::runtime::getOpLocInfo,

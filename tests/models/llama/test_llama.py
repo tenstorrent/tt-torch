@@ -5,6 +5,7 @@ import torch
 import pytest
 
 # Load model directly
+from transformers.models.llama.modeling_llama import LlamaDecoderLayer
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth
@@ -34,6 +35,10 @@ class ThisTester(ModelTester):
             add_special_tokens=True,
             truncation=True,
         )
+
+        for k, v in inputs.items():
+            inputs[k] = v.to(torch.int32)
+
         return inputs
 
 
@@ -48,6 +53,11 @@ def test_llama(record_property, mode, op_by_op):
     record_property("mode", mode)
 
     cc = CompilerConfig()
+    cc.enable_consteval = True
+    # cc.remove_embedded_constants = True
+    cc.consteval_parameters = True
+    # cc.enable_intermediate_verification = True
+    # cc.compile_depth = CompileDepth.TORCH_FX
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 

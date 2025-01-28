@@ -462,6 +462,7 @@ class Executor:
 
         if self.compiler_config.compile_depth == CompileDepth.EXECUTE:
             assert self.binary is not None, "Binary must be set for EXECUTE mode"
+            breakpoint()
             return tt_mlir.run(inputs + self.graph_constants, self.binary)
         elif self.compiler_config.compile_depth in (
             CompileDepth.EXECUTE_OP_BY_OP,
@@ -472,12 +473,40 @@ class Executor:
             return self.gm(*inputs)
 
 
+global bool_tensor
+global t_tensor
+global f_tensor
+
+
 def verify_golden_callback(binary, callback_context, op_context):
     # Using these parameters, we should be able to query information
     # about the op described by op_context, and its output. I.e. location:
+    global bool_tensor
+    global t_tensor
+    global f_tensor
     location = tt_mlir.get_op_loc_info(op_context)
     # ...
 
+    if "%56" in tt_mlir.get_op_debug_str(op_context):
+        bool_tensor = tt_mlir.get_op_output_tensor(op_context, callback_context)
+
+    if "%60" in tt_mlir.get_op_debug_str(op_context):
+        t_tensor = tt_mlir.get_op_output_tensor(op_context, callback_context)
+
+    if "%48" in tt_mlir.get_op_debug_str(op_context):
+        f_tensor = tt_mlir.get_op_output_tensor(op_context, callback_context)
+
+    if "where" in tt_mlir.get_op_debug_str(op_context):
+        where_output = tt_mlir.get_op_output_tensor(op_context, callback_context)
+        breakpoint()
+        torch_bool = torch.tensor(bool_tensor)
+        torch_t = torch.tensor(t_tensor)
+        torch_f = torch.tensor(f_tensor)
+
+        torch_output = torch.where(torch_bool, torch_t, torch_f)
+        calculated_output = torch.tensor(where_output)
+        breakpoint()
+        x = 2
     # We will need to provide the bindings necesarry in this frontend.
     # Those bindings will interact with the runtime API
 
@@ -487,6 +516,8 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     compiler_config.apply_environment_overrides()
     with torch.no_grad():
         gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
+    # breakpoint()
+    # gm.graph.print_tabular()
     executor = Executor(gm, graph_constants, compiler_config)
     if compiler_config.compile_depth in (
         CompileDepth.EXECUTE_OP_BY_OP,
@@ -511,6 +542,7 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         return executor
 
     lower_to_stable_hlo(module)
+    module.dump()
     if dump_intermediates:
         print("StableHLO module", file=sys.stderr)
         module.dump()
