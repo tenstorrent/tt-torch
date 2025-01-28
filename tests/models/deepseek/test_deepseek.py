@@ -4,7 +4,7 @@
 import torch
 import os
 from unittest.mock import patch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 from transformers.dynamic_module_utils import get_imports
 
 
@@ -17,20 +17,39 @@ def fixed_get_imports(filename: str | os.PathLike) -> list[str]:
 
 # Load model and tokenizer
 model_name = "deepseek-ai/DeepSeek-V3"
+### Model specs
+# num_hidden_layers (currently 61)
+# num_attention_heads (currently 128)
+# hidden_size (not shown in your config but is likely 8192 based on the model)
+###
 with patch("transformers.dynamic_module_utils.get_imports", fixed_get_imports):
-    tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
-    breakpoint()
-    # Load the model for CPU, ensuring no flash-attn and GPU-related optimizations
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        trust_remote_code=True,
-        device_map="cpu",  # Explicitly force the model to run on CPU
-        torch_dtype=torch.float32,  # Use float32 on CPU
-        attn_implementation="eager",
-    )
+    config = AutoConfig.from_pretrained(model_name, trust_remote_code=True)
 
-    # Ensure that we avoid any specific GPU-accelerated attention mechanisms like flash-attn
-    model.config.use_flash_attention = False  # This may not exist in every model, but try to turn off flash-attn if possible
+    # Modify config
+    config.num_hidden_layers = 6
+    config.num_attention_heads = 16
+    config.hidden_size = 1024
+    config.num_key_value_heads = 16
+    config.intermediate_size = 1024 * 4
+    config.num_experts_per_tok = 2
+    config.q_lora_rank = 256
+
+    tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+
+    # Create a new model with the config and all necessary parameters
+    model = AutoModelForCausalLM.from_config(
+        config,
+        # device_map="cpu",  # Force CPU
+        torch_dtype=torch.float32,  # Use float32
+        attn_implementation="eager",  # Use eager implementation
+        trust_remote_code=True,
+    ).to(
+        "cpu"
+    )  # Ensure it's on CPU
+
+    # Disable flash attention explicitly
+    model.config.use_flash_attention = False
+    breakpoint()
 
 
 def generate_response(messages):
