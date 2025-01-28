@@ -77,6 +77,10 @@ jobs:
               tests/models/xglm/test_xglm.py::test_xglm \
               tests/models/yolov3/test_yolov3.py::test_yolov3 \
               tests/models/yolov5/test_yolov5.py::test_yolov5 \
+              "
+          },
+          {
+            runs-on: n150, name: "run3", tests: "\
               tests/models/gpt_neo/test_gpt_neo.py::test_gpt_neo \
               tests/models/falcon/test_falcon.py::test_falcon \
               "
