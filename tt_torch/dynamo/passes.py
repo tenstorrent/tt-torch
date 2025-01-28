@@ -16,6 +16,8 @@ from .decompositions import (
 
 
 def run_shape_prop(gm, example_inputs):
+    if len(list(gm.graph.nodes)) == 0:
+        return
     shape_prop = torch.fx.passes.shape_prop.ShapeProp(gm)
     if shape_prop.fake_mode is not None:
         fake_args = [
