@@ -85,13 +85,14 @@ def compile_process(receiver, sender, ttir_event, ttnn_event):
 
 
 def execute_process(receiver, sender, exec_event):
-    obj = receiver.get()
-    faulthandler.disable()
-    binary = obj["binary"]
-    inputs = obj["inputs"]
-    outputs = tt_mlir.run(inputs, binary)
-    sender.put({"outputs": outputs})
-    exec_event.wait()
+    while 1:
+        obj = receiver.get()
+        faulthandler.disable()
+        binary = obj["binary"]
+        inputs = obj["inputs"]
+        outputs = tt_mlir.run(inputs, binary)
+        sender.put({"outputs": outputs})
+        exec_event.wait()
     sys.exit(0)
 
 
@@ -116,6 +117,12 @@ class Executor:
         # types and use it to convert the input arguments to supported types.
         self.type_conversion = {torch.bool: torch.bfloat16}
         self.intermediate_callbacks = {}
+
+        # Opening a device in a new process is very slow as the pcie device needs to be initializes
+        # So we keep the process alive and reuse it. If the process dies, the next call will create a new process
+        self.execute_process = None
+        self.execute_sender = None
+        self.execute_receiver = None
 
     def register_intermediate_callback(self, callback):
         if not is_runtime_debug_enabled():
@@ -292,16 +299,18 @@ class Executor:
         processed_inputs = []
         for inp in inputs:
             if isinstance(inp, torch.nn.Parameter):
+                if not inp.data.is_contiguous():
+                    inp.data = inp.data.contiguous()
                 processed_inputs.append(inp.data)
             elif isinstance(inp, torch.Tensor):
+                if not inp.is_contiguous():
+                    inp = inp.contiguous()
                 processed_inputs.append(inp)
 
         return processed_inputs
 
     def run_op(self, binary, *inputs):
         inputs = self.pre_process_inputs(*inputs)
-        sender = mp.Queue()
-        receiver = mp.Queue()
         obj = {"binary": binary, "inputs": inputs}
 
         f_stderr = tempfile.TemporaryFile(mode="w+t")
@@ -309,30 +318,34 @@ class Executor:
         sys.stderr = f_stderr
 
         exec_event = mp.Event()
-        process = mp.Process(
-            target=execute_process, args=(sender, receiver, exec_event)
-        )
-        process.start()
-        sender.put(obj)
+        if self.execute_process is None:
+            self.execute_sender = mp.Queue()
+            self.execute_receiver = mp.Queue()
+            self.execute_process = mp.Process(
+                target=execute_process,
+                args=(self.execute_sender, self.execute_receiver, exec_event),
+            )
+            self.execute_process.start()
+        self.execute_sender.put(obj)
         result = {}
         start = time.time()
         outputs = [None]
         while True:
-            if not process.is_alive():
+            if not self.execute_process.is_alive():
+                self.execute_process = None
                 break
             try:
-                result = receiver.get_nowait()
+                result = self.execute_receiver.get_nowait()
                 outputs = result["outputs"]
                 exec_event.set()
                 break
             except mp.queues.Empty:
                 pass
             if time.time() - start > self.compiler_config.single_op_timeout:
-                process.terminate()
-                print("Timeout")
+                self.execute_process.terminate()
+                self.execute_process = None
                 break
-            time.sleep(0.05)
-        process.join()
+
         if len(outputs) == 1:
             outputs = outputs[0]
 
@@ -434,6 +447,9 @@ class Executor:
                         out_degree.pop(arg)
 
         self.compiler_config.save_unique_ops()
+        if self.execute_process is not None:
+            self.execute_process.terminate()
+            self.execute_process = None
         return outputs
 
     def __call__(self, *inputs):
