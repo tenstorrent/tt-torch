@@ -35,14 +35,15 @@ class ThisTester(ModelTester):
         "Qwen/Qwen2-7B",
     ],
 )
-def test_qwen2_token_classification(record_property, model_name, mode, nightly):
+@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+def test_qwen2_token_classification(record_property, model_name, mode, op_by_op):
     if mode == "train":
         pytest.skip()
     record_property("model_name", model_name)
     record_property("mode", mode)
 
     cc = CompilerConfig()
-    if nightly:
+    if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(

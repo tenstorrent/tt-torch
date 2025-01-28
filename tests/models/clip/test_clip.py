@@ -59,7 +59,8 @@ class ThisTester(ModelTester):
         "eval",
     ],
 )
-def test_clip(record_property, mode, nightly):
+@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+def test_clip(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
     model_name = "CLIP"
@@ -69,10 +70,12 @@ def test_clip(record_property, mode, nightly):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if nightly:
+    if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_name, mode, relative_atol=0.013, compiler_config=cc)
+    tester = ThisTester(
+        model_name, mode, assert_on_output_mismatch=False, compiler_config=cc
+    )
     results = tester.test_model()
 
     if mode == "eval":

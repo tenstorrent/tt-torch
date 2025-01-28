@@ -20,8 +20,10 @@ target_include_directories(TT_TORCH_MLIR PUBLIC
     ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir/include
     ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir/runtime/include
     ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/stablehlo/
+    ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/shardy/
     ${TTMLIR_TOOLCHAIN_DIR}/include
     ${TTMLIR_TOOLCHAIN_DIR}/src/stablehlo
+    ${TTMLIR_TOOLCHAIN_DIR}/src/shardy
     ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/include
 )
 
@@ -78,6 +80,8 @@ set(STABLEHLO_LIBS
     StablehloReferenceNumPy
     StablehloReferenceScope
     StablehloReferenceValue
+    SdyDialect
+    SdyRegister
 )
 
 target_link_libraries(TT_TORCH_MLIR PUBLIC
@@ -102,7 +106,12 @@ set(CMAKE_PREFIX_PATH ${TORCH_INSTALL_PREFIX})
 find_package(Torch REQUIRED)
 find_library(TORCH_PYTHON_LIBRARY torch_python PATH "${TORCH_INSTALL_PREFIX}/lib")
 set(TARGET_NAME tt_mlir)
+
 pybind11_add_module(${TARGET_NAME} bindings.cpp)
+add_compile_definitions(TTMLIR_ENABLE_STABLEHLO=1)
+if (${TT_RUNTIME_DEBUG} MATCHES "ON")
+    add_compile_definitions(TT_RUNTIME_DEBUG=1)
+endif()
 
 add_dependencies(${TARGET_NAME}
     TT_TORCH_MLIR

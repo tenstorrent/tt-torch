@@ -3,6 +3,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "tt-mlir-interface.hpp"
+#include "tt/runtime/types.h"
+#include <optional>
+#if defined(TT_RUNTIME_DEBUG) && TT_RUNTIME_DEBUG == 1
+#include "tt/runtime/detail/debug.h"
+#include "tt/runtime/runtime.h"
+#endif
 #include <pybind11/pybind11.h>
 #include <torch/extension.h>
 
@@ -120,9 +126,7 @@ std::vector<at::Tensor> run(std::vector<at::Tensor> &inputs,
   std::memcpy(binary_ptr.get(), data_str.data(), data_str.size());
   tt::runtime::Binary binary = tt::runtime::Binary(binary_ptr);
 
-  auto [system_desc, chip_ids] = tt::runtime::getCurrentSystemDesc();
-  int dev_0 = chip_ids[0];
-  auto device = tt::runtime::openDevice({dev_0});
+  auto device = tt::runtime::openDevice({0});
 
   int program_idx = 0;
   auto input_descs = binary.getProgramInputs(program_idx);
@@ -217,4 +221,49 @@ PYBIND11_MODULE(tt_mlir, m) {
         "Get the number of available devices");
   m.def("bytestream_to_json", &bytestream_to_json,
         "Convert the bytestream to json");
+
+#if defined(TT_RUNTIME_DEBUG) && TT_RUNTIME_DEBUG == 1
+  py::class_<tt::runtime::CallbackContext>(m, "CallbackContext");
+  py::class_<tt::runtime::OpContext>(m, "OpContext");
+  py::class_<tt::runtime::TensorDesc>(m, "TensorDesc")
+      .def_readonly("shape", &tt::runtime::TensorDesc::shape)
+      .def_readonly("stride", &tt::runtime::TensorDesc::stride)
+      .def_readonly("itemsize", &tt::runtime::TensorDesc::itemsize)
+      .def_readonly("dataType", &tt::runtime::TensorDesc::dataType);
+  m.def("get_op_output_tensor", &tt::runtime::getOpOutputTensor);
+  m.def("get_op_debug_str", &tt::runtime::getOpDebugString,
+        "Get the debug string of the op");
+  m.def("get_op_loc_info", &tt::runtime::getOpLocInfo,
+        "Get the location info of the op");
+  py::class_<tt::runtime::debug::Hooks>(m, "DebugHooks")
+      .def_static(
+          "get_debug_hooks",
+          [](py::function func) {
+            return tt::runtime::debug::Hooks::get(
+                [func](tt::runtime::Binary binary,
+                       tt::runtime::CallbackContext programContext,
+                       tt::runtime::OpContext opContext) {
+                  func(binary, programContext, opContext);
+                });
+          },
+          "Get the debug hooks")
+      .def("__str__", [](const tt::runtime::debug::Hooks &hooks) {
+        std::stringstream os;
+        os << hooks;
+        return os.str();
+      });
+
+  /**
+   * Cleanup code to force a well ordered destruction w.r.t. the GIL
+   */
+  auto cleanup_callback = []() {
+    tt::runtime::debug::Hooks::get().unregisterHooks();
+  };
+  m.add_object("_cleanup", py::capsule(cleanup_callback));
+  m.def("unregister_hooks",
+        []() { tt::runtime::debug::Hooks::get().unregisterHooks(); });
+  m.def("is_runtime_debug_enabled", []() -> bool { return true; });
+#else
+  m.def("is_runtime_debug_enabled", []() -> bool { return false; });
+#endif
 }

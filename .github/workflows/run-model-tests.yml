@@ -14,15 +14,80 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-          {runs-on: n150, name: "run1", test_names: "stable_diffusion, Qwen, MobileNetV2, clip, flan_t5, mlpmixer, resnet, vilt, albert, codegen, glpn_kitti, mnist, resnet50, RMBG, unet_carvana, mgp-str-base, musicgen_small, segformer, torchvision, yolos"},
-          {runs-on: n150, name: "run2", test_names: "t5, whisper, autoencoder_conv, deit, gpt2, mobilenet_ssd, roberta, timm, xglm, autoencoder_linear, detr, beit, distilbert, hand_landmark, openpose, segment_anything, unet, yolov3, bert, dpr, hardnet, opt, speecht5_tts, unet_brain, yolov5, bloom, falcon, llama, perceiver_io, squeeze_bert, gpt_neo"},
+          {
+            runs-on: n150, name: "run1", tests: "\
+              tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2
+              tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm
+              tests/models/Qwen/test_qwen2_token_classification.py::test_qwen2_token_classification
+              tests/models/RMBG/test_RMBG.py::test_RMBG
+              tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm
+              tests/models/albert/test_albert_question_answering.py::test_albert_question_answering
+              tests/models/albert/test_albert_sequence_classification.py::test_albert_sequence_classification
+              tests/models/albert/test_albert_token_classification.py::test_albert_token_classification
+              tests/models/clip/test_clip.py::test_clip
+              tests/models/codegen/test_codegen.py::test_codegen
+              tests/models/flan_t5/test_flan_t5.py::test_flan_t5
+              tests/models/glpn_kitti/test_glpn_kitti.py::test_glpn_kitti
+              tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base
+              tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer
+              tests/models/mnist/test_mnist.py::test_mnist_train
+              tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small
+              tests/models/resnet/test_resnet.py::test_resnet
+              tests/models/resnet50/test_resnet50.py::test_resnet
+              tests/models/segformer/test_segformer.py::test_segformer
+              tests/models/stable_diffusion/test_stable_diffusion.py::test_stable_diffusion
+              tests/models/stable_diffusion/test_stable_diffusion_v2.py::test_stable_diffusion_v2
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification
+              tests/models/torchvision/test_torchvision_object_detection.py::test_torchvision_object_detection
+              tests/models/unet_carvana/test_unet_carvana.py::test_unet_carvana
+              tests/models/vilt/test_vilt.py::test_vilt
+              tests/models/yolos/test_yolos.py::test_yolos
+              "
+          },
+          {
+            runs-on: n150, name: "run2", tests: "\
+              tests/models/autoencoder_conv/test_autoencoder_conv.py::test_autoencoder_conv \
+              tests/models/autoencoder_conv/test_autoencoder_conv_v2.py::test_autoencoder_conv_v2 \
+              tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear \
+              tests/models/beit/test_beit_image_classification.py::test_beit_image_classification \
+              tests/models/bert/test_bert.py::test_bert \
+              tests/models/bloom/test_bloom.py::test_bloom
+              tests/models/deit/test_deit.py::test_deit \
+              tests/models/detr/test_detr.py::test_detr \
+              tests/models/distilbert/test_distilbert.py::test_distilbert \
+              tests/models/dpr/test_dpr.py::test_dpr \
+              tests/models/gpt2/test_gpt2.py::test_gpt2 \
+              tests/models/hand_landmark/test_hand_landmark.py::test_hand_landmark \
+              tests/models/hardnet/test_hardnet.py::test_hardnet \
+              tests/models/llama/test_llama.py::test_llama \
+              tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd \
+              tests/models/openpose/test_openpose.py::test_openpose \
+              tests/models/openpose/test_openpose_v2.py::test_openpose_v2 \
+              tests/models/opt/test_opt.py::test_opt \
+              tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io \
+              tests/models/roberta/test_roberta.py::test_roberta \
+              tests/models/segment_anything/test_segment_anything.py::test_segment_anything \
+              tests/models/speecht5_tts/test_speecht5_tts.py::test_speecht5_tts \
+              tests/models/squeeze_bert/test_squeeze_bert.py::test_squeeze_bert \
+              tests/models/t5/test_t5.py::test_t5 \
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification \
+              tests/models/unet/test_unet.py::test_unet \
+              tests/models/unet_brain/test_unet_brain.py::test_unet_brain \
+              tests/models/whisper/test_whisper.py::test_whisper \
+              tests/models/xglm/test_xglm.py::test_xglm \
+              tests/models/yolov3/test_yolov3.py::test_yolov3 \
+              tests/models/yolov5/test_yolov5.py::test_yolov5 \
+              tests/models/gpt_neo/test_gpt_neo.py::test_gpt_neo \
+              tests/models/falcon/test_falcon.py::test_falcon \
+              "
+          },
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
 
     container:
       image: ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:latest
-      options: --user root --device /dev/tenstorrent/0 --shm-size=2gb
+      options: --user root --device /dev/tenstorrent/0 --shm-size=4gb
       volumes:
         - /dev/hugepages:/dev/hugepages
         - /dev/hugepages-1G:/dev/hugepages-1G
@@ -91,11 +156,7 @@ jobs:
         echo ${{ steps.strings.outputs.install-output-dir }}
         source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
-        for testname in ${{ matrix.build.test_names }}; do
-        testname=${testname//,/}
-        echo "running test: $testname"
-        pytest -svv tests/models/$testname --nightly
-        done
+        pytest -v --op_by_op ${{ matrix.build.tests }}
 
     - name: Tar results
       if: success() || failure()

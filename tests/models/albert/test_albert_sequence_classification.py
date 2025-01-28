@@ -31,14 +31,15 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.parametrize("model_name", ["textattack/albert-base-v2-imdb"])
-def test_albert_sequence_classification(record_property, model_name, mode, nightly):
+@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+def test_albert_sequence_classification(record_property, model_name, mode, op_by_op):
     record_property("model_name", model_name)
     record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if nightly:
+    if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(

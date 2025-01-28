@@ -19,8 +19,10 @@ from tt_torch.tools.utils import (
 )
 
 import tt_mlir
-from torch_mlir.ir import Context
-from torch_mlir.extras.fx_importer import FxImporter
+from tt_mlir import is_runtime_debug_enabled
+import torch_mlir
+from torch_mlir.ir import Context, Location
+from torch_mlir.extras.fx_importer import FxImporter, ContextCache
 
 from torch_mlir.dialects import torch as torch_dialect
 
@@ -29,7 +31,7 @@ from torch_mlir.compiler_utils import (
     run_pipeline_with_repro_report,
     lower_mlir_module,
 )
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Optional
 import os
 import multiprocessing as mp
 import time
@@ -39,10 +41,18 @@ import sys
 import tempfile
 
 
+class TTContextCache(ContextCache):
+    def get_node_location(self, node: torch.fx.Node) -> Optional[Location]:
+        return Location.name(node.name, context=self._c)
+
+
 def import_graph(graph: torch.fx.GraphModule):
     context = Context()
     torch_dialect.register_dialect(context)
     importer = FxImporter(context=context)
+    importer._cc = TTContextCache(
+        importer._c, py_attr_tracker=importer._py_attr_tracker
+    )
     importer.import_stateless_graph(graph)
     return importer.module
 
@@ -75,13 +85,14 @@ def compile_process(receiver, sender, ttir_event, ttnn_event):
 
 
 def execute_process(receiver, sender, exec_event):
-    obj = receiver.get()
-    faulthandler.disable()
-    binary = obj["binary"]
-    inputs = obj["inputs"]
-    outputs = tt_mlir.run(inputs, binary)
-    sender.put({"outputs": outputs})
-    exec_event.wait()
+    while 1:
+        obj = receiver.get()
+        faulthandler.disable()
+        binary = obj["binary"]
+        inputs = obj["inputs"]
+        outputs = tt_mlir.run(inputs, binary)
+        sender.put({"outputs": outputs})
+        exec_event.wait()
     sys.exit(0)
 
 
@@ -105,6 +116,20 @@ class Executor:
         # Dictionary to keep track of the type conversion for unsupported hardware
         # types and use it to convert the input arguments to supported types.
         self.type_conversion = {torch.bool: torch.bfloat16}
+        self.intermediate_callbacks = {}
+
+        # Opening a device in a new process is very slow as the pcie device needs to be initializes
+        # So we keep the process alive and reuse it. If the process dies, the next call will create a new process
+        self.execute_process = None
+        self.execute_sender = None
+        self.execute_receiver = None
+
+    def register_intermediate_callback(self, callback):
+        if not is_runtime_debug_enabled():
+            raise RuntimeError(
+                "Runtime debug is required to use intermediate callbacks. Please recompile this project with -DTT_RUNTIME_DEBUG=ON."
+            )
+        tt_mlir.DebugHooks.get_debug_hooks(callback)
 
     def set_binary(self, binary):
         self.binary = binary
@@ -274,16 +299,18 @@ class Executor:
         processed_inputs = []
         for inp in inputs:
             if isinstance(inp, torch.nn.Parameter):
+                if not inp.data.is_contiguous():
+                    inp.data = inp.data.contiguous()
                 processed_inputs.append(inp.data)
             elif isinstance(inp, torch.Tensor):
+                if not inp.is_contiguous():
+                    inp = inp.contiguous()
                 processed_inputs.append(inp)
 
         return processed_inputs
 
     def run_op(self, binary, *inputs):
         inputs = self.pre_process_inputs(*inputs)
-        sender = mp.Queue()
-        receiver = mp.Queue()
         obj = {"binary": binary, "inputs": inputs}
 
         f_stderr = tempfile.TemporaryFile(mode="w+t")
@@ -291,30 +318,34 @@ class Executor:
         sys.stderr = f_stderr
 
         exec_event = mp.Event()
-        process = mp.Process(
-            target=execute_process, args=(sender, receiver, exec_event)
-        )
-        process.start()
-        sender.put(obj)
+        if self.execute_process is None:
+            self.execute_sender = mp.Queue()
+            self.execute_receiver = mp.Queue()
+            self.execute_process = mp.Process(
+                target=execute_process,
+                args=(self.execute_sender, self.execute_receiver, exec_event),
+            )
+            self.execute_process.start()
+        self.execute_sender.put(obj)
         result = {}
         start = time.time()
         outputs = [None]
         while True:
-            if not process.is_alive():
+            if not self.execute_process.is_alive():
+                self.execute_process = None
                 break
             try:
-                result = receiver.get_nowait()
+                result = self.execute_receiver.get_nowait()
                 outputs = result["outputs"]
                 exec_event.set()
                 break
             except mp.queues.Empty:
                 pass
             if time.time() - start > self.compiler_config.single_op_timeout:
-                process.terminate()
-                print("Timeout")
+                self.execute_process.terminate()
+                self.execute_process = None
                 break
-            time.sleep(0.05)
-        process.join()
+
         if len(outputs) == 1:
             outputs = outputs[0]
 
@@ -383,7 +414,7 @@ class Executor:
                             raise ValueError("Failed to execute")
                         op.compilation_status = OpCompilationStatus.EXECUTED
                         tensor = node.target(*args, **node.kwargs)
-                        if self.compiler_config.enable_intermediate_verification:
+                        if self.compiler_config.verify_op_by_op:
                             atol = calculate_atol(calculated, tensor)
                             op.atol = atol
                             if atol > self.required_atol:
@@ -416,6 +447,9 @@ class Executor:
                         out_degree.pop(arg)
 
         self.compiler_config.save_unique_ops()
+        if self.execute_process is not None:
+            self.execute_process.terminate()
+            self.execute_process = None
         return outputs
 
     def __call__(self, *inputs):
@@ -452,6 +486,16 @@ class Executor:
             return self.run_gm_op_by_op(*(inputs + self.graph_constants))
         else:
             return self.gm(*inputs)
+
+
+def verify_golden_callback(binary, callback_context, op_context):
+    # Using these parameters, we should be able to query information
+    # about the op described by op_context, and its output. I.e. location:
+    location = tt_mlir.get_op_loc_info(op_context)
+    # ...
+
+    # We will need to provide the bindings necesarry in this frontend.
+    # Those bindings will interact with the runtime API
 
 
 def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
@@ -492,12 +536,19 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     if compiler_config.compile_depth == CompileDepth.STABLEHLO:
         return executor
 
-    ttir = tt_mlir.compile_stable_hlo_to_ttir(module.operation.get_asm())
+    # Need to set enable_debug_info=True to get the location information for the ops in the asm string
+    ttir = tt_mlir.compile_stable_hlo_to_ttir(
+        module.operation.get_asm(enable_debug_info=True)
+    )
     if dump_intermediates:
         print("TTIR module", file=sys.stderr)
         print(ttir, file=sys.stderr)
 
+    if compiler_config.enable_intermediate_verification:
+        executor.register_intermediate_callback(verify_golden_callback)
+
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
+
     if dump_intermediates:
         print("TTNN module", file=sys.stderr)
         print(ttnn, file=sys.stderr)

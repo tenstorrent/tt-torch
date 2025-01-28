@@ -37,7 +37,8 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-def test_yolos(record_property, mode, nightly):
+@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+def test_yolos(record_property, mode, op_by_op):
     model_name = "YOLOS"
     record_property("model_name", model_name)
     record_property("mode", mode)
@@ -45,7 +46,7 @@ def test_yolos(record_property, mode, nightly):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if nightly:
+    if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(
@@ -71,7 +72,7 @@ def test_yolos(record_property, mode, nightly):
             ):
                 box = [round(i, 2) for i in box.tolist()]
                 string = (
-                    f"Detected {tester.model.config.id2label[label.item()]} with confidence "
+                    f"Detected {tester.framework_model.config.id2label[label.item()]} with confidence "
                     f"{round(score.item(), 3)} at location {box}"
                 )
                 return string

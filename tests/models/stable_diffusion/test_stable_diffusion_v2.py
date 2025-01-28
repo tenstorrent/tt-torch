@@ -64,7 +64,8 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-def test_stable_diffusion_v2(record_property, mode, nightly):
+@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+def test_stable_diffusion_v2(record_property, mode, op_by_op):
     model_name = "Stable Diffusion V2"
     record_property("model_name", model_name)
     record_property("mode", mode)
@@ -72,7 +73,7 @@ def test_stable_diffusion_v2(record_property, mode, nightly):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if nightly:
+    if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(

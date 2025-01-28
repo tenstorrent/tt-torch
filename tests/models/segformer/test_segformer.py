@@ -45,7 +45,8 @@ class ThisTester(ModelTester):
     "mode",
     ["train", "eval"],
 )
-def test_segformer(record_property, mode, nightly):
+@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+def test_segformer(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
     model_name = "SegFormer"
@@ -55,7 +56,7 @@ def test_segformer(record_property, mode, nightly):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if nightly:
+    if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
     else:
         cc.compile_depth = CompileDepth.TTNN_IR

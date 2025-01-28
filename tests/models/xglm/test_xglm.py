@@ -33,7 +33,8 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-def test_xglm(record_property, mode, nightly):
+@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+def test_xglm(record_property, mode, op_by_op):
     model_name = "XGLM"
     record_property("model_name", model_name)
     record_property("mode", mode)
@@ -41,7 +42,7 @@ def test_xglm(record_property, mode, nightly):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if nightly:
+    if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
     else:
         cc.compile_depth = CompileDepth.TTNN_IR

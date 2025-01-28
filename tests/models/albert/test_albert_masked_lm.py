@@ -48,14 +48,15 @@ class ThisTester(ModelTester):
         "albert/albert-xxlarge-v2",
     ],
 )
-def test_albert_masked_lm(record_property, model_name, mode, nightly):
+@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+def test_albert_masked_lm(record_property, model_name, mode, op_by_op):
     record_property("model_name", model_name)
     record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if nightly:
+    if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(

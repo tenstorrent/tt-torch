@@ -15,11 +15,10 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-          {runs-on: n150, name: "run"},
+          {runs-on: wormhole_b0, name: "run"},
         ]
 
     runs-on:
-      - in-service
       - ${{ matrix.build.runs-on }}
 
     container:
@@ -60,7 +59,7 @@ jobs:
       uses: hendrikmuhs/ccache-action@v1.2
       with:
         create-symlink: true
-        key: ${{ matrix.build.runs-on }}
+        key: build_cache
 
     # Build project
     - name: Configure CMake
