@@ -55,8 +55,6 @@ def test_detr(record_property, mode, op_by_op):
     cc.consteval_parameters = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-    else:
-        cc.compile_depth = CompileDepth.TTNN_IR
 
     tester = ThisTester(
         model_name, mode, assert_on_output_mismatch=False, compiler_config=cc
