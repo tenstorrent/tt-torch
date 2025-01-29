@@ -12,7 +12,7 @@ on:
     branches:
       - ddilbaz/pages-workflow
     paths:
-      - 'docs/ops/ttnn/**'
+      - 'docs/src/ops/ttnn/**'
 
 jobs:
   generate_md:
@@ -51,27 +51,27 @@ jobs:
         shell: bash
         run: |
           # Check if any files exist before removing
-          if git ls-files docs/ops/ttnn/*.md docs/ops/ttnn/*.json; then
+          if git ls-files docs/src/ops/ttnn/*.md docs/src/ops/ttnn/*.json; then
             # Remove existing files from git tracking
-            git rm -f docs/ops/ttnn/ttnn*.md docs/ops/ttnn/*.json
+            git rm -f docs/src/ops/ttnn/ttnn*.md docs/src/ops/ttnn/*.json
             git commit -m "Remove old TTNN MD/JSON files before regeneration"
           fi
 
       - name: Create necessary directories
         shell: bash
         run: |
-          mkdir -p ${{ steps.strings.outputs.work-dir }}/docs/ops/ttnn
+          mkdir -p ${{ steps.strings.outputs.work-dir }}/docs/src/ops/ttnn
 
       - name: Generate TTNN MD Files and Commit if Changes Exist
         shell: bash
         run: |
           source env/activate
-          python ${{ steps.strings.outputs.work-dir }}/tt_torch/tools/generate_md.py --excel_path ${{ steps.strings.outputs.work-dir }}/results/models_op_per_op.xlsx --md_dir docs/ops/ttnn --json_dir docs/ops/ttnn
+          python ${{ steps.strings.outputs.work-dir }}/tt_torch/tools/generate_md.py --excel_path ${{ steps.strings.outputs.work-dir }}/results/models_op_per_op.xlsx --md_dir docs/src/ops/ttnn --json_dir docs/src/ops/ttnn
           # List newly generated files
-          NEW_FILES=(docs/ops/ttnn/ttnn*.md docs/ops/ttnn/ttnn*.json)
+          NEW_FILES=(docs/src/ops/ttnn/ttnn*.md docs/src/ops/ttnn/ttnn*.json)
 
           # Remove files not in the new generation
-          git rm $(git ls-files 'docs/ops/ttnn/ttnn*.md' 'docs/ops/ttnn/ttnn*.json' | \
+          git rm $(git ls-files 'docs/src/ops/ttnn/ttnn*.md' 'docs/src/ops/ttnn/ttnn*.json' | \
             grep -vFf <(printf '%s\n' "${NEW_FILES[@]}"))
 
           # Stage new and modified files
@@ -87,4 +87,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ttnn-md
-          path: ${{ steps.strings.outputs.work-dir }}/docs/ops/ttnn
+          path: ${{ steps.strings.outputs.work-dir }}/docs/src/ops/ttnn
