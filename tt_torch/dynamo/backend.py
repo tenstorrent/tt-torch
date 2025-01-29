@@ -35,15 +35,6 @@ def lower_to_stable_hlo(module, op=None):
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
 
 
-def _shlo_backend(module_str, options=None):
-    if options is None:
-        options = CompilerConfig()
-    options.graph_type = "STABLEHLO"
-    executor = StableHLOExecutor(module_str, compiler_config=options)
-    executor()
-    return executor
-
-
 def _torch_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     # Apply environment overrides at start of compilation to allow overriding what was set in the test
     compiler_config.apply_environment_overrides()
@@ -82,18 +73,19 @@ def _torch_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     if compiler_config.compile_depth == CompileDepth.STABLEHLO:
         return executor
 
-    ttir = tt_mlir.compile_stable_hlo_to_ttir(module.operation.get_asm())
-    if dump_intermediates:
-        print("TTIR module", file=sys.stderr)
-        print(ttir, file=sys.stderr)
+    # # shouldn't be needed anymore since execution handled in base backend
+    # ttir = tt_mlir.compile_stable_hlo_to_ttir(module.operation.get_asm())
+    # if dump_intermediates:
+    #     print("TTIR module", file=sys.stderr)
+    #     print(ttir, file=sys.stderr)
 
-    binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
-    if dump_intermediates:
-        print("TTNN module", file=sys.stderr)
-        print(ttnn, file=sys.stderr)
+    # binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
+    # if dump_intermediates:
+    #     print("TTNN module", file=sys.stderr)
+    #     print(ttnn, file=sys.stderr)
 
-    executor.set_binary(binary)
-    return executor
+    # executor.set_binary(binary)
+    # return executor
 
 
 def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
@@ -152,7 +144,12 @@ def shlo_to_flatbuffer(module, compiler_config):
 
 
 def _base_backend(gm_or_shlo, example_inputs, compiler_config):
+    compiler_config.apply_environment_overrides()
     if isinstance(gm_or_shlo, torch.fx.GraphModule):
+        with torch.no_grad():
+            gm_or_shlo, graph_constants = pass_pipeline(
+                gm_or_shlo, example_inputs, compiler_config
+            )
         shlo = torch_to_shlo()
     elif isinstance(gm_or_shlo, str):
         shlo = parse_module_from_str(gm_or_shlo)
@@ -181,7 +178,10 @@ def _base_backend(gm_or_shlo, example_inputs, compiler_config):
         new_inputs = new_inputs + ((input),)
 
     example_inputs = new_inputs
-    tt_mlir.run(example_inputs, binary)
+    if graph_constants:
+        tt_mlir.run(example_inputs + graph_constants, binary)
+    else:
+        tt_mlir.run(example_inputs, binary)
 
 
 def backend(gm_or_shlo, example_inputs, options=None):

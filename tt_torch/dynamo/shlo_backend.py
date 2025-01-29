@@ -39,6 +39,7 @@ class StableHLOOp:
         self.binary = ""
         self.ttir = ""
         self.ttnn = ""
+        self.calculated = None
         self.pcc = None
         self.atol = None
         self.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
@@ -115,6 +116,9 @@ class StableHLOExecutor:
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTNN
         return
 
+    def execute_op(self, op, example_inputs):
+        op.calculated = tt_mlir.run(example_inputs, op.binary)
+
     def compile_op_by_op(self):
         for op in self.sub_modules:
             try:
@@ -122,25 +126,24 @@ class StableHLOExecutor:
             except Exception as e:
                 print(f"Error in compiling op {op.op_id}: {e}")
 
+    def execute_op_by_op(self, inputs):
+        next_input = inputs
+        # assuming all ops execute individually - if not would need to generate random inputs
+        for op in self.sub_modules:
+            try:
+                self.execute_op(op, inputs)
+                next_input = op.calculated
+            except Exception as e:
+                print(f"Error in compiling op {op.op_id}: {e}")
+
     def print_graph(self):
         for op in self.sub_modules:
-            print(f"Running: {op.op_id}\n\n\n")
+            print(f"Printing: {op.op_id}\n\n\n")
             print(op)
             print("\n\n\n")
 
     def __call__(self, *inputs):
-        if (
-            self.compiler_config.compile_depth == CompileDepth.EXECUTE
-            or self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
-        ):
-            print("Execution not supported for StableHLO")
-            exit(1)
-
-        elif self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP:
-            print("Ok")
-            self.compile_op_by_op()
-            self.print_graph()
-            return
-
-        else:
-            raise ValueError("Unsupported compilation depth")
+        self.compile_op_by_op()
+        self.print_graph()
+        if self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP:
+            self.execute_op_by_op()
