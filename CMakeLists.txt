@@ -36,7 +36,6 @@ if(CODE_COVERAGE)
 endif(CODE_COVERAGE)
 
 link_directories(${TTMLIR_TOOLCHAIN_DIR}/lib)
-target_link_libraries(TT_TORCH PUBLIC coverage_config)
 
 add_subdirectory(tt_torch)
 add_subdirectory(third_party)

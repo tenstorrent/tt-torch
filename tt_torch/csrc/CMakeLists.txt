@@ -132,6 +132,8 @@ target_link_libraries(${TARGET_NAME} PUBLIC
     ${TORCH_PYTHON_LIBRARY}
 )
 
+target_link_libraries(${TARGET_NAME} PUBLIC coverage_config)
+
 target_link_directories(${TARGET_NAME} PRIVATE
     ${TORCH_INSTALL_PREFIX}/lib
 )
