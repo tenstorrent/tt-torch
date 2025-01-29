@@ -147,3 +147,26 @@ jobs:
       with:
         name: test-reports-onnx-${{ matrix.build.runs-on }}-${{ matrix.build.name }}
         path: ${{ steps.strings.outputs.test_report_path_onnx }}
+
+    - name: Prepare code coverage report
+      if: success() || failure()
+      run: |
+        lcov --directory build --capture --output-file coverage.info
+        lcov --extract coverage.info '**/tt_torch/csrc/*' --output-file coverage.info
+        lcov --list coverage.info
+
+    - name: Upload coverage reports to Codecov
+      if: success() || failure()
+      uses: codecov/codecov-action@v5
+      with:
+        files: coverage.info
+        disable_search: true
+        token: ${{ secrets.CODECOV_TOKEN }}
+
+    - name: Upload test results to Codecov
+      if: success() || failure()
+      uses: codecov/test-results-action@v1
+      with:
+        files: ${{ steps.strings.outputs.test_report_path_torch }}, ${{ steps.strings.outputs.test_report_path_models }}, ${{ steps.strings.outputs.test_report_path_onnx }}
+        disable_search: true
+        token: ${{ secrets.CODECOV_TOKEN }}

@@ -24,7 +24,19 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(CMAKE_INSTALL_PREFIX ${TTTORCH_SOURCE_DIR}/install)
 
+add_library(coverage_config INTERFACE)
+option(CODE_COVERAGE "Enable coverage reporting" OFF)
+if(CODE_COVERAGE)
+  target_compile_options(coverage_config INTERFACE
+    -O0        # no optimization
+    -g         # generate debug info
+    --coverage # sets all required flags
+  )
+  target_link_options(coverage_config INTERFACE --coverage)
+endif(CODE_COVERAGE)
+
 link_directories(${TTMLIR_TOOLCHAIN_DIR}/lib)
+target_link_libraries(TT_TORCH PUBLIC coverage_config)
 
 add_subdirectory(tt_torch)
 add_subdirectory(third_party)
