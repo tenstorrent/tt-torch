@@ -12,13 +12,10 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 class ThisTester(ModelTester):
     # pass model_info instead of model_name
-    def __init__(self, model_info, mode):
-        if mode not in ["train", "eval"]:
-            raise ValueError(f"Current mode is not supported: {mode}")
+    def __init__(self, model_info, mode, *args, **kwargs):
+        # model name in model_info[0]
         self.model_info = model_info
-        self.mode = mode
-        self.model = self._load_model()
-        self.inputs = self._load_inputs()
+        super().__init__(model_info[0], mode, *args, **kwargs)
 
     def _load_model(self):
         model_name, weights_name = self.model_info
@@ -128,7 +125,6 @@ model_info_and_mode_list = [
 def test_torchvision_image_classification(
     record_property, model_info_and_mode, op_by_op
 ):
-    pytest.skip("torchvision modules not supported.")
     model_info = model_info_and_mode[0]
     mode = model_info_and_mode[1]
     model_name, _ = model_info
