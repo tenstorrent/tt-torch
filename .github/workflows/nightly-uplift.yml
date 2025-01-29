@@ -5,7 +5,7 @@ name: Nightly Uplift
 
 on:
   schedule:
-    - cron: '0 8 * * *'   # Runs at 08:00 UTC every day.
+    - cron: '0 8 * * *'  # Runs at 08:00 UTC every day
   workflow_dispatch:  # Manual trigger
 
 jobs:
@@ -43,7 +43,7 @@ jobs:
         with:
           branch: uplift
           committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-          author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
+          author: Muhammad Asif Manzoor <mmanzoor@tenstorrent.com>
           base: main
           commit-message: "Uplift ${{ env.SUBMODULE_PATH }} to ${{ env.SUBMODULE_VERSION }} ${{ env.TODAY }}"
           title: "Uplift ${{ env.SUBMODULE_PATH }} to ${{ env.SUBMODULE_VERSION }} ${{ env.TODAY }}"
