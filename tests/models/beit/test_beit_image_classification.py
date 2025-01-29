@@ -55,8 +55,6 @@ def test_beit_image_classification(record_property, model_name, mode, op_by_op):
     cc.consteval_parameters = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-    else:
-        cc.compile_depth = CompileDepth.TTNN_IR
 
     required_atol = 0.032 if model_name == "microsoft/beit-base-patch16-224" else 0.05
     tester = ThisTester(
