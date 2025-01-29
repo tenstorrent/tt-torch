@@ -13,13 +13,10 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth
 # TODO: RuntimeError: "nms_kernel" not implemented for 'BFloat16'
 class ThisTester(ModelTester):
     # pass model_info instead of model_name
-    def __init__(self, model_info, mode):
-        if mode not in ["train", "eval"]:
-            raise ValueError(f"Current mode is not supported: {mode}")
+    def __init__(self, model_info, mode, *args, **kwargs):
+        # model name in model_info[0]
         self.model_info = model_info
-        self.mode = mode
-        self.model = self._load_model()
-        self.inputs = self._load_inputs()
+        super().__init__(model_info[0], mode, *args, **kwargs)
 
     def _load_model(self):
         model_name, weights_name = self.model_info
@@ -54,7 +51,6 @@ class ThisTester(ModelTester):
 )
 @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
 def test_torchvision_object_detection(record_property, model_info, mode, op_by_op):
-    pytest.skip("torchvision modules not supported.")
     model_name, _ = model_info
     record_property("model_name", model_name)
     record_property("mode", mode)
