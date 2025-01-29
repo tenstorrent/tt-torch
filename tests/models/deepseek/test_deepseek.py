@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import os
+import json
 from unittest.mock import patch
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 from transformers.dynamic_module_utils import get_imports
@@ -23,32 +24,50 @@ model_name = "deepseek-ai/DeepSeek-V3"
 # hidden_size (not shown in your config but is likely 8192 based on the model)
 ###
 with patch("transformers.dynamic_module_utils.get_imports", fixed_get_imports):
-    config = AutoConfig.from_pretrained(model_name, trust_remote_code=True)
-
-    # Modify config
-    config.num_hidden_layers = 6
-    config.num_attention_heads = 16
-    config.hidden_size = 1024
-    config.num_key_value_heads = 16
-    config.intermediate_size = 1024 * 4
-    config.num_experts_per_tok = 2
-    config.q_lora_rank = 256
-
     tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
 
-    # Create a new model with the config and all necessary parameters
-    model = AutoModelForCausalLM.from_config(
-        config,
-        # device_map="cpu",  # Force CPU
-        torch_dtype=torch.float32,  # Use float32
-        attn_implementation="eager",  # Use eager implementation
-        trust_remote_code=True,
-    ).to(
-        "cpu"
-    )  # Ensure it's on CPU
+    # Load only specific layers
+    # Create a custom loading function
+    model_name = "deepseek-ai/DeepSeek-V3"  # This might be the generic model name
+    config_path = "tests/models/deepseek/config_16B.json"
 
-    # Disable flash attention explicitly
-    model.config.use_flash_attention = False
+    with open(config_path, "r") as f:
+        config_dict = json.load(f)
+
+    model = AutoModelForCausalLM.from_pretrained(
+        model_name,
+        config=config_dict,
+        trust_remote_code=True,
+        device_map="cpu",
+        torch_dtype=torch.bfloat16,
+        attn_implementation="eager",
+        # Load only specific layers
+        max_memory={"cpu": "2GB"},  # Limit memory usage
+        low_cpu_mem_usage=True,
+        offload_folder="offload",  # Temporary directory for offloading
+        offload_state_dict=True,  # Enable state dict offloading
+    )
+
+    # Reduce model size after loading
+    keep_layers = [0, 1, 30, 60]  # Keep first two, middle, and last layer
+    new_state_dict = OrderedDict()
+
+    for key, value in model.state_dict().items():
+        if "layers." in key:
+            layer_num = int(key.split("layers.")[1].split(".")[0])
+            if layer_num in keep_layers:
+                new_key = key.replace(
+                    f"layers.{layer_num}", f"layers.{keep_layers.index(layer_num)}"
+                )
+                new_state_dict[new_key] = value
+        else:
+            new_state_dict[key] = value
+
+    # Update config to reflect reduced layers
+    model.config.num_hidden_layers = len(keep_layers)
+
+    # Load reduced state dict
+    model.load_state_dict(new_state_dict)
     breakpoint()
 
 
