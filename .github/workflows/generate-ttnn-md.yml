@@ -16,7 +16,7 @@ on:
 
 jobs:
   generate_md:
-    timeout-minutes: 120
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:latest
@@ -46,16 +46,6 @@ jobs:
         run: |
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
-
-      - name: Clean existing MD/JSON files
-        shell: bash
-        run: |
-          # Check if any files exist before removing
-          if git ls-files docs/src/ops/ttnn/*.md docs/src/ops/ttnn/*.json; then
-            # Remove existing files from git tracking
-            git rm -f docs/src/ops/ttnn/ttnn*.md docs/src/ops/ttnn/*.json
-            git commit -m "Remove old TTNN MD/JSON files before regeneration"
-          fi
 
       - name: Create necessary directories
         shell: bash
