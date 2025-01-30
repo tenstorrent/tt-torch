@@ -1,0 +1,306 @@
+[
+  {
+    "name": "ttnn.repeat",
+    "input_shapes": [
+      "tensor<[1,768,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          24,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[1500 : i32, 1 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[1500,768,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          47,
+          24,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.repeat",
+    "input_shapes": [
+      "tensor<[1,1,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[1 : i32, 1500 : i32, 1 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[1,1500,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1500 + d1, d2)",
+        "memory_config": [
+          47,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.repeat",
+    "input_shapes": [
+      "tensor<[1,1,768,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          1,
+          24,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[1 : i32, 1500 : i32, 1 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[1,1500,768,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1500 + d1, d2)",
+        "memory_config": [
+          47,
+          24,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.repeat",
+    "input_shapes": [
+      "tensor<[1,768,1,bf16]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 768 + d1, d2)",
+        "memory_config": [
+          24,
+          1,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[1 : i32, 1 : i32, 3000 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[1,768,3000,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 768 + d1, d2)",
+        "memory_config": [
+          24,
+          94,
+          "tile<32x32, bf16>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.repeat",
+    "input_shapes": [
+      "tensor<[1,1,1,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[1 : i32, 12 : i32, 64 : i32, 1500 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[1,12,64,1500,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 768 + d1 * 64 + d2, d3)",
+        "memory_config": [
+          24,
+          47,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.repeat",
+    "input_shapes": [
+      "tensor<[1,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          1,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[1500 : i32, 768 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[1500,768,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          47,
+          24,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.repeat",
+    "input_shapes": [
+      "tensor<[1,1500,1,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1500 + d1, d2)",
+        "memory_config": [
+          47,
+          1,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[1 : i32, 1 : i32, 768 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[1,1500,768,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1500 + d1, d2)",
+        "memory_config": [
+          47,
+          24,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.repeat",
+    "input_shapes": [
+      "tensor<[1,1,768,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 + d1, d2)",
+        "memory_config": [
+          1,
+          24,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "shape": "[1 : i32, 1500 : i32, 1 : i32]"
+    },
+    "output_shapes": [
+      "tensor<[1,1500,768,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1500 + d1, d2)",
+        "memory_config": [
+          47,
+          24,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  }
+]
