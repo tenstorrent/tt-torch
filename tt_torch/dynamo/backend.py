@@ -13,6 +13,7 @@ from tt_torch.tools.utils import (
     CompilerConfig,
     CompileDepth,
     Op,
+    Tensor,
     OpCompilationStatus,
     calculate_atol,
     calculate_pcc,
@@ -162,7 +163,7 @@ class Executor:
                 raise ValueError(f"Node target is not an OpOverload: {name}")
             return None, None
 
-        op = Op(name, input_shapes_and_constants)
+        op = Op(name, input_shapes_and_constants, self.compiler_config.model_name)
         if op.unique_key() not in self.compiler_config.unique_ops:
             self.compiler_config.unique_ops[op.unique_key()] = op
         else:
@@ -278,6 +279,7 @@ class Executor:
                     op.add_ttnn_graph(result["ttnn"])
                     ttnn_event.set()
                     op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTNN
+                    op.parse_json()
                     break
             except mp.queues.Empty:
                 pass
