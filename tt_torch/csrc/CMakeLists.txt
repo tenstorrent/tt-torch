@@ -90,6 +90,7 @@ target_link_libraries(TT_TORCH_MLIR PUBLIC
     TTMLIRShared
     TTMLIRStatic
     TTMLIRTosaToTTIR
+    TTMLIRTTIRToLinalg
     MLIRTTIRPipelines
     TTMLIRStableHLOToTTIR
     ${STABLEHLO_LIBS}
