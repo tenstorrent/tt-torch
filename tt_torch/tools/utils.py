@@ -208,7 +208,8 @@ class CompilerConfig:
         else:
             torch._dynamo.config.inline_inbuilt_nn_modules = True
 
-    def model_path(self):
+    def save_unique_ops(self):
+        unique_op_dict = {}
         pytest_test = os.environ.get("PYTEST_CURRENT_TEST")
         # 'PYTEST_CURRENT_TEST' is unavailable for the scripts executed/invoked
         # with python command; use 'sys.argv[0]' instead.
@@ -216,14 +217,9 @@ class CompilerConfig:
             pytest_test = sys.argv[0]
         pytest_test = pytest_test.replace("::", "_").replace(".", "_")
         pytest_test = pytest_test.replace("[", "_").replace("]", "_")
-        return f"{self.results_path}{pytest_test}"
-
-    def save_unique_ops(self):
-        unique_op_dict = {}
-
         for key, op in self.unique_ops.items():
             unique_op_dict[key] = op.to_dict()
-        output_file = Path(f"{self.model_path()}_unique_ops.json")
+        output_file = Path(f"{self.results_path}{pytest_test}_unique_ops.json")
         print(f"#####  Saving unique ops to {output_file}#####  ")
         output_file.parent.mkdir(exist_ok=True, parents=True)
         with open(output_file, "w") as f:
@@ -235,7 +231,7 @@ class CompilerConfig:
         with open(output_file, "a") as f:
             f.write(f"{status}, ")
 
-    def start_compilation_status(self):
+    def start_compilation_status_log(self):
         output_file = Path(f"{self.results_path}compilation_status.txt")
         output_file.parent.mkdir(exist_ok=True, parents=True)
         with open(output_file, "a") as f:

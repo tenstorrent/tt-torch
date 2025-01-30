@@ -200,7 +200,7 @@ class ModelTester:
         )
         golden = self.get_golden_outputs(model, self.inputs)
 
-        self.compiler_config.start_compilation_status()
+        self.compiler_config.start_compilation_status_log()
         if on_device == True:
             model = self.compile_model(model, self.compiler_config)
 
