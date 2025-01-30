@@ -12,7 +12,7 @@ import re
 from typing import List, Dict, Tuple
 from tt_torch.dynamo.backend import backend
 from tt_torch.onnx_compile import compile_onnx
-from tt_torch.tools.utils import CompilerConfig, CompileDepth
+from tt_torch.tools.utils import CompilerConfig, CompilationStatus
 import json
 from onnx import version_converter
 from pathlib import Path
@@ -200,10 +200,12 @@ class ModelTester:
         )
         golden = self.get_golden_outputs(model, self.inputs)
 
+        self.compiler_config.start_compilation_status()
         if on_device == True:
             model = self.compile_model(model, self.compiler_config)
 
         outputs = self.run_model(model, self.inputs)
+        self.compiler_config.log_compilation_status(CompilationStatus.EXECUTED)
         assert type(outputs) == type(
             golden
         ), "Expecting the type of both calculated and golden to be identical. Whether that be a tensor, list, dictonary, etc."

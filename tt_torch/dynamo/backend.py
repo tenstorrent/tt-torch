@@ -13,7 +13,7 @@ from tt_torch.tools.utils import (
     CompilerConfig,
     CompileDepth,
     Op,
-    OpCompilationStatus,
+    CompilationStatus,
     calculate_atol,
     calculate_pcc,
 )
@@ -64,11 +64,11 @@ def lower_to_stable_hlo(module, op=None):
         "Lowering TorchFX IR -> Torch Backend IR",
     )
     if op is not None:
-        op.compilation_status = OpCompilationStatus.CONVERTED_TO_TORCH_BACKEND_IR
+        op.compilation_status = CompilationStatus.CONVERTED_TO_TORCH_BACKEND_IR
 
     lower_mlir_module(False, OutputType.STABLEHLO, module)
     if op is not None:
-        op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
+        op.compilation_status = CompilationStatus.CONVERTED_TO_STABLE_HLO
 
 
 def compile_process(receiver, sender, ttir_event, ttnn_event):
@@ -237,7 +237,7 @@ class Executor:
         if "tensor_meta" not in node.meta:
             raise ValueError(f"Node {node} does not have tensor_meta")
 
-        op.compilation_status = OpCompilationStatus.CREATED_GRAPH
+        op.compilation_status = CompilationStatus.CREATED_GRAPH
         out.meta["tensor_meta"] = node.meta["tensor_meta"]
 
         out_meta = out.meta["tensor_meta"]
@@ -247,7 +247,7 @@ class Executor:
             op.output_shapes.append([dim for dim in out.shape])
 
         module = import_graph(graph)
-        op.compilation_status = OpCompilationStatus.CONVERTED_TO_TORCH_IR
+        op.compilation_status = CompilationStatus.CONVERTED_TO_TORCH_IR
         op.add_torch_ir_graph(module.operation.get_asm())
         lower_to_stable_hlo(module, op=op)
         op.add_stable_hlo_graph(module.operation.get_asm())
@@ -268,7 +268,7 @@ class Executor:
             try:
                 result = receiver.get_nowait()
                 if "ttir" in result:
-                    op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTIR
+                    op.compilation_status = CompilationStatus.CONVERTED_TO_TTIR
                     op.add_ttir_graph(result["ttir"])
                     ttir_event.set()
                 if "binary" in result:
@@ -277,7 +277,7 @@ class Executor:
                     op.json = tt_mlir.bytestream_to_json(binary)
                     op.add_ttnn_graph(result["ttnn"])
                     ttnn_event.set()
-                    op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTNN
+                    op.compilation_status = CompilationStatus.CONVERTED_TO_TTNN
                     break
             except mp.queues.Empty:
                 pass
@@ -412,7 +412,7 @@ class Executor:
                         print(f"Ran: {idx}/{num_nodes}: {node.target}")
                         if calculated is None:
                             raise ValueError("Failed to execute")
-                        op.compilation_status = OpCompilationStatus.EXECUTED
+                        op.compilation_status = CompilationStatus.EXECUTED
                         tensor = node.target(*args, **node.kwargs)
                         if self.compiler_config.verify_op_by_op:
                             atol = calculate_atol(calculated, tensor)
@@ -503,6 +503,7 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     compiler_config.apply_environment_overrides()
     with torch.no_grad():
         gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
+    compiler_config.log_compilation_status(CompilationStatus.CREATED_GRAPH)
     executor = Executor(gm, graph_constants, compiler_config)
     if compiler_config.compile_depth in (
         CompileDepth.EXECUTE_OP_BY_OP,
@@ -521,12 +522,16 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         print("Torch module", file=sys.stderr)
         module.dump()
 
+    compiler_config.log_compilation_status(
+        CompilationStatus.CONVERTED_TO_TORCH_BACKEND_IR
+    )
     if compiler_config.profile_ops:
         compiler_config.set_torch_mlir_module(module.operation.get_asm())
     if compiler_config.compile_depth == CompileDepth.TORCH_MLIR:
         return executor
 
     lower_to_stable_hlo(module)
+    compiler_config.log_compilation_status(CompilationStatus.CONVERTED_TO_STABLE_HLO)
     if dump_intermediates:
         print("StableHLO module", file=sys.stderr)
         module.dump()
@@ -540,6 +545,7 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     ttir = tt_mlir.compile_stable_hlo_to_ttir(
         module.operation.get_asm(enable_debug_info=True)
     )
+    compiler_config.log_compilation_status(CompilationStatus.CONVERTED_TO_TTIR)
     if dump_intermediates:
         print("TTIR module", file=sys.stderr)
         print(ttir, file=sys.stderr)
@@ -548,6 +554,7 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         executor.register_intermediate_callback(verify_golden_callback)
 
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
+    compiler_config.log_compilation_status(CompilationStatus.CONVERTED_TO_TTNN)
 
     if dump_intermediates:
         print("TTNN module", file=sys.stderr)

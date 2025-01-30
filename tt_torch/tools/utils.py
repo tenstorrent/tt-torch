@@ -24,7 +24,7 @@ class CompileDepth(Enum):
     EXECUTE = 7
 
 
-class OpCompilationStatus(IntEnum):
+class CompilationStatus(IntEnum):
     NOT_STARTED = 0
     CREATED_GRAPH = 1
     CONVERTED_TO_TORCH_IR = 2
@@ -50,7 +50,7 @@ class Op:
         self.json = ""
         self.binary = ""
         self.runtime_stack_dump = ""
-        self.compilation_status = OpCompilationStatus.NOT_STARTED
+        self.compilation_status = CompilationStatus.NOT_STARTED
         self.parsed_stable_hlo_ops = False
         self.parsed_ttnn_ops = False
         self.pcc = None
@@ -123,6 +123,7 @@ class Op:
 class CompilerConfig:
     def __init__(self):
         self.compile_depth = CompileDepth.EXECUTE
+        self.compilation_status = CompilationStatus.NOT_STARTED
         self.profile_ops = True
         self.torch_mlir_module = None
         self.stablehlo_mlir_module = None
@@ -207,8 +208,7 @@ class CompilerConfig:
         else:
             torch._dynamo.config.inline_inbuilt_nn_modules = True
 
-    def save_unique_ops(self):
-        unique_op_dict = {}
+    def model_path(self):
         pytest_test = os.environ.get("PYTEST_CURRENT_TEST")
         # 'PYTEST_CURRENT_TEST' is unavailable for the scripts executed/invoked
         # with python command; use 'sys.argv[0]' instead.
@@ -216,13 +216,30 @@ class CompilerConfig:
             pytest_test = sys.argv[0]
         pytest_test = pytest_test.replace("::", "_").replace(".", "_")
         pytest_test = pytest_test.replace("[", "_").replace("]", "_")
+        return f"{self.results_path}{pytest_test}"
+
+    def save_unique_ops(self):
+        unique_op_dict = {}
+
         for key, op in self.unique_ops.items():
             unique_op_dict[key] = op.to_dict()
-        output_file = Path(f"{self.results_path}{pytest_test}_unique_ops.json")
+        output_file = Path(f"{self.model_path()}_unique_ops.json")
         print(f"#####  Saving unique ops to {output_file}#####  ")
         output_file.parent.mkdir(exist_ok=True, parents=True)
         with open(output_file, "w") as f:
             json.dump(unique_op_dict, f)
+
+    def log_compilation_status(self, status):
+        output_file = Path(f"{self.results_path}compilation_status.txt")
+        output_file.parent.mkdir(exist_ok=True, parents=True)
+        with open(output_file, "a") as f:
+            f.write(f"{status}, ")
+
+    def start_compilation_status(self):
+        output_file = Path(f"{self.results_path}compilation_status.txt")
+        output_file.parent.mkdir(exist_ok=True, parents=True)
+        with open(output_file, "a") as f:
+            f.write(f"\n{self.model_name}: ")
 
     def set_compile_depth(self, compile_depth: CompileDepth):
         self.compile_depth = compile_depth
