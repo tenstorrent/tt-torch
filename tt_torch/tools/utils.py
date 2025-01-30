@@ -35,12 +35,41 @@ class OpCompilationStatus(IntEnum):
     EXECUTED = 7
 
 
+class Tensor:
+    def __init__(self, shape):
+        constrained_shape = []
+        for dim in shape:
+            if isinstance(dim, int):
+                constrained_shape.append(dim)
+            else:
+                constrained_shape.append(-1)
+        self.shape = constrained_shape
+
+        self.data_type = ""
+        self.buffer_type = ""
+        self.layout = ""
+        self.grid_shape = []
+
+    def to_dict(self):
+        return {
+            "shape": self.shape,
+            "data_type": self.data_type,
+            "buffer_type": self.buffer_type,
+            "layout": self.layout,
+            "grid_shape": self.grid_shape,
+        }
+
+
 class Op:
-    def __init__(self, torch_name, input_shapes):
-        self.torch_name = torch_name
+    def __init__(self, torch_name, input_shapes, model_name):
+        self.framework_op_name = torch_name
         self.num_ops = 1
+        self.model_name = model_name
         self.input_shapes = input_shapes
+        self.input_tensors = []
         self.output_shapes = []
+        self.output_tensors = []
+        self.frontend = "tt-torch"
 
         self.torch_ir_graph = ""
         self.stable_hlo_graph = ""
@@ -55,6 +84,24 @@ class Op:
         self.parsed_ttnn_ops = False
         self.pcc = None
         self.atol = None
+
+    def parse_json(self):
+        binary = json.loads(self.json)
+
+        def tensor_from_tensor_desc(desc):
+            tensor = Tensor(desc["shape"])
+            tensor.data_type = desc["layout"]["memory_desc"]["data_type"]
+            tensor.buffer_type = desc["layout"]["memory_desc"]["memory_space"]
+            tensor.layout = desc["layout"]["memory_desc"]["memory_layout"]
+            grid_shape = desc["layout"]["core_range_set"][0]["size"]
+            tensor.grid_shape = [grid_shape["x"], grid_shape["y"]]
+            return tensor
+
+        for inp in binary["programs"][0]["inputs"]:
+            self.input_tensors.append(tensor_from_tensor_desc(inp["desc"]))
+
+        for out in binary["programs"][0]["outputs"]:
+            self.output_tensors.append(tensor_from_tensor_desc(out["desc"]))
 
     def print_shapes(self, shapes):
         output = []
@@ -78,10 +125,20 @@ class Op:
         pcc = scrub_nan_inf(self.pcc)
         atol = scrub_nan_inf(self.atol)
 
+        if len(self.input_tensors) == 0:
+            self.input_tensors = [Tensor(shp) for shp in self.input_shapes]
+
+        if len(self.output_tensors) == 0:
+            self.output_tensors = [Tensor(shp) for shp in self.output_shapes]
+
         return {
-            "torch_name": self.torch_name,
+            "framework_op_name": self.framework_op_name,
+            "frontend": self.frontend,
+            "model_name": self.model_name,
             "input_shapes": self.print_shapes(self.input_shapes),
+            "input_tensors": [tensor.to_dict() for tensor in self.input_tensors],
             "output_shapes": self.print_shapes(self.output_shapes),
+            "output_tensors": [tensor.to_dict() for tensor in self.output_tensors],
             "num_ops": self.num_ops,
             "compilation_status": self.compilation_status,
             "parsed_stable_hlo_ops": self.parsed_stable_hlo_ops,
@@ -97,7 +154,7 @@ class Op:
         }
 
     def unique_key(self):
-        key = self.torch_name
+        key = self.framework_op_name
         for shape in self.input_shapes:
             if isinstance(shape, torch.Size):
                 key += f"_{print_shape(shape)}"
