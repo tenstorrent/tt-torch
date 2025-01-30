@@ -133,6 +133,7 @@ class Op:
 
         return {
             "framework_op_name": self.framework_op_name,
+            "torch_name": self.framework_op_name,  # For backward compatibility
             "frontend": self.frontend,
             "model_name": self.model_name,
             "input_shapes": self.print_shapes(self.input_shapes),
