@@ -151,13 +151,32 @@ jobs:
         cp -r ${{ steps.strings.outputs.install-output-dir }}/tt-metal/* ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal
         cp -r ${{ steps.strings.outputs.install-output-dir }}/env/* ${{ steps.strings.outputs.work-dir }}/env
 
+    - name: Compile Supported Models
+      shell: bash
+      run: |
+        source env/activate
+        export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
+        TT_TORCH_COMPILE_DEPTH=TTNN_IR pytest -v \
+                  tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[full-microsoft/beit-base-patch16-224-eval] \
+                  tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[full-microsoft/beit-large-patch16-224-eval] \
+                  tests/models/detr/test_detr.py::test_detr[full-eval] \
+                  tests/models/glpn_kitti/test_glpn_kitti.py::test_glpn_kitti[full-eval] \
+                  tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base[full-eval] \
+                  tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[full-eval] \
+                  tests/models/segformer/test_segformer.py::test_segformer[full-eval] \
+                  tests/models/squeeze_bert/test_squeeze_bert.py::test_squeeze_bert[full-eval] \
+                  tests/models/vilt/test_vilt.py::test_vilt[full-eval] \
+                  tests/models/bert/test_bert.py::test_bert[full-eval] \
+                  tests/models/stable_diffusion/test_stable_diffusion_v2.py::test_stable_diffusion_v2[full-eval] \
+                  tests/models/whisper/test_whisper.py::test_whisper[full-eval] \
+                  tests/models/yolos/test_yolos.py::test_yolos[full-eval] \
+                  tests/models/deit/test_deit.py::test_deit[full-facebook/deit-base-patch16-224-eval] \
+           --junit-xml=${{ steps.strings.outputs.test_report_path_models }}
+
+
     - name: Run Model Tests
       shell: bash
       run: |
-        echo ${{ steps.strings.outputs.work-dir }}
-        echo ${{ steps.strings.outputs.test-output-dir }}
-        echo ${{ steps.strings.outputs.build-output-dir }}
-        echo ${{ steps.strings.outputs.install-output-dir }}
         source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
         pytest -v --op_by_op ${{ matrix.build.tests }}
