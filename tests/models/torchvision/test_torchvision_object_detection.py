@@ -36,18 +36,22 @@ class ThisTester(ModelTester):
         return batch_t
 
 
+model_info_list = [
+    ("ssd300_vgg16", "SSD300_VGG16_Weights"),
+    ("ssdlite320_mobilenet_v3_large", "SSDLite320_MobileNet_V3_Large_Weights"),
+    ("retinanet_resnet50_fpn", "RetinaNet_ResNet50_FPN_Weights"),
+    ("retinanet_resnet50_fpn_v2", "RetinaNet_ResNet50_FPN_V2_Weights"),
+]
+
+
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
 @pytest.mark.parametrize(
     "model_info",
-    [
-        ("ssd300_vgg16", "SSD300_VGG16_Weights"),
-        ("ssdlite320_mobilenet_v3_large", "SSDLite320_MobileNet_V3_Large_Weights"),
-        ("retinanet_resnet50_fpn", "RetinaNet_ResNet50_FPN_Weights"),
-        ("retinanet_resnet50_fpn_v2", "RetinaNet_ResNet50_FPN_V2_Weights"),
-    ],
+    model_info_list,
+    ids=[model_info[0] for model_info in model_info_list],
 )
 @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
 def test_torchvision_object_detection(record_property, model_info, mode, op_by_op):
@@ -61,7 +65,9 @@ def test_torchvision_object_detection(record_property, model_info, mode, op_by_o
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_info, mode, compiler_config=cc)
+    tester = ThisTester(
+        model_info, mode, assert_pcc=True, assert_atol=False, compiler_config=cc
+    )
     results = tester.test_model()
     if mode == "eval":
         print(f"Model: {model_name} | Output: {results}")

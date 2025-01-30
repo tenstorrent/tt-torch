@@ -56,7 +56,8 @@ def test_resnet(record_property, mode, op_by_op):
         mode,
         required_atol=0.03,
         compiler_config=cc,
-        assert_on_output_mismatch=False,
+        assert_pcc=False,
+        assert_atol=False,
     )
     results = tester.test_model()
     if mode == "eval":

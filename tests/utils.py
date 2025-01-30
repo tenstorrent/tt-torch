@@ -28,7 +28,8 @@ class ModelTester:
         required_atol=None,
         relative_atol=None,
         compiler_config=None,
-        assert_on_output_mismatch=True,
+        assert_pcc=True,
+        assert_atol=True,
     ):
         if mode not in ["train", "eval"]:
             raise ValueError(f"Current mode is not supported: {mode}")
@@ -38,7 +39,8 @@ class ModelTester:
         self.compiled_model = None
         self.inputs = self._load_inputs()
         self.required_pcc = required_pcc
-        self.assert_on_output_mismatch = assert_on_output_mismatch
+        self.assert_pcc = assert_pcc
+        self.assert_atol = assert_atol
 
         if (required_atol is None) and (relative_atol is None):
             print(
@@ -208,18 +210,34 @@ class ModelTester:
             golden
         ), "Expecting the type of both calculated and golden to be identical. Whether that be a tensor, list, dictonary, etc."
 
-        passed, err_msg = verify_against_golden(
+        passed_pcc, passed_atol, msg, err_msg = verify_against_golden(
             self._extract_outputs(golden),
             self._extract_outputs(outputs),
             self.required_pcc,
             self.required_atol,
             self.relative_atol,
         )
-        if self.assert_on_output_mismatch:
-            assert passed, err_msg
-        elif not passed:
-            print(err_msg)
-            print("No failure as assert_on_output_mismatch=False")
+        if self.assert_pcc and self.assert_atol:
+            if passed_pcc and passed_atol:
+                print(msg)
+            else:
+                assert False, err_msg
+        elif not self.assert_pcc and self.assert_atol:
+            print("Ignoring PCC check\n")
+            if passed_atol:
+                print(msg)
+            else:
+                assert False, err_msg
+        elif self.assert_pcc and not self.assert_atol:
+            print("Ignoring ATOL check\n")
+            if passed_pcc:
+                print(msg)
+            else:
+                assert False, err_msg
+        else:
+            print(msg)
+            print("No failure as assert_pcc == assert_atol == False")
+
         return outputs
 
     def test_model(self, on_device=True):

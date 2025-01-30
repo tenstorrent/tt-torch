@@ -43,7 +43,7 @@ def test_albert_sequence_classification(record_property, model_name, mode, op_by
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(
-        model_name, mode, assert_on_output_mismatch=False, compiler_config=cc
+        model_name, mode, assert_pcc=False, assert_atol=False, compiler_config=cc
     )
     results = tester.test_model()
 
