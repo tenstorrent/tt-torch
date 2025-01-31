@@ -70,7 +70,7 @@ def test_yolov3(record_property, mode, op_by_op):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(
-        model_name, mode, assert_on_output_mismatch=False, compiler_config=cc
+        model_name, mode, assert_pcc=False, assert_atol=False, compiler_config=cc
     )
     results = tester.test_model()
 

@@ -10,7 +10,7 @@
 - [Pre-commit](./pre_commit.md)
 
 # Models
-
+- [Supported Models](models/supported_models.md)
 # Operations
 - [Operations](ops/README.md)
   - [StableHLO Operations](ops/stablehlo/README.md)

@@ -13,13 +13,10 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth
 # TODO: RuntimeError: "nms_kernel" not implemented for 'BFloat16'
 class ThisTester(ModelTester):
     # pass model_info instead of model_name
-    def __init__(self, model_info, mode):
-        if mode not in ["train", "eval"]:
-            raise ValueError(f"Current mode is not supported: {mode}")
+    def __init__(self, model_info, mode, *args, **kwargs):
+        # model name in model_info[0]
         self.model_info = model_info
-        self.mode = mode
-        self.model = self._load_model()
-        self.inputs = self._load_inputs()
+        super().__init__(model_info[0], mode, *args, **kwargs)
 
     def _load_model(self):
         model_name, weights_name = self.model_info
@@ -39,22 +36,25 @@ class ThisTester(ModelTester):
         return batch_t
 
 
+model_info_list = [
+    ("ssd300_vgg16", "SSD300_VGG16_Weights"),
+    ("ssdlite320_mobilenet_v3_large", "SSDLite320_MobileNet_V3_Large_Weights"),
+    ("retinanet_resnet50_fpn", "RetinaNet_ResNet50_FPN_Weights"),
+    ("retinanet_resnet50_fpn_v2", "RetinaNet_ResNet50_FPN_V2_Weights"),
+]
+
+
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
 @pytest.mark.parametrize(
     "model_info",
-    [
-        ("ssd300_vgg16", "SSD300_VGG16_Weights"),
-        ("ssdlite320_mobilenet_v3_large", "SSDLite320_MobileNet_V3_Large_Weights"),
-        ("retinanet_resnet50_fpn", "RetinaNet_ResNet50_FPN_Weights"),
-        ("retinanet_resnet50_fpn_v2", "RetinaNet_ResNet50_FPN_V2_Weights"),
-    ],
+    model_info_list,
+    ids=[model_info[0] for model_info in model_info_list],
 )
 @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
 def test_torchvision_object_detection(record_property, model_info, mode, op_by_op):
-    pytest.skip("torchvision modules not supported.")
     model_name, _ = model_info
     record_property("model_name", model_name)
     record_property("mode", mode)
@@ -65,7 +65,9 @@ def test_torchvision_object_detection(record_property, model_info, mode, op_by_o
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_info, mode, compiler_config=cc)
+    tester = ThisTester(
+        model_info, mode, assert_pcc=True, assert_atol=False, compiler_config=cc
+    )
     results = tester.test_model()
     if mode == "eval":
         print(f"Model: {model_name} | Output: {results}")

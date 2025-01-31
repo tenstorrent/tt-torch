@@ -43,7 +43,7 @@ jobs:
           source env/activate
           echo "${{ steps.strings.outputs.work-dir }}/tt_torch/tools/generate_md.py"
           echo "${{ steps.strings.outputs.work-dir }}/results/models_op_per_op.xlsx"
-          python ${{ steps.strings.outputs.work-dir }}/tt_torch/tools/generate_md.py --excel_path ${{ steps.strings.outputs.work-dir }}/results/models_op_per_op.xlsx --md_dir ${{ steps.strings.outputs.work-dir }}/docs/ops/ttnn --json_dir ${{ steps.strings.outputs.work-dir }}/docs/ops/ttnn
+          python ${{ steps.strings.outputs.work-dir }}/tt_torch/tools/generate_md.py --excel_path ${{ steps.strings.outputs.work-dir }}/results/models_op_per_op.xlsx --md_dir ${{ steps.strings.outputs.work-dir }}/docs/src/ops/ttnn --json_dir ${{ steps.strings.outputs.work-dir }}/docs/src/ops/ttnn
 
       - name: Upload TTNN MD Files to archive
         uses: actions/upload-artifact@v4
