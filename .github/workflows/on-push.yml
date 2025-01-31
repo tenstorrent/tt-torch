@@ -3,6 +3,8 @@ name: On push
 on:
   workflow_dispatch:
   push:
+    paths-ignore:
+      - '*.md'
     branches: [ "main" ]
 
 jobs:
