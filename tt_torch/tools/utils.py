@@ -5,6 +5,8 @@ import re
 import json
 import numpy as np
 from enum import Enum, IntEnum
+from collections.abc import Iterable
+
 from pathlib import Path
 import os
 import torch
@@ -90,9 +92,10 @@ class Op:
 
         def tensor_from_tensor_desc(desc):
             tensor = Tensor(desc["shape"])
-            tensor.data_type = desc["layout"]["memory_desc"]["data_type"]
-            tensor.buffer_type = desc["layout"]["memory_desc"]["memory_space"]
-            tensor.layout = desc["layout"]["memory_desc"]["memory_layout"]
+            if "memory_desc" in desc["layout"]:
+                tensor.data_type = desc["layout"]["memory_desc"]["data_type"]
+                tensor.buffer_type = desc["layout"]["memory_desc"]["memory_space"]
+                tensor.layout = desc["layout"]["memory_desc"]["memory_layout"]
             grid_shape = desc["layout"]["core_range_set"][0]["size"]
             tensor.grid_shape = [grid_shape["x"], grid_shape["y"]]
             return tensor
@@ -126,10 +129,14 @@ class Op:
         atol = scrub_nan_inf(self.atol)
 
         if len(self.input_tensors) == 0:
-            self.input_tensors = [Tensor(shp) for shp in self.input_shapes]
+            self.input_tensors = [
+                Tensor(shp) for shp in self.input_shapes if isinstance(shp, Iterable)
+            ]
 
         if len(self.output_tensors) == 0:
-            self.output_tensors = [Tensor(shp) for shp in self.output_shapes]
+            self.output_tensors = [
+                Tensor(shp) for shp in self.output_shapes if isinstance(shp, Iterable)
+            ]
 
         return {
             "framework_op_name": self.framework_op_name,
