@@ -8,7 +8,8 @@ add_library(TT_TORCH_MLIR "tt-mlir-interface.cpp")
 
 add_dependencies(TT_TORCH_MLIR
     tt-mlir
-    TTMLIRShared
+    TTMLIRCompiler
+    TTMLIRRuntime
 )
 
 set_target_properties(TT_TORCH_MLIR PROPERTIES COMPILE_FLAGS "-fno-rtti")
@@ -30,7 +31,8 @@ target_include_directories(TT_TORCH_MLIR PUBLIC
 target_link_libraries(TT_TORCH_MLIR PUBLIC
     LLVM
     MLIR
-    TTMLIRShared
+    TTMLIRCompiler
+    TTMLIRRuntime
 )
 target_link_directories(TT_TORCH_MLIR PUBLIC
     ${TTMLIR_TOOLCHAIN_DIR}/lib

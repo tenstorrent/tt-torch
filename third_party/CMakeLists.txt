@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-set(TT_MLIR_VERSION "c0ac6ded06b60b09262e72e1430fd210816efcf6")
+set(TT_MLIR_VERSION "4e5447d8ae8635c6b7e25f163f4576fe0cdda3fb")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
@@ -41,7 +41,8 @@ else()
     endif()
 
     include(ExternalProject)
-    set(TT_MLIR_LIBRARY_PATH ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/lib/SharedLib/libTTMLIR.so)
+    set(TT_MLIR_COMPILER_LIBRARY_PATH ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/lib/SharedLib/libTTMLIRCompiler.so)
+    set(TT_MLIR_RUNTIME_LIBRARY_PATH ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/lib/SharedLib/libTTMLIRRuntime.so)
     ExternalProject_Add(
         tt-mlir
         PREFIX ${TTTORCH_SOURCE_DIR}/third_party/tt-mlir
@@ -65,10 +66,14 @@ else()
         BUILD_BYPRODUCTS ${TT_MLIR_LIBRARY_PATH}
     )
 
-    add_library(TTMLIRShared SHARED IMPORTED GLOBAL)
-    set_target_properties(TTMLIRShared PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_LIBRARY_PATH})
-    add_dependencies(TTMLIRShared tt-mlir)
+    add_library(TTMLIRCompiler SHARED IMPORTED GLOBAL)
+    set_target_properties(TTMLIRCompiler PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_COMPILER_LIBRARY_PATH})
+    add_dependencies(TTMLIRCompiler tt-mlir)
+    add_library(TTMLIRRuntime SHARED IMPORTED GLOBAL)
+    set_target_properties(TTMLIRRuntime PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_RUNTIME_LIBRARY_PATH})
+    add_dependencies(TTMLIRRuntime tt-mlir)
 
-    install(FILES ${TT_MLIR_LIBRARY_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+    install(FILES ${TT_MLIR_COMPILER_LIBRARY_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+    install(FILES ${TT_MLIR_RUNTIME_LIBRARY_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
 endif()
