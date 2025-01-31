@@ -34,6 +34,16 @@ Ensure cmake can by found in this path pip installed it to. E.g. by adding `PATH
 cmake --version
 ```
 
+This project requires the **GCC 11 toolchain**.
+To check which GCC toolchain is currently in use, run:
+```bash
+clang -v
+```
+Look for the line that starts with: `Selected GCC installation:`. If it is something other than GCC 11, please uninstall that and install GCC 11 using:
+```bash
+sudo apt-get install gcc-11 lib32stdc++-11-dev lib32gcc-11-dev
+```
+
 The project also requires a toolchain build. By default, the toolchain is built in `/opt/ttmlir-toolchain`. This path is controlled by the `TTMLIR_TOOLCHAIN_DIR` environment variable.
 
 The toolchain installation only needs to be done once, by running the following commands:
