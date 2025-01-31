@@ -1,17 +1,17 @@
 
 ## Supported Models
-The following models are currently supported through tt-torch as of Jan 30th, 20205.
+The following models are currently supported through tt-torch as of Jan 31st, 2025.
 
 | Model Name | Variant | Pytest Command |
 | ---------- | ------- | -------------- |
-| Autoencoder (linear) | | tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval] |
+| Autoencoder | (linear) | tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval] |
 | DistilBert | base uncased | tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval] |
 | MLPMixer || tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval] |
 | MNist || pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval] |
-| MobileNet | V2 | tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval] |
-|| V2 TorchVision | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-mobilenet_v2] |
-|| V3 Small TorchVision | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-mobilenet_v3_small] |
-|| V3 Large TorchVision | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-mobilenet_v3_large] |
+| MobileNet V2 || tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval] |
+|| TorchVision | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-mobilenet_v2] |
+| MobileNet V3 | Small TorchVision | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-mobilenet_v3_small] |
+|| Large TorchVision | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-mobilenet_v3_large] |
 | OpenPose || tests/models/openpose/test_openpose_v2.py::test_openpose_v2[full-eval] |
 | Preciever_IO || tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io[full-eval] |
 | ResNet | 18 | tests/models/resnet/test_resnet.py::test_resnet[full-eval] |
@@ -21,8 +21,8 @@ The following models are currently supported through tt-torch as of Jan 30th, 20
 || 50 TorchVision | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-resnet50] |
 || 101 TorchVision | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-resnet101] |
 || 152 TorchVision | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-resnet152] |
-|| Wide 50 | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-wide_resnet50_2] \
-|| Wide 101 | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-wide_resnet101_2] \
+| Wide ResNet | 50 | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-wide_resnet50_2] |
+|| 101 | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-wide_resnet101_2] |
 | ResNext |  50 | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-resnext50_32x4d] |
 ||  101_32x8d | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-resnext101_32x8d] |
 ||  101_64x4d | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-resnext101_64x4d] |
