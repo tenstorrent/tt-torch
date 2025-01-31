@@ -65,7 +65,8 @@ def verify_against_golden(
     check_mark = "\U00002705"
     red_x = "\U0000274C"
 
-    passed = True
+    passed_pcc = True
+    passed_atol = True
     err_msg = ""
     msg = ""
     for i, ((pcc_passed, pcc_), (atol_passed, atol_), atol_threshold) in enumerate(
@@ -84,7 +85,7 @@ def verify_against_golden(
                 err_msg
                 + f"PCC of output {i}: {pcc_:0,.4f}, threshold: {required_pcc} {red_x}\n"
             )
-            passed = False
+            passed_pcc = False
 
         if atol_passed:
             msg = (
@@ -100,10 +101,9 @@ def verify_against_golden(
                 err_msg
                 + f"ATOL of output {i}: {atol_:0,.4f}, threshold: {atol_threshold}{f' (calculated using relative_atol: {relative_atol})' if relative_atol is not None else ''} {red_x}\n"
             )
-            passed = False
+            passed_atol = False
 
-    print(msg)
-    return passed, err_msg
+    return passed_pcc, passed_atol, msg, err_msg
 
 
 def _verify_torch_module(
@@ -155,11 +155,12 @@ def _verify_torch_module(
     golden = tuple(golden)
     ret = tuple(ret)
 
-    passed, err_msg = verify_against_golden(
+    passed_pcc, passed_atol, msg, err_msg = verify_against_golden(
         golden, ret, required_pcc, required_atol=required_atol
     )
+    print(msg)
     if do_assert:
-        assert passed, err_msg
+        assert passed_pcc and passed_atol, err_msg
 
 
 def _verify_onnx_module(
@@ -223,11 +224,12 @@ def _verify_onnx_module(
     golden = tuple(golden)
     ret = tuple(ret)
 
-    passed, err_msg = verify_against_golden(
+    passed_pcc, passed_atol, msg, err_msg = verify_against_golden(
         golden, ret, required_pcc, required_atol=required_atol
     )
+    print(msg)
     if do_assert:
-        assert passed, err_msg
+        assert passed_pcc and passed_atol, err_msg
 
 
 def verify_module(

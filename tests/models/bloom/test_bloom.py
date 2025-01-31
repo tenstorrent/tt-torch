@@ -54,7 +54,8 @@ def test_bloom(record_property, mode, op_by_op):
         model_name,
         mode,
         relative_atol=0.01,
-        assert_on_output_mismatch=False,
+        assert_pcc=False,
+        assert_atol=False,
         compiler_config=cc,
     )
     results = tester.test_model()

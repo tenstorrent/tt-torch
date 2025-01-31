@@ -19,13 +19,17 @@ jobs:
     needs: [pre-commit, spdx]
     uses: ./.github/workflows/run-build.yml
     secrets: inherit
-  test:
+  test_op_by_op:
     needs: build
-    uses: ./.github/workflows/run-model-tests.yml
+    uses: ./.github/workflows/run-op-by-op-model-tests.yml
+    secrets: inherit
+  test_e2e:
+    needs: build
+    uses: ./.github/workflows/run-e2e-tests.yml
     secrets: inherit
   download-report:
     if: success() || failure()
-    needs: test
+    needs: test_op_by_op
     uses: ./.github/workflows/generate-model-report.yml
     secrets: inherit
   generate-ttnn-md:

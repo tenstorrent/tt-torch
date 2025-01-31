@@ -1,0 +1,118 @@
+name: Run E2E Tests
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  workflow_run:
+    workflows: [Build]
+    types: [completed]
+
+jobs:
+  tests:
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        build: [
+          {runs-on: wormhole_b0, name: "run"},
+        ]
+
+    runs-on:
+      - ${{ matrix.build.runs-on }}
+
+    container:
+      image: ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:latest
+      options: --user root --device /dev/tenstorrent/0 --shm-size=2gb
+      volumes:
+        - /dev/hugepages:/dev/hugepages
+        - /dev/hugepages-1G:/dev/hugepages-1G
+        - /etc/udev/rules.d:/etc/udev/rules.d
+        - /lib/modules:/lib/modules
+        - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        lfs: true
+
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      env:
+        job-name: "${{ github.job }} (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
+      run: |
+        echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
+        echo "build-output-dir=$(pwd)/build" >> "$GITHUB_OUTPUT"
+        echo "install-output-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
+
+        # Github job context unfortunately doesn't contain job_id, this is the workaround how to fetch it using GH API
+        echo "Expected job name: ${{ env.job-name }}"
+        JOB_ID=$(curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}/jobs" | \
+          jq -r '.jobs[] | select(.name | contains("${{ env.job-name }}")) | .id ')
+        echo "Current job id: $JOB_ID"
+
+        echo "job-id=$JOB_ID" >> "$GITHUB_OUTPUT"
+        echo "test_report_path_torch=report_torch_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+        echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+        echo "test_report_path_onnx=report_onnx_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+
+    - name: Git safe dir
+      run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
+
+    - name: Use build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: install-artifacts
+        path: ${{ steps.strings.outputs.install-output-dir }}
+
+    - name: 'Untar install directory'
+      shell: bash
+      working-directory: ${{ steps.strings.outputs.install-output-dir }}
+      run: tar xvf artifact.tar
+
+    - name: make tt-metal and env directories
+      shell: bash
+      working-directory: ${{ steps.strings.outputs.install-output-dir }}
+      run: |
+        mkdir -p ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal
+        mkdir -p ${{ steps.strings.outputs.work-dir }}/env
+
+    - name: copy tt-metal and env dirs
+      shell: bash
+      working-directory: ${{ steps.strings.outputs.install-output-dir }}
+      run: |
+        cp -r ${{ steps.strings.outputs.install-output-dir }}/tt-metal/* ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal
+        cp -r ${{ steps.strings.outputs.install-output-dir }}/env/* ${{ steps.strings.outputs.work-dir }}/env
+
+
+    - name: Compile Supported Models
+      shell: bash
+      run: |
+        source env/activate
+        export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
+        TT_TORCH_COMPILE_DEPTH=TTNN_IR pytest -v \
+                  tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[full-microsoft/beit-base-patch16-224-eval] \
+                  tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[full-microsoft/beit-large-patch16-224-eval] \
+                  tests/models/detr/test_detr.py::test_detr[full-eval] \
+                  tests/models/glpn_kitti/test_glpn_kitti.py::test_glpn_kitti[full-eval] \
+                  tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base[full-eval] \
+                  tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[full-eval] \
+                  tests/models/segformer/test_segformer.py::test_segformer[full-eval] \
+                  tests/models/squeeze_bert/test_squeeze_bert.py::test_squeeze_bert[full-eval] \
+                  tests/models/vilt/test_vilt.py::test_vilt[full-eval] \
+                  tests/models/bert/test_bert.py::test_bert[full-eval] \
+                  tests/models/stable_diffusion/test_stable_diffusion_v2.py::test_stable_diffusion_v2[full-eval] \
+                  tests/models/whisper/test_whisper.py::test_whisper[full-eval] \
+                  tests/models/yolos/test_yolos.py::test_yolos[full-eval] \
+                  tests/models/deit/test_deit.py::test_deit[full-facebook/deit-base-patch16-224-eval] \
+           --junit-xml=${{ steps.strings.outputs.test_report_path_models }}
+
+
+    - name: Upload Test Report Models
+      uses: actions/upload-artifact@v4
+      if: success() || failure()
+      with:
+        name: test-reports-models-${{ matrix.build.runs-on }}-${{ matrix.build.name }}
+        path: ${{ steps.strings.outputs.test_report_path_models }}
