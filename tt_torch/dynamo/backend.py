@@ -79,8 +79,8 @@ def compile_process(receiver, sender, ttir_event, ttnn_event):
     ttir = tt_mlir.compile_stable_hlo_to_ttir(asm)
     sender.put({"ttir": ttir})
     ttir_event.wait()
-    binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
-    sender.put({"binary": binary, "ttnn": ttnn})
+    binary, ttnn, json = tt_mlir.compile_ttir_to_bytestream(ttir)
+    sender.put({"binary": binary, "ttnn": ttnn, "binary_json": json})
     ttnn_event.wait()
     sys.exit(0)
 
@@ -275,7 +275,7 @@ class Executor:
                 if "binary" in result:
                     binary = result["binary"]
                     op.binary = binary
-                    op.json = tt_mlir.bytestream_to_json(binary)
+                    op.json = result["binary_json"]
                     op.add_ttnn_graph(result["ttnn"])
                     ttnn_event.set()
                     op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTNN
@@ -549,7 +549,7 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     if compiler_config.enable_intermediate_verification:
         executor.register_intermediate_callback(verify_golden_callback)
 
-    binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
+    binary, ttnn, _ = tt_mlir.compile_ttir_to_bytestream(ttir)
 
     if dump_intermediates:
         print("TTNN module", file=sys.stderr)

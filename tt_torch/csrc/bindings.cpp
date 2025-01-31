@@ -168,16 +168,18 @@ std::string compile_stable_hlo_to_ttir(std::string_view code) {
   return ret;
 }
 
-std::tuple<py::bytes, std::string>
+std::tuple<py::bytes, std::string, std::string>
 compile_ttir_to_bytestream(std::string_view code) {
-  auto [binary, ttnn] = tt::torch::compileTTIRToTTNN(code);
+  auto [binary_ptr, ttnn] = tt::torch::compileTTIRToTTNN(code);
   auto size = ::flatbuffers::GetSizePrefixedBufferLength(
-      static_cast<const uint8_t *>(binary->get()));
+      static_cast<const uint8_t *>(binary_ptr->get()));
+  tt::runtime::Binary binary = tt::runtime::Binary(*binary_ptr);
 
-  std::string data_str(static_cast<const char *>(binary->get()), size);
-  delete binary;
+  std::string json = binary.asJson();
+  std::string data_str(static_cast<const char *>(binary_ptr->get()), size);
+  delete binary_ptr;
 
-  return std::make_tuple(py::bytes(data_str), ttnn);
+  return std::make_tuple(py::bytes(data_str), ttnn, json);
 }
 
 py::bytes compile_stablehlo_to_bytestream(std::string_view code) {
