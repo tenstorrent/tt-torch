@@ -64,7 +64,7 @@ else()
         GIT_TAG ${TT_MLIR_VERSION}
         GIT_PROGRESS ON
         BUILD_BYPRODUCTS
-            ${TT_MLIR_COMPILER_LIBRARY_PATH} 
+            ${TT_MLIR_COMPILER_LIBRARY_PATH}
             ${TT_MLIR_RUNTIME_LIBRARY_PATH}
     )
 
