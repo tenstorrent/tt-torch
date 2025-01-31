@@ -79,7 +79,20 @@ jobs:
           },
           {
             runs-on: n150, name: "run3", tests: "\
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-googlenet]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-densenet201]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-mobilenet_v2]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-mobilenet_v3_large]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-resnet152]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-resnext101_64x4d]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-vgg19]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-vgg19_bn]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-vit_h_14]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-wide_resnet101_2]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_y_32gf]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_x_32gf]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-swin_b]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-swin_v2_b]
               tests/models/torchvision/test_torchvision_object_detection.py::test_torchvision_object_detection
               tests/models/gpt_neo/test_gpt_neo.py::test_gpt_neo
               tests/models/falcon/test_falcon.py::test_falcon
