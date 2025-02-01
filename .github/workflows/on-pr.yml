@@ -8,8 +8,6 @@ on:
         required: false
         type: string
   pull_request:
-    paths-ignore:
-      - '*.md'
     branches: [ "main" ]
 
 concurrency:
