@@ -299,6 +299,7 @@ class Executor:
                 break
             time.sleep(0.01)
         process.join()
+        print(f"json len {len(op.json)}")
         return binary, op
 
     def pre_process_inputs(self, *inputs):
