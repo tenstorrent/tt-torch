@@ -198,6 +198,7 @@ std::string bytestream_to_json(py::bytes byte_stream) {
       [](void *ptr) { delete[] static_cast<char *>(ptr); } // Custom deleter
   );
   // Copy data into the allocated memory
+  std::memset(binary_ptr.get(), 0, data_str.size());
   std::memcpy(binary_ptr.get(), data_str.data(), data_str.size());
   tt::runtime::Binary binary = tt::runtime::Binary(binary_ptr);
   return binary.asJson();
