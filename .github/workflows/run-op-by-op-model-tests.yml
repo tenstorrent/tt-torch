@@ -223,6 +223,7 @@ jobs:
         path: ${{ steps.strings.outputs.test-output-dir }}/${{ matrix.build.name }}_${{ steps.strings.outputs.job-id }}.tar
 
     - name: Upload full logs
+      if: success() || failure()
       uses: actions/upload-artifact@v4
       with:
         name: full-logs-${{ matrix.build.name }}
