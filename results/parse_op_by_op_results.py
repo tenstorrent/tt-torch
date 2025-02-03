@@ -199,6 +199,8 @@ def process_json_files():
                 .split(" ")[0]
                 .split("test")[-1]
             )
+        # If invalid excel char in name: []:*?/\, replace with _
+        model_name = re.sub(r"[^a-zA-Z0-9_]", "_", model_name)
         if len(model_name) > 28:
             model_name = model_name[:28]
 
