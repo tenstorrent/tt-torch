@@ -185,6 +185,7 @@ def _base_backend(gm_or_shlo, example_inputs, compiler_config):
 
 
 def backend(gm_or_shlo, example_inputs, options=None):
+    # TODO: use asserts instead of exit/ torch
     if options is None:
         options = CompilerConfig()
     if (
@@ -201,8 +202,10 @@ def backend(gm_or_shlo, example_inputs, options=None):
         else:
             print("Compiler input not valid", file=sys.stderr)
             exit(1)
-
-    return _base_backend(gm_or_shlo, example_inputs, compiler_config=options)
+    if execute:
+        return _base_backend(gm_or_shlo, example_inputs, compiler_config=options)
+    print()
+    exit(1)
 
 
 def generate_random_inputs(module_str):
