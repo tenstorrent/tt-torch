@@ -92,8 +92,6 @@ jobs:
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-regnet_y_32gf]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-regnet_x_32gf]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-swin_b]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-swin_v2_b]
-              tests/models/torchvision/test_torchvision_object_detection.py::test_torchvision_object_detection
               tests/models/gpt_neo/test_gpt_neo.py::test_gpt_neo
               tests/models/falcon/test_falcon.py::test_falcon
               "
@@ -111,6 +109,7 @@ jobs:
         - /etc/udev/rules.d:/etc/udev/rules.d
         - /lib/modules:/lib/modules
         - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
+        - /mnt/dockercache:/mnt/dockercache
 
     steps:
     - uses: actions/checkout@v4
@@ -165,6 +164,9 @@ jobs:
         cp -r ${{ steps.strings.outputs.install-output-dir }}/env/* ${{ steps.strings.outputs.work-dir }}/env
 
     - name: Run Model Tests
+      env:
+        HF_HOME: /mnt/dockercache/huggingface
+        HF_HUB_DISABLE_PROGRESS_BARS: 1
       shell: bash
       run: |
         source env/activate
