@@ -170,12 +170,13 @@ std::string compile_stable_hlo_to_ttir(std::string_view code) {
 
 std::tuple<py::bytes, std::string>
 compile_ttir_to_bytestream(std::string_view code) {
-  auto [binary, ttnn] = tt::torch::compileTTIRToTTNN(code);
+  auto [binary_ptr, ttnn] = tt::torch::compileTTIRToTTNN(code);
   auto size = ::flatbuffers::GetSizePrefixedBufferLength(
-      static_cast<const uint8_t *>(binary->get()));
+      static_cast<const uint8_t *>(binary_ptr->get()));
+  tt::runtime::Binary binary = tt::runtime::Binary(*binary_ptr);
 
-  std::string data_str(static_cast<const char *>(binary->get()), size);
-  delete binary;
+  std::string data_str(static_cast<const char *>(binary_ptr->get()), size);
+  delete binary_ptr;
 
   return std::make_tuple(py::bytes(data_str), ttnn);
 }
@@ -197,6 +198,7 @@ std::string bytestream_to_json(py::bytes byte_stream) {
       [](void *ptr) { delete[] static_cast<char *>(ptr); } // Custom deleter
   );
   // Copy data into the allocated memory
+  std::memset(binary_ptr.get(), 0, data_str.size());
   std::memcpy(binary_ptr.get(), data_str.data(), data_str.size());
   tt::runtime::Binary binary = tt::runtime::Binary(binary_ptr);
   return binary.asJson();

@@ -72,7 +72,7 @@ def lower_to_stable_hlo(module, op=None):
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
 
 
-def compile_process(receiver, sender, ttir_event, ttnn_event):
+def compile_process(receiver, sender, ttir_event, ttnn_event, json_event):
     obj = receiver.get()
     faulthandler.disable()
     asm = obj["asm"]
@@ -82,6 +82,8 @@ def compile_process(receiver, sender, ttir_event, ttnn_event):
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
     sender.put({"binary": binary, "ttnn": ttnn})
     ttnn_event.wait()
+    sender.put({"json": tt_mlir.bytestream_to_json(binary)})
+    json_event.wait()
     sys.exit(0)
 
 
@@ -257,9 +259,11 @@ class Executor:
         receiver = mp.Queue()
         ttir_event = mp.Event()
         ttnn_event = mp.Event()
+        json_event = mp.Event()
         obj = {"asm": module.operation.get_asm()}
         process = mp.Process(
-            target=compile_process, args=(sender, receiver, ttir_event, ttnn_event)
+            target=compile_process,
+            args=(sender, receiver, ttir_event, ttnn_event, json_event),
         )
         process.start()
         sender.put(obj)
@@ -275,11 +279,13 @@ class Executor:
                 if "binary" in result:
                     binary = result["binary"]
                     op.binary = binary
-                    op.json = tt_mlir.bytestream_to_json(binary)
                     op.add_ttnn_graph(result["ttnn"])
                     ttnn_event.set()
-                    op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTNN
+                if "json" in result:
+                    op.json = result["json"]
+                    json_event.set()
                     op.parse_json()
+                    op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTNN
                     break
             except mp.queues.Empty:
                 pass
@@ -293,6 +299,7 @@ class Executor:
                 break
             time.sleep(0.01)
         process.join()
+        print(f"json len {len(op.json)}")
         return binary, op
 
     def pre_process_inputs(self, *inputs):
@@ -550,7 +557,6 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         executor.register_intermediate_callback(verify_golden_callback)
 
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
-
     if dump_intermediates:
         print("TTNN module", file=sys.stderr)
         print(ttnn, file=sys.stderr)

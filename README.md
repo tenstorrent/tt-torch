@@ -5,3 +5,4 @@ tt-torch is a [PyTorch2.0](https://pytorch.org/get-started/pytorch-2.0/) and [to
 ## Links
 - [Overview](https://docs.tenstorrent.com/tt-torch/overview.html)
 - [Building](https://docs.tenstorrent.com/tt-torch/build.html)
+- [Models](https://docs.tenstorrent.com/tt-torch/models/supported_models.html)
