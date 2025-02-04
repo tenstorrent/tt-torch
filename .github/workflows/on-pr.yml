@@ -31,7 +31,7 @@ jobs:
     needs: build
     uses: ./.github/workflows/run-tests.yml
     secrets: inherit
-    
+
   check-all-green:
     if: always()
     needs:

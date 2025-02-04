@@ -148,7 +148,7 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_x_16gf] \
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_x_32gf] \
            --junit-xml=${{ steps.strings.outputs.test_report_path_models }}
-           
+
     - name: Upload Test Report Models
       uses: actions/upload-artifact@v4
       if: success() || failure()
