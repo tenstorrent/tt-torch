@@ -37,6 +37,10 @@ static tt::target::DataType torch_scalar_type_to_dt(torch::ScalarType st) {
   // case torch::ScalarType::Bool:
   case torch::ScalarType::BFloat16:
     return tt::target::DataType::BFloat16;
+  case torch::ScalarType::Bool:
+    // tt-metal does not support boolean data type; so bfloat16 data type is
+    // used instead.
+    return tt::target::DataType::BFloat16;
   default:
     break;
   }
