@@ -59,11 +59,12 @@ def import_graph(graph: torch.fx.GraphModule):
     return importer.module
 
 
-def lower_to_stable_hlo(module, op=None):
+def lower_to_stable_hlo(module, op=None, enable_ir_printing=False):
     run_pipeline_with_repro_report(
         module,
         f"builtin.module(torchdynamo-export-to-torch-backend-pipeline)",
         "Lowering TorchFX IR -> Torch Backend IR",
+        enable_ir_printing,
     )
     if op is not None:
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_TORCH_BACKEND_IR
@@ -540,12 +541,14 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         return executor
 
     dump_intermediates = os.environ.get("TT_TORCH_IR_LOG_LEVEL")
-    dump_intermediates = dump_intermediates and (
-        dump_intermediates == "INFO" or dump_intermediates == "DEBUG"
-    )
+    dump_info = False
+    dump_debug = False
+    if dump_intermediates:
+        dump_debug = dump_intermediates == "DEBUG"
+        dump_info = dump_debug or dump_intermediates == "INFO"
 
     module = import_graph(gm.graph)
-    if dump_intermediates:
+    if dump_info:
         print("Torch module", file=sys.stderr)
         module.dump()
 
@@ -554,8 +557,8 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     if compiler_config.compile_depth == CompileDepth.TORCH_MLIR:
         return executor
 
-    lower_to_stable_hlo(module)
-    if dump_intermediates:
+    lower_to_stable_hlo(module, enable_ir_printing=dump_debug)
+    if dump_info:
         print("StableHLO module", file=sys.stderr)
         module.dump()
 
@@ -568,7 +571,7 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     ttir = tt_mlir.compile_stable_hlo_to_ttir(
         module.operation.get_asm(enable_debug_info=True)
     )
-    if dump_intermediates:
+    if dump_info:
         print("TTIR module", file=sys.stderr)
         print(ttir, file=sys.stderr)
 
@@ -576,7 +579,7 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         executor.register_intermediate_callback(verify_golden_callback)
 
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
-    if dump_intermediates:
+    if dump_info:
         print("TTNN module", file=sys.stderr)
         print(ttnn, file=sys.stderr)
 
