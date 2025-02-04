@@ -184,6 +184,7 @@ jobs:
 
     - name: Prepare code coverage report
       if: success() || failure()
+      continue-on-error: true
       run: |
         lcov --directory . --capture --output-file coverage.info
         lcov --extract coverage.info '**/tt_torch/csrc/*' --output-file coverage.info
@@ -191,6 +192,7 @@ jobs:
 
     - name: Upload coverage reports to Codecov
       if: success() || failure()
+      continue-on-error: true
       uses: codecov/codecov-action@v5
       with:
         files: coverage.info
@@ -199,6 +201,7 @@ jobs:
 
     - name: Upload test results to Codecov
       if: success() || failure()
+      continue-on-error: true
       uses: codecov/test-results-action@v1
       with:
         files: ${{ steps.strings.outputs.test_report_path_torch }}, ${{ steps.strings.outputs.test_report_path_models }}, ${{ steps.strings.outputs.test_report_path_onnx }}
