@@ -23,7 +23,6 @@ librosa
 soundfile
 matplotlib
 mlp_mixer_pytorch
-opencv-python
 wheel
 xlsxwriter
 onnx
@@ -33,3 +32,4 @@ pillow
 kornia
 timm
 ml_dtypes
+opencv-contrib-python
