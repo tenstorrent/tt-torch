@@ -478,7 +478,6 @@ def process_json_files():
                 compiled_json,
             ]
             worksheet.write_row(row, 0, row_data)
-            worksheet.set_row(row, None, None, {"hidden": True})
             row += 1
             for shlo_op in ops:
                 row_data = ["", "", "", "", "", shlo_op[-1]]
