@@ -1,6 +1,6 @@
 
 ## Supported Models
-The following models are currently supported through tt-torch as of Feb 3rd, 2025.
+The following models can be currently run through tt-torch as of Feb 3rd, 2025. Please note, there is a known bug causing incorrect output for some models. The [PCC](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient) is displayed at the end of each test below. This issue will be addressed soon.
 
 | Model Name | Variant | Pytest Command |
 | ---------- | ------- | -------------- |
