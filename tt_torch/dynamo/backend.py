@@ -37,6 +37,7 @@ import os
 import multiprocessing as mp
 import time
 import faulthandler
+from pathlib import Path
 import re
 import sys
 import tempfile
@@ -93,7 +94,16 @@ def execute_process(receiver, sender, exec_event):
         faulthandler.disable()
         binary = obj["binary"]
         inputs = obj["inputs"]
+        file_name = obj["dump_file"]
+        f_stderr = open(file_name, "w")
+        old_stderr = sys.stderr
+        sys.stderr = f_stderr
+        old_stdout = sys.stdout
+        sys.stdout = f_stderr
         outputs = tt_mlir.run(inputs, binary)
+        sys.stderr = old_stderr
+        sys.stdout = old_stdout
+        f_stderr.close()
         sender.put({"outputs": outputs})
         exec_event.wait()
     sys.exit(0)
@@ -126,6 +136,15 @@ class Executor:
         self.execute_process = None
         self.execute_sender = None
         self.execute_receiver = None
+
+        # Create a temp file which will be used by sub process to dump stderr
+        # output during execution of the mlir graph on TT device.
+        self.f_stderr = tempfile.NamedTemporaryFile(mode="w+t", delete=False)
+
+    # Class destructor
+    def __del__(self):
+        # Remove the temp file created.
+        os.unlink(self.f_stderr.name)
 
     def register_intermediate_callback(self, callback):
         if not is_runtime_debug_enabled():
@@ -320,11 +339,7 @@ class Executor:
 
     def run_op(self, binary, *inputs):
         inputs = self.pre_process_inputs(*inputs)
-        obj = {"binary": binary, "inputs": inputs}
-
-        f_stderr = tempfile.TemporaryFile(mode="w+t")
-        old_stderr = sys.stderr
-        sys.stderr = f_stderr
+        obj = {"binary": binary, "inputs": inputs, "dump_file": self.f_stderr.name}
 
         exec_event = mp.Event()
         if self.execute_process is None:
@@ -358,14 +373,13 @@ class Executor:
         if len(outputs) == 1:
             outputs = outputs[0]
 
-        sys.stderr = old_stderr
         stderr_data = ""
         if outputs is None:
-            f_stderr.seek(0)
+            f_stderr = open(self.f_stderr.name, "r")
             stderr_data = f_stderr.read()
             stderr_data = stderr_data.replace("\n", "\\n")
             stderr_data = re.sub(r"[^\x20-\x7E]", "", stderr_data)
-        f_stderr.close()
+            f_stderr.close()
 
         return outputs, stderr_data
 
