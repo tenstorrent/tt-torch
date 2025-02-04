@@ -7,6 +7,11 @@ on:
     workflows: [Build]
     types: [completed]
 
+permissions:
+  packages: write
+  checks: write
+  pull-requests: write # only required if `comment: true` was enabled
+
 jobs:
   tests:
     timeout-minutes: 120
@@ -36,23 +41,21 @@ jobs:
         submodules: recursive
         lfs: true
 
+    - name: Fetch job id
+      id: fetch-job-id
+      uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
+      with:
+        job_name: "${{ github.job }} (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
+
     - name: Set reusable strings
       id: strings
       shell: bash
       env:
-        job-name: "${{ github.job }} (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
+        JOB_ID: ${{ steps.fetch-job-id.outputs.job_id }}
       run: |
         echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
         echo "build-output-dir=$(pwd)/build" >> "$GITHUB_OUTPUT"
         echo "install-output-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
-
-        # Github job context unfortunately doesn't contain job_id, this is the workaround how to fetch it using GH API
-        echo "Expected job name: ${{ env.job-name }}"
-        JOB_ID=$(curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
-          "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}/jobs" | \
-          jq -r '.jobs[] | select(.name | contains("${{ env.job-name }}")) | .id ')
-        echo "Current job id: $JOB_ID"
-
         echo "job-id=$JOB_ID" >> "$GITHUB_OUTPUT"
         echo "test_report_path_torch=report_torch_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
         echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
@@ -145,6 +148,7 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_x_16gf] \
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_x_32gf] \
            --junit-xml=${{ steps.strings.outputs.test_report_path_models }}
+           
     - name: Upload Test Report Models
       uses: actions/upload-artifact@v4
       if: success() || failure()
@@ -167,10 +171,21 @@ jobs:
         name: test-reports-onnx-${{ matrix.build.runs-on }}-${{ matrix.build.name }}
         path: ${{ steps.strings.outputs.test_report_path_onnx }}
 
+    - name: Show Test Report
+      uses: mikepenz/action-junit-report@v5
+      if: success() || failure()
+      with:
+        report_paths: ${{ steps.strings.outputs.test_report_path_torch }}
+        check_name: TT-Torch Tests
+        comment: true
+        updateComment: false
+        detailed_summary: true
+        group_suite: true
+
     - name: Prepare code coverage report
       if: success() || failure()
       run: |
-        lcov --directory build --capture --output-file coverage.info
+        lcov --directory . --capture --output-file coverage.info
         lcov --extract coverage.info '**/tt_torch/csrc/*' --output-file coverage.info
         lcov --list coverage.info
 
