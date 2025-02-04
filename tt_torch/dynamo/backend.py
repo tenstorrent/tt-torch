@@ -128,7 +128,11 @@ class Executor:
         self.required_pcc = required_pcc
         # Dictionary to keep track of the type conversion for unsupported hardware
         # types and use it to convert the input arguments to supported types.
-        self.type_conversion = {torch.bool: torch.bfloat16}
+        self.type_conversion = {
+            torch.bool: torch.bfloat16,
+            torch.int64: torch.int32,
+            torch.float64: torch.float32,
+        }
         self.intermediate_callbacks = {}
 
         # Opening a device in a new process is very slow as the pcie device needs to be initializes
@@ -332,7 +336,29 @@ class Executor:
                     inp = inp.contiguous()
                 processed_inputs.append(inp)
 
-        return processed_inputs
+        # Typecast the unsupported data types to hardware supported types.
+        supported_inputs = ()
+        for input in processed_inputs:
+            # Handle scalar inputs.
+            if not hasattr(input, "dtype"):
+                assert (
+                    type(input) is not bool
+                ), "Conversion for scalar boolean is not supported."
+                supported_inputs = supported_inputs + ((input),)
+                continue
+
+            # Apply type conversion if required.
+            input_type = input.dtype
+            if input_type in self.type_conversion.keys():
+                supported_inputs = supported_inputs + (
+                    (input.to(dtype=self.type_conversion[input_type])),
+                )
+                continue
+
+            # No conversion required.
+            supported_inputs = supported_inputs + ((input),)
+
+        return supported_inputs
 
     def run_op(self, binary, *inputs):
         inputs = self.pre_process_inputs(*inputs)
