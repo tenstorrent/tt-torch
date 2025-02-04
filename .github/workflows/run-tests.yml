@@ -187,7 +187,7 @@ jobs:
       continue-on-error: true
       run: |
         lcov --directory . --capture --output-file coverage.info
-        lcov --extract coverage.info '**/tt_torch/csrc/*' --output-file coverage.info
+        # lcov --extract coverage.info '**/tt_torch/csrc/*' --output-file coverage.info
         lcov --list coverage.info
 
     - name: Upload coverage reports to Codecov
