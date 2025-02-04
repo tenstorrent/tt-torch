@@ -1,11 +1,18 @@
 
 ## Supported Models
-The following models are currently supported through tt-torch as of Jan 31st, 2025.
+The following models are currently supported through tt-torch as of Feb 3rd, 2025.
 
 | Model Name | Variant | Pytest Command |
 | ---------- | ------- | -------------- |
+| Albert | Masked LM Base | tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-base-v2-eval] |
+| | Masked LM Large | tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-large-v2-eval] |
+| | Masked LM XLarge | tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-xlarge-v2-eval] |
+| | Masked LM XXLarge | tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-xxlarge-v2-eval] |
+| | Sequence Classification Base | tests/models/albert/test_albert_sequence_classification.py::test_albert_sequence_classification[full-textattack/albert-base-v2-imdb-eval] |
+| | Token Classification Base | tests/models/albert/test_albert_token_classification.py::test_albert_token_classification[full-albert/albert-base-v2-eval] |
 | Autoencoder | (linear) | tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval] |
 | DistilBert | base uncased | tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval] |
+| Llama | 7B | tests/models/llama/test_llama.py::test_llama[full-eval] |
 | MLPMixer || tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval] |
 | MNist || pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval] |
 | MobileNet V2 || tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval] |
