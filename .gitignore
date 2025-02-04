@@ -2,5 +2,10 @@
 env
 build
 install
+results/mlir_tests/
+results/models/
+results/*.md
+results/*.xlsx
+third_party/toolchain
 third_party/tt-mlir
 third_party/vision
