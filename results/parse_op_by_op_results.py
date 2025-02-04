@@ -186,24 +186,31 @@ def process_json_files():
     workbook = xlsxwriter.Workbook("results/models_op_per_op.xlsx")
     bold = workbook.add_format({"bold": True})
     for json_file in json_files:
-        print(json_file)
         with open(json_file, "r") as f:
             data = json.load(f)
 
-        model_name = (
-            json_file.strip("_unique_ops.json")
-            .split("/")[-1]
-            .split(" ")[0]
-            .split("test")[-1]
-        )
+        first_value = next(iter(data.values()))
+        if "model_name" in first_value and len(first_value["model_name"]) > 0:
+            model_name = first_value["model_name"]
+        else:
+            model_name = (
+                json_file.strip("_unique_ops.json")
+                .split("/")[-1]
+                .split(" ")[0]
+                .split("test")[-1]
+            )
+        # If invalid excel char in name: []:*?/\, replace with _
+        model_name = re.sub(r"[^a-zA-Z0-9_]", "_", model_name)
         if len(model_name) > 28:
             model_name = model_name[:28]
 
         id = 1
+        test_name = model_name
         while model_name in model_names:
-            model_name = model_name + f"_{id}"
+            model_name = test_name + f"_{id}"
             id += 1
 
+        print(f"Processing {model_name}")
         model_names.append(model_name)
         worksheet = workbook.add_worksheet(model_name)
         keys = list(data.keys())
@@ -471,7 +478,6 @@ def process_json_files():
                 compiled_json,
             ]
             worksheet.write_row(row, 0, row_data)
-            worksheet.set_row(row, None, None, {"hidden": True})
             row += 1
             for shlo_op in ops:
                 row_data = ["", "", "", "", "", shlo_op[-1]]

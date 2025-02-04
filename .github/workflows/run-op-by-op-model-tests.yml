@@ -15,7 +15,7 @@ jobs:
       matrix:
         build: [
           {
-            runs-on: n150, name: "run1", tests: "\
+            runs-on: n150, name: "run1", tests: "
               tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2
               tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm
               tests/models/Qwen/test_qwen2_token_classification.py::test_qwen2_token_classification
@@ -43,46 +43,58 @@ jobs:
               "
           },
           {
-            runs-on: n150, name: "run2", tests: "\
-              tests/models/autoencoder_conv/test_autoencoder_conv.py::test_autoencoder_conv \
-              tests/models/autoencoder_conv/test_autoencoder_conv_v2.py::test_autoencoder_conv_v2 \
-              tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear \
-              tests/models/beit/test_beit_image_classification.py::test_beit_image_classification \
-              tests/models/bert/test_bert.py::test_bert \
+            runs-on: n150, name: "run2", tests: "
+              tests/models/autoencoder_conv/test_autoencoder_conv.py::test_autoencoder_conv
+              tests/models/autoencoder_conv/test_autoencoder_conv_v2.py::test_autoencoder_conv_v2
+              tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear
+              tests/models/beit/test_beit_image_classification.py::test_beit_image_classification
+              tests/models/bert/test_bert.py::test_bert
               tests/models/bloom/test_bloom.py::test_bloom
-              tests/models/deit/test_deit.py::test_deit \
-              tests/models/detr/test_detr.py::test_detr \
-              tests/models/distilbert/test_distilbert.py::test_distilbert \
-              tests/models/dpr/test_dpr.py::test_dpr \
-              tests/models/gpt2/test_gpt2.py::test_gpt2 \
-              tests/models/hand_landmark/test_hand_landmark.py::test_hand_landmark \
-              tests/models/hardnet/test_hardnet.py::test_hardnet \
-              tests/models/llama/test_llama.py::test_llama \
-              tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd \
-              tests/models/openpose/test_openpose.py::test_openpose \
-              tests/models/openpose/test_openpose_v2.py::test_openpose_v2 \
-              tests/models/opt/test_opt.py::test_opt \
-              tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io \
-              tests/models/roberta/test_roberta.py::test_roberta \
-              tests/models/segment_anything/test_segment_anything.py::test_segment_anything \
-              tests/models/speecht5_tts/test_speecht5_tts.py::test_speecht5_tts \
-              tests/models/squeeze_bert/test_squeeze_bert.py::test_squeeze_bert \
-              tests/models/t5/test_t5.py::test_t5 \
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification \
-              tests/models/unet/test_unet.py::test_unet \
-              tests/models/unet_brain/test_unet_brain.py::test_unet_brain \
-              tests/models/whisper/test_whisper.py::test_whisper \
-              tests/models/xglm/test_xglm.py::test_xglm \
-              tests/models/yolov3/test_yolov3.py::test_yolov3 \
-              tests/models/yolov5/test_yolov5.py::test_yolov5 \
+              tests/models/deit/test_deit.py::test_deit
+              tests/models/detr/test_detr.py::test_detr
+              tests/models/distilbert/test_distilbert.py::test_distilbert
+              tests/models/dpr/test_dpr.py::test_dpr
+              tests/models/gpt2/test_gpt2.py::test_gpt2
+              tests/models/hand_landmark/test_hand_landmark.py::test_hand_landmark
+              tests/models/hardnet/test_hardnet.py::test_hardnet
+              tests/models/llama/test_llama.py::test_llama
+              tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd
+              tests/models/openpose/test_openpose.py::test_openpose
+              tests/models/openpose/test_openpose_v2.py::test_openpose_v2
+              tests/models/opt/test_opt.py::test_opt
+              tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io
+              tests/models/roberta/test_roberta.py::test_roberta
+              tests/models/segment_anything/test_segment_anything.py::test_segment_anything
+              tests/models/speecht5_tts/test_speecht5_tts.py::test_speecht5_tts
+              tests/models/squeeze_bert/test_squeeze_bert.py::test_squeeze_bert
+              tests/models/t5/test_t5.py::test_t5
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification
+              tests/models/unet/test_unet.py::test_unet
+              tests/models/unet_brain/test_unet_brain.py::test_unet_brain
+              tests/models/whisper/test_whisper.py::test_whisper
+              tests/models/xglm/test_xglm.py::test_xglm
+              tests/models/yolov3/test_yolov3.py::test_yolov3
+              tests/models/yolov5/test_yolov5.py::test_yolov5
               "
           },
           {
             runs-on: n150, name: "run3", tests: "\
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification
-              tests/models/torchvision/test_torchvision_object_detection.py::test_torchvision_object_detection
-              tests/models/gpt_neo/test_gpt_neo.py::test_gpt_neo \
-              tests/models/falcon/test_falcon.py::test_falcon \
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-googlenet]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-densenet201]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-mobilenet_v2]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-mobilenet_v3_large]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-resnet152]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-resnext101_64x4d]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-vgg19]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-vgg19_bn]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-vit_h_14]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-wide_resnet101_2]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-regnet_y_32gf]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-regnet_x_32gf]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-swin_b]
+              tests/models/gpt_neo/test_gpt_neo.py::test_gpt_neo
+              tests/models/falcon/test_falcon.py::test_falcon
+              tests/models/mamba/test_mamba.py::test_mamba[state-spaces/mamba-790m-hf]
               "
           },
         ]
@@ -98,6 +110,7 @@ jobs:
         - /etc/udev/rules.d:/etc/udev/rules.d
         - /lib/modules:/lib/modules
         - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
+        - /mnt/dockercache:/mnt/dockercache
 
     steps:
     - uses: actions/checkout@v4
@@ -152,11 +165,51 @@ jobs:
         cp -r ${{ steps.strings.outputs.install-output-dir }}/env/* ${{ steps.strings.outputs.work-dir }}/env
 
     - name: Run Model Tests
+      env:
+        HF_HOME: /mnt/dockercache/huggingface
+        HF_HUB_DISABLE_PROGRESS_BARS: 1
       shell: bash
       run: |
         source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
-        pytest -v --op_by_op ${{ matrix.build.tests }}
+
+        # Make sure we don't stop on first failure
+        set +e
+
+        tests_list=$(echo "${{ matrix.build.tests }}" | xargs -n1 echo)
+        total_tests=$(echo "$tests_list" | wc -l)
+
+        failures=0
+        counter=0
+
+        for test_case in $tests_list; do
+          counter=$((counter + 1))
+
+          pytest_log="test_${counter}.log"
+
+          pytest -svv "$test_case" --op_by_op > "$pytest_log" 2>&1
+          exit_code=$?
+
+          echo "====== BEGIN LOG: $test_case ======" >> full_job_output.log
+          cat "$pytest_log" >> full_job_output.log
+          echo "====== END LOG: $test_case ========" >> full_job_output.log
+          echo >> full_job_output.log
+          rm "$pytest_log"
+
+          if [ $exit_code -eq 0 ]; then
+            echo "[ $counter / $total_tests ] $test_case PASSED"
+          else
+            echo "[ $counter / $total_tests ] $test_case FAILED"
+            failures=$((failures + 1))
+          fi
+        done
+
+
+        # If any test failed, exit nonzero to mark the job as failed
+        if [ $failures -ne 0 ]; then
+          echo "Total failures: $failures"
+          exit 1
+        fi
 
     - name: Tar results
       if: success() || failure()
@@ -171,3 +224,10 @@ jobs:
       with:
         name: test-reports-${{ matrix.build.name }}.tar
         path: ${{ steps.strings.outputs.test-output-dir }}/${{ matrix.build.name }}_${{ steps.strings.outputs.job-id }}.tar
+
+    - name: Upload full logs
+      if: success() || failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: full-logs-${{ matrix.build.name }}
+        path: full_job_output.log

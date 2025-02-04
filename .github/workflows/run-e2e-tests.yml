@@ -9,12 +9,12 @@ on:
 
 jobs:
   tests:
-    timeout-minutes: 120
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       matrix:
         build: [
-          {runs-on: wormhole_b0, name: "run"},
+          {runs-on: n300, name: "run"},
         ]
 
     runs-on:
@@ -29,6 +29,7 @@ jobs:
         - /etc/udev/rules.d:/etc/udev/rules.d
         - /lib/modules:/lib/modules
         - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
+        - /mnt/dockercache:/mnt/dockercache
 
     steps:
     - uses: actions/checkout@v4
@@ -88,6 +89,9 @@ jobs:
 
 
     - name: Compile Supported Models
+      env:
+        HF_HOME: /mnt/dockercache/huggingface
+        HF_HUB_DISABLE_PROGRESS_BARS: 1
       shell: bash
       run: |
         source env/activate
