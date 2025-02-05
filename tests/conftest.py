@@ -4,6 +4,8 @@
 
 import pytest
 import torch
+import subprocess
+import sys
 
 
 @pytest.fixture(autouse=True)
@@ -11,6 +13,18 @@ def run_around_tests():
     torch.manual_seed(0)
     yield
     torch._dynamo.reset()
+
+
+@pytest.fixture(scope="module")
+def manage_dependencies(request):
+    dependencies = getattr(request.module, "dependencies", [])
+    # Install dependencies
+    subprocess.check_call([sys.executable, "-m", "pip", "install"] + dependencies)
+    yield
+    # Uninstall dependencies
+    subprocess.check_call(
+        [sys.executable, "-m", "pip", "uninstall", "-y"] + dependencies
+    )
 
 
 def pytest_addoption(parser):

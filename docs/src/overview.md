@@ -8,6 +8,9 @@ tt-torch uses venv to keep track of all dependencies. After [compiling](https://
 source env/activate
 ```
 
+The currently supported models can be found [here](https://docs.tenstorrent.com/tt-torch/models/supported_models.html).
+There is a brief demo showing how to use the compiler in *demos/resnet/resnet50_demo.py*
+
 The general compile flow is:
  1. Pytorch model -> torch.compile which creates an fx graph
  2. Several compiler passes on the fx graph including consteval and dead code removal
