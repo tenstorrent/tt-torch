@@ -24,6 +24,7 @@ class CompileDepth(Enum):
     COMPILE_OP_BY_OP = 5
     EXECUTE_OP_BY_OP = 6
     EXECUTE = 7
+    COMPILE_STABLEHLO_OP_BY_OP = 8
 
 
 class OpCompilationStatus(IntEnum):
@@ -35,7 +36,7 @@ class OpCompilationStatus(IntEnum):
     CONVERTED_TO_TTIR = 5
     CONVERTED_TO_TTNN = 6
     EXECUTED = 7
-
+    COMPILE_STABLEHLO_OP_BY_OP = 8
 
 class Tensor:
     def __init__(self, shape):

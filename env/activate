@@ -40,8 +40,11 @@ else
 
     cp dist/*.whl $TT_TORCH_HOME/dist
     cd $TT_TORCH_HOME
+    pip install --pre torch-mlir torchvision
+    pip install stablehlo -f https://github.com/openxla/stablehlo/releases/expanded_assets/dev-wheels
   fi
   pip install $TT_TORCH_HOME/dist/torchvision*.whl
+
 fi
 export TTTORCH_ENV_ACTIVATED=1
 export TTMLIR_ENV_ACTIVATED=1
