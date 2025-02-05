@@ -104,16 +104,18 @@ std::vector<int64_t> as_vec_int64(std::vector<T> const &vec) {
 
 static torch::Tensor create_torch_tensor(const tt::runtime::Tensor &tensor,
                                          const tt::runtime::TensorDesc &desc) {
+  tt::runtime::Tensor untilized_tensor =
+      tt::runtime::toHost(tensor, /*untilize=*/true);
   const std::vector<std::int64_t> shape = as_vec_int64(desc.shape);
   const std::vector<std::int64_t> stride = as_vec_int64((desc.stride));
 
   const tt::target::DataType rt_datatype =
-      tt::runtime::getTensorDataType(tensor);
+      tt::runtime::getTensorDataType(untilized_tensor);
   const torch::ScalarType dataType = dt_to_torch_scalar_type(rt_datatype);
 
   at::Tensor torch_tensor = at::empty_strided(shape, stride, dataType);
   tt::runtime::Tensor rt_tensor = create_tensor(torch_tensor);
-  tt::runtime::memcpy(rt_tensor, tensor);
+  tt::runtime::memcpy(rt_tensor, untilized_tensor);
 
   return torch_tensor;
 }
