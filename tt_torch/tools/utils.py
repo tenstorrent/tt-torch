@@ -24,6 +24,7 @@ class CompileDepth(Enum):
     COMPILE_OP_BY_OP = 5
     EXECUTE_OP_BY_OP = 6
     EXECUTE = 7
+    COMPILE_STABLEHLO_OP_BY_OP = 8
 
 
 class OpCompilationStatus(IntEnum):

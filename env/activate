@@ -34,6 +34,8 @@ else
   git checkout v0.20.0
   pip uninstall -y torchvision
   TORCHVISION_USE_VIDEO_CODEC=0 TORCHVISION_USE_FFMPEG=0 CC=clang CXX=clang++ _GLIBCXX_USE_CXX11_ABI=1 USE_CUDA=OFF python setup.py install
+  pip install --pre torch-mlir torchvision
+  pip install stablehlo -f https://github.com/openxla/stablehlo/releases/expanded_assets/dev-wheels
   cd $TT_TORCH_HOME
 fi
 export TTTORCH_ENV_ACTIVATED=1
