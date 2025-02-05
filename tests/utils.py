@@ -30,6 +30,7 @@ class ModelTester:
         compiler_config=None,
         assert_pcc=True,
         assert_atol=True,
+        record_property_handle=None,
     ):
         if mode not in ["train", "eval"]:
             raise ValueError(f"Current mode is not supported: {mode}")
@@ -59,6 +60,13 @@ class ModelTester:
             compiler_config = CompilerConfig()
         self.compiler_config = compiler_config
         self.compiler_config.model_name = model_name
+        self.record_property = record_property_handle
+        self.record_tag_cache = (
+            {}
+        )  # Stores all tags to be pushed to the test report at test completion
+
+        self.record_property("model_name", model_name)
+        self.record_property("mode", mode)
 
     def _load_model(self):
         raise NotImplementedError(
@@ -222,13 +230,17 @@ class ModelTester:
             golden
         ), "Expecting the type of both calculated and golden to be identical. Whether that be a tensor, list, dictonary, etc."
 
-        passed_pcc, passed_atol, msg, err_msg = verify_against_golden(
+        passed_pcc, passed_atol, msg, err_msg, pccs, atols = verify_against_golden(
             self._extract_outputs(golden),
             self._extract_outputs(outputs),
             self.required_pcc,
             self.required_atol,
             self.relative_atol,
+            return_pccs_atols=True,
         )
+        self.record_tag_cache["pccs"] = pccs
+        self.record_tag_cache["atols"] = atols
+
         if self.assert_pcc and self.assert_atol:
             if passed_pcc and passed_atol:
                 print(msg)
@@ -253,9 +265,19 @@ class ModelTester:
         return outputs
 
     def test_model(self, on_device=True):
+        ret = None
         if self.mode == "train":
-            return self.test_model_train(on_device)
+            ret = self.test_model_train(on_device)
         elif self.mode == "eval":
-            return self.test_model_eval(on_device)
+            ret = self.test_model_eval(on_device)
         else:
             raise ValueError(f"Current mode is not supported: {self.mode}")
+
+        self.record_property("torch_ttnn", (self, ret))
+        return ret
+
+    def flush_tag_cache_to_record(self):
+        self.record_property("tags", self.record_tag_cache)
+
+    def cleanup(self):
+        self.flush_tag_cache_to_record()

@@ -17,6 +17,7 @@ def verify_against_golden(
     required_pcc=0.99,
     required_atol=None,
     relative_atol=None,
+    return_pccs_atols=False,
 ):
     assert (required_atol is not None) != (
         relative_atol is not None
@@ -102,6 +103,9 @@ def verify_against_golden(
                 + f"ATOL of output {i}: {atol_:0,.4f}, threshold: {atol_threshold}{f' (calculated using relative_atol: {relative_atol})' if relative_atol is not None else ''} {red_x}\n"
             )
             passed_atol = False
+
+    if return_pccs_atols:
+        return passed_pcc, passed_atol, msg, err_msg, pccs, atols
 
     return passed_pcc, passed_atol, msg, err_msg
 
