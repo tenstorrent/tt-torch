@@ -7,7 +7,7 @@ import torch
 import requests
 import pytest
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig, CompileDepth
+from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
 # TODO: RuntimeError: "nms_kernel" not implemented for 'BFloat16'
@@ -53,7 +53,11 @@ model_info_list = [
     model_info_list,
     ids=[model_info[0] for model_info in model_info_list],
 )
-@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+@pytest.mark.parametrize(
+    "op_by_op",
+    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
+    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+)
 def test_torchvision_object_detection(record_property, model_info, mode, op_by_op):
     model_name, _ = model_info
 
@@ -62,6 +66,8 @@ def test_torchvision_object_detection(record_property, model_info, mode, op_by_o
     cc.consteval_parameters = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
+        if op_by_op == OpByOpBackend.STABLEHLO:
+            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     tester = ThisTester(
         model_info,
