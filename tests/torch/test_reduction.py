@@ -72,3 +72,59 @@ def test_sum_full(input_shape):
             return torch.reshape(torch.sum(x), (1,))
 
     verify_module(Basic(), input_shapes=input_shape, required_atol=0.7)
+
+
+@pytest.mark.parametrize(
+    ("input_shape", "dim_arg", "keep_dim", "input_type"),
+    [
+        ([(8, 8)], [0], True, [torch.float32]),
+        ([(8, 8)], [0, 1], True, [torch.float32]),
+        ([(8, 8)], [], True, [torch.float32]),
+        ([(4, 32, 64)], [1], False, [torch.float32]),
+        ([(4, 32, 64)], [2], False, [torch.float32]),
+        ([(4, 32, 64)], [1, 2], False, [torch.float32]),
+        ([(4, 2, 32, 32)], [0], False, [torch.bfloat16]),
+        ([(4, 2, 32, 32)], [2], False, [torch.bfloat16]),
+        ([(4, 2, 32, 32)], [3], False, [torch.bfloat16]),
+        ([(4, 2, 32, 32)], [0, 2], False, [torch.bfloat16]),
+        ([(4, 2, 32, 32)], [0, 2, 3], True, [torch.bfloat16]),
+        ([(4, 2, 32, 32)], [0, 1, 2, 3], True, [torch.bfloat16]),
+    ],
+)
+def test_reduce_min(input_shape, dim_arg, keep_dim, input_type):
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.amin(x, dim=dim_arg, keepdim=keep_dim)
+
+    verify_module(
+        Basic(),
+        input_shapes=input_shape,
+        input_data_types=input_type,
+    )
+
+
+# PyTorch returns a scalar value for full tensor reduction for 'keepDim=False'
+# option (default option). tt-metal does not support scalars on other hand; so
+# it returns 1D tensor as output for full reduction op. We are reshaping the
+# output so that device output tensor shape matches with the golden.
+@pytest.mark.parametrize(
+    ("input_shape"),
+    [
+        ([(64, 64)]),
+        ([(4, 128, 64)]),
+        ([(4, 4, 128, 128)]),
+        ([(4, 8, 32, 32)]),
+    ],
+)
+def test_min_full(input_shape):
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.reshape(torch.amin(x), (1,))
+
+    verify_module(Basic(), input_shapes=input_shape)
