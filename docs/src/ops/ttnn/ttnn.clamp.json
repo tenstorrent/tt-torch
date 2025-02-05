@@ -2,1723 +2,7 @@
   {
     "name": "ttnn.clamp",
     "input_shapes": [
-      "tensor<[120,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "5.900000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[120,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[120,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "5.900000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[120,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[128,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          4,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.270000e+02 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[128,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          4,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[128,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          4,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.270000e+02 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[128,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          4,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[128,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          4,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.500000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[128,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          4,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[128,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          4,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.500000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[128,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          4,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[128,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          4,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "3.100000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[128,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          4,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[128,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          4,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "3.100000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[128,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          4,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[128,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          4,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "6.300000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[128,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          4,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[128,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          4,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "6.300000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[128,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          4,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[128,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.270000e+02 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[128,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[128,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.270000e+02 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[128,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[128,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.500000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[128,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[128,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.500000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[128,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[128,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "3.100000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[128,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[128,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "3.100000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[128,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[128,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "6.300000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[128,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[128,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "6.300000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[128,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          4,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[160,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          5,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "7.900000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[160,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          5,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[160,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          5,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "7.900000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[160,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          5,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[240,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          8,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.190000e+02 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[240,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          8,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[240,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          8,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.190000e+02 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[240,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          8,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[27,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "2.600000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[27,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[27,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "2.600000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[27,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[27,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "2.600000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[27,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[27,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "2.600000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[27,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[30,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.400000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[30,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[30,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.400000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[30,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          1,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[320,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          10,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.590000e+02 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[320,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          10,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[320,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          10,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.590000e+02 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[320,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          10,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[320,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          10,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "3.190000e+02 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[320,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          10,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[320,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          10,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "3.190000e+02 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[320,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          10,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[320,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          10,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "3.190000e+02 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[320,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          10,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[320,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          10,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "3.190000e+02 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[320,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          10,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[40,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          2,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.900000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[40,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          2,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[40,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          2,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.900000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[40,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          2,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[480,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          15,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "2.390000e+02 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[480,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          15,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[480,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          15,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "2.390000e+02 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[480,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          15,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[60,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          2,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "2.900000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[60,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          2,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[60,1,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          2,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "2.900000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[60,1,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
-        "memory_config": [
-          2,
-          1,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[640,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          20,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "3.190000e+02 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[640,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          20,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[640,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          20,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "3.190000e+02 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[640,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          20,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[80,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          3,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "3.900000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[80,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          3,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "1.0",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[80,i32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          3,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "3.900000e+01 : f32",
-      "min": "0.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[80,i32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0)",
-        "mapping_to": "(0, d0)",
-        "memory_config": [
-          1,
-          3,
-          "tile<32x32, u32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,1024,512,f32]>"
+      "tensor<[1,1024,3072,f32]>"
     ],
     "input_layouts": [
       {
@@ -1726,7 +10,7 @@
         "mapping_to": "(d0 * 1024 + d1, d2)",
         "memory_config": [
           32,
-          16,
+          96,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -1737,7 +21,7 @@
       "min": "-4.000000e+00 : f32"
     },
     "output_shapes": [
-      "tensor<[1,1024,512,f32]>"
+      "tensor<[1,1024,3072,f32]>"
     ],
     "output_layouts": [
       {
@@ -1745,7 +29,7 @@
         "mapping_to": "(d0 * 1024 + d1, d2)",
         "memory_config": [
           32,
-          16,
+          96,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -1757,7 +41,7 @@
   {
     "name": "ttnn.clamp",
     "input_shapes": [
-      "tensor<[1,1024,512,f32]>"
+      "tensor<[1,1024,3072,f32]>"
     ],
     "input_layouts": [
       {
@@ -1765,7 +49,7 @@
         "mapping_to": "(d0 * 1024 + d1, d2)",
         "memory_config": [
           32,
-          16,
+          96,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -1776,7 +60,7 @@
       "min": "-1.000000e+00 : f32"
     },
     "output_shapes": [
-      "tensor<[1,1024,512,f32]>"
+      "tensor<[1,1024,3072,f32]>"
     ],
     "output_layouts": [
       {
@@ -1784,7 +68,7 @@
         "mapping_to": "(d0 * 1024 + d1, d2)",
         "memory_config": [
           32,
-          16,
+          96,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -1874,6 +158,84 @@
   {
     "name": "ttnn.clamp",
     "input_shapes": [
+      "tensor<[1,1024,6144,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1024 + d1, d2)",
+        "memory_config": [
+          32,
+          192,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "max": "4.000000e+00 : f32",
+      "min": "-4.000000e+00 : f32"
+    },
+    "output_shapes": [
+      "tensor<[1,1024,6144,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1024 + d1, d2)",
+        "memory_config": [
+          32,
+          192,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.clamp",
+    "input_shapes": [
+      "tensor<[1,1024,6144,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1024 + d1, d2)",
+        "memory_config": [
+          32,
+          192,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "max": "1.000000e+00 : f32",
+      "min": "-1.000000e+00 : f32"
+    },
+    "output_shapes": [
+      "tensor<[1,1024,6144,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 1024 + d1, d2)",
+        "memory_config": [
+          32,
+          192,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.clamp",
+    "input_shapes": [
       "tensor<[1,1024,640,f32]>"
     ],
     "input_layouts": [
@@ -1941,396 +303,6 @@
         "memory_config": [
           32,
           20,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,1024,640,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 1024 + d1, d2)",
-        "memory_config": [
-          32,
-          20,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,1024,640,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 1024 + d1, d2)",
-        "memory_config": [
-          32,
-          20,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,1024,640,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 1024 + d1, d2)",
-        "memory_config": [
-          32,
-          20,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,1024,640,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 1024 + d1, d2)",
-        "memory_config": [
-          32,
-          20,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,10,3072,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 10 + d1, d2)",
-        "memory_config": [
-          1,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,10,3072,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 10 + d1, d2)",
-        "memory_config": [
-          1,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,10,3072,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 10 + d1, d2)",
-        "memory_config": [
-          1,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,10,3072,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 10 + d1, d2)",
-        "memory_config": [
-          1,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,10,3072,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 10 + d1, d2)",
-        "memory_config": [
-          1,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,10,3072,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 10 + d1, d2)",
-        "memory_config": [
-          1,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,10,3072,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 10 + d1, d2)",
-        "memory_config": [
-          1,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,10,3072,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 10 + d1, d2)",
-        "memory_config": [
-          1,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,10,768,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 10 + d1, d2)",
-        "memory_config": [
-          1,
-          24,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,10,768,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 10 + d1, d2)",
-        "memory_config": [
-          1,
-          24,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,10,768,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 10 + d1, d2)",
-        "memory_config": [
-          1,
-          24,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,10,768,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 10 + d1, d2)",
-        "memory_config": [
-          1,
-          24,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,10,768,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 10 + d1, d2)",
-        "memory_config": [
-          1,
-          24,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,10,768,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 10 + d1, d2)",
-        "memory_config": [
-          1,
-          24,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,10,768,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 10 + d1, d2)",
-        "memory_config": [
-          1,
-          24,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,10,768,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 10 + d1, d2)",
-        "memory_config": [
-          1,
-          24,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -2420,15 +392,15 @@
   {
     "name": "ttnn.clamp",
     "input_shapes": [
-      "tensor<[1,1200,1280,f32]>"
+      "tensor<[1,1370,5120,f32]>"
     ],
     "input_layouts": [
       {
         "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 1200 + d1, d2)",
+        "mapping_to": "(d0 * 1370 + d1, d2)",
         "memory_config": [
-          38,
-          40,
+          43,
+          160,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -2439,15 +411,15 @@
       "min": "-4.000000e+00 : f32"
     },
     "output_shapes": [
-      "tensor<[1,1200,1280,f32]>"
+      "tensor<[1,1370,5120,f32]>"
     ],
     "output_layouts": [
       {
         "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 1200 + d1, d2)",
+        "mapping_to": "(d0 * 1370 + d1, d2)",
         "memory_config": [
-          38,
-          40,
+          43,
+          160,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -2459,15 +431,15 @@
   {
     "name": "ttnn.clamp",
     "input_shapes": [
-      "tensor<[1,1200,1280,f32]>"
+      "tensor<[1,1370,5120,f32]>"
     ],
     "input_layouts": [
       {
         "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 1200 + d1, d2)",
+        "mapping_to": "(d0 * 1370 + d1, d2)",
         "memory_config": [
-          38,
-          40,
+          43,
+          160,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -2478,93 +450,15 @@
       "min": "-1.000000e+00 : f32"
     },
     "output_shapes": [
-      "tensor<[1,1200,1280,f32]>"
+      "tensor<[1,1370,5120,f32]>"
     ],
     "output_layouts": [
       {
         "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 1200 + d1, d2)",
+        "mapping_to": "(d0 * 1370 + d1, d2)",
         "memory_config": [
-          38,
-          40,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,1445,768,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 1445 + d1, d2)",
-        "memory_config": [
-          46,
-          24,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,1445,768,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 1445 + d1, d2)",
-        "memory_config": [
-          46,
-          24,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,1445,768,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 1445 + d1, d2)",
-        "memory_config": [
-          46,
-          24,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,1445,768,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 1445 + d1, d2)",
-        "memory_config": [
-          46,
-          24,
+          43,
+          160,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -2654,15 +548,15 @@
   {
     "name": "ttnn.clamp",
     "input_shapes": [
-      "tensor<[1,1536,f32]>"
+      "tensor<[1,14,14,2048,f32]>"
     ],
     "input_layouts": [
       {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 196 + d1 * 14 + d2, d3)",
         "memory_config": [
-          1,
-          48,
+          7,
+          64,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -2673,15 +567,15 @@
       "min": "-4.000000e+00 : f32"
     },
     "output_shapes": [
-      "tensor<[1,1536,f32]>"
+      "tensor<[1,14,14,2048,f32]>"
     ],
     "output_layouts": [
       {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 196 + d1 * 14 + d2, d3)",
         "memory_config": [
-          1,
-          48,
+          7,
+          64,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -2693,15 +587,15 @@
   {
     "name": "ttnn.clamp",
     "input_shapes": [
-      "tensor<[1,1536,f32]>"
+      "tensor<[1,14,14,2048,f32]>"
     ],
     "input_layouts": [
       {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 196 + d1 * 14 + d2, d3)",
         "memory_config": [
-          1,
-          48,
+          7,
+          64,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -2712,15 +606,15 @@
       "min": "-1.000000e+00 : f32"
     },
     "output_shapes": [
-      "tensor<[1,1536,f32]>"
+      "tensor<[1,14,14,2048,f32]>"
     ],
     "output_layouts": [
       {
-        "mapping_from": "(d0, d1)",
-        "mapping_to": "(d0, d1)",
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 196 + d1 * 14 + d2, d3)",
         "memory_config": [
-          1,
-          48,
+          7,
+          64,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -2888,7 +782,7 @@
   {
     "name": "ttnn.clamp",
     "input_shapes": [
-      "tensor<[1,16384,128,f32]>"
+      "tensor<[1,16384,1536,f32]>"
     ],
     "input_layouts": [
       {
@@ -2896,7 +790,7 @@
         "mapping_to": "(d0 * 16384 + d1, d2)",
         "memory_config": [
           512,
-          4,
+          48,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -2907,7 +801,7 @@
       "min": "-4.000000e+00 : f32"
     },
     "output_shapes": [
-      "tensor<[1,16384,128,f32]>"
+      "tensor<[1,16384,1536,f32]>"
     ],
     "output_layouts": [
       {
@@ -2915,7 +809,7 @@
         "mapping_to": "(d0 * 16384 + d1, d2)",
         "memory_config": [
           512,
-          4,
+          48,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -2927,7 +821,7 @@
   {
     "name": "ttnn.clamp",
     "input_shapes": [
-      "tensor<[1,16384,128,f32]>"
+      "tensor<[1,16384,1536,f32]>"
     ],
     "input_layouts": [
       {
@@ -2935,7 +829,7 @@
         "mapping_to": "(d0 * 16384 + d1, d2)",
         "memory_config": [
           512,
-          4,
+          48,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -2946,7 +840,7 @@
       "min": "-1.000000e+00 : f32"
     },
     "output_shapes": [
-      "tensor<[1,16384,128,f32]>"
+      "tensor<[1,16384,1536,f32]>"
     ],
     "output_layouts": [
       {
@@ -2954,7 +848,7 @@
         "mapping_to": "(d0 * 16384 + d1, d2)",
         "memory_config": [
           512,
-          4,
+          48,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -2966,15 +860,15 @@
   {
     "name": "ttnn.clamp",
     "input_shapes": [
-      "tensor<[1,16,3072,f32]>"
+      "tensor<[1,16384,768,f32]>"
     ],
     "input_layouts": [
       {
         "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 16 + d1, d2)",
+        "mapping_to": "(d0 * 16384 + d1, d2)",
         "memory_config": [
-          1,
-          96,
+          512,
+          24,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -2985,15 +879,15 @@
       "min": "-4.000000e+00 : f32"
     },
     "output_shapes": [
-      "tensor<[1,16,3072,f32]>"
+      "tensor<[1,16384,768,f32]>"
     ],
     "output_layouts": [
       {
         "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 16 + d1, d2)",
+        "mapping_to": "(d0 * 16384 + d1, d2)",
         "memory_config": [
-          1,
-          96,
+          512,
+          24,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -3005,15 +899,15 @@
   {
     "name": "ttnn.clamp",
     "input_shapes": [
-      "tensor<[1,16,3072,f32]>"
+      "tensor<[1,16384,768,f32]>"
     ],
     "input_layouts": [
       {
         "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 16 + d1, d2)",
+        "mapping_to": "(d0 * 16384 + d1, d2)",
         "memory_config": [
-          1,
-          96,
+          512,
+          24,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -3024,93 +918,15 @@
       "min": "-1.000000e+00 : f32"
     },
     "output_shapes": [
-      "tensor<[1,16,3072,f32]>"
+      "tensor<[1,16384,768,f32]>"
     ],
     "output_layouts": [
       {
         "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 16 + d1, d2)",
+        "mapping_to": "(d0 * 16384 + d1, d2)",
         "memory_config": [
-          1,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,16,3072,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 16 + d1, d2)",
-        "memory_config": [
-          1,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,16,3072,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 16 + d1, d2)",
-        "memory_config": [
-          1,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,16,3072,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 16 + d1, d2)",
-        "memory_config": [
-          1,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,16,3072,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 16 + d1, d2)",
-        "memory_config": [
-          1,
-          96,
+          512,
+          24,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -3200,552 +1016,6 @@
   {
     "name": "ttnn.clamp",
     "input_shapes": [
-      "tensor<[1,19200,256,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 19200 + d1, d2)",
-        "memory_config": [
-          600,
-          8,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,19200,256,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 19200 + d1, d2)",
-        "memory_config": [
-          600,
-          8,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,19200,256,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 19200 + d1, d2)",
-        "memory_config": [
-          600,
-          8,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,19200,256,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 19200 + d1, d2)",
-        "memory_config": [
-          600,
-          8,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,197,3072,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 197 + d1, d2)",
-        "memory_config": [
-          7,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,197,3072,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 197 + d1, d2)",
-        "memory_config": [
-          7,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,197,3072,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 197 + d1, d2)",
-        "memory_config": [
-          7,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,197,3072,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 197 + d1, d2)",
-        "memory_config": [
-          7,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,197,3072,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 197 + d1, d2)",
-        "memory_config": [
-          7,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,197,3072,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 197 + d1, d2)",
-        "memory_config": [
-          7,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,197,3072,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 197 + d1, d2)",
-        "memory_config": [
-          7,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,197,3072,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 197 + d1, d2)",
-        "memory_config": [
-          7,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,197,4096,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 197 + d1, d2)",
-        "memory_config": [
-          7,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,197,4096,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 197 + d1, d2)",
-        "memory_config": [
-          7,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,197,4096,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 197 + d1, d2)",
-        "memory_config": [
-          7,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,197,4096,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 197 + d1, d2)",
-        "memory_config": [
-          7,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,197,4096,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 197 + d1, d2)",
-        "memory_config": [
-          7,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,197,4096,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 197 + d1, d2)",
-        "memory_config": [
-          7,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,197,4096,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 197 + d1, d2)",
-        "memory_config": [
-          7,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,197,4096,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 197 + d1, d2)",
-        "memory_config": [
-          7,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,19,4096,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 19 + d1, d2)",
-        "memory_config": [
-          1,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,19,4096,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 19 + d1, d2)",
-        "memory_config": [
-          1,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,19,4096,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 19 + d1, d2)",
-        "memory_config": [
-          1,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,19,4096,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 19 + d1, d2)",
-        "memory_config": [
-          1,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,19,4096,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 19 + d1, d2)",
-        "memory_config": [
-          1,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,19,4096,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 19 + d1, d2)",
-        "memory_config": [
-          1,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,19,4096,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 19 + d1, d2)",
-        "memory_config": [
-          1,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,19,4096,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 19 + d1, d2)",
-        "memory_config": [
-          1,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
       "tensor<[1,201,3072,f32]>"
     ],
     "input_layouts": [
@@ -3813,240 +1083,6 @@
         "memory_config": [
           7,
           96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,201,3072,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 201 + d1, d2)",
-        "memory_config": [
-          7,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,201,3072,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 201 + d1, d2)",
-        "memory_config": [
-          7,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,201,3072,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 201 + d1, d2)",
-        "memory_config": [
-          7,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,201,3072,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 201 + d1, d2)",
-        "memory_config": [
-          7,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,2048,768,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 2048 + d1, d2)",
-        "memory_config": [
-          64,
-          24,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,2048,768,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 2048 + d1, d2)",
-        "memory_config": [
-          64,
-          24,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,2048,768,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 2048 + d1, d2)",
-        "memory_config": [
-          64,
-          24,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,2048,768,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 2048 + d1, d2)",
-        "memory_config": [
-          64,
-          24,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,2048,768,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 2048 + d1, d2)",
-        "memory_config": [
-          64,
-          24,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,2048,768,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 2048 + d1, d2)",
-        "memory_config": [
-          64,
-          24,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,2048,768,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 2048 + d1, d2)",
-        "memory_config": [
-          64,
-          24,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,2048,768,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 2048 + d1, d2)",
-        "memory_config": [
-          64,
-          24,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -4136,7 +1172,7 @@
   {
     "name": "ttnn.clamp",
     "input_shapes": [
-      "tensor<[1,256,1024,f32]>"
+      "tensor<[1,256,256,f32]>"
     ],
     "input_layouts": [
       {
@@ -4144,6 +1180,318 @@
         "mapping_to": "(d0 * 256 + d1, d2)",
         "memory_config": [
           8,
+          8,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "max": "4.000000e+00 : f32",
+      "min": "-4.000000e+00 : f32"
+    },
+    "output_shapes": [
+      "tensor<[1,256,256,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          8,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.clamp",
+    "input_shapes": [
+      "tensor<[1,256,256,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          8,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "max": "1.000000e+00 : f32",
+      "min": "-1.000000e+00 : f32"
+    },
+    "output_shapes": [
+      "tensor<[1,256,256,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          8,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.clamp",
+    "input_shapes": [
+      "tensor<[1,256,5120,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          160,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "max": "4.000000e+00 : f32",
+      "min": "-4.000000e+00 : f32"
+    },
+    "output_shapes": [
+      "tensor<[1,256,5120,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          160,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.clamp",
+    "input_shapes": [
+      "tensor<[1,256,5120,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          160,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "max": "1.000000e+00 : f32",
+      "min": "-1.000000e+00 : f32"
+    },
+    "output_shapes": [
+      "tensor<[1,256,5120,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          160,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.clamp",
+    "input_shapes": [
+      "tensor<[1,256,6144,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          192,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "max": "4.000000e+00 : f32",
+      "min": "-4.000000e+00 : f32"
+    },
+    "output_shapes": [
+      "tensor<[1,256,6144,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          192,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.clamp",
+    "input_shapes": [
+      "tensor<[1,256,6144,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          192,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "max": "1.000000e+00 : f32",
+      "min": "-1.000000e+00 : f32"
+    },
+    "output_shapes": [
+      "tensor<[1,256,6144,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 256 + d1, d2)",
+        "memory_config": [
+          8,
+          192,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.clamp",
+    "input_shapes": [
+      "tensor<[1,257,3072,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 257 + d1, d2)",
+        "memory_config": [
+          9,
+          96,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "max": "4.000000e+00 : f32",
+      "min": "-4.000000e+00 : f32"
+    },
+    "output_shapes": [
+      "tensor<[1,257,3072,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 257 + d1, d2)",
+        "memory_config": [
+          9,
+          96,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.clamp",
+    "input_shapes": [
+      "tensor<[1,257,3072,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 257 + d1, d2)",
+        "memory_config": [
+          9,
+          96,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "max": "1.000000e+00 : f32",
+      "min": "-1.000000e+00 : f32"
+    },
+    "output_shapes": [
+      "tensor<[1,257,3072,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 257 + d1, d2)",
+        "memory_config": [
+          9,
+          96,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.clamp",
+    "input_shapes": [
+      "tensor<[1,28,28,1024,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 784 + d1 * 28 + d2, d3)",
+        "memory_config": [
+          25,
           32,
           "tile<32x32, f32>",
           "dram"
@@ -4155,14 +1503,14 @@
       "min": "-4.000000e+00 : f32"
     },
     "output_shapes": [
-      "tensor<[1,256,1024,f32]>"
+      "tensor<[1,28,28,1024,f32]>"
     ],
     "output_layouts": [
       {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 784 + d1 * 28 + d2, d3)",
         "memory_config": [
-          8,
+          25,
           32,
           "tile<32x32, f32>",
           "dram"
@@ -4175,14 +1523,14 @@
   {
     "name": "ttnn.clamp",
     "input_shapes": [
-      "tensor<[1,256,1024,f32]>"
+      "tensor<[1,28,28,1024,f32]>"
     ],
     "input_layouts": [
       {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 784 + d1 * 28 + d2, d3)",
         "memory_config": [
-          8,
+          25,
           32,
           "tile<32x32, f32>",
           "dram"
@@ -4194,14 +1542,14 @@
       "min": "-1.000000e+00 : f32"
     },
     "output_shapes": [
-      "tensor<[1,256,1024,f32]>"
+      "tensor<[1,28,28,1024,f32]>"
     ],
     "output_layouts": [
       {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 784 + d1 * 28 + d2, d3)",
         "memory_config": [
-          8,
+          25,
           32,
           "tile<32x32, f32>",
           "dram"
@@ -4214,786 +1562,6 @@
   {
     "name": "ttnn.clamp",
     "input_shapes": [
-      "tensor<[1,256,1280,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          40,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,256,1280,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          40,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,256,1280,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          40,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,256,1280,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          40,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,256,1280,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          40,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,256,1280,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          40,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,256,1280,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          40,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,256,1280,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          40,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,256,256,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          8,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,256,256,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          8,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,256,256,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          8,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,256,256,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          8,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,256,256,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          8,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,256,256,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          8,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,256,256,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          8,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,256,256,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          8,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,256,4096,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,256,4096,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,256,4096,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,256,4096,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,256,4096,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,256,4096,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,256,4096,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,256,4096,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          128,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,256,5120,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          160,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,256,5120,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          160,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,256,5120,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          160,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,256,5120,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          160,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,256,5120,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          160,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,256,5120,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          160,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,256,5120,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          160,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,256,5120,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 256 + d1, d2)",
-        "memory_config": [
-          8,
-          160,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,25,3072,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 25 + d1, d2)",
-        "memory_config": [
-          1,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,25,3072,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 25 + d1, d2)",
-        "memory_config": [
-          1,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,25,3072,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 25 + d1, d2)",
-        "memory_config": [
-          1,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,25,3072,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 25 + d1, d2)",
-        "memory_config": [
-          1,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,25,3072,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 25 + d1, d2)",
-        "memory_config": [
-          1,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,25,3072,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 25 + d1, d2)",
-        "memory_config": [
-          1,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,25,3072,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 25 + d1, d2)",
-        "memory_config": [
-          1,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,25,3072,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 25 + d1, d2)",
-        "memory_config": [
-          1,
-          96,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
       "tensor<[1,300,2048,f32]>"
     ],
     "input_layouts": [
@@ -5061,240 +1629,6 @@
         "memory_config": [
           10,
           64,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,300,2048,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 300 + d1, d2)",
-        "memory_config": [
-          10,
-          64,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,300,2048,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 300 + d1, d2)",
-        "memory_config": [
-          10,
-          64,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,300,2048,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 300 + d1, d2)",
-        "memory_config": [
-          10,
-          64,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,300,2048,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 300 + d1, d2)",
-        "memory_config": [
-          10,
-          64,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,3072,8,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 3072 + d1, d2)",
-        "memory_config": [
-          96,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,3072,8,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 3072 + d1, d2)",
-        "memory_config": [
-          96,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,3072,8,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 3072 + d1, d2)",
-        "memory_config": [
-          96,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,3072,8,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 3072 + d1, d2)",
-        "memory_config": [
-          96,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,3072,8,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 3072 + d1, d2)",
-        "memory_config": [
-          96,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,3072,8,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 3072 + d1, d2)",
-        "memory_config": [
-          96,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,3072,8,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 3072 + d1, d2)",
-        "memory_config": [
-          96,
-          1,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,3072,8,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 3072 + d1, d2)",
-        "memory_config": [
-          96,
-          1,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -5384,7 +1718,7 @@
   {
     "name": "ttnn.clamp",
     "input_shapes": [
-      "tensor<[1,4096,1280,f32]>"
+      "tensor<[1,4096,1536,f32]>"
     ],
     "input_layouts": [
       {
@@ -5392,7 +1726,7 @@
         "mapping_to": "(d0 * 4096 + d1, d2)",
         "memory_config": [
           128,
-          40,
+          48,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -5403,7 +1737,7 @@
       "min": "-4.000000e+00 : f32"
     },
     "output_shapes": [
-      "tensor<[1,4096,1280,f32]>"
+      "tensor<[1,4096,1536,f32]>"
     ],
     "output_layouts": [
       {
@@ -5411,7 +1745,7 @@
         "mapping_to": "(d0 * 4096 + d1, d2)",
         "memory_config": [
           128,
-          40,
+          48,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -5423,7 +1757,7 @@
   {
     "name": "ttnn.clamp",
     "input_shapes": [
-      "tensor<[1,4096,1280,f32]>"
+      "tensor<[1,4096,1536,f32]>"
     ],
     "input_layouts": [
       {
@@ -5431,7 +1765,7 @@
         "mapping_to": "(d0 * 4096 + d1, d2)",
         "memory_config": [
           128,
-          40,
+          48,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -5442,7 +1776,7 @@
       "min": "-1.000000e+00 : f32"
     },
     "output_shapes": [
-      "tensor<[1,4096,1280,f32]>"
+      "tensor<[1,4096,1536,f32]>"
     ],
     "output_layouts": [
       {
@@ -5450,85 +1784,7 @@
         "mapping_to": "(d0 * 4096 + d1, d2)",
         "memory_config": [
           128,
-          40,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,4096,256,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 4096 + d1, d2)",
-        "memory_config": [
-          128,
-          8,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,4096,256,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 4096 + d1, d2)",
-        "memory_config": [
-          128,
-          8,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,4096,256,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 4096 + d1, d2)",
-        "memory_config": [
-          128,
-          8,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,4096,256,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 4096 + d1, d2)",
-        "memory_config": [
-          128,
-          8,
+          48,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -5607,6 +1863,84 @@
         "memory_config": [
           128,
           8,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.clamp",
+    "input_shapes": [
+      "tensor<[1,4096,3072,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 4096 + d1, d2)",
+        "memory_config": [
+          128,
+          96,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "max": "4.000000e+00 : f32",
+      "min": "-4.000000e+00 : f32"
+    },
+    "output_shapes": [
+      "tensor<[1,4096,3072,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 4096 + d1, d2)",
+        "memory_config": [
+          128,
+          96,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.clamp",
+    "input_shapes": [
+      "tensor<[1,4096,3072,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 4096 + d1, d2)",
+        "memory_config": [
+          128,
+          96,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "max": "1.000000e+00 : f32",
+      "min": "-1.000000e+00 : f32"
+    },
+    "output_shapes": [
+      "tensor<[1,4096,3072,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2)",
+        "mapping_to": "(d0 * 4096 + d1, d2)",
+        "memory_config": [
+          128,
+          96,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -5696,14 +2030,14 @@
   {
     "name": "ttnn.clamp",
     "input_shapes": [
-      "tensor<[1,4800,512,f32]>"
+      "tensor<[1,56,56,512,f32]>"
     ],
     "input_layouts": [
       {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 4800 + d1, d2)",
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 3136 + d1 * 56 + d2, d3)",
         "memory_config": [
-          150,
+          98,
           16,
           "tile<32x32, f32>",
           "dram"
@@ -5715,14 +2049,14 @@
       "min": "-4.000000e+00 : f32"
     },
     "output_shapes": [
-      "tensor<[1,4800,512,f32]>"
+      "tensor<[1,56,56,512,f32]>"
     ],
     "output_layouts": [
       {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 4800 + d1, d2)",
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 3136 + d1 * 56 + d2, d3)",
         "memory_config": [
-          150,
+          98,
           16,
           "tile<32x32, f32>",
           "dram"
@@ -5735,14 +2069,14 @@
   {
     "name": "ttnn.clamp",
     "input_shapes": [
-      "tensor<[1,4800,512,f32]>"
+      "tensor<[1,56,56,512,f32]>"
     ],
     "input_layouts": [
       {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 4800 + d1, d2)",
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 3136 + d1 * 56 + d2, d3)",
         "memory_config": [
-          150,
+          98,
           16,
           "tile<32x32, f32>",
           "dram"
@@ -5754,14 +2088,14 @@
       "min": "-1.000000e+00 : f32"
     },
     "output_shapes": [
-      "tensor<[1,4800,512,f32]>"
+      "tensor<[1,56,56,512,f32]>"
     ],
     "output_layouts": [
       {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 4800 + d1, d2)",
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 3136 + d1 * 56 + d2, d3)",
         "memory_config": [
-          150,
+          98,
           16,
           "tile<32x32, f32>",
           "dram"
@@ -5852,15 +2186,15 @@
   {
     "name": "ttnn.clamp",
     "input_shapes": [
-      "tensor<[1,64,5120,f32]>"
+      "tensor<[1,65536,768,f32]>"
     ],
     "input_layouts": [
       {
         "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 64 + d1, d2)",
+        "mapping_to": "(d0 * 65536 + d1, d2)",
         "memory_config": [
-          2,
-          160,
+          2048,
+          24,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -5871,15 +2205,15 @@
       "min": "-4.000000e+00 : f32"
     },
     "output_shapes": [
-      "tensor<[1,64,5120,f32]>"
+      "tensor<[1,65536,768,f32]>"
     ],
     "output_layouts": [
       {
         "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 64 + d1, d2)",
+        "mapping_to": "(d0 * 65536 + d1, d2)",
         "memory_config": [
-          2,
-          160,
+          2048,
+          24,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -5891,15 +2225,15 @@
   {
     "name": "ttnn.clamp",
     "input_shapes": [
-      "tensor<[1,64,5120,f32]>"
+      "tensor<[1,65536,768,f32]>"
     ],
     "input_layouts": [
       {
         "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 64 + d1, d2)",
+        "mapping_to": "(d0 * 65536 + d1, d2)",
         "memory_config": [
-          2,
-          160,
+          2048,
+          24,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -5910,93 +2244,15 @@
       "min": "-1.000000e+00 : f32"
     },
     "output_shapes": [
-      "tensor<[1,64,5120,f32]>"
+      "tensor<[1,65536,768,f32]>"
     ],
     "output_layouts": [
       {
         "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 64 + d1, d2)",
+        "mapping_to": "(d0 * 65536 + d1, d2)",
         "memory_config": [
-          2,
-          160,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,7,18176,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 7 + d1, d2)",
-        "memory_config": [
-          1,
-          568,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "4.000000e+00 : f32",
-      "min": "-4.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,7,18176,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 7 + d1, d2)",
-        "memory_config": [
-          1,
-          568,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "pcc": "N/A",
-    "atol": "N/A"
-  },
-  {
-    "name": "ttnn.clamp",
-    "input_shapes": [
-      "tensor<[1,7,18176,f32]>"
-    ],
-    "input_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 7 + d1, d2)",
-        "memory_config": [
-          1,
-          568,
-          "tile<32x32, f32>",
-          "dram"
-        ]
-      }
-    ],
-    "attributes": {
-      "max": "1.000000e+00 : f32",
-      "min": "-1.000000e+00 : f32"
-    },
-    "output_shapes": [
-      "tensor<[1,7,18176,f32]>"
-    ],
-    "output_layouts": [
-      {
-        "mapping_from": "(d0, d1, d2)",
-        "mapping_to": "(d0 * 7 + d1, d2)",
-        "memory_config": [
-          1,
-          568,
+          2048,
+          24,
           "tile<32x32, f32>",
           "dram"
         ]
@@ -6075,6 +2331,84 @@
         "memory_config": [
           1,
           568,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.clamp",
+    "input_shapes": [
+      "tensor<[1,7,7,4096,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 49 + d1 * 7 + d2, d3)",
+        "memory_config": [
+          2,
+          128,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "max": "4.000000e+00 : f32",
+      "min": "-4.000000e+00 : f32"
+    },
+    "output_shapes": [
+      "tensor<[1,7,7,4096,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 49 + d1 * 7 + d2, d3)",
+        "memory_config": [
+          2,
+          128,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.clamp",
+    "input_shapes": [
+      "tensor<[1,7,7,4096,f32]>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 49 + d1 * 7 + d2, d3)",
+        "memory_config": [
+          2,
+          128,
+          "tile<32x32, f32>",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "max": "1.000000e+00 : f32",
+      "min": "-1.000000e+00 : f32"
+    },
+    "output_shapes": [
+      "tensor<[1,7,7,4096,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 49 + d1 * 7 + d2, d3)",
+        "memory_config": [
+          2,
+          128,
           "tile<32x32, f32>",
           "dram"
         ]

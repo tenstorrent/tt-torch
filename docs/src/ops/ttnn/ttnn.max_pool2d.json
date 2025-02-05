@@ -1,0 +1,436 @@
+[
+  {
+    "name": "ttnn.max_pool2d",
+    "input_shapes": [
+      "tensor<[1,1,3136,256,bf16]>",
+      "tensor<[1,1,784,256,bf16]>",
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 3136 + d1 * 3136 + d2, d3)",
+        "memory_config": [
+          3136,
+          256,
+          "bf16",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 784 + d1 * 784 + d2, d3)",
+        "memory_config": [
+          784,
+          256,
+          "bf16",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "batch_size": "1 : si32",
+      "ceil_mode": false,
+      "channels": "256 : si32",
+      "dilation_height": "1 : si32",
+      "dilation_width": "1 : si32",
+      "input_height": "56 : si32",
+      "input_width": "56 : si32",
+      "kernel_height": "2 : si32",
+      "kernel_width": "2 : si32",
+      "padding_height": "0 : si32",
+      "padding_width": "0 : si32",
+      "stride_height": "2 : si32",
+      "stride_width": "2 : si32"
+    },
+    "output_shapes": [
+      "tensor<[1,1,784,256,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 784 + d1 * 784 + d2, d3)",
+        "memory_config": [
+          784,
+          256,
+          "bf16",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.max_pool2d",
+    "input_shapes": [
+      "tensor<[1,1,196,512,bf16]>",
+      "tensor<[1,1,49,512,bf16]>",
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 196 + d1 * 196 + d2, d3)",
+        "memory_config": [
+          196,
+          512,
+          "bf16",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 49 + d1 * 49 + d2, d3)",
+        "memory_config": [
+          49,
+          512,
+          "bf16",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "batch_size": "1 : si32",
+      "ceil_mode": false,
+      "channels": "512 : si32",
+      "dilation_height": "1 : si32",
+      "dilation_width": "1 : si32",
+      "input_height": "14 : si32",
+      "input_width": "14 : si32",
+      "kernel_height": "2 : si32",
+      "kernel_width": "2 : si32",
+      "padding_height": "0 : si32",
+      "padding_width": "0 : si32",
+      "stride_height": "2 : si32",
+      "stride_width": "2 : si32"
+    },
+    "output_shapes": [
+      "tensor<[1,1,49,512,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 49 + d1 * 49 + d2, d3)",
+        "memory_config": [
+          49,
+          512,
+          "bf16",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.max_pool2d",
+    "input_shapes": [
+      "tensor<[1,1,784,512,bf16]>",
+      "tensor<[1,1,196,512,bf16]>",
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 784 + d1 * 784 + d2, d3)",
+        "memory_config": [
+          784,
+          512,
+          "bf16",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 196 + d1 * 196 + d2, d3)",
+        "memory_config": [
+          196,
+          512,
+          "bf16",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "batch_size": "1 : si32",
+      "ceil_mode": false,
+      "channels": "512 : si32",
+      "dilation_height": "1 : si32",
+      "dilation_width": "1 : si32",
+      "input_height": "28 : si32",
+      "input_width": "28 : si32",
+      "kernel_height": "2 : si32",
+      "kernel_width": "2 : si32",
+      "padding_height": "0 : si32",
+      "padding_width": "0 : si32",
+      "stride_height": "2 : si32",
+      "stride_width": "2 : si32"
+    },
+    "output_shapes": [
+      "tensor<[1,1,196,512,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 196 + d1 * 196 + d2, d3)",
+        "memory_config": [
+          196,
+          512,
+          "bf16",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.max_pool2d",
+    "input_shapes": [
+      "tensor<[1,1,12544,64,bf16]>",
+      "tensor<[1,1,3136,64,bf16]>",
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 12544 + d1 * 12544 + d2, d3)",
+        "memory_config": [
+          12544,
+          64,
+          "bf16",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 3136 + d1 * 3136 + d2, d3)",
+        "memory_config": [
+          3136,
+          64,
+          "bf16",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "batch_size": "1 : si32",
+      "ceil_mode": false,
+      "channels": "64 : si32",
+      "dilation_height": "1 : si32",
+      "dilation_width": "1 : si32",
+      "input_height": "112 : si32",
+      "input_width": "112 : si32",
+      "kernel_height": "3 : si32",
+      "kernel_width": "3 : si32",
+      "padding_height": "1 : si32",
+      "padding_width": "1 : si32",
+      "stride_height": "2 : si32",
+      "stride_width": "2 : si32"
+    },
+    "output_shapes": [
+      "tensor<[1,1,3136,64,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 3136 + d1 * 3136 + d2, d3)",
+        "memory_config": [
+          3136,
+          64,
+          "bf16",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.max_pool2d",
+    "input_shapes": [
+      "tensor<[1,1,50176,64,bf16]>",
+      "tensor<[1,1,12544,64,bf16]>",
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 50176 + d1 * 50176 + d2, d3)",
+        "memory_config": [
+          50176,
+          64,
+          "bf16",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 12544 + d1 * 12544 + d2, d3)",
+        "memory_config": [
+          12544,
+          64,
+          "bf16",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "batch_size": "1 : si32",
+      "ceil_mode": false,
+      "channels": "64 : si32",
+      "dilation_height": "1 : si32",
+      "dilation_width": "1 : si32",
+      "input_height": "224 : si32",
+      "input_width": "224 : si32",
+      "kernel_height": "2 : si32",
+      "kernel_width": "2 : si32",
+      "padding_height": "0 : si32",
+      "padding_width": "0 : si32",
+      "stride_height": "2 : si32",
+      "stride_width": "2 : si32"
+    },
+    "output_shapes": [
+      "tensor<[1,1,12544,64,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 12544 + d1 * 12544 + d2, d3)",
+        "memory_config": [
+          12544,
+          64,
+          "bf16",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.max_pool2d",
+    "input_shapes": [
+      "tensor<[1,1,576,64,bf16]>",
+      "tensor<[1,1,144,64,bf16]>",
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 576 + d1 * 576 + d2, d3)",
+        "memory_config": [
+          576,
+          64,
+          "bf16",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 144 + d1 * 144 + d2, d3)",
+        "memory_config": [
+          144,
+          64,
+          "bf16",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "batch_size": "1 : si32",
+      "ceil_mode": false,
+      "channels": "64 : si32",
+      "dilation_height": "1 : si32",
+      "dilation_width": "1 : si32",
+      "input_height": "24 : si32",
+      "input_width": "24 : si32",
+      "kernel_height": "2 : si32",
+      "kernel_width": "2 : si32",
+      "padding_height": "0 : si32",
+      "padding_width": "0 : si32",
+      "stride_height": "2 : si32",
+      "stride_width": "2 : si32"
+    },
+    "output_shapes": [
+      "tensor<[1,1,144,64,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 144 + d1 * 144 + d2, d3)",
+        "memory_config": [
+          144,
+          64,
+          "bf16",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.max_pool2d",
+    "input_shapes": [
+      "tensor<[1,1,196,832,bf16]>",
+      "tensor<[1,1,49,832,bf16]>",
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 196 + d1 * 196 + d2, d3)",
+        "memory_config": [
+          196,
+          832,
+          "bf16",
+          "dram"
+        ]
+      },
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 49 + d1 * 49 + d2, d3)",
+        "memory_config": [
+          49,
+          832,
+          "bf16",
+          "dram"
+        ]
+      }
+    ],
+    "attributes": {
+      "batch_size": "1 : si32",
+      "ceil_mode": false,
+      "channels": "832 : si32",
+      "dilation_height": "1 : si32",
+      "dilation_width": "1 : si32",
+      "input_height": "14 : si32",
+      "input_width": "14 : si32",
+      "kernel_height": "2 : si32",
+      "kernel_width": "2 : si32",
+      "padding_height": "0 : si32",
+      "padding_width": "0 : si32",
+      "stride_height": "2 : si32",
+      "stride_width": "2 : si32"
+    },
+    "output_shapes": [
+      "tensor<[1,1,49,832,bf16]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 * 49 + d1 * 49 + d2, d3)",
+        "memory_config": [
+          49,
+          832,
+          "bf16",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  }
+]

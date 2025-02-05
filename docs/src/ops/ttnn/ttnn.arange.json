@@ -1,0 +1,746 @@
+[
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "11 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x11>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,11,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          11,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "12 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x12>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,12,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          12,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "13 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x13>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,13,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          13,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "14 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x14>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,14,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          14,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "15 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x15>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,15,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          15,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "16 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x16>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,16,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          16,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "17 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x17>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,17,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          17,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "18 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x18>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,18,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          18,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "19 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x19>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,19,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          19,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "20 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x20>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,20,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          20,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "21 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x21>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,21,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          21,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "22 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x22>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,22,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          22,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "23 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x23>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,23,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          23,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "24 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x24>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,24,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          24,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "25 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x25>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,25,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          25,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "26 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x26>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,26,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          26,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "27 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x27>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,27,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          27,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "28 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x28>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,28,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          28,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "29 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x29>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,29,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          29,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "5 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x5>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,5,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          5,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "6 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x6>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,6,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          6,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "7 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x7>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,7,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          7,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "8 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x8>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,8,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          8,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  },
+  {
+    "name": "ttnn.arange",
+    "input_shapes": [
+      "!tt.device<#device>"
+    ],
+    "input_layouts": [],
+    "attributes": {
+      "dtype": "#tt.supportedDataTypes<u32>",
+      "end": "9 : i64",
+      "memory_config": "#ttnn.memory_config<#dram, <<1x9>>, <interleaved>>",
+      "start": "0 : i64",
+      "step": "1 : i64"
+    },
+    "output_shapes": [
+      "tensor<[1,1,1,9,i32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1, d2, d3)",
+        "mapping_to": "(d0 + d1 + d2, d3)",
+        "memory_config": [
+          1,
+          9,
+          "i32",
+          "dram"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A"
+  }
+]

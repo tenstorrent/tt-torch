@@ -49,4 +49,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ttnn-md
-          path: ${{ steps.strings.outputs.work-dir }}/docs/ops/ttnn
+          path: ${{ steps.strings.outputs.work-dir }}/docs/src/ops/ttnn
