@@ -74,13 +74,25 @@ class ModelTester:
         if isinstance(output_object, torch.Tensor):
             return (output_object,)
         elif isinstance(output_object, (tuple, list)):
-            is_only_tensors = True
-            for item in output_object:
-                if not isinstance(item, torch.Tensor):
-                    is_only_tensors = False
-                    break
-            if is_only_tensors:
-                return tuple(output_object)
+
+            def flatten_tensor_lists(obj):
+                flattened = []
+                for item in obj:
+                    if isinstance(item, torch.Tensor):
+                        flattened.append(item)
+                    elif isinstance(item, (tuple, list)):
+                        flattened.extend(flatten_tensor_lists(item))
+                    else:
+                        raise NotImplementedError(
+                            f"Item type: ({type(item)}) is not a torch.Tensor or list/tuple of torch.Tensors"
+                        )
+                return flattened
+
+            try:
+                flattened_tensors = flatten_tensor_lists(output_object)
+                return tuple(flattened_tensors)
+            except NotImplementedError as e:
+                raise e
         elif hasattr(output_object, "to_tuple"):
 
             def flatten(t):
