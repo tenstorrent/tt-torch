@@ -25,10 +25,17 @@ def compile_onnx(module: onnx.ModelProto):
     imp = onnx_importer.NodeImporter.define_function(module_info.main_graph, module)
     imp.import_all()
 
+    backend_legal_ops = [
+        "aten.flatten.using_ints",
+        "aten.adaptive_avg_pool1d",
+        "aten.unflatten.int",
+    ]
+    option_string = "{backend-legal-ops=" + ",".join(backend_legal_ops) + "}"
     run_pipeline_with_repro_report(
         module,
-        "builtin.module(torch-onnx-to-torch-backend-pipeline)",
+        f"builtin.module(torch-onnx-to-torch-backend-pipeline{option_string})",
         "Lowering Torch Onnx IR -> Torch Backend IR",
+        enable_ir_printing=True,
     )
     lower_mlir_module(False, OutputType.STABLEHLO, module)
     return tt_mlir.compile(module.operation.get_asm())
