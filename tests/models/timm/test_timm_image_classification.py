@@ -31,7 +31,7 @@ class ThisTester(ModelTester):
             )
         )
         # get model specific transforms (normalization, resize)
-        data_config = timm.data.resolve_model_data_config(self.model)
+        data_config = timm.data.resolve_model_data_config(self.framework_model)
         transforms = timm.data.create_transform(**data_config, is_training=False)
         input_batch = transforms(img).unsqueeze(
             0
@@ -104,7 +104,6 @@ model_and_mode_list = [
 ]
 
 
-@pytest.mark.skip  # skipped due to missing manage_dependencies package
 @pytest.mark.usefixtures("manage_dependencies")
 @pytest.mark.parametrize("model_and_mode", model_and_mode_list)
 @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
