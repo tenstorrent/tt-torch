@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-set(TT_MLIR_VERSION "a64c1454417adc9b9c46685789025949afeaa083")
+set(TT_MLIR_VERSION "62517e0e97a923809fb7eeaed6ae31e59501bfd7")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
@@ -41,9 +41,8 @@ else()
     endif()
 
     include(ExternalProject)
-    set(TT_MLIR_LIBRARY_PATH ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/lib/SharedLib/libTTMLIR.so)
-    set(TT_MLIR_SHLO_LIBRARY_PATH ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/lib/libTTMLIRStableHLOToTTIR.a)
-    set(TT_MLIR_PIPELINES_LIBRARY_PATH ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/lib/libMLIRTTIRPipelines.a)
+    set(TT_MLIR_COMPILER_LIBRARY_PATH ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/lib/SharedLib/libTTMLIRCompiler.so)
+    set(TT_MLIR_RUNTIME_LIBRARY_PATH ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/lib/SharedLib/libTTMLIRRuntime.so)
     ExternalProject_Add(
         tt-mlir
         PREFIX ${TTTORCH_SOURCE_DIR}/third_party/tt-mlir
@@ -64,21 +63,19 @@ else()
         GIT_REPOSITORY https://github.com/tenstorrent/tt-mlir.git
         GIT_TAG ${TT_MLIR_VERSION}
         GIT_PROGRESS ON
-        BUILD_BYPRODUCTS ${TT_MLIR_LIBRARY_PATH} ${TT_MLIR_SHLO_LIBRARY_PATH} ${TT_MLIR_PIPELINES_LIBRARY_PATH}
+        BUILD_BYPRODUCTS
+            ${TT_MLIR_COMPILER_LIBRARY_PATH}
+            ${TT_MLIR_RUNTIME_LIBRARY_PATH}
     )
 
-    add_library(TTMLIRShared SHARED IMPORTED GLOBAL)
-    set_target_properties(TTMLIRShared PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_LIBRARY_PATH})
-    add_dependencies(TTMLIRShared tt-mlir)
+    add_library(TTMLIRCompiler SHARED IMPORTED GLOBAL)
+    set_target_properties(TTMLIRCompiler PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_COMPILER_LIBRARY_PATH})
+    add_dependencies(TTMLIRCompiler tt-mlir)
+    add_library(TTMLIRRuntime SHARED IMPORTED GLOBAL)
+    set_target_properties(TTMLIRRuntime PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_RUNTIME_LIBRARY_PATH})
+    add_dependencies(TTMLIRRuntime tt-mlir)
 
-    add_library(TTMLIRStableHLOToTTIR STATIC IMPORTED GLOBAL)
-    set_target_properties(TTMLIRStableHLOToTTIR PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_SHLO_LIBRARY_PATH})
-    add_dependencies(TTMLIRStableHLOToTTIR tt-mlir)
-
-    add_library(MLIRTTIRPipelines STATIC IMPORTED GLOBAL)
-    set_target_properties(MLIRTTIRPipelines PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_PIPELINES_LIBRARY_PATH})
-    add_dependencies(MLIRTTIRPipelines tt-mlir)
-
-    install(FILES ${TT_MLIR_LIBRARY_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+    install(FILES ${TT_MLIR_COMPILER_LIBRARY_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+    install(FILES ${TT_MLIR_RUNTIME_LIBRARY_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
 endif()

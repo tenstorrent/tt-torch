@@ -8,7 +8,8 @@ add_library(TT_TORCH_MLIR "tt-mlir-interface.cpp")
 
 add_dependencies(TT_TORCH_MLIR
     tt-mlir
-    TTMLIRShared
+    TTMLIRCompiler
+    TTMLIRRuntime
 )
 
 set_target_properties(TT_TORCH_MLIR PROPERTIES COMPILE_FLAGS "-fno-rtti")
@@ -27,73 +28,11 @@ target_include_directories(TT_TORCH_MLIR PUBLIC
     ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/include
 )
 
-set(STABLEHLO_LIBS
-    StablehloBase
-    StablehloReferenceIndex
-    StablehloReferenceErrors
-    StablehloReferenceElement
-    StablehloReferenceAxes
-    StablehloReferenceValue
-    StablehloReferenceTypes
-    StablehloReferenceToken
-    StablehloReferenceTensor
-    StablehloReferenceScope
-    StablehloReferenceProcessGrid
-    StablehloReferenceProcess
-    StablehloReferenceOps
-    StablehloPasses
-    ChloOps
-    VhloOps
-    VhloTypes
-    StablehloOps
-    StablehloRegister
-    StablehloReferenceToken
-    StablehloLinalgTransforms
-    StablehloReferenceValue
-    StablehloReferenceScope
-    StablehloPasses
-    StablehloReferenceOps
-    StablehloSerialization
-    InterpreterOps
-    StablehloPortableApi
-    StablehloPasses
-    StablehloAssemblyFormat
-    StablehloOps
-    StablehloReferenceElement
-    StablehloReferenceOps
-    StablehloReferenceTensor
-    StablehloRegister
-    StablehloBase
-    StablehloPasses
-    StablehloReferenceErrors
-    StablehloReferenceProcess
-    StablehloReferenceToken
-    StablehloSerialization
-    StablehloBroadcastUtils
-    StablehloPortableApi
-    StablehloReferenceIndex
-    StablehloReferenceProcessGrid
-    StablehloReferenceTypes
-    StablehloTypeInference
-    StablehloLinalgTransforms
-    StablehloReferenceAxes
-    StablehloReferenceNumPy
-    StablehloReferenceScope
-    StablehloReferenceValue
-    SdyDialect
-    SdyRegister
-)
-
 target_link_libraries(TT_TORCH_MLIR PUBLIC
     LLVM
     MLIR
-    TTMLIRShared
-    TTMLIRStatic
-    TTMLIRTosaToTTIR
-    TTMLIRTTIRToLinalg
-    MLIRTTIRPipelines
-    TTMLIRStableHLOToTTIR
-    ${STABLEHLO_LIBS}
+    TTMLIRCompiler
+    TTMLIRRuntime
 )
 target_link_directories(TT_TORCH_MLIR PUBLIC
     ${TTMLIR_TOOLCHAIN_DIR}/lib

@@ -300,7 +300,7 @@ class CompilerConfig:
 
     def set_stablehlo_mlir_module(self, mlir_module):
         self.stablehlo_mlir_module = mlir_module
-        self.stable_hlo_ops, _ = parse_shlo_mlir(mlir_module)
+        # self.stable_hlo_ops, _ = parse_shlo_mlir(mlir_module)
 
 
 def extract_shape(shape_str):

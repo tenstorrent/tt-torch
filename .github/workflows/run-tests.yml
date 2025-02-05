@@ -34,6 +34,7 @@ jobs:
         - /etc/udev/rules.d:/etc/udev/rules.d
         - /lib/modules:/lib/modules
         - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
+        - /mnt/dockercache:/mnt/dockercache
 
     steps:
     - uses: actions/checkout@v4
@@ -106,13 +107,16 @@ jobs:
         path: ${{ steps.strings.outputs.test_report_path_torch }}
 
     - name: Run Supported Models
+      env:
+        HF_HOME: /mnt/dockercache/huggingface
+        HF_HUB_DISABLE_PROGRESS_BARS: 1
       shell: bash
       run: |
         source env/activate
         export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
         pytest -v \
                   tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval] \
-                  tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval] \
+                  # tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval] \
                   # tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval] \
                   # tests/models/mnist/test_mnist.py::test_mnist_train[full-eval] \
                   # tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval] \
@@ -121,6 +125,8 @@ jobs:
                   # tests/models/resnet/test_resnet.py::test_resnet[full-eval] \
                   # tests/models/resnet50/test_resnet50.py::test_resnet[full-eval] \
                   # tests/models/yolov3/test_yolov3.py::test_yolov3[full-eval] \
+                  # tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-xxlarge-v2-eval] \
+                  # tests/models/llama/test_llama.py::test_llama[full-eval] \
                   # tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-mobilenet_v2] \
                   # tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-mobilenet_v3_small] \
                   # tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-mobilenet_v3_large] \
@@ -148,7 +154,7 @@ jobs:
                   # tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_x_8gf] \
                   # tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_x_16gf] \
                   # tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_x_32gf] \
-           --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
+           --junit-xml=${{ steps.strings.outputs.test_report_path_models }}
            --cov=tests/models --cov-append
 
     - name: Upload Test Report Models

@@ -37,6 +37,7 @@ import os
 import multiprocessing as mp
 import time
 import faulthandler
+from pathlib import Path
 import re
 import sys
 import tempfile
@@ -58,11 +59,12 @@ def import_graph(graph: torch.fx.GraphModule):
     return importer.module
 
 
-def lower_to_stable_hlo(module, op=None):
+def lower_to_stable_hlo(module, op=None, enable_ir_printing=False):
     run_pipeline_with_repro_report(
         module,
         f"builtin.module(torchdynamo-export-to-torch-backend-pipeline)",
         "Lowering TorchFX IR -> Torch Backend IR",
+        enable_ir_printing,
     )
     if op is not None:
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_TORCH_BACKEND_IR
@@ -93,7 +95,16 @@ def execute_process(receiver, sender, exec_event):
         faulthandler.disable()
         binary = obj["binary"]
         inputs = obj["inputs"]
+        file_name = obj["dump_file"]
+        file_stderr = open(file_name, "w")
+        old_stderr = sys.stderr
+        sys.stderr = file_stderr
+        old_stdout = sys.stdout
+        sys.stdout = file_stderr
         outputs = tt_mlir.run(inputs, binary)
+        sys.stderr = old_stderr
+        sys.stdout = old_stdout
+        file_stderr.close()
         sender.put({"outputs": outputs})
         exec_event.wait()
     sys.exit(0)
@@ -118,7 +129,11 @@ class Executor:
         self.required_pcc = required_pcc
         # Dictionary to keep track of the type conversion for unsupported hardware
         # types and use it to convert the input arguments to supported types.
-        self.type_conversion = {torch.bool: torch.bfloat16}
+        self.type_conversion = {
+            torch.bool: torch.bfloat16,
+            torch.int64: torch.int32,
+            torch.float64: torch.float32,
+        }
         self.intermediate_callbacks = {}
 
         # Opening a device in a new process is very slow as the pcie device needs to be initializes
@@ -126,6 +141,12 @@ class Executor:
         self.execute_process = None
         self.execute_sender = None
         self.execute_receiver = None
+
+        # Create temp file at start of execution of first op and pass the name
+        # of temp file to subprocess which will be used to redirect the stderr
+        # to capture runtime stack dump.
+        self.stderror_redirected = False
+        self.file_stderr = None
 
     def register_intermediate_callback(self, callback):
         if not is_runtime_debug_enabled():
@@ -316,15 +337,37 @@ class Executor:
                     inp = inp.contiguous()
                 processed_inputs.append(inp)
 
-        return processed_inputs
+        # Typecast the unsupported data types to hardware supported types.
+        supported_inputs = ()
+        for input in processed_inputs:
+            # Handle scalar inputs.
+            if not hasattr(input, "dtype"):
+                assert (
+                    type(input) is not bool
+                ), "Conversion for scalar boolean is not supported."
+                supported_inputs = supported_inputs + ((input),)
+                continue
+
+            # Apply type conversion if required.
+            input_type = input.dtype
+            if input_type in self.type_conversion.keys():
+                supported_inputs = supported_inputs + (
+                    (input.to(dtype=self.type_conversion[input_type])),
+                )
+                continue
+
+            # No conversion required.
+            supported_inputs = supported_inputs + ((input),)
+
+        return supported_inputs
 
     def run_op(self, binary, *inputs):
         inputs = self.pre_process_inputs(*inputs)
-        obj = {"binary": binary, "inputs": inputs}
+        if not self.stderror_redirected:
+            self.file_stderr = tempfile.NamedTemporaryFile(mode="w+t", delete=False)
+            self.stderror_redirected = True
 
-        f_stderr = tempfile.TemporaryFile(mode="w+t")
-        old_stderr = sys.stderr
-        sys.stderr = f_stderr
+        obj = {"binary": binary, "inputs": inputs, "dump_file": self.file_stderr.name}
 
         exec_event = mp.Event()
         if self.execute_process is None:
@@ -358,14 +401,13 @@ class Executor:
         if len(outputs) == 1:
             outputs = outputs[0]
 
-        sys.stderr = old_stderr
         stderr_data = ""
         if outputs is None:
-            f_stderr.seek(0)
-            stderr_data = f_stderr.read()
+            file_stderr = open(self.file_stderr.name, "r")
+            stderr_data = file_stderr.read()
             stderr_data = stderr_data.replace("\n", "\\n")
             stderr_data = re.sub(r"[^\x20-\x7E]", "", stderr_data)
-        f_stderr.close()
+            file_stderr.close()
 
         return outputs, stderr_data
 
@@ -459,6 +501,10 @@ class Executor:
         if self.execute_process is not None:
             self.execute_process.terminate()
             self.execute_process = None
+        if self.stderror_redirected:
+            os.unlink(self.file_stderr.name)
+            self.stderror_redirected = False
+
         return outputs
 
     def __call__(self, *inputs):
@@ -521,12 +567,14 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         return executor
 
     dump_intermediates = os.environ.get("TT_TORCH_IR_LOG_LEVEL")
-    dump_intermediates = dump_intermediates and (
-        dump_intermediates == "INFO" or dump_intermediates == "DEBUG"
-    )
+    dump_info = False
+    dump_debug = False
+    if dump_intermediates:
+        dump_debug = dump_intermediates == "DEBUG"
+        dump_info = dump_debug or dump_intermediates == "INFO"
 
     module = import_graph(gm.graph)
-    if dump_intermediates:
+    if dump_info:
         print("Torch module", file=sys.stderr)
         module.dump()
 
@@ -535,8 +583,8 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     if compiler_config.compile_depth == CompileDepth.TORCH_MLIR:
         return executor
 
-    lower_to_stable_hlo(module)
-    if dump_intermediates:
+    lower_to_stable_hlo(module, enable_ir_printing=dump_debug)
+    if dump_info:
         print("StableHLO module", file=sys.stderr)
         module.dump()
 
@@ -549,7 +597,7 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     ttir = tt_mlir.compile_stable_hlo_to_ttir(
         module.operation.get_asm(enable_debug_info=True)
     )
-    if dump_intermediates:
+    if dump_info:
         print("TTIR module", file=sys.stderr)
         print(ttir, file=sys.stderr)
 
@@ -557,7 +605,7 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         executor.register_intermediate_callback(verify_golden_callback)
 
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
-    if dump_intermediates:
+    if dump_info:
         print("TTNN module", file=sys.stderr)
         print(ttnn, file=sys.stderr)
 
