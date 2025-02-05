@@ -24,6 +24,7 @@ class CompileDepth(Enum):
     COMPILE_OP_BY_OP = 5
     EXECUTE_OP_BY_OP = 6
     EXECUTE = 7
+    COMPILE_STABLEHLO_OP_BY_OP = 8
 
 
 class OpCompilationStatus(IntEnum):
@@ -302,7 +303,7 @@ class CompilerConfig:
         else:
             torch._dynamo.config.inline_inbuilt_nn_modules = True
 
-    def save_unique_ops(self):
+    def save_unique_ops(self, mode=None):
         unique_op_dict = {}
         pytest_test = os.environ.get("PYTEST_CURRENT_TEST")
         # 'PYTEST_CURRENT_TEST' is unavailable for the scripts executed/invoked
@@ -313,7 +314,16 @@ class CompilerConfig:
         pytest_test = pytest_test.replace("[", "_").replace("]", "_")
         for key, op in self.unique_ops.items():
             unique_op_dict[key] = op.to_dict()
-        output_file = Path(f"{self.results_path}{pytest_test}_unique_ops.json")
+        if mode is None:
+            output_file = Path(f"{self.results_path}{pytest_test}_unique_ops.json")
+        elif mode == "stablehlo":
+            output_file = Path(
+                f"{self.results_path}{pytest_test}_stablehlo_unique_ops.json"
+            )
+        elif mode == "torch":
+            output_file = Path(
+                f"{self.results_path}{pytest_test}_torch_unique_ops.json"
+            )
         print(f"#####  Saving unique ops to {output_file}#####  ")
         output_file.parent.mkdir(exist_ok=True, parents=True)
         with open(output_file, "w") as f:
