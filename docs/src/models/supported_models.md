@@ -12,7 +12,7 @@ The following models can be currently run through tt-torch as of Feb 3rd, 2025. 
 | | Token Classification Base | tests/models/albert/test_albert_token_classification.py::test_albert_token_classification[full-albert/albert-base-v2-eval] |
 | Autoencoder | (linear) | tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval] |
 | DistilBert | base uncased | tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval] |
-| Llama | 7B | tests/models/llama/test_llama.py::test_llama[full-eval] |
+| Llama | 3B | tests/models/llama/test_llama_3b.py::test_llama_3b[full-meta-llama/Llama-3.2-3B-eval] |
 | MLPMixer || tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval] |
 | MNist || pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval] |
 | MobileNet V2 || tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval] |
