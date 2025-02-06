@@ -111,7 +111,6 @@ class StablehloExecutor(Executor):
         self.graph_constants = tuple(graph_constants)
 
     def gm_op_by_op(self, *inputs):
-        breakpoint()
         node_to_tensor = {}
         input_index = 0
         outputs = []

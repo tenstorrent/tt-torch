@@ -54,7 +54,6 @@ def verify_golden_callback(binary, callback_context, op_context):
 
 
 def _shlo_backend(shlo, example_inputs, compiler_config, gm=None):
-    breakpoint()
     if isinstance(shlo, torch_mlir._mlir_libs._mlir.ir.Module):
         executor = StablehloExecutor(
             parsed_module=shlo, compiler_config=compiler_config
@@ -72,7 +71,6 @@ def _shlo_backend(shlo, example_inputs, compiler_config, gm=None):
 
 def _torch_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     # Apply environment overrides at start of compilation to allow overriding what was set in the test
-    breakpoint()
     compiler_config.apply_environment_overrides()
     with torch.no_grad():
         gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
@@ -108,11 +106,6 @@ def _torch_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         compiler_config.set_stablehlo_mlir_module(module.operation.get_asm())
     if compiler_config.compile_depth == CompileDepth.STABLEHLO:
         return executor
-
-    print(
-        "Reached invalid compile depth in tt_torch/dynamo/backend.py", file=sys.stderr
-    )
-    exit(1)
 
 
 def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
@@ -234,6 +227,8 @@ def backend(gm_or_shlo, example_inputs, options=None):
         else:
             print("Compiler input not valid", file=sys.stderr)
             exit(1)
+    if isinstance(gm_or_shlo, torch.fx.GraphModule):
+        return _torch_backend(gm_or_shlo, example_inputs, compiler_config=options)
     print(
         "Reached invalid compile depth in tt_torch/dynamo/backend.py", file=sys.stderr
     )
