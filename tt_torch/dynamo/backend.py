@@ -257,4 +257,3 @@ def backend(gm_or_shlo, example_inputs, options=None):
         "Reached invalid compile depth in tt_torch/dynamo/backend.py", file=sys.stderr
     )
     exit(1)
-
