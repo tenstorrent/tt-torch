@@ -64,7 +64,10 @@ def resolve_shapes(mod):
                 assert node.input[0] in shapes
                 shape_known = True
                 for output in node.output:
-                    shape, shape_known = shape_from_value_info(shapes[output])
+                    if output not in shapes:
+                        shape_known = False
+                    else:
+                        shape, shape_known = shape_from_value_info(shapes[output])
                     if not shape_known:
                         break
 
@@ -107,9 +110,6 @@ def test_resnet50():
         make_dim_param_fixed(mod.graph, input.name, 1)
         make_input_shape_fixed(mod.graph, input.name, [1, 3, 224, 224])
     mod = onnx.shape_inference.infer_shapes(mod)
-    mod = SymbolicShapeInference.infer_shapes(
-        mod, auto_merge=True, guess_output_rank=True, verbose=1
-    )
     mod = resolve_shapes(mod)
     fix_output_shapes(mod)
     onnx.save(mod, "patched.onnx")

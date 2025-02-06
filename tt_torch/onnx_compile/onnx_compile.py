@@ -16,24 +16,20 @@ from torch_mlir.compiler_utils import (
 
 def compile_onnx(module: onnx.ModelProto):
     # Infer onnx shapes incase that information is missing
-    module = onnx.shape_inference.infer_shapes(module)
+    module = onnx.shape_inference.infer_shapes(module, data_prop=True)
 
     context = Context()
     torch_dialect.register_dialect(context)
     module_info = onnx_importer.ModelInfo(module)
-    module = module_info.create_module(context=context).operation
-    imp = onnx_importer.NodeImporter.define_function(module_info.main_graph, module)
+    module = module_info.create_module(context=context)
+    imp = onnx_importer.NodeImporter.define_function(
+        module_info.main_graph, module.operation
+    )
     imp.import_all()
 
-    backend_legal_ops = [
-        "aten.flatten.using_ints",
-        "aten.adaptive_avg_pool1d",
-        "aten.unflatten.int",
-    ]
-    option_string = "{backend-legal-ops=" + ",".join(backend_legal_ops) + "}"
     run_pipeline_with_repro_report(
         module,
-        f"builtin.module(torch-onnx-to-torch-backend-pipeline{option_string})",
+        f"builtin.module(torch-onnx-to-torch-backend-pipeline)",
         "Lowering Torch Onnx IR -> Torch Backend IR",
         enable_ir_printing=True,
     )
