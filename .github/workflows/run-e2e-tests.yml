@@ -88,6 +88,7 @@ jobs:
       env:
         HF_HOME: /mnt/dockercache/huggingface
         TORCH_HOME: /mnt/dockercache/torch
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
       shell: bash
       run: |
         source env/activate
@@ -107,6 +108,7 @@ jobs:
                   tests/models/whisper/test_whisper.py::test_whisper[full-eval] \
                   tests/models/yolos/test_yolos.py::test_yolos[full-eval] \
                   tests/models/deit/test_deit.py::test_deit[full-facebook/deit-base-patch16-224-eval] \
+                  tests/models/llama/test_llama_3b.py::test_llama_3b[full-meta-llama/Llama-3.2-3B-eval] \
            --junit-xml=${{ steps.strings.outputs.test_report_path_models }}
 
 
