@@ -104,16 +104,18 @@ std::vector<int64_t> as_vec_int64(std::vector<T> const &vec) {
 
 static torch::Tensor create_torch_tensor(const tt::runtime::Tensor &tensor,
                                          const tt::runtime::TensorDesc &desc) {
+  tt::runtime::Tensor untilized_tensor =
+      tt::runtime::toHost(tensor, /*untilize=*/true);
   const std::vector<std::int64_t> shape = as_vec_int64(desc.shape);
   const std::vector<std::int64_t> stride = as_vec_int64((desc.stride));
 
   const tt::target::DataType rt_datatype =
-      tt::runtime::getTensorDataType(tensor);
+      tt::runtime::getTensorDataType(untilized_tensor);
   const torch::ScalarType dataType = dt_to_torch_scalar_type(rt_datatype);
 
   at::Tensor torch_tensor = at::empty_strided(shape, stride, dataType);
   tt::runtime::Tensor rt_tensor = create_tensor(torch_tensor);
-  tt::runtime::memcpy(rt_tensor, tensor);
+  tt::runtime::memcpy(rt_tensor, untilized_tensor);
 
   return torch_tensor;
 }
@@ -137,7 +139,7 @@ std::vector<at::Tensor> run(std::vector<at::Tensor> &inputs,
 
   for (int idx = 0; idx < inputs.size(); idx++) {
     if (!inputs[idx].is_contiguous()) {
-      std::cout << "WARINING: Input " << idx
+      std::cout << "WARNING: Input " << idx
                 << " is not contiguous. Converting to contiguous in-place."
                 << std::endl;
       inputs[idx].set_(inputs[idx].contiguous());
@@ -157,9 +159,10 @@ std::vector<at::Tensor> run(std::vector<at::Tensor> &inputs,
   const auto output_descs = binary.getProgramOutputs(program_idx);
 
   for (size_t i = 0; i < rt_outputs.size(); ++i) {
-    const auto &rt_output = rt_outputs.at(i);
+    auto &rt_output = rt_outputs.at(i);
     const auto &output_desc = output_descs.at(i);
     outputs.emplace_back(create_torch_tensor(rt_output, output_desc));
+    tt::runtime::deallocateTensor(rt_output, /*force=*/true);
   }
 
   tt::runtime::closeDevice(device);
