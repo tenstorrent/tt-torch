@@ -8,6 +8,7 @@ patchelf
 pre-commit
 pybind11
 pytest
+pytest-cov
 tabulate
 transformers==4.47.1
 protobuf

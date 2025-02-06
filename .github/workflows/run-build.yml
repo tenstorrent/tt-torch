@@ -68,6 +68,7 @@ jobs:
         source env/activate
         cmake -G Ninja \
         -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+        -DCODE_COVERAGE=ON \
         -DCMAKE_INSTALL_PREFIX=${{ steps.strings.outputs.install-output-dir }} \
         -B ${{ steps.strings.outputs.build-output-dir }} \
         -S ${{ steps.strings.outputs.work-dir }}
