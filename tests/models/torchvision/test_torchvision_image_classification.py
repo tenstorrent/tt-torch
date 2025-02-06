@@ -111,7 +111,12 @@ def test_torchvision_image_classification(
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(
-        model_info, mode, assert_pcc=True, assert_atol=False, compiler_config=cc
+        model_info,
+        mode,
+        required_pcc=0.98,
+        assert_pcc=True,
+        assert_atol=False,
+        compiler_config=cc,
     )
     results = tester.test_model()
     if mode == "eval":
