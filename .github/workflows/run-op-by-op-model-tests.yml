@@ -119,23 +119,22 @@ jobs:
         submodules: recursive
         lfs: true
 
+    - name: Fetch job id
+      id: fetch-job-id
+      uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
+      with:
+        job_name: "${{ github.job }} (${{ matrix.build.runs-on }}, ${{ matrix.build.name }}"
+
     - name: Set reusable strings
       id: strings
       shell: bash
       env:
-        job-name: "${{ github.job }} (${{ matrix.build.runs-on }}, ${{ matrix.build.name }}"
+        JOB_ID: ${{ steps.fetch-job-id.outputs.job_id }}
       run: |
         echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
         echo "build-output-dir=$(pwd)/build" >> "$GITHUB_OUTPUT"
         echo "install-output-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
         echo "test-output-dir=$(pwd)/results/models/tests/" >> "$GITHUB_OUTPUT"
-        # Github job context unfortunately doesn't contain job_id, this is the workaround how to fetch it using GH API
-        echo "Expected job name: ${{ env.job-name }}"
-        JOB_ID=$(curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
-          "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}/jobs" | \
-          jq -r '.jobs[] | select(.name | contains("${{ env.job-name }}")) | .id ')
-        echo "Current job id: $JOB_ID"
-        echo "job-id=$JOB_ID" >> "$GITHUB_OUTPUT"
 
     - name: Git safe dir
       run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
@@ -217,14 +216,14 @@ jobs:
       shell: bash
       working-directory: ${{ steps.strings.outputs.test-output-dir }}
       run: |
-        tar cvf ${{ matrix.build.name }}_${{ steps.strings.outputs.job-id }}.tar .
+        tar cvf ${{ matrix.build.name }}_${{ steps.fetch-job-id.outputs.job_id }}.tar .
 
     - name: Upload test folder to archive
       if: success() || failure()
       uses: actions/upload-artifact@v4
       with:
         name: test-reports-${{ matrix.build.name }}.tar
-        path: ${{ steps.strings.outputs.test-output-dir }}/${{ matrix.build.name }}_${{ steps.strings.outputs.job-id }}.tar
+        path: ${{ steps.strings.outputs.test-output-dir }}/${{ matrix.build.name }}_${{ steps.fetch-job-id.outputs.job_id }}.tar
 
     - name: Upload full logs
       if: success() || failure()
