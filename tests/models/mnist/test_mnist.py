@@ -79,5 +79,5 @@ def test_mnist_train(record_property, mode, op_by_op):
         compiler_config=cc,
         record_property_handle=record_property,
     )
-    results = tester.test_model()
+    tester.test_model()
     tester.cleanup()

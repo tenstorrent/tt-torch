@@ -17,6 +17,7 @@ import json
 from onnx import version_converter
 from pathlib import Path
 from tt_torch.tools.verify import verify_against_golden
+from datetime import datetime, timezone
 
 
 class ModelTester:
@@ -61,12 +62,13 @@ class ModelTester:
         self.compiler_config = compiler_config
         self.compiler_config.model_name = model_name
         self.record_property = record_property_handle
-        self.record_tag_cache = (
-            {}
-        )  # Stores all tags to be pushed to the test report at test completion
+        self.record_tag_cache = {}  # Holds for tags to be written out at finalize()
 
         self.record_property("model_name", model_name)
-        self.record_property("mode", mode)
+        self.record_property("frontend", "tt-torch")
+
+        # configs should be set at test start, so they can be flushed immediately
+        self.record_property("config", {"compiler_config": compiler_config.to_dict()})
 
     def _load_model(self):
         raise NotImplementedError(
@@ -265,15 +267,19 @@ class ModelTester:
         return outputs
 
     def test_model(self, on_device=True):
+        if self.mode not in ["train", "eval"]:
+            raise ValueError(f"Current mode is not supported: {self.mode}")
+
         ret = None
+        self.record_property("start_timestamp", datetime.now(timezone.utc).isoformat())
+
         if self.mode == "train":
             ret = self.test_model_train(on_device)
         elif self.mode == "eval":
             ret = self.test_model_eval(on_device)
-        else:
-            raise ValueError(f"Current mode is not supported: {self.mode}")
 
-        self.record_property("torch_ttnn", (self, ret))
+        self.record_property("end_timestamp", datetime.now(timezone.utc).isoformat())
+
         return ret
 
     def flush_tag_cache_to_record(self):
