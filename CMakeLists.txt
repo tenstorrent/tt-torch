@@ -12,12 +12,21 @@ endif()
 
 project(TT_TORCH)
 
+# Enable ccache by default if available
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+    set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+    set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+    message(STATUS "Using ccache: ${CCACHE_PROGRAM}")
+else()
+    message(STATUS "ccache not found, builds may be slower")
+endif()
 
 set(TTTORCH_SOURCE_DIR ${PROJECT_SOURCE_DIR})
 set(TTMLIR_TOOLCHAIN_DIR $ENV{TTMLIR_TOOLCHAIN_DIR})
 
 set(CMAKE_C_COMPILER clang-17)
-set(DCMAKE_CXX_COMPILER clang++-17)
+set(CMAKE_CXX_COMPILER clang++-17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
