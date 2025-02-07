@@ -43,9 +43,6 @@ else()
     include(ExternalProject)
     set(TT_MLIR_COMPILER_LIBRARY_PATH ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/lib/SharedLib/libTTMLIRCompiler.so)
     set(TT_MLIR_RUNTIME_LIBRARY_PATH ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/lib/SharedLib/libTTMLIRRuntime.so)
-    set(TTMETAL_LIBRARY_PATH ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/lib/libtt_metal.so)
-    set(TTNN_LIBRARY_PATH ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/lib/_ttnn.so)
-    set(DEVICE_LIBRARY_PATH ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/lib/libdevice.so)
     ExternalProject_Add(
         tt-mlir
         PREFIX ${TTTORCH_SOURCE_DIR}/third_party/tt-mlir
@@ -69,35 +66,16 @@ else()
         BUILD_BYPRODUCTS
             ${TT_MLIR_COMPILER_LIBRARY_PATH}
             ${TT_MLIR_RUNTIME_LIBRARY_PATH}
-            ${TTMETAL_LIBRARY_PATH}
-            ${TTNN_LIBRARY_PATH}
-            ${DEVICE_LIBRARY_PATH}
     )
 
     add_library(TTMLIRCompiler SHARED IMPORTED GLOBAL)
     set_target_properties(TTMLIRCompiler PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_COMPILER_LIBRARY_PATH})
     add_dependencies(TTMLIRCompiler tt-mlir)
-
     add_library(TTMLIRRuntime SHARED IMPORTED GLOBAL)
     set_target_properties(TTMLIRRuntime PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_RUNTIME_LIBRARY_PATH})
     add_dependencies(TTMLIRRuntime tt-mlir)
 
-    add_library(TTMETAL SHARED IMPORTED GLOBAL)
-    set_target_properties(TTMETAL PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TTMETAL_LIBRARY_PATH})
-    add_dependencies(TTMETAL tt-mlir)
-
-    add_library(TTNN SHARED IMPORTED GLOBAL)
-    set_target_properties(TTNN PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TTNN_LIBRARY_PATH})
-    add_dependencies(TTNN tt-mlir)
-
-    add_library(DEVICE SHARED IMPORTED GLOBAL)
-    set_target_properties(DEVICE PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${DEVICE_LIBRARY_PATH})
-    add_dependencies(DEVICE tt-mlir)
-
     install(FILES ${TT_MLIR_COMPILER_LIBRARY_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
     install(FILES ${TT_MLIR_RUNTIME_LIBRARY_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-    install(FILES ${TTMETAL_LIBRARY_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-    install(FILES ${TTNN_LIBRARY_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-    install(FILES ${DEVICE_LIBRARY_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
 endif()
