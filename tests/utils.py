@@ -237,7 +237,6 @@ class ModelTester:
             self.required_pcc,
             self.required_atol,
             self.relative_atol,
-            return_pccs_atols=True,
         )
         self.record_tag_cache["pccs"] = pccs
         self.record_tag_cache["atols"] = atols

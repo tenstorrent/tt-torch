@@ -41,14 +41,14 @@ def test_falcon(record_property, mode, op_by_op):
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    results = tester = ThisTester(
+    tester = ThisTester(
         model_name,
         mode,
         relative_atol=0.013,
         compiler_config=cc,
         record_property_handle=record_property,
     )
-    tester.test_model()
+    results = tester.test_model()
 
     if mode == "eval":
         # Helper function to decode output to human-readable text
