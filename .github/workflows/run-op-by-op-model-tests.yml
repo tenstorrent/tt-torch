@@ -210,6 +210,8 @@ jobs:
     runs-on:
       - ${{ matrix.build.runs-on }}
 
+    name: "tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
+
     container:
       image: ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:latest
       options: --user root --device /dev/tenstorrent/0 --shm-size=4gb
@@ -231,7 +233,7 @@ jobs:
       id: fetch-job-id
       uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
       with:
-        job_name: "${{ github.job }} (${{ matrix.build.runs-on }}, ${{ matrix.build.name }}"
+        job_name: "tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
 
     - name: Set reusable strings
       id: strings
