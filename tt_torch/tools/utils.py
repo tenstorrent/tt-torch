@@ -88,6 +88,9 @@ class Op:
         self.atol = None
 
     def parse_json(self):
+        # Replace inf with strings until https://github.com/tenstorrent/tt-mlir/issues/2151 is fixed
+        self.json = re.sub(r":\s*-inf\s*([,}])", r': "-inf"\1', self.json)
+        self.json = re.sub(r":\s*inf\s*([,}])", r': "inf"\1', self.json)
         binary = json.loads(self.json)
 
         def tensor_from_tensor_desc(desc):
