@@ -136,7 +136,6 @@ def run_folding(gm):
 def constant_fold(gm, example_inputs):
     gm = const_fold.split_const_subgraphs(gm)
     gm.run_folding()
-    print(f"Constant folding done")
     graph_constants = {}
 
     for node in gm.graph.nodes:
