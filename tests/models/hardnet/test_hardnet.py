@@ -55,8 +55,6 @@ def test_hardnet(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
     model_name = "HardNet"
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -64,7 +62,13 @@ def test_hardnet(record_property, mode, op_by_op):
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_name, mode, relative_atol=0.01, compiler_config=cc)
+    tester = ThisTester(
+        model_name,
+        mode,
+        relative_atol=0.01,
+        compiler_config=cc,
+        record_property_handle=record_property,
+    )
     results = tester.test_model()
     if mode == "eval":
         # Tensor of shape 1000, with confidence scores over ImageNet's 1000 classes
@@ -73,4 +77,4 @@ def test_hardnet(record_property, mode, op_by_op):
         probabilities = torch.nn.functional.softmax(results[0], dim=0)
         print(probabilities)
 
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()

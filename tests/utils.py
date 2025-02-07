@@ -17,7 +17,6 @@ import json
 from onnx import version_converter
 from pathlib import Path
 from tt_torch.tools.verify import verify_against_golden
-from datetime import datetime, timezone
 
 
 class ModelTester:
@@ -267,23 +266,15 @@ class ModelTester:
         return outputs
 
     def test_model(self, on_device=True):
-        if self.mode not in ["train", "eval"]:
-            raise ValueError(f"Current mode is not supported: {self.mode}")
-
-        ret = None
-        self.record_property("start_timestamp", datetime.now(timezone.utc).isoformat())
-
         if self.mode == "train":
-            ret = self.test_model_train(on_device)
+            return self.test_model_train(on_device)
         elif self.mode == "eval":
-            ret = self.test_model_eval(on_device)
-
-        self.record_property("end_timestamp", datetime.now(timezone.utc).isoformat())
-
-        return ret
+            return self.test_model_eval(on_device)
+        else:
+            raise ValueError(f"Current mode is not supported: {self.mode}")
 
     def flush_tag_cache_to_record(self):
         self.record_property("tags", self.record_tag_cache)
 
-    def cleanup(self):
+    def finalize(self):
         self.flush_tag_cache_to_record()

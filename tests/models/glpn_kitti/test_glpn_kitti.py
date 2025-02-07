@@ -35,8 +35,6 @@ class ThisTester(ModelTester):
 @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
 def test_glpn_kitti(record_property, mode, op_by_op):
     model_name = "GLPN-KITTI"
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -44,7 +42,13 @@ def test_glpn_kitti(record_property, mode, op_by_op):
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_name, mode, relative_atol=0.013, compiler_config=cc)
+    tester = ThisTester(
+        model_name,
+        mode,
+        relative_atol=0.013,
+        compiler_config=cc,
+        record_property_handle=record_property,
+    )
     results = tester.test_model()
     if mode == "eval":
         predicted_depth = results.predicted_depth
@@ -62,4 +66,4 @@ def test_glpn_kitti(record_property, mode, op_by_op):
         formatted = (output * 255 / np.max(output)).astype("uint8")
         depth = Image.fromarray(formatted)
 
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()

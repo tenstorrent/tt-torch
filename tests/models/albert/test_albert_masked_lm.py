@@ -50,8 +50,6 @@ class ThisTester(ModelTester):
 )
 @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
 def test_albert_masked_lm(record_property, model_name, mode, op_by_op):
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -60,7 +58,12 @@ def test_albert_masked_lm(record_property, model_name, mode, op_by_op):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(
-        model_name, mode, assert_pcc=False, assert_atol=False, compiler_config=cc
+        model_name,
+        mode,
+        assert_pcc=False,
+        assert_atol=False,
+        compiler_config=cc,
+        record_property_handle=record_property,
     )
     results = tester.test_model()
 
@@ -75,4 +78,4 @@ def test_albert_masked_lm(record_property, model_name, mode, op_by_op):
 
         print(f"Model: {model_name} | Input: {tester.text} | Mask: {predicted_tokens}")
 
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()

@@ -42,13 +42,14 @@ def test_deepseek_qwen(record_property, model_name, mode, op_by_op):
     if mode == "train":
         pytest.skip()
     pytest.skip("#291")
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_name, mode, compiler_config=cc)
+    tester = ThisTester(
+        model_name, mode, compiler_config=cc, record_property_handle=record_property
+    )
 
-    results = tester.test_model()
+    tester.test_model()
+    tester.finalize()

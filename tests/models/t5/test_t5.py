@@ -35,8 +35,6 @@ class ThisTester(ModelTester):
 @pytest.mark.parametrize("model_name", ["t5-small", "t5-base", "t5-large"])
 @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
 def test_t5(record_property, model_name, mode, op_by_op):
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -44,7 +42,9 @@ def test_t5(record_property, model_name, mode, op_by_op):
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_name, mode, compiler_config=cc)
+    tester = ThisTester(
+        model_name, mode, compiler_config=cc, record_property_handle=record_property
+    )
     results = tester.test_model()
     if mode == "eval":
         output_text = tester.tokenizer.decode(results[0], skip_special_tokens=True)
@@ -52,4 +52,4 @@ def test_t5(record_property, model_name, mode, op_by_op):
             f"Model: {model_name} | Input: {tester.input_text} | Output: {output_text}"
         )
 
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()

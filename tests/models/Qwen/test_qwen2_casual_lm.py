@@ -46,13 +46,13 @@ class ThisTester(ModelTester):
 def test_qwen2_casual_lm(record_property, model_name, mode, op_by_op):
     if mode == "train":
         pytest.skip()
-    record_property("model_name", model_name)
-    record_property("mode", mode)
     cc = CompilerConfig()
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_name, mode, compiler_config=cc)
+    tester = ThisTester(
+        model_name, mode, compiler_config=cc, record_property_handle=record_property
+    )
     results = tester.test_model()
 
     if mode == "eval":
@@ -66,4 +66,4 @@ def test_qwen2_casual_lm(record_property, model_name, mode, op_by_op):
             f"Model: {model_name} | Input: {tester.text} | Generated Text: {gen_text}"
         )
 
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()

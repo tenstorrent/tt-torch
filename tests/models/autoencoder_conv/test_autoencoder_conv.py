@@ -53,8 +53,6 @@ AutoencoderTiny(
 @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
 def test_autoencoder_conv(record_property, mode, op_by_op):
     model_name = "Autoencoder (convolutional)"
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -62,10 +60,12 @@ def test_autoencoder_conv(record_property, mode, op_by_op):
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_name, mode, compiler_config=cc)
+    tester = ThisTester(
+        model_name, mode, compiler_config=cc, record_property_handle=record_property
+    )
     results = tester.test_model()
 
     if mode == "eval":
         image = results.images[0]
 
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()

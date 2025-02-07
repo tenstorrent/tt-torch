@@ -30,8 +30,6 @@ class ThisTester(ModelTester):
 @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
 def test_roberta(record_property, mode, op_by_op):
     model_name = "RoBERTa"
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -39,7 +37,13 @@ def test_roberta(record_property, mode, op_by_op):
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_name, mode, relative_atol=0.012, compiler_config=cc)
+    tester = ThisTester(
+        model_name,
+        mode,
+        relative_atol=0.012,
+        compiler_config=cc,
+        record_property_handle=record_property,
+    )
     results = tester.test_model()
     if mode == "eval":
         logits = results.logits
@@ -51,4 +55,4 @@ def test_roberta(record_property, mode, op_by_op):
         predicted_token_id = logits[0, mask_token_index].argmax(axis=-1)
         output = tester.tokenizer.decode(predicted_token_id)
 
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()

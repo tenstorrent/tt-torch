@@ -6,6 +6,7 @@ import pytest
 import torch
 import subprocess
 import sys
+from datetime import datetime, timezone
 
 
 @pytest.fixture(autouse=True)
@@ -66,3 +67,12 @@ def pytest_collection_modifyitems(config, items):
                 selected_items.append(item)
         # Replace the items with only the op_by_op tests
     items[:] = selected_items
+
+
+@pytest.fixture(scope="function", autouse=True)
+def record_test_timestamp(record_property):
+    start_timestamp = datetime.now(timezone.utc).isoformat()
+    record_property("start_timestamp", start_timestamp)
+    yield
+    end_timestamp = datetime.now(timezone.utc).isoformat()
+    record_property("end_timestamp", end_timestamp)

@@ -47,8 +47,6 @@ class ThisTester(ModelTester):
 @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
 def test_detr(record_property, mode, op_by_op):
     model_name = "DETR"
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -57,7 +55,12 @@ def test_detr(record_property, mode, op_by_op):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(
-        model_name, mode, assert_pcc=False, assert_atol=False, compiler_config=cc
+        model_name,
+        mode,
+        assert_pcc=False,
+        assert_atol=False,
+        compiler_config=cc,
+        record_property_handle=record_property,
     )
     results = tester.test_model()
 
@@ -65,4 +68,4 @@ def test_detr(record_property, mode, op_by_op):
         # Results
         print(results)
 
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()

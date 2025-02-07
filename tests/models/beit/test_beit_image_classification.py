@@ -47,8 +47,6 @@ class ThisTester(ModelTester):
 def test_beit_image_classification(record_property, model_name, mode, op_by_op):
     if mode == "train":
         pytest.skip()
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -58,7 +56,11 @@ def test_beit_image_classification(record_property, model_name, mode, op_by_op):
 
     required_atol = 0.032 if model_name == "microsoft/beit-base-patch16-224" else 0.05
     tester = ThisTester(
-        model_name, mode, required_atol=required_atol, compiler_config=cc
+        model_name,
+        mode,
+        required_atol=required_atol,
+        compiler_config=cc,
+        record_property_handle=record_property,
     )
     results = tester.test_model()
 
@@ -72,4 +74,4 @@ def test_beit_image_classification(record_property, model_name, mode, op_by_op):
             tester.framework_model.config.id2label[predicted_class_idx],
         )
 
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()

@@ -41,16 +41,17 @@ class ThisTester(ModelTester):
 @pytest.mark.parametrize("model_name", ["meta-llama/Llama-3.2-3B"])
 @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
 def test_llama_3b(record_property, model_name, mode, op_by_op):
-    record_property("model_name", model_name)
-    record_property("mode", mode)
-
     cc = CompilerConfig()
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(
-        model_name, mode, compiler_config=cc, assert_atol=False, assert_pcc=False
+        model_name,
+        mode,
+        compiler_config=cc,
+        assert_atol=False,
+        assert_pcc=False,
+        record_property_handle=record_property,
     )
     results = tester.test_model()
-
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()

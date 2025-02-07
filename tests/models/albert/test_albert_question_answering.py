@@ -33,8 +33,6 @@ class ThisTester(ModelTester):
 @pytest.mark.parametrize("model_name", ["twmkn9/albert-base-v2-squad2"])
 @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
 def test_albert_question_answering(record_property, model_name, mode, op_by_op):
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -42,7 +40,13 @@ def test_albert_question_answering(record_property, model_name, mode, op_by_op):
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_name, mode, relative_atol=0.01, compiler_config=cc)
+    tester = ThisTester(
+        model_name,
+        mode,
+        relative_atol=0.01,
+        compiler_config=cc,
+        record_property_handle=record_property,
+    )
     results = tester.test_model()
 
     if mode == "eval":
@@ -60,4 +64,4 @@ def test_albert_question_answering(record_property, model_name, mode, op_by_op):
             f"Model: {model_name} | Question: {tester.question} | Text: {tester.text} | Answer: {answer}"
         )
 
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()
