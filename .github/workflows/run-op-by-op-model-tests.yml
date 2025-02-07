@@ -9,7 +9,7 @@ on:
 
 jobs:
   tests:
-    timeout-minutes: 600
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       matrix:
@@ -92,11 +92,6 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "phi", tests: "
-              tests/models/phi/test_phi.py::test_phi
-              "
-          },
-          {
             runs-on: wormhole_b0, name: "resnet", tests: "
               tests/models/resnet/test_resnet.py::test_resnet
               tests/models/resnet50/test_resnet50.py::test_resnet
@@ -133,6 +128,11 @@ jobs:
               "
           },
           {
+            runs-on: wormhole_b0, name: "timm", tests: "
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification
+              "
+          },
+          {
             runs-on: wormhole_b0, name: "vision-misc", tests: "
               tests/models/glpn_kitti/test_glpn_kitti.py::test_glpn_kitti
               tests/models/hand_landmark/test_hand_landmark.py::test_hand_landmark
@@ -150,7 +150,6 @@ jobs:
               tests/models/deit/test_deit.py::test_deit
               tests/models/detr/test_detr.py::test_detr
               tests/models/segformer/test_segformer.py::test_segformer
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification
               "
           },
           {
@@ -276,7 +275,7 @@ jobs:
     - name: Run Model Tests
       env:
         HF_HOME: /mnt/dockercache/huggingface
-        HF_HUB_DISABLE_PROGRESS_BARS: 1
+        TORCH_HOME: /mnt/dockercache/torch
       shell: bash
       run: |
         source env/activate

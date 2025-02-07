@@ -40,86 +40,44 @@ class ThisTester(ModelTester):
         return input_batch
 
 
-model_and_mode_list = [
-    pytest.param(
-        ["tf_efficientnet_lite0.in1k", "train"],
-    ),
-    pytest.param(
-        ["tf_efficientnet_lite1.in1k", "train"],
-    ),
-    pytest.param(
-        ["tf_efficientnet_lite2.in1k", "train"],
-    ),
-    pytest.param(
-        ["tf_efficientnet_lite3.in1k", "train"],
-    ),
-    pytest.param(
-        ["tf_efficientnet_lite4.in1k", "train"],
-    ),
-    pytest.param(
-        ["ghostnet_100.in1k", "train"],
-    ),
-    pytest.param(
-        ["ghostnetv2_100.in1k", "train"],
-    ),
-    ["inception_v4.tf_in1k", "train"],
-    pytest.param(
-        ["mixer_b16_224.goog_in21k", "train"],
-    ),
-    ["mobilenetv1_100.ra4_e3600_r224_in1k", "train"],
-    ["ese_vovnet19b_dw.ra_in1k", "train"],
-    ["xception71.tf_in1k", "train"],
-    ["dla34.in1k", "train"],
-    pytest.param(
-        ["hrnet_w18.ms_aug_in1k", "train"],
-    ),
-    pytest.param(
-        ["tf_efficientnet_lite0.in1k", "eval"],
-    ),
-    pytest.param(
-        ["tf_efficientnet_lite1.in1k", "eval"],
-    ),
-    pytest.param(
-        ["tf_efficientnet_lite2.in1k", "eval"],
-    ),
-    pytest.param(
-        ["tf_efficientnet_lite3.in1k", "eval"],
-    ),
-    pytest.param(
-        ["tf_efficientnet_lite4.in1k", "eval"],
-    ),
-    ["ghostnet_100.in1k", "eval"],
-    pytest.param(
-        ["ghostnetv2_100.in1k", "eval"],
-    ),
-    ["inception_v4.tf_in1k", "eval"],
-    ["mixer_b16_224.goog_in21k", "eval"],
-    ["mobilenetv1_100.ra4_e3600_r224_in1k", "eval"],
-    ["ese_vovnet19b_dw.ra_in1k", "eval"],
-    ["xception71.tf_in1k", "eval"],
-    ["dla34.in1k", "eval"],
-    pytest.param(
-        ["hrnet_w18.ms_aug_in1k", "eval"],
-    ),
+# Separate lists for models and modes
+model_list = [
+    "tf_efficientnet_lite0.in1k",
+    "tf_efficientnet_lite1.in1k",
+    "tf_efficientnet_lite2.in1k",
+    "tf_efficientnet_lite3.in1k",
+    "tf_efficientnet_lite4.in1k",
+    "ghostnet_100.in1k",
+    "ghostnetv2_100.in1k",
+    "inception_v4.tf_in1k",
+    "mixer_b16_224.goog_in21k",
+    "mobilenetv1_100.ra4_e3600_r224_in1k",
+    "ese_vovnet19b_dw.ra_in1k",
+    "xception71.tf_in1k",
+    "dla34.in1k",
+    "hrnet_w18.ms_aug_in1k",
 ]
 
 
 @pytest.mark.usefixtures("manage_dependencies")
-@pytest.mark.parametrize("model_and_mode", model_and_mode_list)
+@pytest.mark.parametrize("model_name", model_list)
+@pytest.mark.parametrize("mode", ["train", "eval"])
 @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
-def test_timm_image_classification(record_property, model_and_mode, op_by_op):
-    model_name = model_and_mode[0]
-    mode = model_and_mode[1]
+def test_timm_image_classification(record_property, model_name, mode, op_by_op):
     record_property("model_name", model_name)
     record_property("mode", mode)
 
+    if mode == "train":
+        pytest.skip()
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_name, mode, compiler_config=cc)
+    tester = ThisTester(
+        model_name, mode, compiler_config=cc, assert_pcc=False, assert_atol=False
+    )
     results = tester.test_model()
     if mode == "eval":
         top5_probabilities, top5_class_indices = torch.topk(

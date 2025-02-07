@@ -87,7 +87,7 @@ jobs:
     - name: Compile Supported Models
       env:
         HF_HOME: /mnt/dockercache/huggingface
-        HF_HUB_DISABLE_PROGRESS_BARS: 1
+        TORCH_HOME: /mnt/dockercache/torch
       shell: bash
       run: |
         source env/activate

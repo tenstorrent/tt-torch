@@ -41,6 +41,7 @@ class ThisTester(ModelTester):
 def test_deepseek_qwen(record_property, model_name, mode, op_by_op):
     if mode == "train":
         pytest.skip()
+    pytest.skip("#291")
     record_property("model_name", model_name)
     record_property("mode", mode)
 

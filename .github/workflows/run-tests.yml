@@ -109,7 +109,7 @@ jobs:
     - name: Run Supported Models
       env:
         HF_HOME: /mnt/dockercache/huggingface
-        HF_HUB_DISABLE_PROGRESS_BARS: 1
+        TORCH_HOME: /mnt/dockercache/torch
       shell: bash
       run: |
         source env/activate
@@ -127,33 +127,33 @@ jobs:
                   tests/models/yolov3/test_yolov3.py::test_yolov3[full-eval] \
                   tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-xxlarge-v2-eval] \
                   tests/models/llama/test_llama.py::test_llama[full-eval] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-mobilenet_v2] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-mobilenet_v3_small] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-mobilenet_v3_large] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-resnet18] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-resnet34] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-resnet50] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-resnet101] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-resnet152] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-resnext50_32x4d] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-resnext101_32x8d] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-resnext101_64x4d] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-wide_resnet50_2] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-wide_resnet101_2] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_y_400mf] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_y_800mf] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_y_1_6gf] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_y_3_2gf] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_y_8gf] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_y_16gf] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_y_32gf] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_x_400mf] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_x_800mf] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_x_1_6gf] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_x_3_2gf] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_x_8gf] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_x_16gf] \
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-regnet_x_32gf] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v2] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_small] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_large] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet18] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet34] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet50] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet101] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet152] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext50_32x4d] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext101_32x8d] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext101_64x4d] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-wide_resnet50_2] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-wide_resnet101_2] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_400mf] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_800mf] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_1_6gf] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_3_2gf] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_8gf] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_16gf] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_32gf] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_400mf] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_800mf] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_1_6gf] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_3_2gf] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_8gf] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_16gf] \
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_32gf] \
            --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
            --cov=tests/models --cov-append
 
