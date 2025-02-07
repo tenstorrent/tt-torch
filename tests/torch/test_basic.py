@@ -375,10 +375,6 @@ for begin in torch.arange(0, 64, 32).tolist():
     "begin, end, dim", [*dim2_cases, *dim3_cases, *dim0_cases, *dim1_cases]
 )
 def test_slice(begin, end, dim):
-    # Slice test is only working for dim=3; skipping all other tests.
-    if dim != 3:
-        pytest.skip()
-
     class Basic(nn.Module):
         def __init__(self):
             super().__init__()

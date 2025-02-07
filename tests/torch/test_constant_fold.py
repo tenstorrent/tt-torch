@@ -11,7 +11,6 @@ from tt_torch.tools.verify import verify_module
 from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 
-@pytest.mark.xfail(reason="Fails due tt_torch not being able to pass in scalars")
 def test_multiple_ops():
     class ConstantFoldable(nn.Module):
         def __init__(self):
