@@ -192,19 +192,19 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "torchvision", tests: "
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-googlenet]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-densenet201]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-mobilenet_v2]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-mobilenet_v3_large]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-resnet152]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-resnext101_64x4d]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-vgg19]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-vgg19_bn]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-vit_h_14]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-wide_resnet101_2]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-regnet_y_32gf]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-regnet_x_32gf]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-swin_b]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-googlenet]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-densenet201]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-mobilenet_v2]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-mobilenet_v3_large]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-resnet152]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-resnext101_64x4d]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-vgg19]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-vgg19_bn]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-vit_h_14]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-wide_resnet101_2]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-regnet_y_32gf]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-regnet_x_32gf]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-swin_b]
               "
           }
         ]

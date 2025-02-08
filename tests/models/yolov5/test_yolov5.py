@@ -55,6 +55,7 @@ class ThisTester(ModelTester):
         # )
 
         # Model
+        torch.hub._validate_not_a_forked_repo = lambda a, b, c: True
         model = torch.hub.load(
             "ultralytics/yolov5",
             "yolov5s",
