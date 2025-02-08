@@ -110,6 +110,7 @@ jobs:
       env:
         HF_HOME: /mnt/dockercache/huggingface
         TORCH_HOME: /mnt/dockercache/torch
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
       shell: bash
       run: |
         source env/activate
@@ -126,7 +127,7 @@ jobs:
                   tests/models/resnet50/test_resnet50.py::test_resnet[full-eval] \
                   tests/models/yolov3/test_yolov3.py::test_yolov3[full-eval] \
                   tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-xxlarge-v2-eval] \
-                  tests/models/llama/test_llama.py::test_llama[full-eval] \
+                  tests/models/llama/test_llama_3b.py::test_llama_3b[full-meta-llama/Llama-3.2-3B-eval] \
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v2] \
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_small] \
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_large] \
