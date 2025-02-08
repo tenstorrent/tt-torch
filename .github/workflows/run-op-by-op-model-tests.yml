@@ -61,6 +61,7 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "llama", tests: "
+              tests/models/llama/test_llama_7b.py::test_llama_7b
               tests/models/llama/test_llama_3b.py::test_llama_3b
               "
           },

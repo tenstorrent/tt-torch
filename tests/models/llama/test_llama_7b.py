@@ -45,7 +45,7 @@ class ThisTester(ModelTester):
     reason="llama-7b is too large to fit on single device, but we can still generate a graph"
 )
 @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
-def test_llama(record_property, mode, op_by_op):
+def test_llama_7b(record_property, mode, op_by_op):
     model_name = "Llama"
     record_property("model_name", model_name)
     record_property("mode", mode)
