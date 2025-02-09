@@ -1,5 +1,4 @@
 *.pyc
-env
 build
 install
 results/mlir_tests/

@@ -174,28 +174,28 @@ def test_linear():
     class Basic(nn.Module):
         def __init__(self):
             super().__init__()
-            self.linear_a = nn.Linear(32, 64, bias=False)
-            self.linear_b = nn.Linear(64, 64, bias=False)
+            self.linear_a = nn.Linear(32, 64, bias=False, dtype=torch.bfloat16)
+            self.linear_b = nn.Linear(64, 64, bias=False, dtype=torch.bfloat16)
 
         def forward(self, x):
             x = self.linear_a(x)
             x = self.linear_b(x)
             return x
 
-    verify_module(Basic(), input_shapes=[(32, 32)])
+    verify_module(Basic(), input_shapes=[(32, 32)], input_data_types=[torch.bfloat16])
 
 
 def test_linear_with_bias():
     class Basic(nn.Module):
         def __init__(self):
             super().__init__()
-            self.linear_a = nn.Linear(32, 32)
+            self.linear_a = nn.Linear(32, 32, bias=True, dtype=torch.bfloat16)
 
         def forward(self, x):
-            x = self.linear_a(x)
+            x = torch.addmm(self.linear_a.bias, x, self.linear_a.weight)
             return x
 
-    verify_module(Basic(), input_shapes=[(32, 32)])
+    verify_module(Basic(), input_shapes=[(32, 32)], input_data_types=[torch.bfloat16])
 
 
 @pytest.mark.xfail(

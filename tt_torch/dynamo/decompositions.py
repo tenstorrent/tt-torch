@@ -16,6 +16,9 @@ DecompositionOpsList = Sequence[
     Union[torch._ops.OperatorBase, torch._ops.OpOverloadPacket]
 ]
 
+import inspect
+from torch._prims_common import ELEMENTWISE_TYPE_PROMOTION_KIND
+
 # Manages "scopes" for decompositions used. Each unique scope is an attribute on
 # the _decomp_local. If the attribute is missing, then the default
 # decompositions are used. The scope "aot" is used for all AOT cases.
@@ -209,50 +212,50 @@ def _get_default_decomposition_ops() -> DecompositionOpsList:
     aten = torch.ops.aten
     # default decompositions pulled from SHARK / torch._decomp
     return [
-        aten.embedding_dense_backward,
-        aten.native_layer_norm_backward,
-        aten.slice_backward,
-        aten.select_backward,
-        aten.norm.ScalarOpt_dim,
-        aten.native_group_norm,
-        aten.split.Tensor,
-        aten.split_with_sizes,
-        aten.native_layer_norm,
-        aten.masked_fill.Tensor,
-        aten.masked_fill.Scalar,
-        aten.t,
+        #     aten.embedding_dense_backward,
+        #     aten.native_layer_norm_backward,
+        #     aten.slice_backward,
+        #     aten.select_backward,
+        #     aten.norm.ScalarOpt_dim,
+        #     aten.native_group_norm,
+        #     aten.split.Tensor,
+        #     aten.split_with_sizes,
+        #     aten.native_layer_norm,
+        #     aten.masked_fill.Tensor,
+        #     aten.masked_fill.Scalar,
+        #     aten.t,
         aten.addmm,
         # decompositions that aid us in handling nn.BatchNorm2d
-        aten._native_batch_norm_legit_functional,
-        aten._native_batch_norm_legit_no_training,
-        aten._native_batch_norm_legit,
-        aten._native_batch_norm_legit.no_stats,
-        aten.squeeze.dims,
-        # decompositions for miscellaneous ops that are not handled in torch-mlir but have available decompositions
-        aten.soft_margin_loss,
-        aten.im2col,
-        aten._euclidean_dist,
-        aten.index_copy,
-        aten.index_copy_,
-        aten.grid_sampler_2d,
-        aten.log_sigmoid_forward,
-        aten.unsafe_split.Tensor,
-        aten.binary_cross_entropy,
-        aten.dot,
-        aten._adaptive_avg_pool2d,
-        aten._prelu_kernel,
-        aten.full,
-        aten._log_softmax,
-        aten.nll_loss_forward,
-        aten.nll_loss_backward,
-        aten._to_copy,
-        aten._log_softmax_backward_data,
-        aten.lift_fresh_copy.default,
-        aten._unsafe_index.Tensor,
-        aten.unbind.int,
-        aten.linspace.Tensor_Tensor,
-        aten._scaled_dot_product_flash_attention_for_cpu.default,
-        aten.slice_scatter,
+        # aten._native_batch_norm_legit_functional,
+        # aten._native_batch_norm_legit_no_training,
+        # aten._native_batch_norm_legit,
+        # aten._native_batch_norm_legit.no_stats,
+        # aten.squeeze.dims,
+        # # decompositions for miscellaneous ops that are not handled in torch-mlir but have available decompositions
+        # aten.soft_margin_loss,
+        # aten.im2col,
+        # aten._euclidean_dist,
+        # aten.index_copy,
+        # aten.index_copy_,
+        # aten.grid_sampler_2d,
+        # aten.log_sigmoid_forward,
+        # aten.unsafe_split.Tensor,
+        # aten.binary_cross_entropy,
+        # aten.dot,
+        # aten._adaptive_avg_pool2d,
+        # aten._prelu_kernel,
+        # aten.full,
+        # aten._log_softmax,
+        # aten.nll_loss_forward,
+        # aten.nll_loss_backward,
+        # aten._to_copy,
+        # aten._log_softmax_backward_data,
+        # aten.lift_fresh_copy.default,
+        # aten._unsafe_index.Tensor,
+        # aten.unbind.int,
+        # aten.linspace.Tensor_Tensor,
+        # aten._scaled_dot_product_flash_attention_for_cpu.default,
+        # aten.slice_scatter,
     ]
 
 
@@ -273,3 +276,48 @@ DEFAULT_DECOMPOSITION_TABLE: DecompositionTable = get_decompositions(
 )
 
 CUSTOM_DECOMPOSITION_TABLE = _get_custom_decopositions()
+
+
+def remove_casts(decomposition_table):
+    """
+    Create a custom decomposition table by removing all pw_cast_for_opmath wrappers
+    while preserving other decorators.
+    """
+    from functools import partial
+
+    def is_pw_cast_wrapper(f):
+        """Check if a function is the pw_cast_for_opmath wrapper"""
+        breakpoint()
+        return isinstance(
+            f.__closure__[2].cell_contents, ELEMENTWISE_TYPE_PROMOTION_KIND
+        )
+
+    def unwrap_all_casts(f):
+        """Recursively unwrap all pw_cast_for_opmath wrappers"""
+        if f is None:
+            return None
+
+        while hasattr(f, "__wrapped__"):
+            if is_pw_cast_wrapper(f):
+                f = f.__wrapped__
+            else:
+                # Keep this wrapper but check what it wraps
+                inner = unwrap_all_casts(f.__wrapped__)
+                if inner is not f.__wrapped__:
+                    # Create new wrapper with unwrapped inner function
+                    f = type(f)(inner)
+                break
+        return f
+
+    custom_table = {}
+    for key, decomp in decomposition_table.items():
+        custom_table[key] = unwrap_all_casts(decomp)
+
+    return custom_table
+
+
+def get_decomposition_table() -> DecompositionTable:
+    decompositions = DEFAULT_DECOMPOSITION_TABLE
+    # decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
+    decompositions = remove_casts(decompositions)
+    return decompositions
