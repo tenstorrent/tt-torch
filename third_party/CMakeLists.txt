@@ -4,6 +4,7 @@
 #
 
 set(TT_MLIR_VERSION "277836600c9e244bad6ce3139a7c9a2c781b255c")
+set(TORCH_MLIR_VERSION "d40d74fb1baed6698e9af5abdcd6fa5abf1413b4")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
@@ -77,5 +78,38 @@ else()
 
     install(FILES ${TT_MLIR_COMPILER_LIBRARY_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
     install(FILES ${TT_MLIR_RUNTIME_LIBRARY_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+
+    ExternalProject_Add(
+        torch-mlir
+        PREFIX ${TTTORCH_SOURCE_DIR}/third_party/torch-mlir
+        CMAKE_GENERATOR Ninja
+        SOURCE_SUBDIR externals/llvm-project/llvm
+        CMAKE_ARGS
+        -DCMAKE_BUILD_TYPE=Release
+        -DCMAKE_C_COMPILER=clang
+        -DCMAKE_CXX_COMPILER=clang++
+        -DCMAKE_EXE_LINKER_FLAGS_INIT="-fuse-ld=lld"
+        -DCMAKE_MODULE_LINKER_FLAGS_INIT="-fuse-ld=lld"
+        -DCMAKE_SHARED_LINKER_FLAGS_INIT="-fuse-ld=lld"
+        -DLLVM_ENABLE_ASSERTIONS=ON
+        -DCMAKE_C_COMPILER_LAUNCHER=ccache
+        -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+        -DLLVM_ENABLE_PROJECTS=mlir
+        -DLLVM_EXTERNAL_PROJECTS="torch-mlir"
+        # -DLLVM_EXTERNAL_TORCH_MLIR_SOURCE_DIR="torch-mlir/src/torch-mlir"
+        -DLLVM_TARGETS_TO_BUILD=host
+        -DMLIR_ENABLE_BINDINGS_PYTHON=ON
+        -DTORCH_MLIR_ENABLE_LTC=${enable_ltc}
+        -DTORCH_MLIR_USE_INSTALLED_PYTORCH="$torch_from_bin"
+        -DTORCH_MLIR_SRC_PYTORCH_REPO=${TORCH_MLIR_SRC_PYTORCH_REPO}
+        -DTORCH_MLIR_SRC_PYTORCH_BRANCH=${TORCH_MLIR_SRC_PYTORCH_BRANCH}
+        -DTM_PYTORCH_INSTALL_WITHOUT_REBUILD=${TM_PYTORCH_INSTALL_WITHOUT_REBUILD}
+        -DPython3_EXECUTABLE="$(which python3)"
+        BUILD_COMMAND "${CMAKE_COMMAND}" --build .
+        GIT_REPOSITORY https://github.com/llvm/torch-mlir.git
+        GIT_TAG ${TORCH_MLIR_VERSION}
+        GIT_PROGRESS ON
+        GIT_SUBMODULES "."
+    )
 
 endif()
