@@ -336,6 +336,16 @@ class Executor:
                 if not inp.is_contiguous():
                     inp = inp.contiguous()
                 processed_inputs.append(inp)
+            elif isinstance(inp, list):
+                for ele in inp:
+                    if isinstance(ele, torch.nn.Parameter):
+                        if not ele.data.is_contiguous():
+                            ele.data = ele.data.contiguous()
+                        processed_inputs.append(ele.data)
+                    elif isinstance(ele, torch.Tensor):
+                        if not ele.is_contiguous():
+                            ele = ele.contiguous()
+                        processed_inputs.append(ele)
 
         # Typecast the unsupported data types to hardware supported types.
         supported_inputs = ()
