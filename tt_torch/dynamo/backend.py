@@ -323,29 +323,32 @@ class Executor:
         print(f"json len {len(op.json)}")
         return binary, op
 
+    def transform_input(self, inp):
+        # Convert torch.nn.Parameter to torch.Tensor and convert non-contiguous
+        # data to contiguous.
+        if isinstance(inp, torch.nn.Parameter):
+            if not inp.data.is_contiguous():
+                inp.data = inp.data.contiguous()
+            return inp.data
+        elif isinstance(inp, torch.Tensor):
+            if not inp.is_contiguous():
+                inp = inp.contiguous()
+            return inp
+
+        return None
+
     def pre_process_inputs(self, *inputs):
         # Remove scalar constants as they're absorbed into the binary
-        # Convert torch.nn.Parameter to torch.Tensor
         processed_inputs = []
-        for inp in inputs:
-            if isinstance(inp, torch.nn.Parameter):
-                if not inp.data.is_contiguous():
-                    inp.data = inp.data.contiguous()
-                processed_inputs.append(inp.data)
-            elif isinstance(inp, torch.Tensor):
-                if not inp.is_contiguous():
-                    inp = inp.contiguous()
-                processed_inputs.append(inp)
-            elif isinstance(inp, list):
-                for ele in inp:
-                    if isinstance(ele, torch.nn.Parameter):
-                        if not ele.data.is_contiguous():
-                            ele.data = ele.data.contiguous()
-                        processed_inputs.append(ele.data)
-                    elif isinstance(ele, torch.Tensor):
-                        if not ele.is_contiguous():
-                            ele = ele.contiguous()
-                        processed_inputs.append(ele)
+        for input in inputs:
+            # If input is a list, iterate over its elements;
+            # otherwise, process it directly
+            input_items = input if isinstance(input, list) else [input]
+
+            for inp in input_items:
+                transformed_inp = self.transform_input(inp)
+                if transformed_inp is not None:
+                    processed_inputs.append(transformed_inp)
 
         # Typecast the unsupported data types to hardware supported types.
         supported_inputs = ()
