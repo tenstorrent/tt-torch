@@ -42,6 +42,28 @@ def parse_module_from_str(module_str):
         module = Module.parse(module_str)
     return module
 
+def get_input_shapes_and_constants(*inputs):
+    input_shapes_and_constants = []
+        for inp in inputs:
+            if isinstance(inp, torch.Tensor):
+                input_shapes_and_constants.append(inp.shape)
+            elif isinstance(inp, (list, tuple)):
+                sub = []
+                for sub_inp in inp:
+                    if isinstance(sub_inp, torch.Tensor):
+                        sub.append(sub_inp.shape)
+                    else:
+                        sub.append(sub_inp)
+                input_shapes_and_constants.append(sub)
+            elif isinstance(inp, (int, float, bool)):
+                input_shapes_and_constants.append(inp)
+            elif isinstance(inp, torch.dtype):
+                input_shapes_and_constants.append(inp.__str__())
+            elif inp is None:
+                input_shapes_and_constants.append(None)
+            else:
+                raise ValueError(f"Unexpected input type: {type(inp)}")
+    return input_shapes_and_constants
 
 def get_input_shapes_and_constants(*inputs):
     input_shapes_and_constants = []
