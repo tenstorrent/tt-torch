@@ -5,7 +5,6 @@ import torch
 from torch import nn
 import pytest
 
-import tt_torch
 from tt_torch.tools.verify import verify_module
 from tt_torch.tools.utils import CompilerConfig
 
