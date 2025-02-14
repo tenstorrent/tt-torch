@@ -40,11 +40,6 @@ export TTTORCH_ENV_ACTIVATED=1
 export TTMLIR_ENV_ACTIVATED=1
 export PATH=$TT_TORCH_HOME/third_party/tt-mlir/src/tt-mlir-build/bin:$TTMLIR_TOOLCHAIN_DIR/bin:$PATH
 export TOKENIZERS_PARALLELISM=false
-if [ -n "$PROJECT_ROOT" ]; then
-    export TT_METAL_HOME="$PROJECT_ROOT/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal"
-else
-    export TT_METAL_HOME="$(pwd)/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal"
-fi
-export PYTHONPATH="$(pwd):$(pwd)/install/lib:$(pwd)/.local/toolchain/python_packages/mlir_core:${TT_METAL_HOME}:${TT_METAL_HOME}/tt_eager:${TT_METAL_BUILD_HOME}/tools/profiler/bin"
+export PYTHONPATH="$(pwd):$(pwd)/env/venv/lib/python3.11/site-packages/tt_torch/:$(pwd)/install/lib:$(pwd)/.local/toolchain/python_packages/mlir_core:"
 export ARCH_NAME="${ARCH_NAME:-wormhole_b0}"
 export TT_METAL_LOGGER_LEVEL="ERROR"

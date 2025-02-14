@@ -9,3 +9,12 @@ import multiprocessing as mp
 
 if mp.get_start_method() != "forkserver":
     mp.set_start_method("forkserver", force=True)
+
+import os
+import importlib.util
+# find the tt-metal directory, it can either be in the venv if installed from a wheel or in the third_party source tree
+package_name = "tt_metal"
+spec = importlib.util.find_spec(package_name)
+assert spec is not None, "tt_metal not found"
+tt_metal_home = os.path.abspath(spec.submodule_search_locations[0])
+os.environ["TT_METAL_HOME"] = tt_metal_home
