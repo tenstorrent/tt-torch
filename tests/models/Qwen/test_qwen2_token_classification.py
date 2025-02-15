@@ -39,15 +39,18 @@ class ThisTester(ModelTester):
 def test_qwen2_token_classification(record_property, model_name, mode, op_by_op):
     if mode == "train":
         pytest.skip()
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(
-        model_name, mode, assert_pcc=False, assert_atol=False, compiler_config=cc
+        model_name,
+        mode,
+        assert_pcc=False,
+        assert_atol=False,
+        compiler_config=cc,
+        record_property_handle=record_property,
     )
     with torch.no_grad():
         results = tester.test_model()
@@ -65,4 +68,4 @@ def test_qwen2_token_classification(record_property, model_name, mode, op_by_op)
             f"Model: {model_name} | Tokens: {tokens} | Predictions: {predicted_tokens_classes}"
         )
 
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()

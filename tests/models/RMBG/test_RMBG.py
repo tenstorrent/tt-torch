@@ -45,8 +45,6 @@ def test_RMBG(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
     model_name = "RMBG"
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -54,7 +52,9 @@ def test_RMBG(record_property, mode, op_by_op):
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_name, mode, compiler_config=cc)
+    tester = ThisTester(
+        model_name, mode, compiler_config=cc, record_property_handle=record_property
+    )
 
     with torch.no_grad():
         results = tester.test_model()
@@ -66,4 +66,4 @@ def test_RMBG(record_property, mode, op_by_op):
         tester.image.putalpha(mask)
         tester.image.save("no_bg_image.png")
 
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()

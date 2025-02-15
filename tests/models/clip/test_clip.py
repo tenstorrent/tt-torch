@@ -64,8 +64,6 @@ def test_clip(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
     model_name = "CLIP"
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -74,8 +72,14 @@ def test_clip(record_property, mode, op_by_op):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(
-        model_name, mode, assert_pcc=False, assert_atol=False, compiler_config=cc
+        model_name,
+        mode,
+        assert_pcc=False,
+        assert_atol=False,
+        compiler_config=cc,
+        record_property_handle=record_property,
     )
+
     results = tester.test_model()
 
     if mode == "eval":
@@ -86,4 +90,4 @@ def test_clip(record_property, mode, op_by_op):
             dim=1
         )  # we can take the softmax to get the label probabilities
 
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()

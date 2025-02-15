@@ -56,8 +56,6 @@ model_info_list = [
 @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
 def test_torchvision_object_detection(record_property, model_info, mode, op_by_op):
     model_name, _ = model_info
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -66,10 +64,15 @@ def test_torchvision_object_detection(record_property, model_info, mode, op_by_o
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(
-        model_info, mode, assert_pcc=True, assert_atol=False, compiler_config=cc
+        model_info,
+        mode,
+        assert_pcc=True,
+        assert_atol=False,
+        compiler_config=cc,
+        record_property_handle=record_property,
     )
     results = tester.test_model()
     if mode == "eval":
         print(f"Model: {model_name} | Output: {results}")
 
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()

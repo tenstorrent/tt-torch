@@ -65,18 +65,19 @@ def test_mnist_train(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
     model_name = "Mnist"
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-
     tester = ThisTester(
-        model_name, mode, assert_pcc=False, assert_atol=False, compiler_config=cc
+        model_name,
+        mode,
+        assert_pcc=False,
+        assert_atol=False,
+        compiler_config=cc,
+        record_property_handle=record_property,
     )
-    results = tester.test_model()
-
-    record_property("torch_ttnn", (tester, results))
+    tester.test_model()
+    tester.finalize()

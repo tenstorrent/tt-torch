@@ -42,8 +42,6 @@ def test_resnet(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
     model_name = "ResNet50"
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -58,14 +56,16 @@ def test_resnet(record_property, mode, op_by_op):
         compiler_config=cc,
         assert_pcc=True,
         assert_atol=False,
+        record_property_handle=record_property,
     )
+
     results = tester.test_model()
     if mode == "eval":
         # Print the top 5 predictions
         _, indices = torch.topk(results, 5)
         print(f"Top 5 predictions: {indices[0].tolist()}")
 
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()
 
 
 # Empty property record_property

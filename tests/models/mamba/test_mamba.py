@@ -57,18 +57,18 @@ class ThisTester(ModelTester):
 )
 @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
 def test_mamba(record_property, model_name, mode, op_by_op):
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_name, mode, compiler_config=cc)
+    tester = ThisTester(
+        model_name, mode, compiler_config=cc, record_property_handle=record_property
+    )
     results = tester.test_model()
 
     if mode == "eval":
         gen_text = tester.tokenizer.batch_decode(results)
         print("Generated text: ", gen_text)
 
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()

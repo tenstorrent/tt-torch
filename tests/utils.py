@@ -30,6 +30,7 @@ class ModelTester:
         compiler_config=None,
         assert_pcc=True,
         assert_atol=True,
+        record_property_handle=None,
     ):
         if mode not in ["train", "eval"]:
             raise ValueError(f"Current mode is not supported: {mode}")
@@ -59,6 +60,14 @@ class ModelTester:
             compiler_config = CompilerConfig()
         self.compiler_config = compiler_config
         self.compiler_config.model_name = model_name
+        self.record_property = record_property_handle
+        self.record_tag_cache = {}  # Holds for tags to be written out at finalize()
+
+        self.record_property("model_name", model_name)
+        self.record_property("frontend", "tt-torch")
+
+        # configs should be set at test start, so they can be flushed immediately
+        self.record_property("config", {"compiler_config": compiler_config.to_dict()})
 
     def _load_model(self):
         raise NotImplementedError(
@@ -222,13 +231,16 @@ class ModelTester:
             golden
         ), "Expecting the type of both calculated and golden to be identical. Whether that be a tensor, list, dictonary, etc."
 
-        passed_pcc, passed_atol, msg, err_msg = verify_against_golden(
+        passed_pcc, passed_atol, msg, err_msg, pccs, atols = verify_against_golden(
             self._extract_outputs(golden),
             self._extract_outputs(outputs),
             self.required_pcc,
             self.required_atol,
             self.relative_atol,
         )
+        self.record_tag_cache["pccs"] = pccs
+        self.record_tag_cache["atols"] = atols
+
         if self.assert_pcc and self.assert_atol:
             if passed_pcc and passed_atol:
                 print(msg)
@@ -259,3 +271,9 @@ class ModelTester:
             return self.test_model_eval(on_device)
         else:
             raise ValueError(f"Current mode is not supported: {self.mode}")
+
+    def flush_tag_cache_to_record(self):
+        self.record_property("tags", self.record_tag_cache)
+
+    def finalize(self):
+        self.flush_tag_cache_to_record()

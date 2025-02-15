@@ -103,7 +103,7 @@ def verify_against_golden(
             )
             passed_atol = False
 
-    return passed_pcc, passed_atol, msg, err_msg
+    return passed_pcc, passed_atol, msg, err_msg, pccs, atols
 
 
 def _verify_torch_module(
@@ -155,7 +155,7 @@ def _verify_torch_module(
     golden = tuple(golden)
     ret = tuple(ret)
 
-    passed_pcc, passed_atol, msg, err_msg = verify_against_golden(
+    passed_pcc, passed_atol, msg, err_msg, _, _ = verify_against_golden(
         golden, ret, required_pcc, required_atol=required_atol
     )
     print(msg)
@@ -224,7 +224,7 @@ def _verify_onnx_module(
     golden = tuple(golden)
     ret = tuple(ret)
 
-    passed_pcc, passed_atol, msg, err_msg = verify_against_golden(
+    passed_pcc, passed_atol, msg, err_msg, _, _ = verify_against_golden(
         golden, ret, required_pcc, required_atol=required_atol
     )
     print(msg)

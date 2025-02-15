@@ -76,7 +76,12 @@ def test_timm_image_classification(record_property, model_name, mode, op_by_op):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(
-        model_name, mode, compiler_config=cc, assert_pcc=False, assert_atol=False
+        model_name,
+        mode,
+        compiler_config=cc,
+        assert_pcc=False,
+        assert_atol=False,
+        record_property_handle=record_property,
     )
     results = tester.test_model()
     if mode == "eval":
@@ -87,5 +92,4 @@ def test_timm_image_classification(record_property, model_name, mode, op_by_op):
         print(
             f"Model: {model_name} | Predicted class ID: {top5_class_indices[0]} | Probabiliy: {top5_probabilities[0]}"
         )
-
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()

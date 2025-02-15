@@ -46,8 +46,6 @@ class ThisTester(ModelTester):
 @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
 def test_hand_landmark(record_property, mode, op_by_op):
     model_name = "Hand Landmark"
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     # Download required files unless they already exist
     urls = [
@@ -105,7 +103,6 @@ def test_hand_landmark(record_property, mode, op_by_op):
         ]
     )
 
-    tester = ThisTester(model_name, mode)
-    results = tester.test_model()
-
-    record_property("torch_ttnn", (tester, results))
+    tester = ThisTester(model_name, mode, record_property_handle=record_property)
+    tester.test_model()
+    tester.finalize()

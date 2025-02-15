@@ -52,8 +52,6 @@ class ThisTester(ModelTester):
 def test_speecht5_tts(record_property, mode, op_by_op):
     pytest.skip()  # crashes in lowering to stable hlo
     model_name = "speecht5-tts"
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -61,11 +59,13 @@ def test_speecht5_tts(record_property, mode, op_by_op):
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_name, mode, compiler_config=cc)
-    results = tester.test_model()
+    tester = ThisTester(
+        model_name, mode, compiler_config=cc, record_property_handle=record_property
+    )
+    tester.test_model()
     # if mode == "eval":
     #     # Uncomment below if you really want to hear the result.
     #     # import soundfile as sf
     #     sf.write("speech.wav", speech.numpy(), samplerate=16000)
 
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()

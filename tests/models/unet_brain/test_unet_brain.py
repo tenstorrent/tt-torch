@@ -61,8 +61,6 @@ def test_unet_brain(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
     model_name = "Unet-brain"
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -70,9 +68,11 @@ def test_unet_brain(record_property, mode, op_by_op):
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_name, mode, compiler_config=cc)
+    tester = ThisTester(
+        model_name, mode, compiler_config=cc, record_property_handle=record_property
+    )
     results = tester.test_model()
     if mode == "eval":
         print(torch.round(results[0]))
 
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()

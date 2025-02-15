@@ -36,7 +36,6 @@ class ThisTester(ModelTester):
 @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
 def test_albert_token_classification(record_property, model_name, mode, op_by_op):
     record_property("model_name", f"{model_name}-classification")
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -45,7 +44,12 @@ def test_albert_token_classification(record_property, model_name, mode, op_by_op
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(
-        model_name, mode, assert_pcc=False, assert_atol=False, compiler_config=cc
+        model_name,
+        mode,
+        assert_pcc=False,
+        assert_atol=False,
+        compiler_config=cc,
+        record_property_handle=record_property,
     )
     results = tester.test_model()
 
@@ -67,4 +71,4 @@ def test_albert_token_classification(record_property, model_name, mode, op_by_op
             f"Model: {model_name} | Tokens: {tokens} | Predictions: {predicted_tokens_classes}"
         )
 
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()

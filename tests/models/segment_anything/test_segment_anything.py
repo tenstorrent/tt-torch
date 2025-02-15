@@ -41,8 +41,6 @@ class ThisTester(ModelTester):
 @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
 def test_segment_anything(record_property, mode, op_by_op):
     model_name = "segment-anything"
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -50,7 +48,9 @@ def test_segment_anything(record_property, mode, op_by_op):
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_name, mode, compiler_config=cc)
-    results = tester.test_model()
+    tester = ThisTester(
+        model_name, mode, compiler_config=cc, record_property_handle=record_property
+    )
+    tester.test_model()
 
-    record_property("torch_ttnn", (tester, results))
+    tester.finalize()

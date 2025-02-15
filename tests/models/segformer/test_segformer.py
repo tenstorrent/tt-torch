@@ -50,8 +50,6 @@ def test_segformer(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
     model_name = "SegFormer"
-    record_property("model_name", model_name)
-    record_property("mode", mode)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -59,9 +57,15 @@ def test_segformer(record_property, mode, op_by_op):
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(model_name, mode, relative_atol=0.01, compiler_config=cc)
+    tester = ThisTester(
+        model_name,
+        mode,
+        relative_atol=0.01,
+        compiler_config=cc,
+        record_property_handle=record_property,
+    )
     results = tester.test_model()
     if mode == "eval":
         logits = results.logits  # shape (batch_size, num_labels, height/4, width/4)
 
-    record_property("torch_ttnn", (tester, results))
+    results.finalize()

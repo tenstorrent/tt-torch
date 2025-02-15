@@ -305,6 +305,24 @@ class CompilerConfig:
         self.stablehlo_mlir_module = mlir_module
         # self.stable_hlo_ops, _ = parse_shlo_mlir(mlir_module)
 
+    def to_dict(self):
+        return {
+            "compile_depth": serialize_enum(self.compile_depth),
+            "profile_ops": self.profile_ops,
+            "torch_mlir_module": self.torch_mlir_module,
+            "stablehlo_mlir_module": self.stablehlo_mlir_module,
+            "unique_ops": self.unique_ops,
+            "stable_hlo_ops": self.stable_hlo_ops,
+            "model_name": self.model_name,
+            "results_path": self.results_path,
+            "single_op_timeout": self.single_op_timeout,
+            "enable_consteval": self.enable_consteval,
+            "remove_embedded_constants": self.remove_embedded_constants,
+            "_consteval_parameters": self._consteval_parameters,
+            "_enable_intermediate_verification": self._enable_intermediate_verification,
+            "_verify_op_by_op": self._verify_op_by_op,
+        }
+
 
 def extract_shape(shape_str):
     assert shape_str.startswith("tensor<")
@@ -536,3 +554,7 @@ def calculate_pcc(tensor, golden_tensor):
             )
         )
     )
+
+
+def serialize_enum(enum_value):
+    return f"{enum_value.__class__.__name__}.{enum_value.name}"
