@@ -64,9 +64,6 @@ model_list = [
 @pytest.mark.parametrize("mode", ["train", "eval"])
 @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
 def test_timm_image_classification(record_property, model_name, mode, op_by_op):
-    record_property("model_name", model_name)
-    record_property("mode", mode)
-
     if mode == "train":
         pytest.skip()
     cc = CompilerConfig()
