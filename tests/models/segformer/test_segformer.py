@@ -68,4 +68,4 @@ def test_segformer(record_property, mode, op_by_op):
     if mode == "eval":
         logits = results.logits  # shape (batch_size, num_labels, height/4, width/4)
 
-    results.finalize()
+    tester.finalize()
