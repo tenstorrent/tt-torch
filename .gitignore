@@ -10,3 +10,4 @@ results/*.xlsx
 third_party/toolchain
 third_party/tt-mlir
 third_party/vision
+third_party/torch-mlir

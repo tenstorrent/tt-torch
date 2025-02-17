@@ -3,7 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-set(TT_MLIR_VERSION "a566e0e41f0b7bb5742785e5df8d4341a7d98698")
+set(TT_MLIR_VERSION "1d937da293bcd621cd34a204465f185c4ab4996d")
+set(TORCH_MLIR_VERSION "a265d283357f572c5437f9217ea85fa9770d374c")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
@@ -73,5 +74,42 @@ else()
     add_dependencies(TTMLIRRuntime tt-mlir)
 
     install(DIRECTORY ${TTMLIR_INSTALL_PREFIX}/ DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
+
+    # torch-mlir build
+
+    set(TORCH_MLIR_PREFIX ${TTTORCH_SOURCE_DIR}/third_party/torch-mlir)
+    set(TORCH_MLIR_INSTALL_PREFIX ${TORCH_MLIR_PREFIX}/install)
+
+    set(TORCH_MLIR_BUILD_DIR ${TORCH_MLIR_PREFIX}/src/torch-mlir-build)
+    ExternalProject_Add(
+        torch-mlir
+        PREFIX ${TORCH_MLIR_PREFIX}
+        INSTALL_COMMAND ${CMAKE_COMMAND} --install ${TORCH_MLIR_BUILD_DIR}
+        CMAKE_GENERATOR Ninja
+        CMAKE_ARGS
+            -DCMAKE_BUILD_TYPE=Release
+            -DPython3_FIND_VIRTUALENV=ONLY
+            -DMLIR_DIR=${TTMLIR_TOOLCHAIN_DIR}/lib/cmake/mlir/
+            -DLLVM_DIR=${TTMLIR_TOOLCHAIN_DIR}/lib/cmake/llvm/
+            -DCMAKE_C_COMPILER=clang-17
+            -DCMAKE_CXX_COMPILER=clang++-17
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+            -DTORCH_MLIR_ENABLE_STABLEHLO=ON
+            -DMLIR_ENABLE_BINDINGS_PYTHON=ON
+            -DLLVM_TARGETS_TO_BUILD=host
+            -DLLVM_ENABLE_ZSTD=OFF
+            -DTORCH_MLIR_ENABLE_LTC=ON
+            -DCMAKE_VISIBILITY_INLINES_HIDDEN=ON
+            -DCMAKE_C_VISIBILITY_PRESET=hidden
+            -DCMAKE_CXX_VISIBILITY_PRESET=hidden
+            -DCMAKE_INSTALL_PREFIX=${TORCH_MLIR_INSTALL_PREFIX}
+
+        GIT_SUBMODULES "externals/stablehlo"
+        GIT_PROGRESS ON
+        GIT_REPOSITORY https://github.com/tenstorrent/llvm-torch-mlir.git
+        GIT_TAG ${TORCH_MLIR_VERSION}
+    )
+
+    install(DIRECTORY ${TORCH_MLIR_INSTALL_PREFIX}/python_packages/torch_mlir/torch_mlir DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
 
 endif()
