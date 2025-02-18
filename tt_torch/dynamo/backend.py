@@ -105,7 +105,7 @@ def _torch_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         compiler_config.set_stablehlo_mlir_module(module.operation.get_asm())
     if compiler_config.compile_depth == CompileDepth.STABLEHLO:
         return executor
-    
+
     # Need to set enable_debug_info=True to get the location information for the ops in the asm string
     ttir = tt_mlir.compile_stable_hlo_to_ttir(
         module.operation.get_asm(enable_debug_info=True)
@@ -167,6 +167,8 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         compiler_config.set_torch_mlir_module(module.operation.get_asm())
 
     lower_to_stable_hlo(module, enable_ir_printing=dump_debug)
+    with open(compiler_config.model_name + ".mlir", "w") as f:
+        f.write(str(module))
     if dump_info:
         print("StableHLO module", file=sys.stderr)
         module.dump()
