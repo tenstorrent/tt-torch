@@ -62,23 +62,11 @@ jobs:
         key: build_cache
 
     # Build project
-    - name: Configure CMake
-      shell: bash
-      run: |
-        source env/activate
-        cmake -G Ninja \
-        -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
-        -DCODE_COVERAGE=ON \
-        -DCMAKE_INSTALL_PREFIX=${{ steps.strings.outputs.install-output-dir }} \
-        -B ${{ steps.strings.outputs.build-output-dir }} \
-        -S ${{ steps.strings.outputs.work-dir }}
-
     - name: Build
       shell: bash
       run: |
         source env/activate
-        cmake --build ${{ steps.strings.outputs.build-output-dir }}
-        cmake --install ${{ steps.strings.outputs.build-output-dir }}
+        python setup.py bdist_wheel --code_coverage
 
     - name: Verify tt-mlir SHA override
       if: ${{ inputs.mlir_override }}
@@ -95,21 +83,13 @@ jobs:
           echo "::notice::Using tt-mlir: $branch_name, commit: $commit_sha, title: $commit_title"
           cd ../..
 
-    - name: Copy tt-metal binaries
-      shell: bash
-      working-directory: ${{ steps.strings.outputs.install-output-dir }}
-      run: |
-        cp ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal-build/lib/*.so lib/
-        cp ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir-build/bin/ttmlir-opt lib/
 
-    - name: Copy tt-metal directories
+    - name: Copy wheel
       shell: bash
       working-directory: ${{ steps.strings.outputs.install-output-dir }}
       run: |
-        mkdir tt-metal
-        cp -r ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/tt_metal tt-metal/
-        cp -r ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/ttnn tt-metal/
-        cp -r ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/runtime tt-metal/
+        mkdir wheels
+        cp dist/*.whl wheels
 
     - name: Copy venv directory
       shell: bash

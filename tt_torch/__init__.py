@@ -12,6 +12,7 @@ if mp.get_start_method() != "forkserver":
 
 import os
 import importlib.util
+
 # find the tt-metal directory, it can either be in the venv if installed from a wheel or in the third_party source tree
 package_name = "tt_metal"
 spec = importlib.util.find_spec(package_name)
