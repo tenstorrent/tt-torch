@@ -53,7 +53,7 @@ def verify_golden_callback(binary, callback_context, op_context):
     # Those bindings will interact with the runtime API
 
 
-def _shlo_backend(shlo, example_inputs, compiler_config, gm=None):
+def _shlo_backend(shlo, example_inputs, compiler_config, gm=None, graph_constants=None):
     if isinstance(shlo, torch_mlir._mlir_libs._mlir.ir.Module):
         executor = StablehloExecutor(
             parsed_module=shlo, compiler_config=compiler_config
@@ -106,7 +106,7 @@ def _torch_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         compiler_config.set_stablehlo_mlir_module(module.operation.get_asm())
     if compiler_config.compile_depth == CompileDepth.STABLEHLO:
         return executor
-    
+
     # Need to set enable_debug_info=True to get the location information for the ops in the asm string
     ttir = tt_mlir.compile_stable_hlo_to_ttir(
         module.operation.get_asm(enable_debug_info=True)
@@ -149,11 +149,13 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         compiler_config.set_torch_mlir_module(module.operation.get_asm())
 
     lower_to_stable_hlo(module, enable_ir_printing=dump_debug)
+    with open(compiler_config.model_name + ".mlir", "w") as f:
+        f.write(str(module))
     if dump_info:
         print("StableHLO module", file=sys.stderr)
         module.dump()
 
-    return module, executor
+    return module, executor, graph_constants
 
 
 def shlo_to_flatbuffer(module, compiler_config):
@@ -189,7 +191,9 @@ def _base_backend(gm_or_shlo, example_inputs, compiler_config):
     # Execution of the model
     # input is a torch graph
     if isinstance(gm_or_shlo, torch.fx.GraphModule):
-        shlo, executor = torch_to_shlo(gm_or_shlo, example_inputs, compiler_config)
+        shlo, executor, graph_constants = torch_to_shlo(
+            gm_or_shlo, example_inputs, compiler_config
+        )
     # input is a stablehlo string module
     elif isinstance(gm_or_shlo, str):
         shlo = parse_module_from_str(gm_or_shlo)
@@ -208,6 +212,7 @@ def _base_backend(gm_or_shlo, example_inputs, compiler_config):
 def backend(gm_or_shlo, example_inputs, options=None):
     if options is None:
         options = CompilerConfig()
+
     if (
         options.compile_depth == CompileDepth.COMPILE_OP_BY_OP
         or options.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
@@ -230,11 +235,12 @@ def backend(gm_or_shlo, example_inputs, options=None):
 
     if options.compile_depth == CompileDepth.COMPILE_STABLEHLO_OP_BY_OP:
         if isinstance(gm_or_shlo, str):
+            options.compile_depth = CompileDepth.COMPILE_OP_BY_OP
             return _shlo_backend(
                 shlo=gm_or_shlo, example_inputs=example_inputs, compiler_config=options
             )
         elif isinstance(gm_or_shlo, torch.fx.GraphModule):
-            module, __ = torch_to_shlo(
+            module, __, graph_constants = torch_to_shlo(
                 gm_or_shlo, example_inputs, compiler_config=options
             )
             return _shlo_backend(
@@ -242,6 +248,7 @@ def backend(gm_or_shlo, example_inputs, options=None):
                 example_inputs=example_inputs,
                 compiler_config=options,
                 gm=gm_or_shlo,
+                graph_constants=graph_constants,
             )
         else:
             print("Compiler input not valid", file=sys.stderr)

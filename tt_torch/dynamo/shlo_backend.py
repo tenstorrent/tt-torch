@@ -45,28 +45,30 @@ def parse_module_from_str(module_str):
         module = Module.parse(module_str)
     return module
 
+
 def get_input_shapes_and_constants(*inputs):
     input_shapes_and_constants = []
-        for inp in inputs:
-            if isinstance(inp, torch.Tensor):
-                input_shapes_and_constants.append(inp.shape)
-            elif isinstance(inp, (list, tuple)):
-                sub = []
-                for sub_inp in inp:
-                    if isinstance(sub_inp, torch.Tensor):
-                        sub.append(sub_inp.shape)
-                    else:
-                        sub.append(sub_inp)
-                input_shapes_and_constants.append(sub)
-            elif isinstance(inp, (int, float, bool)):
-                input_shapes_and_constants.append(inp)
-            elif isinstance(inp, torch.dtype):
-                input_shapes_and_constants.append(inp.__str__())
-            elif inp is None:
-                input_shapes_and_constants.append(None)
-            else:
-                raise ValueError(f"Unexpected input type: {type(inp)}")
+    for inp in inputs:
+        if isinstance(inp, torch.Tensor):
+            input_shapes_and_constants.append(inp.shape)
+        elif isinstance(inp, (list, tuple)):
+            sub = []
+            for sub_inp in inp:
+                if isinstance(sub_inp, torch.Tensor):
+                    sub.append(sub_inp.shape)
+                else:
+                    sub.append(sub_inp)
+            input_shapes_and_constants.append(sub)
+        elif isinstance(inp, (int, float, bool)):
+            input_shapes_and_constants.append(inp)
+        elif isinstance(inp, torch.dtype):
+            input_shapes_and_constants.append(inp.__str__())
+        elif inp is None:
+            input_shapes_and_constants.append(None)
+        else:
+            raise ValueError(f"Unexpected input type: {type(inp)}")
     return input_shapes_and_constants
+
 
 def compile_process(receiver, sender, ttir_event, ttnn_event, json_event):
     obj = receiver.get()
@@ -133,6 +135,7 @@ class StablehloExecutor(Executor):
         self.graph_constants = tuple(graph_constants)
 
     def gm_op_by_op(self, *inputs):
+        print("I'm here")
         node_to_tensor = {}
         input_index = 0
         outputs = []
@@ -167,6 +170,15 @@ class StablehloExecutor(Executor):
                         args.append(arg)
                 tensor = node.target(*args, **node.kwargs)
                 node_to_tensor[node] = tensor
+                name = node.target.name() if hasattr(node.target, "name") else node.name
+                input_shapes_and_constants = get_input_shapes_and_constants(args)
+                op = Op(
+                    name, input_shapes_and_constants, self.compiler_config.model_name
+                )
+                if op.unique_key() not in self.compiler_config.unique_ops:
+                    self.compiler_config.unique_ops[op.unique_key()] = op
+                else:
+                    self.compiler_config.unique_ops[op.unique_key()].num_ops += 1
             elif node.op == "output":
                 args = node.args[0]
                 output_tensors = [node_to_tensor[arg] for arg in args]
@@ -181,10 +193,7 @@ class StablehloExecutor(Executor):
                     if out_degree[arg] == 0 and arg.op != "output":
                         del node_to_tensor[arg]
                         out_degree.pop(arg)
-
-        # if self.execute_process is not None:
-        #     self.execute_process.terminate()
-        #     self.execute_process = None
+        self.compiler_config.save_unique_ops()
         return outputs
 
     def get_ops_in_module(self, module):
@@ -324,8 +333,12 @@ class StablehloExecutor(Executor):
             self.compiler_config.compile_depth
             == CompileDepth.COMPILE_STABLEHLO_OP_BY_OP
         ):
-            self.compile_shlo_op_by_op()
+            print("lol")
+            # self.compile_shlo_op_by_op()
             return self.gm_op_by_op(*(inputs + self.graph_constants))
+        elif self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP:
+            self.compile_shlo_op_by_op()
+            return  # return nothing
         else:
             print("Invalid compile depth", file=sys.stderr)
             exit(1)
