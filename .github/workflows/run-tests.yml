@@ -74,31 +74,21 @@ jobs:
     - name: 'Untar install directory'
       shell: bash
       working-directory: ${{ steps.strings.outputs.install-output-dir }}
-      run: tar xvf artifact.tar
-
-    - name: make env directory
-      shell: bash
-      working-directory: ${{ steps.strings.outputs.install-output-dir }}
       run: |
-        mkdir -p ${{ steps.strings.outputs.work-dir }}/env
-
-    - name: copy env directory
-      shell: bash
-      working-directory: ${{ steps.strings.outputs.install-output-dir }}
-      run: |
-        cp -r ${{ steps.strings.outputs.install-output-dir }}/env/* ${{ steps.strings.outputs.work-dir }}/env
+        tar xvf artifact.tar
+        mkdir -p ../dist
+        mv wheels/* ../dist/
 
     - name: install tt-torch
       shell: bash
       run: |
         source env/activate
-        pip install install/wheels/*.whl
+        pip install dist/*.whl
 
     - name: Run PyTorch Unit tests
       shell: bash
       run: |
         source env/activate
-        export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
         pytest -v tests/torch \
            --junit-xml=${{ steps.strings.outputs.test_report_path_torch }} \
            --cov=tests/torch --cov-append
@@ -173,7 +163,6 @@ jobs:
       shell: bash
       run: |
         source env/activate
-        export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
         pytest -v tests/onnx \
             --junit-xml=${{ steps.strings.outputs.test_report_path_onnx }} \
             --cov=tests/onnx --cov-append
