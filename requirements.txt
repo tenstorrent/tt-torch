@@ -34,3 +34,6 @@ kornia
 timm
 ml_dtypes
 opencv-contrib-python
+setuptools
+wheel
+scikit-build
