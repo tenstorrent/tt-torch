@@ -91,8 +91,6 @@ jobs:
         cd artifacts
         mkdir wheels
         cp ../dist/*.whl wheels
-        mkdir env
-        cp -r ../env/* env
         tar cvf artifact.tar .
 
     - name: Upload artifacts to archive
