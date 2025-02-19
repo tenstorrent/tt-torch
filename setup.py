@@ -12,6 +12,8 @@ import sys
 class install_metal_libs(install_lib):
     def run(self):
         install_lib.run(self)
+        install_path = os.path.join(self.install_dir, "tt_mlir")
+        os.makedirs(install_path, exist_ok=True)
         lib_dir = os.path.abspath(
             os.path.join(
                 os.getcwd(), "_skbuild", "linux-x86_64-3.11", "cmake-install", "lib"
@@ -20,8 +22,6 @@ class install_metal_libs(install_lib):
         if os.path.exists(lib_dir):
             for file in glob.glob(os.path.join(lib_dir, "*")):
                 if os.path.isfile(file):
-                    install_path = os.path.join(self.install_dir, "tt_torch")
-                    os.makedirs(install_path, exist_ok=True)
                     self.copy_file(file, install_path)
 
         # Copy third_party/tt-mlir/src/tt-mlir-build/bin/ttmlir-opt into lib
@@ -36,8 +36,7 @@ class install_metal_libs(install_lib):
                 "ttmlir-opt",
             )
         )
-        os.makedirs(os.path.join(self.install_dir, "tt_torch"), exist_ok=True)
-        self.copy_file(ttmlir_opt, os.path.join(self.install_dir, "tt_torch"))
+        self.copy_file(ttmlir_opt, install_path)
 
         metal_dir = os.path.abspath(
             os.path.join(
@@ -73,7 +72,7 @@ class install_metal_libs(install_lib):
 
             return ignored_items
 
-        install_path = os.path.join(self.install_dir, "tt_torch", "tt_metal")
+        install_path = os.path.join(self.install_dir, "tt_torch_tt_metal_libs")
         os.makedirs(install_path, exist_ok=True)
         shutil.copytree(metal_dir, install_path, dirs_exist_ok=True, ignore=ignore)
 

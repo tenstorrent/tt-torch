@@ -14,9 +14,8 @@ import os
 import importlib.util
 
 # find the tt-metal directory, it can either be in the venv if installed from a wheel or in the third_party source tree
-package_name = "tt_metal"
+package_name = "tt_torch_tt_metal_libs"
 spec = importlib.util.find_spec(package_name)
-print(f"tt_metal_home: {spec}")
 assert spec is not None, "tt_metal not found"
 tt_metal_home = os.path.abspath(spec.submodule_search_locations[0])
 os.environ["TT_METAL_HOME"] = tt_metal_home
