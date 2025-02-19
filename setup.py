@@ -73,7 +73,7 @@ class install_metal_libs(install_lib):
 
             return ignored_items
 
-        install_path = os.path.join(self.install_dir, "tt_torch" "tt_metal")
+        install_path = os.path.join(self.install_dir, "tt_torch", "tt_metal")
         os.makedirs(install_path, exist_ok=True)
         shutil.copytree(metal_dir, install_path, dirs_exist_ok=True, ignore=ignore)
 
