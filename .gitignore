@@ -1,6 +1,7 @@
 *.pyc
 env/venv
 build
+dist
 install
 results/mlir_tests/
 results/models/
