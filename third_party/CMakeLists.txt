@@ -41,8 +41,8 @@ else()
     endif()
 
     include(ExternalProject)
-    set(TT_MLIR_COMPILER_LIBRARY_PATH ${TTTORCH_SOURCE_DIR}/install/lib/libTTMLIRCompiler.so)
-    set(TT_MLIR_RUNTIME_LIBRARY_PATH ${TTTORCH_SOURCE_DIR}/install/lib/libTTMLIRRuntime.so)
+    set(TT_MLIR_COMPILER_LIBRARY_PATH ${CMAKE_INSTALL_PREFIX}/lib/libTTMLIRCompiler.so)
+    set(TT_MLIR_RUNTIME_LIBRARY_PATH ${CMAKE_INSTALL_PREFIX}/lib/libTTMLIRRuntime.so)
     ExternalProject_Add(
         tt-mlir
         PREFIX ${TTTORCH_SOURCE_DIR}/third_party/tt-mlir
@@ -58,7 +58,7 @@ else()
           -DTTMLIR_ENABLE_RUNTIME=ON
           -DTTMLIR_ENABLE_BINDINGS_PYTHON=OFF
           -DTT_RUNTIME_DEBUG=${TT_RUNTIME_DEBUG}
-          -DCMAKE_INSTALL_PREFIX=${TTTORCH_SOURCE_DIR}/install
+          -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
           -DTTMLIR_ENABLE_DEBUG_STRINGS=${TT_RUNTIME_DEBUG}
         BUILD_COMMAND ${BUILD_COMMAND}
         GIT_REPOSITORY https://github.com/tenstorrent/tt-mlir.git
