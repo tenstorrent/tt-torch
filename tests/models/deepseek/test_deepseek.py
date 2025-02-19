@@ -2,13 +2,12 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import torch
-import os
+import pytest
 from unittest.mock import patch
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 from transformers.dynamic_module_utils import get_imports
-import os
-
-os.environ["HF_HOME"] = "/localdev/ddilbaz/cache/"
+from tests.utils import ModelTester
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 
 def fixed_get_imports(filename: str | os.PathLike) -> list[str]:
@@ -18,70 +17,58 @@ def fixed_get_imports(filename: str | os.PathLike) -> list[str]:
     return imports
 
 
-# Load model and tokenizer
-model_name = "deepseek-ai/DeepSeek-V3"
-### Model specs
-# num_hidden_layers (currently 61)
-# num_attention_heads (currently 128)
-# hidden_size (not shown in your config but is likely 8192 based on the model)
-###
-with patch("transformers.dynamic_module_utils.get_imports", fixed_get_imports):
-    config = AutoConfig.from_pretrained(model_name, trust_remote_code=True)
+class ThisTester(ModelTester):
+    def _load_model(self):
+        model = None
+        with patch("transformers.dynamic_module_utils.get_imports", fixed_get_imports):
+            config = AutoConfig.from_pretrained(self.model_name, trust_remote_code=True)
 
-    # Modify config
-    config.num_hidden_layers = 6
-    config.num_attention_heads = 16
-    config.hidden_size = 1024
-    config.num_key_value_heads = 16
-    config.intermediate_size = 1024 * 4
-    config.num_experts_per_tok = 2
-    config.q_lora_rank = 256
+            # Modify config
+            config.num_hidden_layers = 6
+            config.num_attention_heads = 16
+            config.hidden_size = 1024
+            config.num_key_value_heads = 16
+            config.intermediate_size = 1024 * 4
+            config.num_experts_per_tok = 2
+            config.q_lora_rank = 256
+            config.use_flash_attention = False
 
-    tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+            model = AutoModelForCausalLM.from_config(
+                config,
+                torch_dtype=torch.bfloat16,
+                attn_implementation="eager",
+                trust_remote_code=True,
+            )
+            return model
 
-    # Create a new model with the config and all necessary parameters
-    model = AutoModelForCausalLM.from_config(
-        config,
-        # device_map="cpu",  # Force CPU
-        torch_dtype=torch.float32,  # Use float32
-        attn_implementation="eager",  # Use eager implementation
-        trust_remote_code=True,
-    ).to(
-        "cpu"
-    )  # Ensure it's on CPU
+    def _load_inputs(self):
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            self.model_name, trust_remote_code=True
+        )
+        self.text = "What is machine learning?"
+        self.inputs = self.tokenizer(self.text, return_tensors="pt")
+        return self.inputs
 
-    # Disable flash attention explicitly
-    model.config.use_flash_attention = False
-    breakpoint()
+    def set_model_eval(self, model):
+        return model
 
 
-def generate_response(messages):
-    # Format the messages into DeepSeek's expected format
-    formatted_prompt = ""
-    for message in messages:
-        if message["role"] == "user":
-            formatted_prompt += f"Human: {message['content']}\n\nAssistant: "
-        elif message["role"] == "assistant":
-            formatted_prompt += f"{message['content']}\n\n"
+@pytest.mark.parametrize(
+    "mode",
+    ["eval"],
+)
+@pytest.mark.parametrize("model_name", ["deepseek-ai/DeepSeek-V3"])
+@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+def test_deepseek(record_property, model_name, mode, op_by_op):
+    cc = CompilerConfig()
+    if op_by_op:
+        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
 
-    # Tokenize the input
-    inputs = tokenizer(formatted_prompt, return_tensors="pt").to(model.device)
-
-    # Generate response
-    outputs = model.generate(
-        inputs.input_ids,
-        max_new_tokens=512,
-        temperature=0.7,
-        do_sample=True,
-        pad_token_id=tokenizer.eos_token_id,
+    tester = ThisTester(
+        model_name,
+        mode,
+        compiler_config=cc,
+        record_property_handle=record_property,
     )
-
-    # Decode and return the response
-    response = tokenizer.decode(
-        outputs[0][inputs.input_ids.shape[1] :], skip_special_tokens=True
-    )
-    return response
-
-
-# Example usage
-messages = [{"role": "user", "content": "Who are you?"}]
+    results = tester.test_model()
+    tester.finalize()
