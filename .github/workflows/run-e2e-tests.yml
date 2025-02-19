@@ -67,22 +67,16 @@ jobs:
     - name: 'Untar install directory'
       shell: bash
       working-directory: ${{ steps.strings.outputs.install-output-dir }}
-      run: tar xvf artifact.tar
-
-    - name: make tt-metal and env directories
-      shell: bash
-      working-directory: ${{ steps.strings.outputs.install-output-dir }}
       run: |
-        mkdir -p ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal
-        mkdir -p ${{ steps.strings.outputs.work-dir }}/env
+        tar xvf artifact.tar
+        mkdir -p ../dist
+        mv wheels/* ../dist/
 
-    - name: copy tt-metal and env dirs
+    - name: install tt-torch
       shell: bash
-      working-directory: ${{ steps.strings.outputs.install-output-dir }}
       run: |
-        cp -r ${{ steps.strings.outputs.install-output-dir }}/tt-metal/* ${{ steps.strings.outputs.work-dir }}/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal
-        cp -r ${{ steps.strings.outputs.install-output-dir }}/env/* ${{ steps.strings.outputs.work-dir }}/env
-
+        source env/activate
+        pip install dist/*.whl
 
     - name: Compile Supported Models
       env:
@@ -92,7 +86,6 @@ jobs:
       shell: bash
       run: |
         source env/activate
-        export LD_LIBRARY_PATH="/opt/ttmlir-toolchain/lib/:${{ steps.strings.outputs.install-output-dir }}/lib:${{ steps.strings.outputs.build-output-dir }}/lib:./lib/:${LD_LIBRARY_PATH}"
         TT_TORCH_COMPILE_DEPTH=TTNN_IR pytest -v \
                   tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[full-microsoft/beit-base-patch16-224-eval] \
                   tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[full-microsoft/beit-large-patch16-224-eval] \
