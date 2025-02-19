@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-set(TT_MLIR_VERSION "fa8c589842b557042f8c554120b24fdae11d5fd6")
+set(TT_MLIR_VERSION "bfb88ddfac2d3aaf2ab0525ff177bdeadb2d34e9")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
@@ -41,8 +41,8 @@ else()
     endif()
 
     include(ExternalProject)
-    set(TT_MLIR_COMPILER_LIBRARY_PATH ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/lib/SharedLib/libTTMLIRCompiler.so)
-    set(TT_MLIR_RUNTIME_LIBRARY_PATH ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/lib/SharedLib/libTTMLIRRuntime.so)
+    set(TT_MLIR_COMPILER_LIBRARY_PATH ${TTTORCH_SOURCE_DIR}/install/lib/libTTMLIRCompiler.so)
+    set(TT_MLIR_RUNTIME_LIBRARY_PATH ${TTTORCH_SOURCE_DIR}/install/lib/libTTMLIRRuntime.so)
     ExternalProject_Add(
         tt-mlir
         PREFIX ${TTTORCH_SOURCE_DIR}/third_party/tt-mlir
@@ -56,8 +56,9 @@ else()
           -DTT_RUNTIME_ENABLE_TTMETAL=OFF
           -DTTMLIR_ENABLE_STABLEHLO=ON
           -DTTMLIR_ENABLE_RUNTIME=ON
+          -DTTMLIR_ENABLE_BINDINGS_PYTHON=OFF
           -DTT_RUNTIME_DEBUG=${TT_RUNTIME_DEBUG}
-          -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+          -DCMAKE_INSTALL_PREFIX=${TTTORCH_SOURCE_DIR}/install
           -DTTMLIR_ENABLE_DEBUG_STRINGS=${TT_RUNTIME_DEBUG}
         BUILD_COMMAND ${BUILD_COMMAND}
         GIT_REPOSITORY https://github.com/tenstorrent/tt-mlir.git

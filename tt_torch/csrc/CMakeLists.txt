@@ -29,15 +29,12 @@ target_include_directories(TT_TORCH_MLIR PUBLIC
 )
 
 target_link_libraries(TT_TORCH_MLIR PUBLIC
-    LLVM
-    MLIR
     TTMLIRCompiler
     TTMLIRRuntime
 )
 target_link_directories(TT_TORCH_MLIR PUBLIC
     ${TTMLIR_TOOLCHAIN_DIR}/lib
     ${TTTORCH_SOURCE_DIR}/install/lib
-    ${TTTORCH_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/lib
 )
 
 set(TORCH_INSTALL_PREFIX ${TTTORCH_SOURCE_DIR}/env/venv/lib/python3.11/site-packages/torch)
