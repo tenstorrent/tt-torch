@@ -8,8 +8,6 @@ from skbuild.command.install_lib import install_lib
 import shutil
 import sys
 
-os.environ["DONT_OVERRIDE_INSTALL_PATH"] = "1"
-
 
 class install_metal_libs(install_lib):
     def run(self):
@@ -80,6 +78,9 @@ class install_metal_libs(install_lib):
         shutil.copytree(metal_dir, install_path, dirs_exist_ok=True, ignore=ignore)
 
 
+# Compile time env vars
+os.environ["DONT_OVERRIDE_INSTALL_PATH"] = "1"
+
 cmake_args = [
     "-GNinja",
 ]
@@ -87,6 +88,7 @@ if "--code_coverage" in sys.argv:
     cmake_args += [
         "-DCODE_COVERAGE=ON",
     ]
+    sys.argv.remove("--code_coverage")
 setup(
     name="tt_torch",
     version="0.1",
