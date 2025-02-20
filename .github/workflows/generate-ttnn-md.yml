@@ -25,7 +25,7 @@ jobs:
         shell: bash
         run: |
           echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
-          echo "install-output-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
+          echo "install-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
           echo "test-output-dir=$(pwd)/results/models/tests/" >> "$GITHUB_OUTPUT"
 
       - name: Git safe dir

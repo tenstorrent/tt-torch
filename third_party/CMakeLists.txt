@@ -41,11 +41,17 @@ else()
     endif()
 
     include(ExternalProject)
-    set(TT_MLIR_COMPILER_LIBRARY_PATH ${CMAKE_INSTALL_PREFIX}/lib/libTTMLIRCompiler.so)
-    set(TT_MLIR_RUNTIME_LIBRARY_PATH ${CMAKE_INSTALL_PREFIX}/lib/libTTMLIRRuntime.so)
+    set(TTMLIR_PREFIX ${TTTORCH_SOURCE_DIR}/third_party/tt-mlir)
+    set(TTMLIR_INSTALL_PREFIX ${TTMLIR_PREFIX}/install)
+    set(TT_MLIR_COMPILER_LIBRARY_PATH ${TTMLIR_INSTALL_PREFIX}/lib/libTTMLIRCompiler.so)
+    set(TT_MLIR_RUNTIME_LIBRARY_PATH ${TTMLIR_INSTALL_PREFIX}/lib/libTTMLIRRuntime.so)
+
+    set(TTMLIR_BUILD_DIR ${TTMLIR_PREFIX}/src/tt-mlir-build)
+
     ExternalProject_Add(
         tt-mlir
-        PREFIX ${TTTORCH_SOURCE_DIR}/third_party/tt-mlir
+        PREFIX ${TTMLIR_PREFIX}
+        INSTALL_COMMAND ${CMAKE_COMMAND} --install ${TTMLIR_BUILD_DIR} --component SharedLib
         CMAKE_GENERATOR Ninja
         CMAKE_ARGS
           -DCMAKE_BUILD_TYPE=Release
@@ -58,7 +64,7 @@ else()
           -DTTMLIR_ENABLE_RUNTIME=ON
           -DTTMLIR_ENABLE_BINDINGS_PYTHON=OFF
           -DTT_RUNTIME_DEBUG=${TT_RUNTIME_DEBUG}
-          -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+          -DCMAKE_INSTALL_PREFIX=${TTMLIR_INSTALL_PREFIX}
           -DTTMLIR_ENABLE_DEBUG_STRINGS=${TT_RUNTIME_DEBUG}
         BUILD_COMMAND ${BUILD_COMMAND}
         GIT_REPOSITORY https://github.com/tenstorrent/tt-mlir.git
@@ -76,7 +82,6 @@ else()
     set_target_properties(TTMLIRRuntime PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_RUNTIME_LIBRARY_PATH})
     add_dependencies(TTMLIRRuntime tt-mlir)
 
-    install(FILES ${TT_MLIR_COMPILER_LIBRARY_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-    install(FILES ${TT_MLIR_RUNTIME_LIBRARY_PATH} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+    install(DIRECTORY ${TTMLIR_INSTALL_PREFIX}/ DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
 
 endif()
