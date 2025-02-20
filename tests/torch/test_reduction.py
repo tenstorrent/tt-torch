@@ -22,16 +22,7 @@ from tt_torch.tools.verify import verify_module
         ([(4, 2, 32, 32)], [3], False, [torch.bfloat16], 0.02),
         ([(4, 2, 32, 32)], [0, 2], False, [torch.bfloat16], 0.035),
         ([(4, 2, 32, 32)], [0, 1, 2, 3], True, [torch.bfloat16], 0.13),
-        pytest.param(
-            [(4, 2, 32, 32)],
-            [0, 2, 3],
-            True,
-            [torch.bfloat16],
-            0.35,
-            marks=pytest.mark.xfail(
-                reason="Reduce on more than two dimensions is not currently supported by TTNN"
-            ),
-        ),
+        ([(4, 2, 32, 32)], [0, 2, 3], True, [torch.bfloat16], 0.30),
     ],
 )
 def test_reduce_sum(input_shape, dim_arg, keep_dim, input_type, atol):
@@ -202,15 +193,7 @@ def test_max_full(input_shape):
         ([(4, 2, 32, 32)], [0, 2], False, [torch.bfloat16]),
         ([(4, 2, 32, 32)], [1, 2], True, [torch.bfloat16]),
         ([(4, 2, 32, 32)], [0, 1, 2, 3], True, [torch.bfloat16]),
-        pytest.param(
-            [(4, 2, 32, 32)],
-            [1, 2, 3],
-            True,
-            [torch.bfloat16],
-            marks=pytest.mark.xfail(
-                reason="Reduce on more than two dimensions is not currently supported by TTNN"
-            ),
-        ),
+        ([(4, 2, 32, 32)], [1, 2, 3], True, [torch.bfloat16]),
     ],
 )
 def test_reduce_mean(input_shape, dim_arg, keep_dim, input_type):
