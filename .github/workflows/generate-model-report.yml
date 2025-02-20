@@ -37,8 +37,7 @@ jobs:
       shell: bash
       run: |
         echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
-        echo "build-output-dir=$(pwd)/build" >> "$GITHUB_OUTPUT"
-        echo "install-output-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
+        echo "install-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
         echo "test-output-dir=$(pwd)/results/models/tests/" >> "$GITHUB_OUTPUT"
 
     - name: Git safe dir
@@ -52,17 +51,17 @@ jobs:
 
     - name: 'Untar install directory'
       shell: bash
-      working-directory: ${{ steps.strings.outputs.install-output-dir }}
+      working-directory: ${{ steps.strings.outputs.install-dir }}
       run: |
         tar xvf artifact.tar
-        mkdir -p ../dist
-        mv wheels/* ../dist/
+        mkdir -p ${{ steps.strings.outputs.dist-dir }}
+        mv wheels/* ${{ steps.strings.outputs.dist-dir }}
 
     - name: install tt-torch
       shell: bash
       run: |
         source env/activate
-        pip install dist/*.whl
+        pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
     - name: make tests directory
       shell: bash
