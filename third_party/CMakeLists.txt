@@ -30,15 +30,6 @@ if (BUILD_TOOLCHAIN)
 else()
     set(TT_RUNTIME_DEBUG OFF CACHE BOOL "Enable runtime debugging")
     message(STATUS "TT_RUNTIME_DEBUG is set to: ${TT_RUNTIME_DEBUG}")
-    set(BUILD_TTRT ON CACHE BOOL "Build the ttrt target")
-    # Set the build command based on the BUILD_TTRT variable
-    if(BUILD_TTRT)
-        message(STATUS "Building ttrt")
-        set(BUILD_COMMAND "${CMAKE_COMMAND}" --build . -- ttrt)
-    else()
-        message(STATUS "Not building ttrt")
-        set(BUILD_COMMAND "")
-    endif()
 
     include(ExternalProject)
     set(TT_MLIR_COMPILER_LIBRARY_PATH ${CMAKE_INSTALL_PREFIX}/lib/libTTMLIRCompiler.so)
@@ -60,7 +51,6 @@ else()
           -DTT_RUNTIME_DEBUG=${TT_RUNTIME_DEBUG}
           -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
           -DTTMLIR_ENABLE_DEBUG_STRINGS=${TT_RUNTIME_DEBUG}
-        BUILD_COMMAND ${BUILD_COMMAND}
         GIT_REPOSITORY https://github.com/tenstorrent/tt-mlir.git
         GIT_TAG ${TT_MLIR_VERSION}
         GIT_PROGRESS ON
