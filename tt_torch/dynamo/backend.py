@@ -167,8 +167,6 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         compiler_config.set_torch_mlir_module(module.operation.get_asm())
 
     lower_to_stable_hlo(module, enable_ir_printing=dump_debug)
-    with open(compiler_config.model_name + ".mlir", "w") as f:
-        f.write(str(module))
     if dump_info:
         print("StableHLO module", file=sys.stderr)
         module.dump()
@@ -277,4 +275,5 @@ def backend(gm_or_shlo, example_inputs, options=None):
     print(
         "Reached invalid compile depth in tt_torch/dynamo/backend.py", file=sys.stderr
     )
+
     exit(1)
