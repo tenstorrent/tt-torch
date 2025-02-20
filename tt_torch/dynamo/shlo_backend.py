@@ -27,9 +27,6 @@ from tt_torch.dynamo.executor import Executor
 
 
 def generate_random_inputs_for_shlo(module_str):
-    # Parse tensor shapes from the module string
-    import re
-
     tensor_shapes = re.findall(r"tensor<([\dx]+)xf32>", module_str)
     inputs = []
     for shape_str in tensor_shapes:
@@ -135,7 +132,6 @@ class StablehloExecutor(Executor):
         self.graph_constants = tuple(graph_constants)
 
     def gm_op_by_op(self, *inputs):
-        print("I'm here")
         node_to_tensor = {}
         input_index = 0
         outputs = []
@@ -207,22 +203,35 @@ class StablehloExecutor(Executor):
                         operand.get_name(): str(operand.type) for operand in op.operands
                     }
                     args_str = ", ".join(f"{key}: {typ}" for key, typ in inputs.items())
-                    result_type = str(op.result.type)
-                    result_name = str(op.result.get_name())
 
+                    # Handle multiple results in the operation
+                    result_names = [str(result.get_name()) for result in op.results]
+                    result_types = [str(result.type) for result in op.results]
+
+                    # Construct the function signature based on the number of results
+                    if len(result_names) == 1:
+                        result_str = f"{result_types[0]}"
+                        return_stmt = f"return {result_names[0]} : {result_types[0]}"
+                    else:
+                        result_str = f"({', '.join(result_types)})"
+                        return_stmt = f"return ({', '.join(result_names)}) : ({', '.join(result_types)})"
+                    # Build the new module string
                     new_module_str = f"""module {{
-    func.func @main({args_str}) -> {result_type} {{
-        {str(op)}
-        return {result_name} : {result_type}
-    }}
-}}"""
-                    opObj = StablehloOp(
-                        model_name=self.compiler_config.model_name,
-                        op_id=result_name,
-                        original_shlo=str(op),
-                    )
-                    opObj.add_stable_hlo_graph(new_module_str)
-                    self.sub_ops.append(opObj)
+        func.func @main({args_str}) -> {result_str} {{
+            {str(op)}
+            {return_stmt}
+        }}
+    }}"""
+
+                # Create the StablehloOp object and add it to the sub_ops list
+                opObj = StablehloOp(
+                    model_name=self.compiler_config.model_name,
+                    op_id=", ".join(result_names),
+                    original_shlo=str(op),
+                )
+                opObj.add_stable_hlo_graph(new_module_str)
+                self.sub_ops.append(opObj)
+        breakpoint()
 
     def compile_op(self, op):
         parsed = parse_module_from_str(op.stable_hlo_graph)
@@ -286,6 +295,7 @@ class StablehloExecutor(Executor):
     def compile_shlo_op_by_op(self):
         num_ops = len(self.sub_ops)
         for idx, node in enumerate(self.sub_ops):
+            print(f"Compiling {idx}/{num_ops}: {node.stable_hlo_graph}")
             binary = self.compile_op(node)
         self.set_binary(binary)
         return binary
@@ -333,8 +343,10 @@ class StablehloExecutor(Executor):
             self.compiler_config.compile_depth
             == CompileDepth.COMPILE_STABLEHLO_OP_BY_OP
         ):
-            print("lol")
-            # self.compile_shlo_op_by_op()
+            # assuming input is a torch graph
+            # if input is stablehlo graph, compile depth should have
+            # been reset to COMPILE_OP_BY_OP
+            self.compile_shlo_op_by_op()
             return self.gm_op_by_op(*(inputs + self.graph_constants))
         elif self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP:
             self.compile_shlo_op_by_op()
