@@ -1,6 +1,7 @@
 # Summary
 
 [Introduction](./overview.md)
+[Getting Started](./getting_started.md)
 
 # User guide
 - [Overview](./overview.md)
