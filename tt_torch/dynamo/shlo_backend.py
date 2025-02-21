@@ -1,16 +1,9 @@
 # SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-import tt_mlir
 import torch
 import torch_mlir
-from mlir.ir import Context, Location, Module
-import numpy as np
-import faulthandler
-import multiprocessing as mp
-import time
-import sys
-import tempfile
+from mlir.ir import Context, Module
 import re
 import os
 import mlir.dialects.stablehlo as stablehlo
@@ -20,21 +13,105 @@ from tt_torch.tools.utils import (
     CompilerConfig,
     CompileDepth,
     Op,
+    OpByOpBackend,
     OpCompilationStatus,
     calculate_atol,
     calculate_pcc,
 )
 
-from tt_torch.dynamo.executor import Executor
+from tt_torch.dynamo.executor import OpByOpExecutor
+
+#########################################################
+# Helper functions
+#########################################################
 
 
 def generate_random_inputs_for_shlo(module_str):
-    tensor_shapes = re.findall(r"tensor<([\dx]+)xf32>", module_str)
+    func_match = re.search(r"func\.func @\w+\((.*?)\)", module_str)
+    if not func_match:
+        raise ValueError("Could not find function signature in StableHLO module")
+
+    args_str = func_match.group(1)
+
+    # Match the function arguments
+    args = re.findall(r"%arg\d+:\s+tensor<([^>]+)>", args_str)
+
     inputs = []
-    for shape_str in tensor_shapes:
-        shape = [int(dim) for dim in shape_str.split("x")]
-        inputs.append(torch.randn(shape, dtype=torch.float32))
-    return inputs
+    for shape_str in args:
+        # Check if shape_str contains dimensions (e.g., 1x784x or f32)
+        shape_dtype_match = re.match(r"([\dx]+)x([^>]+)", shape_str)
+
+        if shape_dtype_match:
+            # If it matches the pattern of dimensions and data type (like 1x784xf32)
+            shape_str, dtype_str = shape_dtype_match.groups()
+
+            dims = [int(dim) for dim in shape_str.split("x")]
+
+            if dtype_str == "f32":
+                inputs.append(torch.randn(dims, dtype=torch.float32))
+            elif dtype_str == "f16":
+                inputs.append(torch.randn(dims, dtype=torch.float16))
+            elif dtype_str == "bf16":
+                inputs.append(torch.randn(dims, dtype=torch.bfloat16))
+            elif dtype_str == "f64":
+                inputs.append(torch.randn(dims, dtype=torch.float64))
+            elif dtype_str.startswith("i") or dtype_str.startswith("si"):
+                bit_width = int(
+                    re.search(r"i(\d+)|si(\d+)", dtype_str).group(1)
+                    or re.search(r"i(\d+)|si(\d+)", dtype_str).group(2)
+                )
+                max_val = min(
+                    100,
+                    2 ** (bit_width - 1) - 1
+                    if dtype_str.startswith("si")
+                    else 2**bit_width - 1,
+                )
+                inputs.append(
+                    torch.randint(
+                        -max_val if dtype_str.startswith("si") else 0, max_val, dims
+                    )
+                )
+            elif dtype_str.startswith("ui"):
+                bit_width = int(re.search(r"ui(\d+)", dtype_str).group(1))
+                max_val = min(100, 2**bit_width - 1)
+                inputs.append(torch.randint(0, max_val, dims))
+            else:
+                raise ValueError(f"Unsupported datatype: {dtype_str}")
+
+        else:
+            # If the shape_str is just a data type (e.g., "f32"), treat it as a scalar or unknown shape
+            if shape_str == "f32":
+                inputs.append(torch.randn((), dtype=torch.float32))
+            elif shape_str == "f16":
+                inputs.append(torch.randn((), dtype=torch.float16))
+            elif shape_str == "bf16":
+                inputs.append(torch.randn((), dtype=torch.bfloat16))
+            elif shape_str == "f64":
+                inputs.append(torch.randn((), dtype=torch.float64))
+            elif shape_str.startswith("i") or shape_str.startswith("si"):
+                bit_width = int(
+                    re.search(r"i(\d+)|si(\d+)", shape_str).group(1)
+                    or re.search(r"i(\d+)|si(\d+)", shape_str).group(2)
+                )
+                max_val = min(
+                    100,
+                    2 ** (bit_width - 1) - 1
+                    if shape_str.startswith("si")
+                    else 2**bit_width - 1,
+                )
+                inputs.append(
+                    torch.randint(
+                        -max_val if shape_str.startswith("si") else 0, max_val, ()
+                    )
+                )
+            elif shape_str.startswith("ui"):
+                bit_width = int(re.search(r"ui(\d+)", shape_str).group(1))
+                max_val = min(100, 2**bit_width - 1)
+                inputs.append(torch.randint(0, max_val, ()))
+            else:
+                raise ValueError(f"Unsupported dtype: {shape_str}")
+
+    return tuple(inputs)
 
 
 def parse_module_from_str(module_str):
@@ -45,47 +122,13 @@ def parse_module_from_str(module_str):
     return module
 
 
-def get_input_shapes_and_constants(*inputs):
-    input_shapes_and_constants = []
-    for inp in inputs:
-        if isinstance(inp, torch.Tensor):
-            input_shapes_and_constants.append(inp.shape)
-        elif isinstance(inp, (list, tuple)):
-            sub = []
-            for sub_inp in inp:
-                if isinstance(sub_inp, torch.Tensor):
-                    sub.append(sub_inp.shape)
-                else:
-                    sub.append(sub_inp)
-            input_shapes_and_constants.append(sub)
-        elif isinstance(inp, (int, float, bool)):
-            input_shapes_and_constants.append(inp)
-        elif isinstance(inp, torch.dtype):
-            input_shapes_and_constants.append(inp.__str__())
-        elif inp is None:
-            input_shapes_and_constants.append(None)
-        else:
-            raise ValueError(f"Unexpected input type: {type(inp)}")
-    return input_shapes_and_constants
-
-
-def compile_process(receiver, sender, ttir_event, ttnn_event, json_event):
-    obj = receiver.get()
-    faulthandler.disable()
-    asm = obj["asm"]
-    ttir = tt_mlir.compile_stable_hlo_to_ttir(asm)
-    sender.put({"ttir": ttir})
-    ttir_event.wait()
-    binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
-    sender.put({"binary": binary, "ttnn": ttnn})
-    ttnn_event.wait()
-    sender.put({"json": tt_mlir.bytestream_to_json(binary)})
-    json_event.wait()
-    sys.exit(0)
-
-
 def print_shape(shape):
     return "x".join(str(s) for s in shape)
+
+
+#########################################################
+# StableHlo Op Class which inherits from Op Class
+#########################################################
 
 
 class StablehloOp(Op):
@@ -158,14 +201,19 @@ class StablehloOp(Op):
             # "stable_hlo_ops": self.stable_hlo_ops,
             "ttir_graph": self.ttir_graph,
             "ttnn_graph": self.ttnn_graph,
-            # "runtime_stack_dump": self.runtime_stack_dump,
+            "runtime_stack_dump": self.runtime_stack_dump,
             "pcc": pcc,
             "atol": atol,
             "compiled_json": self.json,
         }
 
 
-class StablehloExecutor(Executor):
+#########################################################
+# StablehloExecutor covers op-by-op CompileDepth Options
+#########################################################
+
+
+class StablehloExecutor(OpByOpExecutor):
     def __init__(
         self,
         module: Union[str, "torch_mlir._mlir_libs._mlir.ir.Module", None] = None,
@@ -198,72 +246,28 @@ class StablehloExecutor(Executor):
 
     def add_gm(self, gm: torch.fx.GraphModule, graph_constants):
         assert (
-            self.compiler_config.compile_depth
-            == CompileDepth.COMPILE_STABLEHLO_OP_BY_OP
-        ), "gm can only be added in COMPILE_STABLEHLO_OP_BY_OP mode"
+            self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP
+            and self.compiler_config.op_by_op_backend == OpByOpBackend.STABLEHLO
+        ), "gm can only be added in COMPILE_OP_BY_OP mode"
         self.gm = gm
-        self.graph_constants = tuple(graph_constants)
+        self.graph_constants = (
+            (graph_constants,)
+            if isinstance(graph_constants, (int, float))
+            else tuple(graph_constants)
+        )
 
-    def gm_op_by_op(self, *inputs):
-        node_to_tensor = {}
-        input_index = 0
-        outputs = []
-        num_nodes = len(self.gm.graph.nodes)
-        out_degree = {}
-        for idx, node in enumerate(self.gm.graph.nodes):
-            print(f"Compiling {idx}/{num_nodes}: {node.target}")
-            out_degree[node] = len(node.users)
-            if node.op == "placeholder":
-                node_to_tensor[node] = inputs[input_index]
-                input_index += 1
-            elif node.op == "get_attr":
-                for buffer in self.gm.named_buffers():
-                    if buffer[0] == node.target:
-                        node_to_tensor[node] = buffer[1]
-                        break
-            elif node.op == "call_function":
-                args = []
-                for arg in node.args:
-                    if isinstance(arg, torch.fx.node.Node):
-                        args.append(node_to_tensor[arg])
-                    elif isinstance(arg, list):
-                        args.append(
-                            [
-                                node_to_tensor[a]
-                                if isinstance(a, torch.fx.node.Node)
-                                else a
-                                for a in arg
-                            ]
-                        )
-                    else:
-                        args.append(arg)
-                tensor = node.target(*args, **node.kwargs)
-                node_to_tensor[node] = tensor
-                name = node.target.name() if hasattr(node.target, "name") else node.name
-                input_shapes_and_constants = get_input_shapes_and_constants(args)
-                op = Op(
-                    name, input_shapes_and_constants, self.compiler_config.model_name
-                )
-                if op.unique_key() not in self.compiler_config.unique_ops:
-                    self.compiler_config.unique_ops[op.unique_key()] = op
-                else:
-                    self.compiler_config.unique_ops[op.unique_key()].num_ops += 1
-            elif node.op == "output":
-                args = node.args[0]
-                output_tensors = [node_to_tensor[arg] for arg in args]
-                outputs = output_tensors
-            args_set = set()
-            for arg in node.args:
-                if arg in args_set:
-                    continue
-                args_set.add(arg)
-                if isinstance(arg, torch.fx.node.Node):
-                    out_degree[arg] -= 1
-                    if out_degree[arg] == 0 and arg.op != "output":
-                        del node_to_tensor[arg]
-                        out_degree.pop(arg)
-        self.compiler_config.save_unique_ops(mode="torch")
-        return outputs
+    def get_stable_hlo_graph(self, op, inputs, **kwargs):
+        if op.unique_key not in self.compiler_config.unique_ops:
+            self.compiler_config.unique_ops[op.unique_key] = op
+        else:
+            self.compiler_config.unique_ops[op.unique_key].num_ops += 1
+            return None, None
+
+        module = parse_module_from_str(op.stable_hlo_graph)
+        asm = module.operation.get_asm()
+        op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
+        op.add_stable_hlo_graph(asm)
+        return module, op
 
     def get_ops_in_module(self, module):
         for func_op in module.body.operations:
@@ -304,76 +308,39 @@ class StablehloExecutor(Executor):
                     opObj.add_stable_hlo_graph(new_module_str)
                     self.sub_ops.append(opObj)
 
-    def compile_op(self, op):
-        if op.unique_key in self.compiler_config.unique_ops:
-            self.compiler_config.unique_ops[op.unique_key].num_ops += 1
-            return op.binary
-
-        parsed = parse_module_from_str(op.stable_hlo_graph)
-        asm = parsed.operation.get_asm()
-        op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
-        op.add_stable_hlo_graph(asm)
-
-        obj = {"asm": asm}
-
-        sender = mp.Queue()
-        receiver = mp.Queue()
-        ttir_event = mp.Event()
-        ttnn_event = mp.Event()
-        json_event = mp.Event()
-
-        process = mp.Process(
-            target=compile_process,
-            args=(sender, receiver, ttir_event, ttnn_event, json_event),
-        )
-        process.start()
-
-        sender.put(obj)
-        start = time.time()
-        binary = None
-        while True:
-            try:
-                result = receiver.get_nowait()
-                if "ttir" in result:
-                    op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTIR
-                    op.add_ttir_graph(result["ttir"])
-                    ttir_event.set()
-
-                if "binary" in result:
-                    binary = result["binary"]
-                    op.binary = binary
-                    op.add_ttnn_graph(result["ttnn"])
-                    op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTNN
-                    ttnn_event.set()
-
-                if "json" in result:
-                    op.json = result["json"]
-                    json_event.set()
-                    op.parse_json()
-                    op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTNN
-
-            except mp.queues.Empty:
-                pass
-            except Exception as e:
-                process.terminate()
-                raise e
-            if time.time() - start > self.compiler_config.single_op_timeout:
-                process.terminate()
-                break
-            if not process.is_alive():
-                break
-            time.sleep(0.01)
-
-        process.join()
-        return binary
-
-    def compile_shlo_op_by_op(self):
+    def shlo_op_by_op(self):
         num_ops = len(self.sub_ops)
         for idx, op in enumerate(self.sub_ops):
             print(f"Compiling {idx}/{num_ops}: {op.op_name}")
-            binary = self.compile_op(op)
-        self.set_binary(binary)
+            try:
+                binary, op = self.compile_op(op, None, None)
+            except Exception as e:
+                binary = None
+                print(f"Failed to compile {idx}/{num_nodes}: {node.target}: {e}")
+            if (
+                self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
+                and binary is not None
+            ):
+                try:
+                    inputs = generate_random_inputs_for_shlo(op.stable_hlo_graph)
+                    inputs = self.typecast_inputs(inputs)
+                    calculated, runtime_stack_dump = self.run_op(binary, *inputs)
+                    self.compiler_config.unique_ops[
+                        op.unique_key
+                    ].runtime_stack_dump = runtime_stack_dump
+                    print(f"Ran: {idx}/{num_ops}: {op.op_name}")
+                    if calculated is None:
+                        raise ValueError("Failed to execute")
+                    op.compilation_status = OpCompilationStatus.EXECUTED
+                except Exception as e:
+                    print(f"Failed to execute {idx}/{num_ops}: {op.op_name}: {e}")
         self.compiler_config.save_unique_ops(mode="stablehlo")
+        if self.execute_process is not None:
+            self.execute_process.terminate()
+            self.execute_process = None
+        if self.stderror_redirected:
+            os.unlink(self.file_stderr.name)
+            self.stderror_redirected = False
 
     def print_op(self, op):
         print(op.op_id)
@@ -387,44 +354,16 @@ class StablehloExecutor(Executor):
             self.print_op(op)
 
     def __call__(self, *inputs):
-        new_inputs = ()
-        for input in inputs:
-            # Handle scalar inputs.
-            if not hasattr(input, "dtype"):
-                assert (
-                    type(input) is not bool
-                ), "Conversion for scalar boolean is not supported."
-                new_inputs = new_inputs + ((input),)
-                continue
 
-            # Apply type conversion if required.
-            input_type = input.dtype
-            if input_type in self.type_conversion.keys():
-                new_inputs = new_inputs + (
-                    (input.to(dtype=self.type_conversion[input_type])),
-                )
-                continue
+        inputs = self.typecast_inputs(inputs)
 
-            # No conversion required.
-            new_inputs = new_inputs + ((input),)
-        inputs = new_inputs
-        if self.compiler_config.compile_depth == CompileDepth.EXECUTE:
-            assert self.binary is not None, "Binary must be set for EXECUTE mode"
-            return tt_mlir.run(inputs, self.binary)
-        elif self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP:
-            self.compile_shlo_op_by_op()
-            return tt_mlir.run(inputs, self.binary)
-        elif (
-            self.compiler_config.compile_depth
-            == CompileDepth.COMPILE_STABLEHLO_OP_BY_OP
+        if self.compiler_config.compile_depth in (
+            CompileDepth.EXECUTE_OP_BY_OP,
+            CompileDepth.COMPILE_OP_BY_OP,
         ):
-            # assuming input is a torch graph
-            # if input is stablehlo graph, compile depth should have
-            # been reset to COMPILE_OP_BY_OP
-            self.compile_shlo_op_by_op()
-            return self.gm_op_by_op(*(inputs + self.graph_constants))
-        elif self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP:
-            self.compile_shlo_op_by_op()
-            return  # return nothing
+            self.shlo_op_by_op()
         else:
             assert False, "Invalid compile depth"
+
+        if self.gm is not None:
+            return self.gm(*inputs)

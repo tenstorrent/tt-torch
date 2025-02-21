@@ -3,15 +3,10 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import operator
-import multiprocessing as mp
-import time
-import faulthandler
-import re
-import sys
-import tempfile
 import tt_mlir
+import os
 
-from typing import List, Tuple, Union, Optional
+from typing import Optional
 from tt_torch.tools.utils import (
     CompilerConfig,
     CompileDepth,
@@ -20,10 +15,21 @@ from tt_torch.tools.utils import (
     calculate_atol,
     calculate_pcc,
 )
-from tt_torch.dynamo.executor import Executor
-from torch_mlir.ir import Context, Location
+from torch_mlir.compiler_utils import (
+    OutputType,
+    run_pipeline_with_repro_report,
+    lower_mlir_module,
+)
 from torch_mlir.extras.fx_importer import FxImporter, ContextCache
-from torch_mlir.dialects import torch as torch_dialect
+from torch_mlir.ir import Context, Location
+from tt_torch.dynamo.executor import (
+    Executor,
+    OpByOpExecutor,
+)
+
+#########################################################
+# Helper functions
+#########################################################
 
 
 class TTContextCache(ContextCache):
@@ -42,6 +48,35 @@ def import_graph(graph: torch.fx.GraphModule):
     return importer.module
 
 
+def verify_ir(module):
+    def verify_op(op):
+        if hasattr(op, "verify"):
+            op.verify()
+        return torch_mlir.ir.WalkResult.ADVANCE
+
+    module.operation.walk(verify_op)
+
+
+def lower_to_stable_hlo(module, op=None, enable_ir_printing=False):
+    run_pipeline_with_repro_report(
+        module,
+        f"builtin.module(torchdynamo-export-to-torch-backend-pipeline)",
+        "Lowering TorchFX IR -> Torch Backend IR",
+        enable_ir_printing,
+    )
+    if op is not None:
+        op.compilation_status = OpCompilationStatus.CONVERTED_TO_TORCH_BACKEND_IR
+
+    lower_mlir_module(False, OutputType.STABLEHLO, module)
+    if op is not None:
+        op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
+
+
+##################################################################
+# TorchExecutor covers all CompileDepth options except for EXECUTE
+##################################################################
+
+
 class TorchExecutor(OpByOpExecutor):
     def __init__(
         self,
@@ -57,20 +92,14 @@ class TorchExecutor(OpByOpExecutor):
             required_atol=required_atol,
         )
         self.gm = gm
-        self.graph_constants = tuple(graph_constants)
-        self.intermediate_callbacks = {}
-
-        # Opening a device in a new process is very slow as the pcie device needs to be initializes
-        # So we keep the process alive and reuse it. If the process dies, the next call will create a new process
-        self.execute_process = None
-        self.execute_sender = None
-        self.execute_receiver = None
-
-        # Create temp file at start of execution of first op and pass the name
-        # of temp file to subprocess which will be used to redirect the stderr
-        # to capture runtime stack dump.
-        self.stderror_redirected = False
-        self.file_stderr = None
+        self.graph_constants = (
+            (graph_constants,)
+            if isinstance(graph_constants, (int, float))
+            else tuple(graph_constants)
+        )
+        if self.compiler_config is None:
+            compiler_config = CompilerConfig()
+        self.compiler_config = compiler_config
 
     def register_intermediate_callback(self, callback):
         if not is_runtime_debug_enabled():
@@ -78,32 +107,6 @@ class TorchExecutor(OpByOpExecutor):
                 "Runtime debug is required to use intermediate callbacks. Please recompile this project with -DTT_RUNTIME_DEBUG=ON."
             )
         tt_mlir.DebugHooks.get_debug_hooks(callback)
-
-    def set_binary(self, binary):
-        self.binary = binary
-
-    def get_input_shapes_and_constants(self, *inputs):
-        input_shapes_and_constants = []
-        for inp in inputs:
-            if isinstance(inp, torch.Tensor):
-                input_shapes_and_constants.append(inp.shape)
-            elif isinstance(inp, (list, tuple)):
-                sub = []
-                for sub_inp in inp:
-                    if isinstance(sub_inp, torch.Tensor):
-                        sub.append(sub_inp.shape)
-                    else:
-                        sub.append(sub_inp)
-                input_shapes_and_constants.append(sub)
-            elif isinstance(inp, (int, float, bool)):
-                input_shapes_and_constants.append(inp)
-            elif isinstance(inp, torch.dtype):
-                input_shapes_and_constants.append(inp.__str__())
-            elif inp is None:
-                input_shapes_and_constants.append(None)
-            else:
-                raise ValueError(f"Unexpected input type: {type(inp)}")
-        return input_shapes_and_constants
 
     def is_node_valid(self, node):
         if not isinstance(node.target, torch._ops.OpOverload):
@@ -115,142 +118,6 @@ class TorchExecutor(OpByOpExecutor):
     def get_node_name(self, node):
         name = node.target.name() if hasattr(node.target, "name") else node.name
         return name
-
-    def get_stable_hlo_graph(self, node, inputs, **kwargs):
-        graph = torch.fx.Graph()
-        placeholders = []
-        for inp in inputs:
-            if isinstance(inp, torch.Tensor):
-                placeholders.append(graph.placeholder("input"))
-            elif isinstance(inp, (list, tuple)):
-                inps = torch.fx.immutable_collections.immutable_list(
-                    [
-                        graph.placeholder(f"input_{idx}")
-                        if isinstance(sub_inp, torch.Tensor)
-                        else sub_inp
-                        for idx, sub_inp in enumerate(inp)
-                    ]
-                )
-                placeholders.append(inps)
-            else:
-                placeholders.append(inp)
-
-        if len(placeholders) != len(node.args):
-            # are any of the args duplicates? If so, we need to duplicate the placeholders
-            for idx, arg in enumerate(node.args):
-                if arg in node.args[idx + 1 :]:
-                    placeholders.append(placeholders[idx])
-
-        placeholders = tuple(placeholders)
-        for placeholder, arg in zip(placeholders, node.args):
-            if isinstance(placeholder, torch.fx.node.Node):
-                placeholder.meta["tensor_meta"] = arg.meta["tensor_meta"]
-            elif isinstance(placeholder, (list, tuple)):
-                for sub_placeholder, sub_arg in zip(placeholder, arg):
-                    if isinstance(sub_placeholder, torch.fx.node.Node):
-                        sub_placeholder.meta["tensor_meta"] = sub_arg.meta[
-                            "tensor_meta"
-                        ]
-
-        graph_node = graph.call_function(node.target, placeholders, kwargs)
-        graph_node.meta["tensor_meta"] = node.meta["tensor_meta"]
-
-        # if the node has multiple outputs, add a getitem for each and append to graph
-        if not isinstance(
-            node.meta["tensor_meta"], torch.fx.passes.shape_prop.TensorMetadata
-        ):
-            getitem_nodes = []
-            graph_node.meta["val"] = node.meta["val"]
-
-            for idx, tensor_meta in enumerate(node.meta["tensor_meta"]):
-                # filter out unused outputs that do not exist in the reduced graph
-                users = self.gm.graph.find_nodes(
-                    op="call_function", target=operator.getitem
-                )
-                if not any(user_node.args == (node, idx) for user_node in users):
-                    continue
-
-                getitem_node = graph.call_function(
-                    operator.getitem, args=(graph_node, idx)
-                )
-                getitem_nodes.append(getitem_node)
-                getitem_node.meta["tensor_meta"] = tensor_meta
-            out = graph.output(tuple(getitem_nodes))
-            if len(node.users) != len(graph_node.users):
-                raise ValueError(
-                    f"Op Node {node} has different number of users({len(graph_node.users)}) from global graph({len(node.users)})"
-                )
-        else:
-            out = graph.output((graph_node,))
-        if "tensor_meta" not in node.meta:
-            raise ValueError(f"Node {node} does not have tensor_meta")
-
-        op.compilation_status = OpCompilationStatus.CREATED_GRAPH
-        out.meta["tensor_meta"] = node.meta["tensor_meta"]
-
-        out_meta = out.meta["tensor_meta"]
-        if isinstance(out_meta, torch.fx.passes.shape_prop.TensorMetadata):
-            out_meta = (out_meta,)
-        for out in out_meta:
-            op.output_shapes.append([dim for dim in out.shape])
-
-        module = import_graph(graph)
-        op.compilation_status = OpCompilationStatus.CONVERTED_TO_TORCH_IR
-        op.add_torch_ir_graph(module.operation.get_asm())
-        lower_to_stable_hlo(module, op=op)
-        op.add_stable_hlo_graph(module.operation.get_asm())
-        return module, op
-
-    def transform_input(self, inp):
-        # Convert torch.nn.Parameter to torch.Tensor and convert non-contiguous
-        # data to contiguous.
-        if isinstance(inp, torch.nn.Parameter):
-            if not inp.data.is_contiguous():
-                inp.data = inp.data.contiguous()
-            return inp.data
-        elif isinstance(inp, torch.Tensor):
-            if not inp.is_contiguous():
-                inp = inp.contiguous()
-            return inp
-
-        return None
-
-    def pre_process_inputs(self, *inputs):
-        # Remove scalar constants as they're absorbed into the binary
-        processed_inputs = []
-        for input in inputs:
-            # If input is a list, iterate over its elements;
-            # otherwise, process it directly
-            input_items = input if isinstance(input, list) else [input]
-
-            for inp in input_items:
-                transformed_inp = self.transform_input(inp)
-                if transformed_inp is not None:
-                    processed_inputs.append(transformed_inp)
-
-        # Typecast the unsupported data types to hardware supported types.
-        supported_inputs = ()
-        for input in processed_inputs:
-            # Handle scalar inputs.
-            if not hasattr(input, "dtype"):
-                assert (
-                    type(input) is not bool
-                ), "Conversion for scalar boolean is not supported."
-                supported_inputs = supported_inputs + ((input),)
-                continue
-
-            # Apply type conversion if required.
-            input_type = input.dtype
-            if input_type in self.type_conversion.keys():
-                supported_inputs = supported_inputs + (
-                    (input.to(dtype=self.type_conversion[input_type])),
-                )
-                continue
-
-            # No conversion required.
-            supported_inputs = supported_inputs + ((input),)
-
-        return supported_inputs
 
     def run_gm_op_by_op(self, *inputs):
         node_to_tensor = {}
@@ -348,34 +215,112 @@ class TorchExecutor(OpByOpExecutor):
 
         return outputs
 
-    def __call__(self, *inputs):
-        new_inputs = ()
-        for input in inputs:
-            # Handle scalar inputs.
-            if not hasattr(input, "dtype"):
-                assert (
-                    type(input) is not bool
-                ), "Conversion for scalar boolean is not supported."
-                new_inputs = new_inputs + ((input),)
-                continue
+    def get_stable_hlo_graph(self, node, inputs, **kwargs):
 
-            # Apply type conversion if required.
-            input_type = input.dtype
-            if input_type in self.type_conversion.keys():
-                new_inputs = new_inputs + (
-                    (input.to(dtype=self.type_conversion[input_type])),
+        input_shapes_and_constants = self.get_input_shapes_and_constants(inputs)
+        if not self.is_node_valid(node):
+            return None, None
+        name = node.target.name() if hasattr(node.target, "name") else node.name
+        if not isinstance(node.target, torch._ops.OpOverload):
+            if "getitem" not in name:
+                raise ValueError(f"Node target is not an OpOverload: {name}")
+            return None, None
+
+        op = Op(name, input_shapes_and_constants, self.compiler_config.model_name)
+        if op.unique_key() not in self.compiler_config.unique_ops:
+            self.compiler_config.unique_ops[op.unique_key()] = op
+        else:
+            self.compiler_config.unique_ops[op.unique_key()].num_ops += 1
+            return None, None
+
+        graph = torch.fx.Graph()
+        placeholders = []
+        for inp in inputs:
+            if isinstance(inp, torch.Tensor):
+                placeholders.append(graph.placeholder("input"))
+            elif isinstance(inp, (list, tuple)):
+                inps = torch.fx.immutable_collections.immutable_list(
+                    [
+                        graph.placeholder(f"input_{idx}")
+                        if isinstance(sub_inp, torch.Tensor)
+                        else sub_inp
+                        for idx, sub_inp in enumerate(inp)
+                    ]
                 )
-                continue
+                placeholders.append(inps)
+            else:
+                placeholders.append(inp)
 
-            # No conversion required.
-            new_inputs = new_inputs + ((input),)
+        if len(placeholders) != len(node.args):
+            # are any of the args duplicates? If so, we need to duplicate the placeholders
+            for idx, arg in enumerate(node.args):
+                if arg in node.args[idx + 1 :]:
+                    placeholders.append(placeholders[idx])
 
-        inputs = new_inputs
+        placeholders = tuple(placeholders)
+        for placeholder, arg in zip(placeholders, node.args):
+            if isinstance(placeholder, torch.fx.node.Node):
+                placeholder.meta["tensor_meta"] = arg.meta["tensor_meta"]
+            elif isinstance(placeholder, (list, tuple)):
+                for sub_placeholder, sub_arg in zip(placeholder, arg):
+                    if isinstance(sub_placeholder, torch.fx.node.Node):
+                        sub_placeholder.meta["tensor_meta"] = sub_arg.meta[
+                            "tensor_meta"
+                        ]
 
-        if self.compiler_config.compile_depth == CompileDepth.EXECUTE:
-            assert self.binary is not None, "Binary must be set for EXECUTE mode"
-            return tt_mlir.run(inputs + self.graph_constants, self.binary)
-        elif self.compiler_config.compile_depth in (
+        graph_node = graph.call_function(node.target, placeholders, kwargs)
+        graph_node.meta["tensor_meta"] = node.meta["tensor_meta"]
+
+        # if the node has multiple outputs, add a getitem for each and append to graph
+        if not isinstance(
+            node.meta["tensor_meta"], torch.fx.passes.shape_prop.TensorMetadata
+        ):
+            getitem_nodes = []
+            graph_node.meta["val"] = node.meta["val"]
+
+            for idx, tensor_meta in enumerate(node.meta["tensor_meta"]):
+                # filter out unused outputs that do not exist in the reduced graph
+                users = self.gm.graph.find_nodes(
+                    op="call_function", target=operator.getitem
+                )
+                if not any(user_node.args == (node, idx) for user_node in users):
+                    continue
+
+                getitem_node = graph.call_function(
+                    operator.getitem, args=(graph_node, idx)
+                )
+                getitem_nodes.append(getitem_node)
+                getitem_node.meta["tensor_meta"] = tensor_meta
+            out = graph.output(tuple(getitem_nodes))
+            if len(node.users) != len(graph_node.users):
+                raise ValueError(
+                    f"Op Node {node} has different number of users({len(graph_node.users)}) from global graph({len(node.users)})"
+                )
+        else:
+            out = graph.output((graph_node,))
+        if "tensor_meta" not in node.meta:
+            raise ValueError(f"Node {node} does not have tensor_meta")
+
+        op.compilation_status = OpCompilationStatus.CREATED_GRAPH
+        out.meta["tensor_meta"] = node.meta["tensor_meta"]
+
+        out_meta = out.meta["tensor_meta"]
+        if isinstance(out_meta, torch.fx.passes.shape_prop.TensorMetadata):
+            out_meta = (out_meta,)
+        for out in out_meta:
+            op.output_shapes.append([dim for dim in out.shape])
+
+        module = import_graph(graph)
+        verify_ir(module)
+        op.compilation_status = OpCompilationStatus.CONVERTED_TO_TORCH_IR
+        op.add_torch_ir_graph(module.operation.get_asm())
+        lower_to_stable_hlo(module, op=op)
+        op.add_stable_hlo_graph(module.operation.get_asm())
+        return module, op
+
+    def __call__(self, *inputs):
+        inputs = self.typecast_inputs(inputs)
+        if self.compiler_config.compile_depth in (
             CompileDepth.EXECUTE_OP_BY_OP,
             CompileDepth.COMPILE_OP_BY_OP,
         ):
