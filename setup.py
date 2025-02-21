@@ -13,7 +13,7 @@ class install_metal_libs(install_lib):
     def run(self):
         install_lib.run(self)
         install_path = os.path.join(self.install_dir, "tt_mlir")
-        # Copy third_party/tt-mlir/src/tt-mlir-build/bin/ttmlir-opt into lib
+        os.makedirs(install_path, exist_ok=True)
         ttmlir_opt = os.path.abspath(
             os.path.join(
                 os.getcwd(),
@@ -60,4 +60,8 @@ setup(
         "install_lib": install_metal_libs,
     },
     zip_safe=False,
+    install_requires=[
+        "torch@https://download.pytorch.org/whl/cpu-cxx11-abi/torch-2.5.0%2Bcpu.cxx11.abi-cp311-cp311-linux_x86_64.whl",
+        "numpy",
+    ],
 )
