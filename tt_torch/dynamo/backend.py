@@ -441,6 +441,8 @@ class Executor:
         out_degree = {}
         for idx, node in enumerate(self.gm.graph.nodes):
             print(f"Compiling {idx}/{num_nodes}: {node.target}")
+            if idx == 9552:
+                breakpoint()
             out_degree[node] = len(node.users)
             if node.op == "placeholder":
                 node_to_tensor[node] = inputs[input_index]
