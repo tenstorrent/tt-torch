@@ -7,6 +7,7 @@ from torch._dynamo.backends.common import aot_autograd
 from torch.fx.experimental.proxy_tensor import make_fx
 from torch._functorch.compile_utils import strip_overloads
 import operator
+import pdb
 
 from tt_torch.dynamo.passes import pass_pipeline
 from tt_torch.tools.utils import (
@@ -568,7 +569,14 @@ class Executor:
 def verify_golden_callback(binary, callback_context, op_context):
     # Using these parameters, we should be able to query information
     # about the op described by op_context, and its output. I.e. location:
-    location = tt_mlir.get_op_loc_info(op_context)
+    location = tt_mlir.get_op_loc_info(op_context)  # unknown
+    print(location)
+    print(
+        "n_inputs to 0th program", len(binary.getProgramInputs(0))
+    )  # appears to be a constant 9. Need to refer to taps
+    pdb.set_trace()
+
+    # print("PRINTING OP CONTEXT:" ,op_context)
     # ...
 
     # We will need to provide the bindings necesarry in this frontend.

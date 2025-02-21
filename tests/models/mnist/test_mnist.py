@@ -69,6 +69,7 @@ def test_mnist_train(record_property, mode, op_by_op):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    cc.enable_intermediate_verification = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
     tester = ThisTester(
