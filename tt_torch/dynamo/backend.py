@@ -67,49 +67,12 @@ def _torch_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     with torch.no_grad():
         gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
     executor = TorchExecutor(gm, graph_constants, compiler_config)
-    if compiler_config.compile_depth in (
-        CompileDepth.EXECUTE_OP_BY_OP,
-        CompileDepth.COMPILE_OP_BY_OP,
-        CompileDepth.TORCH_FX,
-    ):
-        return executor
-
-    dump_intermediates = os.environ.get("TT_TORCH_IR_LOG_LEVEL")
-    dump_intermediates = dump_intermediates and (
-        dump_intermediates == "INFO" or dump_intermediates == "DEBUG"
-    )
-
-    module = import_graph(gm.graph)
-    if dump_intermediates:
-        print("Torch module", file=sys.stderr)
-        module.dump()
-
-    if compiler_config.profile_ops:
-        compiler_config.set_torch_mlir_module(module.operation.get_asm())
-    if compiler_config.compile_depth == CompileDepth.TORCH_MLIR:
-        return executor
-
-    lower_to_stable_hlo(module)
-    if dump_intermediates:
-        print("StableHLO module", file=sys.stderr)
-        module.dump()
-
-    if compiler_config.profile_ops:
-        compiler_config.set_stablehlo_mlir_module(module.operation.get_asm())
-    if compiler_config.compile_depth == CompileDepth.STABLEHLO:
-        return executor
-
-    binary = shlo_to_flatbuffer(module, compiler_config)
-    executor.set_binary(binary)
     return executor
 
 
 def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
-    # Apply environment overrides at start of compilation to allow overriding what was set in the test
-    compiler_config.apply_environment_overrides()
     with torch.no_grad():
         gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
-    executor = TorchExecutor(gm, graph_constants, compiler_config)
     dump_intermediates = os.environ.get("TT_TORCH_IR_LOG_LEVEL")
     dump_info = False
     dump_debug = False
@@ -130,7 +93,7 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         print("StableHLO module", file=sys.stderr)
         module.dump()
 
-    return module, executor, gm, graph_constants
+    return module, gm, graph_constants
 
 
 def shlo_to_flatbuffer(module, compiler_config):
@@ -163,8 +126,7 @@ def shlo_to_flatbuffer(module, compiler_config):
 
 
 def _base_backend(gm_or_shlo, example_inputs, compiler_config):
-    # Called during EXECUTE
-    # input is a torch graph
+    compiler_config.apply_environment_overrides()
     if isinstance(gm_or_shlo, torch.fx.GraphModule):
         shlo, executor, gm, graph_constants = torch_to_shlo(
             gm_or_shlo, example_inputs, compiler_config
@@ -172,11 +134,15 @@ def _base_backend(gm_or_shlo, example_inputs, compiler_config):
     # input is a stablehlo string module
     elif isinstance(gm_or_shlo, str):
         shlo = parse_module_from_str(gm_or_shlo)
-        executor = StablehloExecutor(
-            parsed_module=shlo, compiler_config=compiler_config
-        )
+        gm = None
+        graph_constants = None
     else:
         assert False, "Compiler input not valid"
+
+    executor = Executor(gm, graph_constants, compiler_config)
+
+    if compiler_config.compile_depth == CompileDepth.STABLEHLO:
+        return executor
 
     binary = shlo_to_flatbuffer(shlo, compiler_config)
     executor.set_binary(binary)
@@ -186,10 +152,6 @@ def _base_backend(gm_or_shlo, example_inputs, compiler_config):
 def backend(gm_or_shlo, example_inputs, options=None):
     if options is None:
         options = CompilerConfig()
-
-    if options.compile_depth == CompileDepth.EXECUTE:
-        return _base_backend(gm_or_shlo, example_inputs, compiler_config=options)
-
     if (
         options.compile_depth == CompileDepth.COMPILE_OP_BY_OP
         or options.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
@@ -198,25 +160,18 @@ def backend(gm_or_shlo, example_inputs, options=None):
             assert isinstance(gm_or_shlo, torch.fx.GraphModule)
             return _torch_backend(gm_or_shlo, example_inputs, compiler_config=options)
         else:
-            if isinstance(gm_or_shlo, str):
-                # run shlo op-by-op
-                return _shlo_backend(
-                    shlo=gm_or_shlo,
-                    example_inputs=example_inputs,
-                    compiler_config=options,
-                )
-            else:
+            gm = None
+            graph_constants = None
+            if isinstance(gm_or_shlo, torch.fx.GraphModule):
                 module, __, gm, graph_constants = torch_to_shlo(
                     gm_or_shlo, example_inputs, compiler_config=options
                 )
-                return _shlo_backend(
-                    shlo=module,
-                    example_inputs=example_inputs,
-                    compiler_config=options,
-                    gm=gm,
-                    graph_constants=graph_constants,
-                )
+            return _shlo_backend(
+                shlo=module,
+                example_inputs=example_inputs,
+                compiler_config=options,
+                gm=gm,
+                graph_constants=graph_constants,
+            )
 
-    if isinstance(gm_or_shlo, torch.fx.GraphModule):
-        return _torch_backend(gm_or_shlo, example_inputs, compiler_config=options)
-    assert False, "Reached invalid compile depth in tt_torch/dynamo/backend.py"
+    return _base_backend(gm_or_shlo, example_inputs, compiler_config=options)
