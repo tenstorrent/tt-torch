@@ -138,6 +138,7 @@ def _base_backend(gm_or_shlo, example_inputs, compiler_config):
         return executor
 
     binary = shlo_to_flatbuffer(executor, shlo, compiler_config)
+
     executor.set_binary(binary)
     return executor
 
@@ -167,4 +168,6 @@ def backend(gm_or_shlo, example_inputs, options=None):
                 gm=gm,
                 graph_constants=graph_constants,
             )
+
+
     return _base_backend(gm_or_shlo, example_inputs, compiler_config=options)
