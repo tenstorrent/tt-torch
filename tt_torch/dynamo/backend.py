@@ -54,16 +54,9 @@ def verify_golden_callback(binary, callback_context, op_context):
 
 
 def _shlo_backend(shlo, example_inputs, compiler_config, gm=None, graph_constants=None):
-    if isinstance(shlo, torch_mlir._mlir_libs._mlir.ir.Module):
-        executor = StablehloExecutor(
-            parsed_module=shlo, compiler_config=compiler_config
-        )
-    elif isinstance(shlo, str):
-        executor = StablehloExecutor(module_str=shlo, compiler_config=compiler_config)
-    else:
-        print("Compiler input not valid", file=sys.stderr)
-        exit(1)
+    executor = StablehloExecutor(module=shlo, compiler_config=compiler_config)
     if gm is not None:
+        # original input is a torch graph
         executor.add_gm(gm, graph_constants)
     return executor
 
@@ -217,8 +210,7 @@ def _base_backend(gm_or_shlo, example_inputs, compiler_config):
             parsed_module=shlo, compiler_config=compiler_config
         )
     else:
-        print("Compiler input not valid", file=sys.stderr)
-        exit(1)
+        assert False, "Compiler input not valid"
 
     binary = shlo_to_flatbuffer(shlo, compiler_config)
     executor.set_binary(binary)
@@ -243,8 +235,7 @@ def backend(gm_or_shlo, example_inputs, options=None):
                 shlo=gm_or_shlo, example_inputs=example_inputs, compiler_config=options
             )
         else:
-            print("Compiler input not valid", file=sys.stderr)
-            exit(1)
+            assert False, "Compiler input not valid"
 
     if options.compile_depth == CompileDepth.EXECUTE:
         return _base_backend(gm_or_shlo, example_inputs, compiler_config=options)
@@ -268,12 +259,8 @@ def backend(gm_or_shlo, example_inputs, options=None):
                 graph_constants=graph_constants,
             )
         else:
-            print("Compiler input not valid", file=sys.stderr)
-            exit(1)
+            assert False, "Compiler input not valid"
+
     if isinstance(gm_or_shlo, torch.fx.GraphModule):
         return _torch_backend(gm_or_shlo, example_inputs, compiler_config=options)
-    print(
-        "Reached invalid compile depth in tt_torch/dynamo/backend.py", file=sys.stderr
-    )
-
-    exit(1)
+    assert False, "Reached invalid compile depth in tt_torch/dynamo/backend.py"

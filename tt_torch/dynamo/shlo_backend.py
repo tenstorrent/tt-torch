@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import tt_mlir
 import torch
+import torch_mlir
 from mlir.ir import Context, Location, Module
 import numpy as np
 import faulthandler
@@ -13,6 +14,7 @@ import tempfile
 import re
 import os
 import mlir.dialects.stablehlo as stablehlo
+from typing import Union
 
 from tt_torch.tools.utils import (
     CompilerConfig,
@@ -145,9 +147,9 @@ class StablehloOp(Op):
             "frontend": self.frontend,
             "model_name": self.model_name,
             "input_shapes": self.print_shapes(self.input_shapes),
-            # "input_tensors": [tensor.to_dict() for tensor in self.input_tensors],
+            "input_tensors": [tensor.to_dict() for tensor in self.input_tensors],
             "output_shapes": self.print_shapes(self.output_shapes),
-            # "output_tensors": [tensor.to_dict() for tensor in self.output_tensors],
+            "output_tensors": [tensor.to_dict() for tensor in self.output_tensors],
             "num_ops": self.num_ops,
             "compilation_status": self.compilation_status,
             # "parsed_stable_hlo_ops": self.parsed_stable_hlo_ops,
@@ -166,8 +168,7 @@ class StablehloOp(Op):
 class StablehloExecutor(Executor):
     def __init__(
         self,
-        module_str=None,
-        parsed_module=None,
+        module: Union[str, "torch_mlir._mlir_libs._mlir.ir.Module", None] = None,
         compiler_config=None,
         required_pcc=0.99,
         required_atol=1e-2,
@@ -177,19 +178,23 @@ class StablehloExecutor(Executor):
             required_pcc=required_pcc,
             required_atol=required_atol,
         )
-        if module_str:
-            self.parsed_module = parse_module_from_str(module_str)
-        elif parsed_module:
-            self.parsed_module = parsed_module
-        else:
-            print(
-                "Either module_str or parsed_module should be provided", file=sys.stderr
-            )
-            exit(1)
+        self.parsed_module = None
+        if module is not None:
+            self.set_module(module)
         self.sub_ops = []
         self.get_ops_in_module(self.parsed_module)
         self.gm = None
         self.graph_constants = None
+
+    def set_module(
+        self, module: Union[str, "torch_mlir._mlir_libs._mlir.ir.Module"]
+    ) -> None:
+        if isinstance(module, str):
+            self.parsed_module = parse_module_from_str(module)
+        elif isinstance(module, torch_mlir._mlir_libs._mlir.ir.Module):
+            self.parsed_module = module
+        else:
+            raise ValueError(f"Invalid module type: {type(module)}")
 
     def add_gm(self, gm: torch.fx.GraphModule, graph_constants):
         assert (
@@ -300,9 +305,7 @@ class StablehloExecutor(Executor):
                     self.sub_ops.append(opObj)
 
     def compile_op(self, op):
-        if op.unique_key not in self.compiler_config.unique_ops:
-            self.compiler_config.unique_ops[op.unique_key] = op
-        else:
+        if op.unique_key in self.compiler_config.unique_ops:
             self.compiler_config.unique_ops[op.unique_key].num_ops += 1
             return op.binary
 
@@ -346,7 +349,7 @@ class StablehloExecutor(Executor):
                 if "json" in result:
                     op.json = result["json"]
                     json_event.set()
-                    # op.parse_json()
+                    op.parse_json()
                     op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTNN
 
             except mp.queues.Empty:
@@ -424,5 +427,4 @@ class StablehloExecutor(Executor):
             self.compile_shlo_op_by_op()
             return  # return nothing
         else:
-            print("Invalid compile depth", file=sys.stderr)
-            exit(1)
+            assert False, "Invalid compile depth"
