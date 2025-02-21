@@ -5,7 +5,7 @@ from skbuild import setup
 import os
 import glob
 from skbuild.command.install_lib import install_lib
-import shutil
+from setuptools import find_namespace_packages
 import sys
 
 
@@ -40,6 +40,10 @@ if "--code_coverage" in sys.argv:
         "-DCODE_COVERAGE=ON",
     ]
     sys.argv.remove("--code_coverage")
+
+with open("README.md", "r") as f:
+    long_description = f.read()
+
 setup(
     name="tt_torch",
     version="0.1",
@@ -47,11 +51,10 @@ setup(
     author_email="aknezevic@tenstorrent.com",
     license="Apache-2.0",
     homepage="https://github.com/tenstorrent/tt-torch",
-    packages=[
-        "tt_torch",
-    ],
+    packages=find_namespace_packages(include=["tt_torch.*"]),
     description="TT PyTorch FrontEnd",
-    long_description="",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     cmake_args=cmake_args,
     cmdclass={
         "install_lib": install_metal_libs,
