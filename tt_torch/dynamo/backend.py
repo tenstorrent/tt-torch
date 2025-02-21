@@ -138,7 +138,6 @@ def _base_backend(gm_or_shlo, example_inputs, compiler_config):
         return executor
 
     binary = shlo_to_flatbuffer(executor, shlo, compiler_config)
-
     executor.set_binary(binary)
     return executor
 

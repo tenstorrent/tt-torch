@@ -20,7 +20,10 @@ from tt_torch.tools.utils import (
     calculate_atol,
     calculate_pcc,
 )
-from tt_torch.dynamo.executor import Executor
+from tt_torch.dynamo.executor import (
+    Executor,
+    OpByOpExecutor,
+)
 from torch_mlir.ir import Context, Location
 from torch_mlir.extras.fx_importer import FxImporter, ContextCache
 from torch_mlir.dialects import torch as torch_dialect
