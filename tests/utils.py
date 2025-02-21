@@ -281,11 +281,16 @@ class ModelTester:
         metric_list = self.record_tag_cache.get(metric_key, [])
         avg_metric = default_value
         min_metric = default_value
+        max_metric = default_value
+
         if metric_list:  # check null or empty list
             avg_metric = sum(metric_list) / len(metric_list)
             min_metric = min(metric_list)
+            max_metric = max(metric_list)
+
         self.record_tag_cache["avg_" + metric_key] = avg_metric
         self.record_tag_cache["min_" + metric_key] = min_metric
+        self.record_tag_cache["max_" + metric_key] = max_metric
 
     def flush_tag_cache_to_record(self):
         # record the tags property at the very end of the test as data may
