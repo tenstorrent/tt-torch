@@ -145,6 +145,7 @@ def _base_backend(gm_or_shlo, example_inputs, compiler_config):
         return executor
 
     binary = shlo_to_flatbuffer(shlo, compiler_config)
+    # TODO: Add TTNN_IR compile depth
     executor.set_binary(binary)
     return executor
 
