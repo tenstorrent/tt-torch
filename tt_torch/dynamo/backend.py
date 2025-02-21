@@ -22,6 +22,7 @@ from torch_mlir.compiler_utils import (
     lower_mlir_module,
 )
 from tt_torch.dynamo.passes import pass_pipeline
+from tt_torch.dynamo.executor import Executor
 from tt_torch.tools.utils import (
     CompilerConfig,
     CompileDepth,
@@ -128,7 +129,7 @@ def shlo_to_flatbuffer(module, compiler_config):
 def _base_backend(gm_or_shlo, example_inputs, compiler_config):
     compiler_config.apply_environment_overrides()
     if isinstance(gm_or_shlo, torch.fx.GraphModule):
-        shlo, executor, gm, graph_constants = torch_to_shlo(
+        shlo, gm, graph_constants = torch_to_shlo(
             gm_or_shlo, example_inputs, compiler_config
         )
     # input is a stablehlo string module
@@ -145,7 +146,6 @@ def _base_backend(gm_or_shlo, example_inputs, compiler_config):
         return executor
 
     binary = shlo_to_flatbuffer(shlo, compiler_config)
-    # TODO: Add TTNN_IR compile depth
     executor.set_binary(binary)
     return executor
 
@@ -164,7 +164,7 @@ def backend(gm_or_shlo, example_inputs, options=None):
             gm = None
             graph_constants = None
             if isinstance(gm_or_shlo, torch.fx.GraphModule):
-                module, __, gm, graph_constants = torch_to_shlo(
+                module, gm, graph_constants = torch_to_shlo(
                     gm_or_shlo, example_inputs, compiler_config=options
                 )
             return _shlo_backend(

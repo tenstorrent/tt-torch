@@ -1,9 +1,14 @@
 # SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-
-from tt_torch.tools.utils import CompilerConfig
 import torch
+import tt_mlir
+from tt_torch.tools.utils import (
+    CompileDepth,
+    OpByOpBackend,
+    CompilerConfig,
+)
+from typing import Union
 
 
 def compile_process(receiver, sender, ttir_event, ttnn_event, json_event):
@@ -45,11 +50,14 @@ def execute_process(receiver, sender, exec_event):
 class Executor:
     def __init__(
         self,
+        gm: Union[torch.fx.GraphModule, None] = None,
+        graph_constants=None,
         compiler_config=None,
         required_pcc=0.99,
         required_atol=1e-2,
     ):
-
+        self.gm = gm
+        self.graph_constants = tuple(graph_constants)
         self.binary = None
         if compiler_config is None:
             compiler_config = CompilerConfig()
@@ -67,6 +75,9 @@ class Executor:
 
     def __call__(self, *inputs):
         if self.compiler_config.compile_depth != CompileDepth.EXECUTE:
+            assert (
+                self.compiler_config.op_by_op_backend == OpByOpBackend.TORCH
+            ), "StableHLO Backend does not support TORCH_FX, STABLEHLO, or TTNN_IR Compile Depths"
             return self.gm(*inputs)
 
         assert self.binary is not None
@@ -92,7 +103,7 @@ class Executor:
             # No conversion required.
             new_inputs = new_inputs + ((input),)
         inputs = new_inputs
-        return tt_mlir.run(inputs, self.binary)
+        return tt_mlir.run(inputs + self.graph_constants, self.binary)
 
     def set_binary(self, binary):
         self.binary = binary

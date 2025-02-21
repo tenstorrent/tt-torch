@@ -18,12 +18,11 @@ from tt_mlir import is_runtime_debug_enabled
 
 class CompileDepth(Enum):
     TORCH_FX = 1
-    TORCH_MLIR = 2
-    STABLEHLO = 3
-    TTNN_IR = 4
-    COMPILE_OP_BY_OP = 5
-    EXECUTE_OP_BY_OP = 6
-    EXECUTE = 7
+    STABLEHLO = 2
+    TTNN_IR = 3
+    COMPILE_OP_BY_OP = 4
+    EXECUTE_OP_BY_OP = 5
+    EXECUTE = 6
 
 
 class OpCompilationStatus(IntEnum):
