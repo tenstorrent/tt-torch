@@ -275,8 +275,27 @@ class ModelTester:
         else:
             raise ValueError(f"Current mode is not supported: {self.mode}")
 
+    def record_aggregate_model_metric(self, metric_key, default_value=-1):
+        # read a metric from the tag cache and write out the average and min values
+
+        metric_list = self.record_tag_cache.get(metric_key, [])
+        avg_metric = default_value
+        min_metric = default_value
+        if metric_list:  # check null or empty list
+            avg_metric = sum(metric_list) / len(metric_list)
+            min_metric = min(metric_list)
+        self.record_tag_cache["avg_" + metric_key] = avg_metric
+        self.record_tag_cache["min_" + metric_key] = min_metric
+
     def flush_tag_cache_to_record(self):
+        # record the tags property at the very end of the test as data may
+        # be appended to the cache during the test run
+
         self.record_property("tags", self.record_tag_cache)
 
     def finalize(self):
+        # to be called at the end of the test
+
+        self.record_aggregate_model_metric("pccs")
+        self.record_aggregate_model_metric("atols")
         self.flush_tag_cache_to_record()
