@@ -99,41 +99,7 @@ def _torch_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     if compiler_config.compile_depth == CompileDepth.STABLEHLO:
         return executor
 
-    # Need to set enable_debug_info=True to get the location information for the ops in the asm string
-    ttir = tt_mlir.compile_stable_hlo_to_ttir(
-        module.operation.get_asm(enable_debug_info=True)
-    )
-    if dump_info:
-        print("TTIR module", file=sys.stderr)
-        print(ttir, file=sys.stderr)
-
-    if compiler_config.enable_intermediate_verification:
-        executor.register_intermediate_callback(verify_golden_callback)
-
-    binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
-    if dump_info:
-        print("TTNN module", file=sys.stderr)
-        print(ttnn, file=sys.stderr)
-
-    executor.set_binary(binary)
-    return executor
-
-    # Need to set enable_debug_info=True to get the location information for the ops in the asm string
-    ttir = tt_mlir.compile_stable_hlo_to_ttir(
-        module.operation.get_asm(enable_debug_info=True)
-    )
-    if dump_info:
-        print("TTIR module", file=sys.stderr)
-        print(ttir, file=sys.stderr)
-
-    if compiler_config.enable_intermediate_verification:
-        executor.register_intermediate_callback(verify_golden_callback)
-
-    binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
-    if dump_info:
-        print("TTNN module", file=sys.stderr)
-        print(ttnn, file=sys.stderr)
-
+    binary = shlo_to_flatbuffer(module, compiler_config)
     executor.set_binary(binary)
     return executor
 
@@ -221,45 +187,35 @@ def backend(gm_or_shlo, example_inputs, options=None):
     if options is None:
         options = CompilerConfig()
 
+    if options.compile_depth == CompileDepth.EXECUTE:
+        return _base_backend(gm_or_shlo, example_inputs, compiler_config=options)
+
     if (
         options.compile_depth == CompileDepth.COMPILE_OP_BY_OP
         or options.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
     ):
-        # run op-by-op
-        if isinstance(gm_or_shlo, torch.fx.GraphModule):
-            # run torch op-by-op
+        if options.op_by_op_backend == OpByOpBackend.TORCH:
+            assert isinstance(gm_or_shlo, torch.fx.GraphModule)
             return _torch_backend(gm_or_shlo, example_inputs, compiler_config=options)
-        elif isinstance(gm_or_shlo, str):
-            # run shlo op-by-op
-            return _shlo_backend(
-                shlo=gm_or_shlo, example_inputs=example_inputs, compiler_config=options
-            )
         else:
-            assert False, "Compiler input not valid"
-
-    if options.compile_depth == CompileDepth.EXECUTE:
-        return _base_backend(gm_or_shlo, example_inputs, compiler_config=options)
-
-    if options.compile_depth == CompileDepth.COMPILE_STABLEHLO_OP_BY_OP:
-        # lower to stablehlo and run op-by-op
-        if isinstance(gm_or_shlo, str):
-            options.compile_depth = CompileDepth.COMPILE_OP_BY_OP
-            return _shlo_backend(
-                shlo=gm_or_shlo, example_inputs=example_inputs, compiler_config=options
-            )
-        elif isinstance(gm_or_shlo, torch.fx.GraphModule):
-            module, __, gm, graph_constants = torch_to_shlo(
-                gm_or_shlo, example_inputs, compiler_config=options
-            )
-            return _shlo_backend(
-                shlo=module,
-                example_inputs=example_inputs,
-                compiler_config=options,
-                gm=gm,
-                graph_constants=graph_constants,
-            )
-        else:
-            assert False, "Compiler input not valid"
+            if isinstance(gm_or_shlo, str):
+                # run shlo op-by-op
+                return _shlo_backend(
+                    shlo=gm_or_shlo,
+                    example_inputs=example_inputs,
+                    compiler_config=options,
+                )
+            else:
+                module, __, gm, graph_constants = torch_to_shlo(
+                    gm_or_shlo, example_inputs, compiler_config=options
+                )
+                return _shlo_backend(
+                    shlo=module,
+                    example_inputs=example_inputs,
+                    compiler_config=options,
+                    gm=gm,
+                    graph_constants=graph_constants,
+                )
 
     if isinstance(gm_or_shlo, torch.fx.GraphModule):
         return _torch_backend(gm_or_shlo, example_inputs, compiler_config=options)
