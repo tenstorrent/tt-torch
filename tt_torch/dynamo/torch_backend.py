@@ -42,43 +42,7 @@ def import_graph(graph: torch.fx.GraphModule):
     return importer.module
 
 
-def compile_process(receiver, sender, ttir_event, ttnn_event, json_event):
-    obj = receiver.get()
-    faulthandler.disable()
-    asm = obj["asm"]
-    ttir = tt_mlir.compile_stable_hlo_to_ttir(asm)
-    sender.put({"ttir": ttir})
-    ttir_event.wait()
-    binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
-    sender.put({"binary": binary, "ttnn": ttnn})
-    ttnn_event.wait()
-    sender.put({"json": tt_mlir.bytestream_to_json(binary)})
-    json_event.wait()
-    sys.exit(0)
-
-
-def execute_process(receiver, sender, exec_event):
-    while 1:
-        obj = receiver.get()
-        faulthandler.disable()
-        binary = obj["binary"]
-        inputs = obj["inputs"]
-        file_name = obj["dump_file"]
-        file_stderr = open(file_name, "w")
-        old_stderr = sys.stderr
-        sys.stderr = file_stderr
-        old_stdout = sys.stdout
-        sys.stdout = file_stderr
-        outputs = tt_mlir.run(inputs, binary)
-        sys.stderr = old_stderr
-        sys.stdout = old_stdout
-        file_stderr.close()
-        sender.put({"outputs": outputs})
-        exec_event.wait()
-    sys.exit(0)
-
-
-class TorchExecutor(Executor):
+class TorchExecutor(OpByOpExecutor):
     def __init__(
         self,
         gm,
@@ -118,7 +82,7 @@ class TorchExecutor(Executor):
     def set_binary(self, binary):
         self.binary = binary
 
-    def compile_op(self, node, *inputs, **kwargs):
+    def get_input_shapes_and_constants(self, *inputs):
         input_shapes_and_constants = []
         for inp in inputs:
             if isinstance(inp, torch.Tensor):
@@ -139,20 +103,20 @@ class TorchExecutor(Executor):
                 input_shapes_and_constants.append(None)
             else:
                 raise ValueError(f"Unexpected input type: {type(inp)}")
+        return input_shapes_and_constants
 
-        name = node.target.name() if hasattr(node.target, "name") else node.name
+    def is_node_valid(self, node):
         if not isinstance(node.target, torch._ops.OpOverload):
             if "getitem" not in name:
                 raise ValueError(f"Node target is not an OpOverload: {name}")
-            return None, None
+            return False
+        return True
 
-        op = Op(name, input_shapes_and_constants, self.compiler_config.model_name)
-        if op.unique_key() not in self.compiler_config.unique_ops:
-            self.compiler_config.unique_ops[op.unique_key()] = op
-        else:
-            self.compiler_config.unique_ops[op.unique_key()].num_ops += 1
-            return None, None
+    def get_node_name(self, node):
+        name = node.target.name() if hasattr(node.target, "name") else node.name
+        return name
 
+    def get_stable_hlo_graph(self, node, inputs, **kwargs):
         graph = torch.fx.Graph()
         placeholders = []
         for inp in inputs:
@@ -235,53 +199,7 @@ class TorchExecutor(Executor):
         op.add_torch_ir_graph(module.operation.get_asm())
         lower_to_stable_hlo(module, op=op)
         op.add_stable_hlo_graph(module.operation.get_asm())
-
-        sender = mp.Queue()
-        receiver = mp.Queue()
-        ttir_event = mp.Event()
-        ttnn_event = mp.Event()
-        json_event = mp.Event()
-        obj = {"asm": module.operation.get_asm()}
-        process = mp.Process(
-            target=compile_process,
-            args=(sender, receiver, ttir_event, ttnn_event, json_event),
-        )
-        process.start()
-        sender.put(obj)
-        start = time.time()
-        binary = None
-        while True:
-            try:
-                result = receiver.get_nowait()
-                if "ttir" in result:
-                    op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTIR
-                    op.add_ttir_graph(result["ttir"])
-                    ttir_event.set()
-                if "binary" in result:
-                    binary = result["binary"]
-                    op.binary = binary
-                    op.add_ttnn_graph(result["ttnn"])
-                    ttnn_event.set()
-                if "json" in result:
-                    op.json = result["json"]
-                    json_event.set()
-                    op.parse_json()
-                    op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTNN
-                    break
-            except mp.queues.Empty:
-                pass
-            except Exception as e:
-                process.terminate()
-                raise e
-            if time.time() - start > self.compiler_config.single_op_timeout:
-                process.terminate()
-                break
-            if not process.is_alive():
-                break
-            time.sleep(0.01)
-        process.join()
-        print(f"json len {len(op.json)}")
-        return binary, op
+        return module, op
 
     def transform_input(self, inp):
         # Convert torch.nn.Parameter to torch.Tensor and convert non-contiguous
@@ -333,56 +251,6 @@ class TorchExecutor(Executor):
             supported_inputs = supported_inputs + ((input),)
 
         return supported_inputs
-
-    def run_op(self, binary, *inputs):
-        inputs = self.pre_process_inputs(*inputs)
-        if not self.stderror_redirected:
-            self.file_stderr = tempfile.NamedTemporaryFile(mode="w+t", delete=False)
-            self.stderror_redirected = True
-
-        obj = {"binary": binary, "inputs": inputs, "dump_file": self.file_stderr.name}
-
-        exec_event = mp.Event()
-        if self.execute_process is None:
-            self.execute_sender = mp.Queue()
-            self.execute_receiver = mp.Queue()
-            self.execute_process = mp.Process(
-                target=execute_process,
-                args=(self.execute_sender, self.execute_receiver, exec_event),
-            )
-            self.execute_process.start()
-        self.execute_sender.put(obj)
-        result = {}
-        start = time.time()
-        outputs = [None]
-        while True:
-            if not self.execute_process.is_alive():
-                self.execute_process = None
-                break
-            try:
-                result = self.execute_receiver.get_nowait()
-                outputs = result["outputs"]
-                exec_event.set()
-                break
-            except mp.queues.Empty:
-                pass
-            if time.time() - start > self.compiler_config.single_op_timeout:
-                self.execute_process.terminate()
-                self.execute_process = None
-                break
-
-        if len(outputs) == 1:
-            outputs = outputs[0]
-
-        stderr_data = ""
-        if outputs is None:
-            file_stderr = open(self.file_stderr.name, "r")
-            stderr_data = file_stderr.read()
-            stderr_data = stderr_data.replace("\n", "\\n")
-            stderr_data = re.sub(r"[^\x20-\x7E]", "", stderr_data)
-            file_stderr.close()
-
-        return outputs, stderr_data
 
     def run_gm_op_by_op(self, *inputs):
         node_to_tensor = {}

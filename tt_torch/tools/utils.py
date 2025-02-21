@@ -24,7 +24,6 @@ class CompileDepth(Enum):
     COMPILE_OP_BY_OP = 5
     EXECUTE_OP_BY_OP = 6
     EXECUTE = 7
-    COMPILE_STABLEHLO_OP_BY_OP = 8
 
 
 class OpCompilationStatus(IntEnum):
@@ -36,6 +35,11 @@ class OpCompilationStatus(IntEnum):
     CONVERTED_TO_TTIR = 5
     CONVERTED_TO_TTNN = 6
     EXECUTED = 7
+
+
+class OpByOpBackend(Enum):
+    TORCH = 1
+    STABLEHLO = 2
 
 
 class Tensor:
@@ -227,6 +231,7 @@ class CompilerConfig:
         self.model_name = ""
         self.results_path = "results/models/"
         self.single_op_timeout = 30
+        self.op_by_op_backend = OpByOpBackend.TORCH
         self.enable_consteval = False
         self.remove_embedded_constants = False
         self._consteval_parameters = False
