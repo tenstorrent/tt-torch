@@ -42,7 +42,6 @@ else
 
   fi
   pip install $TT_TORCH_HOME/dist/torchvision*.whl
-  pip install --pre torch-mlir torchvision
   pip install stablehlo -f https://github.com/openxla/stablehlo/releases/expanded_assets/dev-wheels
 
 fi
