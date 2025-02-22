@@ -284,6 +284,7 @@ class ModelTester:
         max_metric = default_value
 
         if metric_list:  # check null or empty list
+            metric_list = [x for x in metric_list if isinstance(x, (int, float))]
             avg_metric = sum(metric_list) / len(metric_list)
             min_metric = min(metric_list)
             max_metric = max(metric_list)
