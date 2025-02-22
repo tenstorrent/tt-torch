@@ -29,7 +29,7 @@ class install_metal_libs(install_lib):
 
 
 # Compile time env vars
-os.environ["DONT_OVERRIDE_INSTALL_PATH"] = "1"
+os.environ["WHEEL_BUILD_CUSTOM_INSTALL_PATH"] = "1"
 
 cmake_args = [
     "-GNinja",
