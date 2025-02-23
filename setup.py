@@ -3,10 +3,64 @@
 # SPDX-License-Identifier: Apache-2.0
 from skbuild import setup
 import os
-import glob
 from skbuild.command.install_lib import install_lib
 from setuptools import find_namespace_packages
 import sys
+import shutil
+
+import hashlib
+import zipfile
+
+# TODO, this is quite hacky
+# The install files provided to us from tt-mlir are all in a single folder. Organize them so that
+# everything is where python expects it to be.
+def shuffle_wheel():
+    whl = "dist/tt_torch-0.1-cp311-cp311-linux_x86_64.whl"
+    print(f"Reading in {whl}")
+    with zipfile.ZipFile(whl, "r") as zip_ref:
+        zip_ref.extractall("wheel_contents")
+
+    print("Moving tt-metal")
+    metal_dir = os.path.join(
+        os.getcwd(), "wheel_contents/tt_torch-0.1.data/data/tt-metal"
+    )
+    shutil.copy2(metal_dir, "wheel_contents/")
+    shutil.rmtree(metal_dir)
+
+    record_path = "wheel_contents/tt_torch-0.1.dist-info/RECORD"
+    print("Populating RECORD.")
+    with open(record_path, "w") as record_file:
+        for root, _, files in os.walk("wheel_contents"):
+            for file in files:
+                file_path = os.path.join(root, file)
+                rel_path = os.path.relpath(file_path, "wheel_contents")
+
+                # Skip RECORD itself (it should be left without a hash)
+                if rel_path.endswith("RECORD"):
+                    record_file.write(f"{rel_path},,\n")
+                    continue
+
+                # Compute the hash
+                hasher = hashlib.sha256()
+                with open(file_path, "rb") as f:
+                    hasher.update(f.read())
+                hash_b64 = hasher.digest().hex()
+
+                # Get file size
+                file_size = os.path.getsize(file_path)
+
+                # Write to RECORD
+                record_file.write(f"{rel_path},sha256={hash_b64},{file_size}\n")
+
+    print("Creating wheel.")
+    with zipfile.ZipFile(whl, "w", zipfile.ZIP_DEFLATED) as zipf:
+        for root, _, files in os.walk("wheel_contents"):
+            for file in files:
+                file_path = os.path.join(root, file)
+                rel_path = os.path.relpath(file_path, "wheel_contents")
+                zipf.write(file_path, rel_path)
+
+    shutil.rmtree("wheel_contents", ignore_errors=True)
 
 
 class install_metal_libs(install_lib):
@@ -65,3 +119,5 @@ setup(
         "numpy",
     ],
 )
+
+shuffle_wheel()

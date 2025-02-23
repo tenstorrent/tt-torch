@@ -13,12 +13,7 @@ add_dependencies(TT_TORCH_MLIR
 )
 
 set_target_properties(TT_TORCH_MLIR PROPERTIES COMPILE_FLAGS "-fno-rtti")
-if(DEFINED ENV{WHEEL_BUILD_CUSTOM_INSTALL_PATH})
-    file(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/lib/python3.11/site-packages/tt_torch)
-    install (TARGETS TT_TORCH_MLIR LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3.11/site-packages/tt_torch)
-else()
-    install (TARGETS TT_TORCH_MLIR LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-endif()
+install (TARGETS TT_TORCH_MLIR LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
 target_include_directories(TT_TORCH_MLIR PUBLIC
     ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/include
@@ -86,9 +81,4 @@ set_target_properties(${TARGET_NAME}
     INSTALL_RPATH "$ORIGIN"
 )
 
-if(DEFINED ENV{WHEEL_BUILD_CUSTOM_INSTALL_PATH})
-    file(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/lib/python3.11/site-packages/tt_torch)
-    install (TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3.11/site-packages/tt_torch)
-else()
-    install (TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-endif()
+install (TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

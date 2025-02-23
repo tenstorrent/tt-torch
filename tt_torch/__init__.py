@@ -11,7 +11,13 @@ if mp.get_start_method() != "forkserver":
     mp.set_start_method("forkserver", force=True)
 
 import os
+import sys
 import importlib.util
+
+# make sure, venv/lib is in the LD_LIBRARY_PATH
+lib_path = os.path.join(os.environ["VIRTUAL_ENV"], "lib")
+sys.path.append(lib_path)
+os.environ["LD_LIBRARY_PATH"] = lib_path + os.pathsep + os.environ["LD_LIBRARY_PATH"]
 
 # find the tt-metal directory, it can either be in the venv if installed from a wheel or in the third_party source tree
 package_name = "tt-metal"
