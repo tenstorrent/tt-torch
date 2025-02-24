@@ -239,6 +239,9 @@ PYBIND11_MODULE(tt_mlir, m) {
       .def_readonly("stride", &tt::runtime::TensorDesc::stride)
       .def_readonly("itemsize", &tt::runtime::TensorDesc::itemsize)
       .def_readonly("dataType", &tt::runtime::TensorDesc::dataType);
+
+  py::class_<tt::runtime::Tensor>(m, "Tensor");
+
   m.def("get_op_output_tensor", &tt::runtime::getOpOutputTensor);
   m.def("get_op_debug_str", &tt::runtime::getOpDebugString,
         "Get the debug string of the op");
