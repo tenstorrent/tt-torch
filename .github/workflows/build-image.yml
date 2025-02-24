@@ -3,9 +3,79 @@ name: Build and Publish Docker Image
 
 on:
   workflow_dispatch:
+    inputs:
+      mlir_override:
+        description: 'Git SHA of commit in tenstorrent/tt-mlir or branch name'
+        required: false
+        type: string
   workflow_call:
+    inputs:
+      mlir_override:
+        description: 'Git SHA of commit in tenstorrent/tt-mlir or branch name'
+        required: false
+        type: string
+    outputs:
+      docker-image:
+        description: "Built docker image name"
+        value: ${{ jobs.build-image.outputs.docker-image }}
 
 jobs:
+
+  build-image:
+    runs-on: builder
+    outputs:
+      docker-image: ${{ steps.build.outputs.docker-image }}
+    steps:
+      - name: Fix permissions
+        shell: bash
+        run: sudo chown ubuntu:ubuntu -R $(pwd)
+
+      - uses: actions/checkout@v4
+        with:
+            submodules: recursive
+            fetch-depth: 0 # Fetch all history and tags
+
+      - name: Update submodule if mlir_override is set
+        if: ${{ inputs.mlir_override }}
+        run: |
+          cd third_party/tt-mlir
+          git fetch origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+          git checkout ${{ inputs.mlir_override }}
+          branch_name=$(git rev-parse --abbrev-ref HEAD)
+          commit_sha=$(git rev-parse HEAD)
+          commit_title=$(git log -1 --pretty=%s)
+          echo "Branch name: $branch_name"
+          echo "Commit SHA: $commit_sha"
+          echo "Commit title: $commit_title"
+          echo "::notice::Using tt-mlir branch: $branch_name, commit: $commit_sha, title: $commit_title"
+          cd ../..
+
+      # Clean everything from submodules (needed to avoid issues
+      # with cmake generated files leftover from previous builds)
+      - name: Cleanup submodules
+        run: |
+          git submodule foreach --recursive git clean -ffdx
+          git submodule foreach --recursive git reset --hard
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker images and output the image name
+        id: build
+        shell: bash
+        run: |
+          # Output the image name
+          set pipefail
+          .github/build-docker-images.sh | tee docker.log
+          DOCKER_CI_IMAGE=$(tail -n 1 docker.log)
+          echo "DOCKER_CI_IMAGE $DOCKER_CI_IMAGE"
+          echo "docker-image=$DOCKER_CI_IMAGE" >> "$GITHUB_OUTPUT"
+
+  
   build:
 
     runs-on:
