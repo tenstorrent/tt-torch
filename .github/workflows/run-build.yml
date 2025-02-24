@@ -11,7 +11,7 @@ on:
         description: 'Docker image to use for build'
         required: true
         type: string
-  
+
 jobs:
   build:
     timeout-minutes: 120

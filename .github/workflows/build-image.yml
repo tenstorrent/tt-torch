@@ -75,7 +75,7 @@ jobs:
           echo "DOCKER_CI_IMAGE $DOCKER_CI_IMAGE"
           echo "docker-image=$DOCKER_CI_IMAGE" >> "$GITHUB_OUTPUT"
 
-  
+
   build:
 
     runs-on:
