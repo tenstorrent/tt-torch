@@ -58,6 +58,30 @@ class TTContextCache(ContextCache):
         return Location.name(node.name, context=self._c)
 
 
+class RuntimeIntermediate:
+    def __init__(self, node: torch.fx.Node, golden):
+        self.node = node
+        self.golden_tensor = golden  # may be a tuple of tensors
+
+        # each fxnode can be decomposed into multiple ttnn ops.
+        # we store all their intermediate outputs here
+        # TODO - Need a way to uniquely reference ttnn intermediates
+        self.decomposed_intermediate_outputs = []
+        self.pcc = None
+        self.atol = None
+
+    def calculate_metrics(self):
+        # calculate the metrics for the golden tensor after all decomposition steps done
+        assert (
+            len(self.decomposed_intermediate_outputs) > 0
+        ), "No decomposed intermediates found"
+        final_decomposed_output = self.decomposed_intermediate_outputs[-1]
+
+        # shape mismatches can be handled in these atol/pcc calculators
+        self.atol = calculate_atol(final_decomposed_output, self.golden_tensor)
+        self.pcc = calculate_pcc(final_decomposed_output, self.golden_tensor)
+
+
 def import_graph(graph: torch.fx.GraphModule):
     context = Context()
     torch_dialect.register_dialect(context)
@@ -157,6 +181,10 @@ class Executor:
         # to capture runtime stack dump.
         self.stderror_redirected = False
         self.file_stderr = None
+
+        # Dictionary to track the intermediate golden values for each torchFX op
+        # string(fxnode_name) : runtimeCacheEntry
+        self.runtime_intermediate_cache = {}
 
     def register_intermediate_callback(self, callback):
         if not is_runtime_debug_enabled():
@@ -434,7 +462,7 @@ class Executor:
 
         return outputs, stderr_data
 
-    def run_gm_op_by_op(self, *inputs):
+    def run_gm_op_by_op(self, *inputs, cache_intermediate_goldens=False):
         node_to_tensor = {}
         input_index = 0
         outputs = []
@@ -473,6 +501,10 @@ class Executor:
                     binary = None
                     print(f"Failed to compile {idx}/{num_nodes}: {node.target}: {e}")
 
+                if cache_intermediate_goldens:
+                    golden = node.target(*args, **node.kwargs)
+                    cache_entry = RuntimeIntermediate(node, golden)
+                    self.runtime_intermediate_cache[node.name] = cache_entry
                 if (
                     self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
                     and binary is not None
@@ -489,7 +521,9 @@ class Executor:
                         op.compilation_status = OpCompilationStatus.EXECUTED
                         tensor = node.target(*args, **node.kwargs)
                         if self.compiler_config.verify_op_by_op:
-                            atol = calculate_atol(calculated, tensor)
+                            atol = calculate_atol(
+                                calculated, tensor
+                            )  # how does this work? the tensor/calculated must be unpacked properly.
                             op.atol = atol
                             if atol > self.required_atol:
                                 print(f"atol too high for {idx}: {atol}")
@@ -505,6 +539,7 @@ class Executor:
                 else:
                     tensor = node.target(*args, **node.kwargs)
                 node_to_tensor[node] = tensor
+
             elif node.op == "output":
                 args = node.args[0]
                 output_tensors = [node_to_tensor[arg] for arg in args]
@@ -530,6 +565,20 @@ class Executor:
 
         return outputs
 
+    def verify_intermediates_after_execution(self):
+        for _, intermediate in self.runtime_intermediate_cache.items():
+            intermediate.calculate_metrics()
+            print(
+                f"Metrics for {intermediate.node.name}: pcc {intermediate.pcc}\tatol {intermediate.atol}"
+            )
+
+            if intermediate.atol > self.required_atol:
+                print(
+                    f"atol too high for {intermediate.node.name}: {intermediate.atol}"
+                )
+            if intermediate.pcc < self.required_pcc:
+                print(f"pcc too low for {intermediate.node.name}: {intermediate.pcc}")
+
     def __call__(self, *inputs):
         new_inputs = ()
         for input in inputs:
@@ -554,33 +603,76 @@ class Executor:
 
         inputs = new_inputs
 
+        if self.compiler_config._enable_intermediate_verification:
+            # prepopulate golden map
+            self.run_gm_op_by_op(
+                *(inputs + self.graph_constants), cache_intermediate_goldens=True
+            )
+
         if self.compiler_config.compile_depth == CompileDepth.EXECUTE:
             assert self.binary is not None, "Binary must be set for EXECUTE mode"
-            return tt_mlir.run(inputs + self.graph_constants, self.binary)
+            ret = tt_mlir.run(inputs + self.graph_constants, self.binary)
         elif self.compiler_config.compile_depth in (
             CompileDepth.EXECUTE_OP_BY_OP,
             CompileDepth.COMPILE_OP_BY_OP,
         ):
-            return self.run_gm_op_by_op(*(inputs + self.graph_constants))
+            ret = self.run_gm_op_by_op(*(inputs + self.graph_constants))
         else:
-            return self.gm(*inputs)
+            ret = self.gm(*inputs)
+
+        if self.compiler_config._enable_intermediate_verification:
+            # run post-execution intermediate verification
+            self.verify_intermediates_after_execution()
+
+        return ret
 
 
-def verify_golden_callback(binary, callback_context, op_context):
-    # Using these parameters, we should be able to query information
-    # about the op described by op_context, and its output. I.e. location:
-    location = tt_mlir.get_op_loc_info(op_context)  # unknown
-    print(location)
-    print(
-        "n_inputs to 0th program", len(binary.getProgramInputs(0))
-    )  # appears to be a constant 9. Need to refer to taps
-    pdb.set_trace()
+def create_verify_golden_callback(executor: Executor):
+    # Closure to capture external state in the callback. Could simplify
+    # to only hold a reference to the golden map
 
-    # print("PRINTING OP CONTEXT:" ,op_context)
-    # ...
+    def verify_golden_callback(binary, callback_context, op_context):
+        # Using these parameters, we should be able to query information
+        # about the op described by op_context, and its output. I.e. location:
+        location = tt_mlir.get_op_loc_info(
+            op_context
+        )  # Do we care about other context?
+        output_intermediate_tensor: Tensor = None  # Grab runtime tensor and inject here
 
-    # We will need to provide the bindings necesarry in this frontend.
-    # Those bindings will interact with the runtime API
+        # format 'loc("<torchfx node UID>")'
+        print(f"location = {location}")
+
+        if location == "loc(unknown)":
+            return
+
+        location = location.split('"')[1]
+
+        print("torchfx node UID raw location =", location)
+
+        golden: RuntimeIntermediate = executor.runtime_intermediate_cache.get(
+            location, None
+        )  # this should a torch tensor
+        if golden is not None:
+            print(f"Found golden for op @ {golden.node.name} == {location}")
+            golden.decomposed_intermediate_outputs.append(
+                golden.golden_tensor
+            )  # TESTING ONLY
+            # golden.decomposed_intermediate_outputs.append(output_intermediate_tensor)
+
+            pdb.set_trace()
+
+        # atol = calculate_atol(calculated, golden)
+        # if atol > executor.required_atol:
+        #     print(f"atol too high for {location}: {atol}")
+        # pcc = calculate_pcc(calculated, golden)
+        # if pcc < executor.required_pcc:
+        #     print(f"pcc too low for {location}: {pcc}")
+
+        # pdb.set_trace()
+        # We will need to provide the bindings necesarry in this frontend.
+        # Those bindings will interact with the runtime API
+
+    return verify_golden_callback
 
 
 def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
@@ -602,6 +694,8 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     if dump_intermediates:
         dump_debug = dump_intermediates == "DEBUG"
         dump_info = dump_debug or dump_intermediates == "INFO"
+
+    gm.graph.print_tabular()  # run in full mode to print the entire graph (names for each op)
 
     module = import_graph(gm.graph)
     verify_ir(module)
@@ -634,7 +728,7 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         print(ttir, file=sys.stderr)
 
     if compiler_config.enable_intermediate_verification:
-        executor.register_intermediate_callback(verify_golden_callback)
+        executor.register_intermediate_callback(create_verify_golden_callback(executor))
 
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
     if dump_info:
