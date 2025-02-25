@@ -261,7 +261,7 @@ class StablehloExecutor(OpByOpExecutor):
         if self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP:
             self.compile_shlo_op_by_op()
             if self.gm is not None:
-                return self.run_gm_op_by_op(*(inputs + self.graph_constants))
+                return self.gm(*inputs)
             return  # return nothing
         else:
             assert False, "Invalid compile depth"
