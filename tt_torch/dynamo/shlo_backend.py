@@ -25,7 +25,7 @@ from tt_torch.tools.utils import (
     calculate_pcc,
 )
 
-from tt_torch.dynamo.executor import Executor
+from tt_torch.dynamo.executor import OpByOpExecutor
 
 
 def generate_random_inputs_for_shlo(module_str):
@@ -43,30 +43,6 @@ def parse_module_from_str(module_str):
         stablehlo.register_dialect(ctx)
         module = Module.parse(module_str)
     return module
-
-
-def get_input_shapes_and_constants(*inputs):
-    input_shapes_and_constants = []
-    for inp in inputs:
-        if isinstance(inp, torch.Tensor):
-            input_shapes_and_constants.append(inp.shape)
-        elif isinstance(inp, (list, tuple)):
-            sub = []
-            for sub_inp in inp:
-                if isinstance(sub_inp, torch.Tensor):
-                    sub.append(sub_inp.shape)
-                else:
-                    sub.append(sub_inp)
-            input_shapes_and_constants.append(sub)
-        elif isinstance(inp, (int, float, bool)):
-            input_shapes_and_constants.append(inp)
-        elif isinstance(inp, torch.dtype):
-            input_shapes_and_constants.append(inp.__str__())
-        elif inp is None:
-            input_shapes_and_constants.append(None)
-        else:
-            raise ValueError(f"Unexpected input type: {type(inp)}")
-    return input_shapes_and_constants
 
 
 def compile_process(receiver, sender, ttir_event, ttnn_event, json_event):
@@ -165,7 +141,7 @@ class StablehloOp(Op):
         }
 
 
-class StablehloExecutor(Executor):
+class StablehloExecutor(OpByOpExecutor):
     def __init__(
         self,
         module: Union[str, "torch_mlir._mlir_libs._mlir.ir.Module", None] = None,
@@ -198,11 +174,28 @@ class StablehloExecutor(Executor):
 
     def add_gm(self, gm: torch.fx.GraphModule, graph_constants):
         assert (
-            self.compiler_config.compile_depth
-            == CompileDepth.COMPILE_STABLEHLO_OP_BY_OP
-        ), "gm can only be added in COMPILE_STABLEHLO_OP_BY_OP mode"
+            self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP
+            and OpByOpBackend == OpByOpBackend.STABLEHLO
+        ), "gm can only be added in COMPILE_OP_BY_OP mode"
         self.gm = gm
-        self.graph_constants = tuple(graph_constants)
+        self.graph_constants = (
+            (graph_constants,)
+            if isinstance(graph_constants, (int, float))
+            else tuple(graph_constants)
+        )
+
+    def get_stable_hlo_graph(self, op, inputs, **kwargs):
+        if op.unique_key not in self.compiler_config.unique_ops:
+            self.compiler_config.unique_ops[op.unique_key] = op
+        else:
+            self.compiler_config.unique_ops[op.unique_key].num_ops += 1
+            return None, None
+
+        module = parse_module_from_str(op.stable_hlo_graph)
+        asm = module.operation.get_asm()
+        op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
+        op.add_stable_hlo_graph(asm)
+        return module, op
 
     def gm_op_by_op(self, *inputs):
         node_to_tensor = {}
@@ -304,74 +297,11 @@ class StablehloExecutor(Executor):
                     opObj.add_stable_hlo_graph(new_module_str)
                     self.sub_ops.append(opObj)
 
-    def compile_op(self, op):
-        if op.unique_key in self.compiler_config.unique_ops:
-            self.compiler_config.unique_ops[op.unique_key].num_ops += 1
-            return op.binary
-
-        parsed = parse_module_from_str(op.stable_hlo_graph)
-        asm = parsed.operation.get_asm()
-        op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
-        op.add_stable_hlo_graph(asm)
-
-        obj = {"asm": asm}
-
-        sender = mp.Queue()
-        receiver = mp.Queue()
-        ttir_event = mp.Event()
-        ttnn_event = mp.Event()
-        json_event = mp.Event()
-
-        process = mp.Process(
-            target=compile_process,
-            args=(sender, receiver, ttir_event, ttnn_event, json_event),
-        )
-        process.start()
-
-        sender.put(obj)
-        start = time.time()
-        binary = None
-        while True:
-            try:
-                result = receiver.get_nowait()
-                if "ttir" in result:
-                    op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTIR
-                    op.add_ttir_graph(result["ttir"])
-                    ttir_event.set()
-
-                if "binary" in result:
-                    binary = result["binary"]
-                    op.binary = binary
-                    op.add_ttnn_graph(result["ttnn"])
-                    op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTNN
-                    ttnn_event.set()
-
-                if "json" in result:
-                    op.json = result["json"]
-                    json_event.set()
-                    op.parse_json()
-                    op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTNN
-
-            except mp.queues.Empty:
-                pass
-            except Exception as e:
-                process.terminate()
-                raise e
-            if time.time() - start > self.compiler_config.single_op_timeout:
-                process.terminate()
-                break
-            if not process.is_alive():
-                break
-            time.sleep(0.01)
-
-        process.join()
-        return binary
-
     def compile_shlo_op_by_op(self):
         num_ops = len(self.sub_ops)
         for idx, op in enumerate(self.sub_ops):
             print(f"Compiling {idx}/{num_ops}: {op.op_name}")
-            binary = self.compile_op(op)
+            binary, op = self.compile_op(op, None, None)
         self.set_binary(binary)
         self.compiler_config.save_unique_ops(mode="stablehlo")
 
@@ -387,43 +317,8 @@ class StablehloExecutor(Executor):
             self.print_op(op)
 
     def __call__(self, *inputs):
-        new_inputs = ()
-        for input in inputs:
-            # Handle scalar inputs.
-            if not hasattr(input, "dtype"):
-                assert (
-                    type(input) is not bool
-                ), "Conversion for scalar boolean is not supported."
-                new_inputs = new_inputs + ((input),)
-                continue
-
-            # Apply type conversion if required.
-            input_type = input.dtype
-            if input_type in self.type_conversion.keys():
-                new_inputs = new_inputs + (
-                    (input.to(dtype=self.type_conversion[input_type])),
-                )
-                continue
-
-            # No conversion required.
-            new_inputs = new_inputs + ((input),)
-        inputs = new_inputs
-        if self.compiler_config.compile_depth == CompileDepth.EXECUTE:
-            assert self.binary is not None, "Binary must be set for EXECUTE mode"
-            return tt_mlir.run(inputs, self.binary)
-        elif self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP:
-            self.compile_shlo_op_by_op()
-            return tt_mlir.run(inputs, self.binary)
-        elif (
-            self.compiler_config.compile_depth
-            == CompileDepth.COMPILE_STABLEHLO_OP_BY_OP
-        ):
-            # assuming input is a torch graph
-            # if input is stablehlo graph, compile depth should have
-            # been reset to COMPILE_OP_BY_OP
-            self.compile_shlo_op_by_op()
-            return self.gm_op_by_op(*(inputs + self.graph_constants))
-        elif self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP:
+        inputs = self.typecast_inputs(inputs)
+        if self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP:
             self.compile_shlo_op_by_op()
             return  # return nothing
         else:

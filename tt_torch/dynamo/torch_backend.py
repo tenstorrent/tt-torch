@@ -3,15 +3,10 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import operator
-import multiprocessing as mp
-import time
-import faulthandler
-import re
-import sys
-import tempfile
 import tt_mlir
+import os
 
-from typing import List, Tuple, Union, Optional
+from typing import List, Tuple, Union
 from tt_torch.tools.utils import (
     CompilerConfig,
     CompileDepth,
@@ -20,29 +15,31 @@ from tt_torch.tools.utils import (
     calculate_atol,
     calculate_pcc,
 )
+from torch_mlir.compiler_utils import (
+    OutputType,
+    run_pipeline_with_repro_report,
+    lower_mlir_module,
+)
 from tt_torch.dynamo.executor import (
     Executor,
     OpByOpExecutor,
+    import_graph,
 )
-from torch_mlir.ir import Context, Location
-from torch_mlir.extras.fx_importer import FxImporter, ContextCache
-from torch_mlir.dialects import torch as torch_dialect
 
 
-class TTContextCache(ContextCache):
-    def get_node_location(self, node: torch.fx.Node) -> Optional[Location]:
-        return Location.name(node.name, context=self._c)
-
-
-def import_graph(graph: torch.fx.GraphModule):
-    context = Context()
-    torch_dialect.register_dialect(context)
-    importer = FxImporter(context=context)
-    importer._cc = TTContextCache(
-        importer._c, py_attr_tracker=importer._py_attr_tracker
+def lower_to_stable_hlo(module, op=None, enable_ir_printing=False):
+    run_pipeline_with_repro_report(
+        module,
+        f"builtin.module(torchdynamo-export-to-torch-backend-pipeline)",
+        "Lowering TorchFX IR -> Torch Backend IR",
+        enable_ir_printing,
     )
-    importer.import_stateless_graph(graph)
-    return importer.module
+    if op is not None:
+        op.compilation_status = OpCompilationStatus.CONVERTED_TO_TORCH_BACKEND_IR
+
+    lower_mlir_module(False, OutputType.STABLEHLO, module)
+    if op is not None:
+        op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
 
 
 class TorchExecutor(OpByOpExecutor):
@@ -89,32 +86,6 @@ class TorchExecutor(OpByOpExecutor):
             )
         tt_mlir.DebugHooks.get_debug_hooks(callback)
 
-    def set_binary(self, binary):
-        self.binary = binary
-
-    def get_input_shapes_and_constants(self, *inputs):
-        input_shapes_and_constants = []
-        for inp in inputs:
-            if isinstance(inp, torch.Tensor):
-                input_shapes_and_constants.append(inp.shape)
-            elif isinstance(inp, (list, tuple)):
-                sub = []
-                for sub_inp in inp:
-                    if isinstance(sub_inp, torch.Tensor):
-                        sub.append(sub_inp.shape)
-                    else:
-                        sub.append(sub_inp)
-                input_shapes_and_constants.append(sub)
-            elif isinstance(inp, (int, float, bool)):
-                input_shapes_and_constants.append(inp)
-            elif isinstance(inp, torch.dtype):
-                input_shapes_and_constants.append(inp.__str__())
-            elif inp is None:
-                input_shapes_and_constants.append(None)
-            else:
-                raise ValueError(f"Unexpected input type: {type(inp)}")
-        return input_shapes_and_constants
-
     def is_node_valid(self, node):
         if not isinstance(node.target, torch._ops.OpOverload):
             if "getitem" not in name:
@@ -127,6 +98,23 @@ class TorchExecutor(OpByOpExecutor):
         return name
 
     def get_stable_hlo_graph(self, node, inputs, **kwargs):
+
+        input_shapes_and_constants = self.get_input_shapes_and_constants(inputs)
+        if not self.is_node_valid(node):
+            return None, None
+        name = node.target.name() if hasattr(node.target, "name") else node.name
+        if not isinstance(node.target, torch._ops.OpOverload):
+            if "getitem" not in name:
+                raise ValueError(f"Node target is not an OpOverload: {name}")
+            return None, None
+
+        op = Op(name, input_shapes_and_constants, self.compiler_config.model_name)
+        if op.unique_key() not in self.compiler_config.unique_ops:
+            self.compiler_config.unique_ops[op.unique_key()] = op
+        else:
+            self.compiler_config.unique_ops[op.unique_key()].num_ops += 1
+            return None, None
+
         graph = torch.fx.Graph()
         placeholders = []
         for inp in inputs:
@@ -210,57 +198,6 @@ class TorchExecutor(OpByOpExecutor):
         lower_to_stable_hlo(module, op=op)
         op.add_stable_hlo_graph(module.operation.get_asm())
         return module, op
-
-    def transform_input(self, inp):
-        # Convert torch.nn.Parameter to torch.Tensor and convert non-contiguous
-        # data to contiguous.
-        if isinstance(inp, torch.nn.Parameter):
-            if not inp.data.is_contiguous():
-                inp.data = inp.data.contiguous()
-            return inp.data
-        elif isinstance(inp, torch.Tensor):
-            if not inp.is_contiguous():
-                inp = inp.contiguous()
-            return inp
-
-        return None
-
-    def pre_process_inputs(self, *inputs):
-        # Remove scalar constants as they're absorbed into the binary
-        processed_inputs = []
-        for input in inputs:
-            # If input is a list, iterate over its elements;
-            # otherwise, process it directly
-            input_items = input if isinstance(input, list) else [input]
-
-            for inp in input_items:
-                transformed_inp = self.transform_input(inp)
-                if transformed_inp is not None:
-                    processed_inputs.append(transformed_inp)
-
-        # Typecast the unsupported data types to hardware supported types.
-        supported_inputs = ()
-        for input in processed_inputs:
-            # Handle scalar inputs.
-            if not hasattr(input, "dtype"):
-                assert (
-                    type(input) is not bool
-                ), "Conversion for scalar boolean is not supported."
-                supported_inputs = supported_inputs + ((input),)
-                continue
-
-            # Apply type conversion if required.
-            input_type = input.dtype
-            if input_type in self.type_conversion.keys():
-                supported_inputs = supported_inputs + (
-                    (input.to(dtype=self.type_conversion[input_type])),
-                )
-                continue
-
-            # No conversion required.
-            supported_inputs = supported_inputs + ((input),)
-
-        return supported_inputs
 
     def run_gm_op_by_op(self, *inputs):
         node_to_tensor = {}
@@ -359,33 +296,8 @@ class TorchExecutor(OpByOpExecutor):
         return outputs
 
     def __call__(self, *inputs):
-        new_inputs = ()
-        for input in inputs:
-            # Handle scalar inputs.
-            if not hasattr(input, "dtype"):
-                assert (
-                    type(input) is not bool
-                ), "Conversion for scalar boolean is not supported."
-                new_inputs = new_inputs + ((input),)
-                continue
-
-            # Apply type conversion if required.
-            input_type = input.dtype
-            if input_type in self.type_conversion.keys():
-                new_inputs = new_inputs + (
-                    (input.to(dtype=self.type_conversion[input_type])),
-                )
-                continue
-
-            # No conversion required.
-            new_inputs = new_inputs + ((input),)
-
-        inputs = new_inputs
-
-        if self.compiler_config.compile_depth == CompileDepth.EXECUTE:
-            assert self.binary is not None, "Binary must be set for EXECUTE mode"
-            return tt_mlir.run(inputs + self.graph_constants, self.binary)
-        elif self.compiler_config.compile_depth in (
+        inputs = self.typecast_inputs(inputs)
+        if self.compiler_config.compile_depth in (
             CompileDepth.EXECUTE_OP_BY_OP,
             CompileDepth.COMPILE_OP_BY_OP,
         ):
