@@ -307,6 +307,9 @@ class CompilerConfig:
         else:
             torch._dynamo.config.inline_inbuilt_nn_modules = True
 
+    def reset_unique_ops(self):
+        self.unique_ops = {}
+
     def save_unique_ops(self, mode="torch"):
         unique_op_dict = {}
         pytest_test = os.environ.get("PYTEST_CURRENT_TEST")

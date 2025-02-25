@@ -5,7 +5,7 @@ import torch
 import torchvision
 import pytest
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig, CompileDepth
+from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
 class ThisTester(ModelTester):
@@ -35,7 +35,6 @@ def test_resnet(record_property, mode, op_by_op):
     cc.consteval_parameters = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-
     tester = ThisTester(
         model_name,
         mode,

@@ -65,19 +65,6 @@ class TorchExecutor(OpByOpExecutor):
         if self.compiler_config is None:
             compiler_config = CompilerConfig()
         self.compiler_config = compiler_config
-        self.intermediate_callbacks = {}
-
-        # Opening a device in a new process is very slow as the pcie device needs to be initializes
-        # So we keep the process alive and reuse it. If the process dies, the next call will create a new process
-        self.execute_process = None
-        self.execute_sender = None
-        self.execute_receiver = None
-
-        # Create temp file at start of execution of first op and pass the name
-        # of temp file to subprocess which will be used to redirect the stderr
-        # to capture runtime stack dump.
-        self.stderror_redirected = False
-        self.file_stderr = None
 
     def register_intermediate_callback(self, callback):
         if not is_runtime_debug_enabled():
@@ -198,102 +185,6 @@ class TorchExecutor(OpByOpExecutor):
         lower_to_stable_hlo(module, op=op)
         op.add_stable_hlo_graph(module.operation.get_asm())
         return module, op
-
-    def run_gm_op_by_op(self, *inputs):
-        node_to_tensor = {}
-        input_index = 0
-        outputs = []
-        num_nodes = len(self.gm.graph.nodes)
-        out_degree = {}
-        for idx, node in enumerate(self.gm.graph.nodes):
-            print(f"Compiling {idx}/{num_nodes}: {node.target}")
-            out_degree[node] = len(node.users)
-            if node.op == "placeholder":
-                node_to_tensor[node] = inputs[input_index]
-                input_index += 1
-            elif node.op == "get_attr":
-                for buffer in self.gm.named_buffers():
-                    if buffer[0] == node.target:
-                        node_to_tensor[node] = buffer[1]
-                        break
-            elif node.op == "call_function":
-                args = []
-                for arg in node.args:
-                    if isinstance(arg, torch.fx.node.Node):
-                        args.append(node_to_tensor[arg])
-                    elif isinstance(arg, list):
-                        args.append(
-                            [
-                                node_to_tensor[a]
-                                if isinstance(a, torch.fx.node.Node)
-                                else a
-                                for a in arg
-                            ]
-                        )
-                    else:
-                        args.append(arg)
-                try:
-                    binary, op = self.compile_op(node, *args, **node.kwargs)
-                except Exception as e:
-                    binary = None
-                    print(f"Failed to compile {idx}/{num_nodes}: {node.target}: {e}")
-
-                if (
-                    self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
-                    and binary is not None
-                ):
-                    try:
-                        calculated, runtime_stack_dump = self.run_op(binary, *args)
-                        self.compiler_config.unique_ops[
-                            op.unique_key()
-                        ].runtime_stack_dump = runtime_stack_dump
-
-                        print(f"Ran: {idx}/{num_nodes}: {node.target}")
-                        if calculated is None:
-                            raise ValueError("Failed to execute")
-                        op.compilation_status = OpCompilationStatus.EXECUTED
-                        tensor = node.target(*args, **node.kwargs)
-                        if self.compiler_config.verify_op_by_op:
-                            atol = calculate_atol(calculated, tensor)
-                            op.atol = atol
-                            if atol > self.required_atol:
-                                print(f"atol too high for {idx}: {atol}")
-                            pcc = calculate_pcc(calculated, tensor)
-                            op.pcc = pcc
-                            if pcc < self.required_pcc:
-                                print(f"pcc too low for {idx}: {pcc}")
-                    except Exception as e:
-                        print(
-                            f"Failed to execute {idx}/{num_nodes}: {node.target}: {e}"
-                        )
-                        tensor = node.target(*args, **node.kwargs)
-                else:
-                    tensor = node.target(*args, **node.kwargs)
-                node_to_tensor[node] = tensor
-            elif node.op == "output":
-                args = node.args[0]
-                output_tensors = [node_to_tensor[arg] for arg in args]
-                outputs = output_tensors
-            args_set = set()
-            for arg in node.args:
-                if arg in args_set:
-                    continue
-                args_set.add(arg)
-                if isinstance(arg, torch.fx.node.Node):
-                    out_degree[arg] -= 1
-                    if out_degree[arg] == 0 and arg.op != "output":
-                        del node_to_tensor[arg]
-                        out_degree.pop(arg)
-
-        self.compiler_config.save_unique_ops()
-        if self.execute_process is not None:
-            self.execute_process.terminate()
-            self.execute_process = None
-        if self.stderror_redirected:
-            os.unlink(self.file_stderr.name)
-            self.stderror_redirected = False
-
-        return outputs
 
     def __call__(self, *inputs):
         inputs = self.typecast_inputs(inputs)

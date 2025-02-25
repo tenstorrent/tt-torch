@@ -20,6 +20,7 @@ from tt_torch.tools.utils import (
     CompilerConfig,
     CompileDepth,
     Op,
+    OpByOpBackend,
     OpCompilationStatus,
     calculate_atol,
     calculate_pcc,
@@ -175,7 +176,7 @@ class StablehloExecutor(OpByOpExecutor):
     def add_gm(self, gm: torch.fx.GraphModule, graph_constants):
         assert (
             self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP
-            and OpByOpBackend == OpByOpBackend.STABLEHLO
+            and self.compiler_config.op_by_op_backend == OpByOpBackend.STABLEHLO
         ), "gm can only be added in COMPILE_OP_BY_OP mode"
         self.gm = gm
         self.graph_constants = (
@@ -196,67 +197,6 @@ class StablehloExecutor(OpByOpExecutor):
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
         op.add_stable_hlo_graph(asm)
         return module, op
-
-    def gm_op_by_op(self, *inputs):
-        node_to_tensor = {}
-        input_index = 0
-        outputs = []
-        num_nodes = len(self.gm.graph.nodes)
-        out_degree = {}
-        for idx, node in enumerate(self.gm.graph.nodes):
-            print(f"Compiling {idx}/{num_nodes}: {node.target}")
-            out_degree[node] = len(node.users)
-            if node.op == "placeholder":
-                node_to_tensor[node] = inputs[input_index]
-                input_index += 1
-            elif node.op == "get_attr":
-                for buffer in self.gm.named_buffers():
-                    if buffer[0] == node.target:
-                        node_to_tensor[node] = buffer[1]
-                        break
-            elif node.op == "call_function":
-                args = []
-                for arg in node.args:
-                    if isinstance(arg, torch.fx.node.Node):
-                        args.append(node_to_tensor[arg])
-                    elif isinstance(arg, list):
-                        args.append(
-                            [
-                                node_to_tensor[a]
-                                if isinstance(a, torch.fx.node.Node)
-                                else a
-                                for a in arg
-                            ]
-                        )
-                    else:
-                        args.append(arg)
-                tensor = node.target(*args, **node.kwargs)
-                node_to_tensor[node] = tensor
-                name = node.target.name() if hasattr(node.target, "name") else node.name
-                input_shapes_and_constants = get_input_shapes_and_constants(args)
-                op = Op(
-                    name, input_shapes_and_constants, self.compiler_config.model_name
-                )
-                if op.unique_key() not in self.compiler_config.unique_ops:
-                    self.compiler_config.unique_ops[op.unique_key()] = op
-                else:
-                    self.compiler_config.unique_ops[op.unique_key()].num_ops += 1
-            elif node.op == "output":
-                args = node.args[0]
-                output_tensors = [node_to_tensor[arg] for arg in args]
-                outputs = output_tensors
-            args_set = set()
-            for arg in node.args:
-                if arg in args_set:
-                    continue
-                args_set.add(arg)
-                if isinstance(arg, torch.fx.node.Node):
-                    out_degree[arg] -= 1
-                    if out_degree[arg] == 0 and arg.op != "output":
-                        del node_to_tensor[arg]
-                        out_degree.pop(arg)
-        self.compiler_config.save_unique_ops(mode="torch")
-        return outputs
 
     def get_ops_in_module(self, module):
         for func_op in module.body.operations:
@@ -320,6 +260,8 @@ class StablehloExecutor(OpByOpExecutor):
         inputs = self.typecast_inputs(inputs)
         if self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP:
             self.compile_shlo_op_by_op()
+            if self.gm is not None:
+                return self.run_gm_op_by_op(*(inputs + self.graph_constants))
             return  # return nothing
         else:
             assert False, "Invalid compile depth"
