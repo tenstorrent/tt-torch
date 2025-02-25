@@ -78,7 +78,7 @@ jobs:
         source env/activate
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
-    - name: Compile Supported Models
+    - name: Compile Supported Models 1
       env:
         HF_HOME: /mnt/dockercache/huggingface
         TORCH_HOME: /mnt/dockercache/torch
@@ -89,6 +89,21 @@ jobs:
         TT_TORCH_COMPILE_DEPTH=TTNN_IR pytest -svv \
                   tests/models/vilt/test_vilt.py::test_vilt[full-eval] \
                   tests/models/bert/test_bert.py::test_bert[full-eval] \
+                  tests/models/stable_diffusion/test_stable_diffusion_v2.py::test_stable_diffusion_v2[full-eval] \
+           --junit-xml=${{ steps.strings.outputs.test_report_path_models }}
+    - name: Compile Supported Models 2
+      env:
+        HF_HOME: /mnt/dockercache/huggingface
+        TORCH_HOME: /mnt/dockercache/torch
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      shell: bash
+      run: |
+        source env/activate
+        TT_TORCH_COMPILE_DEPTH=TTNN_IR pytest -svv \
+                  tests/models/whisper/test_whisper.py::test_whisper[full-eval] \
+                  tests/models/yolos/test_yolos.py::test_yolos[full-eval] \
+                  tests/models/deit/test_deit.py::test_deit[full-facebook/deit-base-patch16-224-eval] \
+                  tests/models/llama/test_llama_3b.py::test_llama_3b[full-meta-llama/Llama-3.2-3B-eval] \
            --junit-xml=${{ steps.strings.outputs.test_report_path_models }}
 
 
