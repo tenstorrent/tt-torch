@@ -60,7 +60,14 @@ class TorchExecutor(OpByOpExecutor):
             required_atol=required_atol,
         )
         self.gm = gm
-        self.graph_constants = tuple(graph_constants)
+        self.graph_constants = (
+            (graph_constants,)
+            if isinstance(graph_constants, (int, float))
+            else tuple(graph_constants)
+        )
+        if self.compiler_config is None:
+            compiler_config = CompilerConfig()
+        self.compiler_config = compiler_config
         self.intermediate_callbacks = {}
 
         # Opening a device in a new process is very slow as the pcie device needs to be initializes

@@ -57,7 +57,11 @@ class Executor:
         required_atol=1e-2,
     ):
         self.gm = gm
-        self.graph_constants = tuple(graph_constants)
+        self.graph_constants = (
+            (graph_constants,)
+            if isinstance(graph_constants, (int, float))
+            else tuple(graph_constants)
+        )
         self.binary = None
         if compiler_config is None:
             compiler_config = CompilerConfig()
