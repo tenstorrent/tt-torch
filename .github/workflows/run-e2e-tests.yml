@@ -86,7 +86,7 @@ jobs:
       shell: bash
       run: |
         source env/activate
-        TT_TORCH_COMPILE_DEPTH=TTNN_IR pytest -v \
+        TT_TORCH_COMPILE_DEPTH=TTNN_IR pytest -svv \
                   tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[full-microsoft/beit-base-patch16-224-eval] \
                   tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[full-microsoft/beit-large-patch16-224-eval] \
                   tests/models/detr/test_detr.py::test_detr[full-eval] \
