@@ -96,7 +96,7 @@ jobs:
         source env/activate
         pytest -v tests/torch \
            --junit-xml=${{ steps.strings.outputs.test_report_path_torch }} \
-           --cov=tests/torch --cov-append
+           --cov=tt_torch --cov-append
 
     - name: Upload Test Report Torch
       uses: actions/upload-artifact@v4
@@ -154,7 +154,7 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_16gf] \
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_32gf] \
            --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
-           --cov=tests/models --cov-append
+           --cov=tt_torch --cov-append
 
     - name: Upload Test Report Models
       uses: actions/upload-artifact@v4
@@ -169,7 +169,7 @@ jobs:
         source env/activate
         pytest -v tests/onnx \
             --junit-xml=${{ steps.strings.outputs.test_report_path_onnx }} \
-            --cov=tests/onnx --cov-append
+            --cov=tt_torch --cov-append
 
     - name: Upload Test Report Onnx
       uses: actions/upload-artifact@v4
@@ -193,6 +193,7 @@ jobs:
       if: success() || failure()
       continue-on-error: true
       run: |
+        coverage-lcov
         lcov --directory . --capture --output-file coverage.info
         # lcov --extract coverage.info '**/tt_torch/csrc/*' --output-file coverage.info
         lcov --list coverage.info
