@@ -43,6 +43,15 @@ import sys
 import tempfile
 
 
+def verify_ir(module):
+    def verify_op(op):
+        if hasattr(op, "verify"):
+            op.verify()
+        return torch_mlir.ir.WalkResult.ADVANCE
+
+    module.operation.walk(verify_op)
+
+
 class TTContextCache(ContextCache):
     def get_node_location(self, node: torch.fx.Node) -> Optional[Location]:
         return Location.name(node.name, context=self._c)
@@ -587,6 +596,8 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         dump_info = dump_debug or dump_intermediates == "INFO"
 
     module = import_graph(gm.graph)
+    verify_ir(module)
+
     if dump_info:
         print("Torch module", file=sys.stderr)
         module.dump()
