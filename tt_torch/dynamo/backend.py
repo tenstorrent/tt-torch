@@ -167,6 +167,4 @@ def backend(gm_or_shlo, example_inputs, options=None):
                 gm=gm,
                 graph_constants=graph_constants,
             )
-
-
     return _base_backend(gm_or_shlo, example_inputs, compiler_config=options)

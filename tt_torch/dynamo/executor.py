@@ -16,26 +16,8 @@ from tt_torch.tools.utils import (
     Op,
     OpCompilationStatus,
 )
-from typing import Union, Optional
-from torch_mlir.ir import Context, Location
-from torch_mlir.extras.fx_importer import FxImporter, ContextCache
+from typing import Union
 from torch_mlir.dialects import torch as torch_dialect
-
-
-class TTContextCache(ContextCache):
-    def get_node_location(self, node: torch.fx.Node) -> Optional[Location]:
-        return Location.name(node.name, context=self._c)
-
-
-def import_graph(graph: torch.fx.GraphModule):
-    context = Context()
-    torch_dialect.register_dialect(context)
-    importer = FxImporter(context=context)
-    importer._cc = TTContextCache(
-        importer._c, py_attr_tracker=importer._py_attr_tracker
-    )
-    importer.import_stateless_graph(graph)
-    return importer.module
 
 
 def compile_process(receiver, sender, ttir_event, ttnn_event, json_event):

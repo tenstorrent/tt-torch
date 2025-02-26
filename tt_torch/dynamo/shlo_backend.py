@@ -1,16 +1,9 @@
 # SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-import tt_mlir
 import torch
 import torch_mlir
-from mlir.ir import Context, Location, Module
-import numpy as np
-import faulthandler
-import multiprocessing as mp
-import time
-import sys
-import tempfile
+from mlir.ir import Context, Module
 import re
 import os
 import mlir.dialects.stablehlo as stablehlo
@@ -28,14 +21,97 @@ from tt_torch.tools.utils import (
 
 from tt_torch.dynamo.executor import OpByOpExecutor
 
+#########################################################
+# Helper functions
+#########################################################
+
 
 def generate_random_inputs_for_shlo(module_str):
-    tensor_shapes = re.findall(r"tensor<([\dx]+)xf32>", module_str)
+    func_match = re.search(r"func\.func @\w+\((.*?)\)", module_str)
+    if not func_match:
+        raise ValueError("Could not find function signature in StableHLO module")
+
+    args_str = func_match.group(1)
+
+    # Match the function arguments
+    args = re.findall(r"%arg\d+:\s+tensor<([^>]+)>", args_str)
+
     inputs = []
-    for shape_str in tensor_shapes:
-        shape = [int(dim) for dim in shape_str.split("x")]
-        inputs.append(torch.randn(shape, dtype=torch.float32))
-    return inputs
+    for shape_str in args:
+        # Check if shape_str contains dimensions (e.g., 1x784x or f32)
+        shape_dtype_match = re.match(r"([\dx]+)x([^>]+)", shape_str)
+
+        if shape_dtype_match:
+            # If it matches the pattern of dimensions and data type (like 1x784xf32)
+            shape_str, dtype_str = shape_dtype_match.groups()
+
+            dims = [int(dim) for dim in shape_str.split("x")]
+
+            if dtype_str == "f32":
+                inputs.append(torch.randn(dims, dtype=torch.float32))
+            elif dtype_str == "f16":
+                inputs.append(torch.randn(dims, dtype=torch.float16))
+            elif dtype_str == "bf16":
+                inputs.append(torch.randn(dims, dtype=torch.bfloat16))
+            elif dtype_str == "f64":
+                inputs.append(torch.randn(dims, dtype=torch.float64))
+            elif dtype_str.startswith("i") or dtype_str.startswith("si"):
+                bit_width = int(
+                    re.search(r"i(\d+)|si(\d+)", dtype_str).group(1)
+                    or re.search(r"i(\d+)|si(\d+)", dtype_str).group(2)
+                )
+                max_val = min(
+                    100,
+                    2 ** (bit_width - 1) - 1
+                    if dtype_str.startswith("si")
+                    else 2**bit_width - 1,
+                )
+                inputs.append(
+                    torch.randint(
+                        -max_val if dtype_str.startswith("si") else 0, max_val, dims
+                    )
+                )
+            elif dtype_str.startswith("ui"):
+                bit_width = int(re.search(r"ui(\d+)", dtype_str).group(1))
+                max_val = min(100, 2**bit_width - 1)
+                inputs.append(torch.randint(0, max_val, dims))
+            else:
+                raise ValueError(f"Unsupported datatype: {dtype_str}")
+
+        else:
+            # If the shape_str is just a data type (e.g., "f32"), treat it as a scalar or unknown shape
+            if shape_str == "f32":
+                inputs.append(torch.randn((), dtype=torch.float32))
+            elif shape_str == "f16":
+                inputs.append(torch.randn((), dtype=torch.float16))
+            elif shape_str == "bf16":
+                inputs.append(torch.randn((), dtype=torch.bfloat16))
+            elif shape_str == "f64":
+                inputs.append(torch.randn((), dtype=torch.float64))
+            elif shape_str.startswith("i") or shape_str.startswith("si"):
+                bit_width = int(
+                    re.search(r"i(\d+)|si(\d+)", shape_str).group(1)
+                    or re.search(r"i(\d+)|si(\d+)", shape_str).group(2)
+                )
+                max_val = min(
+                    100,
+                    2 ** (bit_width - 1) - 1
+                    if shape_str.startswith("si")
+                    else 2**bit_width - 1,
+                )
+                inputs.append(
+                    torch.randint(
+                        -max_val if shape_str.startswith("si") else 0, max_val, ()
+                    )
+                )
+            elif shape_str.startswith("ui"):
+                bit_width = int(re.search(r"ui(\d+)", shape_str).group(1))
+                max_val = min(100, 2**bit_width - 1)
+                inputs.append(torch.randint(0, max_val, ()))
+            else:
+                raise ValueError(f"Unsupported dtype: {shape_str}")
+
+    return tuple(inputs)
 
 
 def parse_module_from_str(module_str):
@@ -46,23 +122,13 @@ def parse_module_from_str(module_str):
     return module
 
 
-def compile_process(receiver, sender, ttir_event, ttnn_event, json_event):
-    obj = receiver.get()
-    faulthandler.disable()
-    asm = obj["asm"]
-    ttir = tt_mlir.compile_stable_hlo_to_ttir(asm)
-    sender.put({"ttir": ttir})
-    ttir_event.wait()
-    binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
-    sender.put({"binary": binary, "ttnn": ttnn})
-    ttnn_event.wait()
-    sender.put({"json": tt_mlir.bytestream_to_json(binary)})
-    json_event.wait()
-    sys.exit(0)
-
-
 def print_shape(shape):
     return "x".join(str(s) for s in shape)
+
+
+#########################################################
+# StableHlo Op Class which inherits from Op Class
+#########################################################
 
 
 class StablehloOp(Op):
@@ -135,11 +201,16 @@ class StablehloOp(Op):
             # "stable_hlo_ops": self.stable_hlo_ops,
             "ttir_graph": self.ttir_graph,
             "ttnn_graph": self.ttnn_graph,
-            # "runtime_stack_dump": self.runtime_stack_dump,
+            "runtime_stack_dump": self.runtime_stack_dump,
             "pcc": pcc,
             "atol": atol,
             "compiled_json": self.json,
         }
+
+
+#########################################################
+# StablehloExecutor covers op-by-op CompileDepth Options
+#########################################################
 
 
 class StablehloExecutor(OpByOpExecutor):
@@ -237,13 +308,39 @@ class StablehloExecutor(OpByOpExecutor):
                     opObj.add_stable_hlo_graph(new_module_str)
                     self.sub_ops.append(opObj)
 
-    def compile_shlo_op_by_op(self):
+    def shlo_op_by_op(self):
         num_ops = len(self.sub_ops)
         for idx, op in enumerate(self.sub_ops):
             print(f"Compiling {idx}/{num_ops}: {op.op_name}")
-            binary, op = self.compile_op(op, None, None)
-        self.set_binary(binary)
+            try:
+                binary, op = self.compile_op(op, None, None)
+            except Exception as e:
+                binary = None
+                print(f"Failed to compile {idx}/{num_nodes}: {node.target}: {e}")
+            if (
+                self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
+                and binary is not None
+            ):
+                try:
+                    inputs = generate_random_inputs_for_shlo(op.stable_hlo_graph)
+                    inputs = self.typecast_inputs(inputs)
+                    calculated, runtime_stack_dump = self.run_op(binary, *inputs)
+                    self.compiler_config.unique_ops[
+                        op.unique_key
+                    ].runtime_stack_dump = runtime_stack_dump
+                    print(f"Ran: {idx}/{num_ops}: {op.op_name}")
+                    if calculated is None:
+                        raise ValueError("Failed to execute")
+                    op.compilation_status = OpCompilationStatus.EXECUTED
+                except Exception as e:
+                    print(f"Failed to execute {idx}/{num_ops}: {op.op_name}: {e}")
         self.compiler_config.save_unique_ops(mode="stablehlo")
+        if self.execute_process is not None:
+            self.execute_process.terminate()
+            self.execute_process = None
+        if self.stderror_redirected:
+            os.unlink(self.file_stderr.name)
+            self.stderror_redirected = False
 
     def print_op(self, op):
         print(op.op_id)
@@ -257,11 +354,16 @@ class StablehloExecutor(OpByOpExecutor):
             self.print_op(op)
 
     def __call__(self, *inputs):
+
         inputs = self.typecast_inputs(inputs)
-        if self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP:
-            self.compile_shlo_op_by_op()
-            if self.gm is not None:
-                return self.gm(*inputs)
-            return  # return nothing
+
+        if self.compiler_config.compile_depth in (
+            CompileDepth.EXECUTE_OP_BY_OP,
+            CompileDepth.COMPILE_OP_BY_OP,
+        ):
+            self.shlo_op_by_op()
         else:
             assert False, "Invalid compile depth"
+
+        if self.gm is not None:
+            return self.gm(*inputs)

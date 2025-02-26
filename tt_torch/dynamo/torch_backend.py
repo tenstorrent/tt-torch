@@ -6,7 +6,7 @@ import operator
 import tt_mlir
 import os
 
-from typing import List, Tuple, Union
+from typing import Optional
 from tt_torch.tools.utils import (
     CompilerConfig,
     CompileDepth,
@@ -20,11 +20,41 @@ from torch_mlir.compiler_utils import (
     run_pipeline_with_repro_report,
     lower_mlir_module,
 )
+from torch_mlir.extras.fx_importer import FxImporter, ContextCache
+from torch_mlir.ir import Context, Location
 from tt_torch.dynamo.executor import (
     Executor,
     OpByOpExecutor,
-    import_graph,
 )
+
+#########################################################
+# Helper functions
+#########################################################
+
+
+class TTContextCache(ContextCache):
+    def get_node_location(self, node: torch.fx.Node) -> Optional[Location]:
+        return Location.name(node.name, context=self._c)
+
+
+def import_graph(graph: torch.fx.GraphModule):
+    context = Context()
+    torch_dialect.register_dialect(context)
+    importer = FxImporter(context=context)
+    importer._cc = TTContextCache(
+        importer._c, py_attr_tracker=importer._py_attr_tracker
+    )
+    importer.import_stateless_graph(graph)
+    return importer.module
+
+
+def verify_ir(module):
+    def verify_op(op):
+        if hasattr(op, "verify"):
+            op.verify()
+        return torch_mlir.ir.WalkResult.ADVANCE
+
+    module.operation.walk(verify_op)
 
 
 def lower_to_stable_hlo(module, op=None, enable_ir_printing=False):
@@ -40,6 +70,11 @@ def lower_to_stable_hlo(module, op=None, enable_ir_printing=False):
     lower_mlir_module(False, OutputType.STABLEHLO, module)
     if op is not None:
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
+
+
+##################################################################
+# TorchExecutor covers all CompileDepth options except for EXECUTE
+##################################################################
 
 
 class TorchExecutor(OpByOpExecutor):
@@ -276,6 +311,7 @@ class TorchExecutor(OpByOpExecutor):
             op.output_shapes.append([dim for dim in out.shape])
 
         module = import_graph(graph)
+        verify_ir(module)
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_TORCH_IR
         op.add_torch_ir_graph(module.operation.get_asm())
         lower_to_stable_hlo(module, op=op)
