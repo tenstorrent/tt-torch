@@ -32,7 +32,7 @@ source myvenv/bin/activate
 
 ### Installing the tt-torch wheel
 
-Download the latest `tt-torch` wheel from [here](https://github.com/tenstorrent/tt-forge)
+Download a `tt-torch` wheel from [here](https://github.com/tenstorrent/tt-forge/releases)
 
 Install the wheel:
 ```bash
