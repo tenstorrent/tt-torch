@@ -189,7 +189,7 @@ jobs:
       continue-on-error: true
       uses: codecov/codecov-action@v5
       with:
-        files: coverage.info,.coverage, coverage.xml
+        files: coverage.info,.coverage,coverage.xml
         # disable_search: true
         token: ${{ secrets.CODECOV_TOKEN }}
 
