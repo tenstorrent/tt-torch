@@ -35,4 +35,3 @@ setuptools
 wheel
 scikit-build
 nanobind
-coverage-lcov
