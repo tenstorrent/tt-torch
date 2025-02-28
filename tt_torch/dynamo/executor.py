@@ -66,6 +66,7 @@ class Executor:
         required_atol=1e-2,
     ):
         self.gm = gm
+        self.binary = None
         if graph_constants is not None:
             self.graph_constants = (
                 (graph_constants,)
@@ -79,7 +80,6 @@ class Executor:
         self.compiler_config = compiler_config
         self.required_atol = required_atol
         self.required_pcc = required_pcc
-        self.binary = None
 
         # Dictionary to keep track of the type conversion for unsupported hardware
         # types and use it to convert the input arguments to supported types.
@@ -88,6 +88,13 @@ class Executor:
             torch.int64: torch.int32,
             torch.float64: torch.float32,
         }
+
+    def register_intermediate_callback(self, callback):
+        if not is_runtime_debug_enabled():
+            raise RuntimeError(
+                "Runtime debug is required to use intermediate callbacks. Please recompile this project with -DTT_RUNTIME_DEBUG=ON."
+            )
+        tt_mlir.DebugHooks.get_debug_hooks(callback)
 
     def typecast_inputs(self, inputs):
         new_inputs = ()
@@ -112,6 +119,9 @@ class Executor:
             new_inputs = new_inputs + ((input),)
         return new_inputs
 
+    def set_binary(self, binary):
+        self.binary = binary
+
     def __call__(self, *inputs):
         if self.compiler_config.compile_depth != CompileDepth.EXECUTE:
             assert (
@@ -124,9 +134,6 @@ class Executor:
         if self.graph_constants is not None:
             inputs = inputs + self.graph_constants
         return tt_mlir.run(inputs, self.binary)
-
-    def set_binary(self, binary):
-        self.binary = binary
 
 
 class OpByOpExecutor(Executor):

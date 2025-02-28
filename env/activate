@@ -28,6 +28,7 @@ else
   pip install --upgrade pip
 
   python3.11 -m pip install -r requirements.txt
+
   mkdir -p $TT_TORCH_HOME/dist
   if [ ! -f $TT_TORCH_HOME/dist/torchvision*.whl ]; then
     cd $TT_TORCH_HOME/third_party
@@ -39,11 +40,9 @@ else
 
     cp dist/*.whl $TT_TORCH_HOME/dist
     cd $TT_TORCH_HOME
-
   fi
   pip install $TT_TORCH_HOME/dist/torchvision*.whl
   pip install stablehlo -f https://github.com/openxla/stablehlo/releases/expanded_assets/dev-wheels
-
 fi
 export TTTORCH_ENV_ACTIVATED=1
 export TTMLIR_ENV_ACTIVATED=1
