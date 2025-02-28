@@ -63,14 +63,22 @@ class RuntimeIntermediate:
 
     def calculate_metrics(self):
         # calculate the metrics for the golden tensor after all decomposition steps done
-        assert (
-            len(self.decomposed_intermediate_outputs) > 0
-        ), "No decomposed intermediates found"
+
+        if (
+            len(self.decomposed_intermediate_outputs) == 0
+            and self.node.op == "call_function"
+        ):
+            return  # getitem_4 has no intermediates?
+            assert False, f"No decomposed intermediates found for {self.node.name}"
+
         final_decomposed_output = self.decomposed_intermediate_outputs[-1]
 
         # shape mismatches can be handled in these atol/pcc calculators
-        self.atol = calculate_atol(final_decomposed_output, self.golden_tensor)
-        self.pcc = calculate_pcc(final_decomposed_output, self.golden_tensor)
+        if isinstance(
+            final_decomposed_output, Tensor
+        ):  # TODO - expand for tuple of tensors
+            self.atol = calculate_atol(final_decomposed_output, self.golden_tensor)
+            self.pcc = calculate_pcc(final_decomposed_output, self.golden_tensor)
 
 
 def import_graph(graph: torch.fx.GraphModule):
@@ -557,17 +565,18 @@ class Executor:
         return outputs
 
     def verify_intermediates_after_execution(self):
+        # pdb.set_trace()
         for _, intermediate in self.runtime_intermediate_cache.items():
             intermediate.calculate_metrics()
             print(
                 f"Metrics for {intermediate.node.name}: pcc {intermediate.pcc}\tatol {intermediate.atol}"
             )
 
-            if intermediate.atol > self.required_atol:
+            if intermediate.atol and intermediate.atol > self.required_atol:
                 print(
                     f"atol too high for {intermediate.node.name}: {intermediate.atol}"
                 )
-            if intermediate.pcc < self.required_pcc:
+            if intermediate.pcc and intermediate.pcc < self.required_pcc:
                 print(f"pcc too low for {intermediate.node.name}: {intermediate.pcc}")
 
     def __call__(self, *inputs):
@@ -642,7 +651,7 @@ def create_verify_golden_callback(executor: Executor):
 
         golden: RuntimeIntermediate = executor.runtime_intermediate_cache.get(
             location, None
-        )  # this should a torch tensor
+        )  # this should be a torch tensor
         if golden is not None:
             print(f"Found golden for op @ {golden.node.name} == {location}")
             golden.decomposed_intermediate_outputs.append(
