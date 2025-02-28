@@ -17,7 +17,6 @@ from tt_torch.tools.utils import (
     OpCompilationStatus,
 )
 from typing import Union
-from torch_mlir.dialects import torch as torch_dialect
 
 
 def compile_process(receiver, sender, ttir_event, ttnn_event, json_event):

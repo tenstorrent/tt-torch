@@ -4,7 +4,9 @@
 import torch
 import operator
 import tt_mlir
+import torch_mlir
 import os
+from torch_mlir.dialects import torch as torch_dialect
 
 from typing import Optional
 from tt_torch.tools.utils import (
