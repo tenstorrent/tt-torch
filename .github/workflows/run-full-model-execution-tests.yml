@@ -106,7 +106,7 @@ jobs:
     runs-on:
       - ${{ matrix.build.runs-on }}
 
-    name: "full model tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
+    name: "test execution (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
 
     container:
       image: ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:latest
@@ -128,7 +128,7 @@ jobs:
       id: fetch-job-id
       uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
       with:
-        job_name: "full model tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})" # reference above tests.name
+        job_name: "test execution (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})" # reference above tests.name
 
     - name: Set reusable strings
       id: strings
