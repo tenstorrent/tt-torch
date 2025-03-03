@@ -42,7 +42,7 @@ else
     cd $TT_TORCH_HOME
   fi
   pip install $TT_TORCH_HOME/dist/torchvision*.whl
-  pip install stablehlo -f https://github.com/openxla/stablehlo/releases/expanded_assets/dev-wheels
+  pip install stablehlo -f https://github.com/openxla/stablehlo/releases/expanded_assets/v1.0.0
 fi
 export TTTORCH_ENV_ACTIVATED=1
 export TTMLIR_ENV_ACTIVATED=1
