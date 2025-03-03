@@ -2,11 +2,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import torch
+import onnx
 from torch import nn
 import pytest
+import os
 
 from tt_torch.tools.verify import verify_module
-from tt_torch.tools.utils import CompilerConfig
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 
 
 def test_add():
@@ -20,5 +22,6 @@ def test_add():
     torch_model = Basic()
     torch_input = (torch.randn(256, 256), torch.randn(256, 256))
     torch.onnx.export(torch_model, torch_input, "add.onnx")
-
-    verify_module("add.onnx")
+    model_proto = onnx.load("add.onnx")
+    os.remove("add.onnx")
+    verify_module(model_proto, compiler_config=CompilerConfig())

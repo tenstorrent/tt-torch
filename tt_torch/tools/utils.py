@@ -18,12 +18,14 @@ from tt_mlir import is_runtime_debug_enabled
 
 class CompileDepth(Enum):
     TORCH_FX = 1
-    TORCH_MLIR = 2
-    STABLEHLO = 3
-    TTNN_IR = 4
-    COMPILE_OP_BY_OP = 5
-    EXECUTE_OP_BY_OP = 6
-    EXECUTE = 7
+    TORCH_ONNX_IR = 2
+    TORCH_FX_IR = 3
+    TORCH_BACKEND_IR = 4
+    STABLEHLO = 5
+    TTNN_IR = 6
+    COMPILE_OP_BY_OP = 7
+    EXECUTE_OP_BY_OP = 8
+    EXECUTE = 9
 
 
 class OpCompilationStatus(IntEnum):
@@ -428,8 +430,6 @@ def parse_shlo_mlir(mlir_code, verbose=False):
         if verbose:
             print(opString)
         output = opString.split(" = ")[0].strip()
-        # if output == "%21":
-        #   breakpoint()
         op_name = opString.split(" = ")[1].split(" ")[0]
         if op_name.startswith('"'):
             op_name = op_name.split('"')[1]
