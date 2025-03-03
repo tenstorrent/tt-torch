@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import torch
+import onnx
+import onnxruntime as ort
 import tt_mlir
 import time
 import faulthandler
@@ -131,6 +133,35 @@ class Executor:
             inputs = self.typecast_inputs(inputs)
         if self.graph_constants is not None:
             inputs = inputs + self.graph_constants
+        return tt_mlir.run(inputs, self.binary)
+
+
+class OnnxExecutor(Executor):
+    def __init__(self, model_proto: onnx.ModelProto):
+        self.model_proto = model_proto
+        self.binary = None
+        self.sess = None
+
+    def typecast_inputs(self, inputs):
+        raise NotImplementedError("This should not be called on an OnnxExecutor.")
+
+    def __call__(self, *inputs):
+        if self.binary is None:
+            # Only want to load the model proto into one inference session
+            # since models can be big
+            if self.sess is None:
+                self.sess = ort.InferenceSession(self.model_proto.SerializeToString())
+            outputs = self.sess.run(
+                None,
+                {
+                    nodearg.name: inp.numpy()
+                    if inp.dtype != torch.bfloat16
+                    else inp.float().numpy()
+                    for nodearg, inp in zip(self.sess.get_inputs(), inputs)
+                },
+            )
+            return outputs
+
         return tt_mlir.run(inputs, self.binary)
 
 
