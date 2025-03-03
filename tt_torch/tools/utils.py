@@ -18,12 +18,11 @@ from tt_mlir import is_runtime_debug_enabled
 
 class CompileDepth(Enum):
     TORCH_FX = 1
-    TORCH_MLIR = 2
-    STABLEHLO = 3
-    TTNN_IR = 4
-    COMPILE_OP_BY_OP = 5
-    EXECUTE_OP_BY_OP = 6
-    EXECUTE = 7
+    STABLEHLO = 2
+    TTNN_IR = 3
+    COMPILE_OP_BY_OP = 4
+    EXECUTE_OP_BY_OP = 5
+    EXECUTE = 6
 
 
 class OpCompilationStatus(IntEnum):
@@ -35,6 +34,11 @@ class OpCompilationStatus(IntEnum):
     CONVERTED_TO_TTIR = 5
     CONVERTED_TO_TTNN = 6
     EXECUTED = 7
+
+
+class OpByOpBackend(Enum):
+    TORCH = 1
+    STABLEHLO = 2
 
 
 class Tensor:
@@ -226,6 +230,7 @@ class CompilerConfig:
         self.model_name = ""
         self.results_path = "results/models/"
         self.single_op_timeout = 30
+        self.op_by_op_backend = OpByOpBackend.TORCH
         self.enable_consteval = False
         self.remove_embedded_constants = False
         self._consteval_parameters = False
@@ -302,7 +307,10 @@ class CompilerConfig:
         else:
             torch._dynamo.config.inline_inbuilt_nn_modules = True
 
-    def save_unique_ops(self):
+    def reset_unique_ops(self):
+        self.unique_ops = {}
+
+    def save_unique_ops(self, mode="torch"):
         unique_op_dict = {}
         pytest_test = os.environ.get("PYTEST_CURRENT_TEST")
         # 'PYTEST_CURRENT_TEST' is unavailable for the scripts executed/invoked
@@ -313,7 +321,16 @@ class CompilerConfig:
         pytest_test = pytest_test.replace("[", "_").replace("]", "_")
         for key, op in self.unique_ops.items():
             unique_op_dict[key] = op.to_dict()
-        output_file = Path(f"{self.results_path}{pytest_test}_unique_ops.json")
+        if mode is None:
+            output_file = Path(f"{self.results_path}{pytest_test}_unique_ops.json")
+        elif mode == "stablehlo":
+            output_file = Path(
+                f"{self.results_path}{pytest_test}_stablehlo_unique_ops.json"
+            )
+        elif mode == "torch":
+            output_file = Path(
+                f"{self.results_path}{pytest_test}_torch_unique_ops.json"
+            )
         print(f"#####  Saving unique ops to {output_file}#####  ")
         output_file.parent.mkdir(exist_ok=True, parents=True)
         with open(output_file, "w") as f:
