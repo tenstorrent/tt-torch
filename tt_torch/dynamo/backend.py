@@ -18,6 +18,9 @@ from tt_torch.dynamo.shlo_backend import (
     parse_module_from_str,
     StablehloExecutor,
 )
+
+from torch_mlir.ir import Module
+
 from torch_mlir.compiler_utils import (
     OutputType,
     run_pipeline_with_repro_report,
@@ -45,7 +48,12 @@ def verify_golden_callback(binary, callback_context, op_context):
 def dump_module(module, name, compiler_config):
     if compiler_config.dump_info:
         print(f"{name} module", file=sys.stderr)
-        module.dump(large_elements_limit=0)
+        if isinstance(module, torch_mlir.ir.Operation):
+            module.print(large_elements_limit=0)
+        elif isinstance(module, str):
+            print(module)
+        else:
+            raise TypeError(f"Unsupported module type: {type(module)}")
 
 
 def _shlo_backend(shlo, example_inputs, compiler_config, gm=None, graph_constants=None):
@@ -65,7 +73,9 @@ def _torch_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     return executor
 
 
-def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
+def generate_torch_fx_ir(
+    gm: torch.fx.GraphModule, example_inputs, compiler_config: CompilerConfig
+):
     with torch.no_grad():
         gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
 
@@ -77,6 +87,10 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     if compiler_config.profile_ops:
         compiler_config.set_torch_mlir_module(module.operation.get_asm())
 
+    return module, gm, graph_constants
+
+
+def torch_fx_ir_to_torch_backend_ir(module: Module, compiler_config: CompilerConfig):
     run_pipeline_with_repro_report(
         module,
         f"builtin.module(torchdynamo-export-to-torch-backend-pipeline)",
@@ -86,41 +100,57 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     dump_module(
         module=module, name="Torch Backend module", compiler_config=compiler_config
     )
+    return module
 
+
+def torch_backend_ir_to_stablehlo(module: Module, compiler_config: CompilerConfig):
     lower_mlir_module(False, OutputType.STABLEHLO, module)
-
     dump_module(module=module, name="StableHLO module", compiler_config=compiler_config)
+    return module
 
-    return module, gm, graph_constants
 
-
-def shlo_to_flatbuffer(executor, module, compiler_config):
-
-    if compiler_config.profile_ops:
-        compiler_config.set_stablehlo_mlir_module(module.operation.get_asm())
-
+def stablehlo_to_ttir(module: Module, compiler_config: CompilerConfig):
     ttir = tt_mlir.compile_stable_hlo_to_ttir(
         module.operation.get_asm(enable_debug_info=True)
     )
     dump_module(module=ttir, name="TTIR module", compiler_config=compiler_config)
+    return ttir
 
-    if compiler_config.enable_intermediate_verification:
-        executor.register_intermediate_callback(verify_golden_callback)
 
+def ttir_to_ttnn_and_binary(ttir, compiler_config: CompilerConfig):
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
     dump_module(module=ttnn, name="TTNN module", compiler_config=compiler_config)
-
-    return binary
+    return binary, ttnn
 
 
 def _base_backend(gm, example_inputs, compiler_config):
-    shlo, gm, graph_constants = torch_to_shlo(gm, example_inputs, compiler_config)
+    module, gm, graph_constants = generate_torch_fx_ir(
+        gm, example_inputs, compiler_config
+    )
     executor = Executor(gm, graph_constants, compiler_config)
+    if compiler_config.compile_depth == CompileDepth.TORCH_FX:
+        return executor
 
+    module = torch_fx_ir_to_torch_backend_ir(module, compiler_config)
+    if compiler_config.profile_ops:
+        compiler_config.set_torch_mlir_module(module.operation.get_asm())
+    if compiler_config.compile_depth == CompileDepth.TORCH_BACKEND_IR:
+        return executor
+
+    module = torch_backend_ir_to_stablehlo(module, compiler_config)
+    if compiler_config.profile_ops:
+        compiler_config.set_stablehlo_mlir_module(module.operation.get_asm())
     if compiler_config.compile_depth == CompileDepth.STABLEHLO:
         return executor
 
-    binary = shlo_to_flatbuffer(executor, shlo, compiler_config)
+    module = stablehlo_to_ttir(module, compiler_config)
+    if compiler_config.compile_depth == CompileDepth.TTIR_DIALECT:
+        return executor
+
+    binary, ttnn = ttir_to_ttnn_and_binary(module, compiler_config)
+    if compiler_config.compile_depth == CompileDepth.TTNN_DIALECT:
+        return executor
+
     executor.set_binary(binary)
     return executor
 
@@ -144,9 +174,11 @@ def backend(gm, example_inputs, options=None):
         else:
             # op_by_op_backend == OpByOpBackend.STABLEHLO
             # convert torch to stablehlo, then run stablehlo op-by-op
-            module, gm, graph_constants = torch_to_shlo(
+            module, gm, graph_constants = generate_torch_fx_ir(
                 gm, example_inputs, compiler_config=options
             )
+            module = torch_fx_ir_to_torch_backend_ir(module, compiler_config=options)
+            module = torch_backend_ir_to_stablehlo(module, compiler_config=options)
             return _shlo_backend(
                 shlo=module,
                 example_inputs=example_inputs,
