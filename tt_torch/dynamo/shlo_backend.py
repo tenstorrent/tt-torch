@@ -3,10 +3,12 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import torch_mlir
+import tt_mlir
 from mlir.ir import Context, Module
+from torch_mlir._mlir_libs._mlir import ir
+import mlir.dialects.stablehlo as stablehlo
 import re
 import os
-import mlir.dialects.stablehlo as stablehlo
 from typing import Union
 
 from tt_torch.tools.utils import (
@@ -239,7 +241,7 @@ class StablehloExecutor(OpByOpExecutor):
     ) -> None:
         if isinstance(module, str):
             self.parsed_module = parse_module_from_str(module)
-        elif isinstance(module, torch_mlir._mlir_libs._mlir.ir.Module):
+        elif isinstance(module, (ir.Module, ir.Operation)):
             self.parsed_module = module
         else:
             raise ValueError(f"Invalid module type: {type(module)}")
@@ -247,8 +249,10 @@ class StablehloExecutor(OpByOpExecutor):
     def add_gm(self, gm: torch.fx.GraphModule, graph_constants):
         assert (
             self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP
-            and self.compiler_config.op_by_op_backend == OpByOpBackend.STABLEHLO
-        ), "gm can only be added in COMPILE_OP_BY_OP mode"
+            or self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
+        ) and self.compiler_config.op_by_op_backend == OpByOpBackend.STABLEHLO, (
+            "gm can only be added in op by op mode"
+        )
         self.gm = gm
         self.graph_constants = (
             (graph_constants,)
@@ -269,8 +273,22 @@ class StablehloExecutor(OpByOpExecutor):
         op.add_stable_hlo_graph(asm)
         return module, op
 
-    def get_ops_in_module(self, module):
-        for func_op in module.body.operations:
+    def get_ops_in_module(self, module_or_op):
+        if hasattr(module_or_op, "body"):
+            # This is likely a Module object
+            module_body = module_or_op.body
+        elif hasattr(module_or_op, "operation") and hasattr(
+            module_or_op.operation, "regions"
+        ):
+            # This is likely an Operation that represents a module
+            # Get the first region's first block
+            module_body = module_or_op.operation.regions[0].blocks[0]
+        else:
+            raise TypeError(
+                "Input must be either a Module object or an Operation representing a module"
+            )
+
+        for func_op in module_body.operations:
             for block in func_op.regions[0].blocks:
                 for op in block.operations:
                     if op.name.startswith(("func.", "return")):
@@ -309,6 +327,7 @@ class StablehloExecutor(OpByOpExecutor):
                     self.sub_ops.append(opObj)
 
     def shlo_op_by_op(self):
+        calculated = None
         num_ops = len(self.sub_ops)
         for idx, op in enumerate(self.sub_ops):
             print(f"Compiling {idx}/{num_ops}: {op.op_name}")
@@ -341,6 +360,7 @@ class StablehloExecutor(OpByOpExecutor):
         if self.stderror_redirected:
             os.unlink(self.file_stderr.name)
             self.stderror_redirected = False
+        self.binary = binary
 
     def print_op(self, op):
         print(op.op_id)
@@ -367,3 +387,6 @@ class StablehloExecutor(OpByOpExecutor):
 
         if self.gm is not None:
             return self.gm(*inputs)
+
+        if self.binary is not None:
+            return tt_mlir.run(inputs, self.binary)

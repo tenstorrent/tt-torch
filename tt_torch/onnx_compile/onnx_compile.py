@@ -16,7 +16,7 @@ from torch_mlir.compiler_utils import (
 )
 
 
-def compile_onnx(module: onnx.ModelProto):
+def onnx_to_stablehlo(module: onnx.ModelProto):
     # Infer onnx shapes incase that information is missing
     module = onnx.shape_inference.infer_shapes(module)
 
@@ -54,6 +54,13 @@ def compile_onnx(module: onnx.ModelProto):
     if dump_info:
         print("StableHLO module", file=sys.stderr)
         module.print(large_elements_limit=0)
+
+    return module
+
+
+def compile_onnx(module: onnx.ModelProto):
+
+    module = onnx_to_stablehlo(module)
 
     # Need to set enable_debug_info=True to get the location information for the ops in the asm string
     ttir = tt_mlir.compile_stable_hlo_to_ttir(
