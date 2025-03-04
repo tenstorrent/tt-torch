@@ -45,6 +45,7 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      run-codecov: ${{ false }}
   check-all-green:
     if: always()
     needs:
