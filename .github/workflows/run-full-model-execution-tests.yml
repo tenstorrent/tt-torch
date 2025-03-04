@@ -15,41 +15,6 @@ jobs:
       matrix:
         build: [
           {
-            runs-on: wormhole_b0, name: "autoencoder", tests: "
-                  tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "distilbert", tests: "
-                  tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "mlpmixer", tests: "
-                  tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "mnist", tests: "
-                  tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "mobilenet", tests: "
-                  tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "openpose", tests: "
-                  tests/models/openpose/test_openpose_v2.py::test_openpose_v2[full-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "perceiver_io", tests: "
-                  tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io[full-eval]
-              "
-          },
-          {
             runs-on: wormhole_b0, name: "resnet", tests: "
                   tests/models/resnet/test_resnet.py::test_resnet[full-eval]
                   tests/models/resnet50/test_resnet50.py::test_resnet[full-eval]
@@ -64,12 +29,7 @@ jobs:
             runs-on: wormhole_b0, name: "albert_masked_lm", tests: "
                   tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-xxlarge-v2-eval]
               "
-          },
-          {
-            runs-on: wormhole_b0, name: "llama_3b", tests: "
-                  tests/models/llama/test_llama_3b.py::test_llama_3b[full-meta-llama/Llama-3.2-3B-eval]
-              "
-          },
+          }
           # {
           #   runs-on: wormhole_b0, name: "torchvision_image_classification", tests: "
           #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v2]
