@@ -135,7 +135,7 @@ jobs:
       run: |
         source env/activate
 
-        pytest -v "${{matrix.build.tests}}" \
+        pytest -v ${{matrix.build.tests}} \
           --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
           --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
 
