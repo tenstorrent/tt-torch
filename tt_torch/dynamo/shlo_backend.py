@@ -246,14 +246,14 @@ class StablehloExecutor(OpByOpExecutor):
         else:
             raise ValueError(f"Invalid module type: {type(module)}")
 
-    def add_gm(self, gm: torch.fx.GraphModule, graph_constants):
+    def add_program(self, program: torch.export.ExportedProgram, graph_constants):
         assert (
             self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP
             or self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
         ) and self.compiler_config.op_by_op_backend == OpByOpBackend.STABLEHLO, (
             "gm can only be added in op by op mode"
         )
-        self.gm = gm
+        self.program = program
         self.graph_constants = (
             (graph_constants,)
             if isinstance(graph_constants, (int, float))
@@ -374,7 +374,6 @@ class StablehloExecutor(OpByOpExecutor):
             self.print_op(op)
 
     def __call__(self, *inputs):
-
         inputs = self.typecast_inputs(inputs)
 
         if self.compiler_config.compile_depth in (
@@ -385,8 +384,10 @@ class StablehloExecutor(OpByOpExecutor):
         else:
             assert False, "Invalid compile depth"
 
-        if self.gm is not None:
-            return self.gm(*inputs)
+        if self.program is not None:
+            return self.program.graph_module(
+                *(self.graph_constants + tuple(self.program.buffers()) + inputs)
+            )
 
         if self.binary is not None:
             return tt_mlir.run_end_to_end(inputs, self.binary)

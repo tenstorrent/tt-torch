@@ -52,6 +52,7 @@ def test_t5(record_property, model_name, mode, op_by_op):
         record_property_handle=record_property,
         assert_pcc=False,
         assert_atol=False,
+        is_token_output=True,
     )
     results = tester.test_model()
     if mode == "eval":

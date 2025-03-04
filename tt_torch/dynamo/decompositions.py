@@ -37,7 +37,7 @@ def _current(scope: str) -> DecompositionTable:
     if stack:
         return dict(stack[-1])
     else:
-        return dict(DEFAULT_DECOMPOSITION_TABLE)
+        return dict(CUSTOM_DECOMPOSITION_TABLE)
 
 
 @contextlib.contextmanager
@@ -46,7 +46,7 @@ def _extend_context_manager(
     *,
     from_current: bool = True,
     add_ops: Optional[DecompositionOpsList] = None,
-    remove_ops: Optional[DecompositionOpsList] = None
+    remove_ops: Optional[DecompositionOpsList] = None,
 ):
     table: DecompositionTable
     if from_current:
@@ -76,7 +76,9 @@ def _extend_context_manager(
 # torch's upsample_bilinear2d when align_corners=True.
 # This logic was derived from @brentyi's implementation in:
 #    https://github.com/jax-ml/jax/issues/11206#issuecomment-1423140760
-def compute_bilinear_weight(input_size, output_size, scale, align_corners, dtype):
+def compute_linear_weight(input_size, output_size, scale, align_corners, dtype):
+    if input_size == 1:
+        return torch.ones(1, output_size, dtype=dtype)
     translation = 0
     if align_corners:
         scale = (output_size - 1) / (input_size - 1)
@@ -107,51 +109,35 @@ def compute_bilinear_weight(input_size, output_size, scale, align_corners, dtype
     return weights.to(dtype)
 
 
-def upsample_bilinear2d(
+def upsample_linear(
     input: torch.Tensor,
     output_size: List[int],
     align_corners: bool,
-    scales_h: Optional[float] = None,
-    scales_w: Optional[float] = None,
-):
-    input_size = input.shape[-2:]
+    scales: List[Optional[float]],
+) -> torch.Tensor:
+    input_size = input.shape[-len(scales) :]
 
-    if scales_h is None:
-        scales_h = float(output_size[0]) / float(input_size[0])
+    for i in range(len(scales)):
+        scales[i] = float(output_size[i]) / float(input_size[i])
 
-    if scales_w is None:
-        scales_w = float(output_size[1]) / float(input_size[1])
-
-    scales = [scales_h, scales_w]
-    if (
-        scales_h == scales_w
-        and input_size[0] == input_size[1]
-        and output_size[0] == output_size[1]
-    ):
-        weight_w = compute_bilinear_weight(
-            input_size[1], output_size[1], scales[1], align_corners, input.dtype
+    res = input
+    for i in range(len(scales)):
+        weight = compute_linear_weight(
+            input_size[i], output_size[i], scales[i], align_corners, input.dtype
         )
-        weight_h = weight_w
-    else:
-        weight_w = compute_bilinear_weight(
-            input_size[1], output_size[1], scales[1], align_corners, input.dtype
+        res = (res.transpose(i - len(scales), -1) @ weight).transpose(
+            i - len(scales), -1
         )
-        weight_h = compute_bilinear_weight(
-            input_size[0], output_size[0], scales[0], align_corners, input.dtype
-        )
-
-    res = (input.transpose(-1, -2) @ weight_h).transpose(-1, -2) @ weight_w
     return res
 
 
-def upsample_nearest2d(
-    input,
-    output_size,
-    scales_h=None,
-    scales_w=None,
+def upsample_nearest(
+    input: torch.Tensor,
+    output_size: List[int],
+    scales: List[Optional[float]],
+    exact: bool = False,
 ):
-    input_size = input.shape[-2:]
-    scales = [scales_h, scales_w]
+    input_size = input.shape[-len(scales) :]
 
     # Find the indices which we should gather from the input tensor
     # but use them to construct weight matrices to perform the interpolation
@@ -186,22 +172,141 @@ def upsample_nearest2d(
         # from the input tensor, and input_index[n, 1] is the output index (n).
         indices.append(input_indices)
 
-    indices_h, indices_w = indices
     # Must use torch.ones so this input is consteval-able
     one = torch.ones(1, dtype=input.dtype)
+    res = input
+    for dim, indices_dim in enumerate(indices):
+        weight_ = torch.zeros(input_size[dim], output_size[dim], dtype=input.dtype)
+        weight = weight_.index_put(
+            (indices_dim[:, 0], indices_dim[:, 1]), one
+        )  # use out-of-place index_put so graph remains consteval-able
 
-    weight_w_ = torch.zeros(input_size[1], output_size[1], dtype=input.dtype)
-    weight_w = weight_w_.index_put(
-        (indices_w[:, 0], indices_w[:, 1]), one
-    )  # use out-of-place index_put so graph remains consteval-able
+        res = (res.transpose(dim - len(indices), -1) @ weight).transpose(
+            dim - len(indices), -1
+        )
 
-    weight_h_ = torch.zeros(input_size[0], output_size[0], dtype=input.dtype)
-    weight_h = weight_h_.index_put(
-        (indices_h[:, 0], indices_h[:, 1]), one
-    )  # use out-of-place index_put so graph remains consteval-able
-
-    res = (input.transpose(-1, -2) @ weight_h).transpose(-1, -2) @ weight_w
     return res
+
+
+def upsample_linear_vec(
+    input: torch.Tensor,
+    output_size: Optional[List[int]],
+    align_corners: bool,
+    scale_factors: Optional[List[float]],
+) -> torch.Tensor:
+    osize = torch._decomp.decompositions.upsample_compute_output_size(
+        input.size(), output_size, scale_factors
+    )
+    scales = scale_factors if scale_factors else [None] * len(osize)
+    return upsample_linear(input, osize, align_corners, scales)
+
+
+def upsample_nearest_vec(
+    input: torch.Tensor,
+    output_size: Optional[List[int]],
+    scale_factors: Optional[List[float]],
+) -> torch.Tensor:
+    osize = torch._decomp.decompositions.upsample_compute_output_size(
+        input.size(), output_size, scale_factors
+    )
+    scales = (
+        scale_factors if scale_factors else [None] * len(osize)  # type: ignore[list-item]
+    )
+    return upsample_nearest(input, osize, scales, scales)
+
+
+# TODO: Remove this decomposition when we can lower a stablehlo.reduce_window which is equivalent to a sum-pool
+# to ttir
+def avg_pool2d(
+    input: torch.Tensor,
+    kernel_size: Union[int, List[int]],
+    stride: Optional[Union[int, List[int]]] = None,
+    padding: Union[int, List[int]] = 0,
+    ceil_mode: bool = False,
+    count_include_pad: bool = True,
+    divisor_override: Optional[int] = None,
+) -> torch.Tensor:
+
+    if isinstance(kernel_size, int):
+        kernel_size = [kernel_size, kernel_size]
+    if stride is None:
+        stride = kernel_size
+    if isinstance(stride, int):
+        stride = [stride, stride]
+    if isinstance(padding, int):
+        padding = [padding, padding, padding, padding]
+
+    input_size = list(input.shape[-len(stride) :])
+    if stride == kernel_size == input_size and padding == [0, 0, 0, 0]:
+        return input.mean(dim=[-2, -1], keepdim=True)
+
+    # If we call the regular torch.nn.functional.avg_pool2d, it will infinitely recurse into this function.
+    # Returning NotImplemented allows the tracer to use the default implementation.
+    return NotImplemented
+
+
+# TODO: Remove this decomposition when aten.as_strided can properly be lowered to stablehlo.slice in torch-mlir
+# This is the decomposition of aten.split_with_sizes as it was in PyTorch 2.5. In pytorch 2.6, the use of `narrow`
+# (which gets decomposed to `slice`) was replaced with `as_strided` which cannot yet be lowered to stablehlo.
+def split_with_sizes(
+    self: torch.Tensor, split_sizes: List[int], dim: int = 0
+) -> List[torch.Tensor]:
+    # NB: Perform the check_is_size tests first so that the
+    # sum test does not try to do a replacement
+    for i in range(len(split_sizes)):
+        torch._check_is_size(
+            split_sizes[i],
+            lambda: "split_with_sizes expects split_sizes have only non-negative entries",
+        )
+    torch._check_with(
+        ValueError,
+        sum(split_sizes) == self.shape[dim],
+        lambda: f"Split sizes add up to {sum(split_sizes)} but got the tensor's size of {self.shape[dim]}",
+    )
+    num_splits = len(split_sizes)
+    splits = []
+    start_idx = 0
+
+    for i in range(num_splits):
+        length = split_sizes[i]
+        splits.append(self.narrow(dim, start_idx, length))
+        start_idx += length
+    return splits
+
+
+# TODO: Remove this decomposition when this issue is resolved: https://github.com/tenstorrent/tt-torch/issues/431
+# This decomposition specifically places the input which must be broadcasted on the RHS, which is necessarry for ttnn.
+# This should be fixed in tt-mlir but to keep aten.clamp working with the PyTorch uplift, we need this decomposition.
+def clamp(
+    input: torch.Tensor,
+    min: Optional[Union[torch.Tensor, float]] = None,
+    max: Optional[Union[torch.Tensor, float]] = None,
+) -> torch.Tensor:
+    if min is None and max is None:
+        return input
+    if min is None:
+        min = float("-inf")
+    if max is None:
+        max = float("inf")
+
+    if not isinstance(max, torch.Tensor):
+        max = torch.ones(1, dtype=input.dtype) * max
+
+    if not isinstance(min, torch.Tensor):
+        min = torch.ones(1, dtype=input.dtype) * min
+
+    out = input
+    if max.numel() <= out.numel():
+        out = torch.minimum(out, max)
+    else:
+        out = torch.minimum(max, out)
+
+    if min.numel() <= out.numel():
+        out = torch.maximum(out, min)
+    else:
+        out = torch.maximum(min, out)
+
+    return out
 
 
 # TODO: DO we ever need this?
@@ -216,7 +321,7 @@ def _get_default_decomposition_ops() -> DecompositionOpsList:
         aten.norm.ScalarOpt_dim,
         aten.native_group_norm,
         aten.split.Tensor,
-        aten.split_with_sizes,
+        # aten.split_with_sizes,
         aten.native_layer_norm,
         aten.masked_fill.Tensor,
         aten.masked_fill.Scalar,
@@ -259,17 +364,18 @@ def _get_default_decomposition_ops() -> DecompositionOpsList:
 def _get_custom_decopositions() -> DecompositionTable:
     aten = torch.ops.aten
     return {
-        aten.upsample_nearest2d.default: upsample_nearest2d,
-        aten.upsample_bilinear2d.default: upsample_bilinear2d,
+        aten.upsample_nearest1d.vec: upsample_nearest_vec,
+        aten.upsample_nearest2d.vec: upsample_nearest_vec,
+        aten.upsample_nearest3d.vec: upsample_nearest_vec,
+        aten.upsample_linear1d.vec: upsample_linear_vec,
+        aten.upsample_bilinear2d.vec: upsample_linear_vec,
+        aten.upsample_trilinear3d.vec: upsample_linear_vec,
+        aten.adaptive_avg_pool2d.default: aten._adaptive_avg_pool2d,
+        aten.avg_pool2d.default: avg_pool2d,
+        aten.split_with_sizes.default: split_with_sizes,
+        aten.clamp.default: clamp,
     }
 
 
-# Some older APIs still use an op list instead of a table.
-DEFAULT_DECOMPOSITIONS: DecompositionOpsList = _get_default_decomposition_ops()
-
-# The table of default decompositions.
-DEFAULT_DECOMPOSITION_TABLE: DecompositionTable = get_decompositions(
-    DEFAULT_DECOMPOSITIONS
-)
-
-CUSTOM_DECOMPOSITION_TABLE = _get_custom_decopositions()
+CUSTOM_DECOMPOSITION_TABLE = get_decompositions(_get_default_decomposition_ops())
+CUSTOM_DECOMPOSITION_TABLE.update(_get_custom_decopositions())

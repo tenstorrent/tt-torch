@@ -32,12 +32,18 @@ class ModelTester:
         assert_atol=True,
         record_property_handle=None,
         model_group="generality",
+        is_token_output=False,
     ):
         if mode not in ["train", "eval"]:
             raise ValueError(f"Current mode is not supported: {mode}")
         self.model_name = model_name
         self.mode = mode
         self.framework_model = self._load_model()
+        self.is_token_output = is_token_output
+        if is_token_output and not hasattr(self, "tokenizer"):
+            raise ValueError(
+                "is_token_output is set to True. Please set `self.tokenizer` inside _load_model method."
+            )
         self.compiled_model = None
         self.inputs = self._load_inputs()
         self.required_pcc = required_pcc
@@ -269,7 +275,7 @@ class ModelTester:
         )
         return model
 
-    @torch.no_grad()
+    @torch.inference_mode()
     def test_model_eval(self, on_device=True):
         model = self.get_framework_model()
         golden = self.get_golden_outputs(model, self.inputs)
@@ -278,8 +284,18 @@ class ModelTester:
             model = self.compile_model(model, self.compiler_config)
 
         outputs = self.run_model(model, self.inputs)
-
-        self.verify_outputs(golden, outputs)
+        if self.is_token_output:
+            decoded_outputs = self.tokenizer.batch_decode(
+                outputs, skip_special_tokens=True
+            )
+            decoded_golden = self.tokenizer.batch_decode(
+                golden, skip_special_tokens=True
+            )
+            assert (
+                decoded_outputs == decoded_golden
+            ), f'Output mismatch: calculated: "{decoded_outputs} vs golden: "{decoded_golden}"'
+        else:
+            self.verify_outputs(golden, outputs)
         return outputs
 
     def test_model(self, on_device=True):

@@ -50,7 +50,6 @@ def test_interp():
     inH = 5
     inW = 5
     inC = 1
-    scale_factor = 3
 
     input_shape = (1, inC, inH, inW)
     small = (

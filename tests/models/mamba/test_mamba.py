@@ -69,7 +69,11 @@ def test_mamba(record_property, model_name, mode, op_by_op):
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     tester = ThisTester(
-        model_name, mode, compiler_config=cc, record_property_handle=record_property
+        model_name,
+        mode,
+        compiler_config=cc,
+        record_property_handle=record_property,
+        is_token_output=True,
     )
     results = tester.test_model()
 
