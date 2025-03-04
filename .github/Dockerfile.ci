@@ -23,6 +23,23 @@ WORKDIR $BUILD_DIR/$PROJECT_NAME
 RUN cd third_party && \
     cmake -B toolchain -DBUILD_TOOLCHAIN=ON
 
+# Build torchvision wheel and copy it to /dist
+RUN mkdir -p $BUILD_DIR/$PROJECT_NAME/dist && \
+    git clone https://github.com/pytorch/vision.git && \
+    cd vision && \
+    git checkout v0.21.0 && \
+    TORCHVISION_USE_VIDEO_CODEC=0 TORCHVISION_USE_FFMPEG=0 CC=clang \
+    CXX=clang++ _GLIBCXX_USE_CXX11_ABI=1 USE_CUDA=OFF python3.11 setup.py bdist_wheel && \
+    cp dist/*.whl $BUILD_DIR/$PROJECT_NAME/dist && \
+    cd .. && \
+    rm -rf vision
+
+# Check for wheel file
+RUN if [ -f $BUILD_DIR/$PROJECT_NAME/dist/*.whl ]; \
+    then echo "Wheel file exists at $BUILD_DIR/$PROJECT_NAME/dist"; \
+    else echo "No wheel file found in $BUILD_DIR/$PROJECT_NAME/dist"; \
+    fi
+
 # Final stage
 FROM ghcr.io/tenstorrent/tt-torch/tt-torch-base-ubuntu-22-04:${FROM_TAG} AS ci
 
