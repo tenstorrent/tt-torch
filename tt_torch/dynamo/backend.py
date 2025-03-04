@@ -46,6 +46,7 @@ import tempfile
 def verify_ir(module):
     def verify_op(op):
         if hasattr(op, "verify"):
+            print(op.location)
             op.verify()
         return torch_mlir.ir.WalkResult.ADVANCE
 
@@ -57,14 +58,14 @@ class TTContextCache(ContextCache):
         return Location.name(node.name, context=self._c)
 
 
-def import_graph(graph: torch.fx.GraphModule):
+def import_graph(graph: torch.export.ExportedProgram):
     context = Context()
     torch_dialect.register_dialect(context)
     importer = FxImporter(context=context)
-    importer._cc = TTContextCache(
-        importer._c, py_attr_tracker=importer._py_attr_tracker
-    )
-    importer.import_stateless_graph(graph)
+    # importer._cc = TTContextCache(
+    #     importer._c, py_attr_tracker=importer._py_attr_tracker
+    # )
+    importer.import_program(graph)
     return importer.module
 
 
@@ -575,12 +576,14 @@ def verify_golden_callback(binary, callback_context, op_context):
     # Those bindings will interact with the runtime API
 
 
-def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
+def _base_backend(
+    program: torch.export.ExportedProgram, example_inputs, compiler_config
+):
     # Apply environment overrides at start of compilation to allow overriding what was set in the test
-    compiler_config.apply_environment_overrides()
-    with torch.no_grad():
-        gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
-    executor = Executor(gm, graph_constants, compiler_config)
+    # compiler_config.apply_environment_overrides()
+    # with torch.no_grad():
+    #     gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
+    executor = Executor(program.graph_module, [], compiler_config)
     if compiler_config.compile_depth in (
         CompileDepth.EXECUTE_OP_BY_OP,
         CompileDepth.COMPILE_OP_BY_OP,
@@ -595,8 +598,16 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         dump_debug = dump_intermediates == "DEBUG"
         dump_info = dump_debug or dump_intermediates == "INFO"
 
-    module = import_graph(gm.graph)
-    verify_ir(module)
+    from .decompositions import (
+        DecompositionTable,
+        DEFAULT_DECOMPOSITION_TABLE,
+        CUSTOM_DECOMPOSITION_TABLE,
+    )
+
+    program = program.run_decompositions(
+        {**DEFAULT_DECOMPOSITION_TABLE, **CUSTOM_DECOMPOSITION_TABLE}
+    )
+    module = import_graph(program)
 
     if dump_info:
         print("Torch FX module", file=sys.stderr)
@@ -645,6 +656,7 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         print("TTNN module", file=sys.stderr)
         print(ttnn, file=sys.stderr)
 
+    verify_ir(module)
     executor.set_binary(binary)
     return executor
 
@@ -661,6 +673,14 @@ def backend(gm, example_inputs, options=None):
     # aten = make_fx(gm, tracing_mode="symbolic", decomposition_table={}, _allow_non_fake_inputs=True)(*example_inputs)
     # return _base_backend(aten, example_inputs)
     return _base_backend(gm, example_inputs, compiler_config=options)
+
+
+def compile(mod, example_inputs, options=None):
+    program = torch.export.export(mod, tuple(example_inputs))
+    if options is None:
+        options = CompilerConfig()
+
+    return _base_backend(program, example_inputs, options)
 
 
 # backend = aot_autograd(fw_compiler=_base_backend)

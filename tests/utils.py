@@ -10,7 +10,7 @@ import numpy as np
 import collections
 import re
 from typing import List, Dict, Tuple
-from tt_torch.dynamo.backend import backend
+from tt_torch.dynamo.backend import compile
 from tt_torch.onnx_compile import compile_onnx
 from tt_torch.tools.utils import CompilerConfig, CompileDepth
 import json
@@ -129,9 +129,7 @@ class ModelTester:
 
     def compile_model(self, model, compiler_config):
         # Compile model
-        model = torch.compile(
-            model, backend=backend, dynamic=False, options=compiler_config
-        )
+        model = compile(model, self.inputs, compiler_config)
         self.compiled_model = model
         return self.compiled_model
 

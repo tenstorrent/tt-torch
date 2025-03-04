@@ -7,7 +7,7 @@ from onnxruntime import InferenceSession
 import numpy as np
 import tt_mlir
 from tt_torch.onnx_compile import compile_onnx
-from tt_torch.dynamo.backend import backend
+from tt_torch.dynamo.backend import backend, compile
 from tt_torch.tools.utils import calculate_atol, calculate_pcc
 
 
@@ -123,7 +123,6 @@ def _verify_torch_module(
             len(input_shapes) if input_shapes is not None else len(inputs)
         )
 
-    tt_mod = torch.compile(mod, backend=backend, options=compiler_config)
     if inputs is None:
         if all([dtype.is_floating_point for dtype in input_data_types]):
             low, high = input_range
@@ -142,7 +141,7 @@ def _verify_torch_module(
                 torch.randint(low, high, shape, dtype=torch.int32)
                 for shape in input_shapes
             ]
-
+    tt_mod = compile(mod, tuple(inputs), options=compiler_config)
     ret = tt_mod(*inputs)
     golden = mod(*inputs)
 

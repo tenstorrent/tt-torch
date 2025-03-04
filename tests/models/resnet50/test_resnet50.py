@@ -30,7 +30,7 @@ class ThisTester(ModelTester):
         img_t = preprocess(image)
         batch_t = torch.unsqueeze(img_t, 0)
         batch_t = batch_t.to(torch.bfloat16)
-        return batch_t
+        return (batch_t,)
 
 
 @pytest.mark.parametrize(
