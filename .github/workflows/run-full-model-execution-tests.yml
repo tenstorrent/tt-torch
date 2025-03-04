@@ -11,8 +11,8 @@ on:
       run-codecov:
         description: 'Run code coverage reports'
         required: false
-        type: boolean
-        default: true
+        type: string # properly a boolean but autocast to string when passed in using 'with' inputs
+        default: 'true'
   workflow_run:
     workflows: [Build] # backref to run-build as dependency
     types: [completed]
@@ -206,7 +206,7 @@ jobs:
         group_suite: true
 
     - name: Upload coverage reports to Codecov
-      if: (success() || failure()) && ${{ inputs.run-codecov != 'false' }}
+      if: (success() || failure()) && ${{ inputs.run-codecov == 'true' }}
       continue-on-error: true
       uses: codecov/codecov-action@v5
       with:
@@ -215,7 +215,7 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Upload test results to Codecov
-      if: (success() || failure()) && ${{ inputs.run-codecov != 'false' }}
+      if: (success() || failure()) && ${{ inputs.run-codecov == 'true' }}
       continue-on-error: true
       uses: codecov/test-results-action@v1
       with:
