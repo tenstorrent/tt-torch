@@ -3,6 +3,11 @@ name: Run Full Model Execution Tests
 on:
   workflow_dispatch:
   workflow_call:
+    inputs:
+      docker-image:
+        description: 'Docker image to use for build'
+        required: true
+        type: string
   workflow_run:
     workflows: [Build] # backref to run-build as dependency
     types: [completed]
@@ -66,41 +71,44 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "llama_3b", tests: "
-                  tests/models/llama/test_llama_3b.py::test_llama_3b[full-meta-llama/Llama-3.2-3B-eval]
-              "
+            runs-on: wormhole_b0, name: "torchvision_image_classification_1", tests: "
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v2]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_small]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_large]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet18]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet34]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet50]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet101]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet152]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext50_32x4d]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext101_32x8d]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext101_64x4d]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-wide_resnet50_2]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-wide_resnet101_2]
+           "
           },
-          # {
-          #   runs-on: wormhole_b0, name: "torchvision_image_classification", tests: "
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v2]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_small]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_large]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet18]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet34]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet50]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet101]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet152]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext50_32x4d]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext101_32x8d]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext101_64x4d]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-wide_resnet50_2]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-wide_resnet101_2]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_400mf]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_800mf]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_1_6gf]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_3_2gf]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_8gf]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_16gf]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_32gf]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_400mf]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_800mf]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_1_6gf]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_3_2gf]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_8gf]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_16gf]
-          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_32gf]
-          #  "
-          # },
+          {
+            runs-on: wormhole_b0, name: "torchvision_image_classification_2", tests: "
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_400mf]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_800mf]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_1_6gf]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_3_2gf]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_8gf]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_16gf]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_32gf]
+           "
+          },
+          {
+            runs-on: wormhole_b0, name: "torchvision_image_classification_3", tests: "
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_400mf]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_800mf]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_1_6gf]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_3_2gf]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_8gf]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_16gf]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_32gf]
+           "
+          },
 
         ]
     runs-on:
@@ -109,7 +117,7 @@ jobs:
     name: "test execution (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
 
     container:
-      image: ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:latest
+      image: ${{ inputs.docker-image }}
       options: --user root --device /dev/tenstorrent/0 --shm-size=4gb
       volumes:
         - /dev/hugepages:/dev/hugepages
@@ -168,37 +176,12 @@ jobs:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
       shell: bash
       run: |
-        # Make sure we don't stop on first failure
-        set +e
-
-        tests_list=$(echo "${{ matrix.build.tests }}" | xargs -n1 echo)
-        total_tests=$(echo "$tests_list" | wc -l)
-
-        failures=0
-        counter=0
         source env/activate
 
-        for test_case in $tests_list; do
-          pytest -v "$test_case" \
-           --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
-           --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
+        pytest -v ${{matrix.build.tests}} \
+          --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
+          --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
 
-          exit_code=$?
-
-          if [ $exit_code -eq 0 ]; then
-            echo "[ $counter / $total_tests ] $test_case PASSED"
-          else
-            echo "[ $counter / $total_tests ] $test_case FAILED"
-            failures=$((failures + 1))
-          fi
-        done
-
-
-        # If any test failed, exit nonzero to mark the job as failed
-        if [ $failures -ne 0 ]; then
-          echo "Total failures: $failures"
-          exit 1
-        fi
     - name: Upload Test Report Models
       uses: actions/upload-artifact@v4
       if: success() || failure()
@@ -216,6 +199,7 @@ jobs:
         updateComment: false
         detailed_summary: true
         group_suite: true
+
     - name: Upload coverage reports to Codecov
       if: success() || failure()
       continue-on-error: true
