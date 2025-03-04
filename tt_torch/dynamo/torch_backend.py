@@ -45,7 +45,23 @@ def verify_ir(module):
 
 class TTContextCache(ContextCache):
     def get_node_location(self, node: torch.fx.Node) -> Optional[Location]:
-        return Location.name(node.name, context=self._c)
+        stack_trace = node.meta.get("stack_trace")
+        if stack_trace is None:
+            return None
+
+        stack_trace = node.stack_trace
+        if stack_trace:
+            stack_frames = re.findall(
+                r"""File "([^"]+)", line ([0-9]+),""", stack_trace
+            )
+            locations = []
+            for filename, line in stack_frames:
+                if filename:
+                    locations.append(
+                        Location.file(filename, line, col=0, context=self._c)
+                    )
+            return Location.fused(locations, context=self._c)
+        return Location.unknown(context=self._c)
 
 
 def import_graph(graph: torch.fx.GraphModule):

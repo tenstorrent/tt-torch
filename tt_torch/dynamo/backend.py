@@ -59,6 +59,15 @@ def _shlo_backend(shlo, example_inputs, compiler_config, gm=None, graph_constant
 def _torch_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     with torch.no_grad():
         gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
+
+    program = torch.export.export(gm, tuple(example_inputs), strict=False)
+    executor = Executor(program.graph_module, [], compiler_config)
+    if compiler_config.compile_depth in (
+        CompileDepth.EXECUTE_OP_BY_OP,
+        CompileDepth.COMPILE_OP_BY_OP,
+        CompileDepth.TORCH_FX,
+    ):
+        return executor
     executor = TorchExecutor(
         gm=gm, graph_constants=graph_constants, compiler_config=compiler_config
     )
