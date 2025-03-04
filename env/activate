@@ -30,6 +30,10 @@ else
   python3.11 -m pip install -r requirements.txt
 
   mkdir -p $TT_TORCH_HOME/dist
+  if [ -n "$TTTORCH_DIST_DIR" ]; then
+    cp -r -n $TTTORCH_DIST_DIR/* $TT_TORCH_HOME/dist/
+  fi
+
   if [ ! -f $TT_TORCH_HOME/dist/torchvision*.whl ]; then
     cd $TT_TORCH_HOME/third_party
     git clone https://github.com/pytorch/vision.git
@@ -39,9 +43,12 @@ else
     TORCHVISION_USE_VIDEO_CODEC=0 TORCHVISION_USE_FFMPEG=0 CC=clang CXX=clang++ _GLIBCXX_USE_CXX11_ABI=1 USE_CUDA=OFF python setup.py bdist_wheel
 
     cp dist/*.whl $TT_TORCH_HOME/dist
+    cd ..
+    rm -rf vision
     cd $TT_TORCH_HOME
   fi
   pip install $TT_TORCH_HOME/dist/torchvision*.whl
+
   pip install stablehlo -f https://github.com/openxla/stablehlo/releases/expanded_assets/v1.0.0
 fi
 export TTTORCH_ENV_ACTIVATED=1

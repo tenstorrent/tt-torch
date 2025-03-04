@@ -9,11 +9,13 @@ ARG GIT_SHA
 ENV PROJECT_NAME=tt-torch
 ENV BUILD_DIR=/home/build
 ENV TTMLIR_TOOLCHAIN_DIR=/opt/ttmlir-toolchain
+ENV TTTORCH_DIST_DIR=/opt/dist
 
 RUN echo "Building $PROJECT_NAME at $GIT_SHA"
 
 RUN mkdir -p $BUILD_DIR && \
-    mkdir -p $TTMLIR_TOOLCHAIN_DIR
+    mkdir -p $TTMLIR_TOOLCHAIN_DIR && \
+    mkdir -p $TTTORCH_DIST_DIR
 
 # Copy the project from host, cloned in build-image.yml
 COPY . $BUILD_DIR/$PROJECT_NAME
@@ -23,6 +25,16 @@ WORKDIR $BUILD_DIR/$PROJECT_NAME
 RUN cd third_party && \
     cmake -B toolchain -DBUILD_TOOLCHAIN=ON
 
+# Build torchvision wheel and copy it to /dist
+RUN git clone https://github.com/pytorch/vision.git && \
+    cd vision && \
+    git checkout v0.21.0 && \
+    TORCHVISION_USE_VIDEO_CODEC=0 TORCHVISION_USE_FFMPEG=0 CC=clang \
+    CXX=clang++ _GLIBCXX_USE_CXX11_ABI=1 USE_CUDA=OFF python3.11 setup.py bdist_wheel && \
+    cp dist/*.whl $TTTORCH_DIST_DIR && \
+    cd .. && \
+    rm -rf vision
+
 # Final stage
 FROM ghcr.io/tenstorrent/tt-torch/tt-torch-base-ubuntu-22-04:${FROM_TAG} AS ci
 
@@ -30,5 +42,10 @@ FROM ghcr.io/tenstorrent/tt-torch/tt-torch-base-ubuntu-22-04:${FROM_TAG} AS ci
 ENV TTMLIR_TOOLCHAIN_DIR=/opt/ttmlir-toolchain
 RUN echo "Copying from ci-build stage $TTMLIR_TOOLCHAIN_DIR"
 COPY --from=ci-build $TTMLIR_TOOLCHAIN_DIR $TTMLIR_TOOLCHAIN_DIR
+
+# Copy the dist directory from the previous stage
+ENV TTTORCH_DIST_DIR=/opt/dist
+COPY --from=ci-build $TTTORCH_DIST_DIR $TTTORCH_DIST_DIR
+RUN echo "Copying from ci-build stage $TTTORCH_DIST_DIR"
 
 RUN du -h --max-depth=2 $TTMLIR_TOOLCHAIN_DIR
