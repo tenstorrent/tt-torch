@@ -168,37 +168,12 @@ jobs:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
       shell: bash
       run: |
-        # Make sure we don't stop on first failure
-        set +e
-
-        tests_list=$(echo "${{ matrix.build.tests }}" | xargs -n1 echo)
-        total_tests=$(echo "$tests_list" | wc -l)
-
-        failures=0
-        counter=0
         source env/activate
 
-        for test_case in $tests_list; do
-          pytest -v "$test_case" \
-           --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
-           --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
+        pytest -v "${{matrix.build.tests}}" \
+          --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
+          --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
 
-          exit_code=$?
-
-          if [ $exit_code -eq 0 ]; then
-            echo "[ $counter / $total_tests ] $test_case PASSED"
-          else
-            echo "[ $counter / $total_tests ] $test_case FAILED"
-            failures=$((failures + 1))
-          fi
-        done
-
-
-        # If any test failed, exit nonzero to mark the job as failed
-        if [ $failures -ne 0 ]; then
-          echo "Total failures: $failures"
-          exit 1
-        fi
     - name: Upload Test Report Models
       uses: actions/upload-artifact@v4
       if: success() || failure()
@@ -216,6 +191,7 @@ jobs:
         updateComment: false
         detailed_summary: true
         group_suite: true
+
     - name: Upload coverage reports to Codecov
       if: success() || failure()
       continue-on-error: true
