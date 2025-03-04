@@ -106,7 +106,7 @@ torch.onnx.export(
     dummy_in,  # model input
     model_fp32_path,  # path
     export_params=True,  # store the trained parameter weights inside the model file
-    opset_version=14,  # the ONNX version to export the model to
+    opset_version=20,  # the ONNX version to export the model to
     do_constant_folding=True,  # constant folding for optimization
     input_names=["input"],  # input names
     output_names=["output"],  # output names
@@ -224,8 +224,14 @@ quantized_model = quantization.quantize_static(
     model_input=model_prep_path,
     model_output=model_int8_path,
     calibration_data_reader=qdr,
+    activation_type=quantization.quant_utils.QuantType.QInt16,
+    weight_type=quantization.quant_utils.QuantType.QInt16,
     extra_options=q_static_opts,
 )
+mod = onnx.load(model_int8_path)
+graph_before = onnx.helper.printable_graph(mod.graph)
+print(graph_before)
+exit()
 # load quantized model
 ort_int8_sess = ort.InferenceSession(model_int8_path, providers=ort_provider)
 

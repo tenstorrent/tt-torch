@@ -29,7 +29,7 @@ def compile_onnx(module: onnx.ModelProto):
         module,
         "builtin.module(torch-onnx-to-torch-backend-pipeline)",
         "Lowering Torch Onnx IR -> Torch Backend IR",
-        enable_ir_printing=False,
+        enable_ir_printing=True,
     )
     print("brata, after run pipelien")
     lower_mlir_module(False, OutputType.STABLEHLO, module)

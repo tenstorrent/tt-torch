@@ -37,15 +37,22 @@ from onnxruntime import quantization
         # "/localdev/achoudhury/tt-torch/tests/onnx/tinyyolov2-7.onnx"
         # "/localdev/achoudhury/tt-torch/tests/onnx/distilbert.onnx"
         # "/proj_sw/user_dev/achoudhury/onnx_models/distilbert.onnx"
-        "/localdev/achoudhury/tt-torch/medium/resnet18_int8.onnx",
+        # "/localdev/achoudhury/tt-torch/medium/resnet18_int8.onnx",
         # "/proj_sw/user_dev/achoudhury/onnx_models/mnist-12-int8.onnx",
-        # "/localdev/achoudhury/tt-torch/tests/onnx/mnist_custom.onnx"
+        # "/localdev/achoudhury/tt-torch/tests/onnx/mnist_custom.onnx",
+        # "/localdev/achoudhury/customer_models/quantized_qdq/priorityA/resnet50/resnet50.onnx",
+        "/localdev/achoudhury/customer_models/quantized_qdq/priorityA/resnet50/resnet50_ptq_qdq.onnx",
+        # "/localdev/achoudhury/tt-torch/models/mobilenetv2-10.onnx",
+        # "/localdev/achoudhury/tt-torch/models/squeezenet1.0-12.onnx",
+        # "/localdev/achoudhury/tt-torch/models/googlenet-12.onnx",
+        # "/localdev/achoudhury/tt-torch/models/resnet18-v1-7.onnx",
+        # "",
     ],
 )
 def test_generic(filename):
     mod = onnx.load(filename)
-    graph_before = onnx.helper.printable_graph(mod.graph)
-    print(graph_before)
+    # graph_before = onnx.helper.printable_graph(mod.graph)
+    # print(graph_before)
     # print(len(mod.graph.input[0].type.tensor_type.shape.dim))
     # print(mod.graph.input)
     # print("----------------")
@@ -56,12 +63,13 @@ def test_generic(filename):
     #         print(node.attribute[0].t)
     #         print(node.attribute[0].type)
 
-    # mod = onnx.version_converter.convert_version(mod, 17)
-    # for input in mod.graph.input:
-    #     make_dim_param_fixed(mod.graph, input.name, 1)
-    #     make_input_shape_fixed(mod.graph, input.name, [32, 32])
-    #     # make_input_shape_fixed(mod.graph, input.name, [32] * len(input.type.tensor_type.shape.dim))
-    # fix_output_shapes(mod)
+    mod = onnx.version_converter.convert_version(mod, 17)
+    for input in mod.graph.input:
+        make_dim_param_fixed(mod.graph, input.name, 1)
+        # make_input_shape_fixed(mod.graph, input.name, [32, 32])
+        make_input_shape_fixed(mod.graph, input.name, [1, 3, 224, 224])
+        # make_input_shape_fixed(mod.graph, input.name, [32] * len(input.type.tensor_type.shape.dim))
+    fix_output_shapes(mod)
     mod = SymbolicShapeInference.infer_shapes(mod, verbose=1)
 
     # quntized_filename = filename[:-5] + "-quantized.onnx"
