@@ -1,44 +1,48 @@
 # Getting Started
 
+## System Dependencies
+
+`tt-torch` requires the python 3.11 dev package, as well as the venv package. If not already installed, please run the following:
+
+```bash
+sudo apt-get install python3.11-dev python3.11-venv
+```
+
 ## Creating a Virtual Environment (skip if you already have one)
 
 Create a virtual environment if you do not already have one in your project:
-```sh
-python -m venv myvenv
+```bash
+python3.11 -m venv myvenv
 ```
 This will create a virtual environemnt in the folder `myvenv` in the current directory.
 
 Activate the environemnt:
-```sh
+```bash
 source myvenv/bin/activate
 ```
 
-## Installing tt_torch
+## Installing tt-torch
 
 ### Installation Notes
-- `tt_torch` requires a pytorch installation that ships with their ABI.
-    - The `tt_torch` wheel lists the following version of torch as an installation requirement:
+- `tt-torch` requires a pytorch installation that ships with their ABI.
+    - The `tt-torch` wheel lists the following version of torch as an installation requirement:
       `torch@https://download.pytorch.org/whl/cpu-cxx11-abi/torch-2.5.0%2Bcpu.cxx11.abi-cp311-cp311-linux_x86_64.whl`
-    - This will be installed by pip upon installing the `tt_torch` wheel
+    - This will be installed by pip upon installing the `tt-torch` wheel
+- The `tt-torch` wheel contains a fork of `torch-mlir`. Please ensure that `torch-mlir` has not been installed in your venv before installing the `tt-torch` wheel.
 
-### Installing the tt_torch wheel
+### Installing the tt-torch wheel
 
-Download the latest `tt_torch` wheel from [here](https://github.com/tenstorrent/tt-forge)
+Download a `tt-torch` wheel from [here](https://github.com/tenstorrent/tt-forge/releases)
 
 Install the wheel:
-```sh
+```bash
 pip install <PATH_TO_TT_TORCH_WHEEL>.whl
-```
-
-This project requires `torch-mlir`. Install the following wheel as well:
-```sh
-pip install torch-mlir -f https://github.com/llvm/torch-mlir-release/releases/expanded_assets/dev-wheels
 ```
 
 ### Updating `PYTHONPATH`
 
-In addition to the `tt_torch` python library that gets installed in `<YOUR_ENV_ROOT>/lib/python3.x/site-packages`, some binaries will be installed in `<YOUR_ENV_ROOT>/lib`, and some files from [tt-metal](https://github.com/tenstorrent/tt-metal) will be installed under `<YOUR_ENV_ROOT>/tt-metal`. Python needs to see these installations and so you should update your `PYTHONPATH` environment variable to include them:
-```sh
+In addition to the `tt-torch` python library that gets installed in `<YOUR_ENV_ROOT>/lib/python3.x/site-packages`, some binaries will be installed in `<YOUR_ENV_ROOT>/lib`, and some files from [tt-metal](https://github.com/tenstorrent/tt-metal) will be installed under `<YOUR_ENV_ROOT>/tt-metal`. Python needs to see these installations and so you should update your `PYTHONPATH` environment variable to include them:
+```bash
 export PYTHONPATH=$PYTHONPATH:<YOUR_ENV_ROOT>:<YOUR_ENV_ROOT>/lib
 ```
 

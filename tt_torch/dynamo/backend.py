@@ -43,6 +43,15 @@ import sys
 import tempfile
 
 
+def verify_ir(module):
+    def verify_op(op):
+        if hasattr(op, "verify"):
+            op.verify()
+        return torch_mlir.ir.WalkResult.ADVANCE
+
+    module.operation.walk(verify_op)
+
+
 class TTContextCache(ContextCache):
     def get_node_location(self, node: torch.fx.Node) -> Optional[Location]:
         return Location.name(node.name, context=self._c)
@@ -587,8 +596,10 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         dump_info = dump_debug or dump_intermediates == "INFO"
 
     module = import_graph(gm.graph)
+    verify_ir(module)
+
     if dump_info:
-        print("Torch module", file=sys.stderr)
+        print("Torch FX module", file=sys.stderr)
         module.dump()
 
     if compiler_config.profile_ops:
@@ -596,7 +607,19 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     if compiler_config.compile_depth == CompileDepth.TORCH_MLIR:
         return executor
 
-    lower_to_stable_hlo(module, enable_ir_printing=dump_debug)
+    run_pipeline_with_repro_report(
+        module,
+        f"builtin.module(torchdynamo-export-to-torch-backend-pipeline)",
+        "Lowering TorchFX IR -> Torch Backend IR",
+        dump_debug,
+    )
+
+    if dump_info:
+        print("Torch Backend module", file=sys.stderr)
+        module.dump()
+
+    lower_mlir_module(False, OutputType.STABLEHLO, module)
+
     if dump_info:
         print("StableHLO module", file=sys.stderr)
         module.dump()
