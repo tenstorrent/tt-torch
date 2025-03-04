@@ -214,6 +214,6 @@ jobs:
       continue-on-error: true
       uses: codecov/test-results-action@v1
       with:
-        files: ${{ steps.strings.outputs.test_report_path_torch }}, ${{ steps.strings.outputs.test_report_path_models }}, ${{ steps.strings.outputs.test_report_path_onnx }}
+        files: ${{ steps.strings.outputs.test_report_path_models }}
         disable_search: true
         token: ${{ secrets.CODECOV_TOKEN }}

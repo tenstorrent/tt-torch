@@ -39,7 +39,12 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-
+  full-model-test:
+    needs: [build, docker-build]
+    uses: ./.github/workflows/run-full-model-execution-tests.yml
+    secrets: inherit
+    with:
+      docker-image: ${{ needs.docker-build.outputs.docker-image }}
   check-all-green:
     if: always()
     needs:
@@ -47,6 +52,7 @@ jobs:
       - spdx
       - build
       - test
+      - full-model-test
     runs-on: Ubuntu-latest
     steps:
     - name: Check if the needed jobs succeeded or failed
