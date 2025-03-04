@@ -93,6 +93,20 @@ jobs:
         source env/activate
         TT_TORCH_COMPILE_DEPTH=TTNN_IR pytest -v \
                   tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[full-microsoft/beit-base-patch16-224-eval] \
+                  tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[full-microsoft/beit-large-patch16-224-eval] \
+                  tests/models/detr/test_detr.py::test_detr[full-eval] \
+                  tests/models/glpn_kitti/test_glpn_kitti.py::test_glpn_kitti[full-eval] \
+                  tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base[full-eval] \
+                  tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[full-eval] \
+                  tests/models/segformer/test_segformer.py::test_segformer[full-eval] \
+                  tests/models/squeeze_bert/test_squeeze_bert.py::test_squeeze_bert[full-eval] \
+                  tests/models/vilt/test_vilt.py::test_vilt[full-eval] \
+                  tests/models/bert/test_bert.py::test_bert[full-eval] \
+                  tests/models/stable_diffusion/test_stable_diffusion_v2.py::test_stable_diffusion_v2[full-eval] \
+                  tests/models/whisper/test_whisper.py::test_whisper[full-eval] \
+                  tests/models/yolos/test_yolos.py::test_yolos[full-eval] \
+                  tests/models/deit/test_deit.py::test_deit[full-facebook/deit-base-patch16-224-eval] \
+                  tests/models/llama/test_llama_3b.py::test_llama_3b[full-meta-llama/Llama-3.2-3B-eval] \
            --junit-xml=${{ steps.strings.outputs.test_report_path_models }}
 
 
