@@ -3,6 +3,11 @@ name: Run Full Model Execution Tests
 on:
   workflow_dispatch:
   workflow_call:
+    inputs:
+      docker-image:
+        description: 'Docker image to use for build'
+        required: true
+        type: string
   workflow_run:
     workflows: [Build] # backref to run-build as dependency
     types: [completed]
@@ -69,7 +74,7 @@ jobs:
     name: "test execution (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
 
     container:
-      image: ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:latest
+      image: ${{ inputs.docker-image }}
       options: --user root --device /dev/tenstorrent/0 --shm-size=4gb
       volumes:
         - /dev/hugepages:/dev/hugepages
