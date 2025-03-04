@@ -206,7 +206,7 @@ jobs:
         group_suite: true
 
     - name: Upload coverage reports to Codecov
-      if: (success() || failure()) && ${{ inputs.run-codecov }}
+      if: (success() || failure()) && ${{ inputs.run-codecov != 'false' }}
       continue-on-error: true
       uses: codecov/codecov-action@v5
       with:
@@ -215,7 +215,7 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Upload test results to Codecov
-      if: (success() || failure()) && ${{ inputs.run-codecov }}
+      if: (success() || failure()) && ${{ inputs.run-codecov != 'false' }}
       continue-on-error: true
       uses: codecov/test-results-action@v1
       with:
