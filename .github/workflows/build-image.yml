@@ -38,21 +38,12 @@ jobs:
             submodules: recursive
             fetch-depth: 0 # Fetch all history and tags
 
-      - name: Update submodule if mlir_override is set
+      - name: Override tt-mlir SHA mlir_override is set
         if: ${{ inputs.mlir_override }}
+        shell: bash
         run: |
-          mkdir -p third_party/tt-mlir
-          cd third_party/tt-mlir
-          git fetch origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
-          git checkout ${{ inputs.mlir_override }}
-          branch_name=$(git rev-parse --abbrev-ref HEAD)
-          commit_sha=$(git rev-parse HEAD)
-          commit_title=$(git log -1 --pretty=%s)
-          echo "Branch name: $branch_name"
-          echo "Commit SHA: $commit_sha"
-          echo "Commit title: $commit_title"
-          echo "::notice::Using tt-mlir branch: $branch_name, commit: $commit_sha, title: $commit_title"
-          cd ../..
+            # Update the CMakeLists.txt file with the new SHA
+            sed -i "s/set(TT_MLIR_VERSION \".*\")/set(TT_MLIR_VERSION \"${{ inputs.mlir_override }}\")/" third_party/CMakeLists.txt
 
       # Clean everything from submodules (needed to avoid issues
       # with cmake generated files leftover from previous builds)
