@@ -76,6 +76,11 @@ jobs:
               "
           },
           {
+            runs-on: wormhole_b0, name: "llama_3b", tests: "
+                  tests/models/llama/test_llama_3b.py::test_llama_3b[full-meta-llama/Llama-3.2-3B-eval]
+              "
+          },
+          {
             runs-on: wormhole_b0, name: "torchvision_image_classification_1", tests: "
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v2]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_small]
@@ -206,7 +211,7 @@ jobs:
         group_suite: true
 
     - name: Upload coverage reports to Codecov
-      if: (success() || failure()) && ${{ inputs.run-codecov == 'true' }}
+      if: ${{ (success() || failure()) && inputs.run-codecov == 'true' }}
       continue-on-error: true
       uses: codecov/codecov-action@v5
       with:
@@ -215,7 +220,7 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Upload test results to Codecov
-      if: (success() || failure()) && ${{ inputs.run-codecov == 'true' }}
+      if: ${{ (success() || failure()) && inputs.run-codecov == 'true' }}
       continue-on-error: true
       uses: codecov/test-results-action@v1
       with:
