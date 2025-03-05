@@ -206,11 +206,8 @@ def _verify_onnx_module(
 
     for i in range(len(golden)):
         golden[i] = torch.tensor(golden[i])
-
     mod = onnx.load(filename)
-    binary = compile_onnx(mod)
-
-    ret = tt_mlir.run(inputs, binary)
+    ret = compile_onnx(mod, inputs, compiler_config)
     assert len(golden) == len(
         ret
     ), f"Number of outputs mismatch between golden and compiled: {len(golden)} vs {len(ret)}"

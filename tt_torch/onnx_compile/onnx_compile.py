@@ -15,8 +15,18 @@ from torch_mlir.compiler_utils import (
     lower_mlir_module,
 )
 
+from tt_torch.tools.utils import (
+    OpByOpBackend,
+    CompilerConfig,
+    CompileDepth,
+)
 
-def compile_onnx(module: onnx.ModelProto):
+from tt_torch.dynamo.shlo_backend import StablehloExecutor
+from tt_torch.dynamo.executor import Executor
+from tt_torch.dynamo.backend import dump_module
+
+
+def onnx_to_stablehlo(module: onnx.ModelProto, compiler_config):
     # Infer onnx shapes incase that information is missing
     module = onnx.shape_inference.infer_shapes(module)
 
@@ -27,17 +37,7 @@ def compile_onnx(module: onnx.ModelProto):
     imp = onnx_importer.NodeImporter.define_function(module_info.main_graph, module)
     imp.import_all()
 
-    dump_intermediates = os.environ.get("TT_TORCH_IR_LOG_LEVEL")
-    dump_info = False
-    dump_debug = False
-    if dump_intermediates:
-        dump_debug = dump_intermediates == "DEBUG"
-        dump_info = dump_debug or dump_intermediates == "INFO"
-
-    # Setting large_elements_limit to 0 so the console does not get flooded with the data of large tensors
-    if dump_info:
-        print("ONNX module", file=sys.stderr)
-        module.print(large_elements_limit=0)
+    dump_module(module=module, name="ONNX module", compiler_config=compiler_config)
 
     run_pipeline_with_repro_report(
         module,
@@ -45,27 +45,38 @@ def compile_onnx(module: onnx.ModelProto):
         "Lowering Torch Onnx IR -> Torch Backend IR",
     )
 
-    if dump_info:
-        print("Torch Backend module", file=sys.stderr)
-        module.print(large_elements_limit=0)
+    dump_module(
+        module=module, name="Torch Backend module", compiler_config=compiler_config
+    )
 
     lower_mlir_module(False, OutputType.STABLEHLO, module)
 
-    if dump_info:
-        print("StableHLO module", file=sys.stderr)
-        module.print(large_elements_limit=0)
+    dump_module(module=module, name="StableHLO module", compiler_config=compiler_config)
+    return module
 
-    # Need to set enable_debug_info=True to get the location information for the ops in the asm string
-    ttir = tt_mlir.compile_stable_hlo_to_ttir(
-        module.operation.get_asm(enable_debug_info=True)
-    )
-    if dump_info:
-        print("TTIR module", file=sys.stderr)
-        print(ttir, file=sys.stderr)
 
-    binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
-    if dump_info:
-        print("TTNN module", file=sys.stderr)
-        print(ttnn, file=sys.stderr)
+def compile_onnx(module: onnx.ModelProto, example_inputs, options=None):
 
-    return binary
+    if options is None:
+        options = CompilerConfig()
+    options.op_by_op_backend = OpByOpBackend.STABLEHLO
+    options.typecast_inputs = False
+    options.apply_environment_overrides()
+    if (
+        options.compile_depth == CompileDepth.COMPILE_OP_BY_OP
+        or options.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
+    ):
+        module = onnx_to_stablehlo(module, options)
+        executor = StablehloExecutor(module=module, compiler_config=options)
+        return executor(*example_inputs)
+    elif options.compile_depth == CompileDepth.EXECUTE:
+        module = onnx_to_stablehlo(module, options)
+        executor = Executor(gm=None, graph_constants=None, compiler_config=options)
+        ttir = tt_mlir.compile_stable_hlo_to_ttir(
+            module.operation.get_asm(enable_debug_info=True)
+        )
+        dump_module(module=ttir, name="TTIR module", compiler_config=options)
+        binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
+        dump_module(module=ttnn, name="TTNN module", compiler_config=options)
+        executor.set_binary(binary)
+        return executor(*example_inputs)

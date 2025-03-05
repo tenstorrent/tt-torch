@@ -9,7 +9,7 @@ import requests
 import pytest
 from tests.utils import ModelTester
 import torch
-from tt_torch.tools.utils import CompilerConfig, CompileDepth
+from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
 class ThisTester(ModelTester):
@@ -45,7 +45,11 @@ class ThisTester(ModelTester):
     "mode",
     ["train", "eval"],
 )
-@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+@pytest.mark.parametrize(
+    "op_by_op",
+    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
+    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+)
 def test_segformer(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
@@ -56,6 +60,8 @@ def test_segformer(record_property, mode, op_by_op):
     cc.consteval_parameters = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
+        if op_by_op == OpByOpBackend.STABLEHLO:
+            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     tester = ThisTester(
         model_name,
