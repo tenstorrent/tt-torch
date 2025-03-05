@@ -199,17 +199,6 @@ jobs:
         name: test-reports-models-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: ${{ steps.strings.outputs.test_report_path_models }}
 
-    - name: Show Test Report
-      uses: mikepenz/action-junit-report@v5
-      if: success() || failure()
-      with:
-        report_paths: ${{ steps.strings.outputs.test_report_path_torch }}
-        check_name: TT-Torch Tests
-        comment: true
-        updateComment: false
-        detailed_summary: true
-        group_suite: true
-
     - name: Upload coverage reports to Codecov
       if: ${{ (success() || failure()) && inputs.run-codecov == 'true' }}
       continue-on-error: true
