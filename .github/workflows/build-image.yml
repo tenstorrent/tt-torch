@@ -41,6 +41,7 @@ jobs:
       - name: Update submodule if mlir_override is set
         if: ${{ inputs.mlir_override }}
         run: |
+          mkdir -p third_party/tt-mlir
           cd third_party/tt-mlir
           git fetch origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
           git checkout ${{ inputs.mlir_override }}
