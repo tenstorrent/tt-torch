@@ -30,6 +30,30 @@ source myvenv/bin/activate
     - This will be installed by pip upon installing the `tt-torch` wheel
 - The `tt-torch` wheel contains a fork of `torch-mlir`. Please ensure that `torch-mlir` has not been installed in your venv before installing the `tt-torch` wheel.
 
+### Torchvision Install (Required if you need to install torchvision)
+
+**If you intend to use torchvision in your project then this step must be done before installing the tt-torch wheel**
+
+You will need to build the torchvision wheel yourself with certain build flags. This is because torchvision does not publish a wheel which uses the PyTorch CXX11 ABI.
+
+To install torchvision:
+```bash
+git clone https://github.com/pytorch/vision.git
+cd vision
+git checkout v0.20.0 # tt-torch requires PyTorch 2.5.0. torchvision 0.20 is the latest version of torchvision that is compatible with PyTorch 2.5.0
+pip uninstall -y torchvision # Ensure torchvision is not in your virtual environment
+pip install wheel
+pip install torch@https://download.pytorch.org/whl/cpu-cxx11-abi/torch-2.5.0%2Bcpu.cxx11.abi-cp311-cp311-linux_x86_64.whl
+TORCHVISION_USE_VIDEO_CODEC=0 TORCHVISION_USE_FFMPEG=0 _GLIBCXX_USE_CXX11_ABI=1 USE_CUDA=OFF python setup.py bdist_wheel
+pip install dist/torchvision*.whl --force-reinstall
+```
+
+If the install was successful then there's no need to keep the torchvision source around:
+```bash
+cd ..
+rm -rf vision
+```
+
 ### Installing the tt-torch wheel
 
 Download a `tt-torch` wheel from [here](https://github.com/tenstorrent/tt-forge/releases)
@@ -45,7 +69,6 @@ In addition to the `tt-torch` python library that gets installed in `<YOUR_ENV_R
 ```bash
 export PYTHONPATH=$PYTHONPATH:<YOUR_ENV_ROOT>:<YOUR_ENV_ROOT>/lib
 ```
-
 
 ## Compiling and Running a Model
 
