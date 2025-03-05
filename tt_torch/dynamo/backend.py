@@ -604,7 +604,7 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
 
     if compiler_config.profile_ops:
         compiler_config.set_torch_mlir_module(module.operation.get_asm())
-    if compiler_config.compile_depth == CompileDepth.TORCH_MLIR:
+    if compiler_config.compile_depth == CompileDepth.TORCH_FX_IR:
         return executor
 
     run_pipeline_with_repro_report(
@@ -617,6 +617,11 @@ def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     if dump_info:
         print("Torch Backend module", file=sys.stderr)
         module.dump()
+
+    if compiler_config.profile_ops:
+        compiler_config.set_torch_mlir_module(module.operation.get_asm())
+    if compiler_config.compile_depth == CompileDepth.TORCH_BACKEND_IR:
+        return executor
 
     lower_mlir_module(False, OutputType.STABLEHLO, module)
 
