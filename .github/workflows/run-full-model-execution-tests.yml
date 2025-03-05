@@ -8,87 +8,42 @@ on:
         description: 'Docker image to use for build'
         required: true
         type: string
+      run-codecov:
+        description: 'Run code coverage reports'
+        required: false
+        type: string # properly a boolean but autocast to string when passed in using 'with' inputs
+        default: 'true'
   workflow_run:
     workflows: [Build] # backref to run-build as dependency
     types: [completed]
 
 jobs:
   tests:
-    timeout-minutes: 90 # current onPR time runs ~60m
+    timeout-minutes: 60 # current onPR time runs ~60m
     strategy:
       fail-fast: false
       matrix:
         build: [
           {
-            runs-on: wormhole_b0, name: "autoencoder", tests: "
+            runs-on: wormhole_b0, name: "eval_1", tests: "
                   tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "distilbert", tests: "
                   tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "mlpmixer", tests: "
                   tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval]
-              "
+                  tests/models/yolov3/test_yolov3.py::test_yolov3[full-eval]
+            "
           },
           {
-            runs-on: wormhole_b0, name: "mnist", tests: "
+            runs-on: wormhole_b0, name: "eval_2", tests: "
                   tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "mobilenet", tests: "
                   tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "openpose", tests: "
                   tests/models/openpose/test_openpose_v2.py::test_openpose_v2[full-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "perceiver_io", tests: "
-                  tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io[full-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "resnet", tests: "
                   tests/models/resnet/test_resnet.py::test_resnet[full-eval]
                   tests/models/resnet50/test_resnet50.py::test_resnet[full-eval]
-              "
+            "
           },
           {
-            runs-on: wormhole_b0, name: "yolov3", tests: "
-                  tests/models/yolov3/test_yolov3.py::test_yolov3[full-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "albert_masked_lm", tests: "
+            runs-on: wormhole_b0, name: "eval_3", tests: "
                   tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-xxlarge-v2-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "torchvision_image_classification_1", tests: "
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v2]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_small]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_large]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet18]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet34]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet50]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet101]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet152]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext50_32x4d]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext101_32x8d]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext101_64x4d]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-wide_resnet50_2]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-wide_resnet101_2]
-           "
-          },
-          {
-            runs-on: wormhole_b0, name: "torchvision_image_classification_2", tests: "
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_400mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_800mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_1_6gf]
@@ -96,10 +51,11 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_8gf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_16gf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_32gf]
-           "
+            "
           },
           {
-            runs-on: wormhole_b0, name: "torchvision_image_classification_3", tests: "
+            runs-on: wormhole_b0, name: "eval_4", tests: "
+                  tests/models/llama/test_llama_3b.py::test_llama_3b[full-meta-llama/Llama-3.2-3B-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_400mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_800mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_1_6gf]
@@ -107,9 +63,26 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_8gf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_16gf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_32gf]
-           "
+            "
           },
-
+          {
+            runs-on: wormhole_b0, name: "eval_5", tests: "
+                tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io[full-eval]
+                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v2]
+                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_small]
+                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_large]
+                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet18]
+                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet34]
+                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet50]
+                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet101]
+                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet152]
+                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext50_32x4d]
+                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext101_32x8d]
+                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext101_64x4d]
+                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-wide_resnet50_2]
+                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-wide_resnet101_2]
+            "
+          }
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
@@ -189,19 +162,8 @@ jobs:
         name: test-reports-models-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: ${{ steps.strings.outputs.test_report_path_models }}
 
-    - name: Show Test Report
-      uses: mikepenz/action-junit-report@v5
-      if: success() || failure()
-      with:
-        report_paths: ${{ steps.strings.outputs.test_report_path_torch }}
-        check_name: TT-Torch Tests
-        comment: true
-        updateComment: false
-        detailed_summary: true
-        group_suite: true
-
     - name: Upload coverage reports to Codecov
-      if: success() || failure()
+      if: ${{ (success() || failure()) && inputs.run-codecov == 'true' }}
       continue-on-error: true
       uses: codecov/codecov-action@v5
       with:
@@ -210,10 +172,10 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Upload test results to Codecov
-      if: success() || failure()
+      if: ${{ (success() || failure()) && inputs.run-codecov == 'true' }}
       continue-on-error: true
       uses: codecov/test-results-action@v1
       with:
-        files: ${{ steps.strings.outputs.test_report_path_torch }}, ${{ steps.strings.outputs.test_report_path_models }}, ${{ steps.strings.outputs.test_report_path_onnx }}
+        files: ${{ steps.strings.outputs.test_report_path_models }}
         disable_search: true
         token: ${{ secrets.CODECOV_TOKEN }}
