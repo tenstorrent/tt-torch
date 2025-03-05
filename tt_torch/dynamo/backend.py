@@ -46,7 +46,6 @@ import tempfile
 def verify_ir(module):
     def verify_op(op):
         if hasattr(op, "verify"):
-            print(op.location)
             op.verify()
         return torch_mlir.ir.WalkResult.ADVANCE
 
@@ -55,16 +54,32 @@ def verify_ir(module):
 
 class TTContextCache(ContextCache):
     def get_node_location(self, node: torch.fx.Node) -> Optional[Location]:
-        return Location.name(node.name, context=self._c)
+        stack_trace = node.meta.get("stack_trace")
+        if stack_trace is None:
+            return None
+
+        stack_trace = node.stack_trace
+        if stack_trace:
+            stack_frames = re.findall(
+                r"""File "([^"]+)", line ([0-9]+),""", stack_trace
+            )
+            locations = []
+            for filename, line in stack_frames:
+                if filename:
+                    locations.append(
+                        Location.file(filename, line, col=0, context=self._c)
+                    )
+            return Location.fused(locations, context=self._c)
+        return Location.unknown(context=self._c)
 
 
 def import_graph(graph: torch.export.ExportedProgram):
     context = Context()
     torch_dialect.register_dialect(context)
     importer = FxImporter(context=context)
-    # importer._cc = TTContextCache(
-    #     importer._c, py_attr_tracker=importer._py_attr_tracker
-    # )
+    importer._cc = TTContextCache(
+        importer._c, py_attr_tracker=importer._py_attr_tracker
+    )
     importer.import_program(graph)
     return importer.module
 
@@ -576,13 +591,13 @@ def verify_golden_callback(binary, callback_context, op_context):
     # Those bindings will interact with the runtime API
 
 
-def _base_backend(
-    program: torch.export.ExportedProgram, example_inputs, compiler_config
-):
+def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     # Apply environment overrides at start of compilation to allow overriding what was set in the test
-    # compiler_config.apply_environment_overrides()
-    # with torch.no_grad():
-    #     gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
+    compiler_config.apply_environment_overrides()
+    with torch.no_grad():
+        gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
+
+    program = torch.export.export(gm, tuple(example_inputs), strict=False)
     executor = Executor(program.graph_module, [], compiler_config)
     if compiler_config.compile_depth in (
         CompileDepth.EXECUTE_OP_BY_OP,
@@ -608,6 +623,7 @@ def _base_backend(
         {**DEFAULT_DECOMPOSITION_TABLE, **CUSTOM_DECOMPOSITION_TABLE}
     )
     module = import_graph(program)
+    verify_ir(module)
 
     if dump_info:
         print("Torch FX module", file=sys.stderr)
@@ -656,7 +672,6 @@ def _base_backend(
         print("TTNN module", file=sys.stderr)
         print(ttnn, file=sys.stderr)
 
-    verify_ir(module)
     executor.set_binary(binary)
     return executor
 
@@ -664,6 +679,8 @@ def _base_backend(
 def backend(gm, example_inputs, options=None):
     if options is None:
         options = CompilerConfig()
+
+    # program = torch.export.export(gm, tuple(example_inputs), strict=False)
 
     concrete_inputs = [
         x.view(x.shape) if isinstance(x, torch.Tensor) else x for x in example_inputs
@@ -673,14 +690,3 @@ def backend(gm, example_inputs, options=None):
     # aten = make_fx(gm, tracing_mode="symbolic", decomposition_table={}, _allow_non_fake_inputs=True)(*example_inputs)
     # return _base_backend(aten, example_inputs)
     return _base_backend(gm, example_inputs, compiler_config=options)
-
-
-def compile(mod, example_inputs, options=None):
-    program = torch.export.export(mod, tuple(example_inputs))
-    if options is None:
-        options = CompilerConfig()
-
-    return _base_backend(program, example_inputs, options)
-
-
-# backend = aot_autograd(fw_compiler=_base_backend)

@@ -224,9 +224,9 @@ def inline_constants(gm, example_inputs):
 
 
 def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
-    decompositions = DEFAULT_DECOMPOSITION_TABLE
-    decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
-    gm = apply_decompositions(gm, example_inputs, decompositions)  # type: ignore
+    # decompositions = DEFAULT_DECOMPOSITION_TABLE
+    # decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
+    # gm = apply_decompositions(gm, example_inputs, decompositions)  # type: ignore
     if compiler_config.enable_consteval:
         gm, constants = constant_fold(gm, example_inputs)
     elif compiler_config.consteval_parameters:
