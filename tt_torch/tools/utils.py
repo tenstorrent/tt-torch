@@ -235,7 +235,10 @@ class CompilerConfig:
         self.remove_embedded_constants = False
         self._consteval_parameters = False
         self._enable_intermediate_verification = False
+        self.dump_debug = False
+        self.dump_info = False
         self._verify_op_by_op = False
+        self.typecast_inputs = True
 
         self.apply_environment_overrides()
         self.post_init()
@@ -300,6 +303,10 @@ class CompilerConfig:
         remove_embedded_constants = os.environ.get("TT_TORCH_EMBEDDEDD_CONSTANTS")
         if remove_embedded_constants and int(remove_embedded_constants):
             self.remove_embedded_constants = True
+        dump_intermediates = os.environ.get("TT_TORCH_IR_LOG_LEVEL")
+        if dump_intermediates:
+            self.dump_debug = dump_intermediates == "DEBUG"
+            self.dump_info = self.dump_debug or dump_intermediates == "INFO"
 
     def post_init(self):
         if self.consteval_parameters:
@@ -310,7 +317,7 @@ class CompilerConfig:
     def reset_unique_ops(self):
         self.unique_ops = {}
 
-    def save_unique_ops(self, mode="torch"):
+    def save_unique_ops(self):
         unique_op_dict = {}
         pytest_test = os.environ.get("PYTEST_CURRENT_TEST")
         # 'PYTEST_CURRENT_TEST' is unavailable for the scripts executed/invoked
@@ -321,16 +328,7 @@ class CompilerConfig:
         pytest_test = pytest_test.replace("[", "_").replace("]", "_")
         for key, op in self.unique_ops.items():
             unique_op_dict[key] = op.to_dict()
-        if mode is None:
-            output_file = Path(f"{self.results_path}{pytest_test}_unique_ops.json")
-        elif mode == "stablehlo":
-            output_file = Path(
-                f"{self.results_path}{pytest_test}_stablehlo_unique_ops.json"
-            )
-        elif mode == "torch":
-            output_file = Path(
-                f"{self.results_path}{pytest_test}_torch_unique_ops.json"
-            )
+        output_file = Path(f"{self.results_path}{pytest_test}_unique_ops.json")
         print(f"#####  Saving unique ops to {output_file}#####  ")
         output_file.parent.mkdir(exist_ok=True, parents=True)
         with open(output_file, "w") as f:

@@ -9,7 +9,7 @@ from PIL import Image
 import torch
 import pytest
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig, CompileDepth
+from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 dependencies = ["timm==1.0.9"]
 
@@ -62,7 +62,11 @@ model_list = [
 @pytest.mark.usefixtures("manage_dependencies")
 @pytest.mark.parametrize("model_name", model_list)
 @pytest.mark.parametrize("mode", ["train", "eval"])
-@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+@pytest.mark.parametrize(
+    "op_by_op",
+    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
+    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+)
 def test_timm_image_classification(record_property, model_name, mode, op_by_op):
     if mode == "train":
         pytest.skip()
@@ -71,6 +75,8 @@ def test_timm_image_classification(record_property, model_name, mode, op_by_op):
     cc.consteval_parameters = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
+        if op_by_op == OpByOpBackend.STABLEHLO:
+            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     tester = ThisTester(
         model_name,

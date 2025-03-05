@@ -123,13 +123,12 @@ class Executor:
 
     def __call__(self, *inputs):
         if self.compiler_config.compile_depth != CompileDepth.EXECUTE:
-            assert (
-                self.compiler_config.op_by_op_backend == OpByOpBackend.TORCH
-            ), "StableHLO Backend does not support TORCH_FX, STABLEHLO, or TTNN_IR Compile Depths"
+            assert self.gm != None, "Cannot run base executor without torch graph"
             return self.gm(*inputs)
 
         assert self.binary is not None
-        inputs = self.typecast_inputs(inputs)
+        if self.compiler_config.typecast_inputs:
+            inputs = self.typecast_inputs(inputs)
         if self.graph_constants is not None:
             inputs = inputs + self.graph_constants
         return tt_mlir.run(inputs, self.binary)

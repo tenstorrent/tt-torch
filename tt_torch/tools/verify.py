@@ -6,7 +6,7 @@ import onnx
 from onnxruntime import InferenceSession
 import numpy as np
 import tt_mlir
-from tt_torch.onnx_compile import onnx_to_stablehlo, compile_onnx
+from tt_torch.onnx_compile import compile_onnx
 from tt_torch.dynamo.backend import backend
 from tt_torch.tools.utils import calculate_atol, calculate_pcc
 
@@ -207,10 +207,7 @@ def _verify_onnx_module(
     for i in range(len(golden)):
         golden[i] = torch.tensor(golden[i])
     mod = onnx.load(filename)
-    stablehlo = onnx_to_stablehlo(mod)
-    executor = backend(stablehlo, inputs, compiler_config)
-    ret = executor(*inputs)
-
+    ret = compile_onnx(mod, inputs, compiler_config)
     assert len(golden) == len(
         ret
     ), f"Number of outputs mismatch between golden and compiled: {len(golden)} vs {len(ret)}"

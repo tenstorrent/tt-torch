@@ -35,6 +35,18 @@ def pytest_addoption(parser):
         default=False,
         help="Run test in op-by-op mode",
     )
+    parser.addoption(
+        "--op_by_op_stablehlo",
+        action="store_true",
+        default=False,
+        help="Run test in stablehlo op-by-op mode",
+    )
+    parser.addoption(
+        "--op_by_op_torch",
+        action="store_true",
+        default=False,
+        help="Run test in torch op-by-op mode",
+    )
 
 
 def pytest_collection_modifyitems(config, items):

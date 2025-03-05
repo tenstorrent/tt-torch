@@ -353,14 +353,14 @@ class StablehloExecutor(OpByOpExecutor):
                     op.compilation_status = OpCompilationStatus.EXECUTED
                 except Exception as e:
                     print(f"Failed to execute {idx}/{num_ops}: {op.op_name}: {e}")
-        self.compiler_config.save_unique_ops(mode="stablehlo")
+        self.binary = binary
+        self.compiler_config.save_unique_ops()
         if self.execute_process is not None:
             self.execute_process.terminate()
             self.execute_process = None
         if self.stderror_redirected:
             os.unlink(self.file_stderr.name)
             self.stderror_redirected = False
-        self.binary = binary
 
     def print_op(self, op):
         print(op.op_id)
