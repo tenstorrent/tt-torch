@@ -31,6 +31,7 @@ class ModelTester:
         assert_pcc=True,
         assert_atol=True,
         record_property_handle=None,
+        model_group="generality",
     ):
         if mode not in ["train", "eval"]:
             raise ValueError(f"Current mode is not supported: {mode}")
@@ -65,6 +66,8 @@ class ModelTester:
 
         self.record_property("model_name", model_name)
         self.record_property("frontend", "tt-torch")
+        self.record_property("owner", "tt-torch")
+        self.record_property("group", model_group)
 
         self.record_tag_cache["model_name"] = model_name
         self.record_tag_cache["frontend"] = "tt-torch"
@@ -293,6 +296,22 @@ class ModelTester:
         self.record_tag_cache["min_" + metric_key] = min_metric
         self.record_tag_cache["max_" + metric_key] = max_metric
 
+    def remap_compile_depth(self, compile_depth, min_pcc):
+        compile_depth_translation_table = {
+            CompileDepth.TORCH_FX: "FAILED_TTMLIR_COMPILATION",
+            CompileDepth.TORCH_MLIR: "FAILED_RUNTIME",
+            CompileDepth.STABLEHLO: "FAILED_RUNTIME",
+            CompileDepth.TTNN_IR: "FAILED_RUNTIME",
+            CompileDepth.COMPILE_OP_BY_OP: "INCORRECT_RESULT",
+            CompileDepth.EXECUTE_OP_BY_OP: "INCORRECT_RESULT",
+            CompileDepth.EXECUTE: "INCORRECT_RESULT",  # ambiguous between incorrect / passed
+        }
+
+        if compile_depth is not CompileDepth.EXECUTE:
+            return compile_depth_translation_table[compile_depth]
+
+        return "PASSED" if min_pcc >= 0.99 else "INCORRECT_RESULT"
+
     def flush_tag_cache_to_record(self):
         # record the tags property at the very end of the test as data may
         # be appended to the cache during the test run
@@ -304,4 +323,16 @@ class ModelTester:
 
         self.record_aggregate_model_metric("pccs")
         self.record_aggregate_model_metric("atols")
+
+        # FE standardization - pack a single PCC & ATOL into the tag record
+        # use cached metrics. Guaranteed to be init'd to the default value
+        self.record_tag_cache["pcc"] = self.record_tag_cache["min_pccs"]
+        self.record_tag_cache["atol"] = self.record_tag_cache["max_atols"]
+
+        # Compile depth is remapped post-execution to FE-standardized format
+        # based on actual execution result.
+        self.record_tag_cache["bringup_status"] = self.remap_compile_depth(
+            self.compiler_config.compile_depth, self.record_tag_cache["min_pccs"]
+        )
+
         self.flush_tag_cache_to_record()
