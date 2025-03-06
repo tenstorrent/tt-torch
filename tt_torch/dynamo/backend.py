@@ -10,6 +10,7 @@ import torch_mlir
 from tt_torch.dynamo.torch_backend import (
     TorchExecutor,
     import_graph,
+    import_program,
     verify_ir,
     lower_to_stable_hlo,
 )
@@ -58,27 +59,20 @@ def _shlo_backend(shlo, example_inputs, compiler_config, gm=None, graph_constant
 
 def _torch_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     with torch.no_grad():
-        gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
-
-    program = torch.export.export(gm, tuple(example_inputs), strict=False)
-    executor = Executor(program.graph_module, [], compiler_config)
-    if compiler_config.compile_depth in (
-        CompileDepth.EXECUTE_OP_BY_OP,
-        CompileDepth.COMPILE_OP_BY_OP,
-        CompileDepth.TORCH_FX,
-    ):
-        return executor
+        program, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
     executor = TorchExecutor(
-        gm=gm, graph_constants=graph_constants, compiler_config=compiler_config
+        gm=program.graph_module,
+        graph_constants=graph_constants,
+        compiler_config=compiler_config,
     )
     return executor
 
 
 def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     with torch.no_grad():
-        gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
+        program, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
 
-    module = import_graph(gm.graph)
+    module = import_program(program)
     verify_ir(module)
 
     dump_module(module=module, name="Torch FX module", compiler_config=compiler_config)
