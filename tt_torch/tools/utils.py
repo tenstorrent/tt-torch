@@ -18,12 +18,11 @@ from tt_mlir import is_runtime_debug_enabled
 
 class CompileDepth(Enum):
     TORCH_FX = 1
-    TORCH_MLIR = 2
-    STABLEHLO = 3
-    TTNN_IR = 4
-    COMPILE_OP_BY_OP = 5
-    EXECUTE_OP_BY_OP = 6
-    EXECUTE = 7
+    STABLEHLO = 2
+    TTNN_IR = 3
+    COMPILE_OP_BY_OP = 4
+    EXECUTE_OP_BY_OP = 5
+    EXECUTE = 6
 
 
 class OpCompilationStatus(IntEnum):
@@ -35,6 +34,11 @@ class OpCompilationStatus(IntEnum):
     CONVERTED_TO_TTIR = 5
     CONVERTED_TO_TTNN = 6
     EXECUTED = 7
+
+
+class OpByOpBackend(Enum):
+    TORCH = 1
+    STABLEHLO = 2
 
 
 class Tensor:
@@ -226,11 +230,15 @@ class CompilerConfig:
         self.model_name = ""
         self.results_path = "results/models/"
         self.single_op_timeout = 30
+        self.op_by_op_backend = OpByOpBackend.TORCH
         self.enable_consteval = False
         self.remove_embedded_constants = False
         self._consteval_parameters = False
         self._enable_intermediate_verification = False
+        self.dump_debug = False
+        self.dump_info = False
         self._verify_op_by_op = False
+        self.typecast_inputs = True
 
         self.apply_environment_overrides()
         self.post_init()
@@ -295,12 +303,19 @@ class CompilerConfig:
         remove_embedded_constants = os.environ.get("TT_TORCH_EMBEDDEDD_CONSTANTS")
         if remove_embedded_constants and int(remove_embedded_constants):
             self.remove_embedded_constants = True
+        dump_intermediates = os.environ.get("TT_TORCH_IR_LOG_LEVEL")
+        if dump_intermediates:
+            self.dump_debug = dump_intermediates == "DEBUG"
+            self.dump_info = self.dump_debug or dump_intermediates == "INFO"
 
     def post_init(self):
         if self.consteval_parameters:
             torch._dynamo.config.inline_inbuilt_nn_modules = False
         else:
             torch._dynamo.config.inline_inbuilt_nn_modules = True
+
+    def reset_unique_ops(self):
+        self.unique_ops = {}
 
     def save_unique_ops(self):
         unique_op_dict = {}
