@@ -138,24 +138,24 @@ def constant_fold(gm, example_inputs):
     gm.run_folding()
     graph_constants = {}
 
-    for node in gm.graph.nodes:
-        if node.op == "get_attr" and node.name == "_fx_const_folded_attrs":
-            gm.graph.inserting_before(node)
-            if isinstance(gm._FX_CONST_FOLDED_ATTRS, torch.Tensor):
-                placeholder = gm.graph.placeholder(node.target)
-                node.replace_all_uses_with(placeholder)
-                tensor = gm._FX_CONST_FOLDED_ATTRS.data
-                graph_constants[node.target] = tensor
-            else:
-                # loop through the get_item nodes
-                for key in node.users.keys():
-                    assert "getitem" in key.name
-                    idx = key.args[-1]
-                    name = f"{node.name}_{idx}"
-                    placeholder = gm.graph.placeholder(name)
-                    key.replace_all_uses_with(placeholder)
-                    tensor = gm._FX_CONST_FOLDED_ATTRS[idx].data
-                    graph_constants[name] = tensor
+    # for node in gm.graph.nodes:
+    #     if node.op == "get_attr" and node.name == "_fx_const_folded_attrs":
+    #         gm.graph.inserting_before(node)
+    #         if isinstance(gm._FX_CONST_FOLDED_ATTRS, torch.Tensor):
+    #             placeholder = gm.graph.placeholder(node.target)
+    #             node.replace_all_uses_with(placeholder)
+    #             tensor = gm._FX_CONST_FOLDED_ATTRS.data
+    #             graph_constants[node.target] = tensor
+    #         else:
+    #             # loop through the get_item nodes
+    #             for key in node.users.keys():
+    #                 assert "getitem" in key.name
+    #                 idx = key.args[-1]
+    #                 name = f"{node.name}_{idx}"
+    #                 placeholder = gm.graph.placeholder(name)
+    #                 key.replace_all_uses_with(placeholder)
+    #                 tensor = gm._FX_CONST_FOLDED_ATTRS[idx].data
+    #                 graph_constants[name] = tensor
 
     gm.graph.eliminate_dead_code()
     return gm, graph_constants
@@ -234,7 +234,8 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     else:
         constants = {}
     gm = bypass_redundant_getitem(gm)
-    gm, parameters = inline_parameters(gm)
+    # gm, parameters = inline_parameters(gm)
+    parameters = {}
     if compiler_config.remove_embedded_constants:
         gm, embedded_constants = inline_constants(gm, example_inputs)
     else:
