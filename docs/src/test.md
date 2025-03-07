@@ -9,8 +9,8 @@ pytest -svv tests/torch
 ```
 
 
-Model tests (tests/models) have the option to run op-by-up, see [overview](https://docs.tenstorrent.com/tt-torch/controlling.html). This allows for faster model bring-up as it allows users to find any potential issues in parallel. This is controlled by the `--op_by_op` flag:
+Model tests (tests/models) have the option to run op-by-op, see [overview](https://docs.tenstorrent.com/tt-torch/controlling.html). This allows for faster model bring-up as it allows users to find any potential issues in parallel. This is controlled by the `--op_by_op_torch` or `--op_by_op_stablehlo` flags. Example:
 
 ```bash
-pytest -svv tests/models/albert --op_by_op
+pytest -svv tests/models/albert --op_by_op_torch
 ```

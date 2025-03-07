@@ -72,7 +72,7 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "mamba", tests: "
-              tests/models/mamba/test_mamba.py::test_mamba[op_by_op-state-spaces/mamba-790m-hf-eval]
+              tests/models/mamba/test_mamba.py::test_mamba[op_by_op_torch-state-spaces/mamba-790m-hf-eval]
               "
           },
           # { https://github.com/tenstorrent/tt-torch/issues/298
@@ -197,23 +197,23 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "torchvision_1", tests: "
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-googlenet]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-densenet201]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-mobilenet_v2]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-mobilenet_v3_large]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-resnet152]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-resnext101_64x4d]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-googlenet]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-densenet201]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-mobilenet_v2]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-mobilenet_v3_large]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-resnet152]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-resnext101_64x4d]
               "
           },
           {
             runs-on: wormhole_b0, name: "torchvision_2", tests: "
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-vgg19]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-vgg19_bn]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-vit_h_14]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-wide_resnet101_2]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-regnet_y_32gf]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-regnet_x_32gf]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op-eval-swin_b]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-vgg19]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-vgg19_bn]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-vit_h_14]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-wide_resnet101_2]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-regnet_y_32gf]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-regnet_x_32gf]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-swin_b]
               "
           }
         ]
@@ -304,7 +304,7 @@ jobs:
 
           pytest_log="test_${counter}.log"
 
-          pytest -svv "$test_case" --op_by_op > "$pytest_log" 2>&1
+          pytest -svv "$test_case" --op_by_op_torch > "$pytest_log" 2>&1
           exit_code=$?
 
           echo "====== BEGIN LOG: $test_case ======" >> full_job_output.log
