@@ -16,13 +16,45 @@ import sys
 from tt_mlir import is_runtime_debug_enabled
 
 
+"""
+The CompileDepth's below represent the different stages of the compilation
+pipeline.
+
+tt-torch has two entrypoints it can compile from: PyTorch and ONNX. At the
+beginning of the compile flow these entrypoints follow different paths, but
+converge early in the compilation pipeline. The flow is as follows:
+
+                                 PyTorch nn.Module
+                                         |
+     ONNX ModelProto               Torch FX Graph
+            |                            |
+      Torch ONNX IR                Torch FX IR  <-----  (first MLIR modules)
+             \-----Torch Backend IR-----/
+                           |
+                       StableHLO
+                           |
+                      TTIR Dialect
+                           |
+                      TTNN Dialect
+                           |
+                 Flatbuffer Executable
+"""
+
+
 class CompileDepth(Enum):
     TORCH_FX = 1
-    STABLEHLO = 2
-    TTNN_IR = 3
-    COMPILE_OP_BY_OP = 4
-    EXECUTE_OP_BY_OP = 5
-    EXECUTE = 6
+    TORCH_FX_IR = 2
+    TORCH_ONNX_IR = 3
+    TORCH_BACKEND_IR = 4
+    STABLEHLO = 5
+    TTIR_DIALECT = 6
+    TTNN_DIALECT = 7
+    EXECUTE = 8
+
+    # These two compile depths are useful for debugging models
+    # which have ops that fail to compile or fail to execute.
+    COMPILE_OP_BY_OP = 9
+    EXECUTE_OP_BY_OP = 10
 
 
 class OpCompilationStatus(IntEnum):
@@ -443,8 +475,6 @@ def parse_shlo_mlir(mlir_code, verbose=False):
         if verbose:
             print(opString)
         output = opString.split(" = ")[0].strip()
-        # if output == "%21":
-        #   breakpoint()
         op_name = opString.split(" = ")[1].split(" ")[0]
         if op_name.startswith('"'):
             op_name = op_name.split('"')[1]

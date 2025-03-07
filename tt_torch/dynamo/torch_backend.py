@@ -56,7 +56,7 @@ def import_graph(graph: torch.fx.GraphModule):
         importer._c, py_attr_tracker=importer._py_attr_tracker
     )
     importer.import_stateless_graph(graph)
-    return importer.module
+    return importer.module.operation
 
 
 def lower_to_stable_hlo(module, op=None, enable_ir_printing=False):
