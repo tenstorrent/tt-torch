@@ -130,7 +130,7 @@ class Executor:
         if self.compiler_config.typecast_inputs:
             inputs = self.typecast_inputs(inputs)
         if self.graph_constants is not None:
-            inputs = inputs + self.graph_constants
+            inputs = self.graph_constants + inputs
         return tt_mlir.run(inputs, self.binary)
 
 

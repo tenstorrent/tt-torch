@@ -6,6 +6,7 @@ import operator
 import tt_mlir
 import torch_mlir
 import os
+import re
 from torch_mlir.dialects import torch as torch_dialect
 
 from typing import Optional
@@ -72,6 +73,17 @@ def import_graph(graph: torch.fx.GraphModule):
         importer._c, py_attr_tracker=importer._py_attr_tracker
     )
     importer.import_stateless_graph(graph)
+    return importer.module
+
+
+def import_program(program: torch.export.ExportedProgram):
+    context = Context()
+    torch_dialect.register_dialect(context)
+    importer = FxImporter(context=context)
+    importer._cc = TTContextCache(
+        importer._c, py_attr_tracker=importer._py_attr_tracker
+    )
+    importer.import_program(program)
     return importer.module
 
 

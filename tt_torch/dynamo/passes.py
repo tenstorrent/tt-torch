@@ -8,6 +8,7 @@ from torch.fx.experimental import const_fold
 from torch._decomp import get_decompositions
 from torch.func import functionalize
 from typing import List, Optional, Union
+from torch.export.graph_signature import InputKind
 
 from .decompositions import (
     DecompositionTable,
@@ -224,9 +225,6 @@ def inline_constants(gm, example_inputs):
 
 
 def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
-    # decompositions = DEFAULT_DECOMPOSITION_TABLE
-    # decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
-    # gm = apply_decompositions(gm, example_inputs, decompositions)  # type: ignore
     if compiler_config.enable_consteval:
         gm, constants = constant_fold(gm, example_inputs)
     elif compiler_config.consteval_parameters:
@@ -253,4 +251,10 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
 
     reduce_graph(gm)
     run_shape_prop(gm, example_inputs + constant_inputs)
-    return gm, constant_inputs
+
+    decompositions = DEFAULT_DECOMPOSITION_TABLE
+    decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
+    program = torch.export.export(
+        gm, tuple(example_inputs + constant_inputs), strict=False
+    ).run_decompositions(decompositions)
+    return program, constant_inputs
