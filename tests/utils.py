@@ -299,7 +299,6 @@ class ModelTester:
     def remap_compile_depth(self, compile_depth, min_pcc):
         compile_depth_translation_table = {
             CompileDepth.TORCH_FX: "FAILED_TTMLIR_COMPILATION",
-            CompileDepth.TORCH_MLIR: "FAILED_RUNTIME",
             CompileDepth.STABLEHLO: "FAILED_RUNTIME",
             CompileDepth.TTNN_IR: "FAILED_RUNTIME",
             CompileDepth.COMPILE_OP_BY_OP: "INCORRECT_RESULT",
