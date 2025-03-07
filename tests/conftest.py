@@ -1,5 +1,4 @@
 # SPDX-FileCopyrightText: © 2024 Tenstorrent AI ULC
-#
 # SPDX-License-Identifier: Apache-2.0
 
 import pytest
@@ -7,6 +6,7 @@ import torch
 import subprocess
 import sys
 from datetime import datetime, timezone
+from tt_torch.tools.utils import OpByOpBackend
 
 
 @pytest.fixture(autouse=True)
@@ -30,12 +30,6 @@ def manage_dependencies(request):
 
 def pytest_addoption(parser):
     parser.addoption(
-        "--op_by_op",
-        action="store_true",
-        default=False,
-        help="Run test in op-by-op mode",
-    )
-    parser.addoption(
         "--op_by_op_stablehlo",
         action="store_true",
         default=False,
@@ -50,24 +44,24 @@ def pytest_addoption(parser):
 
 
 def pytest_collection_modifyitems(config, items):
-    # If --op_by_op flag is set, filter out tests with op_by_op=False
-
+    # Filter tests based on which op_by_op flag is set
     selected_items = []
-    using_op_by_op = config.getoption("--op_by_op")
+    using_torch = config.getoption("--op_by_op_torch")
+    using_stablehlo = config.getoption("--op_by_op_stablehlo")
 
     for item in items:
-        # Check if the test has a parameter called 'op_by_op'
-        # and whether it is set to True
-
-        if using_op_by_op:
-            for param in item.iter_markers(name="parametrize"):
-                # Check if the parameter is 'op_by_op' and its value is True
-                if "op_by_op" in param.args[0] and item.callspec.params["op_by_op"]:
+        for param in item.iter_markers(name="parametrize"):
+            if "op_by_op" in param.args[0]:
+                op_by_op_value = item.callspec.params["op_by_op"]
+                # Only select tests that match the specific backend flag
+                if (using_torch and op_by_op_value == OpByOpBackend.TORCH) or (
+                    using_stablehlo and op_by_op_value == OpByOpBackend.STABLEHLO
+                ):
                     selected_items.append(item)
                     break
 
-    if using_op_by_op:
-        # Replace the items with only the op_by_op tests
+    if using_torch or using_stablehlo:
+        # Replace the items with only the selected backend tests
         items[:] = selected_items
 
 
