@@ -81,7 +81,7 @@ std::string compileStableHLOToTTIR(std::string_view code) {
   }
   mlir::tt::ttir::StableHLOToTTIRPipelineOptions shlo_options;
   shlo_options.arithDialectConversionsEnabled = true;
-  shlo_options.removeDeadValuesEnabled = true;
+  shlo_options.removeDeadValuesEnabled = false;
   shlo_options.legalizeCompositeToCallEnabled = true;
   mlir::tt::ttir::createStableHLOToTTIRPipeline(shlo_pm, shlo_options);
   // Run the pass manager.
