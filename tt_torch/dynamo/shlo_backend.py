@@ -389,4 +389,4 @@ class StablehloExecutor(OpByOpExecutor):
             return self.gm(*inputs)
 
         if self.binary is not None:
-            return tt_mlir.run(inputs, self.binary)
+            return tt_mlir.run_end_to_end(inputs, self.binary)
