@@ -124,56 +124,6 @@ static torch::Tensor create_torch_tensor(const tt::runtime::Tensor &tensor,
   return torch_tensor;
 }
 
-std::vector<at::Tensor> run(std::vector<at::Tensor> &inputs,
-                            py::bytes byte_stream) {
-
-  std::string data_str = byte_stream;
-  auto binary_ptr = std::shared_ptr<void>(
-      new char[data_str.size()],
-      [](void *ptr) { delete[] static_cast<char *>(ptr); } // Custom deleter
-  );
-  // Copy data into the allocated memory
-  std::memcpy(binary_ptr.get(), data_str.data(), data_str.size());
-  tt::runtime::Binary binary = tt::runtime::Binary(binary_ptr);
-
-  auto device = tt::runtime::openDevice({0});
-
-  int program_idx = 0;
-  auto input_descs = binary.getProgramInputs(program_idx);
-
-  for (int idx = 0; idx < inputs.size(); idx++) {
-    if (!inputs[idx].is_contiguous()) {
-      std::cout << "WARNING: Input " << idx
-                << " is not contiguous. Converting to contiguous in-place."
-                << std::endl;
-      inputs[idx].set_(inputs[idx].contiguous());
-    }
-  }
-
-  std::vector<tt::runtime::Tensor> rt_inputs;
-  for (auto const &input : inputs) {
-    rt_inputs.emplace_back(create_tensor(input));
-  }
-
-  std::vector<tt::runtime::Tensor> rt_outputs =
-      tt::runtime::submit(device, binary, program_idx, rt_inputs);
-
-  std::vector<at::Tensor> outputs;
-  outputs.reserve(rt_outputs.size());
-  const auto output_descs = binary.getProgramOutputs(program_idx);
-
-  for (size_t i = 0; i < rt_outputs.size(); ++i) {
-    auto &rt_output = rt_outputs.at(i);
-    const auto &output_desc = output_descs.at(i);
-    outputs.emplace_back(create_torch_tensor(rt_output, output_desc));
-    tt::runtime::deallocateTensor(rt_output, /*force=*/true);
-  }
-
-  tt::runtime::closeDevice(device);
-
-  return outputs;
-}
-
 std::string compile_stable_hlo_to_ttir(std::string_view code) {
   auto ret = tt::torch::compileStableHLOToTTIR(code);
   return ret;
@@ -209,10 +159,91 @@ std::string bytestream_to_json(py::bytes byte_stream) {
       [](void *ptr) { delete[] static_cast<char *>(ptr); } // Custom deleter
   );
   // Copy data into the allocated memory
-  std::memset(binary_ptr.get(), 0, data_str.size());
   std::memcpy(binary_ptr.get(), data_str.data(), data_str.size());
   tt::runtime::Binary binary = tt::runtime::Binary(binary_ptr);
   return binary.asJson();
+}
+
+tt::runtime::Binary create_binary_from_bytestream(py::bytes byte_stream) {
+  std::string data_str = byte_stream;
+  auto binary_ptr = std::shared_ptr<void>(new char[data_str.size()],
+                                          std::default_delete<char[]>());
+  // Copy data into the allocated memory
+  std::memcpy(binary_ptr.get(), data_str.data(), data_str.size());
+  tt::runtime::Binary binary = tt::runtime::Binary(binary_ptr);
+  return binary;
+}
+
+std::vector<tt::runtime::Tensor>
+preprocess_inputs(tt::runtime::Device device, std::vector<at::Tensor> &inputs,
+                  tt::runtime::Binary binary, uint32_t program_idx) {
+  for (int idx = 0; idx < inputs.size(); idx++) {
+    if (!inputs[idx].is_contiguous()) {
+      std::cout << "WARNING: Input " << idx
+                << " is not contiguous. Converting to contiguous in-place."
+                << std::endl;
+      inputs[idx].set_(inputs[idx].contiguous());
+    }
+  }
+
+  std::vector<tt::runtime::Tensor> rt_inputs;
+  rt_inputs.reserve(inputs.size());
+  for (const auto &input : inputs) {
+    rt_inputs.emplace_back(create_tensor(input));
+  }
+
+  std::vector<tt::runtime::Tensor> rt_inputs_with_layout;
+  rt_inputs_with_layout.reserve(inputs.size());
+  std::transform(rt_inputs.begin(), rt_inputs.end(),
+                 std::back_inserter(rt_inputs_with_layout),
+                 [&](tt::runtime::Tensor &t) -> tt::runtime::Tensor {
+                   tt::runtime::Layout layout = tt::runtime::getLayout(
+                       binary, program_idx, rt_inputs_with_layout.size());
+
+                   return tt::runtime::toLayout(t, device, layout);
+                 });
+
+  return rt_inputs_with_layout;
+}
+
+std::vector<at::Tensor> run(tt::runtime::Device device,
+                            tt::runtime::Binary binary, uint32_t program_idx,
+                            const std::vector<tt::runtime::Tensor> &rt_inputs) {
+
+  std::vector<tt::runtime::Tensor> rt_outputs =
+      tt::runtime::submit(device, binary, program_idx, rt_inputs);
+
+  std::vector<at::Tensor> outputs;
+  outputs.reserve(rt_outputs.size());
+  const auto output_descs = binary.getProgramOutputs(program_idx);
+
+  for (size_t i = 0; i < rt_outputs.size(); ++i) {
+    auto &rt_output = rt_outputs.at(i);
+    const auto &output_desc = output_descs.at(i);
+    outputs.emplace_back(create_torch_tensor(rt_output, output_desc));
+    tt::runtime::deallocateTensor(rt_output, /*force=*/true);
+  }
+
+  return outputs;
+}
+
+std::vector<at::Tensor> run_end_to_end(std::vector<at::Tensor> &inputs,
+                                       py::bytes byte_stream) {
+
+  tt::runtime::Binary binary = create_binary_from_bytestream(byte_stream);
+
+  tt::runtime::Device device = tt::runtime::openDevice({0});
+
+  int program_idx = 0;
+
+  std::vector<tt::runtime::Tensor> rt_inputs =
+      preprocess_inputs(device, inputs, binary, program_idx);
+
+  std::vector<at::Tensor> outputs = run(device, binary, program_idx, rt_inputs);
+
+  tt::runtime::closeDevice(device);
+
+  return outputs;
 }
 
 PYBIND11_MODULE(tt_mlir, m) {
@@ -221,19 +252,38 @@ PYBIND11_MODULE(tt_mlir, m) {
       .def("getProgramInputs", &tt::runtime::Binary::getProgramInputs)
       .def("getProgramOutputs", &tt::runtime::Binary::getProgramOutputs)
       .def("asJson", &tt::runtime::Binary::asJson);
+  py::class_<tt::runtime::Device>(m, "Device");
+  py::class_<tt::runtime::Tensor>(m, "Tensor");
   m.def("compile", &compile_stablehlo_to_bytestream,
         "A function that compiles stableHLO to a bytestream");
   m.def("compile_ttir_to_bytestream", &compile_ttir_to_bytestream,
         "A function that compiles TTIR to a bytestream");
   m.def("compile_stable_hlo_to_ttir", &compile_stable_hlo_to_ttir,
         "A function that compiles stableHLO to TTIR");
-  m.def("run", &run, "Push inputs and run binary");
+  m.def("open_device", &tt::runtime::openDevice, py::arg("device_ids"),
+        py::arg("num_hw_cqs") = size_t{1},
+        py::arg("l1_small_size") = py::none(),
+        py::arg("dispatch_core_type") = py::none(),
+        py::arg("enable_async_ttnn") = py::none(),
+        "Open a mesh of devices for execution");
+  m.def("close_device", &tt::runtime::closeDevice, "Close the device");
+  m.def("deallocate_tensor", &tt::runtime::deallocateTensor, py::arg("tensor"),
+        py::arg("force") = false, "Deallocate the tensor");
+  m.def("preprocess_inputs", &preprocess_inputs,
+        "Preprocess inputs for execution");
+  m.def("run", &run,
+        "Run the binary on pre-defined device and pre-processed inputs");
+  m.def("run_end_to_end", &run_end_to_end,
+        "Run binary end to end, isolating all steps such as device opening, "
+        "input preprocessing, execution and device closing");
   m.def("get_current_system_desc", &tt::runtime::getCurrentSystemDesc,
         "Get the current system descriptor");
   m.def("get_num_available_devices", &tt::runtime::getNumAvailableDevices,
         "Get the number of available devices");
   m.def("bytestream_to_json", &bytestream_to_json,
         "Convert the bytestream to json");
+  m.def("create_binary_from_bytestream", &create_binary_from_bytestream,
+        "Create a binary from bytestream");
 
 #if defined(TT_RUNTIME_DEBUG) && TT_RUNTIME_DEBUG == 1
   py::class_<tt::runtime::CallbackContext>(m, "CallbackContext");

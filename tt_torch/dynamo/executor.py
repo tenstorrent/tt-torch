@@ -48,7 +48,7 @@ def execute_process(receiver, sender, exec_event):
         sys.stderr = file_stderr
         old_stdout = sys.stdout
         sys.stdout = file_stderr
-        outputs = tt_mlir.run(inputs, binary)
+        outputs = tt_mlir.run_end_to_end(inputs, binary)
         sys.stderr = old_stderr
         sys.stdout = old_stdout
         file_stderr.close()
@@ -90,6 +90,9 @@ class Executor:
             torch.float64: torch.float32,
         }
 
+        self.binary = None
+        self.preprocessed_graph_constants = None
+
     def register_intermediate_callback(self, callback):
         if not is_runtime_debug_enabled():
             raise RuntimeError(
@@ -123,6 +126,29 @@ class Executor:
     def set_binary(self, binary):
         self.binary = binary
 
+    def _get_device(self):
+        if self.compiler_config.runtime_device is not None:
+            return self.compiler_config.runtime_device
+
+        return tt_mlir.open_device(
+            device_ids=[0], enable_async_ttnn=self.compiler_config.enable_async
+        )
+
+    def _cache_constants_if_needed(self, preprocessed_constants):
+        if (
+            self.compiler_config.cache_preprocessed_constants
+            and self.graph_constants is not None
+            and self.preprocessed_graph_constants is None
+        ):
+            self.preprocessed_graph_constants = preprocessed_constants
+
+    def _cleanup_resources(self, preprocessed_activations, device):
+        for t in preprocessed_activations:
+            tt_mlir.deallocate_tensor(t, force=True)
+
+        if self.compiler_config.runtime_device is None:
+            tt_mlir.close_device(device)
+
     def __call__(self, *inputs):
         if self.compiler_config.compile_depth != CompileDepth.EXECUTE:
             assert self.gm != None, "Cannot run base executor without torch graph"
@@ -131,9 +157,32 @@ class Executor:
         assert self.binary is not None
         if self.compiler_config.typecast_inputs:
             inputs = self.typecast_inputs(inputs)
-        if self.graph_constants is not None:
+
+        activations_len = len(inputs)
+        if (
+            self.graph_constants is not None
+            and self.preprocessed_graph_constants is None
+        ):
             inputs = inputs + self.graph_constants
-        return tt_mlir.run(inputs, self.binary)
+
+        inputs = list(inputs)
+        device = self._get_device()
+
+        binary = tt_mlir.create_binary_from_bytestream(self.binary)
+        program_idx = 0
+        preprocessed_inputs = tt_mlir.preprocess_inputs(
+            device, inputs, binary, program_idx
+        )
+
+        if self.preprocessed_graph_constants is not None:
+            preprocessed_inputs += self.preprocessed_graph_constants
+
+        outputs = tt_mlir.run(device, binary, program_idx, preprocessed_inputs)
+
+        self._cache_constants_if_needed(preprocessed_inputs[activations_len:])
+        self._cleanup_resources(preprocessed_inputs[:activations_len], device)
+
+        return outputs
 
 
 class OnnxExecutor(Executor):
@@ -162,7 +211,7 @@ class OnnxExecutor(Executor):
             )
             return outputs
 
-        return tt_mlir.run(inputs, self.binary)
+        return tt_mlir.run_end_to_end(inputs, self.binary)
 
 
 class OpByOpExecutor(Executor):
