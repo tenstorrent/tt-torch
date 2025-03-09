@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 import pytest
 from tests.utils import ModelTester
+from tt_torch.tools.utils import OpByOpBackend
 
 dependencies = ["mediapipe"]
 

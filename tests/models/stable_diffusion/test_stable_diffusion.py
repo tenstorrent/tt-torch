@@ -6,6 +6,7 @@ from diffusers import StableDiffusionPipeline
 import torch
 import pytest
 from tests.utils import ModelTester
+from tt_torch.tools.utils import OpByOpBackend
 
 
 class ThisTester(ModelTester):

@@ -200,13 +200,17 @@ jobs:
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-googlenet]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-densenet201]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-mobilenet_v2]
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "torchvision_2", tests: "
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-mobilenet_v3_large]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-resnet152]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-resnext101_64x4d]
               "
           },
           {
-            runs-on: wormhole_b0, name: "torchvision_2", tests: "
+            runs-on: wormhole_b0, name: "torchvision_3", tests: "
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-vgg19]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-vgg19_bn]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-vit_h_14]
