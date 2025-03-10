@@ -220,23 +220,19 @@ class ModelTester:
         results = self.get_results_train(model, inputs, outputs)
         return results
 
-    @torch.no_grad()
-    def test_model_eval(self, on_device=True):
+    def get_model_and_golden(self):
         model = (
             self.framework_model.eval()
             if hasattr(self.framework_model, "eval")
             else self.framework_model
         )
         golden = self.get_golden_outputs(model, self.inputs)
+        return model, golden
 
-        if on_device == True:
-            model = self.compile_model(model, self.compiler_config)
-
-        outputs = self.run_model(model, self.inputs)
+    def evaluate_outputs(self, golden, outputs):
         assert type(outputs) == type(
             golden
         ), "Expecting the type of both calculated and golden to be identical. Whether that be a tensor, list, dictonary, etc."
-
         passed_pcc, passed_atol, msg, err_msg, pccs, atols = verify_against_golden(
             self._extract_outputs(golden),
             self._extract_outputs(outputs),
@@ -268,6 +264,16 @@ class ModelTester:
             print(msg)
             print("No failure as assert_pcc == assert_atol == False")
 
+    @torch.no_grad()
+    def test_model_eval(self, on_device=True):
+        model, golden = self.get_model_and_golden()
+
+        if on_device == True:
+            model = self.compile_model(model, self.compiler_config)
+
+        outputs = self.run_model(model, self.inputs)
+
+        self.evaluate_outputs(golden, outputs)
         return outputs
 
     def test_model(self, on_device=True):
