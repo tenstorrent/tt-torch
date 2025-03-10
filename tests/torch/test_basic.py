@@ -198,9 +198,6 @@ def test_linear_with_bias():
     verify_module(Basic(), input_shapes=[(32, 32)])
 
 
-@pytest.mark.xfail(
-    reason="PCC and ATOL mismatch",
-)
 def test_linear_with_bias_no_embedded_constants():
     class Basic(nn.Module):
         def __init__(self):
