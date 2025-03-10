@@ -16,8 +16,6 @@ import torch.nn.functional as F
 @pytest.mark.parametrize("scale_factor", [0.5, 2])
 @pytest.mark.parametrize("align_corners", [False, True])
 def test_bilinear_upsample(inH, inW, scale_factor, align_corners):
-    pytest.skip()  # https://github.com/tenstorrent/tt-torch/issues/405
-
     class Interpolate(nn.Module):
         def __init__(self):
             super().__init__()
@@ -47,8 +45,6 @@ def test_bilinear_upsample(inH, inW, scale_factor, align_corners):
 @pytest.mark.parametrize("inW", [50, 128, 224, 540])
 @pytest.mark.parametrize("scale_factor", [0.5, 2])
 def test_nearest_upsample(inH, inW, scale_factor):
-    pytest.skip()  # https://github.com/tenstorrent/tt-torch/issues/405
-
     class Interpolate(nn.Module):
         def __init__(self):
             super().__init__()

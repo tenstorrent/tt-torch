@@ -42,10 +42,15 @@ def verify_golden_callback(binary, callback_context, op_context):
     # Those bindings will interact with the runtime API
 
 
-def dump_module(module, name, compiler_config):
+def dump_module(
+    module: torch_mlir._mlir_libs._mlir.ir.Module | str, name, compiler_config
+):
     if compiler_config.dump_info:
         print(f"{name} module", file=sys.stderr)
-        module.dump(large_elements_limit=0)
+        if isinstance(module, str):
+            print(module, file=sys.stderr)
+        else:
+            module.dump()
 
 
 def _shlo_backend(shlo, example_inputs, compiler_config, gm=None, graph_constants=None):
