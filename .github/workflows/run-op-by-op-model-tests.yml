@@ -14,7 +14,7 @@ on:
 
 jobs:
   tests:
-    timeout-minutes: 180
+    timeout-minutes: 360
     strategy:
       fail-fast: false
       matrix:
