@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import torch
+import copy
 import traceback
 from torch.fx.experimental.proxy_tensor import make_fx
 from torch.fx.experimental import const_fold
@@ -250,6 +251,10 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         if not t.is_contiguous():
             constant_inputs[i] = t.contiguous()
 
-    reduce_graph(gm)
+    copy_gm = copy.deepcopy(gm)
+    reduce_graph(copy_gm)
+    # check if reduced graph is empty and override with original graph if so
+    gm = gm if len(copy_gm.graph.nodes) == 0 else copy_gm
+
     run_shape_prop(gm, example_inputs + constant_inputs)
     return gm, constant_inputs
