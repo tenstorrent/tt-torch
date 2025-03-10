@@ -59,12 +59,6 @@ def reduce_graph(module_or_graph: Union[torch.fx.Graph, torch.fx.GraphModule]):
         if node not in consumed:
             graph.erase_node(node)
 
-    if len(graph.nodes) == 1:
-        for node in graph.nodes:
-            if node.op == "output":
-                # Remove the output node if it's the only one
-                graph.erase_node(node)
-
 
 def apply_decompositions(
     gm: torch.fx.GraphModule,
