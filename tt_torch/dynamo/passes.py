@@ -134,29 +134,10 @@ def run_folding(gm):
     setattr(gm, gm.fx_const_folded_attrs_name, params)
 
 
-def constant_fold(gm, example_inputs):
+def constant_fold(gm):
     gm = const_fold.split_const_subgraphs(gm)
     gm.run_folding()
     graph_constants = {}
-
-    # for node in gm.graph.nodes:
-    #     if node.op == "get_attr" and node.name == "_fx_const_folded_attrs":
-    #         gm.graph.inserting_before(node)
-    #         if isinstance(gm._FX_CONST_FOLDED_ATTRS, torch.Tensor):
-    #             placeholder = gm.graph.placeholder(node.target)
-    #             node.replace_all_uses_with(placeholder)
-    #             tensor = gm._FX_CONST_FOLDED_ATTRS.data
-    #             graph_constants[node.target] = tensor
-    #         else:
-    #             # loop through the get_item nodes
-    #             for key in node.users.keys():
-    #                 assert "getitem" in key.name
-    #                 idx = key.args[-1]
-    #                 name = f"{node.name}_{idx}"
-    #                 placeholder = gm.graph.placeholder(name)
-    #                 key.replace_all_uses_with(placeholder)
-    #                 tensor = gm._FX_CONST_FOLDED_ATTRS[idx].data
-    #                 graph_constants[name] = tensor
 
     gm.graph.eliminate_dead_code()
     return gm, graph_constants
@@ -225,14 +206,24 @@ def inline_constants(gm, example_inputs):
 
 
 def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
+    decompositions = DEFAULT_DECOMPOSITION_TABLE
+    decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
+
+    # we use the export API to run the decompositions, as this maintains the
+    # soruce locations in stack_trace
+    gm = (
+        torch.export.export(gm, tuple(example_inputs), strict=False)
+        .run_decompositions(decompositions)
+        .module()
+    )
+
     if compiler_config.enable_consteval:
-        gm, constants = constant_fold(gm, example_inputs)
+        gm, constants = constant_fold(gm)
     elif compiler_config.consteval_parameters:
         raise Exception("consteval_parameters is enabled but enable_consteval is not")
     else:
         constants = {}
     gm = bypass_redundant_getitem(gm)
-    # gm, parameters = inline_parameters(gm)
     parameters = {}
     if compiler_config.remove_embedded_constants:
         gm, embedded_constants = inline_constants(gm, example_inputs)
@@ -251,10 +242,7 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
 
     reduce_graph(gm)
     run_shape_prop(gm, example_inputs + constant_inputs)
-
-    decompositions = DEFAULT_DECOMPOSITION_TABLE
-    decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
     program = torch.export.export(
         gm, tuple(example_inputs + constant_inputs), strict=False
-    ).run_decompositions(decompositions)
+    )
     return program, constant_inputs
