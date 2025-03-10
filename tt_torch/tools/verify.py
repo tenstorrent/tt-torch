@@ -9,11 +9,14 @@ import tt_mlir
 from tt_torch.onnx_compile import compile_onnx
 from tt_torch.dynamo.backend import backend
 from tt_torch.tools.utils import calculate_atol, calculate_pcc
+from tt_torch.tools.utils import CompileDepth
 
 
 def verify_against_golden(
     golden_tensors,
     calculated_tensors,
+    assert_pcc,
+    assert_atol,
     required_pcc=0.99,
     required_atol=None,
     relative_atol=None,
@@ -64,6 +67,10 @@ def verify_against_golden(
 
     check_mark = "\U00002705"
     red_x = "\U0000274C"
+    warning = "\U0000274E"
+
+    pcc_warning = f"{warning} (assert_pcc == False)"
+    atol_warning = f"{warning} (assert_atol == False)"
 
     passed_pcc = True
     passed_atol = True
@@ -75,35 +82,53 @@ def verify_against_golden(
         msg = msg + f"Results for output {i}:\n"
         if pcc_passed:
             if pcc_ != SKIPPED_PCC_CALCULATION_FOR_SINGLE_VALUE:
-                msg = (
-                    msg
-                    + f"  PCC: {pcc_:0,.4f}, threshold: {required_pcc} {check_mark}\n"
-                )
+                msg = msg + f"  PCC: {pcc_:0,.4f}, threshold: {required_pcc} "
+                msg = msg + f"{check_mark}\n"
         else:
-            msg = msg + f"  PCC: {pcc_:0,.4f}, threshold: {required_pcc} {red_x}\n"
+            msg = msg + f"  PCC: {pcc_:0,.4f}, threshold: {required_pcc} "
+            msg = msg + f"{red_x if assert_pcc else pcc_warning}\n"
             err_msg = (
                 err_msg
-                + f"PCC of output {i}: {pcc_:0,.4f}, threshold: {required_pcc} {red_x}\n"
+                + f"PCC of output {i}: {pcc_:0,.4f}, threshold: {required_pcc} {red_x if assert_pcc else pcc_warning}\n"
             )
             passed_pcc = False
 
+        msg = (
+            msg
+            + f"  ATOL: {atol_:0,.4f}, threshold: {atol_threshold}{f' (calculated using relative_atol: {relative_atol})' if relative_atol is not None else ''} "
+        )
         if atol_passed:
-            msg = (
-                msg
-                + f"  ATOL: {atol_:0,.4f}, threshold: {atol_threshold}{f' (calculated using relative_atol: {relative_atol})' if relative_atol is not None else ''} {check_mark}\n"
-            )
+            msg = msg + f"{check_mark}\n"
         else:
-            msg = (
-                msg
-                + f"  ATOL: {atol_:0,.4f}, threshold: {atol_threshold}{f' (calculated using relative_atol: {relative_atol})' if relative_atol is not None else ''} {red_x}\n"
-            )
+            msg = msg + f"{red_x if assert_atol else atol_warning}\n"
+
             err_msg = (
                 err_msg
-                + f"ATOL of output {i}: {atol_:0,.4f}, threshold: {atol_threshold}{f' (calculated using relative_atol: {relative_atol})' if relative_atol is not None else ''} {red_x}\n"
+                + f"ATOL of output {i}: {atol_:0,.4f}, threshold: {atol_threshold}{f' (calculated using relative_atol: {relative_atol})' if relative_atol is not None else ''} {red_x if assert_atol else atol_warning}\n"
             )
             passed_atol = False
 
-    return passed_pcc, passed_atol, msg, err_msg, pccs, atols
+        if assert_pcc and assert_atol:
+            if passed_pcc and passed_atol:
+                print(msg)
+            else:
+                assert False, err_msg
+        elif not assert_pcc and assert_atol:
+            print("Ignoring PCC check\n")
+            if passed_atol:
+                print(msg)
+            else:
+                assert False, err_msg
+        elif assert_pcc and not assert_atol:
+            print("Ignoring ATOL check\n")
+            if passed_pcc:
+                print(msg)
+            else:
+                assert False, err_msg
+        else:
+            print(msg)
+
+    return pccs, atols
 
 
 def _verify_torch_module(
@@ -155,16 +180,13 @@ def _verify_torch_module(
     golden = tuple(golden)
     ret = tuple(ret)
 
-    passed_pcc, passed_atol, msg, err_msg, _, _ = verify_against_golden(
-        golden, ret, required_pcc, required_atol=required_atol
+    verify_against_golden(
+        golden, ret, do_assert, do_assert, required_pcc, required_atol=required_atol
     )
-    print(msg)
-    if do_assert:
-        assert passed_pcc and passed_atol, err_msg
 
 
 def _verify_onnx_module(
-    filename,
+    model_proto: onnx.ModelProto,
     inputs,
     input_data_types,
     required_pcc,
@@ -175,7 +197,7 @@ def _verify_onnx_module(
     do_assert,
 ):
 
-    sess = InferenceSession(filename)
+    sess = InferenceSession(model_proto.SerializeToString())
     input_shapes = [nodearg.shape for nodearg in sess.get_inputs()]
     if input_data_types is None:
         input_data_types = [torch.float32] * (
@@ -206,8 +228,17 @@ def _verify_onnx_module(
 
     for i in range(len(golden)):
         golden[i] = torch.tensor(golden[i])
-    mod = onnx.load(filename)
-    ret = compile_onnx(mod, inputs, compiler_config)
+
+    compiled_mod = compile_onnx(model_proto, compiler_config)
+
+    ret = compiled_mod(*inputs)
+    if compiler_config.compile_depth not in [
+        CompileDepth.EXECUTE,
+        CompileDepth.EXECUTE_OP_BY_OP,
+    ]:
+        for i in range(len(ret)):
+            ret[i] = torch.tensor(ret[i])
+
     assert len(golden) == len(
         ret
     ), f"Number of outputs mismatch between golden and compiled: {len(golden)} vs {len(ret)}"
@@ -221,12 +252,9 @@ def _verify_onnx_module(
     golden = tuple(golden)
     ret = tuple(ret)
 
-    passed_pcc, passed_atol, msg, err_msg, _, _ = verify_against_golden(
-        golden, ret, required_pcc, required_atol=required_atol
+    verify_against_golden(
+        golden, ret, do_assert, do_assert, required_pcc, required_atol=required_atol
     )
-    print(msg)
-    if do_assert:
-        assert passed_pcc and passed_atol, err_msg
 
 
 def verify_module(
@@ -258,7 +286,7 @@ def verify_module(
             compiler_config,
             do_assert,
         )
-    elif isinstance(mod, str) and mod.endswith(".onnx"):
+    elif isinstance(mod, onnx.ModelProto):
         assert (
             input_shapes is None
         ), "When verifying an ONNX module, input_shapes must be None as they are inferred from the ONNX model"

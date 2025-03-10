@@ -23,11 +23,10 @@ def test_abs():
         model = helper.make_model(graph, opset_imports=[helper.make_opsetid("", 21)])
         return model
 
-    onnx.save(create_abs_model(), "abs.onnx")
     cc = CompilerConfig()
     cc.compile_depth = tt_torch.tools.utils.CompileDepth.EXECUTE_OP_BY_OP
     cc.op_by_op_backend = tt_torch.tools.utils.OpByOpBackend.STABLEHLO
-    verify_module("abs.onnx", compiler_config=cc)
+    verify_module(create_abs_model(), compiler_config=cc)
 
 
 def test_add():
@@ -50,11 +49,10 @@ def test_add():
         model = helper.make_model(graph, opset_imports=[helper.make_opsetid("", 21)])
         return model
 
-    onnx.save(create_add_model(), "add.onnx")
     cc = tt_torch.tools.utils.CompilerConfig()
     cc.compile_depth = tt_torch.tools.utils.CompileDepth.EXECUTE_OP_BY_OP
     cc.op_by_op_backend = tt_torch.tools.utils.OpByOpBackend.STABLEHLO
-    verify_module("add.onnx", compiler_config=cc)
+    verify_module(create_add_model(), compiler_config=cc)
 
 
 def test_concat_dim0():
@@ -77,11 +75,10 @@ def test_concat_dim0():
         model = helper.make_model(graph, opset_imports=[helper.make_opsetid("", 21)])
         return model
 
-    onnx.save(create_concat_model(), "concat_dim0.onnx")
     cc = tt_torch.tools.utils.CompilerConfig()
     cc.compile_depth = tt_torch.tools.utils.CompileDepth.EXECUTE_OP_BY_OP
     cc.op_by_op_backend = tt_torch.tools.utils.OpByOpBackend.STABLEHLO
-    verify_module("concat_dim0.onnx", compiler_config=cc)
+    verify_module(create_concat_model(), compiler_config=cc)
 
 
 def test_concat_dim1():
@@ -104,11 +101,10 @@ def test_concat_dim1():
         model = helper.make_model(graph, opset_imports=[helper.make_opsetid("", 21)])
         return model
 
-    onnx.save(create_concat_model(), "concat_dim1.onnx")
     cc = tt_torch.tools.utils.CompilerConfig()
     cc.compile_depth = tt_torch.tools.utils.CompileDepth.EXECUTE_OP_BY_OP
     cc.op_by_op_backend = tt_torch.tools.utils.OpByOpBackend.STABLEHLO
-    verify_module("concat_dim1.onnx", compiler_config=cc)
+    verify_module(create_concat_model(), compiler_config=cc)
 
 
 def test_concat_dim2():
@@ -131,11 +127,10 @@ def test_concat_dim2():
         model = helper.make_model(graph, opset_imports=[helper.make_opsetid("", 21)])
         return model
 
-    onnx.save(create_concat_model(), "concat_dim2.onnx")
     cc = tt_torch.tools.utils.CompilerConfig()
     cc.compile_depth = tt_torch.tools.utils.CompileDepth.EXECUTE_OP_BY_OP
     cc.op_by_op_backend = tt_torch.tools.utils.OpByOpBackend.STABLEHLO
-    verify_module("concat_dim2.onnx", compiler_config=cc)
+    verify_module(create_concat_model(), compiler_config=cc)
 
 
 def test_concat_dim3():
@@ -158,11 +153,10 @@ def test_concat_dim3():
         model = helper.make_model(graph, opset_imports=[helper.make_opsetid("", 21)])
         return model
 
-    onnx.save(create_concat_model(), "concat_dim3.onnx")
     cc = tt_torch.tools.utils.CompilerConfig()
     cc.compile_depth = tt_torch.tools.utils.CompileDepth.EXECUTE_OP_BY_OP
     cc.op_by_op_backend = tt_torch.tools.utils.OpByOpBackend.STABLEHLO
-    verify_module("concat_dim3.onnx", compiler_config=cc)
+    verify_module(create_concat_model(), compiler_config=cc)
 
 
 @pytest.mark.parametrize(
@@ -193,11 +187,10 @@ def test_div(input_range, input_shapes, input_type):
         model = helper.make_model(graph, opset_imports=[helper.make_opsetid("", 21)])
         return model
 
-    onnx.save(create_div_model(), "div.onnx")
     cc = tt_torch.tools.utils.CompilerConfig()
     cc.compile_depth = tt_torch.tools.utils.CompileDepth.EXECUTE_OP_BY_OP
     cc.op_by_op_backend = tt_torch.tools.utils.OpByOpBackend.STABLEHLO
-    verify_module("div.onnx", compiler_config=cc)
+    verify_module(create_div_model(), compiler_config=cc)
 
 
 def test_div_zero():
@@ -214,11 +207,10 @@ def test_div_zero():
         model = helper.make_model(graph, opset_imports=[helper.make_opsetid("", 21)])
         return model
 
-    onnx.save(create_div_zero_model(), "div_zero.onnx")
     cc = tt_torch.tools.utils.CompilerConfig()
     cc.compile_depth = tt_torch.tools.utils.CompileDepth.EXECUTE_OP_BY_OP
     cc.op_by_op_backend = tt_torch.tools.utils.OpByOpBackend.STABLEHLO
-    verify_module("div_zero.onnx", compiler_config=cc)
+    verify_module(create_div_zero_model(), compiler_config=cc)
 
 
 def test_exp():
@@ -230,11 +222,10 @@ def test_exp():
         model = helper.make_model(graph, opset_imports=[helper.make_opsetid("", 21)])
         return model
 
-    onnx.save(create_exp_model(), "exp.onnx")
     cc = tt_torch.tools.utils.CompilerConfig()
     cc.compile_depth = tt_torch.tools.utils.CompileDepth.EXECUTE_OP_BY_OP
     cc.op_by_op_backend = tt_torch.tools.utils.OpByOpBackend.STABLEHLO
-    verify_module("exp.onnx", compiler_config=cc, required_atol=3e-2)
+    verify_module(create_exp_model(), compiler_config=cc, required_atol=3e-2)
 
 
 def test_linear_with_bias():
@@ -264,8 +255,7 @@ def test_linear_with_bias():
         model = helper.make_model(graph, opset_imports=[helper.make_opsetid("", 21)])
         return model
 
-    onnx.save(create_linear_with_bias_model(), "linear_with_bias.onnx")
     cc = tt_torch.tools.utils.CompilerConfig()
     cc.compile_depth = tt_torch.tools.utils.CompileDepth.EXECUTE
     cc.op_by_op_backend = tt_torch.tools.utils.OpByOpBackend.STABLEHLO
-    verify_module("linear_with_bias.onnx", compiler_config=cc)
+    verify_module(create_linear_with_bias_model(), compiler_config=cc)

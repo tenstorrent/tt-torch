@@ -95,6 +95,8 @@ class ModelTester:
                 for item in obj:
                     if isinstance(item, torch.Tensor):
                         flattened.append(item)
+                    elif isinstance(item, (np.ndarray)):
+                        flattened.append(torch.from_numpy(item))
                     elif isinstance(item, (tuple, list)):
                         flattened.extend(flatten_tensor_lists(item))
                     else:
@@ -220,6 +222,22 @@ class ModelTester:
         results = self.get_results_train(model, inputs, outputs)
         return results
 
+    def verify_outputs(self, golden, outputs):
+        assert type(outputs) == type(
+            golden
+        ), "Expecting the type of both calculated and golden to be identical. Whether that be a tensor, list, dictonary, etc."
+        pccs, atols = verify_against_golden(
+            self._extract_outputs(golden),
+            self._extract_outputs(outputs),
+            self.assert_pcc,
+            self.assert_atol,
+            self.required_pcc,
+            self.required_atol,
+            self.relative_atol,
+        )
+        self.record_tag_cache["pccs"] = pccs
+        self.record_tag_cache["atols"] = atols
+
     @torch.no_grad()
     def test_model_eval(self, on_device=True):
         model = (
@@ -233,40 +251,7 @@ class ModelTester:
             model = self.compile_model(model, self.compiler_config)
 
         outputs = self.run_model(model, self.inputs)
-        assert type(outputs) == type(
-            golden
-        ), "Expecting the type of both calculated and golden to be identical. Whether that be a tensor, list, dictonary, etc."
-
-        passed_pcc, passed_atol, msg, err_msg, pccs, atols = verify_against_golden(
-            self._extract_outputs(golden),
-            self._extract_outputs(outputs),
-            self.required_pcc,
-            self.required_atol,
-            self.relative_atol,
-        )
-        self.record_tag_cache["pccs"] = pccs
-        self.record_tag_cache["atols"] = atols
-
-        if self.assert_pcc and self.assert_atol:
-            if passed_pcc and passed_atol:
-                print(msg)
-            else:
-                assert False, err_msg
-        elif not self.assert_pcc and self.assert_atol:
-            print("Ignoring PCC check\n")
-            if passed_atol:
-                print(msg)
-            else:
-                assert False, err_msg
-        elif self.assert_pcc and not self.assert_atol:
-            print("Ignoring ATOL check\n")
-            if passed_pcc:
-                print(msg)
-            else:
-                assert False, err_msg
-        else:
-            print(msg)
-            print("No failure as assert_pcc == assert_atol == False")
+        self.verify_outputs(golden, outputs)
 
         return outputs
 
@@ -335,3 +320,87 @@ class ModelTester:
         )
 
         self.flush_tag_cache_to_record()
+
+
+class OnnxModelTester(ModelTester):
+    def __init__(
+        self,
+        model_name,
+        mode,
+        required_pcc=0.99,
+        required_atol=None,
+        relative_atol=None,
+        compiler_config=None,
+        assert_pcc=True,
+        assert_atol=True,
+        record_property_handle=None,
+    ):
+
+        super().__init__(
+            model_name,
+            mode,
+            required_pcc,
+            required_atol,
+            relative_atol,
+            compiler_config,
+            assert_pcc,
+            assert_atol,
+            record_property_handle,
+        )
+        # Hold an onnxruntime session for golden / non-full compile execution
+        self.sess = onnxruntime.InferenceSession(
+            self.framework_model.SerializeToString()
+        )
+        self.torch_inputs = self._load_torch_inputs()
+        self.numpy_inputs = self._load_numpy_inputs()
+
+    # Pass this function so we can use superclass __init__ without failure
+    def _load_inputs(self):
+        pass
+
+    def _load_torch_inputs(self):
+        raise NotImplementedError(
+            "This method should be implemented in the derived class"
+        )
+
+    def _load_numpy_inputs(self):
+        torch_inputs = self._load_torch_inputs()
+        return {
+            nodearg.name: inp.numpy()
+            if inp.dtype != torch.bfloat16
+            else inp.float().numpy()
+            for nodearg, inp in zip(self.sess.get_inputs(), torch_inputs)
+        }
+
+    def compile_model(self, model, compiler_config):
+        model = compile_onnx(model, compiler_config)
+        self.compiled_model = model
+        return self.compiled_model
+
+    def run_model(self, model, inputs):
+        if isinstance(model, onnx.ModelProto):
+            outputs = self.sess.run(None, inputs)
+            return outputs
+        else:
+            return model(*inputs)
+
+    def test_model_train(self, on_device=True):
+        raise NotImplementedError("TODO: Implement this method")
+
+    def test_model_eval(self, on_device=True):
+        golden = self.run_model(self.framework_model, self.numpy_inputs)
+
+        if on_device == True:
+            model = self.compile_model(self.framework_model, self.compiler_config)
+
+        if isinstance(model, onnx.ModelProto):
+            outputs = self.run_model(model, self.numpy_inputs)
+        else:
+            outputs = self.run_model(model, self.torch_inputs)
+
+        self.verify_outputs(golden, outputs)
+
+        return [
+            torch.from_numpy(out) if isinstance(out, np.ndarray) else out
+            for out in outputs
+        ]
