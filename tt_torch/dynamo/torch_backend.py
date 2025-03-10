@@ -116,7 +116,7 @@ class TorchExecutor(OpByOpExecutor):
 
     def get_stable_hlo_graph(self, node, inputs, **kwargs):
 
-        input_shapes_and_constants = self.get_input_shapes_and_constants(inputs)
+        input_shapes_and_constants = self.get_input_shapes_and_constants(*inputs)
 
         name = node.target.name() if hasattr(node.target, "name") else node.name
         if not isinstance(node.target, torch._ops.OpOverload):
