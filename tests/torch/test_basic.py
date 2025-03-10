@@ -208,9 +208,7 @@ def test_linear_with_bias_no_embedded_constants():
             x = self.linear_a(x)
             return x
 
-    cc = CompilerConfig()
-    cc.remove_embedded_constants = True
-    verify_module(Basic(), input_shapes=[(32, 32)], compiler_config=cc)
+    verify_module(Basic(), input_shapes=[(32, 32)])
 
 
 @pytest.mark.parametrize(

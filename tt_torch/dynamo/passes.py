@@ -137,26 +137,7 @@ def constant_fold(gm):
     return gm, graph_constants
 
 
-def inline_parameters(gm):
-    parameters = {}
-    placeholders = {}
-    for node in gm.graph.nodes:
-        if node.op == "get_attr":
-            assert hasattr(gm, node.target), f"Parameter {node.target} not found"
-            gm.graph.inserting_before(node)
-            if node.target not in placeholders:
-                placeholder = gm.graph.placeholder(node.target)
-                placeholders[node.target] = placeholder
-                parameters[node.target] = getattr(gm, node.target).data
-            else:
-                placeholder = placeholders[node.target]
-            node.replace_all_uses_with(placeholder)
-
-    gm.graph.eliminate_dead_code()
-    return gm, parameters
-
-
-def order_constant_inputs(gm, parameters, constants, embedded_constants):
+def order_constant_inputs(gm, parameters, constants):
     constant_inputs = []
     for node in gm.graph.nodes:
         if node.op == "placeholder":
@@ -164,39 +145,7 @@ def order_constant_inputs(gm, parameters, constants, embedded_constants):
                 constant_inputs.append(parameters[node.target])
             elif node.target in constants:
                 constant_inputs.append(constants[node.target])
-            elif node.target in embedded_constants:
-                constant_inputs.append(embedded_constants[node.target])
     return constant_inputs
-
-
-def inline_constants(gm, example_inputs):
-    inlied_constats = {}
-    placeholders = {}
-
-    for node in gm.graph.nodes:
-        if node.op == "placeholder":
-            # start appending after last placeholder
-            gm.graph.inserting_after(node)
-
-        if node.op != "call_function" or node.target._overloadname != "Tensor":
-            continue
-
-        for idx, arg in enumerate(node.args):
-            if isinstance(arg, (int, float)):
-                if arg not in placeholders:
-                    name = f"const_{arg}"
-                    placeholder = gm.graph.placeholder(name)
-                    placeholders[arg] = placeholder
-                    new_arg = torch.tensor(arg)
-                    inlied_constats[name] = new_arg
-                else:
-                    placeholder = placeholders[arg]
-
-                args = list(node.args)
-                args[idx] = placeholder
-                node.args = tuple(args)
-
-    return gm, inlied_constats
 
 
 def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
@@ -219,14 +168,8 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         constants = {}
     gm = bypass_redundant_getitem(gm)
     parameters = {}
-    if compiler_config.remove_embedded_constants:
-        gm, embedded_constants = inline_constants(gm, example_inputs)
-    else:
-        embedded_constants = {}
 
-    constant_inputs = order_constant_inputs(
-        gm, parameters, constants, embedded_constants
-    )
+    constant_inputs = order_constant_inputs(gm, parameters, constants)
 
     # some constant folding operations are preformed by changing tensor strides, we
     # want all the strides to be 1, so make them contiguous
