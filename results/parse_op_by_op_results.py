@@ -839,6 +839,12 @@ def process_json_files():
             f.write(text)
 
         worksheet.autofit()
+
+    # model_ops_compile_depth_summary_worksheet
+    worksheet = workbook.add_worksheet("Per Model Compile Depths")
+    header = ["", 0, 1, 2, 3, 4, 5, 6, 7]
+    worksheet.write_row(0, 0, header)
+
     workbook.close()
 
 
