@@ -7,9 +7,11 @@ import tt_mlir
 import torch_mlir
 import os
 import re
+import ml_dtypes
+import numpy as np
 from torch_mlir.dialects import torch as torch_dialect
 
-from typing import Optional
+from typing import Optional, Any
 from tt_torch.tools.utils import (
     CompilerConfig,
     CompileDepth,
@@ -23,8 +25,16 @@ from torch_mlir.compiler_utils import (
     run_pipeline_with_repro_report,
     lower_mlir_module,
 )
-from torch_mlir.extras.fx_importer import FxImporter, ContextCache
-from torch_mlir.ir import Context, Location
+from torch_mlir.extras.fx_importer import (
+    FxImporter,
+    ContextCache,
+    FxImporterHooks,
+    InputInfo,
+    GraphNodeImporter,
+    TORCH_DTYPE_TO_NPY_TYPE,
+    TORCH_DTYPE_TO_MLIR_TYPE,
+)
+from torch_mlir.ir import Context, Location, DenseElementsAttr, Operation
 from tt_torch.dynamo.executor import (
     Executor,
     OpByOpExecutor,
@@ -66,25 +76,64 @@ class TTContextCache(ContextCache):
 
 
 def import_graph(graph: torch.fx.GraphModule):
-    context = Context()
-    torch_dialect.register_dialect(context)
-    importer = FxImporter(context=context)
-    importer._cc = TTContextCache(
-        importer._c, py_attr_tracker=importer._py_attr_tracker
-    )
-    importer.import_stateless_graph(graph)
-    return importer.module
+    with Context() as context:
+        torch_dialect.register_dialect()
+        importer = FxImporter()
+        importer._cc = TTContextCache(
+            importer._c, py_attr_tracker=importer._py_attr_tracker
+        )
+        importer.import_stateless_graph(graph)
+        return importer.module
+
+
+class TTFxImporterHooks(FxImporterHooks):
+    def resolve_literal(
+        self, gni: GraphNodeImporter, tensor: Any, info: Optional[InputInfo]
+    ):
+        # This implementation is a near exact copy of the default implementation of
+        # torch_mlir.extras.fx_importer._make_vtensor_literal_op. The difference is
+        # that we wish to use DenseElementsAttr at all times and never DenseResourceElementsAttr.
+        # This is because the use of DenseResourceElementsAttr is causing the GIL to block
+        # Mentioned in this IREE issue: https://github.com/iree-org/iree/issues/20102
+        if not isinstance(tensor, torch.Tensor):
+            return None
+
+        assert not (
+            tensor.dtype == torch.bfloat16 and ml_dtypes is None
+        ), f"torch.bfloat16 requires the ml_dtypes package, please run:\n\npip install ml_dtypes\n"
+        # Resolve the attribute.
+        npy_dtype = TORCH_DTYPE_TO_NPY_TYPE.get(tensor.dtype)
+        assert (
+            npy_dtype is not None
+        ), f"Can not create literal tensor for unsupported datatype: {tensor.dtype}"
+
+        np_tensor = np.array(tensor.tolist()).astype(npy_dtype)
+
+        try:
+            dtype = tensor.dtype
+            element_type = TORCH_DTYPE_TO_MLIR_TYPE[dtype]()
+        except KeyError:
+            raise TypeError(f"Could not map Torch dtype {dtype} to an MLIR type")
+        elements_attr = DenseElementsAttr.get(
+            type=element_type, array=np_tensor, shape=np_tensor.shape
+        )
+        return Operation.create(
+            name="torch.vtensor.literal",
+            results=[gni._cc.tensor_to_vtensor_type(tensor)],
+            attributes={"value": elements_attr},
+        ).result
 
 
 def import_program(program: torch.export.ExportedProgram):
-    context = Context()
-    torch_dialect.register_dialect(context)
-    importer = FxImporter(context=context)
-    importer._cc = TTContextCache(
-        importer._c, py_attr_tracker=importer._py_attr_tracker
-    )
-    importer.import_program(program)
-    return importer.module
+    with Context() as context:
+        context.enable_multithreading(False)
+        torch_dialect.register_dialect(context)
+        importer = FxImporter(context=context, hooks=TTFxImporterHooks())
+        importer._cc = TTContextCache(
+            importer._c, py_attr_tracker=importer._py_attr_tracker
+        )
+        importer.import_program(program)
+        return importer.module
 
 
 def lower_to_stable_hlo(module, op=None, enable_ir_printing=False):
