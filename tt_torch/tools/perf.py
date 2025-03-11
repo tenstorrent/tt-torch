@@ -9,6 +9,8 @@ import time
 import socket
 import signal
 import sys
+import shutil
+from utils import FileManager
 
 
 class Perf:
@@ -30,8 +32,8 @@ class Perf:
         self.profiler_device_side_log_path = f"{self.get_ttmetal_home_path()}/generated/profiler/.logs/profile_log_device.csv"
         self.profiler_csv_file_path = f"{self.get_ttmetal_home_path()}/generated/profiler/reports/ops_perf_results.csv"
 
-        # self.file_manager.remove_directory(self.profiler_logs_dir)
-        # self.file_manager.create_directory(self.profiler_logs_dir)
+        FileManager.remove_directory(self.profiler_logs_dir)
+        FileManager.create_directory(self.profiler_logs_dir)
 
     def setup_tracy_server(self) -> None:
         def get_available_port():
@@ -53,14 +55,18 @@ class Perf:
         if not port:
             raise Exception("No available port found")
 
+        port = 8086
+
         print(f"selected port={port}")
 
-        os.environ["TT_METAL_DEVICE_PROFILER"] = "1"
+        os.environ[
+            "TT_METAL_DEVICE_PROFILER"
+        ] = "1"  # carries over to other cmds run in shell
         # os.environ["TT_METAL_CLEAR_L1"] = "1"
         # os.environ["TT_METAL_DEVICE_PROFILER_DISPATCH"] = "0"
 
         tracy_capture_tool_command = (
-            f"{self.tracy_capture_tool_path} -o {self.tracy_file_path} -f -p {port}"
+            f"{self.tracy_capture_tool_path} -o {self.tracy_file_path} -f -p {8086}"
         )
         self.tracy_capture_tool_process = subprocess.Popen(
             tracy_capture_tool_command, shell=True  # ,env=os.environ.copy()

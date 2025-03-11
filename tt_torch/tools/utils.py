@@ -12,6 +12,7 @@ import os
 import torch
 import math
 import sys
+import shutil
 
 from tt_mlir import open_device, close_device, is_runtime_debug_enabled
 
@@ -638,3 +639,58 @@ def calculate_pcc(tensor, golden_tensor):
 
 def serialize_enum(enum_value):
     return f"{enum_value.__class__.__name__}.{enum_value.name}"
+
+
+class FileManager:
+    @staticmethod
+    def create_file(file_path):
+        self.logging.debug(f"creating file={file_path}")
+
+        try:
+            if not self.check_directory_exists(os.path.dirname(file_path)):
+                self.create_directory(os.path.dirname(file_path))
+
+            with open(file_path, "w") as file:
+                file.write("")
+        except OSError as e:
+            raise OSError(f"error creating file: {e}")
+        except Exception as e:
+            raise Exception(f"an unexpected error occurred: {e}")
+
+    @staticmethod
+    def create_directory(directory_path):
+        try:
+            os.makedirs(directory_path)
+        except FileExistsError as e:
+            raise FileExistsError(f"directory '{directory_path}' already exists")
+        except OSError as e:
+            raise OSError(f"error creating directory: {e}")
+        except Exception as e:
+            raise Exception(f"an unexpected error occurred: {e}")
+
+    @staticmethod
+    def remove_file(file_path):
+        try:
+            os.remove(file_path)
+        except FileNotFoundError:
+            print(f"directory '{file_path}' not found - cannot remove")
+        except PermissionError:
+            raise PermissionError(
+                f"insufficient permissions to remove file '{file_path}'"
+            )
+        except Exception as e:
+            raise Exception(f"an unexpected error occurred: {e}")
+
+    @staticmethod
+    def remove_directory(directory_path):
+
+        try:
+            shutil.rmtree(directory_path)
+        except FileNotFoundError:
+            print(f"directory '{directory_path}' not found - cannot remove")
+        except PermissionError:
+            raise PermissionError(
+                f"insufficient permissions to remove directory '{directory_path}'"
+            )
+        except Exception as e:
+            raise Exception(f"an unexpected error occurred: {e}")
