@@ -7,6 +7,8 @@ import typing
 import subprocess
 import time
 import socket
+import signal
+import sys
 
 
 class Perf:
@@ -20,7 +22,7 @@ class Perf:
     def __init__(self):
         self.tracy_capture_tool_path = f"{self.get_ttmetal_home_path()}/../tt-metal-build/tools/profiler/bin/capture-release"  # tt-metal-build/tools/profiler/bin/capture-release
         self.profiler_logs_dir = (
-            f"{self.globals.get_ttmetal_home_path()}/generated/profiler/.logs"
+            f"{self.get_ttmetal_home_path()}/generated/profiler/.logs"
         )
         self.tracy_file_path = "tracy_profile_log_host.tracy"
         self.tracy_ops_times_file_path = "tracy_ops_times.csv"
@@ -31,7 +33,7 @@ class Perf:
         # self.file_manager.remove_directory(self.profiler_logs_dir)
         # self.file_manager.create_directory(self.profiler_logs_dir)
 
-    def setup_tracy_server(self, port: int) -> None:
+    def setup_tracy_server(self) -> None:
         def get_available_port():
             ip = socket.gethostbyname(socket.gethostname())
 
@@ -60,3 +62,9 @@ class Perf:
         tracy_capture_tool_command = (
             f"{self.tracy_capture_tool_path} -o {self.tracy_file_path} -f -p {port}"
         )
+        self.tracy_capture_tool_process = subprocess.Popen(
+            tracy_capture_tool_command, shell=True  # ,env=os.environ.copy()
+        )
+
+        # self.tracy_capture_tool_process.terminate() # doesn't work when shell=True
+        # os.killpg(os.getpgid(self.tracy_capture_tool_process.pid), signal.SIGTERM)
