@@ -238,21 +238,25 @@ class ModelTester:
         self.record_tag_cache["pccs"] = pccs
         self.record_tag_cache["atols"] = atols
 
-    @torch.no_grad()
-    def test_model_eval(self, on_device=True):
+    def get_framework_model(self):
         model = (
             self.framework_model.eval()
             if hasattr(self.framework_model, "eval")
             else self.framework_model
         )
+        return model
+
+    @torch.no_grad()
+    def test_model_eval(self, on_device=True):
+        model = self.get_framework_model()
         golden = self.get_golden_outputs(model, self.inputs)
 
         if on_device == True:
             model = self.compile_model(model, self.compiler_config)
 
         outputs = self.run_model(model, self.inputs)
-        self.verify_outputs(golden, outputs)
 
+        self.verify_outputs(golden, outputs)
         return outputs
 
     def test_model(self, on_device=True):

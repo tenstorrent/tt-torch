@@ -13,7 +13,7 @@ import torch
 import math
 import sys
 
-from tt_mlir import is_runtime_debug_enabled
+from tt_mlir import open_device, close_device, is_runtime_debug_enabled
 
 
 """
@@ -264,6 +264,9 @@ class CompilerConfig:
         self.dump_info = False
         self._verify_op_by_op = False
         self.typecast_inputs = True
+        self.runtime_device = None
+        self.enable_async = False
+        self.cache_preprocessed_constants = False
 
         self.apply_environment_overrides()
         self.post_init()
@@ -332,6 +335,19 @@ class CompilerConfig:
         if dump_intermediates:
             self.dump_debug = dump_intermediates == "DEBUG"
             self.dump_info = self.dump_debug or dump_intermediates == "INFO"
+
+    def initialize_device(self, device_ids=None):
+        assert self.runtime_device is None
+        if device_ids is None:
+            device_ids = [0]
+        self.runtime_device = open_device(
+            device_ids=device_ids, enable_async_ttnn=self.enable_async
+        )
+
+    def cleanup_device(self):
+        assert self.runtime_device is not None
+        close_device(self.runtime_device)
+        self.runtime_device = None
 
     def post_init(self):
         if self.consteval_parameters:
