@@ -144,63 +144,25 @@ def upsample_bilinear2d(
     return res
 
 
-def upsample_nearest2d(
-    input,
-    output_size,
-    scales_h=None,
-    scales_w=None,
-):
-    input_size = input.shape[-2:]
-    scales = [scales_h, scales_w]
+def upsample_linear(
+    input: torch.Tensor,
+    output_size: List[int],
+    align_corners: bool,
+    scales: List[Optional[float]],
+) -> torch.Tensor:
+    input_size = input.shape[-len(scales) :]
 
-    # Find the indices which we should gather from the input tensor
-    # but use them to construct weight matrices to perform the interpolation
-    # rather than simply gather.
-    indices = []
-    for (scale, in_size, out_size) in zip(scales, input_size, output_size):
-        # To map from output indices to input indices we need to multiply
-        # the output index by the reciprocal of the scale
-        scale = 1 / scale if scale is not None else in_size / out_size
+    for i in range(len(scales)):
+        scales[i] = float(output_size[i]) / float(input_size[i])
 
-        all_output_indices = torch.arange(out_size)
-        input_indices = (
-            torch.floor(all_output_indices * scale)
-            .to(torch.int64)
-            .unsqueeze(0)
-            .transpose(-2, -1)
+    res = input
+    for i in range(len(scales)):
+        weight = compute_bilinear_weight(
+            input_size[i], output_size[i], scales[i], align_corners, input.dtype
         )
-        # input_indices currently contains which indices to gather from the
-        # input tensor for each output index we are going to concatenate the
-        # output indices to this tensor so that we can use it to map from
-        # output indices to input indices.
-        input_indices = torch.cat(
-            [
-                input_indices,
-                torch.arange(out_size).unsqueeze(0).transpose(-2, -1),
-            ],
-            dim=-1,
+        res = (res.transpose(i - len(scales), -1) @ weight).transpose(
+            i - len(scales), -1
         )
-
-        # input_indices is in the form [input_index, output_index]. That is to say
-        # that for the nth output index, input_index[n, 0] is the index to gather
-        # from the input tensor, and input_index[n, 1] is the output index (n).
-        indices.append(input_indices)
-
-    indices_h, indices_w = indices
-    # Must use torch.ones so this input is consteval-able
-    one = torch.ones(1, dtype=input.dtype)
-
-    weight_w_ = torch.zeros(input_size[1], output_size[1], dtype=input.dtype)
-    weight_w = weight_w_.index_put(
-        (indices_w[:, 0], indices_w[:, 1]), one
-    )  # use out-of-place index_put so graph remains consteval-able
-
-    weight_h_ = torch.zeros(input_size[0], output_size[0], dtype=input.dtype)
-    weight_h = weight_h_.index_put(
-        (indices_h[:, 0], indices_h[:, 1]), one
-    )  # use out-of-place index_put so graph remains consteval-able
-
-    res = (input.transpose(-1, -2) @ weight_h).transpose(-1, -2) @ weight_w
     return res
 
 
@@ -259,6 +221,19 @@ def upsample_nearest(
         )
 
     return res
+
+
+def upsample_linear_vec(
+    input: torch.Tensor,
+    output_size: Optional[List[int]],
+    align_corners: bool,
+    scale_factors: Optional[List[float]],
+) -> torch.Tensor:
+    osize = torch._decomp.decompositions.upsample_compute_output_size(
+        input.size(), output_size, scale_factors
+    )
+    scales = scale_factors if scale_factors else [None] * len(osize)
+    return upsample_linear(input, osize, align_corners, scales)
 
 
 def upsample_nearest_vec(
@@ -333,7 +308,9 @@ def _get_custom_decopositions() -> DecompositionTable:
         aten.upsample_nearest1d.vec: upsample_nearest_vec,
         aten.upsample_nearest2d.vec: upsample_nearest_vec,
         aten.upsample_nearest3d.vec: upsample_nearest_vec,
-        aten.upsample_bilinear2d.default: upsample_bilinear2d,
+        aten.upsample_linear1d.vec: upsample_linear_vec,
+        aten.upsample_bilinear2d.vec: upsample_linear_vec,
+        aten.upsample_trilinear3d.vec: upsample_linear_vec,
     }
 
 
