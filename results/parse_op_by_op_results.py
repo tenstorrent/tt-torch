@@ -29,6 +29,12 @@ def generate_status_report():
     model_names = []
 
     for json_file in json_files:
+
+        if (
+            "_unique_ops.json" not in json_file
+        ):  # indicator that the JSON is a model report, not an op report
+            continue
+
         # Get model name from the parent directory of the json file
         model_name = (
             json_file.strip("_unique_ops.json")
