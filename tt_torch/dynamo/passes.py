@@ -85,9 +85,11 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
 
     # we use the export API to run the decompositions, as this maintains the
     # soruce locations in stack_trace
+    decomp_table = DEFAULT_DECOMPOSITION_TABLE
+    decomp_table.update(CUSTOM_DECOMPOSITION_TABLE)
     gm = (
-        torch.export.export(gm, tuple(example_inputs), strict=False)
-        .run_decompositions(decompositions)
+        torch.export.export_for_training(gm, tuple(example_inputs), strict=False)
+        .run_decompositions(decomp_table)
         .module()
     )
 

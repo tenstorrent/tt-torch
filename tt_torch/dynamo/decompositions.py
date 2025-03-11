@@ -204,6 +204,77 @@ def upsample_nearest2d(
     return res
 
 
+def upsample_nearest(
+    input: torch.Tensor,
+    output_size: List[int],
+    scales: List[Optional[float]],
+    exact: bool = False,
+):
+    input_size = input.shape[-len(scales) :]
+
+    # Find the indices which we should gather from the input tensor
+    # but use them to construct weight matrices to perform the interpolation
+    # rather than simply gather.
+    indices = []
+    for (scale, in_size, out_size) in zip(scales, input_size, output_size):
+        # To map from output indices to input indices we need to multiply
+        # the output index by the reciprocal of the scale
+        scale = 1 / scale if scale is not None else in_size / out_size
+
+        all_output_indices = torch.arange(out_size)
+        input_indices = (
+            torch.floor(all_output_indices * scale)
+            .to(torch.int64)
+            .unsqueeze(0)
+            .transpose(-2, -1)
+        )
+        # input_indices currently contains which indices to gather from the
+        # input tensor for each output index we are going to concatenate the
+        # output indices to this tensor so that we can use it to map from
+        # output indices to input indices.
+        input_indices = torch.cat(
+            [
+                input_indices,
+                torch.arange(out_size).unsqueeze(0).transpose(-2, -1),
+            ],
+            dim=-1,
+        )
+
+        # input_indices is in the form [input_index, output_index]. That is to say
+        # that for the nth output index, input_index[n, 0] is the index to gather
+        # from the input tensor, and input_index[n, 1] is the output index (n).
+        indices.append(input_indices)
+
+    # Must use torch.ones so this input is consteval-able
+    one = torch.ones(1, dtype=input.dtype)
+    res = input
+    for dim, indices_dim in enumerate(indices):
+        weight_ = torch.zeros(input_size[dim], output_size[dim], dtype=input.dtype)
+        weight = weight_.index_put(
+            (indices_dim[:, 0], indices_dim[:, 1]), one
+        )  # use out-of-place index_put so graph remains consteval-able
+
+        res = (res.transpose(dim - len(indices), -1) @ weight).transpose(
+            dim - len(indices), -1
+        )
+
+    return res
+
+
+def upsample_nearest_vec(
+    input: torch.Tensor,
+    output_size: Optional[List[int]],
+    scale_factors: Optional[List[float]],
+) -> torch.Tensor:
+    osize = torch._decomp.decompositions.upsample_compute_output_size(
+        input.size(), output_size, scale_factors
+    )
+    scales = (
+        scale_factors if scale_factors else [None] * len(osize)  # type: ignore[list-item]
+    )
+    return upsample_nearest(input, osize, scales, scales)
+
+
 # TODO: DO we ever need this?
 def _get_default_decomposition_ops() -> DecompositionOpsList:
     aten = torch.ops.aten
@@ -259,7 +330,9 @@ def _get_default_decomposition_ops() -> DecompositionOpsList:
 def _get_custom_decopositions() -> DecompositionTable:
     aten = torch.ops.aten
     return {
-        aten.upsample_nearest2d.default: upsample_nearest2d,
+        aten.upsample_nearest1d.vec: upsample_nearest_vec,
+        aten.upsample_nearest2d.vec: upsample_nearest_vec,
+        aten.upsample_nearest3d.vec: upsample_nearest_vec,
         aten.upsample_bilinear2d.default: upsample_bilinear2d,
     }
 
