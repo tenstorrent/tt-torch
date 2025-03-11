@@ -163,7 +163,7 @@ class Executor:
             self.graph_constants is not None
             and self.preprocessed_graph_constants is None
         ):
-            inputs = inputs + self.graph_constants
+            inputs = self.graph_constants + inputs
 
         inputs = list(inputs)
         device = self._get_device()
@@ -175,7 +175,9 @@ class Executor:
         )
 
         if self.preprocessed_graph_constants is not None:
-            preprocessed_inputs += self.preprocessed_graph_constants
+            preprocessed_inputs = (
+                self.preprocessed_graph_constants + preprocessed_inputs
+            )
 
         outputs = tt_mlir.run(device, binary, program_idx, preprocessed_inputs)
 
