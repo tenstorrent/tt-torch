@@ -45,7 +45,7 @@ def verify_golden_callback(binary, callback_context, op_context):
 def dump_module(module, name, compiler_config):
     if compiler_config.dump_info:
         print(f"{name} module", file=sys.stderr)
-        module.dump(large_elements_limit=0)
+        print(module, file=sys.stderr)
 
 
 def _shlo_backend(shlo, example_inputs, compiler_config, gm=None, graph_constants=None):
