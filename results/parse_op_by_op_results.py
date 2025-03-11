@@ -185,6 +185,8 @@ def process_json_files():
     stable_hlo_ops_per_torch_op = {}
     workbook = xlsxwriter.Workbook("results/models_op_per_op.xlsx")
     bold = workbook.add_format({"bold": True})
+
+    worksheet = workbook.add_worksheet("Per Model Compile Depths")
     for json_file in json_files:
         with open(json_file, "r") as f:
             data = json.load(f)
@@ -556,6 +558,21 @@ def process_json_files():
             for shlo_op in shlo_ops
         ]
         worksheet.write_row(row, 0, data)
+        row += 1
+
+    # Summarize Models / Compile Depths in the first sheet
+    worksheet = workbook.get_worksheet_by_name("Per Model Compile Depths")
+    worksheet.write_row(0, 0, ["", 0, 1, 2, 3, 4, 5, 6, 7])
+    worksheet.write_column(1, 0, model_names)
+
+    row = 1
+    for model_name in model_names:
+        for compile_depth in range(0, 8):
+            # baking dynamic references
+            compile_depth_formula = (
+                f'=COUNTIF(INDIRECT("\'" & "{model_name}" & "\'!E:E"), {compile_depth})'
+            )
+            worksheet.write(row, 1 + compile_depth, compile_depth_formula)
         row += 1
 
     workbook.close()
