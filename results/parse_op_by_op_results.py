@@ -29,10 +29,8 @@ def generate_status_report():
     model_names = []
 
     for json_file in json_files:
-
-        if (
-            "_unique_ops.json" not in json_file
-        ):  # indicator that the JSON is a model report, not an op report
+        # indicator that the JSON is a model report, not an op report
+        if "_unique_ops.json" not in json_file:
             continue
 
         # Get model name from the parent directory of the json file
@@ -192,6 +190,10 @@ def process_json_files():
     workbook = xlsxwriter.Workbook("results/models_op_per_op.xlsx")
     bold = workbook.add_format({"bold": True})
     for json_file in json_files:
+        # indicator that the JSON is a model report, not an op report
+        if "_unique_ops.json" not in json_file:
+            continue
+
         with open(json_file, "r") as f:
             data = json.load(f)
 
