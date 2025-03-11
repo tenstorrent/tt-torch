@@ -6,7 +6,7 @@ from diffusers import StableDiffusionPipeline
 import torch
 import pytest
 from tests.utils import ModelTester
-from tt_torch.tools.utils import OpByOpBackend
+from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
 class ThisTester(ModelTester):
@@ -16,7 +16,9 @@ class ThisTester(ModelTester):
         return pipe
 
     def _load_inputs(self):
-        prompt = "a photo of an astronaut riding a horse on mars"
+        prompt = [
+            "a photo of an astronaut riding a horse on mars",
+        ]
         return prompt
 
 
@@ -24,16 +26,27 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-@pytest.mark.skip(reason="Dynamo cannot support pipeline.")
 @pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
+@pytest.mark.xfail(
+    reason="Fails due to pt2 compile issue when finishing generation, but we can still generate a graph"
+)
 def test_stable_diffusion(record_property, mode, op_by_op):
     model_name = "Stable Diffusion"
 
-    tester = ThisTester(model_name, mode, record_property_handle=record_property)
+    cc = CompilerConfig()
+    cc.enable_consteval = True
+    cc.consteval_parameters = True
+    if op_by_op:
+        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
+        if op_by_op == OpByOpBackend.STABLEHLO:
+            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+    tester = ThisTester(
+        model_name, mode, compiler_config=cc, record_property_handle=record_property
+    )
     results = tester.test_model()
     if mode == "eval":
         image = results.images[0]

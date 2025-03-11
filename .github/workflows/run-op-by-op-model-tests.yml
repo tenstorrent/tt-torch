@@ -104,9 +104,13 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "stable-diffusion", tests: "
+            runs-on: wormhole_b0, name: "stable-diffusion-pipe", tests: "
               tests/models/stable_diffusion/test_stable_diffusion.py::test_stable_diffusion
-              tests/models/stable_diffusion/test_stable_diffusion_v2.py::test_stable_diffusion_v2
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "stable-diffusion-unet", tests: "
+              tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet
               "
           },
           {

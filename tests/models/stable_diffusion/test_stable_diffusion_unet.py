@@ -69,8 +69,8 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_stable_diffusion_v2(record_property, mode, op_by_op):
-    model_name = "Stable Diffusion V2"
+def test_stable_diffusion_unet(record_property, mode, op_by_op):
+    model_name = "Stable Diffusion UNET"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
