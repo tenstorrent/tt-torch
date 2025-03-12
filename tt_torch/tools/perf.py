@@ -78,6 +78,20 @@ class Perf:
         # self.tracy_capture_tool_process.terminate() # doesn't work when shell=True
         # os.killpg(os.getpgid(self.tracy_capture_tool_process.pid), signal.SIGTERM)
 
+    def close_capture_tool_process(self):
+        if self.tracy_capture_tool_process is None:
+            return
+
+        try:
+            # block until tracy capture tool exits with T/O
+            self.tracy_capture_tool_process.communicate(timeout=60)
+        except subprocess.TimeoutExpired as e:
+            self.tracy_capture_tool_process.terminate()
+            self.tracy_capture_tool_process.communicate()
+            raise Exception(
+                f"No profiling data could be captured. Please make sure you are on the correct build"
+            )
+
     def process_csvexport(self):
         with open(self.tracy_ops_times_file_path, "w") as csv_file:
             child_calls = ["CompileProgram", "HWCommandQueue_write_buffer"]
@@ -89,3 +103,13 @@ class Perf:
                 stdout=csv_file,
                 stderr=subprocess.DEVNULL,
             )
+        print("writing tracy ops times ")
+        with open(self.tracy_ops_data_file_path, "w") as csv_file:
+            subprocess.run(
+                f'{self.tracy_csvexport_tool_path} -m -s ";" {self.tracy_file_path}',
+                shell=True,
+                check=True,
+                stdout=csv_file,
+                stderr=subprocess.DEVNULL,
+            )
+        print("writing tracy ops data ")
