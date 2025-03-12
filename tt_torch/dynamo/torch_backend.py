@@ -77,8 +77,8 @@ class TTContextCache(ContextCache):
 
 def import_graph(graph: torch.fx.GraphModule):
     with Context() as context:
-        torch_dialect.register_dialect()
-        importer = FxImporter()
+        torch_dialect.register_dialect(context)
+        importer = FxImporter(context=context)
         importer._cc = TTContextCache(
             importer._c, py_attr_tracker=importer._py_attr_tracker
         )
@@ -159,7 +159,7 @@ def lower_to_stable_hlo(module, op=None, enable_ir_printing=False):
 class TorchExecutor(OpByOpExecutor):
     def __init__(
         self,
-        gm,
+        program,
         graph_constants,
         compiler_config=None,
         required_pcc=0.99,
@@ -170,7 +170,7 @@ class TorchExecutor(OpByOpExecutor):
             required_pcc=required_pcc,
             required_atol=required_atol,
         )
-        self.gm = gm
+        self.program = program
         self.graph_constants = (
             (graph_constants,)
             if isinstance(graph_constants, (int, float))
@@ -255,7 +255,7 @@ class TorchExecutor(OpByOpExecutor):
 
             for idx, tensor_meta in enumerate(node.meta["tensor_meta"]):
                 # filter out unused outputs that do not exist in the reduced graph
-                users = self.gm.graph.find_nodes(
+                users = self.program.graph_module.graph.find_nodes(
                     op="call_function", target=operator.getitem
                 )
                 if not any(user_node.args == (node, idx) for user_node in users):
@@ -296,16 +296,16 @@ class TorchExecutor(OpByOpExecutor):
         node_to_tensor = {}
         input_index = 0
         outputs = []
-        num_nodes = len(self.gm.graph.nodes)
+        num_nodes = len(self.program.graph_module.graph.nodes)
         out_degree = {}
-        for idx, node in enumerate(self.gm.graph.nodes):
+        for idx, node in enumerate(self.program.graph_module.graph.nodes):
             print(f"Compiling {idx}/{num_nodes}: {node.target}")
             out_degree[node] = len(node.users)
             if node.op == "placeholder":
                 node_to_tensor[node] = inputs[input_index]
                 input_index += 1
             elif node.op == "get_attr":
-                for buffer in self.gm.named_buffers():
+                for buffer in self.program.graph_module.named_buffers():
                     if buffer[0] == node.target:
                         node_to_tensor[node] = buffer[1]
                         break
@@ -394,6 +394,8 @@ class TorchExecutor(OpByOpExecutor):
             CompileDepth.EXECUTE_OP_BY_OP,
             CompileDepth.COMPILE_OP_BY_OP,
         ):
-            return self.run_gm_op_by_op(*(inputs + self.graph_constants))
+            return self.run_gm_op_by_op(
+                *(self.graph_constants + tuple(self.program.buffers()) + inputs)
+            )
         else:
-            return self.gm(*inputs)
+            return self.program.graph_module(*inputs)

@@ -61,7 +61,7 @@ def _torch_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     with torch.no_grad():
         program, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
     executor = TorchExecutor(
-        gm=program.graph_module,
+        program=program,
         graph_constants=graph_constants,
         compiler_config=compiler_config,
     )
