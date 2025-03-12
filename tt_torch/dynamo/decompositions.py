@@ -37,7 +37,7 @@ def _current(scope: str) -> DecompositionTable:
     if stack:
         return dict(stack[-1])
     else:
-        return dict(DEFAULT_DECOMPOSITION_TABLE)
+        return dict(CUSTOM_DECOMPOSITION_TABLE)
 
 
 @contextlib.contextmanager
@@ -351,12 +351,5 @@ def _get_custom_decopositions() -> DecompositionTable:
     }
 
 
-# Some older APIs still use an op list instead of a table.
-DEFAULT_DECOMPOSITIONS: DecompositionOpsList = _get_default_decomposition_ops()
-
-# The table of default decompositions.
-DEFAULT_DECOMPOSITION_TABLE: DecompositionTable = get_decompositions(
-    DEFAULT_DECOMPOSITIONS
-)
-
-CUSTOM_DECOMPOSITION_TABLE = _get_custom_decopositions()
+CUSTOM_DECOMPOSITION_TABLE = get_decompositions(_get_default_decomposition_ops())
+CUSTOM_DECOMPOSITION_TABLE.update(_get_custom_decopositions())

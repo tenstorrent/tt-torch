@@ -11,8 +11,6 @@ from typing import List, Optional, Union
 from torch.export.graph_signature import InputKind
 
 from .decompositions import (
-    DecompositionTable,
-    DEFAULT_DECOMPOSITION_TABLE,
     CUSTOM_DECOMPOSITION_TABLE,
 )
 
@@ -80,7 +78,7 @@ def constant_fold(gm):
 
 
 def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
-    decompositions = DEFAULT_DECOMPOSITION_TABLE
+    decompositions = torch.export.default_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
 
     # we use the export API to run the decompositions, as this maintains the
