@@ -162,6 +162,7 @@ jobs:
             runs-on: wormhole_b0, name: "yolo", tests: "
               tests/models/yolos/test_yolos.py::test_yolos
               tests/models/yolov3/test_yolov3.py::test_yolov3
+              tests/models/yolov4/test_yolov4.py::test_yolov4
               tests/models/yolov5/test_yolov5.py::test_yolov5
               "
           },
