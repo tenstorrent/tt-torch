@@ -250,6 +250,41 @@ def upsample_nearest_vec(
     return upsample_nearest(input, osize, scales, scales)
 
 
+def avg_pool2d(
+    input: torch.Tensor,
+    kernel_size: Union[int, List[int]],
+    stride: Optional[Union[int, List[int]]] = None,
+    padding: Union[int, List[int]] = 0,
+    ceil_mode: bool = False,
+    count_include_pad: bool = True,
+    divisor_override: Optional[int] = None,
+) -> torch.Tensor:
+
+    if isinstance(kernel_size, int):
+        kernel_size = [kernel_size, kernel_size]
+    if stride is None:
+        stride = kernel_size
+    if isinstance(stride, int):
+        stride = [stride, stride]
+    if isinstance(padding, int):
+        padding = [padding, padding, padding, padding]
+    else:
+        padding = [padding[0], padding[0], padding[1], padding[1]]
+
+    if stride == kernel_size and padding == [0, 0, 0, 0]:
+        return input.mean(dim=[-2, -1], keepdim=True)
+
+    return torch.nn.functional.avg_pool2d(
+        input,
+        kernel_size,
+        stride,
+        padding,
+        ceil_mode,
+        count_include_pad,
+        divisor_override,
+    )
+
+
 # TODO: DO we ever need this?
 def _get_default_decomposition_ops() -> DecompositionOpsList:
     aten = torch.ops.aten
@@ -311,6 +346,8 @@ def _get_custom_decopositions() -> DecompositionTable:
         aten.upsample_linear1d.vec: upsample_linear_vec,
         aten.upsample_bilinear2d.vec: upsample_linear_vec,
         aten.upsample_trilinear3d.vec: upsample_linear_vec,
+        aten.adaptive_avg_pool2d.default: aten._adaptive_avg_pool2d,
+        aten.avg_pool2d.default: avg_pool2d,
     }
 
 
