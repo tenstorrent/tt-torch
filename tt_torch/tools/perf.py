@@ -23,6 +23,8 @@ class Perf:
 
     def __init__(self):
         self.tracy_capture_tool_path = f"{self.get_ttmetal_home_path()}/../tt-metal-build/tools/profiler/bin/capture-release"  # tt-metal-build/tools/profiler/bin/capture-release
+        self.tracy_csvexport_tool_path = f"{self.get_ttmetal_home_path()}/../tt-metal-build/tools/profiler/bin/csvexport-release"
+
         self.profiler_logs_dir = (
             f"{self.get_ttmetal_home_path()}/generated/profiler/.logs"
         )
@@ -62,6 +64,7 @@ class Perf:
         os.environ[
             "TT_METAL_DEVICE_PROFILER"
         ] = "1"  # carries over to other cmds run in shell
+
         # os.environ["TT_METAL_CLEAR_L1"] = "1"
         # os.environ["TT_METAL_DEVICE_PROFILER_DISPATCH"] = "0"
 
@@ -74,3 +77,15 @@ class Perf:
 
         # self.tracy_capture_tool_process.terminate() # doesn't work when shell=True
         # os.killpg(os.getpgid(self.tracy_capture_tool_process.pid), signal.SIGTERM)
+
+    def process_csvexport(self):
+        with open(self.tracy_ops_times_file_path, "w") as csv_file:
+            child_calls = ["CompileProgram", "HWCommandQueue_write_buffer"]
+            child_calls_str = f"-x {','.join(child_calls)}"
+            subprocess.run(
+                f"{self.tracy_csvexport_tool_path} -u -p TT_DNN {child_calls_str} {self.tracy_file_path}",
+                shell=True,
+                check=True,
+                stdout=csv_file,
+                stderr=subprocess.DEVNULL,
+            )

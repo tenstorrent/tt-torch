@@ -15,6 +15,7 @@ def main():
         ["-svv", "tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]"]
     )
     # pytest.main(["-svv", "tests/models/mnist/test_mnist.py::test_mnist_train[op_by_op-eval]"])
+    cvar.process_csvexport()
 
 
 if __name__ == "__main__":
