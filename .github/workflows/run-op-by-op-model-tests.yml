@@ -111,9 +111,13 @@ jobs:
           counter=$((counter + 1))
 
           pytest_log="test_${counter}.log"
-          echo "====== BEGIN LOG: $test_case ======"
-          pytest -svv -x --loop=10 "$test_case" --op_by_op_torch
-          echo "====== END LOG: $test_case ========"
+
+          for i in {1..10}; do
+            echo "====== BEGIN LOG: $test_case ======"
+            pytest -svv -x "$test_case" --op_by_op_torch
+            echo "====== END LOG: $test_case ========"
+          done
+
           exit_code=$?
 
           echo "====== BEGIN LOG: $test_case ======" >> full_job_output.log
