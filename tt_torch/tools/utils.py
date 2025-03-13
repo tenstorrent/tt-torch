@@ -643,6 +643,18 @@ def serialize_enum(enum_value):
 
 class FileManager:
     @staticmethod
+    def create_file(file_path):
+        try:
+            if not FileManager.check_directory_exists(os.path.dirname(file_path)):
+                FileManager.create_directory(os.path.dirname(file_path))
+            with open(file_path, "w") as file:
+                file.write("")
+        except OSError as e:
+            raise OSError(f"error creating file: {e}")
+        except Exception as e:
+            raise Exception(f"an unexpected error occurred: {e}")
+
+    @staticmethod
     def create_directory(directory_path):
         try:
             os.makedirs(directory_path)
@@ -680,6 +692,7 @@ class FileManager:
         except Exception as e:
             raise Exception(f"an unexpected error occurred: {e}")
 
+    @staticmethod
     def copy_file(dest_file_path, src_file_path):
         try:
             shutil.copy2(src_file_path, dest_file_path)
@@ -693,3 +706,25 @@ class FileManager:
             )
         except Exception as e:
             raise Exception(f"an unexpected error occurred: {e}")
+
+    @staticmethod
+    def check_file_exists(file_path):
+        exists = False
+        try:
+            if os.path.exists(file_path):
+                exists = True
+        except Exception as e:
+            raise Exception(f"an unexpected error occurred: {e}")
+
+        return exists
+
+    @staticmethod
+    def check_directory_exists(directory_path):
+        exists = False
+        try:
+            if os.path.isdir(directory_path):
+                exists = True
+        except Exception as e:
+            raise Exception(f"an unexpected error occurred: {e}")
+
+        return exists
