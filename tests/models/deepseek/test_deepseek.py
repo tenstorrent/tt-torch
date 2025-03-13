@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import pytest
+import os
 from unittest.mock import patch
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 from transformers.dynamic_module_utils import get_imports
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig, CompileDepth
+from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
 def fixed_get_imports(filename: str | os.PathLike) -> list[str]:
@@ -58,17 +59,25 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.parametrize("model_name", ["deepseek-ai/DeepSeek-V3"])
-@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+@pytest.mark.parametrize(
+    "op_by_op",
+    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
+    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+)
 def test_deepseek(record_property, model_name, mode, op_by_op):
     cc = CompilerConfig()
+    cc.enable_consteval = False
+    # cc.consteval_parameters = True
     if op_by_op:
-        cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
-
+        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
+        if op_by_op == OpByOpBackend.STABLEHLO:
+            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
     tester = ThisTester(
         model_name,
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
+        aot_autograd=True,
     )
     results = tester.test_model()
     tester.finalize()

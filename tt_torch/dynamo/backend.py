@@ -6,7 +6,7 @@ import os
 import tt_mlir
 import sys
 import torch_mlir
-
+from torch._dynamo.backends.common import aot_autograd, aot_module_simplified
 from tt_torch.dynamo.torch_backend import (
     TorchExecutor,
     import_graph,
@@ -23,8 +23,8 @@ from torch_mlir.compiler_utils import (
     run_pipeline_with_repro_report,
     lower_mlir_module,
 )
-from tt_torch.dynamo.passes import pass_pipeline
-from tt_torch.dynamo.executor import Executor
+from tt_torch.dynamo.passes import pass_pipeline, pass_pipeline_aot_autograd
+from tt_torch.dynamo.executor import Executor, TensorHandlingExecutor
 from tt_torch.tools.utils import (
     OpByOpBackend,
     CompilerConfig,
@@ -65,11 +65,60 @@ def _torch_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     return executor
 
 
+def _torch_backend_aot_autograd(
+    gm: torch.fx.GraphModule, example_inputs, compiler_config
+):
+    with torch.no_grad():
+        gm, graph_constants = pass_pipeline_aot_autograd(
+            gm, example_inputs, compiler_config
+        )
+    executor = TorchExecutor(
+        gm=gm, graph_constants=graph_constants, compiler_config=compiler_config
+    )
+    return executor
+
+
 def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     with torch.no_grad():
         gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
 
     module = import_graph(gm.graph)
+    verify_ir(module)
+
+    dump_module(module=module, name="Torch FX module", compiler_config=compiler_config)
+
+    if compiler_config.profile_ops:
+        compiler_config.set_torch_mlir_module(module.operation.get_asm())
+
+    run_pipeline_with_repro_report(
+        module,
+        f"builtin.module(torchdynamo-export-to-torch-backend-pipeline)",
+        "Lowering TorchFX IR -> Torch Backend IR",
+        compiler_config.dump_debug,
+    )
+    dump_module(
+        module=module, name="Torch Backend module", compiler_config=compiler_config
+    )
+
+    lower_mlir_module(False, OutputType.STABLEHLO, module)
+
+    dump_module(module=module, name="StableHLO module", compiler_config=compiler_config)
+
+    return module, gm, graph_constants
+
+
+def torch_to_shlo_aot_autograd(
+    gm: torch.fx.GraphModule, example_inputs, compiler_config
+):
+    print(gm)
+    breakpoint()
+    with torch.no_grad():
+        gm, graph_constants = pass_pipeline_aot_autograd(
+            gm, example_inputs, compiler_config
+        )
+
+    module = import_graph(gm.graph)
+    breakpoint()
     verify_ir(module)
 
     dump_module(module=module, name="Torch FX module", compiler_config=compiler_config)
@@ -123,6 +172,54 @@ def _base_backend(gm, example_inputs, compiler_config):
     binary = shlo_to_flatbuffer(executor, shlo, compiler_config)
     executor.set_binary(binary)
     return executor
+
+
+def _base_backend_aot_autograd(gm, example_inputs, compiler_config):
+    shlo, gm, graph_constants = torch_to_shlo_aot_autograd(
+        gm, example_inputs, compiler_config
+    )
+    executor = Executor(gm, graph_constants, compiler_config)
+
+    if compiler_config.compile_depth == CompileDepth.STABLEHLO:
+        return executor
+
+    binary = shlo_to_flatbuffer(executor, shlo, compiler_config)
+    executor.set_binary(binary)
+    return executor
+
+
+def backend_aot_autograd(gm, example_inputs, options=None):
+    assert isinstance(gm, torch.fx.GraphModule), "Backend only supports torch graphs"
+
+    if options is None:
+        options = CompilerConfig()
+
+    # Apply environment overrides at start of compilation to allow overriding what was set in the test
+    options.apply_environment_overrides()
+    if (
+        options.compile_depth == CompileDepth.COMPILE_OP_BY_OP
+        or options.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
+    ):
+        if options.op_by_op_backend == OpByOpBackend.TORCH:
+            # run torch graph op-by-op
+            executor = _torch_backend_aot_autograd(
+                gm, example_inputs, compiler_config=options
+            )
+        else:
+            # op_by_op_backend == OpByOpBackend.STABLEHLO
+            # convert torch to stablehlo, then run stablehlo op-by-op
+            module, gm, graph_constants = torch_to_shlo_aot_autograd(
+                gm, example_inputs, compiler_config=options
+            )
+            executor = _shlo_backend(
+                shlo=module,
+                example_inputs=example_inputs,
+                compiler_config=options,
+                gm=gm,
+                graph_constants=graph_constants,
+            )
+    executor = _base_backend_aot_autograd(gm, example_inputs, compiler_config=options)
+    return TensorHandlingExecutor(compiler)
 
 
 def backend(gm, example_inputs, options=None):

@@ -255,3 +255,29 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     reduce_graph(gm)
     run_shape_prop(gm, example_inputs + constant_inputs)
     return gm, constant_inputs
+
+
+def pass_pipeline_aot_autograd(
+    gm: torch.fx.GraphModule, example_inputs, compiler_config
+):
+    constants = {}
+    gm = bypass_redundant_getitem(gm)
+    gm, parameters = inline_parameters(gm)
+    if compiler_config.remove_embedded_constants:
+        gm, embedded_constants = inline_constants(gm, example_inputs)
+    else:
+        embedded_constants = {}
+
+    constant_inputs = order_constant_inputs(
+        gm, parameters, constants, embedded_constants
+    )
+
+    # some constant folding operations are preformed by changing tensor strides, we
+    # want all the strides to be 1, so make them contiguous
+    for (i, t) in enumerate(constant_inputs):
+        if not t.is_contiguous():
+            constant_inputs[i] = t.contiguous()
+
+    reduce_graph(gm)
+    run_shape_prop(gm, example_inputs + constant_inputs)
+    return gm, constant_inputs

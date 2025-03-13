@@ -10,13 +10,19 @@ import numpy as np
 import collections
 import re
 from typing import List, Dict, Tuple
-from tt_torch.dynamo.backend import backend
+from torch._functorch.aot_autograd import aot_module
+from tt_torch.dynamo.backend import backend, backend_aot_autograd
 from tt_torch.onnx_compile import compile_onnx
 from tt_torch.tools.utils import CompilerConfig, CompileDepth
 import json
 from onnx import version_converter
 from pathlib import Path
 from tt_torch.tools.verify import verify_against_golden
+from tt_torch.dynamo.decompositions import (
+    DecompositionTable,
+    DEFAULT_DECOMPOSITION_TABLE,
+    CUSTOM_DECOMPOSITION_TABLE,
+)
 
 
 class ModelTester:
@@ -32,6 +38,7 @@ class ModelTester:
         assert_atol=True,
         record_property_handle=None,
         model_group="generality",
+        aot_autograd=False,
     ):
         if mode not in ["train", "eval"]:
             raise ValueError(f"Current mode is not supported: {mode}")
@@ -74,6 +81,7 @@ class ModelTester:
 
         # configs should be set at test start, so they can be flushed immediately
         self.record_property("config", {"compiler_config": compiler_config.to_dict()})
+        self.aot_autograd = aot_autograd
 
     def _load_model(self):
         raise NotImplementedError(
@@ -134,9 +142,29 @@ class ModelTester:
 
     def compile_model(self, model, compiler_config):
         # Compile model
-        model = torch.compile(
-            model, backend=backend, dynamic=False, options=compiler_config
-        )
+        if self.aot_autograd:
+            from torch._functorch.aot_autograd import aot_module
+
+            decomposition_table = DEFAULT_DECOMPOSITION_TABLE
+            decomposition_table.update(CUSTOM_DECOMPOSITION_TABLE)
+
+            model = aot_module(
+                model,
+                fw_compiler=lambda *args, **kwargs: backend_aot_autograd(
+                    *args, options=compiler_config, **kwargs
+                ),
+                bw_compiler=lambda *args, **kwargs: backend_aot_autograd(
+                    *args, options=compiler_config, **kwargs
+                ),
+                decompositions=decomposition_table,
+            )
+            # model = torch.compile(
+            #     model, backend=backend_aot_autograd, dynamic=False, options=compiler_config
+            # )
+        else:
+            model = torch.compile(
+                model, backend=backend, dynamic=False, options=compiler_config
+            )
         self.compiled_model = model
         return self.compiled_model
 

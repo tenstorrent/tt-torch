@@ -57,6 +57,19 @@ def execute_process(receiver, sender, exec_event):
     sys.exit(0)
 
 
+class TensorHandlingExecutor:
+    def __init__(self, real_executor):
+        self.real_executor = real_executor
+
+    def __call__(self, *args, **kwargs):
+        result = self.real_executor(*args, **kwargs)
+        # Convert result to standard tensors
+        if isinstance(result, torch.Tensor):
+            return result.detach().clone()
+        # Handle other container types recursively
+        return result
+
+
 class Executor:
     def __init__(
         self,

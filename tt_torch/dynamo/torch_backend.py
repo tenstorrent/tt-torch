@@ -311,12 +311,23 @@ class TorchExecutor(OpByOpExecutor):
 
         return outputs
 
+    def handle_output(self, output):
+        # Convert any tensor subclasses to regular tensors
+        if isinstance(output, torch.Tensor):
+            return output.detach().clone()
+        elif isinstance(output, (list, tuple)):
+            return type(output)(self.handle_output(x) for x in output)
+        elif isinstance(output, dict):
+            return {k: self.handle_output(v) for k, v in output.items()}
+        return output
+
     def __call__(self, *inputs):
         inputs = self.typecast_inputs(inputs)
         if self.compiler_config.compile_depth in (
             CompileDepth.EXECUTE_OP_BY_OP,
             CompileDepth.COMPILE_OP_BY_OP,
         ):
-            return self.run_gm_op_by_op(*(inputs + self.graph_constants))
+            outputs = self.run_gm_op_by_op(*(inputs + self.graph_constants))
+            return self.handle_output(outputs)
         else:
             return self.gm(*inputs)

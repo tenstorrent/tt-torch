@@ -63,6 +63,7 @@ def test_resnet(record_property, mode, op_by_op):
         assert_pcc=True,
         assert_atol=False,
         record_property_handle=record_property,
+        aot_autograd=True,
     )
 
     results = tester.test_model()
