@@ -18,7 +18,6 @@ def main():
     cvar = perf.Perf()
     cvar.setup_tracy_server()
 
-    print("Triggering test")
     if use_test_subprocess:
         # canonical subprocess invocation
         env_vars = os.environ.copy()
@@ -41,26 +40,13 @@ def main():
         signal.signal(signal.SIGINT, signal_handler)
         signal.signal(signal.SIGTERM, signal_handler)
         testProcess.communicate()  # block until the test process exits (tracy server should then auto disconnect)
-        import time
-
-        time.sleep(0.1)
-    else:
-        # fixture "like" invocation. Orchestrator runs in the same proc as the test
-        # running from the same process as main causes deadlock
-        # also req. port override to 8086 (?)
-
-        # synchronous / blocking invocations
-        pytest.main(
-            ["-svv", "tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]"]
-        )
-    # pytest.main(["-svv", "tests/models/mnist/test_mnist.py::test_mnist_train[op_by_op-eval]"])
 
     cvar.close_capture_tool_process()
     cvar.process_csvexport()
-
     cvar.copy_files_to_tt_metal()
     cvar.run_ttmetal_process_ops()
     cvar.post_process_ops()
+    cvar.cleanup()
 
 
 if __name__ == "__main__":
