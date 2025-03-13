@@ -6,6 +6,12 @@
 # python3 tt_torch/tools/dummy_orchestrator.py
 import perf
 import pytest
+import subprocess
+import os
+import signal
+import sys
+
+use_test_subprocess = True
 
 
 def main():
@@ -13,13 +19,48 @@ def main():
     cvar.setup_tracy_server()
 
     print("Triggering test")
-    pytest.main(
-        ["-svv", "tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]"]
-    )  # synchronous and blocking
+    if use_test_subprocess:
+        # canonical subprocess invocation
+        env_vars = os.environ.copy()
+        test_command = (
+            "pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]"
+        )
+        # test_command = "pytest -svv tests/torch/test_basic.py::test_linear"
+
+        testProcess = subprocess.Popen(
+            [test_command], shell=True, env=env_vars, preexec_fn=os.setsid
+        )
+
+        def signal_handler(sig, frame):
+            print("sig handler got invoked")
+            os.killpg(os.getpgid(testProcess.pid), signal.SIGTERM)
+            cvar.tracy_capture_tool_process.terminate()
+            cvar.tracy_capture_tool_process.communicate()
+            sys.exit(3)
+
+        signal.signal(signal.SIGINT, signal_handler)
+        signal.signal(signal.SIGTERM, signal_handler)
+        testProcess.communicate()  # block until the test process exits (tracy server should then auto disconnect)
+        import time
+
+        time.sleep(0.1)
+    else:
+        # fixture "like" invocation. Orchestrator runs in the same proc as the test
+        # running from the same process as main causes deadlock
+        # also req. port override to 8086 (?)
+
+        # synchronous / blocking invocations
+        pytest.main(
+            ["-svv", "tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]"]
+        )
     # pytest.main(["-svv", "tests/models/mnist/test_mnist.py::test_mnist_train[op_by_op-eval]"])
 
     cvar.close_capture_tool_process()
     cvar.process_csvexport()
+
+    cvar.copy_files_to_tt_metal()
+    cvar.run_ttmetal_process_ops()
+    cvar.post_process_ops()
 
 
 if __name__ == "__main__":
