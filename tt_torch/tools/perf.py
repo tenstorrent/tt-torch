@@ -33,7 +33,9 @@ class Perf:
         self.tracy_file_path = "tracy_profile_log_host.tracy"
         self.tracy_ops_times_file_path = "tracy_ops_times.csv"
         self.tracy_ops_data_file_path = "tracy_ops_data.csv"
-        self.profiler_device_ops_perf_trace_file_path = "device_ops_perf_trace.csv"
+        self.profiler_device_ops_perf_trace_file_path = (
+            "results/perf/device_ops_perf_trace.csv"
+        )
 
         self.profiler_device_side_log_path = (
             f"install/tt-metal/generated/profiler/.logs/profile_log_device.csv"
@@ -187,12 +189,17 @@ class Perf:
             for row in perf_data:
                 perf_writer.writerow(row)
 
+        FileManager.create_file(self.profiler_device_ops_perf_trace_file_path)
+
         # Trim out non-loc associated ops (And other post processing)
         with open(self.profiler_csv_file_path, "r") as perf_file, open(
             self.profiler_device_ops_perf_trace_file_path, "w+"
         ) as report_file:
             perf_reader = csv.DictReader(perf_file)
-            ops_writer = csv.DictWriter(report_file, perf_reader.fieldnames)
+            headers = perf_reader.fieldnames
+            headers = [headers[-1]] + headers[:-1]  # move LOC to first column
+
+            ops_writer = csv.DictWriter(report_file, headers)
             ops_writer.writeheader()
             for row in perf_reader:
                 if "loc" in row["LOC"]:
