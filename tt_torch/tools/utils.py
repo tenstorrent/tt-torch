@@ -643,21 +643,6 @@ def serialize_enum(enum_value):
 
 class FileManager:
     @staticmethod
-    def create_file(file_path):
-        self.logging.debug(f"creating file={file_path}")
-
-        try:
-            if not self.check_directory_exists(os.path.dirname(file_path)):
-                self.create_directory(os.path.dirname(file_path))
-
-            with open(file_path, "w") as file:
-                file.write("")
-        except OSError as e:
-            raise OSError(f"error creating file: {e}")
-        except Exception as e:
-            raise Exception(f"an unexpected error occurred: {e}")
-
-    @staticmethod
     def create_directory(directory_path):
         try:
             os.makedirs(directory_path)
@@ -691,6 +676,20 @@ class FileManager:
         except PermissionError:
             raise PermissionError(
                 f"insufficient permissions to remove directory '{directory_path}'"
+            )
+        except Exception as e:
+            raise Exception(f"an unexpected error occurred: {e}")
+
+    def copy_file(dest_file_path, src_file_path):
+        try:
+            shutil.copy2(src_file_path, dest_file_path)
+        except FileNotFoundError as e:
+            raise FileNotFoundError(
+                f"the source file does not exist: '{src_file_path}'"
+            )
+        except PermissionError as e:
+            raise PermissionError(
+                f"permission denied: '{src_file_path}' or '{dest_file_path}'"
             )
         except Exception as e:
             raise Exception(f"an unexpected error occurred: {e}")
