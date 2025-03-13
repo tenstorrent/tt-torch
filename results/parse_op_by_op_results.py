@@ -29,6 +29,10 @@ def generate_status_report():
     model_names = []
 
     for json_file in json_files:
+        # indicator that the JSON is a model report, not an op report
+        if "_unique_ops.json" not in json_file:
+            continue
+
         # Get model name from the parent directory of the json file
         model_name = (
             json_file.strip("_unique_ops.json")
@@ -188,6 +192,10 @@ def process_json_files():
 
     worksheet = workbook.add_worksheet("Per Model Compile Depths")
     for json_file in json_files:
+        # indicator that the JSON is a model report, not an op report
+        if "_unique_ops.json" not in json_file:
+            continue
+
         with open(json_file, "r") as f:
             data = json.load(f)
 
