@@ -67,12 +67,12 @@ jobs:
             "
           },
           {
+            # Mobilenet failing: Issue: https://github.com/tenstorrent/tt-torch/issues/431
+            # tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_small]
+            # tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_large]
             runs-on: wormhole_b0, name: "eval_5", tests: "
                 tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io[full-eval]
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v2]
-                # Mobilenet failing: Issue: https://github.com/tenstorrent/tt-torch/issues/431
-                # tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_small]
-                # tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_large]
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet18]
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet34]
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet50]
