@@ -226,9 +226,32 @@ class ModelTester:
         assert type(outputs) == type(
             golden
         ), "Expecting the type of both calculated and golden to be identical. Whether that be a tensor, list, dictonary, etc."
+
+        golden_tensors, output_tensors = (), ()
+
+        if isinstance(golden, (tuple, list)):
+            for golden_item, output_item in zip(golden, outputs):
+                assert type(golden_item) == type(
+                    output_item
+                ), "Expecting the type of each item in outputs and golden to be identical."
+                if isinstance(golden_item, dict):
+                    # Verify the keys are the same and extract outputs from dict values
+                    sorted_golden = sorted(golden_item.items())
+                    sorted_outputs = sorted(output_item.items())
+                    for (g_k, g_v), (o_k, o_v) in zip(sorted_golden, sorted_outputs):
+                        assert g_k == o_k, f"Keys do not match: {g_k} vs {o_k}"
+                        golden_tensors += self._extract_outputs(g_v)
+                        output_tensors += self._extract_outputs(o_v)
+                else:
+                    golden_tensors += self._extract_outputs(golden_item)
+                    output_tensors += self._extract_outputs(output_item)
+        else:
+            golden_tensors = self._extract_outputs(golden)
+            output_tensors = self._extract_outputs(outputs)
+
         pccs, atols = verify_against_golden(
-            self._extract_outputs(golden),
-            self._extract_outputs(outputs),
+            golden_tensors,
+            output_tensors,
             self.assert_pcc,
             self.assert_atol,
             self.required_pcc,
