@@ -21,7 +21,7 @@ class Perf:
         return os.environ.get(
             "TT_METAL_HOME",
             "third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal",
-        )  # /localdev/jameszianxu/tracy/tt-torch/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal
+        )
 
     def __init__(self):
         self.tracy_capture_tool_path = f"{self.get_ttmetal_home_path()}/../tt-metal-build/tools/profiler/bin/capture-release"  # tt-metal-build/tools/profiler/bin/capture-release
@@ -33,9 +33,12 @@ class Perf:
         self.tracy_file_path = "tracy_profile_log_host.tracy"
         self.tracy_ops_times_file_path = "tracy_ops_times.csv"
         self.tracy_ops_data_file_path = "tracy_ops_data.csv"
-        self.profiler_device_ops_times_file_path = "device_ops_times.csv"
+        self.profiler_device_ops_perf_trace_file_path = "device_ops_perf_trace.csv"
 
-        self.profiler_device_side_log_path = f"{self.get_ttmetal_home_path()}/generated/profiler/.logs/profile_log_device.csv"
+        self.profiler_device_side_log_path = (
+            f"install/tt-metal/generated/profiler/.logs/profile_log_device.csv"
+        )
+        self.expected_profiler_device_side_log_path = f"{self.get_ttmetal_home_path()}/generated/profiler/.logs/profile_log_device.csv"
         self.profiler_csv_file_path = f"{self.get_ttmetal_home_path()}/generated/profiler/reports/ops_perf_results.csv"
 
         FileManager.remove_directory(self.profiler_logs_dir)
@@ -68,12 +71,9 @@ class Perf:
 
         print(f"selected port={port}")
 
-        os.environ[
-            "TT_METAL_DEVICE_PROFILER"
-        ] = "1"  # carries over to other cmds run in shell
-
+        os.environ["TT_METAL_DEVICE_PROFILER"] = "1"
         os.environ["TT_METAL_CLEAR_L1"] = "1"
-        os.environ["TT_METAL_DEVICE_PROFILER_DISPATCH"] = "1"  # don't show dispatch
+        os.environ["TT_METAL_DEVICE_PROFILER_DISPATCH"] = "0"
 
         tracy_capture_tool_command = (
             f"{self.tracy_capture_tool_path} -o {self.tracy_file_path} -f -p {port}"
@@ -93,7 +93,7 @@ class Perf:
 
         try:
             # block until tracy capture tool exits with T/O
-            self.tracy_capture_tool_process.terminate()
+            # self.tracy_capture_tool_process.terminate()
             self.tracy_capture_tool_process.communicate(timeout=15)
         except subprocess.TimeoutExpired as e:
             self.tracy_capture_tool_process.terminate()
@@ -101,6 +101,7 @@ class Perf:
             raise Exception(
                 f"No profiling data could be captured. Please make sure you are on the correct build"
             )
+
         print("done closing capture tool process")
 
     def process_csvexport(self):
@@ -136,6 +137,12 @@ class Perf:
         FileManager.copy_file(self.profiler_logs_dir, self.tracy_ops_times_file_path)
         FileManager.copy_file(self.profiler_logs_dir, self.tracy_ops_data_file_path)
 
+        FileManager.copy_file(
+            self.expected_profiler_device_side_log_path,
+            self.profiler_device_side_log_path,
+        )
+        FileManager.copy_file(self.profiler_logs_dir, self.tracy_ops_data_file_path)
+
     def run_ttmetal_process_ops(self):
         # need to temporary add these sys paths so TTRT whls can find the `process_ops` function
         # ideally we want process_ops to be in a standalone module we can import from tt_metal
@@ -145,8 +152,8 @@ class Perf:
         from tt_metal.tools.profiler.process_ops_logs import process_ops
 
         process_ops(
-            None, None, False
-        )  # where does this expect the files to be? output folder
+            None, None, False, False  # generate date & device only
+        )  # where does this expect the files to be?
 
     def post_process_ops(self):
         # Add post-processing steps to insert location data into the ops_perf data file
@@ -180,20 +187,18 @@ class Perf:
             for row in perf_data:
                 perf_writer.writerow(row)
 
-        selected_fields = [
-            "OP CODE",
-            "OP TYPE",
-            "LOC",
-            "HOST START TS",
-            "DEVICE KERNEL DURATION PER CORE AVG [ns]",
-        ]
+        # Trim out non-loc associated ops (And other post processing)
         with open(self.profiler_csv_file_path, "r") as perf_file, open(
-            self.profiler_device_ops_times_file_path, "w+"
+            self.profiler_device_ops_perf_trace_file_path, "w+"
         ) as report_file:
             perf_reader = csv.DictReader(perf_file)
-
-            ops_writer = csv.DictWriter(report_file, selected_fields)
+            ops_writer = csv.DictWriter(report_file, perf_reader.fieldnames)
             ops_writer.writeheader()
             for row in perf_reader:
                 if "loc" in row["LOC"]:
-                    ops_writer.writerow({k: row[k] for k in selected_fields})
+                    ops_writer.writerow(row)
+
+    def cleanup(self):
+        FileManager.remove_file(self.tracy_ops_times_file_path)
+        FileManager.remove_file(self.tracy_ops_data_file_path)
+        FileManager.remove_file(self.tracy_file_path)
