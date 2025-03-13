@@ -94,7 +94,7 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
 
     dump_module(module=module, name="StableHLO module", compiler_config=compiler_config)
 
-    return module, gm, graph_constants
+    return module, program, graph_constants
 
 
 def shlo_to_flatbuffer(executor, module, compiler_config):
@@ -117,8 +117,8 @@ def shlo_to_flatbuffer(executor, module, compiler_config):
 
 
 def _base_backend(gm, example_inputs, compiler_config):
-    shlo, gm, graph_constants = torch_to_shlo(gm, example_inputs, compiler_config)
-    executor = Executor(gm, graph_constants, compiler_config)
+    shlo, program, graph_constants = torch_to_shlo(gm, example_inputs, compiler_config)
+    executor = Executor(program, graph_constants, compiler_config)
 
     if compiler_config.compile_depth == CompileDepth.STABLEHLO:
         return executor

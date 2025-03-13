@@ -268,21 +268,14 @@ def avg_pool2d(
         stride = [stride, stride]
     if isinstance(padding, int):
         padding = [padding, padding, padding, padding]
-    else:
-        padding = [padding[0], padding[0], padding[1], padding[1]]
 
-    if stride == kernel_size and padding == [0, 0, 0, 0]:
+    input_size = list(input.shape[-len(stride) :])
+    if stride == kernel_size == input_size and padding == [0, 0, 0, 0]:
         return input.mean(dim=[-2, -1], keepdim=True)
 
-    return torch.nn.functional.avg_pool2d(
-        input,
-        kernel_size,
-        stride,
-        padding,
-        ceil_mode,
-        count_include_pad,
-        divisor_override,
-    )
+    # If we call the regular torch.nn.functional.avg_pool2d, it will infinitely recurse into this function.
+    # Returning NotImplemented allows the tracer to use the default implementation.
+    return NotImplemented
 
 
 # TODO: DO we ever need this?

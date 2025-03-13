@@ -154,7 +154,9 @@ class Executor:
             assert (
                 self.program.graph_module != None
             ), "Cannot run base executor without torch graph"
-            return self.program.graph_module(*inputs)
+            return self.program.graph_module(
+                *(self.graph_constants + tuple(self.program.buffers()) + inputs)
+            )
 
         assert self.binary is not None
         if self.compiler_config.typecast_inputs:
