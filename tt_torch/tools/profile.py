@@ -15,15 +15,13 @@ from argparse import ArgumentParser
 
 def main(test_command):
     cvar = perf.Perf()
+    cvar.assert_perf_build()
     cvar.setup_tracy_server()
 
-    # canonical subprocess invocation
     env_vars = os.environ.copy()
-    # test_command = (
-    #     "pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]"
-    # )
-    # test_command = "pytest -svv tests/torch/test_basic.py::test_linear"
 
+    # Test process must not run in main process, or else tracy capture will
+    # deadlock this.
     testProcess = subprocess.Popen(
         [test_command], shell=True, env=env_vars, preexec_fn=os.setsid
     )

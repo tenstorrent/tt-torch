@@ -49,7 +49,15 @@ class Perf:
         FileManager.remove_file(self.tracy_ops_times_file_path)
         FileManager.remove_file(self.tracy_ops_data_file_path)
 
-    def setup_tracy_server(self) -> None:
+    def assert_perf_build(self):
+        assert FileManager.check_file_exists(
+            self.tracy_capture_tool_path
+        ), f"perf tool={self.tracy_capture_tool_path} does not exist - rebuild with ENABLE_PERF_TRACE"
+        assert FileManager.check_file_exists(
+            self.tracy_csvexport_tool_path
+        ), f"perf tool={self.tracy_csvexport_tool_path} does not exist - rebuild with ENABLE_PERF_TRACE"
+
+    def setup_tracy_server(self):
         def get_available_port():
             ip = socket.gethostbyname(socket.gethostname())
 
