@@ -10,17 +10,18 @@ import subprocess
 import os
 import signal
 import sys
+from argparse import ArgumentParser
 
 
-def main():
+def main(test_command):
     cvar = perf.Perf()
     cvar.setup_tracy_server()
 
     # canonical subprocess invocation
     env_vars = os.environ.copy()
-    test_command = (
-        "pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]"
-    )
+    # test_command = (
+    #     "pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]"
+    # )
     # test_command = "pytest -svv tests/torch/test_basic.py::test_linear"
 
     testProcess = subprocess.Popen(
@@ -47,4 +48,22 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    """
+    This script is used to wrap pytests and generate Tracy profiling data for the tests,
+    gathering device-side performance data associated with individual torchfx ops.
+
+    Usage:
+        python profile.py test_command
+
+    Examples:
+        python tt_torch/tools/profile.py "pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]"
+
+    Notes:
+        - You must provide either --excel_path or --json_path, but not both.
+    """
+
+    parser = ArgumentParser()
+    parser.add_argument("test_command", type=str, help="The test command to run")
+    args = parser.parse_args()
+
+    main(args.test_command)
