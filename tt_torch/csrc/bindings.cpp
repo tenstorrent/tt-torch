@@ -22,10 +22,8 @@ static tt::target::DataType torch_scalar_type_to_dt(torch::ScalarType st) {
     return tt::target::DataType::UInt8;
   case torch::ScalarType::Short:
     return tt::target::DataType::UInt16;
-  case torch::ScalarType::UInt32:
-    return tt::target::DataType::UInt32;
   case torch::ScalarType::Int:
-    return tt::target::DataType::Int32;
+    return tt::target::DataType::UInt32;
   case torch::ScalarType::Long:
     return tt::target::DataType::UInt32;
   case torch::ScalarType::Half:
@@ -56,8 +54,6 @@ static torch::ScalarType dt_to_torch_scalar_type(tt::target::DataType df) {
   case tt::target::DataType::UInt16:
     return torch::ScalarType::Short;
   case tt::target::DataType::UInt32:
-    return torch::ScalarType::UInt32;
-  case tt::target::DataType::Int32:
     return torch::ScalarType::Int;
   case tt::target::DataType::Float16:
     return torch::ScalarType::Half;
