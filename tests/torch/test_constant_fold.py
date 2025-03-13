@@ -38,10 +38,6 @@ def test_multiple_ops():
 
 
 def test_interp():
-    pytest.skip(
-        "Interpolation not decomposing into a pattern which can be lowered to TTNN"
-    )
-
     class Basic(nn.Module):
         def __init__(self):
             super().__init__()
@@ -54,7 +50,6 @@ def test_interp():
     inH = 5
     inW = 5
     inC = 1
-    scale_factor = 3
 
     input_shape = (1, inC, inH, inW)
     small = (

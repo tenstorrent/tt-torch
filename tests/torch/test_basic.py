@@ -198,19 +198,6 @@ def test_linear_with_bias():
     verify_module(Basic(), input_shapes=[(32, 32)])
 
 
-def test_linear_with_bias_no_embedded_constants():
-    class Basic(nn.Module):
-        def __init__(self):
-            super().__init__()
-            self.linear_a = nn.Linear(32, 32)
-
-        def forward(self, x):
-            x = self.linear_a(x)
-            return x
-
-    verify_module(Basic(), input_shapes=[(32, 32)])
-
-
 @pytest.mark.parametrize(
     ("input_type"),
     [
