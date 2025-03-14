@@ -49,11 +49,13 @@ def dump_module(module, name, compiler_config):
         print(module, file=sys.stderr)
 
 
-def _shlo_backend(shlo, example_inputs, compiler_config, gm=None, graph_constants=None):
+def _shlo_backend(
+    shlo, example_inputs, compiler_config, program=None, graph_constants=None
+):
     executor = StablehloExecutor(module=shlo, compiler_config=compiler_config)
-    if gm is not None:
+    if program is not None:
         # original input is a torch graph
-        executor.add_gm(gm, graph_constants)
+        executor.add_program(program, graph_constants)
     return executor
 
 
@@ -147,14 +149,14 @@ def backend(gm, example_inputs, options=None):
         else:
             # op_by_op_backend == OpByOpBackend.STABLEHLO
             # convert torch to stablehlo, then run stablehlo op-by-op
-            module, gm, graph_constants = torch_to_shlo(
+            module, program, graph_constants = torch_to_shlo(
                 gm, example_inputs, compiler_config=options
             )
             return _shlo_backend(
                 shlo=module,
                 example_inputs=example_inputs,
                 compiler_config=options,
-                gm=gm,
+                program=program,
                 graph_constants=graph_constants,
             )
     return _base_backend(gm, example_inputs, compiler_config=options)
