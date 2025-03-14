@@ -6,10 +6,12 @@ import onnx
 import onnxruntime as ort
 import tt_mlir
 import time
+import pickle
 import faulthandler
 import sys
 import re
 import tempfile
+import os
 import multiprocessing as mp
 from tt_torch.tools.utils import (
     CompileDepth,
@@ -19,6 +21,29 @@ from tt_torch.tools.utils import (
     OpCompilationStatus,
 )
 from typing import Union
+
+
+def get_tensor_size(tensor):
+    """Calculate the memory size of a tensor in bytes."""
+    if isinstance(tensor, torch.Tensor):
+        return tensor.element_size() * tensor.nelement()
+    return 0
+
+
+def get_inputs_size(inputs):
+    """Calculate the total memory size of inputs in bytes."""
+    total_size = 0
+
+    if isinstance(inputs, torch.Tensor):
+        total_size += get_tensor_size(inputs)
+    elif isinstance(inputs, (list, tuple)):
+        for item in inputs:
+            total_size += get_inputs_size(item)
+    elif isinstance(inputs, dict):
+        for item in inputs.values():
+            total_size += get_inputs_size(item)
+
+    return total_size
 
 
 def compile_process(receiver, sender, ttir_event, ttnn_event, json_event):
@@ -36,24 +61,61 @@ def compile_process(receiver, sender, ttir_event, ttnn_event, json_event):
     sys.exit(0)
 
 
+def print_tensor_shapes(inputs, prefix=""):
+    """Print the shapes and dtypes of tensor inputs for debugging."""
+    if isinstance(inputs, torch.Tensor):
+        print(f"{prefix}dtype = {inputs.dtype}, shape = {inputs.shape}")
+    elif isinstance(inputs, (list, tuple)):
+        print(f"{prefix}List/Tuple of length {len(inputs)}")
+        for i, item in enumerate(inputs):
+            print_tensor_shapes(item, prefix=f"{prefix}[{i}].")
+    elif isinstance(inputs, dict):
+        print(f"{prefix}Dict with keys: {list(inputs.keys())}")
+        for key, item in inputs.items():
+            print_tensor_shapes(item, prefix=f"{prefix}['{key}'].")
+    else:
+        print(f"{prefix}Not a tensor: {type(inputs)}")
+
+
 def execute_process(receiver, sender, exec_event):
     while 1:
         obj = receiver.get()
         faulthandler.disable()
         binary = obj["binary"]
-        inputs = obj["inputs"]
         file_name = obj["dump_file"]
+        large_input = obj.get("large_input", False)
+        inputs = None
+
+        # Load inputs from disk if they're large
+        if large_input:
+            print("Child process handling large input", flush=True)
+            inputs_file_path = obj.get("inputs_file_path")
+            if inputs_file_path and os.path.exists(inputs_file_path):
+                try:
+                    with open(inputs_file_path, "rb") as f:
+                        inputs = pickle.load(f)
+                except Exception as e:
+                    print(f"Error loading inputs from disk: {e}")
+        else:
+            inputs = obj.get("inputs")
+
         file_stderr = open(file_name, "w")
         old_stderr = sys.stderr
         sys.stderr = file_stderr
         old_stdout = sys.stdout
         sys.stdout = file_stderr
-        outputs = tt_mlir.run_end_to_end(inputs, binary)
+
+        outputs = None
+        if inputs is not None:
+            outputs = tt_mlir.run_end_to_end(inputs, binary)
+
         sys.stderr = old_stderr
         sys.stdout = old_stdout
         file_stderr.close()
+
         sender.put({"outputs": outputs})
         exec_event.wait()
+
     sys.exit(0)
 
 
@@ -381,7 +443,38 @@ class OpByOpExecutor(Executor):
             self.file_stderr = tempfile.NamedTemporaryFile(mode="w+t", delete=False)
             self.stderror_redirected = True
 
-        obj = {"binary": binary, "inputs": inputs, "dump_file": self.file_stderr.name}
+        inputs_size = get_inputs_size(inputs)
+
+        large_input = inputs_size > 1 * 1024 * 1024 * 1024  # 1GB limit
+
+        obj = {
+            "binary": binary,
+            "dump_file": self.file_stderr.name,
+            "large_input": large_input,
+        }
+
+        inputs_file_path = None
+        if large_input:
+            try:
+                temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pkl")
+                inputs_file_path = temp_file.name
+                temp_file.close()
+
+                with open(inputs_file_path, "wb") as f:
+                    pickle.dump(inputs, f)
+
+                obj["inputs_file_path"] = inputs_file_path
+            except Exception as e:
+                print(f"Error saving inputs to disk: {e}")
+                if inputs_file_path and os.path.exists(inputs_file_path):
+                    try:
+                        os.remove(inputs_file_path)
+                    except OSError:
+                        pass
+                large_input = False
+
+        if not large_input:
+            obj["inputs"] = inputs
 
         exec_event = mp.Event()
         if self.execute_process is None:
@@ -411,6 +504,12 @@ class OpByOpExecutor(Executor):
                 self.execute_process.terminate()
                 self.execute_process = None
                 break
+
+        if large_input and inputs_file_path and os.path.exists(inputs_file_path):
+            try:
+                os.remove(inputs_file_path)
+            except OSError:
+                pass
 
         if len(outputs) == 1:
             outputs = outputs[0]
