@@ -6,7 +6,7 @@ import tt_torch
 import subprocess
 import os
 from tt_torch.tools.profile import profile
-from tt_torch.tools.perf import Profiler
+from tt_torch.tools.profile_util import Profiler
 
 test_command = (
     "pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]"

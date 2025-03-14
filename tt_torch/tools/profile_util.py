@@ -9,7 +9,7 @@ import socket
 import signal
 import sys
 import shutil
-from utils import FileManager
+from tt_torch.tools.utils import FileManager
 import csv
 import json
 
