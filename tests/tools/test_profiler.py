@@ -8,14 +8,15 @@ import os
 from tt_torch.tools.profile import profile
 from tt_torch.tools.profile_util import Profiler
 
-test_command = (
+test_command_mnist = (
     "pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]"
 )
-expected_output_location = f"{Profiler.get_ttmetal_home_path()}/generated/profiler/reports/{Profiler.DEFAULT_OUTPUT_FILENAME}"
+test_command_add = "pytest -svv tests/torch/test_basic.py::test_add"
+expected_report_path = f"results/perf/{Profiler.DEFAULT_OUTPUT_FILENAME}"
 
 
 def test_profiler_cli():
-    profiler_command = f'python tt_torch/tools/profile.py "{test_command}"'
+    profiler_command = f'python tt_torch/tools/profile.py "{test_command_add}"'
     profiler_subprocess = subprocess.run(profiler_command, shell=True)
 
     # Check return code
@@ -25,13 +26,23 @@ def test_profiler_cli():
 
     # Check that the profiler generated the expected files
     assert os.path.exists(
-        expected_output_location
-    ), f"Result file @ {expected_output_location} not found"
+        expected_report_path
+    ), f"Result file @ {expected_report_path} not found"
+
+    with open(expected_report_path, "r") as f:
+        header = f.readlines(1)[0]
+        print("First Entry ", header)
+        assert "LOC" in header, f"Profiler output does not contain expected output"
 
 
 def test_profiler_module():
-    profile(test_command)
+    profile(test_command_add)
 
     assert os.path.exists(
-        expected_output_location
-    ), f"Result file @ {expected_output_location} not found"
+        expected_report_path
+    ), f"Result file @ {expected_report_path} not found"
+
+    with open(expected_report_path, "r") as f:
+        header = f.readlines(1)[0]
+        print("First Entry ", header)
+        assert "LOC" in header, f"Profiler output does not contain expected output"
