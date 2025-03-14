@@ -7,6 +7,7 @@ import subprocess
 import os
 from tt_torch.tools.profile import profile
 from tt_torch.tools.profile_util import Profiler
+import csv
 
 test_command_mnist = (
     "pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]"
@@ -30,9 +31,14 @@ def test_profiler_cli():
     ), f"Result file @ {expected_report_path} not found"
 
     with open(expected_report_path, "r") as f:
-        header = f.readlines(1)[0]
-        print("First Entry ", header)
-        assert "LOC" in header, f"Profiler output does not contain expected output"
+        reader = csv.DictReader(f)
+        assert (
+            "LOC" in reader.fieldnames
+        ), f"Profiler output does not contain expected output"
+
+        print("Perf Report Contents")
+        for row in reader:
+            print(row)
 
 
 def test_profiler_module():
@@ -43,6 +49,11 @@ def test_profiler_module():
     ), f"Result file @ {expected_report_path} not found"
 
     with open(expected_report_path, "r") as f:
-        header = f.readlines(1)[0]
-        print("First Entry ", header)
-        assert "LOC" in header, f"Profiler output does not contain expected output"
+        reader = csv.DictReader(f)
+        assert (
+            "LOC" in reader.fieldnames
+        ), f"Profiler output does not contain expected output"
+
+        print("Perf Report Contents")
+        for row in reader:
+            print(row)
