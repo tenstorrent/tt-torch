@@ -11,6 +11,10 @@ on:
         description: 'Docker image to use for build'
         required: true
         type: string
+      setup-args:
+        description: 'Arguments to pass to setup.py'
+        required: false
+        type: string
 
 jobs:
   build:
@@ -70,7 +74,7 @@ jobs:
       shell: bash
       run: |
         source env/activate
-        python setup.py bdist_wheel --code_coverage
+        python setup.py bdist_wheel --code_coverage ${{ inputs.setup-args }}
 
     - name: Verify tt-mlir SHA override
       if: ${{ inputs.mlir_override }}
