@@ -109,7 +109,7 @@ std::vector<int64_t> as_vec_int64(std::vector<T> const &vec) {
 static torch::Tensor create_torch_tensor(const tt::runtime::Tensor &tensor,
                                          const tt::runtime::TensorDesc &desc) {
   tt::runtime::Tensor untilized_tensor =
-      tt::runtime::toHost(tensor, /*untilize=*/true);
+      tt::runtime::toHost(tensor, /*untilize=*/true)[0];
   const std::vector<std::int64_t> shape = as_vec_int64(desc.shape);
   const std::vector<std::int64_t> stride = as_vec_int64((desc.stride));
 
