@@ -97,7 +97,6 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     gm = bypass_redundant_getitem(gm)
 
     reduce_graph(gm)
-    run_shape_prop(gm, example_inputs)
     program = torch.export.export(gm, tuple(example_inputs), strict=False)
     if not compiler_config.inline_parameters:
         constant_inputs = [
@@ -110,4 +109,8 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     else:
         constant_inputs = []
 
+    # Need to run shape_prop again to populate tensor_meta
+    run_shape_prop(
+        program.graph_module, constant_inputs + list(program.buffers()) + example_inputs
+    )
     return program, constant_inputs
