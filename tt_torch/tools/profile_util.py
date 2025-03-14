@@ -64,6 +64,11 @@ class Profiler:
             "third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal-build",
         )
 
+        print("Directory structure")
+        metal_home_structure = os.listdir(self.get_ttmetal_home_path())
+        for file in metal_home_structure:
+            print(file)
+
         if FileManager.check_file_exists(
             self.tracy_capture_tool_path
         ) and FileManager.check_file_exists(self.tracy_csvexport_tool_path):
