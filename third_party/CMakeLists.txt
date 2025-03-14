@@ -32,6 +32,9 @@ else()
     set(TT_RUNTIME_DEBUG OFF CACHE BOOL "Enable runtime debugging")
     message(STATUS "TT_RUNTIME_DEBUG is set to: ${TT_RUNTIME_DEBUG}")
 
+    set(TT_RUNTIME_ENABLE_PERF_TRACE OFF CACHE BOOL "Enable runtime Tracy perf tracing")
+    message(STATUS "TT_RUNTIME_ENABLE_PERF_TRACE is set to: ${TT_RUNTIME_ENABLE_PERF_TRACE}")
+
     include(ExternalProject)
     set(TTMLIR_PREFIX ${TTTORCH_SOURCE_DIR}/third_party/tt-mlir)
     set(TTMLIR_INSTALL_PREFIX ${TTMLIR_PREFIX}/install)
@@ -51,6 +54,7 @@ else()
           -DCMAKE_CXX_COMPILER=clang++-17
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           -DTT_RUNTIME_ENABLE_TTNN=ON
+          -DTT_RUNTIME_ENABLE_PERF_TRACE=${TT_RUNTIME_ENABLE_PERF_TRACE}
           -DTT_RUNTIME_ENABLE_TTMETAL=OFF
           -DTTMLIR_ENABLE_STABLEHLO=ON
           -DTTMLIR_ENABLE_RUNTIME=ON
