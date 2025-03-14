@@ -23,7 +23,7 @@ def test_profiler_cli():
     # Check return code
     assert (
         profiler_subprocess.returncode == 0
-    ), "Profiler exited with non-zero return code {profier_subprocess.returncode}"
+    ), f"Profiler exited with non-zero return code {profiler_subprocess.returncode}"
 
     # Check that the profiler generated the expected files
     assert os.path.exists(
