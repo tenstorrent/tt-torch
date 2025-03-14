@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-# from tt_mlir import is_runtime_debug_enabled  # eqv for perf enabled
 import os
 import typing
 import subprocess
@@ -15,7 +14,9 @@ import csv
 import json
 
 
-class Perf:
+class Profiler:
+    DEFAULT_OUTPUT_FILENAME = "device_ops_perf_trace.csv"
+
     @staticmethod
     def get_ttmetal_home_path():
         return os.environ.get(
@@ -23,7 +24,7 @@ class Perf:
             "third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal",
         )
 
-    def __init__(self):
+    def __init__(self, output_filename: str = DEFAULT_OUTPUT_FILENAME):
         self.tracy_capture_tool_path = f"{self.get_ttmetal_home_path()}/../tt-metal-build/tools/profiler/bin/capture-release"  # tt-metal-build/tools/profiler/bin/capture-release
         self.tracy_csvexport_tool_path = f"{self.get_ttmetal_home_path()}/../tt-metal-build/tools/profiler/bin/csvexport-release"
 
@@ -33,16 +34,12 @@ class Perf:
         self.tracy_file_path = "tracy_profile_log_host.tracy"
         self.tracy_ops_times_file_path = "tracy_ops_times.csv"
         self.tracy_ops_data_file_path = "tracy_ops_data.csv"
-        self.profiler_device_ops_perf_trace_file_path = (
-            "results/perf/device_ops_perf_trace.csv"
-        )
-
         self.profiler_device_side_log_path = (
             f"install/tt-metal/generated/profiler/.logs/profile_log_device.csv"
         )
         self.expected_profiler_device_side_log_path = f"{self.get_ttmetal_home_path()}/generated/profiler/.logs/profile_log_device.csv"
-        self.profiler_csv_file_path = f"{self.get_ttmetal_home_path()}/generated/profiler/reports/ops_perf_results.csv"
-
+        self.profiler_report_csv_path = f"{self.get_ttmetal_home_path()}/generated/profiler/reports/ops_perf_results.csv"
+        self.profile_ops_perf_report = f"results/perf/{output_filename}"
         FileManager.remove_directory(self.profiler_logs_dir)
         FileManager.create_directory(self.profiler_logs_dir)
 
@@ -104,7 +101,7 @@ class Perf:
         try:
             # block until tracy capture tool exits with T/O
             # self.tracy_capture_tool_process.terminate()
-            self.tracy_capture_tool_process.communicate(timeout=15)
+            self.tracy_capture_tool_process.communicate(timeout=5)
         except subprocess.TimeoutExpired as e:
             self.tracy_capture_tool_process.terminate()
             self.tracy_capture_tool_process.communicate()
@@ -156,23 +153,22 @@ class Perf:
     def run_ttmetal_process_ops(self):
         # need to temporary add these sys paths so TTRT whls can find the `process_ops` function
         # ideally we want process_ops to be in a standalone module we can import from tt_metal
-        # ref: https://github.com/tenstorrent/tt-metal/blob/5b24e448480c86c6e74563745b58f8c95fa81237/tt_metal/tools/profiler/process_ops_logs.py#L37
+        # ref: https://github.com/tenstorrent/tt-metal/blob/main/tt_metal/tools/profiler/process_ops_logs.py
         sys.path.append(f"{self.get_ttmetal_home_path()}")
         sys.path.append(f"{self.get_ttmetal_home_path()}/ttnn")
         from tt_metal.tools.profiler.process_ops_logs import process_ops
 
-        process_ops(
-            None, None, False, False  # generate date & device only
-        )  # where does this expect the files to be?
+        #  Decode ops @ self.tracy_ops_data_file_path
+        process_ops(None, None, False, False)
 
     def post_process_ops(self):
         # Add post-processing steps to insert location data into the ops_perf data file
-        with open(self.profiler_csv_file_path, "r") as perf_file:
+        with open(self.profiler_report_csv_path, "r") as perf_file:
             perf_reader = csv.DictReader(perf_file)
             headers = list(perf_reader.fieldnames) + ["LOC"]
             perf_data = list(perf_reader)
 
-        with open(self.profiler_csv_file_path, "w+") as perf_file, open(
+        with open(self.profiler_report_csv_path, "w+") as perf_file, open(
             self.tracy_ops_data_file_path, "r"
         ) as message_file:
             message_reader = csv.reader(message_file, delimiter=";")
@@ -197,11 +193,11 @@ class Perf:
             for row in perf_data:
                 perf_writer.writerow(row)
 
-        FileManager.create_file(self.profiler_device_ops_perf_trace_file_path)
+        FileManager.create_file(self.profile_ops_perf_report)
 
         # Trim out non-loc associated ops (And other post processing)
-        with open(self.profiler_csv_file_path, "r") as perf_file, open(
-            self.profiler_device_ops_perf_trace_file_path, "w+"
+        with open(self.profiler_report_csv_path, "r") as perf_file, open(
+            self.profile_ops_perf_report, "w+"
         ) as report_file:
             perf_reader = csv.DictReader(perf_file)
             headers = perf_reader.fieldnames
@@ -212,6 +208,8 @@ class Perf:
             for row in perf_reader:
                 if "loc" in row["LOC"]:
                     ops_writer.writerow(row)
+
+        print(f"Wrote report to {self.profile_ops_perf_report}")
 
     def cleanup(self):
         FileManager.remove_file(self.tracy_ops_times_file_path)

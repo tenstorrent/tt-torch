@@ -4,7 +4,7 @@
 
 # run as
 # python3 tt_torch/tools/dummy_orchestrator.py
-import perf
+from perf import Profiler
 import pytest
 import subprocess
 import os
@@ -13,10 +13,10 @@ import sys
 from argparse import ArgumentParser
 
 
-def main(test_command):
-    cvar = perf.Perf()
-    cvar.assert_perf_build()
-    cvar.setup_tracy_server()
+def profile(test_command: str, output_filename: str = Profiler.DEFAULT_OUTPUT_FILENAME):
+    profiler = Profiler(output_filename)
+    profiler.assert_perf_build()
+    profiler.setup_tracy_server()
 
     env_vars = os.environ.copy()
 
@@ -29,20 +29,20 @@ def main(test_command):
     def signal_handler(sig, frame):
         print("sig handler got invoked")
         os.killpg(os.getpgid(testProcess.pid), signal.SIGTERM)
-        cvar.tracy_capture_tool_process.terminate()
-        cvar.tracy_capture_tool_process.communicate()
+        profiler.tracy_capture_tool_process.terminate()
+        profiler.tracy_capture_tool_process.communicate()
         sys.exit(3)
 
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
     testProcess.communicate()  # block until the test process exits
 
-    cvar.close_capture_tool_process()  # tracy server close & cleanup file
-    cvar.process_csvexport()
-    cvar.copy_files_to_tt_metal()
-    cvar.run_ttmetal_process_ops()
-    cvar.post_process_ops()
-    cvar.cleanup()
+    profiler.close_capture_tool_process()
+    profiler.process_csvexport()
+    profiler.copy_files_to_tt_metal()
+    profiler.run_ttmetal_process_ops()
+    profiler.post_process_ops()
+    profiler.cleanup()
 
 
 if __name__ == "__main__":
@@ -62,6 +62,14 @@ if __name__ == "__main__":
 
     parser = ArgumentParser()
     parser.add_argument("test_command", type=str, help="The test command to run")
+    parser.add_argument(
+        "-o",
+        "--output_path",
+        help="Output file path",
+        type=str,
+        default=Profiler.DEFAULT_OUTPUT_FILENAME,
+    )
+
     args = parser.parse_args()
 
-    main(args.test_command)
+    profile(args.test_command, args.output_path)
