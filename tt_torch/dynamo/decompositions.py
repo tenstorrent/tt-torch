@@ -46,7 +46,7 @@ def _extend_context_manager(
     *,
     from_current: bool = True,
     add_ops: Optional[DecompositionOpsList] = None,
-    remove_ops: Optional[DecompositionOpsList] = None
+    remove_ops: Optional[DecompositionOpsList] = None,
 ):
     table: DecompositionTable
     if from_current:
@@ -250,6 +250,8 @@ def upsample_nearest_vec(
     return upsample_nearest(input, osize, scales, scales)
 
 
+# TODO: Remove this decomposition when we can lower a stablehlo.reduce_window which is equivalent to a sum-pool
+# to ttir
 def avg_pool2d(
     input: torch.Tensor,
     kernel_size: Union[int, List[int]],
@@ -278,6 +280,35 @@ def avg_pool2d(
     return NotImplemented
 
 
+# TODO: Remove this decomposition when aten.as_strided can properly be lowered to stablehlo.slice in torch-mlir
+# This is the decomposition of aten.split_with_sizes as it was in PyTorch 2.5. In pytorch 2.6, the use of `narrow`
+# (which gets decomposed to `slice`) was replaced with `as_strided` which cannot yet be lowered to stablehlo.
+def split_with_sizes(
+    self: torch.Tensor, split_sizes: List[int], dim: int = 0
+) -> List[torch.Tensor]:
+    # NB: Perform the check_is_size tests first so that the
+    # sum test does not try to do a replacement
+    for i in range(len(split_sizes)):
+        torch._check_is_size(
+            split_sizes[i],
+            lambda: "split_with_sizes expects split_sizes have only non-negative entries",
+        )
+    torch._check_with(
+        ValueError,
+        sum(split_sizes) == self.shape[dim],
+        lambda: f"Split sizes add up to {sum(split_sizes)} but got the tensor's size of {self.shape[dim]}",
+    )
+    num_splits = len(split_sizes)
+    splits = []
+    start_idx = 0
+
+    for i in range(num_splits):
+        length = split_sizes[i]
+        splits.append(self.narrow(dim, start_idx, length))
+        start_idx += length
+    return splits
+
+
 # TODO: DO we ever need this?
 def _get_default_decomposition_ops() -> DecompositionOpsList:
     aten = torch.ops.aten
@@ -290,7 +321,7 @@ def _get_default_decomposition_ops() -> DecompositionOpsList:
         aten.norm.ScalarOpt_dim,
         aten.native_group_norm,
         aten.split.Tensor,
-        aten.split_with_sizes,
+        # aten.split_with_sizes,
         aten.native_layer_norm,
         aten.masked_fill.Tensor,
         aten.masked_fill.Scalar,
@@ -341,6 +372,7 @@ def _get_custom_decopositions() -> DecompositionTable:
         aten.upsample_trilinear3d.vec: upsample_linear_vec,
         aten.adaptive_avg_pool2d.default: aten._adaptive_avg_pool2d,
         aten.avg_pool2d.default: avg_pool2d,
+        aten.split_with_sizes.default: split_with_sizes,
     }
 
 
