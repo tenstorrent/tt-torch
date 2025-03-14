@@ -6,9 +6,12 @@ import operator
 import tt_mlir
 import torch_mlir
 import os
+import re
+import ml_dtypes
+import numpy as np
 from torch_mlir.dialects import torch as torch_dialect
 
-from typing import Optional
+from typing import Optional, Any
 from tt_torch.tools.utils import (
     CompilerConfig,
     CompileDepth,
@@ -22,8 +25,16 @@ from torch_mlir.compiler_utils import (
     run_pipeline_with_repro_report,
     lower_mlir_module,
 )
-from torch_mlir.extras.fx_importer import FxImporter, ContextCache
-from torch_mlir.ir import Context, Location
+from torch_mlir.extras.fx_importer import (
+    FxImporter,
+    ContextCache,
+    FxImporterHooks,
+    InputInfo,
+    GraphNodeImporter,
+    TORCH_DTYPE_TO_NPY_TYPE,
+    TORCH_DTYPE_TO_MLIR_TYPE,
+)
+from torch_mlir.ir import Context, Location, DenseElementsAttr, Operation
 from tt_torch.dynamo.executor import (
     Executor,
     OpByOpExecutor,
@@ -45,18 +56,84 @@ def verify_ir(module):
 
 class TTContextCache(ContextCache):
     def get_node_location(self, node: torch.fx.Node) -> Optional[Location]:
-        return Location.name(node.name, context=self._c)
+        stack_trace = node.meta.get("stack_trace")
+        if stack_trace is None:
+            return None
+
+        stack_trace = node.stack_trace
+        if stack_trace:
+            stack_frames = re.findall(
+                r"""File "([^"]+)", line ([0-9]+),""", stack_trace
+            )
+            locations = []
+            for filename, line in stack_frames:
+                if filename:
+                    locations.append(
+                        Location.file(filename, line, col=0, context=self._c)
+                    )
+            return Location.fused(locations, context=self._c)
+        return Location.unknown(context=self._c)
 
 
 def import_graph(graph: torch.fx.GraphModule):
-    context = Context()
-    torch_dialect.register_dialect(context)
-    importer = FxImporter(context=context)
-    importer._cc = TTContextCache(
-        importer._c, py_attr_tracker=importer._py_attr_tracker
-    )
-    importer.import_stateless_graph(graph)
-    return importer.module
+    with Context() as context:
+        torch_dialect.register_dialect(context)
+        importer = FxImporter(context=context)
+        importer._cc = TTContextCache(
+            importer._c, py_attr_tracker=importer._py_attr_tracker
+        )
+        importer.import_stateless_graph(graph)
+        return importer.module
+
+
+class TTFxImporterHooks(FxImporterHooks):
+    def resolve_literal(
+        self, gni: GraphNodeImporter, tensor: Any, info: Optional[InputInfo]
+    ):
+        # This implementation is a near exact copy of the default implementation of
+        # torch_mlir.extras.fx_importer._make_vtensor_literal_op. The difference is
+        # that we wish to use DenseElementsAttr at all times and never DenseResourceElementsAttr.
+        # This is because the use of DenseResourceElementsAttr is causing the GIL to block
+        # Mentioned in this IREE issue: https://github.com/iree-org/iree/issues/20102
+        if not isinstance(tensor, torch.Tensor):
+            return None
+
+        assert not (
+            tensor.dtype == torch.bfloat16 and ml_dtypes is None
+        ), f"torch.bfloat16 requires the ml_dtypes package, please run:\n\npip install ml_dtypes\n"
+        # Resolve the attribute.
+        npy_dtype = TORCH_DTYPE_TO_NPY_TYPE.get(tensor.dtype)
+        assert (
+            npy_dtype is not None
+        ), f"Can not create literal tensor for unsupported datatype: {tensor.dtype}"
+
+        np_tensor = np.array(tensor.tolist()).astype(npy_dtype)
+
+        try:
+            dtype = tensor.dtype
+            element_type = TORCH_DTYPE_TO_MLIR_TYPE[dtype]()
+        except KeyError:
+            raise TypeError(f"Could not map Torch dtype {dtype} to an MLIR type")
+        elements_attr = DenseElementsAttr.get(
+            type=element_type, array=np_tensor, shape=np_tensor.shape
+        )
+        return Operation.create(
+            name="torch.vtensor.literal",
+            results=[gni._cc.tensor_to_vtensor_type(tensor)],
+            attributes={"value": elements_attr},
+        ).result
+
+
+def import_program(program: torch.export.ExportedProgram):
+    with Context() as context:
+        context.enable_multithreading(False)
+        torch_dialect.register_dialect(context)
+        importer = FxImporter(context=context, hooks=TTFxImporterHooks())
+        importer._cc = TTContextCache(
+            importer._c, py_attr_tracker=importer._py_attr_tracker
+        )
+        importer.import_program(program)
+        return importer.module
 
 
 def lower_to_stable_hlo(module, op=None, enable_ir_printing=False):
@@ -82,7 +159,7 @@ def lower_to_stable_hlo(module, op=None, enable_ir_printing=False):
 class TorchExecutor(OpByOpExecutor):
     def __init__(
         self,
-        gm,
+        program,
         graph_constants,
         compiler_config=None,
         required_pcc=0.99,
@@ -93,7 +170,7 @@ class TorchExecutor(OpByOpExecutor):
             required_pcc=required_pcc,
             required_atol=required_atol,
         )
-        self.gm = gm
+        self.program = program
         self.graph_constants = (
             (graph_constants,)
             if isinstance(graph_constants, (int, float))
@@ -178,7 +255,7 @@ class TorchExecutor(OpByOpExecutor):
 
             for idx, tensor_meta in enumerate(node.meta["tensor_meta"]):
                 # filter out unused outputs that do not exist in the reduced graph
-                users = self.gm.graph.find_nodes(
+                users = self.program.graph_module.graph.find_nodes(
                     op="call_function", target=operator.getitem
                 )
                 if not any(user_node.args == (node, idx) for user_node in users):
@@ -219,16 +296,16 @@ class TorchExecutor(OpByOpExecutor):
         node_to_tensor = {}
         input_index = 0
         outputs = []
-        num_nodes = len(self.gm.graph.nodes)
+        num_nodes = len(self.program.graph_module.graph.nodes)
         out_degree = {}
-        for idx, node in enumerate(self.gm.graph.nodes):
+        for idx, node in enumerate(self.program.graph_module.graph.nodes):
             print(f"Compiling {idx}/{num_nodes}: {node.target}")
             out_degree[node] = len(node.users)
             if node.op == "placeholder":
                 node_to_tensor[node] = inputs[input_index]
                 input_index += 1
             elif node.op == "get_attr":
-                for buffer in self.gm.named_buffers():
+                for buffer in self.program.graph_module.named_buffers():
                     if buffer[0] == node.target:
                         node_to_tensor[node] = buffer[1]
                         break
@@ -317,6 +394,8 @@ class TorchExecutor(OpByOpExecutor):
             CompileDepth.EXECUTE_OP_BY_OP,
             CompileDepth.COMPILE_OP_BY_OP,
         ):
-            return self.run_gm_op_by_op(*(inputs + self.graph_constants))
+            return self.run_gm_op_by_op(
+                *(self.graph_constants + tuple(self.program.buffers()) + inputs)
+            )
         else:
-            return self.gm(*inputs)
+            return self.program.graph_module(*inputs)

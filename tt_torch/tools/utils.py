@@ -257,7 +257,6 @@ class CompilerConfig:
         self.single_op_timeout = 30
         self.op_by_op_backend = OpByOpBackend.TORCH
         self.enable_consteval = False
-        self.remove_embedded_constants = False
         self._consteval_parameters = False
         self._enable_intermediate_verification = False
         self.dump_debug = False
@@ -267,6 +266,7 @@ class CompilerConfig:
         self.runtime_device = None
         self.enable_async = False
         self.cache_preprocessed_constants = False
+        self.inline_parameters = False
 
         self.apply_environment_overrides()
         self.post_init()
@@ -328,9 +328,9 @@ class CompilerConfig:
         consteval_parameters = os.environ.get("TT_TORCH_CONSTEVAL_PARAMETERS")
         if consteval_parameters and int(consteval_parameters):
             self.consteval_parameters = True
-        remove_embedded_constants = os.environ.get("TT_TORCH_EMBEDDEDD_CONSTANTS")
-        if remove_embedded_constants and int(remove_embedded_constants):
-            self.remove_embedded_constants = True
+        inline_parameters = os.environ.get("TT_TORCH_INLINE_PARAMETERS")
+        if inline_parameters and int(inline_parameters):
+            self.inline_parameters = True
         dump_intermediates = os.environ.get("TT_TORCH_IR_LOG_LEVEL")
         if dump_intermediates:
             self.dump_debug = dump_intermediates == "DEBUG"
@@ -400,7 +400,6 @@ class CompilerConfig:
             "results_path": self.results_path,
             "single_op_timeout": self.single_op_timeout,
             "enable_consteval": self.enable_consteval,
-            "remove_embedded_constants": self.remove_embedded_constants,
             "_consteval_parameters": self._consteval_parameters,
             "_enable_intermediate_verification": self._enable_intermediate_verification,
             "_verify_op_by_op": self._verify_op_by_op,

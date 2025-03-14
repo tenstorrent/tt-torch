@@ -10,6 +10,7 @@ import torch_mlir
 from tt_torch.dynamo.torch_backend import (
     TorchExecutor,
     import_graph,
+    import_program,
     verify_ir,
     lower_to_stable_hlo,
 )
@@ -48,28 +49,32 @@ def dump_module(module, name, compiler_config):
         print(module, file=sys.stderr)
 
 
-def _shlo_backend(shlo, example_inputs, compiler_config, gm=None, graph_constants=None):
+def _shlo_backend(
+    shlo, example_inputs, compiler_config, program=None, graph_constants=None
+):
     executor = StablehloExecutor(module=shlo, compiler_config=compiler_config)
-    if gm is not None:
+    if program is not None:
         # original input is a torch graph
-        executor.add_gm(gm, graph_constants)
+        executor.add_program(program, graph_constants)
     return executor
 
 
 def _torch_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     with torch.no_grad():
-        gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
+        program, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
     executor = TorchExecutor(
-        gm=gm, graph_constants=graph_constants, compiler_config=compiler_config
+        program=program,
+        graph_constants=graph_constants,
+        compiler_config=compiler_config,
     )
     return executor
 
 
 def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     with torch.no_grad():
-        gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
+        program, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
 
-    module = import_graph(gm.graph)
+    module = import_program(program)
     verify_ir(module)
 
     dump_module(module=module, name="Torch FX module", compiler_config=compiler_config)
@@ -91,7 +96,7 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
 
     dump_module(module=module, name="StableHLO module", compiler_config=compiler_config)
 
-    return module, gm, graph_constants
+    return module, program, graph_constants
 
 
 def shlo_to_flatbuffer(executor, module, compiler_config):
@@ -114,8 +119,8 @@ def shlo_to_flatbuffer(executor, module, compiler_config):
 
 
 def _base_backend(gm, example_inputs, compiler_config):
-    shlo, gm, graph_constants = torch_to_shlo(gm, example_inputs, compiler_config)
-    executor = Executor(gm, graph_constants, compiler_config)
+    shlo, program, graph_constants = torch_to_shlo(gm, example_inputs, compiler_config)
+    executor = Executor(program, graph_constants, compiler_config)
 
     if compiler_config.compile_depth == CompileDepth.STABLEHLO:
         return executor
@@ -144,14 +149,14 @@ def backend(gm, example_inputs, options=None):
         else:
             # op_by_op_backend == OpByOpBackend.STABLEHLO
             # convert torch to stablehlo, then run stablehlo op-by-op
-            module, gm, graph_constants = torch_to_shlo(
+            module, program, graph_constants = torch_to_shlo(
                 gm, example_inputs, compiler_config=options
             )
             return _shlo_backend(
                 shlo=module,
                 example_inputs=example_inputs,
                 compiler_config=options,
-                gm=gm,
+                program=program,
                 graph_constants=graph_constants,
             )
     return _base_backend(gm, example_inputs, compiler_config=options)

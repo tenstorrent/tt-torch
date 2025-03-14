@@ -60,13 +60,13 @@ def execute_process(receiver, sender, exec_event):
 class Executor:
     def __init__(
         self,
-        gm: Union[torch.fx.GraphModule, None] = None,
+        program: Union[torch.export.ExportedProgram, None] = None,
         graph_constants=None,
         compiler_config=None,
         required_pcc=0.99,
         required_atol=1e-2,
     ):
-        self.gm = gm
+        self.program = program
         self.binary = None
         if graph_constants is not None:
             self.graph_constants = (
@@ -151,8 +151,12 @@ class Executor:
 
     def __call__(self, *inputs):
         if self.compiler_config.compile_depth != CompileDepth.EXECUTE:
-            assert self.gm != None, "Cannot run base executor without torch graph"
-            return self.gm(*inputs)
+            assert (
+                self.program.graph_module != None
+            ), "Cannot run base executor without torch graph"
+            return self.program.graph_module(
+                *(self.graph_constants + tuple(self.program.buffers()) + inputs)
+            )
 
         assert self.binary is not None
         if self.compiler_config.typecast_inputs:
@@ -163,7 +167,7 @@ class Executor:
             self.graph_constants is not None
             and self.preprocessed_graph_constants is None
         ):
-            inputs = inputs + self.graph_constants
+            inputs = self.graph_constants + inputs
 
         inputs = list(inputs)
         device = self._get_device()
@@ -175,12 +179,14 @@ class Executor:
         )
 
         if self.preprocessed_graph_constants is not None:
-            preprocessed_inputs += self.preprocessed_graph_constants
+            preprocessed_inputs = (
+                self.preprocessed_graph_constants + preprocessed_inputs
+            )
 
         outputs = tt_mlir.run(device, binary, program_idx, preprocessed_inputs)
 
-        self._cache_constants_if_needed(preprocessed_inputs[activations_len:])
-        self._cleanup_resources(preprocessed_inputs[:activations_len], device)
+        self._cache_constants_if_needed(preprocessed_inputs[:-activations_len])
+        self._cleanup_resources(preprocessed_inputs[-activations_len:], device)
 
         return outputs
 
@@ -222,7 +228,7 @@ class OpByOpExecutor(Executor):
         required_atol=1e-2,
     ):
         super().__init__(
-            gm=None,
+            program=None,
             graph_constants=None,
             compiler_config=compiler_config,
             required_pcc=required_pcc,
