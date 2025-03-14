@@ -41,6 +41,12 @@ if "--code_coverage" in sys.argv:
     ]
     sys.argv.remove("--code_coverage")
 
+if "--build_perf" in sys.argv:
+    cmake_args += [
+        "-DTT_RUNTIME_ENABLE_PERF_TRACE=ON",
+    ]
+    sys.argv.remove("--build_perf")
+
 with open("README.md", "r") as f:
     long_description = f.read()
 
