@@ -25,8 +25,14 @@ class Profiler:
         )
 
     def __init__(self, output_filename: str = DEFAULT_OUTPUT_FILENAME):
-        self.tracy_capture_tool_path = f"{self.get_ttmetal_home_path()}/../tt-metal-build/tools/profiler/bin/capture-release"  # tt-metal-build/tools/profiler/bin/capture-release
-        self.tracy_csvexport_tool_path = f"{self.get_ttmetal_home_path()}/../tt-metal-build/tools/profiler/bin/csvexport-release"
+        self.tracy_capture_tool_path = (
+            f"{self.get_ttmetal_home_path()}/tools/profiler/bin/capture-release"
+        )
+        self.tracy_csvexport_tool_path = (
+            f"{self.get_ttmetal_home_path()}/tools/profiler/bin/csvexport-release"
+        )
+
+        self.check_install_tt_metal_tool_binaries()
 
         self.profiler_logs_dir = (
             f"{self.get_ttmetal_home_path()}/generated/profiler/.logs"
@@ -40,11 +46,42 @@ class Profiler:
         self.expected_profiler_device_side_log_path = f"{self.get_ttmetal_home_path()}/generated/profiler/.logs/profile_log_device.csv"
         self.profiler_report_csv_path = f"{self.get_ttmetal_home_path()}/generated/profiler/reports/ops_perf_results.csv"
         self.profile_ops_perf_report = f"results/perf/{output_filename}"
+
         FileManager.remove_directory(self.profiler_logs_dir)
         FileManager.create_directory(self.profiler_logs_dir)
 
         FileManager.remove_file(self.tracy_ops_times_file_path)
         FileManager.remove_file(self.tracy_ops_data_file_path)
+
+        print("TT_METAL HOME looks like ", os.environ.get("TT_METAL_HOME"))
+
+    def check_install_tt_metal_tool_binaries(self):
+        this_dir = os.path.dirname(__file__)
+        metal_bin_dir = os.path.join(
+            this_dir,
+            "..",
+            "..",
+            "third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal-build",
+        )
+
+        if FileManager.check_file_exists(
+            self.tracy_capture_tool_path
+        ) and FileManager.check_file_exists(self.tracy_csvexport_tool_path):
+            print("Perf tool binaries were found.")
+            return
+
+        print("Perf tool binaries not found - Installing...")
+        FileManager.create_directory(
+            f"{self.get_ttmetal_home_path()}/tools/profiler/bin"
+        )
+        FileManager.copy_file(
+            self.tracy_capture_tool_path,
+            f"{metal_bin_dir}/tools/profiler/bin/capture-release",
+        )
+        FileManager.copy_file(
+            self.tracy_csvexport_tool_path,
+            f"{metal_bin_dir}/tools/profiler/bin/csvexport-release",
+        )
 
     def assert_perf_build(self):
         assert FileManager.check_file_exists(
@@ -74,8 +111,6 @@ class Profiler:
         if not port:
             raise Exception("No available port found")
 
-        # port = 8086
-
         print(f"selected port={port}")
 
         os.environ["TT_METAL_DEVICE_PROFILER"] = "1"
@@ -88,9 +123,6 @@ class Profiler:
         self.tracy_capture_tool_process = subprocess.Popen(
             tracy_capture_tool_command, shell=True  # ,env=os.environ.copy()
         )
-
-        # self.tracy_capture_tool_process.terminate() # doesn't work when shell=True
-        # os.killpg(os.getpgid(self.tracy_capture_tool_process.pid), signal.SIGTERM)
 
     def close_capture_tool_process(self):
         if self.tracy_capture_tool_process is None:
@@ -136,18 +168,13 @@ class Profiler:
         print("done writing tracy ops data ")
 
     def copy_files_to_tt_metal(self):
-        # ref:
+        # ref comment from ttrt-perf
         # copy all relevant files to correct folder directory (metal hardcoded path, need to make more dynamic from metal library)
         print("copying artifacts ")
 
         FileManager.copy_file(self.profiler_logs_dir, self.tracy_file_path)
         FileManager.copy_file(self.profiler_logs_dir, self.tracy_ops_times_file_path)
         FileManager.copy_file(self.profiler_logs_dir, self.tracy_ops_data_file_path)
-
-        FileManager.copy_file(
-            self.expected_profiler_device_side_log_path,
-            self.profiler_device_side_log_path,
-        )
         FileManager.copy_file(self.profiler_logs_dir, self.tracy_ops_data_file_path)
 
     def run_ttmetal_process_ops(self):
