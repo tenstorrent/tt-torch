@@ -30,6 +30,7 @@ class ModelTester:
         compiler_config=None,
         assert_pcc=True,
         assert_atol=True,
+        verify_with_golden=True,
         record_property_handle=None,
         model_group="generality",
     ):
@@ -56,6 +57,7 @@ class ModelTester:
 
         self.required_atol = required_atol
         self.relative_atol = relative_atol
+        self.verify_with_golden = verify_with_golden
         self.golden_outputs = None
         if compiler_config is None:
             compiler_config = CompilerConfig()
@@ -279,7 +281,8 @@ class ModelTester:
 
         outputs = self.run_model(model, self.inputs)
 
-        self.verify_outputs(golden, outputs)
+        if self.verify_with_golden == True:
+            self.verify_outputs(golden, outputs)
         return outputs
 
     def test_model(self, on_device=True):
