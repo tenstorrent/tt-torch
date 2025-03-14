@@ -4,7 +4,7 @@
 
 # run as
 # python3 tt_torch/tools/dummy_orchestrator.py
-from perf import Profiler
+from tt_torch.tools.profile_util import Profiler
 import pytest
 import subprocess
 import os
