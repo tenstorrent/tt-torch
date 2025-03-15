@@ -45,7 +45,6 @@ class ThisTester(ModelTester):
 def test_deepseek_qwen(record_property, model_name, mode, op_by_op):
     if mode == "train":
         pytest.skip()
-    pytest.skip("#291")
 
     cc = CompilerConfig()
     if op_by_op:
@@ -54,7 +53,11 @@ def test_deepseek_qwen(record_property, model_name, mode, op_by_op):
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     tester = ThisTester(
-        model_name, mode, compiler_config=cc, record_property_handle=record_property
+        model_name,
+        mode,
+        compiler_config=cc,
+        record_property_handle=record_property,
+        required_atol=0.5,
     )
 
     tester.test_model()

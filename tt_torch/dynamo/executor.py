@@ -6,11 +6,17 @@ import onnx
 import onnxruntime as ort
 import tt_mlir
 import time
+import pickle
 import faulthandler
 import sys
 import re
+import os
 import tempfile
 import multiprocessing as mp
+import signal
+import subprocess
+from pathlib import Path
+import tempfile
 from tt_torch.tools.utils import (
     CompileDepth,
     OpByOpBackend,
@@ -36,25 +42,95 @@ def compile_process(receiver, sender, ttir_event, ttnn_event, json_event):
     sys.exit(0)
 
 
-def execute_process(receiver, sender, exec_event):
-    while 1:
-        obj = receiver.get()
-        faulthandler.disable()
-        binary = obj["binary"]
-        inputs = obj["inputs"]
-        file_name = obj["dump_file"]
-        file_stderr = open(file_name, "w")
-        old_stderr = sys.stderr
-        sys.stderr = file_stderr
-        old_stdout = sys.stdout
-        sys.stdout = file_stderr
+def run_subprocess(binary, inputs, dump_file):
+    """
+    Isolated script to run tt_mlir.run_end_to_end in a completely separate process.
+    This will be saved as a temporary Python file and executed using subprocess.
+    """
+    script = """
+import os
+import sys
+import pickle
+import traceback
+
+# Redirect stdout/stderr
+with open("{stderr_file}", "w") as file_stderr:
+    old_stderr = sys.stderr
+    old_stdout = sys.stdout
+    sys.stderr = file_stderr
+    sys.stdout = file_stderr
+
+    try:
+        # Load inputs from pickle file
+        with open("{input_file}", "rb") as f:
+            binary, inputs = pickle.load(f)
+
+        # Import tt_mlir here to keep it isolated
+        import tt_mlir
         outputs = tt_mlir.run_end_to_end(inputs, binary)
+
+        # Save outputs to pickle file
+        with open("{output_file}", "wb") as f:
+            pickle.dump(outputs, f)
+
+        # Success exit code
+        sys.exit(0)
+    except Exception as e:
+        # Save the exception information
+        with open("{error_file}", "wb") as f:
+            pickle.dump(str(e), f)
+
+        # Error exit code
+        sys.exit(1)
+    finally:
+        # Restore stdout/stderr
         sys.stderr = old_stderr
         sys.stdout = old_stdout
-        file_stderr.close()
-        sender.put({"outputs": outputs})
-        exec_event.wait()
-    sys.exit(0)
+"""
+
+    # Create temporary files for communication
+    temp_dir = tempfile.mkdtemp()
+    input_file = os.path.join(temp_dir, "input.pkl")
+    output_file = os.path.join(temp_dir, "output.pkl")
+    error_file = os.path.join(temp_dir, "error.pkl")
+    script_file = os.path.join(temp_dir, "runner.py")
+
+    # Fill in the template
+    script = script.format(
+        stderr_file=dump_file,
+        input_file=input_file,
+        output_file=output_file,
+        error_file=error_file,
+    )
+
+    # Save the script
+    with open(script_file, "w") as f:
+        f.write(script)
+
+    # Save the inputs
+    with open(input_file, "wb") as f:
+        pickle.dump((binary, inputs), f)
+
+    # Execute the subprocess
+    process = subprocess.Popen([sys.executable, script_file])
+
+    return process, output_file, error_file, temp_dir
+
+
+def execute_process_simple(args_dict, result_queue):
+    """Worker process function to run tt_mlir.run_end_to_end in isolation"""
+    try:
+        binary = args_dict["binary"]
+        inputs = args_dict["inputs"]
+
+        # Import tt_mlir only in the child process to avoid any global state issues
+        import tt_mlir
+
+        outputs = tt_mlir.run_end_to_end(inputs, binary)
+        result_queue.put({"status": "success", "outputs": outputs})
+    except Exception as e:
+        # Catch any other exceptions in the worker process
+        result_queue.put({"status": "error", "error": str(e)})
 
 
 class Executor:
@@ -371,50 +447,73 @@ class OpByOpExecutor(Executor):
 
     def run_op(self, binary, *inputs):
         inputs = self.pre_process_inputs(*inputs)
-        if not self.stderror_redirected:
+
+        if not hasattr(self, "stderror_redirected") or not self.stderror_redirected:
             self.file_stderr = tempfile.NamedTemporaryFile(mode="w+t", delete=False)
             self.stderror_redirected = True
 
-        obj = {"binary": binary, "inputs": inputs, "dump_file": self.file_stderr.name}
+        process, output_file, error_file, temp_dir = run_subprocess(
+            binary, inputs, self.file_stderr.name
+        )
 
-        exec_event = mp.Event()
-        if self.execute_process is None:
-            self.execute_sender = mp.Queue()
-            self.execute_receiver = mp.Queue()
-            self.execute_process = mp.Process(
-                target=execute_process,
-                args=(self.execute_sender, self.execute_receiver, exec_event),
-            )
-            self.execute_process.start()
-        self.execute_sender.put(obj)
-        result = {}
-        start = time.time()
-        outputs = [None]
-        while True:
-            if not self.execute_process.is_alive():
-                self.execute_process = None
-                break
+        timeout = getattr(
+            self.compiler_config, "single_op_timeout", 30
+        )  # Default 30s timeout
+        start_time = time.time()
+
+        outputs = None
+        while process.poll() is None and time.time() - start_time < timeout:
+            time.sleep(0.01)
+
+        if process.poll() is None:
             try:
-                result = self.execute_receiver.get_nowait()
-                outputs = result["outputs"]
-                exec_event.set()
-                break
-            except mp.queues.Empty:
+                os.kill(process.pid, signal.SIGTERM)
+                time.sleep(0.1)
+                if process.poll() is None:
+                    os.kill(process.pid, signal.SIGKILL)
+            except OSError:
                 pass
-            if time.time() - start > self.compiler_config.single_op_timeout:
-                self.execute_process.terminate()
-                self.execute_process = None
-                break
 
-        if len(outputs) == 1:
-            outputs = outputs[0]
+        if process.returncode == 0:
+            try:
+                with open(output_file, "rb") as f:
+                    outputs = pickle.load(f)
+            except (FileNotFoundError, pickle.PickleError):
+                outputs = None
+        else:
+            try:
+                with open(error_file, "rb") as f:
+                    error_msg = pickle.load(f)
+                    print(f"Subprocess error: {error_msg}")
+            except (FileNotFoundError, pickle.PickleError):
+                pass
+
+            outputs = None
+
+        try:
+            for file in [
+                output_file,
+                error_file,
+                os.path.join(temp_dir, "runner.py"),
+                os.path.join(temp_dir, "input.pkl"),
+            ]:
+                if os.path.exists(file):
+                    os.unlink(file)
+            os.rmdir(temp_dir)
+        except OSError:
+            pass
 
         stderr_data = ""
         if outputs is None:
-            file_stderr = open(self.file_stderr.name, "r")
-            stderr_data = file_stderr.read()
-            stderr_data = stderr_data.replace("\n", "\\n")
-            stderr_data = re.sub(r"[^\x20-\x7E]", "", stderr_data)
-            file_stderr.close()
+            try:
+                with open(self.file_stderr.name, "r") as file_stderr:
+                    stderr_data = file_stderr.read()
+                    stderr_data = stderr_data.replace("\n", "\\n")
+                    stderr_data = re.sub(r"[^\x20-\x7E]", "", stderr_data)
+            except:
+                stderr_data = "Failed to read stderr"
+
+        if outputs is not None and isinstance(outputs, list) and len(outputs) == 1:
+            outputs = outputs[0]
 
         return outputs, stderr_data
