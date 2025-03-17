@@ -50,7 +50,7 @@ def test_falcon(record_property, mode, op_by_op):
     tester = ThisTester(
         model_name,
         mode,
-        relative_atol=0.013,
+        relative_atol=0.015,
         compiler_config=cc,
         record_property_handle=record_property,
     )

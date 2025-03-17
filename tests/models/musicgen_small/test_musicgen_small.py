@@ -63,6 +63,7 @@ def test_musicgen_small(record_property, mode, op_by_op):
         assert_atol=False,
         assert_pcc=False,
         record_property_handle=record_property,
+        is_token_output=True,
     )
     results = tester.test_model()
     tester.finalize()
