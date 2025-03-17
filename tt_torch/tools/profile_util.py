@@ -64,28 +64,67 @@ class Profiler:
             "third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal-build",
         )
 
-        print("Directory structure")
-        metal_home_structure = os.listdir(self.get_ttmetal_home_path())
-        for file in metal_home_structure:
-            print(file)
-
         if FileManager.check_file_exists(
             self.tracy_capture_tool_path
         ) and FileManager.check_file_exists(self.tracy_csvexport_tool_path):
             print("Perf tool binaries were found.")
             return
 
-        print("Perf tool binaries not found - Installing...")
         FileManager.create_directory(
-            f"{self.get_ttmetal_home_path()}/tools/profiler/bin"
+            f"{self.get_ttmetal_home_path()}/tools/profiler/bin", exist_ok=True
         )
-        FileManager.copy_file(
+
+        # For a local, non-wheel case - the binaries are expected to be in the metal_bin_dir
+        # and correctly placed relative to TT_METAL_HOME
+
+        # if we can find the binary in metal_bin dir:
+        if FileManager.check_file_exists(
+            f"{metal_bin_dir}/tools/profiler/bin/capture-release"
+        ) and FileManager.check_file_exists(
+            f"{metal_bin_dir}/tools/profiler/bin/csvexport-release"
+        ):
+            print("Perf tool binaries not found - Installing from tree")
+
+            FileManager.copy_file(
+                self.tracy_capture_tool_path,
+                f"{metal_bin_dir}/tools/profiler/bin/capture-release",
+            )
+            FileManager.copy_file(
+                self.tracy_csvexport_tool_path,
+                f"{metal_bin_dir}/tools/profiler/bin/csvexport-release",
+            )
+
+        # For a wheel build, the binaries are in site-packages and need to be properly copied
+        else:
+            print("Perf tool binaries not found - Installing from wheel")
+            # expected to be @ env/venv/lib/python3.11/site-packages/tt_metal/tools/profiler/bin/[...]
+            # in this context the tt_metal_home is at /env/venv/tt_metal
+
+            site_packages_dir = os.path.join(
+                self.get_ttmetal_home_path(),
+                "..",
+                "lib",
+                "python3.11",
+                "site-packages",
+                "tt_metal",
+                "tools",
+                "profiler",
+                "bin",
+            )
+
+            FileManager.copy_file(
+                f"{self.get_ttmetal_home_path()}/tools/profiler/bin/capture-release",
+                f"{site_packages_dir}/capture-release",
+            )
+            FileManager.copy_file(
+                f"{self.get_ttmetal_home_path()}/tools/profiler/bin/csvexport-release",
+                f"{site_packages_dir}/csvexport-release",
+            )
+
+        print(
+            "Perf tool binaries were installed at ",
             self.tracy_capture_tool_path,
-            f"{metal_bin_dir}/tools/profiler/bin/capture-release",
-        )
-        FileManager.copy_file(
             self.tracy_csvexport_tool_path,
-            f"{metal_bin_dir}/tools/profiler/bin/csvexport-release",
         )
 
     def assert_perf_build(self):

@@ -655,9 +655,9 @@ class FileManager:
             raise Exception(f"an unexpected error occurred: {e}")
 
     @staticmethod
-    def create_directory(directory_path):
+    def create_directory(directory_path, exist_ok=False):
         try:
-            os.makedirs(directory_path)
+            os.makedirs(directory_path, exist_ok=exist_ok)
         except FileExistsError as e:
             raise FileExistsError(f"directory '{directory_path}' already exists")
         except OSError as e:
