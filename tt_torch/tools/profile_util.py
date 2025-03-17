@@ -53,8 +53,6 @@ class Profiler:
         FileManager.remove_file(self.tracy_ops_times_file_path)
         FileManager.remove_file(self.tracy_ops_data_file_path)
 
-        print("TT_METAL HOME looks like ", os.environ.get("TT_METAL_HOME"))
-
     def check_install_tt_metal_tool_binaries(self):
         this_dir = os.path.dirname(__file__)
         metal_bin_dir = os.path.join(
@@ -83,7 +81,7 @@ class Profiler:
         ) and FileManager.check_file_exists(
             f"{metal_bin_dir}/tools/profiler/bin/csvexport-release"
         ):
-            print("Perf tool binaries not found - Installing from tree")
+            print("Perf tool binaries not found - Installing from tree.")
 
             FileManager.copy_file(
                 self.tracy_capture_tool_path,
@@ -96,7 +94,7 @@ class Profiler:
 
         # For a wheel build, the binaries are in site-packages and need to be properly copied
         else:
-            print("Perf tool binaries not found - Installing from wheel")
+            print("Perf tool binaries not found - Installing from wheel.")
             # expected to be @ env/venv/lib/python3.11/site-packages/tt_metal/tools/profiler/bin/[...]
             # in this context the tt_metal_home is at /env/venv/tt_metal
 
@@ -155,8 +153,6 @@ class Profiler:
         if not port:
             raise Exception("No available port found")
 
-        print(f"selected port={port}")
-
         os.environ["TT_METAL_DEVICE_PROFILER"] = "1"
         os.environ["TT_METAL_CLEAR_L1"] = "1"
         os.environ["TT_METAL_DEVICE_PROFILER_DISPATCH"] = "0"
@@ -171,12 +167,9 @@ class Profiler:
     def close_capture_tool_process(self):
         if self.tracy_capture_tool_process is None:
             return
-
-        print("trying to close capture tool process")
-
         try:
-            # block until tracy capture tool exits with T/O
-            # self.tracy_capture_tool_process.terminate()
+            # block until tracy capture tool exits with T/O limit.
+            # this should not take long as the client should have exited and the capture tool just needs to write out the tracedump
             self.tracy_capture_tool_process.communicate(timeout=5)
         except subprocess.TimeoutExpired as e:
             self.tracy_capture_tool_process.terminate()
@@ -185,11 +178,7 @@ class Profiler:
                 f"No profiling data could be captured. Please make sure you are on the correct build"
             )
 
-        print("done closing capture tool process")
-
     def process_csvexport(self):
-        print("starting process csv export")
-
         with open(self.tracy_ops_times_file_path, "w") as csv_file:
             child_calls = ["CompileProgram", "HWCommandQueue_write_buffer"]
             child_calls_str = f"-x {','.join(child_calls)}"
@@ -200,7 +189,6 @@ class Profiler:
                 stdout=csv_file,
                 stderr=subprocess.DEVNULL,
             )
-        print("done writing tracy ops times ")
         with open(self.tracy_ops_data_file_path, "w") as csv_file:
             subprocess.run(
                 f'{self.tracy_csvexport_tool_path} -m -s ";" {self.tracy_file_path}',
@@ -209,12 +197,10 @@ class Profiler:
                 stdout=csv_file,
                 stderr=subprocess.DEVNULL,
             )
-        print("done writing tracy ops data ")
 
     def copy_files_to_tt_metal(self):
         # ref comment from ttrt-perf
         # copy all relevant files to correct folder directory (metal hardcoded path, need to make more dynamic from metal library)
-        print("copying artifacts ")
 
         FileManager.copy_file(self.profiler_logs_dir, self.tracy_file_path)
         FileManager.copy_file(self.profiler_logs_dir, self.tracy_ops_times_file_path)

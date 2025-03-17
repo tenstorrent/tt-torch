@@ -2,10 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# run as
-# python3 tt_torch/tools/dummy_orchestrator.py
 from tt_torch.tools.profile_util import Profiler
-import pytest
 import subprocess
 import os
 import signal
@@ -18,16 +15,12 @@ def profile(test_command: str, output_filename: str = Profiler.DEFAULT_OUTPUT_FI
     profiler.assert_perf_build()
     profiler.setup_tracy_server()
 
-    env_vars = os.environ.copy()
-
-    # Test process must not run in main process, or else tracy capture will
-    # deadlock this.
+    # Test process must not run in main process, (i.e. via pytest.main) or else tracy capture will deadlock with main
     testProcess = subprocess.Popen(
-        [test_command], shell=True, env=env_vars, preexec_fn=os.setsid
+        [test_command], shell=True, env=os.environ.copy(), preexec_fn=os.setsid
     )
 
     def signal_handler(sig, frame):
-        print("sig handler got invoked")
         os.killpg(os.getpgid(testProcess.pid), signal.SIGTERM)
         profiler.tracy_capture_tool_process.terminate()
         profiler.tracy_capture_tool_process.communicate()
@@ -51,13 +44,13 @@ if __name__ == "__main__":
     gathering device-side performance data associated with individual torchfx ops.
 
     Usage:
-        python profile.py test_command
+        python profile.py test_command -o output_name
 
     Examples:
         python tt_torch/tools/profile.py "pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]"
 
     Notes:
-        - You must provide either --excel_path or --json_path, but not both.
+        Providing an output name is optional and defaults to 'device_ops_perf_trace.csv'.
     """
 
     parser = ArgumentParser()
