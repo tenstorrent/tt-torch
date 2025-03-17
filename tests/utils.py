@@ -64,11 +64,8 @@ class ModelTester:
         self.record_property = record_property_handle
         self.record_tag_cache = {}  # Holds for tags to be written out at finalize()
 
-        self.record_property("model_name", model_name)
-        self.record_property("frontend", "tt-torch")
         self.record_property("owner", "tt-torch")
         self.record_property("group", model_group)
-
         self.record_tag_cache["model_name"] = model_name
         self.record_tag_cache["frontend"] = "tt-torch"
 
