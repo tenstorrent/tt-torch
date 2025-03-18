@@ -13,7 +13,7 @@ import os
 import json
 import shutil
 
-global junitxml_path 
+global junitxml_path
 junitxml_path = None
 
 
@@ -96,7 +96,7 @@ def record_property(request):
     def _original_record_property(name, value):
         # Copied from https://docs.pytest.org/en/7.1.x/_modules/_pytest/junitxml.html
         request.node.user_properties.append((name, value))
-    
+
     # config options not in scope at this point, so using this global as indicator
     if not junitxml_path:
         return _original_record_property
