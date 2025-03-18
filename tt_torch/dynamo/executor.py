@@ -11,11 +11,7 @@ import faulthandler
 import sys
 import re
 import os
-import tempfile
 import multiprocessing as mp
-import signal
-import subprocess
-from pathlib import Path
 import tempfile
 from tt_torch.tools.utils import (
     CompileDepth,
@@ -26,6 +22,33 @@ from tt_torch.tools.utils import (
 )
 from typing import Union
 
+def get_tensor_size(tensor):
+    """Calculate the memory size of a tensor in bytes."""
+    if isinstance(tensor, torch.Tensor):
+        return tensor.element_size() * tensor.nelement()
+    return 0
+
+def get_inputs_size(inputs):
+    """Calculate the total memory size of inputs in bytes."""
+    total_size = 0
+    
+    if isinstance(inputs, torch.Tensor):
+        total_size += get_tensor_size(inputs)
+    elif isinstance(inputs, (list, tuple)):
+        for item in inputs:
+            total_size += get_inputs_size(item)
+    elif isinstance(inputs, dict):
+        for item in inputs.values():
+            total_size += get_inputs_size(item)
+            
+    return total_size
+
+def save_inputs_to_disk(inputs):
+    """Save inputs to disk and return the file path."""
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.pkl')
+    with open(temp_file.name, 'wb') as f:
+        pickle.dump(inputs, f)
+    return temp_file.name
 
 def compile_process(receiver, sender, ttir_event, ttnn_event, json_event):
     obj = receiver.get()
@@ -41,97 +64,61 @@ def compile_process(receiver, sender, ttir_event, ttnn_event, json_event):
     json_event.wait()
     sys.exit(0)
 
+def print_tensor_shapes(inputs, prefix=""):
+    """Print the shapes and dtypes of tensor inputs for debugging."""
+    if isinstance(inputs, torch.Tensor):
+        print(f"{prefix}dtype = {inputs.dtype}, shape = {inputs.shape}")
+    elif isinstance(inputs, (list, tuple)):
+        print(f"{prefix}List/Tuple of length {len(inputs)}")
+        for i, item in enumerate(inputs):
+            print_tensor_shapes(item, prefix=f"{prefix}[{i}].")
+    elif isinstance(inputs, dict):
+        print(f"{prefix}Dict with keys: {list(inputs.keys())}")
+        for key, item in inputs.items():
+            print_tensor_shapes(item, prefix=f"{prefix}['{key}'].")
+    else:
+        print(f"{prefix}Not a tensor: {type(inputs)}")
 
-def run_subprocess(binary, inputs, dump_file):
-    """
-    Isolated script to run tt_mlir.run_end_to_end in a completely separate process.
-    This will be saved as a temporary Python file and executed using subprocess.
-    """
-    script = """
-import os
-import sys
-import pickle
-import traceback
-
-# Redirect stdout/stderr
-with open("{stderr_file}", "w") as file_stderr:
-    old_stderr = sys.stderr
-    old_stdout = sys.stdout
-    sys.stderr = file_stderr
-    sys.stdout = file_stderr
-
-    try:
-        # Load inputs from pickle file
-        with open("{input_file}", "rb") as f:
-            binary, inputs = pickle.load(f)
-
-        # Import tt_mlir here to keep it isolated
-        import tt_mlir
-        outputs = tt_mlir.run_end_to_end(inputs, binary)
-
-        # Save outputs to pickle file
-        with open("{output_file}", "wb") as f:
-            pickle.dump(outputs, f)
-
-        # Success exit code
-        sys.exit(0)
-    except Exception as e:
-        # Save the exception information
-        with open("{error_file}", "wb") as f:
-            pickle.dump(str(e), f)
-
-        # Error exit code
-        sys.exit(1)
-    finally:
-        # Restore stdout/stderr
+def execute_process(receiver, sender, exec_event):
+    while 1:
+        obj = receiver.get()
+        faulthandler.disable()
+        binary = obj["binary"]
+        file_name = obj["dump_file"]
+        large_input = obj.get("large_input", False)
+        
+        inputs = None
+        # Load inputs from disk if they're large
+        if large_input:
+            print('Child process handling large input', flush=True)
+            inputs_file_path = obj.get("inputs_file_path")
+            if inputs_file_path and os.path.exists(inputs_file_path):
+                try:
+                    with open(inputs_file_path, "rb") as f:
+                        inputs = pickle.load(f)
+                except Exception as e:
+                    print(f"Error loading inputs from disk: {e}")
+        else:
+            inputs = obj.get("inputs")
+        
+        file_stderr = open(file_name, "w")
+        old_stderr = sys.stderr
+        sys.stderr = file_stderr
+        old_stdout = sys.stdout
+        sys.stdout = file_stderr
+        
+        outputs = None
+        if inputs is not None:
+            outputs = tt_mlir.run_end_to_end(inputs, binary)
+        
         sys.stderr = old_stderr
         sys.stdout = old_stdout
-"""
-
-    # Create temporary files for communication
-    temp_dir = tempfile.mkdtemp()
-    input_file = os.path.join(temp_dir, "input.pkl")
-    output_file = os.path.join(temp_dir, "output.pkl")
-    error_file = os.path.join(temp_dir, "error.pkl")
-    script_file = os.path.join(temp_dir, "runner.py")
-
-    # Fill in the template
-    script = script.format(
-        stderr_file=dump_file,
-        input_file=input_file,
-        output_file=output_file,
-        error_file=error_file,
-    )
-
-    # Save the script
-    with open(script_file, "w") as f:
-        f.write(script)
-
-    # Save the inputs
-    with open(input_file, "wb") as f:
-        pickle.dump((binary, inputs), f)
-
-    # Execute the subprocess
-    process = subprocess.Popen([sys.executable, script_file])
-
-    return process, output_file, error_file, temp_dir
-
-
-def execute_process_simple(args_dict, result_queue):
-    """Worker process function to run tt_mlir.run_end_to_end in isolation"""
-    try:
-        binary = args_dict["binary"]
-        inputs = args_dict["inputs"]
-
-        # Import tt_mlir only in the child process to avoid any global state issues
-        import tt_mlir
-
-        outputs = tt_mlir.run_end_to_end(inputs, binary)
-        result_queue.put({"status": "success", "outputs": outputs})
-    except Exception as e:
-        # Catch any other exceptions in the worker process
-        result_queue.put({"status": "error", "error": str(e)})
-
+        file_stderr.close()
+        
+        sender.put({"outputs": outputs})
+        exec_event.wait()
+    
+    sys.exit(0)
 
 class Executor:
     def __init__(
@@ -445,75 +432,99 @@ class OpByOpExecutor(Executor):
         print(f"json len {len(op.json)}")
         return binary, op
 
-    def run_op(self, binary, *inputs):
+    def run_op(self, idx, binary, *inputs):
         inputs = self.pre_process_inputs(*inputs)
-
-        if not hasattr(self, "stderror_redirected") or not self.stderror_redirected:
+        if not self.stderror_redirected:
             self.file_stderr = tempfile.NamedTemporaryFile(mode="w+t", delete=False)
             self.stderror_redirected = True
-
-        process, output_file, error_file, temp_dir = run_subprocess(
-            binary, inputs, self.file_stderr.name
-        )
-
-        timeout = getattr(
-            self.compiler_config, "single_op_timeout", 30
-        )  # Default 30s timeout
-        start_time = time.time()
-
-        outputs = None
-        while process.poll() is None and time.time() - start_time < timeout:
-            time.sleep(0.01)
-
-        if process.poll() is None:
+        
+        inputs_size = get_inputs_size(inputs)
+        print_tensor_shapes(inputs, prefix="inputs.")
+        print(f"Size of inputs: {inputs_size}")
+        
+        # Uncomment this line for production use
+        # large_input = inputs_size > 1 * 1024 * 1024 * 1024  # 1GB in bytes
+        large_input = inputs_size > 0  # For testing
+        
+        obj = {
+            "binary": binary,
+            "dump_file": self.file_stderr.name,
+            "large_input": large_input
+        }
+        
+        inputs_file_path = None
+        if large_input:
             try:
-                os.kill(process.pid, signal.SIGTERM)
-                time.sleep(0.1)
-                if process.poll() is None:
-                    os.kill(process.pid, signal.SIGKILL)
+                # Create a temporary file and save its path
+                temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.pkl')
+                inputs_file_path = temp_file.name
+                temp_file.close()  # Close it so we can reopen for writing
+                
+                # Write the inputs to the file
+                with open(inputs_file_path, "wb") as f:
+                    pickle.dump(inputs, f)
+                
+                # Store only the path in the object
+                obj["inputs_file_path"] = inputs_file_path
+            except Exception as e:
+                print(f"Error saving inputs to disk: {e}")
+                if inputs_file_path and os.path.exists(inputs_file_path):
+                    try:
+                        os.remove(inputs_file_path)
+                    except OSError:
+                        pass
+                large_input = False
+        
+        if not large_input:
+            obj["inputs"] = inputs
+        
+        # Rest of the function...
+        exec_event = mp.Event()
+        if self.execute_process is None:
+            self.execute_sender = mp.Queue()
+            self.execute_receiver = mp.Queue()
+            self.execute_process = mp.Process(
+                target=execute_process,
+                args=(self.execute_sender, self.execute_receiver, exec_event),
+            )
+            self.execute_process.start()
+        
+        self.execute_sender.put(obj)
+        result = {}
+        start = time.time()
+        outputs = [None]
+        
+        while True:
+            if not self.execute_process.is_alive():
+                self.execute_process = None
+                break
+            try:
+                result = self.execute_receiver.get_nowait()
+                outputs = result["outputs"]
+                exec_event.set()
+                break
+            except mp.queues.Empty:
+                pass
+            if time.time() - start > self.compiler_config.single_op_timeout:
+                self.execute_process.terminate()
+                self.execute_process = None
+                break
+        
+        # Clean up the temporary file if we created one
+        if large_input and inputs_file_path and os.path.exists(inputs_file_path):
+            try:
+                os.remove(inputs_file_path)
             except OSError:
                 pass
-
-        if process.returncode == 0:
-            try:
-                with open(output_file, "rb") as f:
-                    outputs = pickle.load(f)
-            except (FileNotFoundError, pickle.PickleError):
-                outputs = None
-        else:
-            try:
-                with open(error_file, "rb") as f:
-                    error_msg = pickle.load(f)
-                    print(f"Subprocess error: {error_msg}")
-            except (FileNotFoundError, pickle.PickleError):
-                pass
-
-            outputs = None
-
-        try:
-            for file in [
-                output_file,
-                error_file,
-                os.path.join(temp_dir, "runner.py"),
-                os.path.join(temp_dir, "input.pkl"),
-            ]:
-                if os.path.exists(file):
-                    os.unlink(file)
-            os.rmdir(temp_dir)
-        except OSError:
-            pass
-
+        
+        if len(outputs) == 1:
+            outputs = outputs[0]
+        
         stderr_data = ""
         if outputs is None:
-            try:
-                with open(self.file_stderr.name, "r") as file_stderr:
-                    stderr_data = file_stderr.read()
-                    stderr_data = stderr_data.replace("\n", "\\n")
-                    stderr_data = re.sub(r"[^\x20-\x7E]", "", stderr_data)
-            except:
-                stderr_data = "Failed to read stderr"
-
-        if outputs is not None and isinstance(outputs, list) and len(outputs) == 1:
-            outputs = outputs[0]
-
+            with open(self.file_stderr.name, "r") as file_stderr:
+                stderr_data = file_stderr.read()
+            stderr_data = stderr_data.replace("\n", "\\n")
+            stderr_data = re.sub(r"[^\x20-\x7E]", "", stderr_data)
+        
         return outputs, stderr_data

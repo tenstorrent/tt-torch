@@ -248,6 +248,8 @@ class TorchExecutor(OpByOpExecutor):
                         )
                     else:
                         args.append(arg)
+                if idx == 9550:
+                    breakpoint()
                 try:
                     binary, op = self.compile_op(node, *args, **node.kwargs)
                 except Exception as e:
@@ -259,7 +261,7 @@ class TorchExecutor(OpByOpExecutor):
                     and binary is not None
                 ):
                     try:
-                        calculated, runtime_stack_dump = self.run_op(binary, *args)
+                        calculated, runtime_stack_dump = self.run_op(idx, binary, *args)
                         self.compiler_config.unique_ops[
                             op.unique_key()
                         ].runtime_stack_dump = runtime_stack_dump
