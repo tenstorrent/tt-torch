@@ -22,16 +22,18 @@ from tt_torch.tools.utils import (
 )
 from typing import Union
 
+
 def get_tensor_size(tensor):
     """Calculate the memory size of a tensor in bytes."""
     if isinstance(tensor, torch.Tensor):
         return tensor.element_size() * tensor.nelement()
     return 0
 
+
 def get_inputs_size(inputs):
     """Calculate the total memory size of inputs in bytes."""
     total_size = 0
-    
+
     if isinstance(inputs, torch.Tensor):
         total_size += get_tensor_size(inputs)
     elif isinstance(inputs, (list, tuple)):
@@ -40,15 +42,17 @@ def get_inputs_size(inputs):
     elif isinstance(inputs, dict):
         for item in inputs.values():
             total_size += get_inputs_size(item)
-            
+
     return total_size
+
 
 def save_inputs_to_disk(inputs):
     """Save inputs to disk and return the file path."""
-    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.pkl')
-    with open(temp_file.name, 'wb') as f:
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pkl")
+    with open(temp_file.name, "wb") as f:
         pickle.dump(inputs, f)
     return temp_file.name
+
 
 def compile_process(receiver, sender, ttir_event, ttnn_event, json_event):
     obj = receiver.get()
@@ -63,6 +67,7 @@ def compile_process(receiver, sender, ttir_event, ttnn_event, json_event):
     sender.put({"json": tt_mlir.bytestream_to_json(binary)})
     json_event.wait()
     sys.exit(0)
+
 
 def print_tensor_shapes(inputs, prefix=""):
     """Print the shapes and dtypes of tensor inputs for debugging."""
@@ -79,6 +84,7 @@ def print_tensor_shapes(inputs, prefix=""):
     else:
         print(f"{prefix}Not a tensor: {type(inputs)}")
 
+
 def execute_process(receiver, sender, exec_event):
     while 1:
         obj = receiver.get()
@@ -86,11 +92,11 @@ def execute_process(receiver, sender, exec_event):
         binary = obj["binary"]
         file_name = obj["dump_file"]
         large_input = obj.get("large_input", False)
-        
+
         inputs = None
         # Load inputs from disk if they're large
         if large_input:
-            print('Child process handling large input', flush=True)
+            print("Child process handling large input", flush=True)
             inputs_file_path = obj.get("inputs_file_path")
             if inputs_file_path and os.path.exists(inputs_file_path):
                 try:
@@ -100,25 +106,26 @@ def execute_process(receiver, sender, exec_event):
                     print(f"Error loading inputs from disk: {e}")
         else:
             inputs = obj.get("inputs")
-        
+
         file_stderr = open(file_name, "w")
         old_stderr = sys.stderr
         sys.stderr = file_stderr
         old_stdout = sys.stdout
         sys.stdout = file_stderr
-        
+
         outputs = None
         if inputs is not None:
             outputs = tt_mlir.run_end_to_end(inputs, binary)
-        
+
         sys.stderr = old_stderr
         sys.stdout = old_stdout
         file_stderr.close()
-        
+
         sender.put({"outputs": outputs})
         exec_event.wait()
-    
+
     sys.exit(0)
+
 
 class Executor:
     def __init__(
@@ -437,33 +444,33 @@ class OpByOpExecutor(Executor):
         if not self.stderror_redirected:
             self.file_stderr = tempfile.NamedTemporaryFile(mode="w+t", delete=False)
             self.stderror_redirected = True
-        
+
         inputs_size = get_inputs_size(inputs)
         print_tensor_shapes(inputs, prefix="inputs.")
         print(f"Size of inputs: {inputs_size}")
-        
+
         # Uncomment this line for production use
         # large_input = inputs_size > 1 * 1024 * 1024 * 1024  # 1GB in bytes
         large_input = inputs_size > 0  # For testing
-        
+
         obj = {
             "binary": binary,
             "dump_file": self.file_stderr.name,
-            "large_input": large_input
+            "large_input": large_input,
         }
-        
+
         inputs_file_path = None
         if large_input:
             try:
                 # Create a temporary file and save its path
-                temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.pkl')
+                temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pkl")
                 inputs_file_path = temp_file.name
                 temp_file.close()  # Close it so we can reopen for writing
-                
+
                 # Write the inputs to the file
                 with open(inputs_file_path, "wb") as f:
                     pickle.dump(inputs, f)
-                
+
                 # Store only the path in the object
                 obj["inputs_file_path"] = inputs_file_path
             except Exception as e:
@@ -474,10 +481,10 @@ class OpByOpExecutor(Executor):
                     except OSError:
                         pass
                 large_input = False
-        
+
         if not large_input:
             obj["inputs"] = inputs
-        
+
         # Rest of the function...
         exec_event = mp.Event()
         if self.execute_process is None:
@@ -488,12 +495,12 @@ class OpByOpExecutor(Executor):
                 args=(self.execute_sender, self.execute_receiver, exec_event),
             )
             self.execute_process.start()
-        
+
         self.execute_sender.put(obj)
         result = {}
         start = time.time()
         outputs = [None]
-        
+
         while True:
             if not self.execute_process.is_alive():
                 self.execute_process = None
@@ -509,22 +516,22 @@ class OpByOpExecutor(Executor):
                 self.execute_process.terminate()
                 self.execute_process = None
                 break
-        
+
         # Clean up the temporary file if we created one
         if large_input and inputs_file_path and os.path.exists(inputs_file_path):
             try:
                 os.remove(inputs_file_path)
             except OSError:
                 pass
-        
+
         if len(outputs) == 1:
             outputs = outputs[0]
-        
+
         stderr_data = ""
         if outputs is None:
             with open(self.file_stderr.name, "r") as file_stderr:
                 stderr_data = file_stderr.read()
             stderr_data = stderr_data.replace("\n", "\\n")
             stderr_data = re.sub(r"[^\x20-\x7E]", "", stderr_data)
-        
+
         return outputs, stderr_data
