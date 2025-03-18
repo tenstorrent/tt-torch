@@ -7,6 +7,11 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 from tt_torch.tools.utils import OpByOpBackend
+import os
+import json
+import shutil
+
+global junitxml_path
 
 
 @pytest.fixture(autouse=True)
@@ -40,6 +45,12 @@ def pytest_addoption(parser):
         action="store_true",
         default=False,
         help="Run test in torch op-by-op mode",
+    )
+    parser.addoption(
+        "--crashsafe",
+        action="store_true",
+        default=False,
+        help="Create transacted output logs",
     )
 
 
@@ -79,3 +90,48 @@ def record_test_timestamp(record_property):
     yield
     end_timestamp = datetime.now(timezone.utc).isoformat()
     record_property("end_timestamp", end_timestamp)
+
+
+@pytest.fixture
+def crashsafe_record_property(request):
+    """Override the built-in record_property fixture with transactional writes."""
+    global junitxml_path
+
+    property_file = f"{junitxml_path}_crashsafe.json"
+    with open(property_file, "w+") as f:
+        json.dump({}, f)
+
+    def _record_property(name, value):
+        # Add to the standard pytest user_properties
+        request.node.user_properties.append((name, value))
+
+        # Also write to disk immediately for durability
+        properties = {}
+        if os.path.exists(property_file):
+            with open(property_file, "r") as f:
+                try:
+                    properties = json.load(f)
+                except json.JSONDecodeError:
+                    properties = {}
+
+        properties[name] = value
+
+        # Write atomically to avoid corruption
+        temp_file = f"{property_file}.tmp"
+        with open(temp_file, "w") as f:
+            json.dump(properties, f)
+        os.replace(temp_file, property_file)
+
+    return _record_property
+
+
+def pytest_configure(config):
+    global junitxml_path
+    junitxml_path = config.getoption("--junit-xml")
+
+    # Check if the --crashsafe option is enabled
+    if config.getoption("--crashsafe"):
+        # Override the `record_property` fixture with the crash-safe version
+        pytest.record_property = pytest.fixture(scope="function")(
+            crashsafe_record_property
+        )
