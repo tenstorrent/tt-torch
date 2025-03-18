@@ -267,6 +267,7 @@ class CompilerConfig:
         self.enable_async = False
         self.cache_preprocessed_constants = False
         self.inline_parameters = False
+        self.record_property = None
 
         self.apply_environment_overrides()
         self.post_init()
