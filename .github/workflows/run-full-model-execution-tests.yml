@@ -30,6 +30,7 @@ jobs:
                   tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval]
                   tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval]
                   tests/models/yolov3/test_yolov3.py::test_yolov3[full-eval]
+                  tests/models/yolov4/test_yolov4.py::test_yolov4[full-eval]
             "
           },
           {
@@ -151,6 +152,8 @@ jobs:
       shell: bash
       run: |
         source env/activate
+        apt-get update
+        apt install -y libgl1 libglx-mesa0
 
         pytest -v ${{matrix.build.tests}} \
           --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
