@@ -72,4 +72,3 @@ def test_phi_1(record_property, mode, op_by_op):
         """
         )
     tester.finalize()
-    
