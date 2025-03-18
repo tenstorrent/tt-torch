@@ -7,11 +7,14 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 from tt_torch.tools.utils import OpByOpBackend
+from tt_torch.tools.crashsafe_utils import crashsafe_suffix
+
 import os
 import json
 import shutil
 
-global junitxml_path
+global junitxml_path 
+junitxml_path = None
 
 
 @pytest.fixture(autouse=True)
@@ -93,15 +96,24 @@ def record_test_timestamp(record_property):
 
 
 @pytest.fixture
-def crashsafe_record_property(request):
+def record_property(request):
     """Override the built-in record_property fixture with transactional writes."""
     global junitxml_path
 
-    property_file = f"{junitxml_path}_crashsafe.json"
+    def _original_record_property(name, value):
+        # Copied from https://docs.pytest.org/en/7.1.x/_modules/_pytest/junitxml.html
+        request.node.user_properties.append((name, value))
+    
+    # config options not in scope at this point, so using this global as indicator
+    if not junitxml_path:
+        return _original_record_property
+
+    property_file = f"{junitxml_path}{crashsafe_suffix}"
+    print(f"Writing to {property_file}")
     with open(property_file, "w+") as f:
         json.dump({}, f)
 
-    def _record_property(name, value):
+    def _crashsafe_record_property(name, value):
         # Add to the standard pytest user_properties
         request.node.user_properties.append((name, value))
 
@@ -122,16 +134,13 @@ def crashsafe_record_property(request):
             json.dump(properties, f)
         os.replace(temp_file, property_file)
 
-    return _record_property
+    return _crashsafe_record_property
 
 
 def pytest_configure(config):
     global junitxml_path
-    junitxml_path = config.getoption("--junit-xml")
 
     # Check if the --crashsafe option is enabled
     if config.getoption("--crashsafe"):
-        # Override the `record_property` fixture with the crash-safe version
-        pytest.record_property = pytest.fixture(scope="function")(
-            crashsafe_record_property
-        )
+        print(f"Running in crashsafe mode - logging data to crashsafe log")
+        junitxml_path = config.getoption("--junit-xml")
