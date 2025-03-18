@@ -276,6 +276,7 @@ class CompilerConfig:
         self.mesh_device_shape = [1, 1]
         self.mesh_device_options = MeshDeviceOptions()
         self.mesh_device_options.enable_async_ttnn = False
+        self.record_property = None
 
         self.apply_environment_overrides()
         self.post_init()

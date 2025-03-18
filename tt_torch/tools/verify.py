@@ -128,7 +128,7 @@ def verify_against_golden(
         else:
             print(msg)
 
-    return pccs, atols
+    return pccs, atols, passed_pcc, passed_atol
 
 
 def _verify_torch_module(
