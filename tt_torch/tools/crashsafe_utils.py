@@ -4,6 +4,9 @@
 
 import xml.etree.ElementTree as ET
 import ast
+import pytest
+import subprocess
+import re
 
 crashsafe_suffix = "_crashsafe.xml"
 
@@ -100,3 +103,51 @@ def rewrite_crashsafe_xml(xml_file):
     inject_param_into_tags(
         xml_file, "max_achieved_compile_depth", max_achieved_compile_depth
     )
+
+
+def enumerate_all_tests():
+    test_dir = "tests/models"
+    try:
+        # Run pytest with --collect-only and capture the output
+        result = subprocess.run(
+            ["pytest", test_dir, "--collect-only", "-q"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+
+        # Check if pytest ran successfully
+        if result.returncode != 0:
+            raise RuntimeError(f"pytest failed: {result.stderr}")
+
+        # Extract test names using a regex
+        test_cases = re.findall(r"(\S+::\S+)", result.stdout)
+
+        return test_cases
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return []
+
+
+def generate_test_matrix(test_list):
+    full_eval_test_list = test_list
+    matrix = []
+    n_groups = 8  # arbitrary number of groups ~ # CI test runners
+    group_size = max(
+        1, len(full_eval_test_list) // n_groups
+    )  # Ensure group_size is at least 1
+
+    for i in range(0, len(full_eval_test_list), group_size):
+        # Slice up to the end of the list to avoid out-of-bounds errors
+        group = full_eval_test_list[i : min(i + group_size, len(full_eval_test_list))]
+        matrix.append(
+            {
+                "runs-on": "wormhole_b0",
+                "name": f"benchmark_{len(matrix) + 1}",
+                "tests": group,
+            }
+        )
+
+    print(matrix)
+    return matrix
