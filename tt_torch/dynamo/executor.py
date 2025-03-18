@@ -46,14 +46,6 @@ def get_inputs_size(inputs):
     return total_size
 
 
-def save_inputs_to_disk(inputs):
-    """Save inputs to disk and return the file path."""
-    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pkl")
-    with open(temp_file.name, "wb") as f:
-        pickle.dump(inputs, f)
-    return temp_file.name
-
-
 def compile_process(receiver, sender, ttir_event, ttnn_event, json_event):
     obj = receiver.get()
     faulthandler.disable()
@@ -446,12 +438,8 @@ class OpByOpExecutor(Executor):
             self.stderror_redirected = True
 
         inputs_size = get_inputs_size(inputs)
-        print_tensor_shapes(inputs, prefix="inputs.")
-        print(f"Size of inputs: {inputs_size}")
 
-        # Uncomment this line for production use
-        # large_input = inputs_size > 1 * 1024 * 1024 * 1024  # 1GB in bytes
-        large_input = inputs_size > 0  # For testing
+        large_input = inputs_size > 1 * 1024 * 1024 * 1024  # 1GB
 
         obj = {
             "binary": binary,
@@ -462,16 +450,13 @@ class OpByOpExecutor(Executor):
         inputs_file_path = None
         if large_input:
             try:
-                # Create a temporary file and save its path
                 temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pkl")
                 inputs_file_path = temp_file.name
-                temp_file.close()  # Close it so we can reopen for writing
+                temp_file.close()
 
-                # Write the inputs to the file
                 with open(inputs_file_path, "wb") as f:
                     pickle.dump(inputs, f)
 
-                # Store only the path in the object
                 obj["inputs_file_path"] = inputs_file_path
             except Exception as e:
                 print(f"Error saving inputs to disk: {e}")
@@ -485,7 +470,6 @@ class OpByOpExecutor(Executor):
         if not large_input:
             obj["inputs"] = inputs
 
-        # Rest of the function...
         exec_event = mp.Event()
         if self.execute_process is None:
             self.execute_sender = mp.Queue()
@@ -517,7 +501,6 @@ class OpByOpExecutor(Executor):
                 self.execute_process = None
                 break
 
-        # Clean up the temporary file if we created one
         if large_input and inputs_file_path and os.path.exists(inputs_file_path):
             try:
                 os.remove(inputs_file_path)
