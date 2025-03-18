@@ -21,6 +21,7 @@ def verify_against_golden(
     required_atol=None,
     relative_atol=None,
 ):
+    breakpoint()
     assert (required_atol is not None) != (
         relative_atol is not None
     ), "Exactly one of atol or relative_atol should be provided."

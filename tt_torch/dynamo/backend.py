@@ -24,6 +24,12 @@ from torch_mlir.compiler_utils import (
     run_pipeline_with_repro_report,
     lower_mlir_module,
 )
+from .decompositions import (
+    DecompositionTable,
+    # DEFAULT_DECOMPOSITION_TABLE,
+    CUSTOM_DECOMPOSITION_TABLE,
+)
+from torch._dynamo.backends.common import aot_autograd, aot_module_simplified
 from tt_torch.dynamo.passes import pass_pipeline
 from tt_torch.dynamo.executor import Executor
 from tt_torch.tools.utils import (
@@ -159,4 +165,13 @@ def backend(gm, example_inputs, options=None):
                 program=program,
                 graph_constants=graph_constants,
             )
-    return _base_backend(gm, example_inputs, compiler_config=options)
+    decomposition_table = CUSTOM_DECOMPOSITION_TABLE
+    return aot_module_simplified(
+        gm,
+        example_inputs,
+        fw_compiler=lambda *args, **kwargs: _base_backend(
+            *args, **kwargs, compiler_config=options
+        ),  # Forward compiler
+        decompositions=decomposition_table,
+    )
+    # return _base_backend(gm, example_inputs, compiler_config=options)

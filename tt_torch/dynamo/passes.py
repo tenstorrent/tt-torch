@@ -80,16 +80,16 @@ def constant_fold(gm):
 
 
 def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
-    decompositions = torch.export.default_decompositions()
-    decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
+    # decompositions = torch.export.default_decompositions()
+    # decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
 
-    # we use the export API to run the decompositions, as this maintains the
-    # soruce locations in stack_trace
-    gm = (
-        torch.export.export_for_training(gm, tuple(example_inputs), strict=False)
-        .run_decompositions(decompositions)
-        .module()
-    )
+    # # we use the export API to run the decompositions, as this maintains the
+    # # soruce locations in stack_trace
+    # gm = (
+    #     torch.export.export_for_training(gm, tuple(example_inputs), strict=False)
+    #     .run_decompositions(decompositions)
+    #     .module()
+    # )
 
     if compiler_config.enable_consteval:
         gm = constant_fold(gm)

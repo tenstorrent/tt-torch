@@ -422,7 +422,7 @@ def test_multiple_ops():
             return z
 
     cc = CompilerConfig()
-    cc.compile_depth = tt_torch.tools.utils.CompileDepth.EXECUTE_OP_BY_OP
+    cc.compile_depth = tt_torch.tools.utils.CompileDepth.EXECUTE
     verify_module(
         Basic(), input_shapes=[(256, 256)], compiler_config=cc, do_assert=False
     )
