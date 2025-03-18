@@ -306,8 +306,6 @@ jobs:
       shell: bash
       run: |
         source env/activate
-        apt-get update
-        apt install -y libgl1 libglx-mesa0
 
         # Make sure we don't stop on first failure
         set +e
