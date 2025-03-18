@@ -7,6 +7,10 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 from tt_torch.tools.utils import OpByOpBackend
+import faulthandler
+import signal
+
+junitxml_report = None
 
 
 @pytest.fixture(autouse=True)
@@ -72,3 +76,41 @@ def record_test_timestamp(record_property):
     yield
     end_timestamp = datetime.now(timezone.utc).isoformat()
     record_property("end_timestamp", end_timestamp)
+
+
+def pytest_configure(config):
+    global junitxml_report
+    junitxml_path = config.getoption("--junit-xml")
+    if junitxml_path:
+        junitxml_report = config.pluginmanager.getplugin("junitxml")
+
+
+def pytest_sessionstart(session):
+    if junitxml_report:
+        faulthandler.enable()
+        # Register signal handlers to gracefully flush junitxml report at session end
+        signal.signal(signal.SIGTERM, handle_signal)
+        signal.signal(signal.SIGINT, handle_signal)
+        signal.signal(signal.SIGSEGV, handle_signal)
+        signal.signal(signal.SIGABRT, handle_signal)
+
+
+def pytest_sessionfinish(session, exitstatus):
+    if junitxml_report:
+        # Ensure the junitxml report is flushed properly at the end of the session
+        flush_junitxml_report()
+
+
+def flush_junitxml_report():
+    global junitxml_report
+    import pdb
+
+    pdb.set_trace()
+    if junitxml_report:
+        junitxml_report.report._xmlfile.write()
+        junitxml_report.report._xmlfile.flush()
+
+
+def handle_signal(signum, frame):
+    flush_junitxml_report()
+    sys.exit(1)

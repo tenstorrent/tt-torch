@@ -61,7 +61,9 @@ class ModelTester:
             compiler_config = CompilerConfig()
         self.compiler_config = compiler_config
         self.compiler_config.model_name = model_name
+        self.compiler_config.record_property = record_property_handle
         self.record_property = record_property_handle
+
         self.record_tag_cache = {}  # Holds for tags to be written out at finalize()
 
         self.record_property("model_name", model_name)
@@ -249,7 +251,7 @@ class ModelTester:
             golden_tensors = self._extract_outputs(golden)
             output_tensors = self._extract_outputs(outputs)
 
-        pccs, atols = verify_against_golden(
+        pccs, atols, passed_pcc, passed_atol = verify_against_golden(
             golden_tensors,
             output_tensors,
             self.assert_pcc,
@@ -258,8 +260,11 @@ class ModelTester:
             self.required_atol,
             self.relative_atol,
         )
+
         self.record_tag_cache["pccs"] = pccs
         self.record_tag_cache["atols"] = atols
+        if passed_pcc and passed_atol:
+            self.record_property("achieved_compile_depth", "PASSED")
 
     def get_framework_model(self):
         model = (
@@ -278,6 +283,8 @@ class ModelTester:
             model = self.compile_model(model, self.compiler_config)
 
         outputs = self.run_model(model, self.inputs)
+
+        self.record_property("achieved_compile_depth", "EXECUTE")
 
         self.verify_outputs(golden, outputs)
         return outputs
