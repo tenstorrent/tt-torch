@@ -276,7 +276,7 @@ class ModelTester:
         return model
 
     @torch.inference_mode()
-    def test_model_eval(self, on_device=True):
+    def test_model_eval(self, on_device=True, assert_eval_token_mismatch=True):
         model = self.get_framework_model()
         golden = self.get_golden_outputs(model, self.inputs)
 
@@ -291,18 +291,19 @@ class ModelTester:
             decoded_golden = self.tokenizer.batch_decode(
                 golden, skip_special_tokens=True
             )
-            assert (
-                decoded_outputs == decoded_golden
-            ), f'Output mismatch: calculated: "{decoded_outputs} vs golden: "{decoded_golden}"'
+            if assert_eval_token_mismatch:
+                assert (
+                    decoded_outputs == decoded_golden
+                ), f'Output mismatch: calculated: "{decoded_outputs} vs golden: "{decoded_golden}"'
         else:
             self.verify_outputs(golden, outputs)
         return outputs
 
-    def test_model(self, on_device=True):
+    def test_model(self, on_device=True, assert_eval_token_mismatch=True):
         if self.mode == "train":
             return self.test_model_train(on_device)
         elif self.mode == "eval":
-            return self.test_model_eval(on_device)
+            return self.test_model_eval(on_device, assert_eval_token_mismatch)
         else:
             raise ValueError(f"Current mode is not supported: {self.mode}")
 
