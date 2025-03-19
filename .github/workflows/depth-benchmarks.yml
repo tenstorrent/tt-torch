@@ -1,0 +1,31 @@
+# This workflow automates running model depth benchmarks
+
+name: Depth Benchmarks
+
+on:
+  schedule:
+    - cron: '0 4 * * *'  # Runs at 04:00 UTC every day
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  pre-commit:
+    uses: ./.github/workflows/pre-commit.yml
+    secrets: inherit
+  spdx:
+    uses: ./.github/workflows/spdx.yml
+    secrets: inherit
+  docker-build:
+    uses: ./.github/workflows/build-image.yml
+    secrets: inherit
+  build:
+    needs: [pre-commit, spdx, docker-build]
+    uses: ./.github/workflows/run-build.yml
+    secrets: inherit
+    with:
+      docker-image: ${{ needs.docker-build.outputs.docker-image }}
+  run_benchmark:
+    needs: [docker-build, build]
+    uses: ./.github/workflows/run-depth-benchmark-tests.yml
+    secrets: inherit
+    with:
+      docker-image: ${{ needs.docker-build.outputs.docker-image }}

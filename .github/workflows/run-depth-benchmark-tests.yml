@@ -8,11 +8,6 @@ on:
         description: 'Docker image to use for build'
         required: true
         type: string
-      run-codecov:
-        description: 'Run code coverage reports'
-        required: false
-        type: string # properly a boolean but autocast to string when passed in using 'with' inputs
-        default: 'true'
   workflow_run:
     workflows: [Build] # backref to run-build as dependency
     types: [completed]
@@ -115,7 +110,6 @@ jobs:
       run: |
         source env/activate
         python -m tt-torch/tt_torch/tools/postprocess_crashsafe_reports.py ${{ steps.strings.outputs.test_report_path_models }}_subtest*_crashsafe.xml ${{ steps.strings.outputs.test_report_path_models }}
-
 
     - name: Upload Test Report Models
       uses: actions/upload-artifact@v4
