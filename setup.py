@@ -7,6 +7,7 @@ from skbuild.command.install_lib import install_lib
 import glob
 from setuptools import find_namespace_packages
 import sys
+import shutil
 
 
 class install_metal_libs(install_lib):
@@ -27,6 +28,26 @@ class install_metal_libs(install_lib):
         )
         self.copy_file(ttmlir_opt, install_path)
 
+        # Copy profiling tools
+        src_tools_dir = os.path.abspath(
+            os.path.join(
+                os.getcwd(),
+                "third_party",
+                "tt-mlir",
+                "src",
+                "tt-mlir",
+                "third_party",
+                "tt-metal",
+                "src",
+                "tt-metal-build",
+                "tools",
+            )
+        )
+        dest_tools_dir = os.path.join(self.install_dir, "tt_metal", "tools")
+        if os.path.exists(src_tools_dir):
+            os.makedirs(os.path.dirname(dest_tools_dir), exist_ok=True)
+            shutil.copytree(src_tools_dir, dest_tools_dir, dirs_exist_ok=True)
+
 
 # Compile time env vars
 os.environ["DONT_OVERRIDE_INSTALL_PATH"] = "1"
@@ -40,6 +61,12 @@ if "--code_coverage" in sys.argv:
         "-DCODE_COVERAGE=ON",
     ]
     sys.argv.remove("--code_coverage")
+
+if "--build_perf" in sys.argv:
+    cmake_args += [
+        "-DTT_RUNTIME_ENABLE_PERF_TRACE=ON",
+    ]
+    sys.argv.remove("--build_perf")
 
 with open("README.md", "r") as f:
     long_description = f.read()

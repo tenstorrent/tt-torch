@@ -35,3 +35,5 @@ setuptools
 wheel
 scikit-build
 nanobind
+loguru
+seaborn

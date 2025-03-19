@@ -241,3 +241,5 @@ distributed as part of the software:
 - kornia - Apache v2.0 (https://github.com/kornia/kornia/blob/main/LICENSE)
 - timm - MIT License (https://github.com/guigrpa/timm/blob/master/LICENSE)
 - jax - Apache v2.0 (https://github.com/jax-ml/jax/blob/main/LICENSE)
+- loguru - MIT License (https://github.com/Delgan/loguru/blob/master/LICENSE)
+- seaborn - Custom License (https://github.com/mwaskom/seaborn/blob/master/LICENSE.md)

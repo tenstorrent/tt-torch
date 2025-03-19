@@ -5,6 +5,7 @@ dist
 install
 results/mlir_tests/
 results/models/
+results/perf/
 results/*.md
 results/*.xlsx
 third_party/toolchain
