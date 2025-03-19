@@ -43,6 +43,13 @@ def pytest_addoption(parser):
     )
 
 
+# Print more details for skipped and xfailed tests
+def pytest_runtest_logreport(report):
+    if report.outcome in ("xfailed", "skipped") or hasattr(report, "wasxfail"):
+        if report.longrepr:
+            print(f"\n{report.longreprtext}")
+
+
 def pytest_collection_modifyitems(config, items):
     # Filter tests based on which op_by_op flag is set
     selected_items = []
