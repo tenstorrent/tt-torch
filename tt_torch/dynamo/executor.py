@@ -23,6 +23,10 @@ from tt_torch.tools.utils import (
 from typing import Union
 
 
+def gb_to_bytes(gb):
+    return gb * 1024 * 1024 * 1024
+
+
 def get_tensor_size(tensor):
     """Calculate the memory size of a tensor in bytes."""
     if isinstance(tensor, torch.Tensor):
@@ -42,7 +46,8 @@ def get_inputs_size(inputs):
     elif isinstance(inputs, dict):
         for item in inputs.values():
             total_size += get_inputs_size(item)
-
+    else:
+        assert false, f"Unexpected input type: {type(inputs)}"
     return total_size
 
 
@@ -83,13 +88,13 @@ def execute_process(receiver, sender, exec_event):
         faulthandler.disable()
         binary = obj["binary"]
         file_name = obj["dump_file"]
-        large_input = obj.get("large_input", False)
+        large_input = obj["large_input"]
         inputs = None
 
         # Load inputs from disk if they're large
         if large_input:
             print("Child process handling large input", flush=True)
-            inputs_file_path = obj.get("inputs_file_path")
+            inputs_file_path = obj["inputs_file_path"]
             if inputs_file_path and os.path.exists(inputs_file_path):
                 try:
                     with open(inputs_file_path, "rb") as f:
@@ -97,7 +102,7 @@ def execute_process(receiver, sender, exec_event):
                 except Exception as e:
                     print(f"Error loading inputs from disk: {e}")
         else:
-            inputs = obj.get("inputs")
+            inputs = obj["inputs"]
 
         file_stderr = open(file_name, "w")
         old_stderr = sys.stderr
@@ -308,6 +313,7 @@ class OpByOpExecutor(Executor):
         # to capture runtime stack dump.
         self.stderror_redirected = False
         self.file_stderr = None
+        self.op_memory_limit = gb_to_bytes(1)  # 1GB limit
 
     def transform_input(self, inp):
         # Convert torch.nn.Parameter to torch.Tensor and convert non-contiguous
@@ -445,7 +451,7 @@ class OpByOpExecutor(Executor):
 
         inputs_size = get_inputs_size(inputs)
 
-        large_input = inputs_size > 1 * 1024 * 1024 * 1024  # 1GB limit
+        large_input = inputs_size > self.op_memory_limit
 
         obj = {
             "binary": binary,
@@ -455,6 +461,7 @@ class OpByOpExecutor(Executor):
 
         inputs_file_path = None
         if large_input:
+            obj["inputs"] = None
             try:
                 temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pkl")
                 inputs_file_path = temp_file.name
@@ -472,9 +479,9 @@ class OpByOpExecutor(Executor):
                     except OSError:
                         pass
                 large_input = False
-
-        if not large_input:
+        else:
             obj["inputs"] = inputs
+            obj["inputs_file_path"] = None
 
         exec_event = mp.Event()
         if self.execute_process is None:
@@ -505,7 +512,7 @@ class OpByOpExecutor(Executor):
                 self.execute_process = None
                 break
 
-        if large_input and inputs_file_path and os.path.exists(inputs_file_path):
+        if os.path.isfile(inputs_file_path):
             try:
                 os.remove(inputs_file_path)
             except OSError:
