@@ -94,8 +94,16 @@ jobs:
         source env/activate
         python results/parse_op_by_op_results.py
 
+    - name: Get branch name, commit hash, and date
+      id: git-info
+      shell: bash
+      run: |
+        echo "branch=$(git rev-parse --abbrev-ref HEAD)" >> "$GITHUB_OUTPUT"
+        echo "commit=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+        echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+
     - name: Upload report to archive
       uses: actions/upload-artifact@v4
       with:
-        name: models_op_per_op.xlsx
+        name: "models_op_per_op_${{ steps.git-info.outputs.date }}_${{ steps.git-info.outputs.branch }}_${{ steps.git-info.outputs.commit }}.xlsx"
         path: "${{ steps.strings.outputs.work-dir }}/results/models_op_per_op.xlsx"
