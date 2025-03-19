@@ -2,6 +2,11 @@ name: Generate TTNN MD Files
 
 on:
   workflow_call:
+    inputs:
+      spreadsheet_name:
+        description: 'Name of spreadsheet dynamically generated from generate-model-report.'
+        required: true
+        type: string
   workflow_dispatch:
     inputs:
       run_id:
