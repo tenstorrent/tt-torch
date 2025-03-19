@@ -94,11 +94,12 @@ jobs:
         source env/activate
         python results/parse_op_by_op_results.py
 
-    - name: Get branch name, commit hash, and date
+    - name: Get git metadata
       id: git-info
       shell: bash
       run: |
-        echo "branch=$(git rev-parse --abbrev-ref HEAD)" >> "$GITHUB_OUTPUT"
+        branch=$(git rev-parse --abbrev-ref HEAD | sed 's/[":<>|*?\\\/]/_/g' | tr -d '\r\n')
+        echo "branch=$branch" >> "$GITHUB_OUTPUT"
         echo "commit=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
         echo "date=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
 
