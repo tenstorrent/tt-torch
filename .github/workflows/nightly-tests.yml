@@ -24,6 +24,7 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
+<<<<<<< HEAD
   test_op_by_op:
     needs: [docker-build, build]
     uses: ./.github/workflows/run-op-by-op-model-tests.yml
@@ -60,3 +61,12 @@ jobs:
     secrets: inherit
     with:
       spreadsheet_name: ${{ needs.download-report.outputs.spreadsheet_name }}
+=======
+  # I do not think this should run in nightly
+  run_benchmark:
+      needs: [docker-build, build]
+      uses: ./.github/workflows/run-depth-benchmark-tests.yml
+      secrets: inherit
+      with:
+        docker-image: ${{ needs.docker-build.outputs.docker-image }}
+>>>>>>> 62061f8 (Add benchmark run for nightlies temporarily to workaround nonexistent new nonmerged workflow in Actions tab)
