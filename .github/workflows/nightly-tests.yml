@@ -24,31 +24,10 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  test_op_by_op:
-    needs: [docker-build, build]
-    uses: ./.github/workflows/run-op-by-op-model-tests.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  test_e2e:
-    needs: [docker-build, build]
-    uses: ./.github/workflows/run-e2e-tests.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  test_full_model:
-    needs: [docker-build, build]
-    uses: ./.github/workflows/run-full-model-execution-tests.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  download-report:
-    if: success() || failure()
-    needs: test_op_by_op
-    uses: ./.github/workflows/generate-model-report.yml
-    secrets: inherit
-  generate-ttnn-md:
-    if: success() || failure()
-    needs: download-report
-    uses: ./.github/workflows/generate-ttnn-md.yml
-    secrets: inherit
+  # I do not think this should run in nightly
+  run_benchmark:
+      needs: [docker-build, build]
+      uses: ./.github/workflows/run-depth-benchmark-tests.yml
+      secrets: inherit
+      with:
+        docker-image: ${{ needs.docker-build.outputs.docker-image }}
