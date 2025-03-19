@@ -52,3 +52,5 @@ jobs:
     needs: download-report
     uses: ./.github/workflows/generate-ttnn-md.yml
     secrets: inherit
+    with:
+      spreadsheet_name: ${{ needs.download-report.outputs.spreadsheet_name }}
