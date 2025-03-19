@@ -313,7 +313,7 @@ jobs:
 
           pytest_log="test_${counter}.log"
 
-          pytest -svv --runxfail "$test_case" --op_by_op_torch > "$pytest_log" 2>&1
+          pytest -svv "$test_case" --op_by_op_torch > "$pytest_log" 2>&1
           exit_code=$?
 
           echo "====== BEGIN LOG: $test_case ======" >> full_job_output.log
