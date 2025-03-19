@@ -12,7 +12,7 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 class ThisTester(ModelTester):
     def _load_model(self):
         # load model and processor
-        self.processor = WhisperProcessor.from_pretrained(
+        self.tokenizer = WhisperProcessor.from_pretrained(
             "openai/whisper-small", torch_dtype=torch.bfloat16
         )
         model = WhisperForConditionalGeneration.from_pretrained(
@@ -27,7 +27,7 @@ class ThisTester(ModelTester):
             "hf-internal-testing/librispeech_asr_dummy", "clean", split="validation"
         )
         sample = ds[0]["audio"]
-        input_features = self.processor(
+        input_features = self.tokenizer(
             sample["array"], sampling_rate=sample["sampling_rate"], return_tensors="pt"
         ).input_features
         return input_features.to(torch.bfloat16)
@@ -36,7 +36,7 @@ class ThisTester(ModelTester):
         # generate token ids
         predicted_ids = model(input_features)
         # decode token ids to text
-        transcription = self.processor.batch_decode(
+        transcription = self.tokenizer.batch_decode(
             predicted_ids, skip_special_tokens=True
         )
         return transcription
