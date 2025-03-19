@@ -49,7 +49,7 @@ jobs:
     secrets: inherit
   generate-ttnn-md:
     if: success() || failure()
-    needs: download-report
+    needs: [download-report]
     uses: ./.github/workflows/generate-ttnn-md.yml
     secrets: inherit
     with:
