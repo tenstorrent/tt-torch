@@ -15,7 +15,6 @@ on:
         description: 'Arguments to pass to setup.py'
         required: false
         type: string
-
 jobs:
   build:
     timeout-minutes: 120
