@@ -253,12 +253,10 @@ class TorchExecutor(OpByOpExecutor):
             getitem_nodes = []
             graph_node.meta["val"] = node.meta["val"]
 
+            # if the output of the getitem node is not used, we don't append it to the graph
+            unused_output = [len(user.users) == 0 for user in node.users]
             for idx, tensor_meta in enumerate(node.meta["tensor_meta"]):
-                # filter out unused outputs that do not exist in the reduced graph
-                users = self.program.graph_module.graph.find_nodes(
-                    op="call_function", target=operator.getitem
-                )
-                if not any(user_node.args == (node, idx) for user_node in users):
+                if unused_output[idx]:
                     continue
 
                 getitem_node = graph.call_function(
@@ -267,10 +265,6 @@ class TorchExecutor(OpByOpExecutor):
                 getitem_nodes.append(getitem_node)
                 getitem_node.meta["tensor_meta"] = tensor_meta
             out = graph.output(tuple(getitem_nodes))
-            if len(node.users) != len(graph_node.users):
-                raise ValueError(
-                    f"Op Node {node} has different number of users({len(graph_node.users)}) from global graph({len(node.users)})"
-                )
         else:
             out = graph.output((graph_node,))
         if "tensor_meta" not in node.meta:
