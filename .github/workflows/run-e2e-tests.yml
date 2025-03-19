@@ -102,7 +102,7 @@ jobs:
                   tests/models/squeeze_bert/test_squeeze_bert.py::test_squeeze_bert[full-eval] \
                   tests/models/vilt/test_vilt.py::test_vilt[full-eval] \
                   tests/models/bert/test_bert.py::test_bert[full-eval] \
-                  tests/models/stable_diffusion/test_stable_diffusion_v2.py::test_stable_diffusion_v2[full-eval] \
+                  tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet[full-eval] \
                   tests/models/whisper/test_whisper.py::test_whisper[full-eval] \
                   tests/models/yolos/test_yolos.py::test_yolos[full-eval] \
                   tests/models/deit/test_deit.py::test_deit[full-facebook/deit-base-patch16-224-eval] \
