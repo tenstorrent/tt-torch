@@ -376,6 +376,14 @@ class CompilerConfig:
         with open(output_file, "w") as f:
             json.dump(unique_op_dict, f)
 
+        total_ops = len(unique_op_dict)
+        num_executed_ops = 0
+        for op in unique_op_dict.values():
+            if op["compilation_status"] == OpCompilationStatus.EXECUTED:
+                num_executed_ops += 1
+
+        print(f"{num_executed_ops}/{total_ops} ops executed")
+
     def set_compile_depth(self, compile_depth: CompileDepth):
         self.compile_depth = compile_depth
 
