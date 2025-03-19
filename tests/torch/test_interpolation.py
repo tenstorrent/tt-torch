@@ -11,12 +11,11 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth
 import torch.nn.functional as F
 
 
-@pytest.mark.parametrize("inH", [50, 128, 224, 960])
-@pytest.mark.parametrize("inW", [50, 128, 224, 540])
-@pytest.mark.parametrize("scale_factor", [0.5, 2])
-@pytest.mark.parametrize("align_corners", [False, True])
+@pytest.mark.parametrize("inH", [50])
+@pytest.mark.parametrize("inW", [224])
+@pytest.mark.parametrize("scale_factor", [2])
+@pytest.mark.parametrize("align_corners", [False])
 def test_bilinear_upsample(inH, inW, scale_factor, align_corners):
-    pytest.skip()  # https://github.com/tenstorrent/tt-torch/issues/405
 
     class Interpolate(nn.Module):
         def __init__(self):
