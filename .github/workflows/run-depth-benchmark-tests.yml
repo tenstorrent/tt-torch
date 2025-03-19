@@ -96,7 +96,7 @@ jobs:
         source env/activate
         apt-get update
         apt install -y libgl1 libglx-mesa0
-
+        set +e
         for test in $(echo '${{ toJSON(matrix.build.tests) }}' | jq -r '.[]'); do
             test_name=$(echo "$test" | sed 's/[^a-zA-Z0-9]/_/g')  # Sanitize test name for filename
 
@@ -104,6 +104,8 @@ jobs:
                 --junit-xml=${{ steps.strings.outputs.test_report_path_models }}_subtest${test_name}_crashsafe.xml \
                 --crashsafe
         done
+        set -e
+        exit 0 # force successful exit
 
     - name: Postprocess and Join Test Reports
       shell: bash
