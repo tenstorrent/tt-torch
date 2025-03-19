@@ -20,6 +20,17 @@ jobs:
       matrix:
         build: [
           {
+            runs-on: wormhole_b0, name: "RMBG", tests: "
+              tests/models/RMBG/test_RMBG.py::test_RMBG
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "resnet", tests: "
+              tests/models/resnet/test_resnet.py::test_resnet
+              tests/models/resnet50/test_resnet50.py::test_resnet
+              "
+          },
+          {
             runs-on: wormhole_b0, name: "musicgen_small", tests: "
               tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small
               "
