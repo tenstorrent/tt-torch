@@ -313,7 +313,7 @@ jobs:
 
           pytest_log="test_${counter}.log"
 
-          pytest -svv "$test_case" --op_by_op_torch > "$pytest_log" 2>&1
+          pytest -svv --runxfail "$test_case" --op_by_op_torch > "$pytest_log" 2>&1
           exit_code=$?
 
           echo "====== BEGIN LOG: $test_case ======" >> full_job_output.log
@@ -340,9 +340,17 @@ jobs:
     - name: Tar results
       if: success() || failure()
       shell: bash
-      working-directory: ${{ steps.strings.outputs.test-output-dir }}
       run: |
-        tar cvf ${{ matrix.build.name }}_${{ steps.fetch-job-id.outputs.job_id }}.tar .
+        TEST_DIR="${{ steps.strings.outputs.test-output-dir }}"
+        OUTPUT_TAR="${{ matrix.build.name }}_${{ steps.fetch-job-id.outputs.job_id }}.tar"
+
+        if [ ! -d "$TEST_DIR" ]; then
+          echo "ERROR: Test output dir '$TEST_DIR' does not exist. Please check if test ran properly."
+          exit 1
+        fi
+
+        cd "$TEST_DIR"
+        tar cvf "$OUTPUT_TAR" .
 
     - name: Upload test folder to archive
       if: success() || failure()
