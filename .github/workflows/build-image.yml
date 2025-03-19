@@ -18,7 +18,9 @@ on:
       docker-image:
         description: "Built docker image name"
         value: ${{ jobs.build-image.outputs.docker-image }}
-
+      sanity-test:
+        description: "Built docker image name"
+        value: ${{ jobs.build-image.outputs.docker-image }}
 jobs:
 
   build-image:

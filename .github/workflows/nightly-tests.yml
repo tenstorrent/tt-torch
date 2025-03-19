@@ -24,6 +24,8 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      sanity-test-1: ${{ needs.docker-build.outputs.sanity-test }}
+
   test_op_by_op:
     needs: [docker-build, build]
     uses: ./.github/workflows/run-op-by-op-model-tests.yml
