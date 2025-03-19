@@ -50,6 +50,7 @@ jobs:
         shell: bash
         run: |
           source env/activate
+          ls -l "${{ steps.strings.outputs.work-dir }}/results/"
           echo "${{ steps.strings.outputs.work-dir }}/tt_torch/tools/generate_md.py"
           echo "${{ steps.strings.outputs.work-dir }}/results/${{ inputs.spreadsheet_name }}"
           python ${{ steps.strings.outputs.work-dir }}/tt_torch/tools/generate_md.py --excel_path ${{ steps.strings.outputs.work-dir }}/results/${{ inputs.spreadsheet_name }} --md_dir ${{ steps.strings.outputs.work-dir }}/docs/src/ops/ttnn --json_dir ${{ steps.strings.outputs.work-dir }}/docs/src/ops/ttnn
