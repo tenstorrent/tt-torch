@@ -366,8 +366,10 @@ class CompilerConfig:
         # with python command; use 'sys.argv[0]' instead.
         if pytest_test is None:
             pytest_test = sys.argv[0]
-        pytest_test = pytest_test.replace("::", "_").replace(".", "_")
-        pytest_test = pytest_test.replace("[", "_").replace("]", "_")
+
+        # Keep slashes, replace all non-alphanumeric characters with underscore.
+        pytest_test = re.sub(r"[^A-Za-z0-9_/]", "_", pytest_test)
+
         for key, op in self.unique_ops.items():
             unique_op_dict[key] = op.to_dict()
         output_file = Path(f"{self.results_path}{pytest_test}_unique_ops.json")
