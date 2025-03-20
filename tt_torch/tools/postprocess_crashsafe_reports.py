@@ -24,14 +24,29 @@ def merge_junit_reports(input_files, output_file):
     base_tree = parse(input_files[0])
     base_root = base_tree.getroot()
 
-    # Merge the rest of the files into the base
+    # Find the single <testsuite> element in the base file
+    base_testsuite = base_root.find(".//testsuite")
+    if base_testsuite is None:
+        print(f"Error: No <testsuite> element found in {input_files[0]}")
+        return
+
+    # Merge the rest of the files into the base <testsuite>
     for file in input_files[1:]:
         tree = parse(file)
         root = tree.getroot()
 
-        # Append all <testcase> elements from the current file to the base
-        for testcase in root.findall(".//testcase"):
-            base_root.append(testcase)
+        # Find the <testsuite> element in the current file
+        testsuite = root.find(".//testsuite")
+        if testsuite is None:
+            print(f"Warning: No <testsuite> element found in {file}, skipping.")
+            continue
+
+        # Append all <testcase> elements from the current <testsuite> to the base <testsuite>
+        for testcase in testsuite.findall(".//testcase"):
+            base_testsuite.append(testcase)
+
+    # Update the <testsuite> test count to be internally consistent
+    base_testsuite.set("tests", str(len(input_files)))  # Update the number of tests
 
     # Write the merged XML to the output file
     base_tree.write(output_file, encoding="utf-8", xml_declaration=True)
@@ -66,7 +81,7 @@ def process_and_merge_reports(search_pattern, output_file):
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print(
-            "Usage: python -m tt_torch.tests.postprocess_test_reports <search_pattern> <output_file>"
+            'Usage: python tt_torch/tools/postprocess_test_reports.py "<search_pattern>" "<output_file>"'
         )
         sys.exit(1)
 
