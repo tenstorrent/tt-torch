@@ -124,7 +124,7 @@ jobs:
       shell: bash
       run: |
         source env/activate
-        TT_TORCH_CHECK_ALL_OPS_RUN=1 pytest -v tests/onnx/test_mnist_op_by_op.py --op_by_op_torch
+        TT_TORCH_CHECK_ALL_OPS_RUN=1 pytest -v tests/models/mnist/test_mnist.py --op_by_op_torch
 
     - name: Show Test Report
       uses: mikepenz/action-junit-report@v5
