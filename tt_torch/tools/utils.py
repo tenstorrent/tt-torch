@@ -262,6 +262,7 @@ class CompilerConfig:
         self._enable_intermediate_verification = False
         self.dump_debug = False
         self.dump_info = False
+        self.check_all_ops_execute = False
         self._verify_op_by_op = False
         self.typecast_inputs = True
         self.runtime_device = None
@@ -320,6 +321,9 @@ class CompilerConfig:
         verify_op_by_op = os.environ.get("TT_TORCH_VERIFY_OP_BY_OP")
         if verify_op_by_op and int(verify_op_by_op):
             self.verify_op_by_op = True
+        check_all_ops_execute = os.environ.get("TT_TORCH_CHECK_ALL_OPS_EXECUTE")
+        if check_all_ops_execute:
+            self.check_all_ops_execute = True
         verify_intermediates = os.environ.get("TT_TORCH_VERIFY_INTERMEDIATES")
         if verify_intermediates and int(verify_intermediates):
             self.enable_intermediate_verification = True
@@ -385,6 +389,9 @@ class CompilerConfig:
                 num_executed_ops += 1
 
         print(f"{num_executed_ops}/{total_ops} ops executed")
+        if self.check_all_ops_execute:
+            assert num_executed_ops == total_ops
+            print(f"Verified all ops ran in {self.model_name}")
 
     def set_compile_depth(self, compile_depth: CompileDepth):
         self.compile_depth = compile_depth

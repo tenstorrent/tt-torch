@@ -451,7 +451,7 @@ class OpByOpExecutor(Executor):
 
         inputs_size = get_inputs_size(inputs)
 
-        large_input = inputs_size > self.op_memory_limit
+        large_input = inputs_size >= self.op_memory_limit
 
         obj = {
             "binary": binary,
@@ -512,7 +512,7 @@ class OpByOpExecutor(Executor):
                 self.execute_process = None
                 break
 
-        if os.path.isfile(inputs_file_path):
+        if inputs_file_path and os.path.isfile(inputs_file_path):
             try:
                 os.remove(inputs_file_path)
             except OSError:
