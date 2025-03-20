@@ -64,5 +64,3 @@ def test_albert_sequence_classification(record_property, model_name, mode, op_by
         print(
             f"Model: {model_name} | Input: {tester.input_text} | Label: {predicted_label}"
         )
-
-    tester.finalize()

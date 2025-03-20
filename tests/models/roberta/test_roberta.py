@@ -60,5 +60,3 @@ def test_roberta(record_property, mode, op_by_op):
 
         predicted_token_id = logits[0, mask_token_index].argmax(axis=-1)
         output = tester.tokenizer.decode(predicted_token_id)
-
-    tester.finalize()

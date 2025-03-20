@@ -83,5 +83,3 @@ def test_albert_masked_lm(record_property, model_name, mode, op_by_op):
         predicted_tokens = tester.tokenizer.decode(predicted_token_id)
 
         print(f"Model: {model_name} | Input: {tester.text} | Mask: {predicted_tokens}")
-
-    tester.finalize()

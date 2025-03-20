@@ -81,5 +81,3 @@ def test_bloom(record_property, mode, op_by_op):
         output: {decoded_output}
         """
         )
-
-    tester.finalize()

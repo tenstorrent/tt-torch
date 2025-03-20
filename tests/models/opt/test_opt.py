@@ -61,5 +61,3 @@ def test_opt(record_property, mode, op_by_op):
     results = tester.test_model(assert_eval_token_mismatch=False)
     if mode == "eval":
         tester.tokenizer.batch_decode(results)[0]
-
-    tester.finalize()

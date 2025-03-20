@@ -228,7 +228,7 @@ class ModelTester:
         results = self.get_results_train(model, inputs, outputs)
         return results
 
-    def verify_outputs(self, golden, outputs):
+    def verify_outputs(self, golden, outputs, should_flush_tags=False):
         assert type(outputs) == type(
             golden
         ), "Expecting the type of both calculated and golden to be identical. Whether that be a tensor, list, dictonary, etc."
@@ -263,9 +263,10 @@ class ModelTester:
             self.required_pcc,
             self.required_atol,
             self.relative_atol,
+            preflush_tags=lambda pccs, atols: self.preflush_tags(pccs, atols)
+            if should_flush_tags
+            else None,
         )
-        self.record_tag_cache["pccs"] = pccs
-        self.record_tag_cache["atols"] = atols
 
     def get_framework_model(self):
         model = (
@@ -296,7 +297,7 @@ class ModelTester:
                     decoded_outputs == decoded_golden
                 ), f'Output mismatch: calculated: "{decoded_outputs} vs golden: "{decoded_golden}"'
         else:
-            self.verify_outputs(golden, outputs)
+            self.verify_outputs(golden, outputs, should_flush_tags=True)
         return outputs
 
     def test_model(self, on_device=True, assert_eval_token_mismatch=True):
@@ -346,8 +347,15 @@ class ModelTester:
 
         self.record_property("tags", self.record_tag_cache)
 
+    def preflush_tags(self, pccs, atols):
+        print("Flushing tags to JUnitXML output.")
+
+        self.record_tag_cache["pccs"] = pccs
+        self.record_tag_cache["atols"] = atols
+        self.finalize()
+
     def finalize(self):
-        # to be called at the end of the test
+        # to be called at the end of the test, once pccs and atols are available
 
         self.record_aggregate_model_metric("pccs")
         self.record_aggregate_model_metric("atols")

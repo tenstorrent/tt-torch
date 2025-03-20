@@ -62,4 +62,3 @@ def test_yolov4(record_property, mode, op_by_op):
     )
     with torch.no_grad():
         tester.test_model()
-    tester.finalize()

@@ -73,5 +73,3 @@ def test_autoencoder_conv(record_property, mode, op_by_op):
 
     if mode == "eval":
         image = results.images[0]
-
-    tester.finalize()

@@ -64,8 +64,6 @@ def test_MobileNetV2(record_property, mode, op_by_op):
         _, indices = torch.topk(results, 5)
         print(f"Top 5 predictions: {indices[0].tolist()}")
 
-    tester.finalize()
-
 
 # Empty property record_property
 def empty_record_property(a, b):

@@ -71,5 +71,3 @@ def test_RMBG(record_property, mode, op_by_op):
         mask = pred_pil.resize(tester.image.size)
         tester.image.putalpha(mask)
         tester.image.save("no_bg_image.png")
-
-    tester.finalize()

@@ -76,4 +76,3 @@ def test_whisper(record_property, mode, op_by_op):
         is_token_output=True,
     )
     tester.test_model()
-    tester.finalize()

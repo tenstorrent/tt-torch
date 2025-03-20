@@ -71,5 +71,3 @@ def test_glpn_kitti(record_property, mode, op_by_op):
         output = prediction.squeeze().cpu().to(float).numpy()
         formatted = (output * 255 / np.max(output)).astype("uint8")
         depth = Image.fromarray(formatted)
-
-    tester.finalize()

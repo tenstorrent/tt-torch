@@ -69,5 +69,3 @@ def test_albert_question_answering(record_property, model_name, mode, op_by_op):
         print(
             f"Model: {model_name} | Question: {tester.question} | Text: {tester.text} | Answer: {answer}"
         )
-
-    tester.finalize()

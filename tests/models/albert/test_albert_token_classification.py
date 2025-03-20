@@ -75,5 +75,3 @@ def test_albert_token_classification(record_property, model_name, mode, op_by_op
         print(
             f"Model: {model_name} | Tokens: {tokens} | Predictions: {predicted_tokens_classes}"
         )
-
-    tester.finalize()

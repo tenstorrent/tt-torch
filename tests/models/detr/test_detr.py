@@ -73,5 +73,3 @@ def test_detr(record_property, mode, op_by_op):
     if mode == "eval":
         # Results
         print(results)
-
-    tester.finalize()

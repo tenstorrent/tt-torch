@@ -82,5 +82,3 @@ def test_hardnet(record_property, mode, op_by_op):
         # The output has unnormalized scores. To get probabilities, you can run a softmax on it.
         probabilities = torch.nn.functional.softmax(results[0], dim=0)
         print(probabilities)
-
-    tester.finalize()

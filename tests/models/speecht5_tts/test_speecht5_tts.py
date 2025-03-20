@@ -77,5 +77,3 @@ def test_speecht5_tts(record_property, mode, op_by_op):
     #     # Uncomment below if you really want to hear the result.
     #     # import soundfile as sf
     #     sf.write("speech.wav", speech.numpy(), samplerate=16000)
-
-    tester.finalize()

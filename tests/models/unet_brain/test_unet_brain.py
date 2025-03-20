@@ -80,5 +80,3 @@ def test_unet_brain(record_property, mode, op_by_op):
     results = tester.test_model()
     if mode == "eval":
         print(torch.round(results[0]))
-
-    tester.finalize()

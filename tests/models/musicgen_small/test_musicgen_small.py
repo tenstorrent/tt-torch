@@ -66,4 +66,3 @@ def test_musicgen_small(record_property, mode, op_by_op):
         is_token_output=True,
     )
     results = tester.test_model()
-    tester.finalize()
