@@ -379,7 +379,6 @@ class TorchExecutor(OpByOpExecutor):
         if self.stderror_redirected:
             os.unlink(self.file_stderr.name)
             self.stderror_redirected = False
-
         return outputs
 
     def __call__(self, *inputs):
