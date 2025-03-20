@@ -256,6 +256,8 @@ class CompilerConfig:
         self.model_name = ""
         self.results_path = "results/models/"
         self.single_op_timeout = 30
+        self.num_executed_ops = 0
+        self.total_ops = 0
         self.op_by_op_backend = OpByOpBackend.TORCH
         self.enable_consteval = False
         self._consteval_parameters = False
@@ -396,16 +398,18 @@ class CompilerConfig:
         with open(output_file, "w") as f:
             json.dump(unique_op_dict, f)
 
-        total_ops = len(unique_op_dict)
-        num_executed_ops = 0
+        self.total_ops = len(unique_op_dict)
+        self.num_executed_ops = 0
         for op in unique_op_dict.values():
             if op["compilation_status"] == OpCompilationStatus.EXECUTED:
-                num_executed_ops += 1
+                self.num_executed_ops += 1
 
-        print(f"{num_executed_ops}/{total_ops} ops executed")
+        print(f"{self.num_executed_ops}/{self.total_ops} ops executed")
+
+    def verify_all_ops_run(self):
         if self._check_all_ops_run:
             assert (
-                num_executed_ops == total_ops
+                self.num_executed_ops == self.total_ops
             ), f"Expected all ops to run in {self.model_name}, only {num_executed_ops}/{total_ops} ops ran"
 
     def set_compile_depth(self, compile_depth: CompileDepth):

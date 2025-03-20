@@ -361,6 +361,7 @@ class StablehloExecutor(OpByOpExecutor):
         if self.stderror_redirected:
             os.unlink(self.file_stderr.name)
             self.stderror_redirected = False
+        self.compiler_config.verify_all_ops_run()
 
     def print_op(self, op):
         print(op.op_id)
