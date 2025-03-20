@@ -119,7 +119,7 @@ jobs:
       with:
         name: test-reports-onnx-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: ${{ steps.strings.outputs.test_report_path_onnx }}
-    
+
     - name: Run Mnist Op-By-Op and Check All Ops Execute
       shell: bash
       run: |

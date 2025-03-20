@@ -291,12 +291,10 @@ class CompilerConfig:
     @property
     def check_all_ops_run(self):
         return self._check_all_ops_run
-    
+
     @verify_op_by_op.setter
     def check_all_ops_run(self, value):
-        assert isinstance(
-            value, bool
-        ), "check_all_ops_run must be a boolean"
+        assert isinstance(value, bool), "check_all_ops_run must be a boolean"
         if value and self.compile_depth != CompileDepth.EXECUTE_OP_BY_OP:
             print(
                 "WARNING: Setting check_all_ops_run to True but compile_depth is not set to EXECUTE_OP_BY_OP. This CompilerConfig flag will have no effect."
@@ -304,7 +302,6 @@ class CompilerConfig:
             self._check_all_ops_run = False
         self._check_all_ops_run = value
 
-    
     @property
     def enable_intermediate_verification(self):
         return self._enable_intermediate_verification
@@ -407,7 +404,9 @@ class CompilerConfig:
 
         print(f"{num_executed_ops}/{total_ops} ops executed")
         if self._check_all_ops_run:
-            assert num_executed_ops == total_ops, f"Expected all ops to run in {self.model_name}, only {num_executed_ops}/{total_ops} ops ran"
+            assert (
+                num_executed_ops == total_ops
+            ), f"Expected all ops to run in {self.model_name}, only {num_executed_ops}/{total_ops} ops ran"
 
     def set_compile_depth(self, compile_depth: CompileDepth):
         self.compile_depth = compile_depth
