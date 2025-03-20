@@ -20,6 +20,35 @@ jobs:
       matrix:
         build: [
           {
+            runs-on: wormhole_b0, name: "qwen", tests: "
+              tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm
+              tests/models/Qwen/test_qwen2_token_classification.py::test_qwen2_token_classification
+              tests/models/deepseek/test_deepseek_qwen.py::test_deepseek_qwen
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "albert", tests: "
+              tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm
+              tests/models/albert/test_albert_question_answering.py::test_albert_question_answering
+              tests/models/albert/test_albert_sequence_classification.py::test_albert_sequence_classification
+              tests/models/albert/test_albert_token_classification.py::test_albert_token_classification
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "autoencoder", tests: "
+              tests/models/autoencoder_conv/test_autoencoder_conv.py::test_autoencoder_conv
+              tests/models/autoencoder_conv/test_autoencoder_conv_v2.py::test_autoencoder_conv_v2
+              tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "bert", tests: "
+              tests/models/bert/test_bert.py::test_bert
+              tests/models/distilbert/test_distilbert.py::test_distilbert
+              tests/models/squeeze_bert/test_squeeze_bert.py::test_squeeze_bert
+              "
+          },
+          {
             runs-on: wormhole_b0, name: "RMBG", tests: "
               tests/models/RMBG/test_RMBG.py::test_RMBG
               "
