@@ -463,9 +463,9 @@ def backend(gm, example_inputs, options=None):
     if options is None:
         options = CompilerConfig()
     compiler_cfg = options
-
     def _base_backend(gm: torch.fx.GraphModule, example_inputs):
         compiler_config = CompilerConfig()
+        compiler_config.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         # Apply environment overrides at start of compilation to allow overriding what was set in the test
         compiler_config.apply_environment_overrides()
         with torch.no_grad():
