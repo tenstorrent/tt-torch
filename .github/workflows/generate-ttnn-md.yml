@@ -2,10 +2,19 @@ name: Generate TTNN MD Files
 
 on:
   workflow_call:
+    inputs:
+      spreadsheet_name:
+        description: 'Name of spreadsheet dynamically generated from generate-model-report.'
+        required: true
+        type: string
   workflow_dispatch:
     inputs:
       run_id:
         description: 'Build pipeline run ID to download artifacts from'
+        required: true
+        type: string
+      spreadsheet_name:
+        description: 'Name of spreadsheet dynamically generated from generate-model-report.'
         required: true
         type: string
 
@@ -34,16 +43,17 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: models_op_per_op.xlsx
+          name: ${{ inputs.spreadsheet_name }}
           path: ${{ steps.strings.outputs.work-dir }}/results
 
       - name: Generate TTNN MD Files
         shell: bash
         run: |
           source env/activate
+          ls -l "${{ steps.strings.outputs.work-dir }}/results/"
           echo "${{ steps.strings.outputs.work-dir }}/tt_torch/tools/generate_md.py"
-          echo "${{ steps.strings.outputs.work-dir }}/results/models_op_per_op.xlsx"
-          python ${{ steps.strings.outputs.work-dir }}/tt_torch/tools/generate_md.py --excel_path ${{ steps.strings.outputs.work-dir }}/results/models_op_per_op.xlsx --md_dir ${{ steps.strings.outputs.work-dir }}/docs/src/ops/ttnn --json_dir ${{ steps.strings.outputs.work-dir }}/docs/src/ops/ttnn
+          echo "${{ steps.strings.outputs.work-dir }}/results/${{ inputs.spreadsheet_name }}"
+          python ${{ steps.strings.outputs.work-dir }}/tt_torch/tools/generate_md.py --excel_path ${{ steps.strings.outputs.work-dir }}/results/${{ inputs.spreadsheet_name }} --md_dir ${{ steps.strings.outputs.work-dir }}/docs/src/ops/ttnn --json_dir ${{ steps.strings.outputs.work-dir }}/docs/src/ops/ttnn
 
       - name: Upload TTNN MD Files to archive
         uses: actions/upload-artifact@v4
