@@ -6,11 +6,34 @@ import os
 import json
 import csv
 import xlsxwriter
+from xlsxwriter.utility import xl_rowcol_to_cell
 from mdutils.mdutils import MdUtils
 from pathlib import Path
 
 import subprocess
 import re
+
+import datetime
+import subprocess
+
+# Function to get git branch and commit
+def get_git_info():
+    try:
+        branch = (
+            subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"])
+            .decode("utf-8")
+            .strip()
+        )
+        commit = (
+            subprocess.check_output(["git", "rev-parse", "HEAD"])
+            .decode("utf-8")
+            .strip()
+        )
+    except Exception as e:
+        branch = "N/A"
+        commit = "N/A"
+    return branch, commit
+
 
 # Script to parse the results of the unique ops json files and combine them into a spreadsheet
 # This script parses models compiled into stable hlo / TTIR op by op
@@ -173,6 +196,201 @@ def create_test_dirs():
     Path("results/mlir_tests/torch_ir").mkdir(parents=True, exist_ok=True)
     Path("results/mlir_tests/ttir").mkdir(parents=True, exist_ok=True)
     Path("results/mlir_tests/stable_hlo").mkdir(parents=True, exist_ok=True)
+
+
+# Conditionally format a cell and it's neighbor based on the percentage value of the cell
+def apply_percentage_conditional_format(
+    worksheet, row, col, formats, include_neighbor=False
+):
+
+    helper_cell = xl_rowcol_to_cell(row, col, row_abs=True, col_abs=True)
+    start_cell = xl_rowcol_to_cell(row, col)
+    end_cell = xl_rowcol_to_cell(row, col + 1) if include_neighbor else start_cell
+
+    cell_range = f"{start_cell}:{end_cell}"
+
+    # Apply conditional formatting rules.
+    worksheet.conditional_format(
+        cell_range,
+        {
+            "type": "formula",
+            "criteria": f"={helper_cell}=1.0",
+            "format": formats["green"],
+        },
+    )
+    worksheet.conditional_format(
+        cell_range,
+        {
+            "type": "formula",
+            "criteria": f"=AND({helper_cell}>=0.8, {helper_cell}<1.0)",
+            "format": formats["yellow"],
+        },
+    )
+    worksheet.conditional_format(
+        cell_range,
+        {
+            "type": "formula",
+            "criteria": f"=AND({helper_cell}>=0.5, {helper_cell}<0.8)",
+            "format": formats["orange"],
+        },
+    )
+    worksheet.conditional_format(
+        cell_range,
+        {
+            "type": "formula",
+            "criteria": f"=AND({helper_cell}>=0, {helper_cell}<0.5)",
+            "format": formats["red"],
+        },
+    )
+
+
+# Conditionally format with color (green/yellow) the ops per model by compile depth
+# where any ops not compiling to TTNN are orange, ops compiling to TTNN are yellow
+# and ops executing on silicon are green.
+def apply_non_zero_conditional_format(worksheet, row, col, compile_depth, formats):
+    helper_cell = xl_rowcol_to_cell(row, col, row_abs=True, col_abs=True)
+
+    if compile_depth <= 5:
+        fmt = formats["orange"]
+    elif compile_depth == 6:
+        fmt = formats["yellow"]
+    else:
+        fmt = formats["green"]
+
+    worksheet.conditional_format(
+        helper_cell,
+        {
+            "type": "formula",
+            "criteria": f"={helper_cell}<>0",
+            "format": fmt,
+        },
+    )
+
+
+def create_summary_worksheet(workbook, model_names):
+
+    worksheet = workbook.get_worksheet_by_name("Per Model Compile Depths")
+    percentage_format = workbook.add_format({"num_format": "0.00%"})
+    centered_format = workbook.add_format({"align": "center"})
+
+    # Get current date, time and git branch, commit info.
+    branch, commit = get_git_info()
+    now = datetime.datetime.now()
+    date_str = now.strftime("%Y-%m-%d")
+    time_str = now.strftime("%H:%M:%S")
+
+    info_str = (
+        f"Generated on {date_str} at {time_str} from Branch: {branch} Commit: {commit}"
+    )
+    worksheet.write(0, 0, info_str)
+
+    worksheet.write_row(2, 0, ["Model / CompileDepth", 0, 1, 2, 3, 4, 5, 6, 7])
+    worksheet.write_column(3, 0, model_names)
+    worksheet.set_column(0, 0, 25)  # first column width
+
+    color_formats = {
+        "green": workbook.add_format({"bg_color": "#4CAF50"}),
+        "yellow": workbook.add_format({"bg_color": "#FFEB3B"}),
+        "orange": workbook.add_format({"bg_color": "#FF9800"}),
+        "red": workbook.add_format({"bg_color": "#F44336"}),
+    }
+
+    # Merge headers for columns that will be populated per model.
+    worksheet.merge_range(2, 12, 2, 13, "Compiled to TTNN (Depth 6,7)", centered_format)
+    worksheet.merge_range(2, 15, 2, 16, "Executed on Device (Depth 7)", centered_format)
+
+    row = 3
+    for model_name in model_names:
+        for compile_depth in range(0, 8):
+            # baking dynamic references
+            compile_depth_formula = (
+                f'=COUNTIF(INDIRECT("\'" & "{model_name}" & "\'!E:E"), {compile_depth})'
+            )
+            worksheet.write(row, 1 + compile_depth, compile_depth_formula)
+            apply_non_zero_conditional_format(
+                worksheet, row, 1 + compile_depth, compile_depth, color_formats
+            )
+
+        # Calculate Total Ops for the current row by summing compile depth columns (B to I)
+        start_cell = xl_rowcol_to_cell(
+            row, 1
+        )  # first compile depth cell for current row
+        end_cell = xl_rowcol_to_cell(row, 8)  # last compile depth cell for current row
+        total_ops_formula = f"=SUM({start_cell}:{end_cell})"
+        worksheet.write(2, 10, "Total Ops Per Model")
+        worksheet.write(row, 10, total_ops_formula)
+        worksheet.set_column(10, 10, 15)
+        worksheet.set_column(11, 11, 2)
+
+        # Compute a summary of ops compiling to TTNN per model
+        compile_depth_6_cell = xl_rowcol_to_cell(row, 7)
+        compile_depth_7_cell = xl_rowcol_to_cell(row, 8)
+        total_ops_cell = xl_rowcol_to_cell(row, 10)
+        compiling_formula_percentage = (
+            f"=SUM({compile_depth_6_cell}:{compile_depth_7_cell})/{total_ops_cell}"
+        )
+        compiling_formula = (
+            f'=TEXT(SUM({compile_depth_6_cell}:{compile_depth_7_cell}),"0") & "/" & '
+            f'TEXT({total_ops_cell},"0") & " (" & '
+            f'TEXT(SUM({compile_depth_6_cell}:{compile_depth_7_cell}) - {total_ops_cell},"0") & ") "'
+        )
+        worksheet.write_formula(
+            row, 12, compiling_formula_percentage, percentage_format
+        )
+        worksheet.set_column(12, 12, 12)
+        worksheet.write(row, 13, compiling_formula)
+        worksheet.set_column(13, 13, 15)
+        worksheet.set_column(14, 14, 2)
+
+        # Compute a summary of ops executing on silicon per model
+        compile_depth_7_cell = xl_rowcol_to_cell(row, 8)
+        total_ops_cell = xl_rowcol_to_cell(row, 10)
+        executing_formula_percentage = f"={compile_depth_7_cell}/{total_ops_cell}"
+        executing_formula = (
+            f'=TEXT({compile_depth_7_cell},"0") & "/" & '
+            f'TEXT({total_ops_cell},"0") & " (" & '
+            f'TEXT({compile_depth_7_cell} - {total_ops_cell},"0") & ") "'
+        )
+        worksheet.write_formula(
+            row, 15, executing_formula_percentage, percentage_format
+        )
+        worksheet.set_column(15, 15, 12)
+        worksheet.write(row, 16, executing_formula)
+        worksheet.set_column(16, 16, 15)
+
+        row += 1
+
+        # Apply conditional formatting to the percentage columns per model.
+        apply_percentage_conditional_format(worksheet, row - 1, 12, color_formats, True)
+        apply_percentage_conditional_format(worksheet, row - 1, 15, color_formats, True)
+
+    # Add blank row and total ops per compile depth across all models.
+    data_end_row = row - 1
+    row += 1
+    worksheet.write(row, 0, "Total Ops per Compile Depth")
+    for compile_depth in range(0, 8):
+        col = 1 + compile_depth
+        total_formula = (
+            f"=SUM({xl_rowcol_to_cell(1, col)}:{xl_rowcol_to_cell(data_end_row, col)})"
+        )
+        worksheet.write(row, col, total_formula)
+
+    # Add more top-level summaries to the right of existing data
+    worksheet.set_column(18, 18, 25)
+    worksheet.write(1, 18, "Models Total:")
+    worksheet.write(1, 19, len(model_names))
+    worksheet.write(2, 18, "Models Fully Compiling to TTNN:")
+    worksheet.write_formula(
+        2,
+        19,
+        f"=COUNTIF({xl_rowcol_to_cell(3, 12)}:{xl_rowcol_to_cell(3+len(model_names)-1, 12)}, 100%)",
+    )
+    worksheet.write(3, 18, "Models Executing on Device:")
+    worksheet.write_formula(
+        3,
+        19,
+        f"=COUNTIF({xl_rowcol_to_cell(3, 15)}:{xl_rowcol_to_cell(3+len(model_names)-1, 15)}, 100%)",
+    )
 
 
 def process_json_files():
@@ -569,19 +787,7 @@ def process_json_files():
         row += 1
 
     # Summarize Models / Compile Depths in the first sheet
-    worksheet = workbook.get_worksheet_by_name("Per Model Compile Depths")
-    worksheet.write_row(0, 0, ["", 0, 1, 2, 3, 4, 5, 6, 7])
-    worksheet.write_column(1, 0, model_names)
-
-    row = 1
-    for model_name in model_names:
-        for compile_depth in range(0, 8):
-            # baking dynamic references
-            compile_depth_formula = (
-                f'=COUNTIF(INDIRECT("\'" & "{model_name}" & "\'!E:E"), {compile_depth})'
-            )
-            worksheet.write(row, 1 + compile_depth, compile_depth_formula)
-        row += 1
+    create_summary_worksheet(workbook, model_names)
 
     workbook.close()
 
