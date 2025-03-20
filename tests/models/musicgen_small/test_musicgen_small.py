@@ -11,14 +11,14 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.processor = AutoProcessor.from_pretrained("facebook/musicgen-small")
+        self.tokenizer = AutoProcessor.from_pretrained("facebook/musicgen-small")
         model = MusicgenForConditionalGeneration.from_pretrained(
             "facebook/musicgen-small"
         )
         return model.generate
 
     def _load_inputs(self):
-        inputs = self.processor(
+        inputs = self.tokenizer(
             text=[
                 "80s pop track with bassy drums and synth",
                 "90s rock song with loud guitars and heavy drums",

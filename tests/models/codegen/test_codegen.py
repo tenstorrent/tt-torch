@@ -50,7 +50,7 @@ def test_codegen(record_property, mode, op_by_op):
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
-        is_transformers_generation=True,
+        is_token_output=True,
     )
     results = tester.test_model()
 

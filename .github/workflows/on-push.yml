@@ -21,6 +21,7 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      setup-args: "--build_perf" #TODO - This should be toggleable?
   test:
     needs: [build, docker-build]
     uses: ./.github/workflows/run-tests.yml

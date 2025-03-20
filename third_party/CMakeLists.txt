@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-set(TT_MLIR_VERSION "6d835b4744bccd38f0e7211cf2ade5f086cb9354")
+set(TT_MLIR_VERSION "06e1c845722cc81f90369baeeae17e2f253bda32")
 set(TORCH_MLIR_VERSION "a265d283357f572c5437f9217ea85fa9770d374c")
 
 if (BUILD_TOOLCHAIN)
@@ -32,6 +32,9 @@ else()
     set(TT_RUNTIME_DEBUG OFF CACHE BOOL "Enable runtime debugging")
     message(STATUS "TT_RUNTIME_DEBUG is set to: ${TT_RUNTIME_DEBUG}")
 
+    set(TT_RUNTIME_ENABLE_PERF_TRACE OFF CACHE BOOL "Enable runtime Tracy perf tracing")
+    message(STATUS "TT_RUNTIME_ENABLE_PERF_TRACE is set to: ${TT_RUNTIME_ENABLE_PERF_TRACE}")
+
     include(ExternalProject)
     set(TTMLIR_PREFIX ${TTTORCH_SOURCE_DIR}/third_party/tt-mlir)
     set(TTMLIR_INSTALL_PREFIX ${TTMLIR_PREFIX}/install)
@@ -51,6 +54,7 @@ else()
           -DCMAKE_CXX_COMPILER=clang++-17
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           -DTT_RUNTIME_ENABLE_TTNN=ON
+          -DTT_RUNTIME_ENABLE_PERF_TRACE=${TT_RUNTIME_ENABLE_PERF_TRACE}
           -DTT_RUNTIME_ENABLE_TTMETAL=OFF
           -DTTMLIR_ENABLE_STABLEHLO=ON
           -DTTMLIR_ENABLE_RUNTIME=ON
