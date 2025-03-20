@@ -15,6 +15,10 @@ on:
         description: 'Arguments to pass to setup.py'
         required: false
         type: string
+      build-cache-run-id:
+        description: 'Run ID of the run you want to use the build artifact from. Will override mlir_override if set.'
+        required: false
+        type: string
 
 jobs:
   build:
@@ -68,6 +72,34 @@ jobs:
       with:
         create-symlink: true
         key: build_cache
+
+
+    # if using a cached build, download remote artefact and reupload
+    - name: Download cached artefacts
+      uses: actions/download-artifact@v4
+      if: ${{ inputs.build-cache-run-id }}
+      with:
+        name: install-artifacts # this is the name of the artefact from a prev. run
+        path: artifacts/artifact.tar # write out to where the upload artifacts expects this to be
+        github-token: ${{ secrets.GITHUB_TOKEN }} # token with actions:read permissions on target repo
+        run-id: ${{ inputs.build-cache-run-id }}
+        # repository default set to this repo
+
+
+    - name: Upload artifacts to archive
+      if: ${{ inputs.build-cache-run-id }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: install-artifacts
+        path: artifacts/artifact.tar
+
+    - name: Early Exit if build-cache-run-id is set
+      if: ${{ inputs.build-cache-run-id }}
+      shell: bash
+      run: |
+        echo "Using build from ${{ inputs.build-cache-run-id }}. Exiting build job early."
+        exit 0
+
 
     # Build project
     - name: Build
