@@ -458,11 +458,11 @@ class Executor:
             return self.gm(*inputs)
 
 
-
 def backend(gm, example_inputs, options=None):
     if options is None:
         options = CompilerConfig()
     compiler_cfg = options
+
     def _base_backend(gm: torch.fx.GraphModule, example_inputs):
         compiler_config = CompilerConfig()
         compiler_config.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
@@ -515,7 +515,12 @@ def backend(gm, example_inputs, options=None):
 
         executor.set_binary(binary)
         return executor
+
     decomposition_table = DEFAULT_DECOMPOSITION_TABLE
     decomposition_table.update(CUSTOM_DECOMPOSITION_TABLE)
-    return aot_module_simplified(gm, example_inputs, fw_compiler=_base_backend, decompositions=decomposition_table)
-
+    return aot_module_simplified(
+        gm,
+        example_inputs,
+        fw_compiler=_base_backend,
+        decompositions=decomposition_table,
+    )
