@@ -64,6 +64,7 @@ jobs:
         echo "dist-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
         echo "job-id=$JOB_ID" >> "$GITHUB_OUTPUT"
         echo "test_report_path_torch=report_torch_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+        echo "test_report_path_mnist=report_mnist_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
         echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
         echo "test_report_path_onnx=report_onnx_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
 
@@ -124,7 +125,17 @@ jobs:
       shell: bash
       run: |
         source env/activate
-        TT_TORCH_CHECK_ALL_OPS_RUN=1 pytest -v tests/models/mnist/test_mnist.py --op_by_op_torch
+        TT_TORCH_CHECK_ALL_OPS_RUN=1 pytest -svv tests/models/mnist/test_mnist.py --op_by_op_torch \
+            --junit-xml=${{ steps.strings.outputs.test_report_path_mnist }} \
+            --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
+
+    - name: Upload Test Report Mnist
+      uses: actions/upload-artifact@v4
+      if: success() || failure()
+      with:
+        name: test-reports-mnist-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        path: ${{ steps.strings.outputs.test_report_path_mnist }}
+
 
     - name: Show Test Report
       uses: mikepenz/action-junit-report@v5
@@ -151,6 +162,6 @@ jobs:
       continue-on-error: true
       uses: codecov/test-results-action@v1
       with:
-        files: ${{ steps.strings.outputs.test_report_path_torch }}, ${{ steps.strings.outputs.test_report_path_onnx }}
+        files: ${{ steps.strings.outputs.test_report_path_torch }}, ${{ steps.strings.outputs.test_report_path_onnx }}, ${{ steps.strings.outputs.test_report_path_mnist }}
         disable_search: true
         token: ${{ secrets.CODECOV_TOKEN }}
