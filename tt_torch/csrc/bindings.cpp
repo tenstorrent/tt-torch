@@ -85,10 +85,21 @@ static tt::runtime::Tensor create_tensor(const torch::Tensor &tensor) {
     shape.push_back(1);
   }
 
-  auto stride =
-      std::vector<uint32_t>(tensor.strides().begin(), tensor.strides().end());
-  if (stride.empty()) {
-    stride.push_back(1);
+  assert(tensor.is_contiguous() && "Cannot create runtime tensor from "
+                                   "non-contiguous torch tensor");
+
+  // Torch tensors which are contiguous may not always have a stride
+  // attribute which indicates that the tensor is contiguous. This occurs
+  // when the left-most dimension is 1. In such cases, when the left-most
+  // dimension is 1, the stride value for that dimension will never be used,
+  // and so they do not bother to compute it even when calling .contiguous().
+  //
+  // Our runtime expects that this stride is accurate. So, we will require
+  // that this torch tensor is contiguous and then calculate a fully-accurate
+  // stride for it.
+  std::vector<uint32_t> stride(shape.size(), 1);
+  for (int i = shape.size() - 2; i >= 0; --i) {
+    stride[i] = shape[i + 1] * stride[i + 1];
   }
 
   return tt::runtime::createTensor(
