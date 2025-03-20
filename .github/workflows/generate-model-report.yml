@@ -112,9 +112,11 @@ jobs:
         echo "date=$date" >> "$GITHUB_OUTPUT"
         spreadsheet_name="models_op_per_op_${date}_${branch}_${commit}.xlsx"
         echo "spreadsheet_name=$spreadsheet_name" >> "$GITHUB_OUTPUT"
+        echo "Renaming spreadsheet from ${{ steps.strings.outputs.work-dir }}/results/models_op_per_op.xlsx to ${{ steps.strings.outputs.work-dir }}/results/$spreadsheet_name"
+        mv ${{ steps.strings.outputs.work-dir }}/results/models_op_per_op.xlsx ${{ steps.strings.outputs.work-dir }}/results/$spreadsheet_name
 
     - name: Upload report to archive
       uses: actions/upload-artifact@v4
       with:
         name: ${{ steps.git-info.outputs.spreadsheet_name }}
-        path: "${{ steps.strings.outputs.work-dir }}/results/models_op_per_op.xlsx"
+        path: "${{ steps.strings.outputs.work-dir }}/results/${{ steps.git-info.outputs.spreadsheet_name }}"
