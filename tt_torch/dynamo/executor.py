@@ -313,7 +313,7 @@ class OpByOpExecutor(Executor):
         # to capture runtime stack dump.
         self.stderror_redirected = False
         self.file_stderr = None
-        self.op_memory_limit = gb_to_bytes(1)  # 1GB limit
+        self.op_memory_limit = gb_to_bytes(0.5)  # 512MB limit
 
     def transform_input(self, inp):
         # Convert torch.nn.Parameter to torch.Tensor and convert non-contiguous
