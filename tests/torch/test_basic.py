@@ -566,3 +566,19 @@ def test_cosine_op():
     verify_module(
         Basic(), input_shapes=[(32, 32)], input_range=(-2 * math.pi, 2 * math.pi)
     )
+
+import os
+def test_all_reduce():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.distributed.all_reduce(x)
+
+    os.environ["MASTER_ADDR"] = "localhost"
+    os.environ["MASTER_PORT"] = "29501"
+    torch.distributed.init_process_group(world_size=1, rank=0)
+    verify_module(
+        Basic(), input_shapes=[(32, 32)]
+    )
