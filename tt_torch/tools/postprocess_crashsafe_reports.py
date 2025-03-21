@@ -69,13 +69,29 @@ def process_and_merge_reports(search_pattern, output_file):
 
     print(f"Found {len(input_files)} files to process.")
 
+    parsable_input_files = []
+    unparsable_input_files = []
+
     # Process each file with rewrite_crashsafe_xml
+    # some of these files may be irrecoverably malformed
+    # (i.e. if the test is marked @skip causing no XML to be generated).
+
     for file in input_files:
-        print(f"Processing file: {file}")
-        rewrite_crashsafe_xml(file)
+        try:
+            print(f"Processing file: {file}")
+            rewrite_crashsafe_xml(file)
+            parsable_input_files.append(file)
+        except Exception as e:
+            print(f"Error processing file {file}: {e}")
+            unparsable_input_files.append(file)
+
+    if unparsable_input_files:
+        print(
+            f"Warning: {len(unparsable_input_files)} files could not be processed and will be skipped. These files include {unparsable_input_files}"
+        )
 
     # Merge all processed files into a single output file
-    merge_junit_reports(input_files, output_file)
+    merge_junit_reports(parsable_input_files, output_file)
 
 
 if __name__ == "__main__":
