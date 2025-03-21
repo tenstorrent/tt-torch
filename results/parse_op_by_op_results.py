@@ -46,7 +46,8 @@ def find_json_files(directory="results"):
     return json_files
 
 
-def generate_status_report():
+# Generate a high level report per model of the compilation status
+def generate_status_report_md():
     json_files = find_json_files()
     status_report = {}
     model_names = []
@@ -358,11 +359,20 @@ def create_summary_worksheet(workbook, model_names):
         worksheet.write(row, 16, executing_formula)
         worksheet.set_column(16, 16, 15)
 
-        row += 1
-
         # Apply conditional formatting to the percentage columns per model.
-        apply_percentage_conditional_format(worksheet, row - 1, 12, color_formats, True)
-        apply_percentage_conditional_format(worksheet, row - 1, 15, color_formats, True)
+        apply_percentage_conditional_format(worksheet, row, 12, color_formats, True)
+        apply_percentage_conditional_format(worksheet, row, 15, color_formats, True)
+
+        # Determine how many ops for model hit unknown error (column M is "Compile error")
+        unknown_errors_formula = f'=COUNTIF(INDIRECT("\'" & "{model_name}" & "\'!M:M"), "Error message not extracted.")'
+        worksheet.set_column(17, 17, 2)
+        worksheet.set_column(18, 18, 13)
+        worksheet.write(2, 18, "Unknown Errors")
+        worksheet.write(row, 18, unknown_errors_formula)
+        worksheet.set_column(19, 19, 2)
+
+        # Finished the per-model row now, move to the next.
+        row += 1
 
     # Add blank row and total ops per compile depth across all models.
     data_end_row = row - 1
@@ -375,24 +385,25 @@ def create_summary_worksheet(workbook, model_names):
         worksheet.write(row, col, total_formula)
 
     # Add more top-level summaries to the right of existing data
-    worksheet.set_column(18, 18, 25)
-    worksheet.write(1, 18, "Models Total:")
-    worksheet.write(1, 19, len(model_names))
-    worksheet.write(2, 18, "Models Fully Compiling to TTNN:")
-    worksheet.write_formula(
-        2,
-        19,
-        f"=COUNTIF({xl_rowcol_to_cell(3, 12)}:{xl_rowcol_to_cell(3+len(model_names)-1, 12)}, 100%)",
-    )
-    worksheet.write(3, 18, "Models Executing on Device:")
+    worksheet.set_column(20, 20, 25)
+    worksheet.write(2, 20, "Models Total:")
+    worksheet.write(2, 21, len(model_names))
+    worksheet.write(3, 20, "Models Fully Compiling to TTNN:")
     worksheet.write_formula(
         3,
-        19,
+        21,
+        f"=COUNTIF({xl_rowcol_to_cell(3, 12)}:{xl_rowcol_to_cell(3+len(model_names)-1, 12)}, 100%)",
+    )
+    worksheet.write(4, 20, "Models Fully Executing on Device:")
+    worksheet.write_formula(
+        4,
+        21,
         f"=COUNTIF({xl_rowcol_to_cell(3, 15)}:{xl_rowcol_to_cell(3+len(model_names)-1, 15)}, 100%)",
     )
 
 
-def process_json_files():
+# Main entry point to generate detailed xlsx files of op status by model with summary sheet.
+def generate_op_reports_xlsx():
     json_files = find_json_files()
     create_test_dirs()
 
@@ -650,26 +661,26 @@ def process_json_files():
         unique_ops.add(key)
         if value["torch_name"] not in torch_ops:
             torch_ops[value["torch_name"]] = []
-        else:
-            torch_ops[value["torch_name"]].append(
-                {
-                    "torch_name": value["torch_name"],
-                    "input_shapes": value["input_shapes"],
-                    "output_shapes": value["output_shapes"],
-                    "num_ops": value["num_ops"],
-                    "status": value["compilation_status"],
-                    "pcc": value["pcc"],
-                    "atol": value["atol"],
-                    "torch_ir_graph": value["torch_ir_graph"],
-                    "stable_hlo_graph": value["stable_hlo_graph"],
-                    "ops": value["stable_hlo_ops"],
-                    "ttir_graph": value["ttir_graph"],
-                    "ttnn_graph": value["ttnn_graph"],
-                    "compiled_json": value["compiled_json"],
-                    "error": value["error"],
-                    "trace_dump": value["trace_dump"],
-                }
-            )
+
+        torch_ops[value["torch_name"]].append(
+            {
+                "torch_name": value["torch_name"],
+                "input_shapes": value["input_shapes"],
+                "output_shapes": value["output_shapes"],
+                "num_ops": value["num_ops"],
+                "status": value["compilation_status"],
+                "pcc": value["pcc"],
+                "atol": value["atol"],
+                "torch_ir_graph": value["torch_ir_graph"],
+                "stable_hlo_graph": value["stable_hlo_graph"],
+                "ops": value["stable_hlo_ops"],
+                "ttir_graph": value["ttir_graph"],
+                "ttnn_graph": value["ttnn_graph"],
+                "compiled_json": value["compiled_json"],
+                "error": value["error"],
+                "trace_dump": value["trace_dump"],
+            }
+        )
 
     for torch_name, torch_op in sorted(torch_ops.items()):
         name = torch_name
@@ -1074,5 +1085,5 @@ def process_json_files():
 
 
 if __name__ == "__main__":
-    generate_status_report()
-    process_json_files()
+    generate_status_report_md()
+    generate_op_reports_xlsx()

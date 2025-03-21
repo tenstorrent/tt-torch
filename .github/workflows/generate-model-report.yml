@@ -111,12 +111,22 @@ jobs:
         echo "commit=$commit" >> "$GITHUB_OUTPUT"
         echo "date=$date" >> "$GITHUB_OUTPUT"
         spreadsheet_name="models_op_per_op_${date}_${branch}_${commit}.xlsx"
+        markdown_name="models_${date}_${branch}_${commit}.md"
         echo "spreadsheet_name=$spreadsheet_name" >> "$GITHUB_OUTPUT"
+        echo "markdown_name=$markdown_name" >> "$GITHUB_OUTPUT"
         echo "Renaming spreadsheet from ${{ steps.strings.outputs.work-dir }}/results/models_op_per_op.xlsx to ${{ steps.strings.outputs.work-dir }}/results/$spreadsheet_name"
         mv ${{ steps.strings.outputs.work-dir }}/results/models_op_per_op.xlsx ${{ steps.strings.outputs.work-dir }}/results/$spreadsheet_name
+        echo "Renaming markdown from ${{ steps.strings.outputs.work-dir }}/results/models.md to ${{ steps.strings.outputs.work-dir }}/results/$markdown_name"
+        mv ${{ steps.strings.outputs.work-dir }}/results/models.md ${{ steps.strings.outputs.work-dir }}/results/$markdown_name
 
-    - name: Upload report to archive
+    - name: Upload xls report to archive
       uses: actions/upload-artifact@v4
       with:
         name: ${{ steps.git-info.outputs.spreadsheet_name }}
         path: "${{ steps.strings.outputs.work-dir }}/results/${{ steps.git-info.outputs.spreadsheet_name }}"
+
+    - name: Upload markdown report to archive
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.git-info.outputs.markdown_name }}
+        path: "${{ steps.strings.outputs.work-dir }}/results/${{ steps.git-info.outputs.markdown_name }}"
