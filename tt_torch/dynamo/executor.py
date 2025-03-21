@@ -520,7 +520,7 @@ class OpByOpExecutor(Executor):
                 self.execute_process = None
                 break
 
-        if inputs_file_path and os.path.isfile(inputs_file_path):
+        if inputs_file_path and large_input:
             try:
                 os.remove(inputs_file_path)
             except OSError:

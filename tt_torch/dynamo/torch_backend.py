@@ -39,6 +39,9 @@ from tt_torch.dynamo.executor import (
     Executor,
     OpByOpExecutor,
 )
+from torch_xla.stablehlo import exported_program_to_stablehlo
+from mlir.ir import Context, Module
+import mlir.dialects.stablehlo as stablehlo
 
 #########################################################
 # Helper functions
@@ -136,19 +139,16 @@ def import_program(program: torch.export.ExportedProgram):
         return importer.module
 
 
-def lower_to_stable_hlo(module, op=None, enable_ir_printing=False):
-    run_pipeline_with_repro_report(
-        module,
-        f"builtin.module(torchdynamo-export-to-torch-backend-pipeline)",
-        "Lowering TorchFX IR -> Torch Backend IR",
-        enable_ir_printing,
-    )
-    if op is not None:
-        op.compilation_status = OpCompilationStatus.CONVERTED_TO_TORCH_BACKEND_IR
+def lower_to_stable_hlo(program: torch.export.ExportedProgram, op=None, enable_ir_printing=False):
+    module_str = exported_program_to_stablehlo(program).get_stablehlo_text()
+    with Context() as ctx:
+        stablehlo.register_dialect(ctx)
+        module = Module.parse(module_str)
 
-    lower_mlir_module(False, OutputType.STABLEHLO, module)
     if op is not None:
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
+    
+    return module
 
 
 ##################################################################
@@ -279,10 +279,22 @@ class TorchExecutor(OpByOpExecutor):
         for out in out_meta:
             op.output_shapes.append([dim for dim in out.shape])
 
+
+        class Basic(torch.nn.Module):
+            def __init__(self):
+                super().__init__()
+
+            def forward(self, x, y):
+                return x + y
+
+        breakpoint()
+        mod = copy.deepcopy(self.program.graph_module())
+        mod.graph = graph
+        program = torch.export.export(mod)
         module = import_graph(graph)
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_TORCH_IR
         op.add_torch_ir_graph(module.operation.get_asm())
-        lower_to_stable_hlo(module, op=op)
+        module = lower_to_stable_hlo(program, op=op)
         op.add_stable_hlo_graph(module.operation.get_asm())
         return module, op
 
