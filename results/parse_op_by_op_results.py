@@ -46,7 +46,8 @@ def find_json_files(directory="results"):
     return json_files
 
 
-def generate_status_report():
+# Generate a high level report per model of the compilation status
+def generate_status_report_md():
     json_files = find_json_files()
     status_report = {}
     model_names = []
@@ -392,7 +393,8 @@ def create_summary_worksheet(workbook, model_names):
     )
 
 
-def process_json_files():
+# Main entry point to generate detailed xlsx files of op status by model with summary sheet.
+def generate_op_reports_xlsx():
     json_files = find_json_files()
     create_test_dirs()
 
@@ -650,26 +652,26 @@ def process_json_files():
         unique_ops.add(key)
         if value["torch_name"] not in torch_ops:
             torch_ops[value["torch_name"]] = []
-        else:
-            torch_ops[value["torch_name"]].append(
-                {
-                    "torch_name": value["torch_name"],
-                    "input_shapes": value["input_shapes"],
-                    "output_shapes": value["output_shapes"],
-                    "num_ops": value["num_ops"],
-                    "status": value["compilation_status"],
-                    "pcc": value["pcc"],
-                    "atol": value["atol"],
-                    "torch_ir_graph": value["torch_ir_graph"],
-                    "stable_hlo_graph": value["stable_hlo_graph"],
-                    "ops": value["stable_hlo_ops"],
-                    "ttir_graph": value["ttir_graph"],
-                    "ttnn_graph": value["ttnn_graph"],
-                    "compiled_json": value["compiled_json"],
-                    "error": value["error"],
-                    "trace_dump": value["trace_dump"],
-                }
-            )
+
+        torch_ops[value["torch_name"]].append(
+            {
+                "torch_name": value["torch_name"],
+                "input_shapes": value["input_shapes"],
+                "output_shapes": value["output_shapes"],
+                "num_ops": value["num_ops"],
+                "status": value["compilation_status"],
+                "pcc": value["pcc"],
+                "atol": value["atol"],
+                "torch_ir_graph": value["torch_ir_graph"],
+                "stable_hlo_graph": value["stable_hlo_graph"],
+                "ops": value["stable_hlo_ops"],
+                "ttir_graph": value["ttir_graph"],
+                "ttnn_graph": value["ttnn_graph"],
+                "compiled_json": value["compiled_json"],
+                "error": value["error"],
+                "trace_dump": value["trace_dump"],
+            }
+        )
 
     for torch_name, torch_op in sorted(torch_ops.items()):
         name = torch_name
@@ -1074,5 +1076,5 @@ def process_json_files():
 
 
 if __name__ == "__main__":
-    generate_status_report()
-    process_json_files()
+    generate_status_report_md()
+    generate_op_reports_xlsx()
