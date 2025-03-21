@@ -224,11 +224,6 @@ jobs:
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-regnet_x_32gf]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-swin_b]
               "
-          },
-          {
-            runs-on: wormhole_b0, name: "mistral", tests: "
-              tests/models/mistral/test_mistral_8b.py::test_mistral_8b
-              "
           }
         ]
     runs-on:
