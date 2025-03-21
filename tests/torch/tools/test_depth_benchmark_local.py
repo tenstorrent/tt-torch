@@ -6,6 +6,43 @@ import os
 import xml.etree.ElementTree as ET
 import ast
 import pandas as pd
+import json
+
+
+def parse_tests_from_json(json_file):
+    """
+    Parse the JSON file to extract the full_test_name and max_achieved_compile_depth.
+
+    Args:
+        json_file (str): Path to the JSON file.
+
+    Returns:
+        list: A list of tuples containing (full_test_name, max_achieved_compile_depth).
+    """
+    result_tuples = []
+
+    # Load the JSON file
+    with open(json_file, "r") as file:
+        data = json.load(file)
+
+    # Iterate through the jobs
+    for job in data.get("jobs", []):
+        # Iterate through the tests in each job
+        for test in job.get("tests", []):
+            full_test_name = test.get("full_test_name")
+
+            full_test_name = "".join(
+                full_test_name.split("::")[1:]
+            )  # strip out the short test name
+
+            tags = test.get("tags", {})
+            max_achieved_compile_depth = tags.get("max_achieved_compile_depth")
+
+            # Add to result_tuples if both fields are present
+            if full_test_name and max_achieved_compile_depth:
+                result_tuples.append((full_test_name, max_achieved_compile_depth))
+
+    return result_tuples
 
 
 def parse_tests_from_matrix(yaml_file):
@@ -46,7 +83,7 @@ def test_depth_benchmark():
     # check the list of tests inside the test_data folder
     test_data_dir = "tests/torch/tools/depth_benchmark_data"  # this is bad
     found_tests = []
-    result_tuples = []
+    result_tuples_fusedxml = []
     parsed_files = 0
     for file in os.listdir(test_data_dir):
         if not file.endswith(".xml"):
@@ -70,7 +107,7 @@ def test_depth_benchmark():
                 max_achieved_compile_depth = testcase_tags_dict.get(
                     "max_achieved_compile_depth"
                 )
-                result_tuples.append((test_name, max_achieved_compile_depth))
+                result_tuples_fusedxml.append((test_name, max_achieved_compile_depth))
             else:
                 assert False, f"No tags property found for test: {test_name}."
 
@@ -85,6 +122,19 @@ def test_depth_benchmark():
     )
 
     df = pd.DataFrame(
-        result_tuples, columns=["Model Name", "Max Achieved Compile Depth"]
+        result_tuples_fusedxml, columns=["Model Name", "Max Achieved Compile Depth"]
     )
     print(df.to_string())
+
+    json_file = "tests/torch/tools/depth_benchmark_data/pipeline_13992907180_2025-03-21T13:31:41.000000+0000.json"  # Path to the JSON file
+    result_tuples_json = parse_tests_from_json(json_file)
+
+    df = pd.DataFrame(
+        result_tuples_json, columns=["Model Name", "Max Achieved Compile Depth"]
+    )
+    print(df.to_string())
+
+    missing_json_fusedxml = set(result_tuples_json) - set(result_tuples_fusedxml)
+    print(
+        f"Test set and results in fused crashsafe XML files match those in the parsed JSON"
+    )
