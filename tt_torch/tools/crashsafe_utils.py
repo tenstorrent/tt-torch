@@ -73,7 +73,7 @@ def check_valid_xml(xml_file):
             xpath = f".//property[@name='{property_name}']"
             if root.find(xpath) is None:
                 raise AssertionError(
-                    f"Property with name='{property_name}' does not exist in the XML."
+                    f"Property with name='{property_name}' does not exist in the XML. This XML file is probably empty, and records a skipped test."
                 )
 
     except ET.ParseError as e:
