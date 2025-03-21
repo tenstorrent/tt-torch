@@ -31,6 +31,7 @@ from tt_torch.tools.utils import (
     CompilerConfig,
     CompileDepth,
 )
+from tt_torch.dynamo.torch_backend import lower_to_stable_hlo
 
 
 def verify_golden_callback(binary, callback_context, op_context):
@@ -74,25 +75,7 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     with torch.no_grad():
         program, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
 
-    module = import_program(program)
-    verify_ir(module)
-
-    dump_module(module=module, name="Torch FX module", compiler_config=compiler_config)
-
-    if compiler_config.profile_ops:
-        compiler_config.set_torch_mlir_module(module.operation.get_asm())
-
-    run_pipeline_with_repro_report(
-        module,
-        f"builtin.module(torchdynamo-export-to-torch-backend-pipeline)",
-        "Lowering TorchFX IR -> Torch Backend IR",
-        compiler_config.dump_debug,
-    )
-    dump_module(
-        module=module, name="Torch Backend module", compiler_config=compiler_config
-    )
-
-    lower_mlir_module(False, OutputType.STABLEHLO, module)
+    module = lower_to_stable_hlo(program)
 
     dump_module(module=module, name="StableHLO module", compiler_config=compiler_config)
 
