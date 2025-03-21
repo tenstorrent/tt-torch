@@ -80,5 +80,3 @@ def test_torchvision_object_detection(record_property, model_info, mode, op_by_o
     results = tester.test_model()
     if mode == "eval":
         print(f"Model: {model_name} | Output: {results}")
-
-    tester.finalize()

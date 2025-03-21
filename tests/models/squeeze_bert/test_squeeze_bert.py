@@ -52,5 +52,3 @@ def test_squeeze_bert(record_property, mode, op_by_op):
     if mode == "eval":
         logits = results.logits
         predicted_class_id = logits.argmax().item()
-
-    tester.finalize()

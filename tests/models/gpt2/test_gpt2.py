@@ -72,5 +72,3 @@ def test_gpt2(record_property, mode, op_by_op):
         output before: {decoded_output}
         """
         )
-
-    tester.finalize()

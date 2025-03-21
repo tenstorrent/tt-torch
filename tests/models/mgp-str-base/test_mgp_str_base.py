@@ -69,5 +69,3 @@ def test_mgp_str_base(record_property, mode, op_by_op):
         generated_text = tester.processor.batch_decode(logits)["generated_text"]
         print(f"Generated text: '{generated_text}'")
         assert generated_text[0] == "ticket"
-
-    tester.finalize()

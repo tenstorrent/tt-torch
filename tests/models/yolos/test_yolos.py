@@ -93,5 +93,3 @@ def test_yolos(record_property, mode, op_by_op):
         answer before: {interpret_results(decoded_output)}
         """
         )
-
-    tester.finalize()

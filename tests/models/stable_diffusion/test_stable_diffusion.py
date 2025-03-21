@@ -50,5 +50,3 @@ def test_stable_diffusion(record_property, mode, op_by_op):
     results = tester.test_model()
     if mode == "eval":
         image = results.images[0]
-
-    tester.finalize()

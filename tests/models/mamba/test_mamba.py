@@ -80,5 +80,3 @@ def test_mamba(record_property, model_name, mode, op_by_op):
     if mode == "eval":
         gen_text = tester.tokenizer.batch_decode(results)
         print("Generated text: ", gen_text)
-
-    tester.finalize()

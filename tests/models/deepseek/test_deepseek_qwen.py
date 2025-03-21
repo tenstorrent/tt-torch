@@ -61,4 +61,3 @@ def test_deepseek_qwen(record_property, model_name, mode, op_by_op):
     )
 
     tester.test_model()
-    tester.finalize()

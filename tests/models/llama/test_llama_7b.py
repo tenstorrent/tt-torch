@@ -83,5 +83,3 @@ def test_llama_7b(record_property, mode, op_by_op):
         output before: {decoded_output}
         """
         )
-
-    tester.finalize()

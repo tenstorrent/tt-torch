@@ -95,5 +95,3 @@ def test_clip(record_property, mode, op_by_op):
         probs = logits_per_image.softmax(
             dim=1
         )  # we can take the softmax to get the label probabilities
-
-    tester.finalize()

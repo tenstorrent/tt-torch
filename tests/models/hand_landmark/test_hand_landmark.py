@@ -110,4 +110,3 @@ def test_hand_landmark(record_property, mode, op_by_op):
 
     tester = ThisTester(model_name, mode, record_property_handle=record_property)
     tester.test_model()
-    tester.finalize()

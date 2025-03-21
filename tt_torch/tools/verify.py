@@ -20,6 +20,7 @@ def verify_against_golden(
     required_pcc=0.99,
     required_atol=None,
     relative_atol=None,
+    preflush_tags=None,
 ):
     assert (required_atol is not None) != (
         relative_atol is not None
@@ -107,6 +108,9 @@ def verify_against_golden(
                 + f"ATOL of output {i}: {atol_:0,.4f}, threshold: {atol_threshold}{f' (calculated using relative_atol: {relative_atol})' if relative_atol is not None else ''} {red_x if assert_atol else atol_warning}\n"
             )
             passed_atol = False
+
+        if preflush_tags is not None:
+            preflush_tags(pccs, atols)
 
         if assert_pcc and assert_atol:
             if passed_pcc and passed_atol:

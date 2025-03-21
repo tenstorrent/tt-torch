@@ -56,5 +56,3 @@ def test_codegen(record_property, mode, op_by_op):
 
     if mode == "eval":
         print(tester.tokenizer.decode(results[0]))
-
-    tester.finalize()

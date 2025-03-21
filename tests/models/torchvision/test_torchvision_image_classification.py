@@ -125,5 +125,3 @@ def test_torchvision_image_classification(record_property, model_info, mode, op_
         # Print the top 5 predictions
         _, indices = torch.topk(results, 5)
         print(f"Model: {model_info[0]} | Top 5 predictions: {indices[0].tolist()}")
-
-    tester.finalize()

@@ -95,4 +95,3 @@ def test_timm_image_classification(record_property, model_name, mode, op_by_op):
         print(
             f"Model: {model_name} | Predicted class ID: {top5_class_indices[0]} | Probabiliy: {top5_probabilities[0]}"
         )
-    tester.finalize()

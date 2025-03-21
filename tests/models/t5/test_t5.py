@@ -60,5 +60,3 @@ def test_t5(record_property, model_name, mode, op_by_op):
         print(
             f"Model: {model_name} | Input: {tester.input_text} | Output: {output_text}"
         )
-
-    tester.finalize()

@@ -65,5 +65,3 @@ def test_dpr(record_property, mode, op_by_op):
         end_logits = results.end_logits
         relevance_logits = results.relevance_logits
         print(results)
-
-    tester.finalize()

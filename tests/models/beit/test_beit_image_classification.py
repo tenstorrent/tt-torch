@@ -79,5 +79,3 @@ def test_beit_image_classification(record_property, model_name, mode, op_by_op):
             "Predicted class:",
             tester.framework_model.config.id2label[predicted_class_idx],
         )
-
-    tester.finalize()

@@ -55,8 +55,6 @@ def test_distilbert(record_property, model_name, mode, op_by_op):
     if mode == "eval":
         print(f"Model: {model_name} | Input: {tester.text} | Output: {results}")
 
-    tester.finalize()
-
 
 @pytest.mark.parametrize(
     "num_loops",
@@ -101,5 +99,4 @@ def test_distilbert_multiloop(record_property, model_name, mode, op_by_op, num_l
         print(f"Model: {model_name} | Input: {tester.text} | Output: {results}")
         print(f"{num_loops} iterations took {(end_time - start_time)} seconds")
 
-    tester.finalize()
     cc.cleanup_device()

@@ -50,5 +50,3 @@ def test_resnet(record_property, mode, op_by_op):
         record_property_handle=record_property,
     )
     results = tester.test_model()
-
-    tester.finalize()

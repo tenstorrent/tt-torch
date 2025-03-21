@@ -109,5 +109,3 @@ def test_autoencoder_linear(record_property, mode, op_by_op):
 
     if mode == "eval":
         print("Output: ", results)
-
-    tester.finalize()

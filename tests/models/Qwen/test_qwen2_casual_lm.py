@@ -75,5 +75,3 @@ def test_qwen2_casual_lm(record_property, model_name, mode, op_by_op):
         print(
             f"Model: {model_name} | Input: {tester.text} | Generated Text: {gen_text}"
         )
-
-    tester.finalize()

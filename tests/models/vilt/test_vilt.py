@@ -65,5 +65,3 @@ def test_vilt(record_property, mode, op_by_op):
         logits = results.logits
         idx = logits.argmax(-1).item()
         print("Predicted answer:", tester.framework_model.config.id2label[idx])
-
-    tester.finalize()

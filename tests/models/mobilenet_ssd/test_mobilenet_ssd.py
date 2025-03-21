@@ -59,4 +59,3 @@ def test_mobilenet_ssd(record_property, mode, op_by_op):
         model_name, mode, compiler_config=cc, record_property_handle=record_property
     )
     tester.test_model()
-    tester.finalize()

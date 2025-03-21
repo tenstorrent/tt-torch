@@ -68,5 +68,3 @@ def test_perceiver_io(record_property, mode, op_by_op):
         logits = results.logits
         masked_tokens_predictions = logits[0, 51:61].argmax(dim=-1)
         print(tester.tokenizer.decode(masked_tokens_predictions))
-
-    tester.finalize()

@@ -79,5 +79,3 @@ def test_openpose_v2(record_property, mode, op_by_op):
     results = tester.test_model()
     if mode == "eval":
         print(f"Output: {results}")
-
-    tester.finalize()

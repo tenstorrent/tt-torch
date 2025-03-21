@@ -86,5 +86,3 @@ def test_bert(record_property, mode, op_by_op):
         answer: {answer}
         """
         )
-
-    tester.finalize()

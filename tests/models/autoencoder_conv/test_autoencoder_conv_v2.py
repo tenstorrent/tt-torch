@@ -98,5 +98,3 @@ def test_autoencoder_conv_v2(record_property, mode, op_by_op):
 
     if mode == "eval":
         print("Output: ", results)
-
-    tester.finalize()

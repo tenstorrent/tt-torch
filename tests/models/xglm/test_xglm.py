@@ -60,4 +60,3 @@ def test_xglm(record_property, mode, op_by_op):
         record_property_handle=record_property,
     )
     tester.test_model()
-    tester.finalize()
