@@ -45,7 +45,7 @@ def parse_tests_from_json(json_file):
     return result_tuples
 
 
-def parse_tests_from_matrix(yaml_file):
+def parse_tests_from_matrix(yaml_file, array_fmt=True):
     """
     Parse the list of tests from the test matrix in the given YAML file.
 
@@ -65,7 +65,7 @@ def parse_tests_from_matrix(yaml_file):
     all_tests = []
     for entry in matrix:
         if "tests" in entry:
-            all_tests.extend(entry["tests"])
+            all_tests.extend(entry["tests"] if array_fmt else entry["tests"].split())
     return all_tests
 
 
@@ -77,7 +77,7 @@ def test_depth_benchmark():
 
     print("Combined List of Tests:")
     print(len(all_tests), "tests found in the workflow file.")
-
+    print(all_tests)
     # run a mini benchmark and evaluate that?
 
     # check the list of tests inside the test_data folder
@@ -115,6 +115,7 @@ def test_depth_benchmark():
 
     # Compare the two lists
     missing_tests = set(all_tests) - set(found_tests)
+    print(found_tests)
     assert not missing_tests, f"Missing tests: {missing_tests}"
 
     print(
@@ -138,3 +139,31 @@ def test_depth_benchmark():
     print(
         f"Test set and results in fused crashsafe XML files match those in the parsed JSON"
     )
+
+    # Validate against expectations, at least for full execute
+    # We would expect that everything currently running in full model execution
+    # shows up as such
+    current_exec_tests = parse_tests_from_matrix(
+        ".github/workflows/run-full-model-execution-tests.yml", array_fmt=False
+    )
+    result_tuples_json_executing = [
+        tup[0]
+        for tup in result_tuples_json
+        if tup[1] == "EXECUTE" or tup[1] == "PASSED"
+    ]
+
+    in_exec_but_not_in_json = set(current_exec_tests) - set(
+        result_tuples_json_executing
+    )
+    #    in_json_but_not_in_exec = set(result_tuples_json_executing) - set(current_exec_tests)
+    in_exec_but_not_in_json = sorted(in_exec_but_not_in_json)
+
+    print("Tests in current execution but not in JSON:")
+    df = pd.DataFrame(in_exec_but_not_in_json, columns=["Model Name"])
+    print(df.to_string())
+
+    # print("Tests in JSON but not in current execution:")
+    # df = pd.DataFrame(
+    #     in_json_but_not_in_exec, columns=["Model Name"]
+    # )
+    # print(df.to_string())
