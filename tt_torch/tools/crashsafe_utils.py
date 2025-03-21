@@ -96,6 +96,12 @@ def inject_param_into_tags(xml_file, tag_name, tag_value):
         tags_dict = {}
 
     # Inject the max achieved compile depth into the tags dictionary
+    # pack model_name and frontend from properties into tags (overwriting is ok)
+    tags_dict["model_name"] = root.find(".//property[@name='model_name']").attrib[
+        "value"
+    ]
+    tags_dict["frontend"] = root.find(".//property[@name='frontend']").attrib["value"]
+
     tags_dict[tag_name] = tag_value
     tags_dict[
         "crashsafe"
