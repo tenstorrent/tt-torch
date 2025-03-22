@@ -292,8 +292,15 @@ class TorchExecutor(OpByOpExecutor):
         outputs = []
         num_nodes = len(self.program.graph_module.graph.nodes)
         out_degree = {}
+
+        # Hack to run only certain index. get RUN_IDX from env
+        run_idx = os.getenv("RUN_IDX")
+        if run_idx is not None:
+            run_idx = int(run_idx)
+            print(f"Going to compile/run only index: {run_idx}", flush=True)
+
         for idx, node in enumerate(self.program.graph_module.graph.nodes):
-            print(f"Compiling {idx}/{num_nodes}: {node.target}")
+            print(f"Compiling {idx}/{num_nodes}: {node.target}", flush=True)
             out_degree[node] = len(node.users)
             if node.op == "placeholder":
                 node_to_tensor[node] = inputs[input_index]
@@ -319,8 +326,13 @@ class TorchExecutor(OpByOpExecutor):
                         )
                     else:
                         args.append(arg)
+
                 try:
-                    binary, op = self.compile_op(node, *args, **node.kwargs)
+                    if run_idx is not None and idx != run_idx:
+                        print(f"Skipping compile of op idx: {idx}", flush=True)
+                        binary = None
+                    else:
+                        binary, op = self.compile_op(node, *args, **node.kwargs)
                 except Exception as e:
                     binary = None
                     print(f"Failed to compile {idx}/{num_nodes}: {node.target}: {e}")
@@ -329,6 +341,15 @@ class TorchExecutor(OpByOpExecutor):
                     self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
                     and binary is not None
                 ):
+
+                    if run_idx is not None:
+                        if idx == run_idx:
+                            print(f"Going to run target op idx: {idx}")
+                            # breakpoint()
+                        else:
+                            print(f"Skipping run_op for idx: {idx}")
+                            continue
+
                     try:
                         calculated, runtime_stack_dump = self.run_op(binary, *args)
                         self.compiler_config.unique_ops[
