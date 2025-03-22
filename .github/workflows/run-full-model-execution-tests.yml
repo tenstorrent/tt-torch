@@ -31,6 +31,12 @@ jobs:
                   tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval]
                   tests/models/yolov3/test_yolov3.py::test_yolov3[full-eval]
                   tests/models/yolov4/test_yolov4.py::test_yolov4[full-eval]
+                  tests/models/hardnet/test_hardnet.py::test_hardnet[full-eval]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vgg19]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vgg19_bn]
+                  tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[full-eval]
+                  tests/models/dpr/test_dpr.py::test_dpr[full-eval]
+
             "
           },
           {
@@ -41,6 +47,11 @@ jobs:
                   tests/models/resnet/test_resnet.py::test_resnet[full-eval]
                   tests/models/resnet50/test_resnet50.py::test_resnet[full-eval]
                   tests/models/distilbert/test_distilbert.py::test_distilbert_multiloop[full-distilbert-base-uncased-eval-64]
+                  tests/models/roberta/test_roberta.py::test_roberta[full-eval]
+                  tests/models/deepseek/test_deepseek_qwen.py::test_deepseek_qwen[full-deepseek-ai/DeepSeek-R1-Distill-Qwen-32B-eval]
+                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-xlarge-v2-eval]
+                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-large-v2-eval]
+                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-base-v2-eval]
             "
           },
           {
@@ -53,6 +64,11 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_8gf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_16gf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_32gf]
+                  tests/models/albert/test_albert_sequence_classification.py::test_albert_sequence_classification[full-textattack/albert-base-v2-imdb-eval]
+                  tests/models/albert/test_albert_question_answering.py::test_albert_question_answering[full-twmkn9/albert-base-v2-squad2-eval]
+                  tests/models/albert/test_albert_token_classification.py::test_albert_token_classification[full-albert/albert-base-v2-eval]
+                  tests/models/bloom/test_bloom.py::test_bloom[full-eval]
+                  tests/models/bert/test_bert.py::test_bert[full-eval]
             "
           },
           {
@@ -65,6 +81,11 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_8gf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_16gf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_32gf]
+                  tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[full-Qwen/Qwen2.5-1.5B-eval]
+                  tests/models/Qwen/test_qwen2_token_classification.py::test_qwen2_token_classification[full-Qwen/Qwen2-7B-eval]
+                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-xception71.tf_in1k]
+                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-mobilenetv1_100.ra4_e3600_r224_in1k]
+                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-dla34.in1k]
             "
           },
           {
@@ -83,6 +104,9 @@ jobs:
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext101_64x4d]
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-wide_resnet50_2]
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-wide_resnet101_2]
+                tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-hrnet_w18.ms_aug_in1k]
+                tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-ghostnet_100.in1k]
+                tests/models/yolov5/test_yolov5.py::test_yolov5[full-eval]
             "
           }
         ]
