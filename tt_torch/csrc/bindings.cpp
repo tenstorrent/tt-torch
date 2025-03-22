@@ -5,6 +5,7 @@
 #include "tt-mlir-interface.hpp"
 #include "tt/runtime/types.h"
 #include <optional>
+#include <pybind11/cast.h>
 #if defined(TT_RUNTIME_DEBUG) && TT_RUNTIME_DEBUG == 1
 #include "tt/runtime/detail/debug.h"
 #include "tt/runtime/runtime.h"
@@ -242,8 +243,10 @@ std::vector<at::Tensor> run_end_to_end(std::vector<at::Tensor> &inputs,
                                        py::bytes byte_stream) {
 
   tt::runtime::Binary binary = create_binary_from_bytestream(byte_stream);
-
-  tt::runtime::Device device = tt::runtime::openDevice({0});
+  
+  tt::runtime::MeshDeviceOptions mesh_device_options;
+  mesh_device_options.meshShape = {1, 1};
+  tt::runtime::Device device = tt::runtime::openMeshDevice(mesh_device_options);
 
   int program_idx = 0;
 
@@ -252,7 +255,7 @@ std::vector<at::Tensor> run_end_to_end(std::vector<at::Tensor> &inputs,
 
   std::vector<at::Tensor> outputs = run(device, binary, program_idx, rt_inputs);
 
-  tt::runtime::closeDevice(device);
+  tt::runtime::closeMeshDevice(device);
 
   return outputs;
 }
@@ -263,6 +266,15 @@ PYBIND11_MODULE(tt_mlir, m) {
       .def("getProgramInputs", &tt::runtime::Binary::getProgramInputs)
       .def("getProgramOutputs", &tt::runtime::Binary::getProgramOutputs)
       .def("asJson", &tt::runtime::Binary::asJson);
+  py::class_<tt::runtime::MeshDeviceOptions>(m, "MeshDeviceOptions")
+      .def(py::init<>())
+      .def_readwrite("meshShape", &tt::runtime::MeshDeviceOptions::meshShape)
+      .def_readwrite("meshOffset", &tt::runtime::MeshDeviceOptions::meshOffset)
+      .def_readwrite("deviceIds", &tt::runtime::MeshDeviceOptions::deviceIds)
+      .def_readwrite("numHWCQs", &tt::runtime::MeshDeviceOptions::numHWCQs)
+      .def_readwrite("l1SmallSize", &tt::runtime::MeshDeviceOptions::l1SmallSize)
+      .def_readwrite("dispatchCoreType", &tt::runtime::MeshDeviceOptions::dispatchCoreType)
+      .def_readwrite("enableAsyncTTNN", &tt::runtime::MeshDeviceOptions::enableAsyncTTNN);
   py::class_<tt::runtime::Device>(m, "Device");
   py::class_<tt::runtime::Tensor>(m, "Tensor");
   m.def("compile", &compile_stablehlo_to_bytestream,
@@ -279,6 +291,15 @@ PYBIND11_MODULE(tt_mlir, m) {
         py::arg("enable_program_cache") = py::none(),
         "Open a mesh of devices for execution");
   m.def("close_device", &tt::runtime::closeDevice, "Close the device");
+  m.def("open_mesh_device", &tt::runtime::openMeshDevice, py::arg("mesh_device_options"), 
+        "Open a mesh of devices for execution using the new API");
+  m.def("create_sub_mesh_device", &tt::runtime::createSubMeshDevice, py::arg("parent_mesh"),
+        py::arg("mesh_shape"), py::arg("mesh_offset") = py::none(),
+        "Create a sub-mesh device using the new API");
+  m.def("close_mesh_device", &tt::runtime::closeMeshDevice, py::arg("parent_mesh"),
+        "Close the mesh device using new API");
+  m.def("release_sub_mesh_device", &tt::runtime::releaseSubMeshDevice, py::arg("sub_mesh"),
+        "Release the sub-mesh device using the new API");
   m.def("deallocate_tensor", &tt::runtime::deallocateTensor, py::arg("tensor"),
         py::arg("force") = false, "Deallocate the tensor");
   m.def("preprocess_inputs", &preprocess_inputs,

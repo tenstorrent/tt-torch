@@ -196,10 +196,14 @@ class Executor:
     def _get_device(self):
         if self.compiler_config.runtime_device is not None:
             return self.compiler_config.runtime_device
+        
 
-        return tt_mlir.open_device(
-            device_ids=[0], enable_async_ttnn=self.compiler_config.enable_async
-        )
+        mesh_device_options = tt_mlir.MeshDeviceOptions()
+        mesh_device_options.meshShape = [1, 1]
+        return tt_mlir.open_mesh_device(mesh_device_options)
+        # return tt_mlir.open_device(
+        #     device_ids=[0], enable_async_ttnn=self.compiler_config.enable_async
+        # )
 
     def _cache_constants_if_needed(self, preprocessed_constants):
         if (
@@ -214,7 +218,8 @@ class Executor:
             tt_mlir.deallocate_tensor(t, force=True)
 
         if self.compiler_config.runtime_device is None:
-            tt_mlir.close_device(device)
+            # tt_mlir.close_device(device)
+            tt_mlir.close_mesh_device(device)
 
     def __call__(self, *inputs):
         if self.compiler_config.compile_depth != CompileDepth.EXECUTE:
