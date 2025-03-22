@@ -1,0 +1,145 @@
+name: Run Full Model Execution Tests
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      docker-image:
+        description: 'Docker image to use for build'
+        required: true
+        type: string
+      run-codecov:
+        description: 'Run code coverage reports'
+        required: false
+        type: string # properly a boolean but autocast to string when passed in using 'with' inputs
+        default: 'true'
+  workflow_run:
+    workflows: [Build] # backref to run-build as dependency
+    types: [completed]
+
+jobs:
+  tests:
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        build: [
+          {
+            runs-on: wormhole_b0, name: "eval_1", tests: "
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vgg19]
+                  tests/models/dpr/test_dpr.py::test_dpr[full-eval]
+                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-xlarge-v2-eval]
+                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-large-v2-eval]
+                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-base-v2-eval]
+                  tests/models/albert/test_albert_sequence_classification.py::test_albert_sequence_classification[full-textattack/albert-base-v2-imdb-eval]
+                  tests/models/albert/test_albert_token_classification.py::test_albert_token_classification[full-albert/albert-base-v2-eval]
+            "
+          },
+          {
+            runs-on: wormhole_b0, name: "eval_2", tests: "
+                  tests/models/bloom/test_bloom.py::test_bloom[full-eval]
+                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-hrnet_w18.ms_aug_in1k]
+                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-ghostnet_100.in1k]
+                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-xception71.tf_in1k]
+                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-mobilenetv1_100.ra4_e3600_r224_in1k]
+                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-dla34.in1k]
+            "
+          }
+        ]
+    runs-on:
+      - ${{ matrix.build.runs-on }}
+
+    name: "test execution_nightly (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
+
+    container:
+      image: ${{ inputs.docker-image }}
+      options: --user root --device /dev/tenstorrent/0 --shm-size=4gb
+      volumes:
+        - /dev/hugepages:/dev/hugepages
+        - /dev/hugepages-1G:/dev/hugepages-1G
+        - /etc/udev/rules.d:/etc/udev/rules.d
+        - /lib/modules:/lib/modules
+        - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
+        - /mnt/dockercache:/mnt/dockercache
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        lfs: true
+
+    - name: Fetch job id
+      id: fetch-job-id
+      uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
+      with:
+        job_name: "test execution_nightly (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})" # reference above tests.name
+
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      env:
+        JOB_ID: ${{ steps.fetch-job-id.outputs.job_id }}
+
+      run: |
+        echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
+        echo "install-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
+        echo "dist-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
+        echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+    - name: Use build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: install-artifacts
+        path: ${{ steps.strings.outputs.install-dir }}
+
+    - name: 'Untar install directory'
+      shell: bash
+      working-directory: ${{ steps.strings.outputs.install-dir }}
+      run: |
+        tar xvf artifact.tar
+        mkdir -p ${{ steps.strings.outputs.dist-dir }}
+        mv wheels/* ${{ steps.strings.outputs.dist-dir }}
+
+    - name: install tt-torch
+      shell: bash
+      run: |
+        source env/activate
+        pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
+
+    - name: Run Full Model Execution Tests
+      env:
+        HF_HOME: /mnt/dockercache/huggingface
+        TORCH_HOME: /mnt/dockercache/torch
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      shell: bash
+      run: |
+        source env/activate
+        apt-get update
+        apt install -y libgl1 libglx-mesa0
+
+        pytest --durations=50 -v ${{matrix.build.tests}} \
+          --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
+          --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
+
+    - name: Upload Test Report Models
+      uses: actions/upload-artifact@v4
+      if: success() || failure()
+      with:
+        name: test-reports-models-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        path: ${{ steps.strings.outputs.test_report_path_models }}
+
+    - name: Upload coverage reports to Codecov
+      if: ${{ (success() || failure()) && inputs.run-codecov == 'true' }}
+      continue-on-error: true
+      uses: codecov/codecov-action@v5
+      with:
+        files: coverage.info,.coverage,coverage.xml
+        # disable_search: true
+        token: ${{ secrets.CODECOV_TOKEN }}
+
+    - name: Upload test results to Codecov
+      if: ${{ (success() || failure()) && inputs.run-codecov == 'true' }}
+      continue-on-error: true
+      uses: codecov/test-results-action@v1
+      with:
+        files: ${{ steps.strings.outputs.test_report_path_models }}
+        disable_search: true
+        token: ${{ secrets.CODECOV_TOKEN }}

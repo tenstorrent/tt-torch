@@ -37,43 +37,30 @@ jobs:
             "
           },
           {
-            # Approximately 65 minutes.
+            # Approximately 55 minutes.
             runs-on: wormhole_b0, name: "compile_2", tests: "
                   tests/models/detr/test_detr.py::test_detr[full-eval]
                   tests/models/glpn_kitti/test_glpn_kitti.py::test_glpn_kitti[full-eval]
                   tests/models/hardnet/test_hardnet.py::test_hardnet[full-eval]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vgg19]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vgg19_bn]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vit_h_14]
-                  tests/models/dpr/test_dpr.py::test_dpr[full-eval]
                   tests/models/roberta/test_roberta.py::test_roberta[full-eval]
                   tests/models/deepseek/test_deepseek_qwen.py::test_deepseek_qwen[full-deepseek-ai/DeepSeek-R1-Distill-Qwen-32B-eval]
-                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-xlarge-v2-eval]
-                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-large-v2-eval]
-                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-base-v2-eval]
-                  tests/models/albert/test_albert_sequence_classification.py::test_albert_sequence_classification[full-textattack/albert-base-v2-imdb-eval]
                   tests/models/albert/test_albert_question_answering.py::test_albert_question_answering[full-twmkn9/albert-base-v2-squad2-eval]
-                  tests/models/albert/test_albert_token_classification.py::test_albert_token_classification[full-albert/albert-base-v2-eval]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-xception71.tf_in1k]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-tf_efficientnet_lite0.in1k]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-tf_efficientnet_lite1.in1k]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-tf_efficientnet_lite2.in1k]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-tf_efficientnet_lite3.in1k]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-tf_efficientnet_lite4.in1k]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-hrnet_w18.ms_aug_in1k]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-mobilenetv1_100.ra4_e3600_r224_in1k]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-dla34.in1k]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-mixer_b16_224.goog_in21k]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-ghostnet_100.in1k]
                   tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[full-Qwen/Qwen2.5-1.5B-eval]
                   tests/models/Qwen/test_qwen2_token_classification.py::test_qwen2_token_classification[full-Qwen/Qwen2-7B-eval]
             "
           },
           {
-            # Approximately 40 minutes.
+            # Approximately 30 minutes.
             runs-on: wormhole_b0, name: "compile_3", tests: "
                   tests/models/opt/test_opt.py::test_opt[full-eval]
-                  tests/models/bloom/test_bloom.py::test_bloom[full-eval]
                   tests/models/yolov5/test_yolov5.py::test_yolov5[full-eval]
                   tests/models/llama/test_llama_7b.py::test_llama_7b[full-eval]
             "
