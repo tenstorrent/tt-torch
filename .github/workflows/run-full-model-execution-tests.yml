@@ -11,86 +11,63 @@ on:
       run-codecov:
         description: 'Run code coverage reports'
         required: false
-        type: string # properly a boolean but autocast to string when passed in using 'with' inputs
+        type: string
         default: 'true'
+      is_nightly:
+        description: 'Set to "true" to run the full (common + nightly extra) test set'
+        required: false
+        type: string
+        default: 'false'
   workflow_run:
-    workflows: [Build] # backref to run-build as dependency
+    workflows: [Build]
     types: [completed]
 
+###############################
+# Job to generate the test matrix
+###############################
 jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Generate matrix from full-model-execution-test-matrix.yml
+        id: set-matrix
+        shell: bash
+        env:
+          IS_NIGHTLY: ${{ inputs.is_nightly }}
+        run: |
+          MATRIX=$(python << 'EOF'
+import yaml, json, os
+with open("full-model-execution-test-matrix.yml", "r") as f:
+    data = yaml.safe_load(f)
+is_nightly = os.getenv("IS_NIGHTLY", "false").lower() == "true"
+# Start with the common tests.
+matrix = data["common_tests"]
+# If nightly, add the extra tests.
+if is_nightly:
+    matrix.extend(data.get("nightly_extra", []))
+print(json.dumps(matrix))
+EOF
+)
+          echo "Selected matrix: $MATRIX"
+          echo "::set-output name=matrix::$MATRIX"
+
+###############################
+# The tests job using the dynamic matrix.
+###############################
   tests:
-    timeout-minutes: 60 # current onPR time runs ~60m
+    needs: generate-matrix
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
-        build: [
-          {
-            runs-on: wormhole_b0, name: "eval_1", tests: "
-                  tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval]
-                  tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval]
-                  tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval]
-                  tests/models/yolov3/test_yolov3.py::test_yolov3[full-eval]
-                  tests/models/yolov4/test_yolov4.py::test_yolov4[full-eval]
-            "
-          },
-          {
-            runs-on: wormhole_b0, name: "eval_2", tests: "
-                  tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]
-                  tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval]
-                  tests/models/openpose/test_openpose_v2.py::test_openpose_v2[full-eval]
-                  tests/models/resnet/test_resnet.py::test_resnet[full-eval]
-                  tests/models/resnet50/test_resnet50.py::test_resnet[full-eval]
-                  tests/models/distilbert/test_distilbert.py::test_distilbert_multiloop[full-distilbert-base-uncased-eval-64]
-            "
-          },
-          {
-            runs-on: wormhole_b0, name: "eval_3", tests: "
-                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-xxlarge-v2-eval]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_400mf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_800mf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_1_6gf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_3_2gf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_8gf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_16gf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_32gf]
-            "
-          },
-          {
-            runs-on: wormhole_b0, name: "eval_4", tests: "
-                  tests/models/llama/test_llama_3b.py::test_llama_3b[full-meta-llama/Llama-3.2-3B-eval]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_400mf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_800mf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_1_6gf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_3_2gf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_8gf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_16gf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_32gf]
-            "
-          },
-          {
-            runs-on: wormhole_b0, name: "eval_5", tests: "
-                tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io[full-eval]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v2]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_small]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_large]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet18]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet34]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet50]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet101]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet152]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext50_32x4d]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext101_32x8d]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext101_64x4d]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-wide_resnet50_2]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-wide_resnet101_2]
-            "
-          }
-        ]
-    runs-on:
-      - ${{ matrix.build.runs-on }}
-
+        build: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+    runs-on: ${{ matrix.build["runs-on"] }}
     name: "test execution (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
-
     container:
       image: ${{ inputs.docker-image }}
       options: --user root --device /dev/tenstorrent/0 --shm-size=4gb
@@ -102,84 +79,73 @@ jobs:
         - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
         - /mnt/dockercache:/mnt/dockercache
     steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: recursive
-        lfs: true
-
-    - name: Fetch job id
-      id: fetch-job-id
-      uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
-      with:
-        job_name: "test execution (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})" # reference above tests.name
-
-    - name: Set reusable strings
-      id: strings
-      shell: bash
-      env:
-        JOB_ID: ${{ steps.fetch-job-id.outputs.job_id }}
-
-      run: |
-        echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
-        echo "install-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
-        echo "dist-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
-        echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
-    - name: Use build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: install-artifacts
-        path: ${{ steps.strings.outputs.install-dir }}
-
-    - name: 'Untar install directory'
-      shell: bash
-      working-directory: ${{ steps.strings.outputs.install-dir }}
-      run: |
-        tar xvf artifact.tar
-        mkdir -p ${{ steps.strings.outputs.dist-dir }}
-        mv wheels/* ${{ steps.strings.outputs.dist-dir }}
-
-    - name: install tt-torch
-      shell: bash
-      run: |
-        source env/activate
-        pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
-
-    - name: Run Full Model Execution Tests
-      env:
-        HF_HOME: /mnt/dockercache/huggingface
-        TORCH_HOME: /mnt/dockercache/torch
-        HF_TOKEN: ${{ secrets.HF_TOKEN }}
-      shell: bash
-      run: |
-        source env/activate
-        apt-get update
-        apt install -y libgl1 libglx-mesa0
-
-        pytest -v ${{matrix.build.tests}} \
-          --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
-          --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
-
-    - name: Upload Test Report Models
-      uses: actions/upload-artifact@v4
-      if: success() || failure()
-      with:
-        name: test-reports-models-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
-        path: ${{ steps.strings.outputs.test_report_path_models }}
-
-    - name: Upload coverage reports to Codecov
-      if: ${{ (success() || failure()) && inputs.run-codecov == 'true' }}
-      continue-on-error: true
-      uses: codecov/codecov-action@v5
-      with:
-        files: coverage.info,.coverage,coverage.xml
-        # disable_search: true
-        token: ${{ secrets.CODECOV_TOKEN }}
-
-    - name: Upload test results to Codecov
-      if: ${{ (success() || failure()) && inputs.run-codecov == 'true' }}
-      continue-on-error: true
-      uses: codecov/test-results-action@v1
-      with:
-        files: ${{ steps.strings.outputs.test_report_path_models }}
-        disable_search: true
-        token: ${{ secrets.CODECOV_TOKEN }}
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          lfs: true
+      - name: Fetch job id
+        id: fetch-job-id
+        uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
+        with:
+          job_name: "test execution (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
+      - name: Set reusable strings
+        id: strings
+        shell: bash
+        env:
+          JOB_ID: ${{ steps.fetch-job-id.outputs.job_id }}
+        run: |
+          echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
+          echo "install-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
+          echo "dist-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
+          echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+      - name: Use build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: install-artifacts
+          path: ${{ steps.strings.outputs.install-dir }}
+      - name: Untar install directory
+        shell: bash
+        working-directory: ${{ steps.strings.outputs.install-dir }}
+        run: |
+          tar xvf artifact.tar
+          mkdir -p ${{ steps.strings.outputs.dist-dir }}
+          mv wheels/* ${{ steps.strings.outputs.dist-dir }}
+      - name: install tt-torch
+        shell: bash
+        run: |
+          source env/activate
+          pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
+      - name: Run Full Model Execution Tests
+        env:
+          HF_HOME: /mnt/dockercache/huggingface
+          TORCH_HOME: /mnt/dockercache/torch
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        shell: bash
+        run: |
+          source env/activate
+          apt-get update
+          apt install -y libgl1 libglx-mesa0
+          pytest -v ${{ matrix.build.tests }} \
+            --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
+            --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
+      - name: Upload Test Report Models
+        uses: actions/upload-artifact@v4
+        if: success() || failure()
+        with:
+          name: test-reports-models-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+          path: ${{ steps.strings.outputs.test_report_path_models }}
+      - name: Upload coverage reports to Codecov
+        if: ${{ (success() || failure()) && inputs.run-codecov == 'true' }}
+        continue-on-error: true
+        uses: codecov/codecov-action@v5
+        with:
+          files: coverage.info,.coverage,coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload test results to Codecov
+        if: ${{ (success() || failure()) && inputs.run-codecov == 'true' }}
+        continue-on-error: true
+        uses: codecov/test-results-action@v1
+        with:
+          files: ${{ steps.strings.outputs.test_report_path_models }}
+          disable_search: true
+          token: ${{ secrets.CODECOV_TOKEN }}
