@@ -1,0 +1,23 @@
+common_tests:
+  - runs-on: wormhole_b0
+    name: "eval_1"
+    tests: |
+      tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval]
+      tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval]
+  - runs-on: wormhole_b0
+    name: "eval_2"
+    tests: |
+      tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]
+      tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval]
+
+nightly_extra:
+  - runs-on: wormhole_b0
+    name: "nightly_eval_1"
+    tests: |
+      tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-xxlarge-v2-eval]
+      tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_400mf]
+  - runs-on: wormhole_b0
+    name: "nightly_eval_2"
+    tests: |
+      tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_400mf]
+      tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_800mf]
