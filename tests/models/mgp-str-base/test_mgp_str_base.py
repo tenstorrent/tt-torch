@@ -23,7 +23,7 @@ class ThisTester(ModelTester):
         return model
 
     def _load_inputs(self):
-        url = "https://i.postimg.cc/ZKwLg2Gw/367-14.png"  # generated_text = "ticket"
+        url = "https://huggingface.co/datasets/Xenova/transformers.js-docs/resolve/main/ocr-demo.png"  # generated_text = "ticket"
         image = Image.open(requests.get(url, stream=True).raw).convert("RGB")
         inputs = self.processor(
             images=image,
