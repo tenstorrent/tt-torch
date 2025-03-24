@@ -127,7 +127,7 @@ def test_depth_benchmark():
     )
     print(df.to_string())
 
-    json_file = "tests/torch/tools/depth_benchmark_data/pipeline_13992907180_2025-03-21T13:31:41.000000+0000.json"  # Path to the JSON file
+    json_file = "tests/torch/tools/depth_benchmark_data/pipeline_14020910456_2025-03-23T16:34:59.000000+0000.json"  # Path to the JSON file
     result_tuples_json = parse_tests_from_json(json_file)
 
     df = pd.DataFrame(
@@ -155,15 +155,15 @@ def test_depth_benchmark():
     in_exec_but_not_in_json = set(current_exec_tests) - set(
         result_tuples_json_executing
     )
-    #    in_json_but_not_in_exec = set(result_tuples_json_executing) - set(current_exec_tests)
+    in_json_but_not_in_exec = set(result_tuples_json_executing) - set(
+        current_exec_tests
+    )
     in_exec_but_not_in_json = sorted(in_exec_but_not_in_json)
 
-    print("Tests in current execution but not in JSON:")
+    print("Tests in current execution but not executing in benchmark JSON:")
     df = pd.DataFrame(in_exec_but_not_in_json, columns=["Model Name"])
     print(df.to_string())
 
-    # print("Tests in JSON but not in current execution:")
-    # df = pd.DataFrame(
-    #     in_json_but_not_in_exec, columns=["Model Name"]
-    # )
-    # print(df.to_string())
+    print("Tests in JSON but not in current execution:")
+    df = pd.DataFrame(in_json_but_not_in_exec, columns=["Model Name"])
+    print(df.to_string())
