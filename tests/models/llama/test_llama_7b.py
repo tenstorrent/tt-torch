@@ -41,9 +41,8 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-@pytest.mark.xfail(
-    reason="llama-7b is too large to fit on single device, but we can still generate a graph"
-)
+
+# Note - llama-7b is too large to fit on single device, but we can still generate a graph. Don't run it in full-eval execute mode.
 @pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
