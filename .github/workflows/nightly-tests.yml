@@ -24,49 +24,13 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-<<<<<<< HEAD
-  test_op_by_op:
+  run-benchmark:
     needs: [docker-build, build]
-    uses: ./.github/workflows/run-op-by-op-model-tests.yml
+    uses: ./.github/workflows/run-depth-benchmark-tests.yml
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  test_e2e:
-    needs: [docker-build, build]
-    uses: ./.github/workflows/run-e2e-tests.yml
+  generate-report:
+    needs: [run-benchmark]
+    uses: ./.github/workflows/generate-benchmark-report.yml
     secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  test_full_model:
-    needs: [docker-build, build]
-    uses: ./.github/workflows/run-full-model-execution-tests.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  test_full_model_nightly:
-    needs: [docker-build, build]
-    uses: ./.github/workflows/run-full-model-execution-tests-nightly.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  download-report:
-    if: success() || failure()
-    needs: test_op_by_op
-    uses: ./.github/workflows/generate-model-report.yml
-    secrets: inherit
-  generate-ttnn-md:
-    if: success() || failure()
-    needs: [download-report]
-    uses: ./.github/workflows/generate-ttnn-md.yml
-    secrets: inherit
-    with:
-      spreadsheet_name: ${{ needs.download-report.outputs.spreadsheet_name }}
-=======
-  # I do not think this should run in nightly
-  run_benchmark:
-      needs: [docker-build, build]
-      uses: ./.github/workflows/run-depth-benchmark-tests.yml
-      secrets: inherit
-      with:
-        docker-image: ${{ needs.docker-build.outputs.docker-image }}
->>>>>>> 62061f8 (Add benchmark run for nightlies temporarily to workaround nonexistent new nonmerged workflow in Actions tab)

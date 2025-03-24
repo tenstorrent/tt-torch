@@ -9,6 +9,13 @@ import subprocess
 import re
 
 crashsafe_suffix = "_crashsafe.xml"
+achieved_depth_mapping = {
+    "FAILED_FE": 0,
+    "STABLEHLO": 1,
+    "TTNN_IR": 2,
+    "EXECUTE": 3,
+    "PASSED": 4,
+}
 
 
 def get_achieved_compile_depths(xml_file):
@@ -39,13 +46,7 @@ def get_achieved_compile_depths(xml_file):
 
 
 def get_max_achieved_compile_depth(xml_file):
-    achieved_depth_mapping = {
-        "FAILED_FE": 0,
-        "STABLEHLO": 1,
-        "TTNN_IR": 2,
-        "EXECUTE": 3,
-        "PASSED": 4,
-    }
+
     # reverse_compile_depth_mapping = {v: k for k, v in achieved_depth_mapping.items()}
     # numeric_depths = [achieved_depth_mapping.get(depth, 0) for depth in compile_depths]
 
