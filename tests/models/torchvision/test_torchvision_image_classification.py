@@ -111,6 +111,15 @@ def test_torchvision_image_classification(record_property, model_info, mode, op_
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    model_group = (
+        "red"
+        if any(
+            model_name in model_info[0].lower()
+            for model_name in ["mobilenet_v2", "vit", "swin"]
+        )
+        else "generality"
+    )
+
     tester = ThisTester(
         model_info,
         mode,
@@ -120,6 +129,7 @@ def test_torchvision_image_classification(record_property, model_info, mode, op_
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
+        model_group=model_group,
     )
     results = tester.test_model()
     if mode == "eval":
