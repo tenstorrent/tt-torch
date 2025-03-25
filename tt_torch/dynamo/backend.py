@@ -3,14 +3,10 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 
-from torch._dynamo.backends.common import aot_autograd, aot_module_simplified
+from torch._dynamo.backends.common import aot_autograd
+from torch.fx.experimental.proxy_tensor import make_fx
+from torch._functorch.compile_utils import strip_overloads
 import operator
-
-from .decompositions import (
-    DecompositionTable,
-    DEFAULT_DECOMPOSITION_TABLE,
-    CUSTOM_DECOMPOSITION_TABLE,
-)
 
 from tt_torch.dynamo.passes import pass_pipeline
 from tt_torch.tools.utils import (
@@ -457,65 +453,66 @@ class Executor:
         else:
             return self.gm(*inputs)
 
+def _base_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
+    # Apply environment overrides at start of compilation to allow overriding what was set in the test
+    compiler_config.apply_environment_overrides()
+    with torch.no_grad():
+        gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
+    executor = Executor(gm, graph_constants, compiler_config)
+    if compiler_config.compile_depth in (
+        CompileDepth.EXECUTE_OP_BY_OP,
+        CompileDepth.COMPILE_OP_BY_OP,
+        CompileDepth.TORCH_FX,
+    ):
+        return executor
+
+    dump_intermediates = os.environ.get("TT_TORCH_IR_LOG_LEVEL")
+    dump_intermediates = dump_intermediates and (
+        dump_intermediates == "INFO" or dump_intermediates == "DEBUG"
+    )
+
+    module = import_graph(gm.graph)
+    if dump_intermediates:
+        print("Torch module", file=sys.stderr)
+        module.dump()
+
+    if compiler_config.profile_ops:
+        compiler_config.set_torch_mlir_module(module.operation.get_asm())
+    if compiler_config.compile_depth == CompileDepth.TORCH_MLIR:
+        return executor
+
+    lower_to_stable_hlo(module)
+    if dump_intermediates:
+        print("StableHLO module", file=sys.stderr)
+        module.dump()
+
+    if compiler_config.profile_ops:
+        compiler_config.set_stablehlo_mlir_module(module.operation.get_asm())
+    if compiler_config.compile_depth == CompileDepth.STABLEHLO:
+        return executor
+
+    ttir = tt_mlir.compile_stable_hlo_to_ttir(module.operation.get_asm())
+    if dump_intermediates:
+        print("TTIR module", file=sys.stderr)
+        print(ttir, file=sys.stderr)
+
+    binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
+    if dump_intermediates:
+        print("TTNN module", file=sys.stderr)
+        print(ttnn, file=sys.stderr)
+
+    executor.set_binary(binary)
+    return executor
 
 
 def backend(gm, example_inputs, options=None):
     if options is None:
         options = CompilerConfig()
-    compiler_cfg = options
-
-    def _base_backend(gm: torch.fx.GraphModule, example_inputs):
-        compiler_config = CompilerConfig()
-        # Apply environment overrides at start of compilation to allow overriding what was set in the test
-        compiler_config.apply_environment_overrides()
-        with torch.no_grad():
-            gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
-        executor = Executor(gm, graph_constants, compiler_config)
-        if compiler_config.compile_depth in (
-            CompileDepth.EXECUTE_OP_BY_OP,
-            CompileDepth.COMPILE_OP_BY_OP,
-            CompileDepth.TORCH_FX,
-        ):
-            return executor
-
-        dump_intermediates = os.environ.get("TT_TORCH_IR_LOG_LEVEL")
-        dump_intermediates = dump_intermediates and (
-            dump_intermediates == "INFO" or dump_intermediates == "DEBUG"
-        )
-
-        module = import_graph(gm.graph)
-        if dump_intermediates:
-            print("Torch module", file=sys.stderr)
-            module.dump()
-
-        if compiler_config.profile_ops:
-            compiler_config.set_torch_mlir_module(module.operation.get_asm())
-        if compiler_config.compile_depth == CompileDepth.TORCH_MLIR:
-            return executor
-
-        lower_to_stable_hlo(module)
-        if dump_intermediates:
-            print("StableHLO module", file=sys.stderr)
-            module.dump()
-
-        if compiler_config.profile_ops:
-            compiler_config.set_stablehlo_mlir_module(module.operation.get_asm())
-        if compiler_config.compile_depth == CompileDepth.STABLEHLO:
-            return executor
-
-        ttir = tt_mlir.compile_stable_hlo_to_ttir(module.operation.get_asm())
-        if dump_intermediates:
-            print("TTIR module", file=sys.stderr)
-            print(ttir, file=sys.stderr)
-
-        binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
-        if dump_intermediates:
-            print("TTNN module", file=sys.stderr)
-            print(ttnn, file=sys.stderr)
-
-        executor.set_binary(binary)
-        return executor
-    decomposition_table = DEFAULT_DECOMPOSITION_TABLE
-    decomposition_table.update(CUSTOM_DECOMPOSITION_TABLE)
-    return aot_module_simplified(gm, example_inputs, fw_compiler=_base_backend, decompositions=decomposition_table)
-
+    concrete_inputs = [
+        x.view(x.shape) if isinstance(x, torch.Tensor) else x for x in example_inputs
+    ]
+    # fake_tensor_mode = torch._dynamo.utils.detect_fake_mode(example_inputs)
+    # fake_tensor_mode.allow_non_fake_inputs = True
+    # aten = make_fx(gm, tracing_mode="symbolic", decomposition_table={}, _allow_non_fake_inputs=True)(*example_inputs)
+    # return _base_backend(aten, example_inputs)
+    return _base_backend(gm, example_inputs, compiler_config=options)
