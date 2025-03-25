@@ -42,8 +42,10 @@ jobs:
     - name: Download Depth Benchmark Artifacts
       uses: actions/download-artifact@v4
       with:
-        name: test-reports-models-*
+        pattern: test-reports-models-benchmark*
         path: ./depth-benchmark-artifacts
+        merge-multiple: true
+    - run: ls -lshR ./depth-benchmark-artifacts
 
     - name: Untar Depth Benchmark Artifacts
       shell: bash

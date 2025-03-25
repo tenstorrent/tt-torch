@@ -33,15 +33,19 @@ def parse_benchmark_xml(xml_dir):
             testcase_name = testcase.attrib.get("name")
             execution_time = 0
 
-            # try:
-            #     start_time = testcase.find(".//property[@name='start_timestamp']")
-            #     end_time = testcase.find(".//property[@name='end_timestamp']")
-            #     start_dt = datetime.fromisoformat(start_time.attrib["value"].replace("Z", "+00:00"))
-            #     end_dt = datetime.fromisoformat(end_time.attrib["value"].replace("Z", "+00:00"))
-            #     execution_time = (end_dt - start_dt).total_seconds()
-            # except Exception as e:
-            #     print(f"Error parsing execution time for testcase {testcase_name}:", e)
-            #     pass
+            try:
+                start_time = testcase.find(".//property[@name='start_timestamp']")
+                end_time = testcase.find(".//property[@name='end_timestamp']")
+                start_dt = datetime.fromisoformat(
+                    start_time.attrib["value"].replace("Z", "+00:00")
+                )
+                end_dt = datetime.fromisoformat(
+                    end_time.attrib["value"].replace("Z", "+00:00")
+                )
+                execution_time = (end_dt - start_dt).total_seconds()
+            except Exception as e:
+                print(f"Error parsing execution time for testcase {testcase_name}:", e)
+                pass
 
             tags_property = testcase.find(".//property[@name='tags']")
             max_achieved_compile_depth = None
