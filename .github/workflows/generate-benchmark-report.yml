@@ -35,7 +35,7 @@ jobs:
         echo "install-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
         echo "dist-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
         echo "test-output-dir=$(pwd)/results/models/tests/" >> "$GITHUB_OUTPUT"
-
+        echo "xml-dir=$(pwd)/depth-benchmark-artifacts" >> "$GITHUB_OUTPUT"
     - name: Git safe dir
       run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
 
@@ -43,18 +43,9 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         pattern: test-reports-models-benchmark*
-        path: ./depth-benchmark-artifacts
+        path:  ${{ steps.strings.outputs.xml-dir }}
         merge-multiple: true
-    - run: ls -lshR ./depth-benchmark-artifacts
-
-    # I think download artifact already untars the artifacts and packs them in the ./depth-benchmark-artifacts directory
-    # - name: Untar Depth Benchmark Artifacts
-    #   shell: bash
-    #   run: |
-    #     mkdir -p ./depth-benchmark-data
-    #     for tar_file in ./depth-benchmark-artifacts/*.tar; do
-    #       tar -xvf "$tar_file" -C ./depth-benchmark-data
-    #     done
+    - run: ls -lshR ${{ steps.strings.outputs.xml-dir }}
 
     - name: install tt-torch
       shell: bash
@@ -80,7 +71,7 @@ jobs:
       run: |
             source env/activate
             python "${{ steps.strings.outputs.work-dir }}/tt_torch/tools/generate_benchmark_report.py" \
-            --xml-dir ./depth-benchmark-data \
+            --xml-dir ${{ steps.strings.outputs.xml-dir}} \
             --compile-yaml "${{ steps.strings.outputs.work-dir }}/.github/workflows/run-e2e-tests.yml" \
             --execution-yaml "${{ steps.strings.outputs.work-dir }}/.github/workflows/run-full-model-execution-tests.yml" \
             --execution-nightly-yaml "${{ steps.strings.outputs.work-dir }}/.github/workflows/run-full-model-execution-tests-nightly.yml" \

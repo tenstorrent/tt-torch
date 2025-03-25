@@ -176,10 +176,9 @@ def pytest_configure(config):
 
     # Check if the --crashsafe option is enabled
     if config.getoption("--crashsafe"):
-        print(f"Running in crashsafe mode - logging data to crashsafe log.")
         junitxml_path = config.getoption("--junit-xml")
         property_file = f"{junitxml_path}{crashsafe_suffix}"
-        print(f"Writing to {property_file}")
+        print(f"Writing crashsafe log to {property_file}")
 
         # Ensure the XML file exists and has a root element
         root = ET.Element("testsuites")
