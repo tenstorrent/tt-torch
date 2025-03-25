@@ -1,0 +1,136 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.0rc1, pytest-8.3.5, pluggy-1.5.0 -- /localdev/ddilbaz/tt-torch/env/venv/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /localdev/ddilbaz/tt-torch
+collecting ... collected 2 items
+
+tests/models/RMBG/test_RMBG.py::test_RMBG[True-train] SKIPPED
+tests/models/RMBG/test_RMBG.py::test_RMBG[True-eval] A new version of the following files was downloaded from https://huggingface.co/briaai/RMBG-2.0:
+- BiRefNet_config.py
+. Make sure to double-check they do not contain any added malicious code. To avoid downloading new versions of the code file, you can pin a revision.
+You are using a model of type birefnet to instantiate a model of type SegformerForSemanticSegmentation. This is not supported for all configurations of models and can yield errors.
+A new version of the following files was downloaded from https://huggingface.co/briaai/RMBG-2.0:
+- birefnet.py
+. Make sure to double-check they do not contain any added malicious code. To avoid downloading new versions of the code file, you can pin a revision.
+Compiling 0/21: arg0_1
+Compiling 1/21: arg1_1
+Compiling 2/21: arg2_1
+Compiling 3/21: arg3_1
+Compiling 4/21: arg4_1
+Compiling 5/21: aten.convolution.default
+
+[32m2025-03-20 21:19:24.922[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:19:24.923[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:19:24.923[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:19:24.957[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+[38;2;000;128;000m                 Always[0m | [1m[38;2;255;000;000mFATAL   [0m | Out of Memory: Not enough space to allocate 134217728 B L1 buffer across 64 banks, where each bank needs to store 2097152 B
+Ran: 5/21: aten.convolution.default
+Failed to execute 5/21: aten.convolution.default: Failed to execute
+Compiling 6/21: aten.view.default
+
+[32m2025-03-20 21:19:26.750[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:19:26.750[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:19:26.750[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:19:26.789[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 6/21: aten.view.default
+Compiling 7/21: aten.transpose.int
+
+[32m2025-03-20 21:19:29.074[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:19:29.074[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:19:29.074[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:19:29.123[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 7/21: aten.transpose.int
+Compiling 8/21: aten.clone.default
+
+[32m2025-03-20 21:19:30.706[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:19:30.706[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:19:30.706[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:19:30.742[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 0 is not contiguous. Converting to contiguous in-place.
+Ran: 8/21: aten.clone.default
+Failed to execute 8/21: aten.clone.default: Failed to execute
+Compiling 9/21: aten.var_mean.correction
+
+[32m2025-03-20 21:19:31.986[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:19:31.987[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:19:31.987[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:19:32.021[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+[38;2;000;128;000m                 Always[0m | [1m[38;2;255;000;000mFATAL   [0m | Statically allocated circular buffers on core range [(x=0,y=0) - (x=0,y=0)] grow to 16876320 B which is beyond max L1 size of 1499136 B
+Ran: 9/21: aten.var_mean.correction
+Failed to execute 9/21: aten.var_mean.correction: Failed to execute
+Compiling 10/21: <built-in function getitem>
+Compiling 11/21: <built-in function getitem>
+Compiling 12/21: aten.add.Tensor
+
+[32m2025-03-20 21:19:34.912[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:19:34.912[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:19:34.912[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:19:34.945[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 12/21: aten.add.Tensor
+Compiling 13/21: aten.rsqrt.default
+
+[32m2025-03-20 21:19:36.738[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:19:36.739[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:19:36.739[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:19:36.773[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 13/21: aten.rsqrt.default
+Compiling 14/21: aten.sub.Tensor
+
+[32m2025-03-20 21:19:38.366[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:19:38.366[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:19:38.366[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:19:38.405[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 14/21: aten.sub.Tensor
+Compiling 15/21: aten.mul.Tensor
+
+[32m2025-03-20 21:19:40.362[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:19:40.362[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:19:40.362[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:19:40.397[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 15/21: aten.mul.Tensor
+Compiling 16/21: aten.mul.Tensor
+
+[32m2025-03-20 21:19:42.352[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:19:42.353[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:19:42.353[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:19:42.370[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 16/21: aten.mul.Tensor
+Compiling 17/21: aten.add.Tensor
+
+[32m2025-03-20 21:19:44.292[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:19:44.293[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:19:44.293[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:19:44.329[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 17/21: aten.add.Tensor
+Compiling 18/21: aten.transpose.int
+
+[32m2025-03-20 21:19:46.285[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:19:46.286[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:19:46.286[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:19:46.322[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 18/21: aten.transpose.int
+Compiling 19/21: aten.view.default
+
+[32m2025-03-20 21:19:47.960[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:19:47.961[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:19:47.961[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:19:47.997[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 0 is not contiguous. Converting to contiguous in-place.
+Ran: 19/21: aten.view.default
+Failed to execute 19/21: aten.view.default: Failed to execute
+Compiling 20/21: output
+#####  Saving unique ops to results/models/tests/models/RMBG/test_RMBG_py_test_RMBG_True-eval_ (call)_unique_ops.json#####
+XFAIL (Fails due
+pt2 compile issue, graph is traced)
+
+=============================== warnings summary ===============================
+tests/models/RMBG/test_RMBG.py::test_RMBG[True-eval]
+  /localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/timm/models/layers/__init__.py:48: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+    warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+
+tests/models/RMBG/test_RMBG.py::test_RMBG[True-eval]
+  /localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/timm/models/registry.py:4: FutureWarning: Importing from timm.models.registry is deprecated, please import via timm.models
+    warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.models", FutureWarning)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================== 1 skipped, 1 xfailed, 2 warnings in 48.26s ==================

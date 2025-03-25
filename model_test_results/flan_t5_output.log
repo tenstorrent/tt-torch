@@ -1,0 +1,10 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.0rc1, pytest-8.3.5, pluggy-1.5.0 -- /localdev/ddilbaz/tt-torch/env/venv/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /localdev/ddilbaz/tt-torch
+collecting ... collected 1 item
+
+tests/models/flan_t5/test_flan_t5.py::test_flan_t5[True-eval] XFAILan
+still generate a graph)
+
+============================= 1 xfailed in 59.96s ==============================

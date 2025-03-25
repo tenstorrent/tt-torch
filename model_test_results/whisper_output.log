@@ -1,0 +1,2190 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.0rc1, pytest-8.3.5, pluggy-1.5.0 -- /localdev/ddilbaz/tt-torch/env/venv/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /localdev/ddilbaz/tt-torch
+collecting ... collected 1 item
+
+tests/models/whisper/test_whisper.py::test_whisper[True-eval] Generating validation split:   0%|          | 0/73 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 73/73 [00:00<00:00, 1854.43 examples/s]
+Due to a bug fix in https://github.com/huggingface/transformers/pull/28687 transcription using a multilingual Whisper will default to language detection followed by transcription instead of translation to English.This might be a breaking change for your use case. If you want to instead always translate your audio to English, make sure to pass `language='en'`.
+Compiling 0/6: arg0_1
+Compiling 1/6: aten.slice.Tensor
+
+[32m2025-03-20 21:37:24.620[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:37:24.620[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:37:24.620[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:37:24.657[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 1/6: aten.slice.Tensor
+Compiling 2/6: aten.slice.Tensor
+
+[32m2025-03-20 21:37:25.814[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:37:25.814[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:37:25.814[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:37:25.849[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 2/6: aten.slice.Tensor
+Compiling 3/6: aten.ones.default
+
+[32m2025-03-20 21:37:26.958[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:37:26.958[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:37:26.958[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:37:26.993[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 3/6: aten.ones.default
+Compiling 4/6: aten.mul.Tensor
+
+[32m2025-03-20 21:37:28.165[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:37:28.166[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:37:28.166[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:37:28.201[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 4/6: aten.mul.Tensor
+Compiling 5/6: output
+#####  Saving unique ops to results/models/tests/models/whisper/test_whisper_py_test_whisper_True-eval_ (call)_unique_ops.json#####
+Compiling 0/1684: arg0_1
+Compiling 1/1684: arg1_1
+Compiling 2/1684: arg2_1
+Compiling 3/1684: arg3_1
+Compiling 4/1684: arg4_1
+Compiling 5/1684: arg5_1
+Compiling 6/1684: arg6_1
+Compiling 7/1684: arg7_1
+Compiling 8/1684: arg8_1
+Compiling 9/1684: arg9_1
+Compiling 10/1684: arg10_1
+Compiling 11/1684: arg11_1
+Compiling 12/1684: arg12_1
+Compiling 13/1684: arg13_1
+Compiling 14/1684: arg14_1
+Compiling 15/1684: arg15_1
+Compiling 16/1684: arg16_1
+Compiling 17/1684: arg17_1
+Compiling 18/1684: arg18_1
+Compiling 19/1684: arg19_1
+Compiling 20/1684: arg20_1
+Compiling 21/1684: arg21_1
+Compiling 22/1684: arg22_1
+Compiling 23/1684: arg23_1
+Compiling 24/1684: arg24_1
+Compiling 25/1684: arg25_1
+Compiling 26/1684: arg26_1
+Compiling 27/1684: arg27_1
+Compiling 28/1684: arg28_1
+Compiling 29/1684: arg29_1
+Compiling 30/1684: arg30_1
+Compiling 31/1684: arg31_1
+Compiling 32/1684: arg32_1
+Compiling 33/1684: arg33_1
+Compiling 34/1684: arg34_1
+Compiling 35/1684: arg35_1
+Compiling 36/1684: arg36_1
+Compiling 37/1684: arg37_1
+Compiling 38/1684: arg38_1
+Compiling 39/1684: arg39_1
+Compiling 40/1684: arg40_1
+Compiling 41/1684: arg41_1
+Compiling 42/1684: arg42_1
+Compiling 43/1684: arg43_1
+Compiling 44/1684: arg44_1
+Compiling 45/1684: arg45_1
+Compiling 46/1684: arg46_1
+Compiling 47/1684: arg47_1
+Compiling 48/1684: arg48_1
+Compiling 49/1684: arg49_1
+Compiling 50/1684: arg50_1
+Compiling 51/1684: arg51_1
+Compiling 52/1684: arg52_1
+Compiling 53/1684: arg53_1
+Compiling 54/1684: arg54_1
+Compiling 55/1684: arg55_1
+Compiling 56/1684: arg56_1
+Compiling 57/1684: arg57_1
+Compiling 58/1684: arg58_1
+Compiling 59/1684: arg59_1
+Compiling 60/1684: arg60_1
+Compiling 61/1684: arg61_1
+Compiling 62/1684: arg62_1
+Compiling 63/1684: arg63_1
+Compiling 64/1684: arg64_1
+Compiling 65/1684: arg65_1
+Compiling 66/1684: arg66_1
+Compiling 67/1684: arg67_1
+Compiling 68/1684: arg68_1
+Compiling 69/1684: arg69_1
+Compiling 70/1684: arg70_1
+Compiling 71/1684: arg71_1
+Compiling 72/1684: arg72_1
+Compiling 73/1684: arg73_1
+Compiling 74/1684: arg74_1
+Compiling 75/1684: arg75_1
+Compiling 76/1684: arg76_1
+Compiling 77/1684: arg77_1
+Compiling 78/1684: arg78_1
+Compiling 79/1684: arg79_1
+Compiling 80/1684: arg80_1
+Compiling 81/1684: arg81_1
+Compiling 82/1684: arg82_1
+Compiling 83/1684: arg83_1
+Compiling 84/1684: arg84_1
+Compiling 85/1684: arg85_1
+Compiling 86/1684: arg86_1
+Compiling 87/1684: arg87_1
+Compiling 88/1684: arg88_1
+Compiling 89/1684: arg89_1
+Compiling 90/1684: arg90_1
+Compiling 91/1684: arg91_1
+Compiling 92/1684: arg92_1
+Compiling 93/1684: arg93_1
+Compiling 94/1684: arg94_1
+Compiling 95/1684: arg95_1
+Compiling 96/1684: arg96_1
+Compiling 97/1684: arg97_1
+Compiling 98/1684: arg98_1
+Compiling 99/1684: arg99_1
+Compiling 100/1684: arg100_1
+Compiling 101/1684: arg101_1
+Compiling 102/1684: arg102_1
+Compiling 103/1684: arg103_1
+Compiling 104/1684: arg104_1
+Compiling 105/1684: arg105_1
+Compiling 106/1684: arg106_1
+Compiling 107/1684: arg107_1
+Compiling 108/1684: arg108_1
+Compiling 109/1684: arg109_1
+Compiling 110/1684: arg110_1
+Compiling 111/1684: arg111_1
+Compiling 112/1684: arg112_1
+Compiling 113/1684: arg113_1
+Compiling 114/1684: arg114_1
+Compiling 115/1684: arg115_1
+Compiling 116/1684: arg116_1
+Compiling 117/1684: arg117_1
+Compiling 118/1684: arg118_1
+Compiling 119/1684: arg119_1
+Compiling 120/1684: arg120_1
+Compiling 121/1684: arg121_1
+Compiling 122/1684: arg122_1
+Compiling 123/1684: arg123_1
+Compiling 124/1684: arg124_1
+Compiling 125/1684: arg125_1
+Compiling 126/1684: arg126_1
+Compiling 127/1684: arg127_1
+Compiling 128/1684: arg128_1
+Compiling 129/1684: arg129_1
+Compiling 130/1684: arg130_1
+Compiling 131/1684: arg131_1
+Compiling 132/1684: arg132_1
+Compiling 133/1684: arg133_1
+Compiling 134/1684: arg134_1
+Compiling 135/1684: arg135_1
+Compiling 136/1684: arg136_1
+Compiling 137/1684: arg137_1
+Compiling 138/1684: arg138_1
+Compiling 139/1684: arg139_1
+Compiling 140/1684: arg140_1
+Compiling 141/1684: arg141_1
+Compiling 142/1684: arg142_1
+Compiling 143/1684: arg143_1
+Compiling 144/1684: arg144_1
+Compiling 145/1684: arg145_1
+Compiling 146/1684: arg146_1
+Compiling 147/1684: arg147_1
+Compiling 148/1684: arg148_1
+Compiling 149/1684: arg149_1
+Compiling 150/1684: arg150_1
+Compiling 151/1684: arg151_1
+Compiling 152/1684: arg152_1
+Compiling 153/1684: arg153_1
+Compiling 154/1684: arg154_1
+Compiling 155/1684: arg155_1
+Compiling 156/1684: arg156_1
+Compiling 157/1684: arg157_1
+Compiling 158/1684: arg158_1
+Compiling 159/1684: arg159_1
+Compiling 160/1684: arg160_1
+Compiling 161/1684: arg161_1
+Compiling 162/1684: arg162_1
+Compiling 163/1684: arg163_1
+Compiling 164/1684: arg164_1
+Compiling 165/1684: arg165_1
+Compiling 166/1684: arg166_1
+Compiling 167/1684: arg167_1
+Compiling 168/1684: arg168_1
+Compiling 169/1684: arg169_1
+Compiling 170/1684: arg170_1
+Compiling 171/1684: arg171_1
+Compiling 172/1684: arg172_1
+Compiling 173/1684: arg173_1
+Compiling 174/1684: arg174_1
+Compiling 175/1684: arg175_1
+Compiling 176/1684: arg176_1
+Compiling 177/1684: arg177_1
+Compiling 178/1684: arg178_1
+Compiling 179/1684: arg179_1
+Compiling 180/1684: arg180_1
+Compiling 181/1684: arg181_1
+Compiling 182/1684: arg182_1
+Compiling 183/1684: arg183_1
+Compiling 184/1684: arg184_1
+Compiling 185/1684: arg185_1
+Compiling 186/1684: arg186_1
+Compiling 187/1684: arg187_1
+Compiling 188/1684: aten.convolution.default
+
+[32m2025-03-20 21:37:33.692[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:37:33.693[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:37:33.693[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:37:33.729[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Timeout
+Ran: 188/1684: aten.convolution.default
+Failed to execute 188/1684: aten.convolution.default: Failed to execute
+Compiling 189/1684: aten.gelu.default
+
+[32m2025-03-20 21:37:38.842[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:37:38.843[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:37:38.843[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:37:38.879[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Timeout
+Ran: 189/1684: aten.gelu.default
+Failed to execute 189/1684: aten.gelu.default: Failed to execute
+Compiling 190/1684: aten.convolution.default
+
+[32m2025-03-20 21:37:43.957[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:37:43.957[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:37:43.958[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:37:43.995[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Timeout
+Ran: 190/1684: aten.convolution.default
+Failed to execute 190/1684: aten.convolution.default: Failed to execute
+Compiling 191/1684: aten.gelu.default
+
+[32m2025-03-20 21:37:49.169[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:37:49.169[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:37:49.169[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:37:49.210[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Timeout
+Ran: 191/1684: aten.gelu.default
+Failed to execute 191/1684: aten.gelu.default: Failed to execute
+Compiling 192/1684: aten.permute.default
+
+[32m2025-03-20 21:37:54.279[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:37:54.280[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:37:54.280[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:37:54.313[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 192/1684: aten.permute.default
+Compiling 193/1684: aten.add.Tensor
+
+[32m2025-03-20 21:37:56.130[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:37:56.131[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:37:56.131[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:37:56.165[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 0 is not contiguous. Converting to contiguous in-place.
+Ran: 193/1684: aten.add.Tensor
+Failed to execute 193/1684: aten.add.Tensor: Failed to execute
+Compiling 194/1684: aten.clone.default
+
+[32m2025-03-20 21:37:57.458[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:37:57.459[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:37:57.459[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:37:57.493[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 0 is not contiguous. Converting to contiguous in-place.
+Ran: 194/1684: aten.clone.default
+Failed to execute 194/1684: aten.clone.default: Failed to execute
+Compiling 195/1684: aten.clone.default
+Compiling 196/1684: prims.convert_element_type.default
+
+[32m2025-03-20 21:37:58.788[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:37:58.788[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:37:58.788[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:37:58.825[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 196/1684: prims.convert_element_type.default
+Compiling 197/1684: aten.var_mean.correction
+
+[32m2025-03-20 21:38:00.694[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:00.694[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:00.694[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:00.733[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Timeout
+Ran: 197/1684: aten.var_mean.correction
+Failed to execute 197/1684: aten.var_mean.correction: Failed to execute
+Compiling 198/1684: <built-in function getitem>
+Compiling 199/1684: <built-in function getitem>
+Compiling 200/1684: aten.add.Tensor
+
+[32m2025-03-20 21:38:05.805[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:05.806[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:05.806[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:05.841[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 200/1684: aten.add.Tensor
+Compiling 201/1684: aten.rsqrt.default
+
+[32m2025-03-20 21:38:08.356[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:08.356[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:08.357[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:08.397[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 201/1684: aten.rsqrt.default
+Compiling 202/1684: aten.sub.Tensor
+
+[32m2025-03-20 21:38:10.005[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:10.005[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:10.005[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:10.041[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 202/1684: aten.sub.Tensor
+Compiling 203/1684: aten.mul.Tensor
+
+[32m2025-03-20 21:38:12.661[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:12.662[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:12.662[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:12.702[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 203/1684: aten.mul.Tensor
+Compiling 204/1684: aten.mul.Tensor
+
+[32m2025-03-20 21:38:14.612[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:14.613[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:14.613[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:14.651[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 204/1684: aten.mul.Tensor
+Compiling 205/1684: aten.add.Tensor
+
+[32m2025-03-20 21:38:17.216[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:17.216[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:17.217[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:17.254[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 205/1684: aten.add.Tensor
+Compiling 206/1684: prims.convert_element_type.default
+
+[32m2025-03-20 21:38:19.770[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:19.770[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:19.770[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:19.805[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 206/1684: prims.convert_element_type.default
+Compiling 207/1684: aten.view.default
+
+[32m2025-03-20 21:38:21.371[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:21.372[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:21.372[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:21.409[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 207/1684: aten.view.default
+Compiling 208/1684: aten.transpose.int
+
+[32m2025-03-20 21:38:22.920[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:22.920[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:22.920[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:22.962[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 208/1684: aten.transpose.int
+Compiling 209/1684: prims.convert_element_type.default
+
+[32m2025-03-20 21:38:24.769[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:24.769[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:24.769[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:24.807[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 209/1684: prims.convert_element_type.default
+Compiling 210/1684: prims.convert_element_type.default
+
+[32m2025-03-20 21:38:26.669[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:26.669[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:26.669[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:26.705[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 210/1684: prims.convert_element_type.default
+Compiling 211/1684: prims.convert_element_type.default
+
+[32m2025-03-20 21:38:28.620[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:28.621[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:28.621[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:28.661[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 0 is not contiguous. Converting to contiguous in-place.
+Ran: 211/1684: prims.convert_element_type.default
+Compiling 212/1684: aten.mm.default
+
+[32m2025-03-20 21:38:30.524[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:30.525[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:30.525[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:30.561[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 1 is not contiguous. Converting to contiguous in-place.
+Ran: 212/1684: aten.mm.default
+Compiling 213/1684: aten.mul.Tensor
+
+[32m2025-03-20 21:38:32.230[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:32.230[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:32.230[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:32.265[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 213/1684: aten.mul.Tensor
+Compiling 214/1684: aten.mul.Tensor
+
+[32m2025-03-20 21:38:34.684[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:34.684[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:34.684[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:34.721[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 214/1684: aten.mul.Tensor
+Compiling 215/1684: aten.add.Tensor
+
+[32m2025-03-20 21:38:37.537[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:37.538[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:37.538[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:37.573[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 215/1684: aten.add.Tensor
+Compiling 216/1684: prims.convert_element_type.default
+
+[32m2025-03-20 21:38:39.390[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:39.390[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:39.390[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:39.425[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 216/1684: prims.convert_element_type.default
+Compiling 217/1684: aten.view.default
+
+[32m2025-03-20 21:38:40.992[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:40.993[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:40.993[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:41.029[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 217/1684: aten.view.default
+Compiling 218/1684: aten.view.default
+
+[32m2025-03-20 21:38:42.541[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:42.542[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:42.542[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:42.577[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 218/1684: aten.view.default
+Compiling 219/1684: aten.transpose.int
+
+[32m2025-03-20 21:38:45.094[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:45.095[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:45.095[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:45.130[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 219/1684: aten.transpose.int
+Compiling 220/1684: aten.clone.default
+
+[32m2025-03-20 21:38:46.994[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:46.995[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:46.995[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:47.031[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 0 is not contiguous. Converting to contiguous in-place.
+Ran: 220/1684: aten.clone.default
+Failed to execute 220/1684: aten.clone.default: Failed to execute
+Compiling 221/1684: aten.transpose.int
+Compiling 222/1684: aten.view.default
+Compiling 223/1684: aten.mm.default
+Compiling 224/1684: aten.view.default
+Compiling 225/1684: aten.view.default
+
+[32m2025-03-20 21:38:48.344[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:48.344[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:48.344[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:48.381[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 225/1684: aten.view.default
+Compiling 226/1684: aten.transpose.int
+Compiling 227/1684: aten.clone.default
+Compiling 228/1684: aten.view.default
+Compiling 229/1684: aten.transpose.int
+Compiling 230/1684: prims.convert_element_type.default
+Compiling 231/1684: prims.convert_element_type.default
+Compiling 232/1684: prims.convert_element_type.default
+Compiling 233/1684: aten.mm.default
+Compiling 234/1684: aten.mul.Tensor
+Compiling 235/1684: aten.mul.Tensor
+Compiling 236/1684: aten.add.Tensor
+Compiling 237/1684: prims.convert_element_type.default
+Compiling 238/1684: aten.view.default
+Compiling 239/1684: aten.view.default
+Compiling 240/1684: aten.transpose.int
+Compiling 241/1684: aten.clone.default
+Compiling 242/1684: prims.convert_element_type.default
+
+[32m2025-03-20 21:38:50.955[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:50.955[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:50.955[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:50.993[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 242/1684: prims.convert_element_type.default
+Compiling 243/1684: prims.convert_element_type.default
+Compiling 244/1684: prims.convert_element_type.default
+Compiling 245/1684: aten.mul.Scalar
+
+[32m2025-03-20 21:38:52.910[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:52.910[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:52.910[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:52.945[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 245/1684: aten.mul.Scalar
+Compiling 246/1684: aten.transpose.int
+
+[32m2025-03-20 21:38:55.314[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:55.315[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:55.315[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:55.349[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 246/1684: aten.transpose.int
+Compiling 247/1684: aten.mul.Scalar
+
+[32m2025-03-20 21:38:56.866[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:56.866[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:56.866[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:56.901[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 0 is not contiguous. Converting to contiguous in-place.
+Ran: 247/1684: aten.mul.Scalar
+Failed to execute 247/1684: aten.mul.Scalar: Failed to execute
+Compiling 248/1684: aten.expand.default
+
+[32m2025-03-20 21:38:58.196[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:58.197[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:58.197[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:58.233[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 248/1684: aten.expand.default
+Compiling 249/1684: aten.view.default
+
+[32m2025-03-20 21:38:59.395[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:38:59.395[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:38:59.395[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:38:59.430[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 249/1684: aten.view.default
+Compiling 250/1684: aten.expand.default
+
+[32m2025-03-20 21:39:00.645[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:00.646[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:00.646[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:00.681[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 0 is not contiguous. Converting to contiguous in-place.
+Ran: 250/1684: aten.expand.default
+Failed to execute 250/1684: aten.expand.default: Failed to execute
+Compiling 251/1684: aten.view.default
+
+[32m2025-03-20 21:39:01.975[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:01.975[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:01.975[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:02.009[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 0 is not contiguous. Converting to contiguous in-place.
+Ran: 251/1684: aten.view.default
+Failed to execute 251/1684: aten.view.default: Failed to execute
+Compiling 252/1684: aten.bmm.default
+
+[32m2025-03-20 21:39:03.254[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:03.254[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:03.254[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:03.289[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 1 is not contiguous. Converting to contiguous in-place.
+Ran: 252/1684: aten.bmm.default
+Failed to execute 252/1684: aten.bmm.default: Failed to execute
+Compiling 253/1684: aten.view.default
+
+[32m2025-03-20 21:39:04.616[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:04.617[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:04.617[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:04.653[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 253/1684: aten.view.default
+Compiling 254/1684: aten._safe_softmax.default
+loc("-":24:27): error: failed to legalize operation 'stablehlo.reduce'
+Process Process-91:
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/lib/python3.11/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/localdev/ddilbaz/tt-torch/tt_torch/dynamo/backend.py", line 72, in compile_process
+    ttir = tt_mlir.compile_stable_hlo_to_ttir(asm)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Failed to run StableHLO to TTIR compiler pass pipeline.
+Compiling 255/1684: aten.expand.default
+
+[32m2025-03-20 21:39:06.687[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:06.687[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:06.687[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:06.726[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 255/1684: aten.expand.default
+Compiling 256/1684: aten.view.default
+
+[32m2025-03-20 21:39:07.938[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:07.939[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:07.939[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:07.973[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 256/1684: aten.view.default
+Compiling 257/1684: aten.expand.default
+Compiling 258/1684: aten.view.default
+Compiling 259/1684: aten.bmm.default
+
+[32m2025-03-20 21:39:09.854[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:09.855[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:09.855[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:09.889[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 259/1684: aten.bmm.default
+Compiling 260/1684: aten.view.default
+
+[32m2025-03-20 21:39:11.836[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:11.837[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:11.837[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:11.856[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 260/1684: aten.view.default
+Compiling 261/1684: prims.convert_element_type.default
+
+[32m2025-03-20 21:39:13.035[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:13.036[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:13.036[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:13.073[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 261/1684: prims.convert_element_type.default
+Compiling 262/1684: aten.transpose.int
+
+[32m2025-03-20 21:39:14.689[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:14.690[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:14.690[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:14.726[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 262/1684: aten.transpose.int
+Compiling 263/1684: aten.clone.default
+
+[32m2025-03-20 21:39:16.540[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:16.541[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:16.541[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:16.577[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 0 is not contiguous. Converting to contiguous in-place.
+Ran: 263/1684: aten.clone.default
+Failed to execute 263/1684: aten.clone.default: Failed to execute
+Compiling 264/1684: aten.transpose.int
+Compiling 265/1684: aten.transpose.int
+Compiling 266/1684: aten.view.default
+
+[32m2025-03-20 21:39:17.921[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:17.921[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:17.921[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:17.961[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 266/1684: aten.view.default
+Compiling 267/1684: aten.view.default
+Compiling 268/1684: aten.transpose.int
+Compiling 269/1684: prims.convert_element_type.default
+Compiling 270/1684: prims.convert_element_type.default
+Compiling 271/1684: prims.convert_element_type.default
+Compiling 272/1684: aten.mm.default
+Compiling 273/1684: aten.mul.Tensor
+Compiling 274/1684: aten.mul.Tensor
+Compiling 275/1684: aten.add.Tensor
+Compiling 276/1684: prims.convert_element_type.default
+Compiling 277/1684: aten.view.default
+Compiling 278/1684: aten.clone.default
+Compiling 279/1684: aten.add.Tensor
+
+[32m2025-03-20 21:39:20.531[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:20.531[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:20.531[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:20.567[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 0 is not contiguous. Converting to contiguous in-place.
+Ran: 279/1684: aten.add.Tensor
+Failed to execute 279/1684: aten.add.Tensor: Failed to execute
+Compiling 280/1684: aten.clone.default
+Compiling 281/1684: prims.convert_element_type.default
+Compiling 282/1684: aten.var_mean.correction
+Compiling 283/1684: <built-in function getitem>
+Compiling 284/1684: <built-in function getitem>
+Compiling 285/1684: aten.add.Tensor
+Compiling 286/1684: aten.rsqrt.default
+Compiling 287/1684: aten.sub.Tensor
+Compiling 288/1684: aten.mul.Tensor
+Compiling 289/1684: aten.mul.Tensor
+Compiling 290/1684: aten.add.Tensor
+Compiling 291/1684: prims.convert_element_type.default
+Compiling 292/1684: aten.view.default
+Compiling 293/1684: aten.transpose.int
+
+[32m2025-03-20 21:39:21.865[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:21.866[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:21.866[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:21.901[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 293/1684: aten.transpose.int
+Compiling 294/1684: prims.convert_element_type.default
+
+[32m2025-03-20 21:39:23.716[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:23.716[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:23.716[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:23.753[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 294/1684: prims.convert_element_type.default
+Compiling 295/1684: prims.convert_element_type.default
+Compiling 296/1684: prims.convert_element_type.default
+
+[32m2025-03-20 21:39:25.618[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:25.618[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:25.618[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:25.653[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 0 is not contiguous. Converting to contiguous in-place.
+Ran: 296/1684: prims.convert_element_type.default
+Compiling 297/1684: aten.mm.default
+
+[32m2025-03-20 21:39:27.523[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:27.523[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:27.523[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:27.557[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 1 is not contiguous. Converting to contiguous in-place.
+Ran: 297/1684: aten.mm.default
+Compiling 298/1684: aten.mul.Tensor
+
+[32m2025-03-20 21:39:29.341[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:29.342[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:29.342[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:29.377[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 298/1684: aten.mul.Tensor
+Compiling 299/1684: aten.mul.Tensor
+
+[32m2025-03-20 21:39:31.951[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:31.951[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:31.951[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:31.985[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 299/1684: aten.mul.Tensor
+Compiling 300/1684: aten.add.Tensor
+
+[32m2025-03-20 21:39:34.158[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:34.159[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:34.159[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:34.193[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 300/1684: aten.add.Tensor
+Compiling 301/1684: prims.convert_element_type.default
+
+[32m2025-03-20 21:39:36.165[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:36.166[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:36.166[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:36.201[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 301/1684: prims.convert_element_type.default
+Compiling 302/1684: aten.view.default
+
+[32m2025-03-20 21:39:37.823[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:37.824[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:37.824[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:37.857[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 302/1684: aten.view.default
+Compiling 303/1684: aten.gelu.default
+
+[32m2025-03-20 21:39:39.438[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:39.439[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:39.439[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:39.473[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Timeout
+Ran: 303/1684: aten.gelu.default
+Failed to execute 303/1684: aten.gelu.default: Failed to execute
+Compiling 304/1684: aten.clone.default
+
+[32m2025-03-20 21:39:44.555[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:44.556[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:44.556[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:44.593[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 304/1684: aten.clone.default
+Compiling 305/1684: aten.view.default
+
+[32m2025-03-20 21:39:45.758[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:45.758[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:45.758[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:45.797[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 305/1684: aten.view.default
+Compiling 306/1684: aten.transpose.int
+
+[32m2025-03-20 21:39:47.360[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:47.361[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:47.361[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:47.397[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 306/1684: aten.transpose.int
+Compiling 307/1684: prims.convert_element_type.default
+Compiling 308/1684: prims.convert_element_type.default
+
+[32m2025-03-20 21:39:49.262[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:49.263[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:49.263[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:49.302[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 308/1684: prims.convert_element_type.default
+Compiling 309/1684: prims.convert_element_type.default
+
+[32m2025-03-20 21:39:51.219[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:51.219[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:51.219[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:51.253[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 0 is not contiguous. Converting to contiguous in-place.
+Ran: 309/1684: prims.convert_element_type.default
+Compiling 310/1684: aten.mm.default
+
+[32m2025-03-20 21:39:53.128[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:53.129[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:53.129[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:53.165[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 1 is not contiguous. Converting to contiguous in-place.
+Ran: 310/1684: aten.mm.default
+Compiling 311/1684: aten.mul.Tensor
+Compiling 312/1684: aten.mul.Tensor
+Compiling 313/1684: aten.add.Tensor
+Compiling 314/1684: prims.convert_element_type.default
+Compiling 315/1684: aten.view.default
+Compiling 316/1684: aten.clone.default
+Compiling 317/1684: aten.add.Tensor
+Compiling 318/1684: aten.clone.default
+Compiling 319/1684: prims.convert_element_type.default
+Compiling 320/1684: aten.var_mean.correction
+Compiling 321/1684: <built-in function getitem>
+Compiling 322/1684: <built-in function getitem>
+Compiling 323/1684: aten.add.Tensor
+Compiling 324/1684: aten.rsqrt.default
+Compiling 325/1684: aten.sub.Tensor
+Compiling 326/1684: aten.mul.Tensor
+Compiling 327/1684: aten.mul.Tensor
+Compiling 328/1684: aten.add.Tensor
+Compiling 329/1684: prims.convert_element_type.default
+Compiling 330/1684: aten.view.default
+Compiling 331/1684: aten.transpose.int
+Compiling 332/1684: prims.convert_element_type.default
+Compiling 333/1684: prims.convert_element_type.default
+Compiling 334/1684: prims.convert_element_type.default
+Compiling 335/1684: aten.mm.default
+Compiling 336/1684: aten.mul.Tensor
+Compiling 337/1684: aten.mul.Tensor
+Compiling 338/1684: aten.add.Tensor
+Compiling 339/1684: prims.convert_element_type.default
+Compiling 340/1684: aten.view.default
+Compiling 341/1684: aten.view.default
+Compiling 342/1684: aten.transpose.int
+Compiling 343/1684: aten.clone.default
+Compiling 344/1684: aten.transpose.int
+Compiling 345/1684: aten.view.default
+Compiling 346/1684: aten.mm.default
+Compiling 347/1684: aten.view.default
+Compiling 348/1684: aten.view.default
+Compiling 349/1684: aten.transpose.int
+Compiling 350/1684: aten.clone.default
+Compiling 351/1684: aten.view.default
+Compiling 352/1684: aten.transpose.int
+Compiling 353/1684: prims.convert_element_type.default
+Compiling 354/1684: prims.convert_element_type.default
+Compiling 355/1684: prims.convert_element_type.default
+Compiling 356/1684: aten.mm.default
+Compiling 357/1684: aten.mul.Tensor
+Compiling 358/1684: aten.mul.Tensor
+Compiling 359/1684: aten.add.Tensor
+Compiling 360/1684: prims.convert_element_type.default
+Compiling 361/1684: aten.view.default
+Compiling 362/1684: aten.view.default
+Compiling 363/1684: aten.transpose.int
+Compiling 364/1684: aten.clone.default
+Compiling 365/1684: prims.convert_element_type.default
+Compiling 366/1684: prims.convert_element_type.default
+Compiling 367/1684: prims.convert_element_type.default
+Compiling 368/1684: aten.mul.Scalar
+Compiling 369/1684: aten.transpose.int
+Compiling 370/1684: aten.mul.Scalar
+Compiling 371/1684: aten.expand.default
+Compiling 372/1684: aten.view.default
+Compiling 373/1684: aten.expand.default
+Compiling 374/1684: aten.view.default
+Compiling 375/1684: aten.bmm.default
+Compiling 376/1684: aten.view.default
+Compiling 377/1684: aten._safe_softmax.default
+Compiling 378/1684: aten.expand.default
+Compiling 379/1684: aten.view.default
+Compiling 380/1684: aten.expand.default
+Compiling 381/1684: aten.view.default
+Compiling 382/1684: aten.bmm.default
+Compiling 383/1684: aten.view.default
+Compiling 384/1684: prims.convert_element_type.default
+Compiling 385/1684: aten.transpose.int
+Compiling 386/1684: aten.clone.default
+Compiling 387/1684: aten.transpose.int
+Compiling 388/1684: aten.transpose.int
+Compiling 389/1684: aten.view.default
+Compiling 390/1684: aten.view.default
+Compiling 391/1684: aten.transpose.int
+Compiling 392/1684: prims.convert_element_type.default
+Compiling 393/1684: prims.convert_element_type.default
+Compiling 394/1684: prims.convert_element_type.default
+Compiling 395/1684: aten.mm.default
+Compiling 396/1684: aten.mul.Tensor
+Compiling 397/1684: aten.mul.Tensor
+Compiling 398/1684: aten.add.Tensor
+Compiling 399/1684: prims.convert_element_type.default
+Compiling 400/1684: aten.view.default
+Compiling 401/1684: aten.clone.default
+Compiling 402/1684: aten.add.Tensor
+Compiling 403/1684: aten.clone.default
+Compiling 404/1684: prims.convert_element_type.default
+Compiling 405/1684: aten.var_mean.correction
+Compiling 406/1684: <built-in function getitem>
+Compiling 407/1684: <built-in function getitem>
+Compiling 408/1684: aten.add.Tensor
+Compiling 409/1684: aten.rsqrt.default
+Compiling 410/1684: aten.sub.Tensor
+Compiling 411/1684: aten.mul.Tensor
+Compiling 412/1684: aten.mul.Tensor
+Compiling 413/1684: aten.add.Tensor
+Compiling 414/1684: prims.convert_element_type.default
+Compiling 415/1684: aten.view.default
+Compiling 416/1684: aten.transpose.int
+Compiling 417/1684: prims.convert_element_type.default
+Compiling 418/1684: prims.convert_element_type.default
+Compiling 419/1684: prims.convert_element_type.default
+Compiling 420/1684: aten.mm.default
+Compiling 421/1684: aten.mul.Tensor
+Compiling 422/1684: aten.mul.Tensor
+Compiling 423/1684: aten.add.Tensor
+Compiling 424/1684: prims.convert_element_type.default
+Compiling 425/1684: aten.view.default
+Compiling 426/1684: aten.gelu.default
+Compiling 427/1684: aten.clone.default
+Compiling 428/1684: aten.view.default
+Compiling 429/1684: aten.transpose.int
+Compiling 430/1684: prims.convert_element_type.default
+Compiling 431/1684: prims.convert_element_type.default
+Compiling 432/1684: prims.convert_element_type.default
+Compiling 433/1684: aten.mm.default
+Compiling 434/1684: aten.mul.Tensor
+Compiling 435/1684: aten.mul.Tensor
+Compiling 436/1684: aten.add.Tensor
+Compiling 437/1684: prims.convert_element_type.default
+Compiling 438/1684: aten.view.default
+Compiling 439/1684: aten.clone.default
+Compiling 440/1684: aten.add.Tensor
+Compiling 441/1684: aten.clone.default
+Compiling 442/1684: prims.convert_element_type.default
+Compiling 443/1684: aten.var_mean.correction
+Compiling 444/1684: <built-in function getitem>
+Compiling 445/1684: <built-in function getitem>
+Compiling 446/1684: aten.add.Tensor
+Compiling 447/1684: aten.rsqrt.default
+Compiling 448/1684: aten.sub.Tensor
+Compiling 449/1684: aten.mul.Tensor
+Compiling 450/1684: aten.mul.Tensor
+Compiling 451/1684: aten.add.Tensor
+Compiling 452/1684: prims.convert_element_type.default
+Compiling 453/1684: aten.view.default
+Compiling 454/1684: aten.transpose.int
+Compiling 455/1684: prims.convert_element_type.default
+Compiling 456/1684: prims.convert_element_type.default
+Compiling 457/1684: prims.convert_element_type.default
+Compiling 458/1684: aten.mm.default
+Compiling 459/1684: aten.mul.Tensor
+Compiling 460/1684: aten.mul.Tensor
+Compiling 461/1684: aten.add.Tensor
+Compiling 462/1684: prims.convert_element_type.default
+Compiling 463/1684: aten.view.default
+Compiling 464/1684: aten.view.default
+Compiling 465/1684: aten.transpose.int
+Compiling 466/1684: aten.clone.default
+Compiling 467/1684: aten.transpose.int
+Compiling 468/1684: aten.view.default
+Compiling 469/1684: aten.mm.default
+Compiling 470/1684: aten.view.default
+Compiling 471/1684: aten.view.default
+Compiling 472/1684: aten.transpose.int
+Compiling 473/1684: aten.clone.default
+Compiling 474/1684: aten.view.default
+Compiling 475/1684: aten.transpose.int
+Compiling 476/1684: prims.convert_element_type.default
+Compiling 477/1684: prims.convert_element_type.default
+Compiling 478/1684: prims.convert_element_type.default
+Compiling 479/1684: aten.mm.default
+Compiling 480/1684: aten.mul.Tensor
+Compiling 481/1684: aten.mul.Tensor
+Compiling 482/1684: aten.add.Tensor
+Compiling 483/1684: prims.convert_element_type.default
+Compiling 484/1684: aten.view.default
+Compiling 485/1684: aten.view.default
+Compiling 486/1684: aten.transpose.int
+Compiling 487/1684: aten.clone.default
+Compiling 488/1684: prims.convert_element_type.default
+Compiling 489/1684: prims.convert_element_type.default
+Compiling 490/1684: prims.convert_element_type.default
+Compiling 491/1684: aten.mul.Scalar
+Compiling 492/1684: aten.transpose.int
+Compiling 493/1684: aten.mul.Scalar
+Compiling 494/1684: aten.expand.default
+Compiling 495/1684: aten.view.default
+Compiling 496/1684: aten.expand.default
+Compiling 497/1684: aten.view.default
+Compiling 498/1684: aten.bmm.default
+Compiling 499/1684: aten.view.default
+Compiling 500/1684: aten._safe_softmax.default
+Compiling 501/1684: aten.expand.default
+Compiling 502/1684: aten.view.default
+Compiling 503/1684: aten.expand.default
+Compiling 504/1684: aten.view.default
+Compiling 505/1684: aten.bmm.default
+Compiling 506/1684: aten.view.default
+Compiling 507/1684: prims.convert_element_type.default
+Compiling 508/1684: aten.transpose.int
+Compiling 509/1684: aten.clone.default
+Compiling 510/1684: aten.transpose.int
+Compiling 511/1684: aten.transpose.int
+Compiling 512/1684: aten.view.default
+Compiling 513/1684: aten.view.default
+Compiling 514/1684: aten.transpose.int
+Compiling 515/1684: prims.convert_element_type.default
+Compiling 516/1684: prims.convert_element_type.default
+Compiling 517/1684: prims.convert_element_type.default
+Compiling 518/1684: aten.mm.default
+Compiling 519/1684: aten.mul.Tensor
+Compiling 520/1684: aten.mul.Tensor
+Compiling 521/1684: aten.add.Tensor
+Compiling 522/1684: prims.convert_element_type.default
+Compiling 523/1684: aten.view.default
+Compiling 524/1684: aten.clone.default
+Compiling 525/1684: aten.add.Tensor
+Compiling 526/1684: aten.clone.default
+Compiling 527/1684: prims.convert_element_type.default
+Compiling 528/1684: aten.var_mean.correction
+Compiling 529/1684: <built-in function getitem>
+Compiling 530/1684: <built-in function getitem>
+Compiling 531/1684: aten.add.Tensor
+Compiling 532/1684: aten.rsqrt.default
+Compiling 533/1684: aten.sub.Tensor
+Compiling 534/1684: aten.mul.Tensor
+Compiling 535/1684: aten.mul.Tensor
+Compiling 536/1684: aten.add.Tensor
+Compiling 537/1684: prims.convert_element_type.default
+Compiling 538/1684: aten.view.default
+Compiling 539/1684: aten.transpose.int
+Compiling 540/1684: prims.convert_element_type.default
+Compiling 541/1684: prims.convert_element_type.default
+Compiling 542/1684: prims.convert_element_type.default
+Compiling 543/1684: aten.mm.default
+Compiling 544/1684: aten.mul.Tensor
+Compiling 545/1684: aten.mul.Tensor
+Compiling 546/1684: aten.add.Tensor
+Compiling 547/1684: prims.convert_element_type.default
+Compiling 548/1684: aten.view.default
+Compiling 549/1684: aten.gelu.default
+Compiling 550/1684: aten.clone.default
+Compiling 551/1684: aten.view.default
+Compiling 552/1684: aten.transpose.int
+Compiling 553/1684: prims.convert_element_type.default
+Compiling 554/1684: prims.convert_element_type.default
+Compiling 555/1684: prims.convert_element_type.default
+Compiling 556/1684: aten.mm.default
+Compiling 557/1684: aten.mul.Tensor
+Compiling 558/1684: aten.mul.Tensor
+Compiling 559/1684: aten.add.Tensor
+Compiling 560/1684: prims.convert_element_type.default
+Compiling 561/1684: aten.view.default
+Compiling 562/1684: aten.clone.default
+Compiling 563/1684: aten.add.Tensor
+Compiling 564/1684: aten.clone.default
+Compiling 565/1684: prims.convert_element_type.default
+Compiling 566/1684: aten.var_mean.correction
+Compiling 567/1684: <built-in function getitem>
+Compiling 568/1684: <built-in function getitem>
+Compiling 569/1684: aten.add.Tensor
+Compiling 570/1684: aten.rsqrt.default
+Compiling 571/1684: aten.sub.Tensor
+Compiling 572/1684: aten.mul.Tensor
+Compiling 573/1684: aten.mul.Tensor
+Compiling 574/1684: aten.add.Tensor
+Compiling 575/1684: prims.convert_element_type.default
+Compiling 576/1684: aten.view.default
+Compiling 577/1684: aten.transpose.int
+Compiling 578/1684: prims.convert_element_type.default
+Compiling 579/1684: prims.convert_element_type.default
+Compiling 580/1684: prims.convert_element_type.default
+Compiling 581/1684: aten.mm.default
+Compiling 582/1684: aten.mul.Tensor
+Compiling 583/1684: aten.mul.Tensor
+Compiling 584/1684: aten.add.Tensor
+Compiling 585/1684: prims.convert_element_type.default
+Compiling 586/1684: aten.view.default
+Compiling 587/1684: aten.view.default
+Compiling 588/1684: aten.transpose.int
+Compiling 589/1684: aten.clone.default
+Compiling 590/1684: aten.transpose.int
+Compiling 591/1684: aten.view.default
+Compiling 592/1684: aten.mm.default
+Compiling 593/1684: aten.view.default
+Compiling 594/1684: aten.view.default
+Compiling 595/1684: aten.transpose.int
+Compiling 596/1684: aten.clone.default
+Compiling 597/1684: aten.view.default
+Compiling 598/1684: aten.transpose.int
+Compiling 599/1684: prims.convert_element_type.default
+Compiling 600/1684: prims.convert_element_type.default
+Compiling 601/1684: prims.convert_element_type.default
+Compiling 602/1684: aten.mm.default
+Compiling 603/1684: aten.mul.Tensor
+Compiling 604/1684: aten.mul.Tensor
+Compiling 605/1684: aten.add.Tensor
+Compiling 606/1684: prims.convert_element_type.default
+Compiling 607/1684: aten.view.default
+Compiling 608/1684: aten.view.default
+Compiling 609/1684: aten.transpose.int
+Compiling 610/1684: aten.clone.default
+Compiling 611/1684: prims.convert_element_type.default
+Compiling 612/1684: prims.convert_element_type.default
+Compiling 613/1684: prims.convert_element_type.default
+Compiling 614/1684: aten.mul.Scalar
+Compiling 615/1684: aten.transpose.int
+Compiling 616/1684: aten.mul.Scalar
+Compiling 617/1684: aten.expand.default
+Compiling 618/1684: aten.view.default
+Compiling 619/1684: aten.expand.default
+Compiling 620/1684: aten.view.default
+Compiling 621/1684: aten.bmm.default
+Compiling 622/1684: aten.view.default
+Compiling 623/1684: aten._safe_softmax.default
+Compiling 624/1684: aten.expand.default
+Compiling 625/1684: aten.view.default
+Compiling 626/1684: aten.expand.default
+Compiling 627/1684: aten.view.default
+Compiling 628/1684: aten.bmm.default
+Compiling 629/1684: aten.view.default
+Compiling 630/1684: prims.convert_element_type.default
+Compiling 631/1684: aten.transpose.int
+Compiling 632/1684: aten.clone.default
+Compiling 633/1684: aten.transpose.int
+Compiling 634/1684: aten.transpose.int
+Compiling 635/1684: aten.view.default
+Compiling 636/1684: aten.view.default
+Compiling 637/1684: aten.transpose.int
+Compiling 638/1684: prims.convert_element_type.default
+Compiling 639/1684: prims.convert_element_type.default
+Compiling 640/1684: prims.convert_element_type.default
+Compiling 641/1684: aten.mm.default
+Compiling 642/1684: aten.mul.Tensor
+Compiling 643/1684: aten.mul.Tensor
+Compiling 644/1684: aten.add.Tensor
+Compiling 645/1684: prims.convert_element_type.default
+Compiling 646/1684: aten.view.default
+Compiling 647/1684: aten.clone.default
+Compiling 648/1684: aten.add.Tensor
+Compiling 649/1684: aten.clone.default
+Compiling 650/1684: prims.convert_element_type.default
+Compiling 651/1684: aten.var_mean.correction
+Compiling 652/1684: <built-in function getitem>
+Compiling 653/1684: <built-in function getitem>
+Compiling 654/1684: aten.add.Tensor
+Compiling 655/1684: aten.rsqrt.default
+Compiling 656/1684: aten.sub.Tensor
+Compiling 657/1684: aten.mul.Tensor
+Compiling 658/1684: aten.mul.Tensor
+Compiling 659/1684: aten.add.Tensor
+Compiling 660/1684: prims.convert_element_type.default
+Compiling 661/1684: aten.view.default
+Compiling 662/1684: aten.transpose.int
+Compiling 663/1684: prims.convert_element_type.default
+Compiling 664/1684: prims.convert_element_type.default
+Compiling 665/1684: prims.convert_element_type.default
+Compiling 666/1684: aten.mm.default
+Compiling 667/1684: aten.mul.Tensor
+Compiling 668/1684: aten.mul.Tensor
+Compiling 669/1684: aten.add.Tensor
+Compiling 670/1684: prims.convert_element_type.default
+Compiling 671/1684: aten.view.default
+Compiling 672/1684: aten.gelu.default
+Compiling 673/1684: aten.clone.default
+Compiling 674/1684: aten.view.default
+Compiling 675/1684: aten.transpose.int
+Compiling 676/1684: prims.convert_element_type.default
+Compiling 677/1684: prims.convert_element_type.default
+Compiling 678/1684: prims.convert_element_type.default
+Compiling 679/1684: aten.mm.default
+Compiling 680/1684: aten.mul.Tensor
+Compiling 681/1684: aten.mul.Tensor
+Compiling 682/1684: aten.add.Tensor
+Compiling 683/1684: prims.convert_element_type.default
+Compiling 684/1684: aten.view.default
+Compiling 685/1684: aten.clone.default
+Compiling 686/1684: aten.add.Tensor
+Compiling 687/1684: aten.clone.default
+Compiling 688/1684: prims.convert_element_type.default
+Compiling 689/1684: aten.var_mean.correction
+Compiling 690/1684: <built-in function getitem>
+Compiling 691/1684: <built-in function getitem>
+Compiling 692/1684: aten.add.Tensor
+Compiling 693/1684: aten.rsqrt.default
+Compiling 694/1684: aten.sub.Tensor
+Compiling 695/1684: aten.mul.Tensor
+Compiling 696/1684: aten.mul.Tensor
+Compiling 697/1684: aten.add.Tensor
+Compiling 698/1684: prims.convert_element_type.default
+Compiling 699/1684: aten.view.default
+Compiling 700/1684: aten.transpose.int
+Compiling 701/1684: prims.convert_element_type.default
+Compiling 702/1684: prims.convert_element_type.default
+Compiling 703/1684: prims.convert_element_type.default
+Compiling 704/1684: aten.mm.default
+Compiling 705/1684: aten.mul.Tensor
+Compiling 706/1684: aten.mul.Tensor
+Compiling 707/1684: aten.add.Tensor
+Compiling 708/1684: prims.convert_element_type.default
+Compiling 709/1684: aten.view.default
+Compiling 710/1684: aten.view.default
+Compiling 711/1684: aten.transpose.int
+Compiling 712/1684: aten.clone.default
+Compiling 713/1684: aten.transpose.int
+Compiling 714/1684: aten.view.default
+Compiling 715/1684: aten.mm.default
+Compiling 716/1684: aten.view.default
+Compiling 717/1684: aten.view.default
+Compiling 718/1684: aten.transpose.int
+Compiling 719/1684: aten.clone.default
+Compiling 720/1684: aten.view.default
+Compiling 721/1684: aten.transpose.int
+Compiling 722/1684: prims.convert_element_type.default
+Compiling 723/1684: prims.convert_element_type.default
+Compiling 724/1684: prims.convert_element_type.default
+Compiling 725/1684: aten.mm.default
+Compiling 726/1684: aten.mul.Tensor
+Compiling 727/1684: aten.mul.Tensor
+Compiling 728/1684: aten.add.Tensor
+Compiling 729/1684: prims.convert_element_type.default
+Compiling 730/1684: aten.view.default
+Compiling 731/1684: aten.view.default
+Compiling 732/1684: aten.transpose.int
+Compiling 733/1684: aten.clone.default
+Compiling 734/1684: prims.convert_element_type.default
+Compiling 735/1684: prims.convert_element_type.default
+Compiling 736/1684: prims.convert_element_type.default
+Compiling 737/1684: aten.mul.Scalar
+Compiling 738/1684: aten.transpose.int
+Compiling 739/1684: aten.mul.Scalar
+Compiling 740/1684: aten.expand.default
+Compiling 741/1684: aten.view.default
+Compiling 742/1684: aten.expand.default
+Compiling 743/1684: aten.view.default
+Compiling 744/1684: aten.bmm.default
+Compiling 745/1684: aten.view.default
+Compiling 746/1684: aten._safe_softmax.default
+Compiling 747/1684: aten.expand.default
+Compiling 748/1684: aten.view.default
+Compiling 749/1684: aten.expand.default
+Compiling 750/1684: aten.view.default
+Compiling 751/1684: aten.bmm.default
+Compiling 752/1684: aten.view.default
+Compiling 753/1684: prims.convert_element_type.default
+Compiling 754/1684: aten.transpose.int
+Compiling 755/1684: aten.clone.default
+Compiling 756/1684: aten.transpose.int
+Compiling 757/1684: aten.transpose.int
+Compiling 758/1684: aten.view.default
+Compiling 759/1684: aten.view.default
+Compiling 760/1684: aten.transpose.int
+Compiling 761/1684: prims.convert_element_type.default
+Compiling 762/1684: prims.convert_element_type.default
+Compiling 763/1684: prims.convert_element_type.default
+Compiling 764/1684: aten.mm.default
+Compiling 765/1684: aten.mul.Tensor
+Compiling 766/1684: aten.mul.Tensor
+Compiling 767/1684: aten.add.Tensor
+Compiling 768/1684: prims.convert_element_type.default
+Compiling 769/1684: aten.view.default
+Compiling 770/1684: aten.clone.default
+Compiling 771/1684: aten.add.Tensor
+Compiling 772/1684: aten.clone.default
+Compiling 773/1684: prims.convert_element_type.default
+Compiling 774/1684: aten.var_mean.correction
+Compiling 775/1684: <built-in function getitem>
+Compiling 776/1684: <built-in function getitem>
+Compiling 777/1684: aten.add.Tensor
+Compiling 778/1684: aten.rsqrt.default
+Compiling 779/1684: aten.sub.Tensor
+Compiling 780/1684: aten.mul.Tensor
+Compiling 781/1684: aten.mul.Tensor
+Compiling 782/1684: aten.add.Tensor
+Compiling 783/1684: prims.convert_element_type.default
+Compiling 784/1684: aten.view.default
+Compiling 785/1684: aten.transpose.int
+Compiling 786/1684: prims.convert_element_type.default
+Compiling 787/1684: prims.convert_element_type.default
+Compiling 788/1684: prims.convert_element_type.default
+Compiling 789/1684: aten.mm.default
+Compiling 790/1684: aten.mul.Tensor
+Compiling 791/1684: aten.mul.Tensor
+Compiling 792/1684: aten.add.Tensor
+Compiling 793/1684: prims.convert_element_type.default
+Compiling 794/1684: aten.view.default
+Compiling 795/1684: aten.gelu.default
+Compiling 796/1684: aten.clone.default
+Compiling 797/1684: aten.view.default
+Compiling 798/1684: aten.transpose.int
+Compiling 799/1684: prims.convert_element_type.default
+Compiling 800/1684: prims.convert_element_type.default
+Compiling 801/1684: prims.convert_element_type.default
+Compiling 802/1684: aten.mm.default
+Compiling 803/1684: aten.mul.Tensor
+Compiling 804/1684: aten.mul.Tensor
+Compiling 805/1684: aten.add.Tensor
+Compiling 806/1684: prims.convert_element_type.default
+Compiling 807/1684: aten.view.default
+Compiling 808/1684: aten.clone.default
+Compiling 809/1684: aten.add.Tensor
+Compiling 810/1684: aten.clone.default
+Compiling 811/1684: prims.convert_element_type.default
+Compiling 812/1684: aten.var_mean.correction
+Compiling 813/1684: <built-in function getitem>
+Compiling 814/1684: <built-in function getitem>
+Compiling 815/1684: aten.add.Tensor
+Compiling 816/1684: aten.rsqrt.default
+Compiling 817/1684: aten.sub.Tensor
+Compiling 818/1684: aten.mul.Tensor
+Compiling 819/1684: aten.mul.Tensor
+Compiling 820/1684: aten.add.Tensor
+Compiling 821/1684: prims.convert_element_type.default
+Compiling 822/1684: aten.view.default
+Compiling 823/1684: aten.transpose.int
+Compiling 824/1684: prims.convert_element_type.default
+Compiling 825/1684: prims.convert_element_type.default
+Compiling 826/1684: prims.convert_element_type.default
+Compiling 827/1684: aten.mm.default
+Compiling 828/1684: aten.mul.Tensor
+Compiling 829/1684: aten.mul.Tensor
+Compiling 830/1684: aten.add.Tensor
+Compiling 831/1684: prims.convert_element_type.default
+Compiling 832/1684: aten.view.default
+Compiling 833/1684: aten.view.default
+Compiling 834/1684: aten.transpose.int
+Compiling 835/1684: aten.clone.default
+Compiling 836/1684: aten.transpose.int
+Compiling 837/1684: aten.view.default
+Compiling 838/1684: aten.mm.default
+Compiling 839/1684: aten.view.default
+Compiling 840/1684: aten.view.default
+Compiling 841/1684: aten.transpose.int
+Compiling 842/1684: aten.clone.default
+Compiling 843/1684: aten.view.default
+Compiling 844/1684: aten.transpose.int
+Compiling 845/1684: prims.convert_element_type.default
+Compiling 846/1684: prims.convert_element_type.default
+Compiling 847/1684: prims.convert_element_type.default
+Compiling 848/1684: aten.mm.default
+Compiling 849/1684: aten.mul.Tensor
+Compiling 850/1684: aten.mul.Tensor
+Compiling 851/1684: aten.add.Tensor
+Compiling 852/1684: prims.convert_element_type.default
+Compiling 853/1684: aten.view.default
+Compiling 854/1684: aten.view.default
+Compiling 855/1684: aten.transpose.int
+Compiling 856/1684: aten.clone.default
+Compiling 857/1684: prims.convert_element_type.default
+Compiling 858/1684: prims.convert_element_type.default
+Compiling 859/1684: prims.convert_element_type.default
+Compiling 860/1684: aten.mul.Scalar
+Compiling 861/1684: aten.transpose.int
+Compiling 862/1684: aten.mul.Scalar
+Compiling 863/1684: aten.expand.default
+Compiling 864/1684: aten.view.default
+Compiling 865/1684: aten.expand.default
+Compiling 866/1684: aten.view.default
+Compiling 867/1684: aten.bmm.default
+Compiling 868/1684: aten.view.default
+Compiling 869/1684: aten._safe_softmax.default
+Compiling 870/1684: aten.expand.default
+Compiling 871/1684: aten.view.default
+Compiling 872/1684: aten.expand.default
+Compiling 873/1684: aten.view.default
+Compiling 874/1684: aten.bmm.default
+Compiling 875/1684: aten.view.default
+Compiling 876/1684: prims.convert_element_type.default
+Compiling 877/1684: aten.transpose.int
+Compiling 878/1684: aten.clone.default
+Compiling 879/1684: aten.transpose.int
+Compiling 880/1684: aten.transpose.int
+Compiling 881/1684: aten.view.default
+Compiling 882/1684: aten.view.default
+Compiling 883/1684: aten.transpose.int
+Compiling 884/1684: prims.convert_element_type.default
+Compiling 885/1684: prims.convert_element_type.default
+Compiling 886/1684: prims.convert_element_type.default
+Compiling 887/1684: aten.mm.default
+Compiling 888/1684: aten.mul.Tensor
+Compiling 889/1684: aten.mul.Tensor
+Compiling 890/1684: aten.add.Tensor
+Compiling 891/1684: prims.convert_element_type.default
+Compiling 892/1684: aten.view.default
+Compiling 893/1684: aten.clone.default
+Compiling 894/1684: aten.add.Tensor
+Compiling 895/1684: aten.clone.default
+Compiling 896/1684: prims.convert_element_type.default
+Compiling 897/1684: aten.var_mean.correction
+Compiling 898/1684: <built-in function getitem>
+Compiling 899/1684: <built-in function getitem>
+Compiling 900/1684: aten.add.Tensor
+Compiling 901/1684: aten.rsqrt.default
+Compiling 902/1684: aten.sub.Tensor
+Compiling 903/1684: aten.mul.Tensor
+Compiling 904/1684: aten.mul.Tensor
+Compiling 905/1684: aten.add.Tensor
+Compiling 906/1684: prims.convert_element_type.default
+Compiling 907/1684: aten.view.default
+Compiling 908/1684: aten.transpose.int
+Compiling 909/1684: prims.convert_element_type.default
+Compiling 910/1684: prims.convert_element_type.default
+Compiling 911/1684: prims.convert_element_type.default
+Compiling 912/1684: aten.mm.default
+Compiling 913/1684: aten.mul.Tensor
+Compiling 914/1684: aten.mul.Tensor
+Compiling 915/1684: aten.add.Tensor
+Compiling 916/1684: prims.convert_element_type.default
+Compiling 917/1684: aten.view.default
+Compiling 918/1684: aten.gelu.default
+Compiling 919/1684: aten.clone.default
+Compiling 920/1684: aten.view.default
+Compiling 921/1684: aten.transpose.int
+Compiling 922/1684: prims.convert_element_type.default
+Compiling 923/1684: prims.convert_element_type.default
+Compiling 924/1684: prims.convert_element_type.default
+Compiling 925/1684: aten.mm.default
+Compiling 926/1684: aten.mul.Tensor
+Compiling 927/1684: aten.mul.Tensor
+Compiling 928/1684: aten.add.Tensor
+Compiling 929/1684: prims.convert_element_type.default
+Compiling 930/1684: aten.view.default
+Compiling 931/1684: aten.clone.default
+Compiling 932/1684: aten.add.Tensor
+Compiling 933/1684: aten.clone.default
+Compiling 934/1684: prims.convert_element_type.default
+Compiling 935/1684: aten.var_mean.correction
+Compiling 936/1684: <built-in function getitem>
+Compiling 937/1684: <built-in function getitem>
+Compiling 938/1684: aten.add.Tensor
+Compiling 939/1684: aten.rsqrt.default
+Compiling 940/1684: aten.sub.Tensor
+Compiling 941/1684: aten.mul.Tensor
+Compiling 942/1684: aten.mul.Tensor
+Compiling 943/1684: aten.add.Tensor
+Compiling 944/1684: prims.convert_element_type.default
+Compiling 945/1684: aten.view.default
+Compiling 946/1684: aten.transpose.int
+Compiling 947/1684: prims.convert_element_type.default
+Compiling 948/1684: prims.convert_element_type.default
+Compiling 949/1684: prims.convert_element_type.default
+Compiling 950/1684: aten.mm.default
+Compiling 951/1684: aten.mul.Tensor
+Compiling 952/1684: aten.mul.Tensor
+Compiling 953/1684: aten.add.Tensor
+Compiling 954/1684: prims.convert_element_type.default
+Compiling 955/1684: aten.view.default
+Compiling 956/1684: aten.view.default
+Compiling 957/1684: aten.transpose.int
+Compiling 958/1684: aten.clone.default
+Compiling 959/1684: aten.transpose.int
+Compiling 960/1684: aten.view.default
+Compiling 961/1684: aten.mm.default
+Compiling 962/1684: aten.view.default
+Compiling 963/1684: aten.view.default
+Compiling 964/1684: aten.transpose.int
+Compiling 965/1684: aten.clone.default
+Compiling 966/1684: aten.view.default
+Compiling 967/1684: aten.transpose.int
+Compiling 968/1684: prims.convert_element_type.default
+Compiling 969/1684: prims.convert_element_type.default
+Compiling 970/1684: prims.convert_element_type.default
+Compiling 971/1684: aten.mm.default
+Compiling 972/1684: aten.mul.Tensor
+Compiling 973/1684: aten.mul.Tensor
+Compiling 974/1684: aten.add.Tensor
+Compiling 975/1684: prims.convert_element_type.default
+Compiling 976/1684: aten.view.default
+Compiling 977/1684: aten.view.default
+Compiling 978/1684: aten.transpose.int
+Compiling 979/1684: aten.clone.default
+Compiling 980/1684: prims.convert_element_type.default
+Compiling 981/1684: prims.convert_element_type.default
+Compiling 982/1684: prims.convert_element_type.default
+Compiling 983/1684: aten.mul.Scalar
+Compiling 984/1684: aten.transpose.int
+Compiling 985/1684: aten.mul.Scalar
+Compiling 986/1684: aten.expand.default
+Compiling 987/1684: aten.view.default
+Compiling 988/1684: aten.expand.default
+Compiling 989/1684: aten.view.default
+Compiling 990/1684: aten.bmm.default
+Compiling 991/1684: aten.view.default
+Compiling 992/1684: aten._safe_softmax.default
+Compiling 993/1684: aten.expand.default
+Compiling 994/1684: aten.view.default
+Compiling 995/1684: aten.expand.default
+Compiling 996/1684: aten.view.default
+Compiling 997/1684: aten.bmm.default
+Compiling 998/1684: aten.view.default
+Compiling 999/1684: prims.convert_element_type.default
+Compiling 1000/1684: aten.transpose.int
+Compiling 1001/1684: aten.clone.default
+Compiling 1002/1684: aten.transpose.int
+Compiling 1003/1684: aten.transpose.int
+Compiling 1004/1684: aten.view.default
+Compiling 1005/1684: aten.view.default
+Compiling 1006/1684: aten.transpose.int
+Compiling 1007/1684: prims.convert_element_type.default
+Compiling 1008/1684: prims.convert_element_type.default
+Compiling 1009/1684: prims.convert_element_type.default
+Compiling 1010/1684: aten.mm.default
+Compiling 1011/1684: aten.mul.Tensor
+Compiling 1012/1684: aten.mul.Tensor
+Compiling 1013/1684: aten.add.Tensor
+Compiling 1014/1684: prims.convert_element_type.default
+Compiling 1015/1684: aten.view.default
+Compiling 1016/1684: aten.clone.default
+Compiling 1017/1684: aten.add.Tensor
+Compiling 1018/1684: aten.clone.default
+Compiling 1019/1684: prims.convert_element_type.default
+Compiling 1020/1684: aten.var_mean.correction
+Compiling 1021/1684: <built-in function getitem>
+Compiling 1022/1684: <built-in function getitem>
+Compiling 1023/1684: aten.add.Tensor
+Compiling 1024/1684: aten.rsqrt.default
+Compiling 1025/1684: aten.sub.Tensor
+Compiling 1026/1684: aten.mul.Tensor
+Compiling 1027/1684: aten.mul.Tensor
+Compiling 1028/1684: aten.add.Tensor
+Compiling 1029/1684: prims.convert_element_type.default
+Compiling 1030/1684: aten.view.default
+Compiling 1031/1684: aten.transpose.int
+Compiling 1032/1684: prims.convert_element_type.default
+Compiling 1033/1684: prims.convert_element_type.default
+Compiling 1034/1684: prims.convert_element_type.default
+Compiling 1035/1684: aten.mm.default
+Compiling 1036/1684: aten.mul.Tensor
+Compiling 1037/1684: aten.mul.Tensor
+Compiling 1038/1684: aten.add.Tensor
+Compiling 1039/1684: prims.convert_element_type.default
+Compiling 1040/1684: aten.view.default
+Compiling 1041/1684: aten.gelu.default
+Compiling 1042/1684: aten.clone.default
+Compiling 1043/1684: aten.view.default
+Compiling 1044/1684: aten.transpose.int
+Compiling 1045/1684: prims.convert_element_type.default
+Compiling 1046/1684: prims.convert_element_type.default
+Compiling 1047/1684: prims.convert_element_type.default
+Compiling 1048/1684: aten.mm.default
+Compiling 1049/1684: aten.mul.Tensor
+Compiling 1050/1684: aten.mul.Tensor
+Compiling 1051/1684: aten.add.Tensor
+Compiling 1052/1684: prims.convert_element_type.default
+Compiling 1053/1684: aten.view.default
+Compiling 1054/1684: aten.clone.default
+Compiling 1055/1684: aten.add.Tensor
+Compiling 1056/1684: aten.clone.default
+Compiling 1057/1684: prims.convert_element_type.default
+Compiling 1058/1684: aten.var_mean.correction
+Compiling 1059/1684: <built-in function getitem>
+Compiling 1060/1684: <built-in function getitem>
+Compiling 1061/1684: aten.add.Tensor
+Compiling 1062/1684: aten.rsqrt.default
+Compiling 1063/1684: aten.sub.Tensor
+Compiling 1064/1684: aten.mul.Tensor
+Compiling 1065/1684: aten.mul.Tensor
+Compiling 1066/1684: aten.add.Tensor
+Compiling 1067/1684: prims.convert_element_type.default
+Compiling 1068/1684: aten.view.default
+Compiling 1069/1684: aten.transpose.int
+Compiling 1070/1684: prims.convert_element_type.default
+Compiling 1071/1684: prims.convert_element_type.default
+Compiling 1072/1684: prims.convert_element_type.default
+Compiling 1073/1684: aten.mm.default
+Compiling 1074/1684: aten.mul.Tensor
+Compiling 1075/1684: aten.mul.Tensor
+Compiling 1076/1684: aten.add.Tensor
+Compiling 1077/1684: prims.convert_element_type.default
+Compiling 1078/1684: aten.view.default
+Compiling 1079/1684: aten.view.default
+Compiling 1080/1684: aten.transpose.int
+Compiling 1081/1684: aten.clone.default
+Compiling 1082/1684: aten.transpose.int
+Compiling 1083/1684: aten.view.default
+Compiling 1084/1684: aten.mm.default
+Compiling 1085/1684: aten.view.default
+Compiling 1086/1684: aten.view.default
+Compiling 1087/1684: aten.transpose.int
+Compiling 1088/1684: aten.clone.default
+Compiling 1089/1684: aten.view.default
+Compiling 1090/1684: aten.transpose.int
+Compiling 1091/1684: prims.convert_element_type.default
+Compiling 1092/1684: prims.convert_element_type.default
+Compiling 1093/1684: prims.convert_element_type.default
+Compiling 1094/1684: aten.mm.default
+Compiling 1095/1684: aten.mul.Tensor
+Compiling 1096/1684: aten.mul.Tensor
+Compiling 1097/1684: aten.add.Tensor
+Compiling 1098/1684: prims.convert_element_type.default
+Compiling 1099/1684: aten.view.default
+Compiling 1100/1684: aten.view.default
+Compiling 1101/1684: aten.transpose.int
+Compiling 1102/1684: aten.clone.default
+Compiling 1103/1684: prims.convert_element_type.default
+Compiling 1104/1684: prims.convert_element_type.default
+Compiling 1105/1684: prims.convert_element_type.default
+Compiling 1106/1684: aten.mul.Scalar
+Compiling 1107/1684: aten.transpose.int
+Compiling 1108/1684: aten.mul.Scalar
+Compiling 1109/1684: aten.expand.default
+Compiling 1110/1684: aten.view.default
+Compiling 1111/1684: aten.expand.default
+Compiling 1112/1684: aten.view.default
+Compiling 1113/1684: aten.bmm.default
+Compiling 1114/1684: aten.view.default
+Compiling 1115/1684: aten._safe_softmax.default
+Compiling 1116/1684: aten.expand.default
+Compiling 1117/1684: aten.view.default
+Compiling 1118/1684: aten.expand.default
+Compiling 1119/1684: aten.view.default
+Compiling 1120/1684: aten.bmm.default
+Compiling 1121/1684: aten.view.default
+Compiling 1122/1684: prims.convert_element_type.default
+Compiling 1123/1684: aten.transpose.int
+Compiling 1124/1684: aten.clone.default
+Compiling 1125/1684: aten.transpose.int
+Compiling 1126/1684: aten.transpose.int
+Compiling 1127/1684: aten.view.default
+Compiling 1128/1684: aten.view.default
+Compiling 1129/1684: aten.transpose.int
+Compiling 1130/1684: prims.convert_element_type.default
+Compiling 1131/1684: prims.convert_element_type.default
+Compiling 1132/1684: prims.convert_element_type.default
+Compiling 1133/1684: aten.mm.default
+Compiling 1134/1684: aten.mul.Tensor
+Compiling 1135/1684: aten.mul.Tensor
+Compiling 1136/1684: aten.add.Tensor
+Compiling 1137/1684: prims.convert_element_type.default
+Compiling 1138/1684: aten.view.default
+Compiling 1139/1684: aten.clone.default
+Compiling 1140/1684: aten.add.Tensor
+Compiling 1141/1684: aten.clone.default
+Compiling 1142/1684: prims.convert_element_type.default
+Compiling 1143/1684: aten.var_mean.correction
+Compiling 1144/1684: <built-in function getitem>
+Compiling 1145/1684: <built-in function getitem>
+Compiling 1146/1684: aten.add.Tensor
+Compiling 1147/1684: aten.rsqrt.default
+Compiling 1148/1684: aten.sub.Tensor
+Compiling 1149/1684: aten.mul.Tensor
+Compiling 1150/1684: aten.mul.Tensor
+Compiling 1151/1684: aten.add.Tensor
+Compiling 1152/1684: prims.convert_element_type.default
+Compiling 1153/1684: aten.view.default
+Compiling 1154/1684: aten.transpose.int
+Compiling 1155/1684: prims.convert_element_type.default
+Compiling 1156/1684: prims.convert_element_type.default
+Compiling 1157/1684: prims.convert_element_type.default
+Compiling 1158/1684: aten.mm.default
+Compiling 1159/1684: aten.mul.Tensor
+Compiling 1160/1684: aten.mul.Tensor
+Compiling 1161/1684: aten.add.Tensor
+Compiling 1162/1684: prims.convert_element_type.default
+Compiling 1163/1684: aten.view.default
+Compiling 1164/1684: aten.gelu.default
+Compiling 1165/1684: aten.clone.default
+Compiling 1166/1684: aten.view.default
+Compiling 1167/1684: aten.transpose.int
+Compiling 1168/1684: prims.convert_element_type.default
+Compiling 1169/1684: prims.convert_element_type.default
+Compiling 1170/1684: prims.convert_element_type.default
+Compiling 1171/1684: aten.mm.default
+Compiling 1172/1684: aten.mul.Tensor
+Compiling 1173/1684: aten.mul.Tensor
+Compiling 1174/1684: aten.add.Tensor
+Compiling 1175/1684: prims.convert_element_type.default
+Compiling 1176/1684: aten.view.default
+Compiling 1177/1684: aten.clone.default
+Compiling 1178/1684: aten.add.Tensor
+Compiling 1179/1684: aten.clone.default
+Compiling 1180/1684: prims.convert_element_type.default
+Compiling 1181/1684: aten.var_mean.correction
+Compiling 1182/1684: <built-in function getitem>
+Compiling 1183/1684: <built-in function getitem>
+Compiling 1184/1684: aten.add.Tensor
+Compiling 1185/1684: aten.rsqrt.default
+Compiling 1186/1684: aten.sub.Tensor
+Compiling 1187/1684: aten.mul.Tensor
+Compiling 1188/1684: aten.mul.Tensor
+Compiling 1189/1684: aten.add.Tensor
+Compiling 1190/1684: prims.convert_element_type.default
+Compiling 1191/1684: aten.view.default
+Compiling 1192/1684: aten.transpose.int
+Compiling 1193/1684: prims.convert_element_type.default
+Compiling 1194/1684: prims.convert_element_type.default
+Compiling 1195/1684: prims.convert_element_type.default
+Compiling 1196/1684: aten.mm.default
+Compiling 1197/1684: aten.mul.Tensor
+Compiling 1198/1684: aten.mul.Tensor
+Compiling 1199/1684: aten.add.Tensor
+Compiling 1200/1684: prims.convert_element_type.default
+Compiling 1201/1684: aten.view.default
+Compiling 1202/1684: aten.view.default
+Compiling 1203/1684: aten.transpose.int
+Compiling 1204/1684: aten.clone.default
+Compiling 1205/1684: aten.transpose.int
+Compiling 1206/1684: aten.view.default
+Compiling 1207/1684: aten.mm.default
+Compiling 1208/1684: aten.view.default
+Compiling 1209/1684: aten.view.default
+Compiling 1210/1684: aten.transpose.int
+Compiling 1211/1684: aten.clone.default
+Compiling 1212/1684: aten.view.default
+Compiling 1213/1684: aten.transpose.int
+Compiling 1214/1684: prims.convert_element_type.default
+Compiling 1215/1684: prims.convert_element_type.default
+Compiling 1216/1684: prims.convert_element_type.default
+Compiling 1217/1684: aten.mm.default
+Compiling 1218/1684: aten.mul.Tensor
+Compiling 1219/1684: aten.mul.Tensor
+Compiling 1220/1684: aten.add.Tensor
+Compiling 1221/1684: prims.convert_element_type.default
+Compiling 1222/1684: aten.view.default
+Compiling 1223/1684: aten.view.default
+Compiling 1224/1684: aten.transpose.int
+Compiling 1225/1684: aten.clone.default
+Compiling 1226/1684: prims.convert_element_type.default
+Compiling 1227/1684: prims.convert_element_type.default
+Compiling 1228/1684: prims.convert_element_type.default
+Compiling 1229/1684: aten.mul.Scalar
+Compiling 1230/1684: aten.transpose.int
+Compiling 1231/1684: aten.mul.Scalar
+Compiling 1232/1684: aten.expand.default
+Compiling 1233/1684: aten.view.default
+Compiling 1234/1684: aten.expand.default
+Compiling 1235/1684: aten.view.default
+Compiling 1236/1684: aten.bmm.default
+Compiling 1237/1684: aten.view.default
+Compiling 1238/1684: aten._safe_softmax.default
+Compiling 1239/1684: aten.expand.default
+Compiling 1240/1684: aten.view.default
+Compiling 1241/1684: aten.expand.default
+Compiling 1242/1684: aten.view.default
+Compiling 1243/1684: aten.bmm.default
+Compiling 1244/1684: aten.view.default
+Compiling 1245/1684: prims.convert_element_type.default
+Compiling 1246/1684: aten.transpose.int
+Compiling 1247/1684: aten.clone.default
+Compiling 1248/1684: aten.transpose.int
+Compiling 1249/1684: aten.transpose.int
+Compiling 1250/1684: aten.view.default
+Compiling 1251/1684: aten.view.default
+Compiling 1252/1684: aten.transpose.int
+Compiling 1253/1684: prims.convert_element_type.default
+Compiling 1254/1684: prims.convert_element_type.default
+Compiling 1255/1684: prims.convert_element_type.default
+Compiling 1256/1684: aten.mm.default
+Compiling 1257/1684: aten.mul.Tensor
+Compiling 1258/1684: aten.mul.Tensor
+Compiling 1259/1684: aten.add.Tensor
+Compiling 1260/1684: prims.convert_element_type.default
+Compiling 1261/1684: aten.view.default
+Compiling 1262/1684: aten.clone.default
+Compiling 1263/1684: aten.add.Tensor
+Compiling 1264/1684: aten.clone.default
+Compiling 1265/1684: prims.convert_element_type.default
+Compiling 1266/1684: aten.var_mean.correction
+Compiling 1267/1684: <built-in function getitem>
+Compiling 1268/1684: <built-in function getitem>
+Compiling 1269/1684: aten.add.Tensor
+Compiling 1270/1684: aten.rsqrt.default
+Compiling 1271/1684: aten.sub.Tensor
+Compiling 1272/1684: aten.mul.Tensor
+Compiling 1273/1684: aten.mul.Tensor
+Compiling 1274/1684: aten.add.Tensor
+Compiling 1275/1684: prims.convert_element_type.default
+Compiling 1276/1684: aten.view.default
+Compiling 1277/1684: aten.transpose.int
+Compiling 1278/1684: prims.convert_element_type.default
+Compiling 1279/1684: prims.convert_element_type.default
+Compiling 1280/1684: prims.convert_element_type.default
+Compiling 1281/1684: aten.mm.default
+Compiling 1282/1684: aten.mul.Tensor
+Compiling 1283/1684: aten.mul.Tensor
+Compiling 1284/1684: aten.add.Tensor
+Compiling 1285/1684: prims.convert_element_type.default
+Compiling 1286/1684: aten.view.default
+Compiling 1287/1684: aten.gelu.default
+Compiling 1288/1684: aten.clone.default
+Compiling 1289/1684: aten.view.default
+Compiling 1290/1684: aten.transpose.int
+Compiling 1291/1684: prims.convert_element_type.default
+Compiling 1292/1684: prims.convert_element_type.default
+Compiling 1293/1684: prims.convert_element_type.default
+Compiling 1294/1684: aten.mm.default
+Compiling 1295/1684: aten.mul.Tensor
+Compiling 1296/1684: aten.mul.Tensor
+Compiling 1297/1684: aten.add.Tensor
+Compiling 1298/1684: prims.convert_element_type.default
+Compiling 1299/1684: aten.view.default
+Compiling 1300/1684: aten.clone.default
+Compiling 1301/1684: aten.add.Tensor
+Compiling 1302/1684: aten.clone.default
+Compiling 1303/1684: prims.convert_element_type.default
+Compiling 1304/1684: aten.var_mean.correction
+Compiling 1305/1684: <built-in function getitem>
+Compiling 1306/1684: <built-in function getitem>
+Compiling 1307/1684: aten.add.Tensor
+Compiling 1308/1684: aten.rsqrt.default
+Compiling 1309/1684: aten.sub.Tensor
+Compiling 1310/1684: aten.mul.Tensor
+Compiling 1311/1684: aten.mul.Tensor
+Compiling 1312/1684: aten.add.Tensor
+Compiling 1313/1684: prims.convert_element_type.default
+Compiling 1314/1684: aten.view.default
+Compiling 1315/1684: aten.transpose.int
+Compiling 1316/1684: prims.convert_element_type.default
+Compiling 1317/1684: prims.convert_element_type.default
+Compiling 1318/1684: prims.convert_element_type.default
+Compiling 1319/1684: aten.mm.default
+Compiling 1320/1684: aten.mul.Tensor
+Compiling 1321/1684: aten.mul.Tensor
+Compiling 1322/1684: aten.add.Tensor
+Compiling 1323/1684: prims.convert_element_type.default
+Compiling 1324/1684: aten.view.default
+Compiling 1325/1684: aten.view.default
+Compiling 1326/1684: aten.transpose.int
+Compiling 1327/1684: aten.clone.default
+Compiling 1328/1684: aten.transpose.int
+Compiling 1329/1684: aten.view.default
+Compiling 1330/1684: aten.mm.default
+Compiling 1331/1684: aten.view.default
+Compiling 1332/1684: aten.view.default
+Compiling 1333/1684: aten.transpose.int
+Compiling 1334/1684: aten.clone.default
+Compiling 1335/1684: aten.view.default
+Compiling 1336/1684: aten.transpose.int
+Compiling 1337/1684: prims.convert_element_type.default
+Compiling 1338/1684: prims.convert_element_type.default
+Compiling 1339/1684: prims.convert_element_type.default
+Compiling 1340/1684: aten.mm.default
+Compiling 1341/1684: aten.mul.Tensor
+Compiling 1342/1684: aten.mul.Tensor
+Compiling 1343/1684: aten.add.Tensor
+Compiling 1344/1684: prims.convert_element_type.default
+Compiling 1345/1684: aten.view.default
+Compiling 1346/1684: aten.view.default
+Compiling 1347/1684: aten.transpose.int
+Compiling 1348/1684: aten.clone.default
+Compiling 1349/1684: prims.convert_element_type.default
+Compiling 1350/1684: prims.convert_element_type.default
+Compiling 1351/1684: prims.convert_element_type.default
+Compiling 1352/1684: aten.mul.Scalar
+Compiling 1353/1684: aten.transpose.int
+Compiling 1354/1684: aten.mul.Scalar
+Compiling 1355/1684: aten.expand.default
+Compiling 1356/1684: aten.view.default
+Compiling 1357/1684: aten.expand.default
+Compiling 1358/1684: aten.view.default
+Compiling 1359/1684: aten.bmm.default
+Compiling 1360/1684: aten.view.default
+Compiling 1361/1684: aten._safe_softmax.default
+Compiling 1362/1684: aten.expand.default
+Compiling 1363/1684: aten.view.default
+Compiling 1364/1684: aten.expand.default
+Compiling 1365/1684: aten.view.default
+Compiling 1366/1684: aten.bmm.default
+Compiling 1367/1684: aten.view.default
+Compiling 1368/1684: prims.convert_element_type.default
+Compiling 1369/1684: aten.transpose.int
+Compiling 1370/1684: aten.clone.default
+Compiling 1371/1684: aten.transpose.int
+Compiling 1372/1684: aten.transpose.int
+Compiling 1373/1684: aten.view.default
+Compiling 1374/1684: aten.view.default
+Compiling 1375/1684: aten.transpose.int
+Compiling 1376/1684: prims.convert_element_type.default
+Compiling 1377/1684: prims.convert_element_type.default
+Compiling 1378/1684: prims.convert_element_type.default
+Compiling 1379/1684: aten.mm.default
+Compiling 1380/1684: aten.mul.Tensor
+Compiling 1381/1684: aten.mul.Tensor
+Compiling 1382/1684: aten.add.Tensor
+Compiling 1383/1684: prims.convert_element_type.default
+Compiling 1384/1684: aten.view.default
+Compiling 1385/1684: aten.clone.default
+Compiling 1386/1684: aten.add.Tensor
+Compiling 1387/1684: aten.clone.default
+Compiling 1388/1684: prims.convert_element_type.default
+Compiling 1389/1684: aten.var_mean.correction
+Compiling 1390/1684: <built-in function getitem>
+Compiling 1391/1684: <built-in function getitem>
+Compiling 1392/1684: aten.add.Tensor
+Compiling 1393/1684: aten.rsqrt.default
+Compiling 1394/1684: aten.sub.Tensor
+Compiling 1395/1684: aten.mul.Tensor
+Compiling 1396/1684: aten.mul.Tensor
+Compiling 1397/1684: aten.add.Tensor
+Compiling 1398/1684: prims.convert_element_type.default
+Compiling 1399/1684: aten.view.default
+Compiling 1400/1684: aten.transpose.int
+Compiling 1401/1684: prims.convert_element_type.default
+Compiling 1402/1684: prims.convert_element_type.default
+Compiling 1403/1684: prims.convert_element_type.default
+Compiling 1404/1684: aten.mm.default
+Compiling 1405/1684: aten.mul.Tensor
+Compiling 1406/1684: aten.mul.Tensor
+Compiling 1407/1684: aten.add.Tensor
+Compiling 1408/1684: prims.convert_element_type.default
+Compiling 1409/1684: aten.view.default
+Compiling 1410/1684: aten.gelu.default
+Compiling 1411/1684: aten.clone.default
+Compiling 1412/1684: aten.view.default
+Compiling 1413/1684: aten.transpose.int
+Compiling 1414/1684: prims.convert_element_type.default
+Compiling 1415/1684: prims.convert_element_type.default
+Compiling 1416/1684: prims.convert_element_type.default
+Compiling 1417/1684: aten.mm.default
+Compiling 1418/1684: aten.mul.Tensor
+Compiling 1419/1684: aten.mul.Tensor
+Compiling 1420/1684: aten.add.Tensor
+Compiling 1421/1684: prims.convert_element_type.default
+Compiling 1422/1684: aten.view.default
+Compiling 1423/1684: aten.clone.default
+Compiling 1424/1684: aten.add.Tensor
+Compiling 1425/1684: aten.clone.default
+Compiling 1426/1684: prims.convert_element_type.default
+Compiling 1427/1684: aten.var_mean.correction
+Compiling 1428/1684: <built-in function getitem>
+Compiling 1429/1684: <built-in function getitem>
+Compiling 1430/1684: aten.add.Tensor
+Compiling 1431/1684: aten.rsqrt.default
+Compiling 1432/1684: aten.sub.Tensor
+Compiling 1433/1684: aten.mul.Tensor
+Compiling 1434/1684: aten.mul.Tensor
+Compiling 1435/1684: aten.add.Tensor
+Compiling 1436/1684: prims.convert_element_type.default
+Compiling 1437/1684: aten.view.default
+Compiling 1438/1684: aten.transpose.int
+Compiling 1439/1684: prims.convert_element_type.default
+Compiling 1440/1684: prims.convert_element_type.default
+Compiling 1441/1684: prims.convert_element_type.default
+Compiling 1442/1684: aten.mm.default
+Compiling 1443/1684: aten.mul.Tensor
+Compiling 1444/1684: aten.mul.Tensor
+Compiling 1445/1684: aten.add.Tensor
+Compiling 1446/1684: prims.convert_element_type.default
+Compiling 1447/1684: aten.view.default
+Compiling 1448/1684: aten.view.default
+Compiling 1449/1684: aten.transpose.int
+Compiling 1450/1684: aten.clone.default
+Compiling 1451/1684: aten.transpose.int
+Compiling 1452/1684: aten.view.default
+Compiling 1453/1684: aten.mm.default
+Compiling 1454/1684: aten.view.default
+Compiling 1455/1684: aten.view.default
+Compiling 1456/1684: aten.transpose.int
+Compiling 1457/1684: aten.clone.default
+Compiling 1458/1684: aten.view.default
+Compiling 1459/1684: aten.transpose.int
+Compiling 1460/1684: prims.convert_element_type.default
+Compiling 1461/1684: prims.convert_element_type.default
+Compiling 1462/1684: prims.convert_element_type.default
+Compiling 1463/1684: aten.mm.default
+Compiling 1464/1684: aten.mul.Tensor
+Compiling 1465/1684: aten.mul.Tensor
+Compiling 1466/1684: aten.add.Tensor
+Compiling 1467/1684: prims.convert_element_type.default
+Compiling 1468/1684: aten.view.default
+Compiling 1469/1684: aten.view.default
+Compiling 1470/1684: aten.transpose.int
+Compiling 1471/1684: aten.clone.default
+Compiling 1472/1684: prims.convert_element_type.default
+Compiling 1473/1684: prims.convert_element_type.default
+Compiling 1474/1684: prims.convert_element_type.default
+Compiling 1475/1684: aten.mul.Scalar
+Compiling 1476/1684: aten.transpose.int
+Compiling 1477/1684: aten.mul.Scalar
+Compiling 1478/1684: aten.expand.default
+Compiling 1479/1684: aten.view.default
+Compiling 1480/1684: aten.expand.default
+Compiling 1481/1684: aten.view.default
+Compiling 1482/1684: aten.bmm.default
+Compiling 1483/1684: aten.view.default
+Compiling 1484/1684: aten._safe_softmax.default
+Compiling 1485/1684: aten.expand.default
+Compiling 1486/1684: aten.view.default
+Compiling 1487/1684: aten.expand.default
+Compiling 1488/1684: aten.view.default
+Compiling 1489/1684: aten.bmm.default
+Compiling 1490/1684: aten.view.default
+Compiling 1491/1684: prims.convert_element_type.default
+Compiling 1492/1684: aten.transpose.int
+Compiling 1493/1684: aten.clone.default
+Compiling 1494/1684: aten.transpose.int
+Compiling 1495/1684: aten.transpose.int
+Compiling 1496/1684: aten.view.default
+Compiling 1497/1684: aten.view.default
+Compiling 1498/1684: aten.transpose.int
+Compiling 1499/1684: prims.convert_element_type.default
+Compiling 1500/1684: prims.convert_element_type.default
+Compiling 1501/1684: prims.convert_element_type.default
+Compiling 1502/1684: aten.mm.default
+Compiling 1503/1684: aten.mul.Tensor
+Compiling 1504/1684: aten.mul.Tensor
+Compiling 1505/1684: aten.add.Tensor
+Compiling 1506/1684: prims.convert_element_type.default
+Compiling 1507/1684: aten.view.default
+Compiling 1508/1684: aten.clone.default
+Compiling 1509/1684: aten.add.Tensor
+Compiling 1510/1684: aten.clone.default
+Compiling 1511/1684: prims.convert_element_type.default
+Compiling 1512/1684: aten.var_mean.correction
+Compiling 1513/1684: <built-in function getitem>
+Compiling 1514/1684: <built-in function getitem>
+Compiling 1515/1684: aten.add.Tensor
+Compiling 1516/1684: aten.rsqrt.default
+Compiling 1517/1684: aten.sub.Tensor
+Compiling 1518/1684: aten.mul.Tensor
+Compiling 1519/1684: aten.mul.Tensor
+Compiling 1520/1684: aten.add.Tensor
+Compiling 1521/1684: prims.convert_element_type.default
+Compiling 1522/1684: aten.view.default
+Compiling 1523/1684: aten.transpose.int
+Compiling 1524/1684: prims.convert_element_type.default
+Compiling 1525/1684: prims.convert_element_type.default
+Compiling 1526/1684: prims.convert_element_type.default
+Compiling 1527/1684: aten.mm.default
+Compiling 1528/1684: aten.mul.Tensor
+Compiling 1529/1684: aten.mul.Tensor
+Compiling 1530/1684: aten.add.Tensor
+Compiling 1531/1684: prims.convert_element_type.default
+Compiling 1532/1684: aten.view.default
+Compiling 1533/1684: aten.gelu.default
+Compiling 1534/1684: aten.clone.default
+Compiling 1535/1684: aten.view.default
+Compiling 1536/1684: aten.transpose.int
+Compiling 1537/1684: prims.convert_element_type.default
+Compiling 1538/1684: prims.convert_element_type.default
+Compiling 1539/1684: prims.convert_element_type.default
+Compiling 1540/1684: aten.mm.default
+Compiling 1541/1684: aten.mul.Tensor
+Compiling 1542/1684: aten.mul.Tensor
+Compiling 1543/1684: aten.add.Tensor
+Compiling 1544/1684: prims.convert_element_type.default
+Compiling 1545/1684: aten.view.default
+Compiling 1546/1684: aten.clone.default
+Compiling 1547/1684: aten.add.Tensor
+Compiling 1548/1684: aten.clone.default
+Compiling 1549/1684: prims.convert_element_type.default
+Compiling 1550/1684: aten.var_mean.correction
+Compiling 1551/1684: <built-in function getitem>
+Compiling 1552/1684: <built-in function getitem>
+Compiling 1553/1684: aten.add.Tensor
+Compiling 1554/1684: aten.rsqrt.default
+Compiling 1555/1684: aten.sub.Tensor
+Compiling 1556/1684: aten.mul.Tensor
+Compiling 1557/1684: aten.mul.Tensor
+Compiling 1558/1684: aten.add.Tensor
+Compiling 1559/1684: prims.convert_element_type.default
+Compiling 1560/1684: aten.view.default
+Compiling 1561/1684: aten.transpose.int
+Compiling 1562/1684: prims.convert_element_type.default
+Compiling 1563/1684: prims.convert_element_type.default
+Compiling 1564/1684: prims.convert_element_type.default
+Compiling 1565/1684: aten.mm.default
+Compiling 1566/1684: aten.mul.Tensor
+Compiling 1567/1684: aten.mul.Tensor
+Compiling 1568/1684: aten.add.Tensor
+Compiling 1569/1684: prims.convert_element_type.default
+Compiling 1570/1684: aten.view.default
+Compiling 1571/1684: aten.view.default
+Compiling 1572/1684: aten.transpose.int
+Compiling 1573/1684: aten.clone.default
+Compiling 1574/1684: aten.transpose.int
+Compiling 1575/1684: aten.view.default
+Compiling 1576/1684: aten.mm.default
+Compiling 1577/1684: aten.view.default
+Compiling 1578/1684: aten.view.default
+Compiling 1579/1684: aten.transpose.int
+Compiling 1580/1684: aten.clone.default
+Compiling 1581/1684: aten.view.default
+Compiling 1582/1684: aten.transpose.int
+Compiling 1583/1684: prims.convert_element_type.default
+Compiling 1584/1684: prims.convert_element_type.default
+Compiling 1585/1684: prims.convert_element_type.default
+Compiling 1586/1684: aten.mm.default
+Compiling 1587/1684: aten.mul.Tensor
+Compiling 1588/1684: aten.mul.Tensor
+Compiling 1589/1684: aten.add.Tensor
+Compiling 1590/1684: prims.convert_element_type.default
+Compiling 1591/1684: aten.view.default
+Compiling 1592/1684: aten.view.default
+Compiling 1593/1684: aten.transpose.int
+Compiling 1594/1684: aten.clone.default
+Compiling 1595/1684: prims.convert_element_type.default
+Compiling 1596/1684: prims.convert_element_type.default
+Compiling 1597/1684: prims.convert_element_type.default
+Compiling 1598/1684: aten.mul.Scalar
+Compiling 1599/1684: aten.transpose.int
+Compiling 1600/1684: aten.mul.Scalar
+Compiling 1601/1684: aten.expand.default
+Compiling 1602/1684: aten.view.default
+Compiling 1603/1684: aten.expand.default
+Compiling 1604/1684: aten.view.default
+Compiling 1605/1684: aten.bmm.default
+Compiling 1606/1684: aten.view.default
+Compiling 1607/1684: aten._safe_softmax.default
+Compiling 1608/1684: aten.expand.default
+Compiling 1609/1684: aten.view.default
+Compiling 1610/1684: aten.expand.default
+Compiling 1611/1684: aten.view.default
+Compiling 1612/1684: aten.bmm.default
+Compiling 1613/1684: aten.view.default
+Compiling 1614/1684: prims.convert_element_type.default
+Compiling 1615/1684: aten.transpose.int
+Compiling 1616/1684: aten.clone.default
+Compiling 1617/1684: aten.transpose.int
+Compiling 1618/1684: aten.transpose.int
+Compiling 1619/1684: aten.view.default
+Compiling 1620/1684: aten.view.default
+Compiling 1621/1684: aten.transpose.int
+Compiling 1622/1684: prims.convert_element_type.default
+Compiling 1623/1684: prims.convert_element_type.default
+Compiling 1624/1684: prims.convert_element_type.default
+Compiling 1625/1684: aten.mm.default
+Compiling 1626/1684: aten.mul.Tensor
+Compiling 1627/1684: aten.mul.Tensor
+Compiling 1628/1684: aten.add.Tensor
+Compiling 1629/1684: prims.convert_element_type.default
+Compiling 1630/1684: aten.view.default
+Compiling 1631/1684: aten.clone.default
+Compiling 1632/1684: aten.add.Tensor
+Compiling 1633/1684: aten.clone.default
+Compiling 1634/1684: prims.convert_element_type.default
+Compiling 1635/1684: aten.var_mean.correction
+Compiling 1636/1684: <built-in function getitem>
+Compiling 1637/1684: <built-in function getitem>
+Compiling 1638/1684: aten.add.Tensor
+Compiling 1639/1684: aten.rsqrt.default
+Compiling 1640/1684: aten.sub.Tensor
+Compiling 1641/1684: aten.mul.Tensor
+Compiling 1642/1684: aten.mul.Tensor
+Compiling 1643/1684: aten.add.Tensor
+Compiling 1644/1684: prims.convert_element_type.default
+Compiling 1645/1684: aten.view.default
+Compiling 1646/1684: aten.transpose.int
+Compiling 1647/1684: prims.convert_element_type.default
+Compiling 1648/1684: prims.convert_element_type.default
+Compiling 1649/1684: prims.convert_element_type.default
+Compiling 1650/1684: aten.mm.default
+Compiling 1651/1684: aten.mul.Tensor
+Compiling 1652/1684: aten.mul.Tensor
+Compiling 1653/1684: aten.add.Tensor
+Compiling 1654/1684: prims.convert_element_type.default
+Compiling 1655/1684: aten.view.default
+Compiling 1656/1684: aten.gelu.default
+Compiling 1657/1684: aten.clone.default
+Compiling 1658/1684: aten.view.default
+Compiling 1659/1684: aten.transpose.int
+Compiling 1660/1684: prims.convert_element_type.default
+Compiling 1661/1684: prims.convert_element_type.default
+Compiling 1662/1684: prims.convert_element_type.default
+Compiling 1663/1684: aten.mm.default
+Compiling 1664/1684: aten.mul.Tensor
+Compiling 1665/1684: aten.mul.Tensor
+Compiling 1666/1684: aten.add.Tensor
+Compiling 1667/1684: prims.convert_element_type.default
+Compiling 1668/1684: aten.view.default
+Compiling 1669/1684: aten.clone.default
+Compiling 1670/1684: aten.add.Tensor
+Compiling 1671/1684: aten.clone.default
+Compiling 1672/1684: prims.convert_element_type.default
+Compiling 1673/1684: aten.var_mean.correction
+Compiling 1674/1684: <built-in function getitem>
+Compiling 1675/1684: <built-in function getitem>
+Compiling 1676/1684: aten.add.Tensor
+Compiling 1677/1684: aten.rsqrt.default
+Compiling 1678/1684: aten.sub.Tensor
+Compiling 1679/1684: aten.mul.Tensor
+Compiling 1680/1684: aten.mul.Tensor
+Compiling 1681/1684: aten.add.Tensor
+Compiling 1682/1684: prims.convert_element_type.default
+Compiling 1683/1684: output
+#####  Saving unique ops to results/models/tests/models/whisper/test_whisper_py_test_whisper_True-eval_ (call)_unique_ops.json#####
+Compiling 0/5: arg0_1
+Compiling 1/5: arg1_1
+Compiling 2/5: aten.view.default
+
+[32m2025-03-20 21:39:56.088[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:56.089[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:56.089[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:56.129[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 2/5: aten.view.default
+Compiling 3/5: aten.embedding.default
+
+[32m2025-03-20 21:39:57.299[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:39:57.299[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:39:57.299[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:39:57.333[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Passing a tuple of `past_key_values` is deprecated and will be removed in Transformers v4.43.0. You should pass an instance of `EncoderDecoderCache` instead, e.g. `past_key_values=EncoderDecoderCache.from_legacy_cache(past_key_values)`.
+Ran: 3/5: aten.embedding.default
+Compiling 4/5: output
+#####  Saving unique ops to results/models/tests/models/whisper/test_whisper_py_test_whisper_True-eval_ (call)_unique_ops.json#####
+XFAILan
+still generate a graph)
+
+======================== 1 xfailed in 205.94s (0:03:25) ========================

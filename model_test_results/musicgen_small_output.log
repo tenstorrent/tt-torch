@@ -1,0 +1,9 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.0rc1, pytest-8.3.5, pluggy-1.5.0 -- /localdev/ddilbaz/tt-torch/env/venv/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /localdev/ddilbaz/tt-torch
+collecting ... collected 1 item
+
+tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small[True-eval] SKIPPED
+
+============================== 1 skipped in 1.81s ==============================

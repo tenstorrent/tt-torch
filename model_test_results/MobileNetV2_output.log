@@ -1,0 +1,379 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.0rc1, pytest-8.3.5, pluggy-1.5.0 -- /localdev/ddilbaz/tt-torch/env/venv/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /localdev/ddilbaz/tt-torch
+collecting ... collected 1 item
+
+tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[True-eval] Downloading: "https://download.pytorch.org/models/mobilenet_v2-7ebf99e0.pth" to /home/ddilbaz/.cache/torch/hub/checkpoints/mobilenet_v2-7ebf99e0.pth
+  0%|          | 0.00/13.6M [00:00<?, ?B/s]  1%|          | 128k/13.6M [00:00<00:15, 927kB/s]  4%|▎         | 512k/13.6M [00:00<00:06, 2.27MB/s] 12%|█▏        | 1.62M/13.6M [00:00<00:02, 6.06MB/s] 38%|███▊      | 5.12M/13.6M [00:00<00:00, 17.1MB/s] 74%|███████▎  | 10.0M/13.6M [00:00<00:00, 28.5MB/s]100%|██████████| 13.6M/13.6M [00:00<00:00, 22.4MB/s]
+Traceback (most recent call last):
+  File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torch/fx/passes/shape_prop.py", line 152, in run_node
+    result = super().run_node(n)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torch/fx/interpreter.py", line 203, in run_node
+    return getattr(self, n.op)(n.target, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torch/fx/interpreter.py", line 275, in call_function
+    return target(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torch/_ops.py", line 716, in __call__
+    return self._op(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torch/utils/_stats.py", line 21, in wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torch/_subclasses/fake_tensor.py", line 1238, in __torch_dispatch__
+    return self.dispatch(func, types, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torch/_subclasses/fake_tensor.py", line 1692, in dispatch
+    return self._cached_dispatch_impl(func, types, args, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torch/_subclasses/fake_tensor.py", line 1339, in _cached_dispatch_impl
+    output = self._dispatch_impl(func, types, args, kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torch/_subclasses/fake_tensor.py", line 1983, in _dispatch_impl
+    op_impl_out = op_impl(self, func, *args, **kwargs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torch/_subclasses/fake_impls.py", line 147, in dispatch_to_op_implementations_dict
+    return op_implementations_dict[func](fake_mode, func, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torch/_subclasses/fake_impls.py", line 670, in conv
+    batch = kwargs["input"].shape[0]
+            ~~~~~~~~~~~~~~~~~~~~~^^^
+IndexError: tuple index out of range
+FAILED
+
+=================================== FAILURES ===================================
+_________________________ test_MobileNetV2[True-eval] __________________________
+
+self = <torch.fx.passes.shape_prop.ShapeProp object at 0x7f2bce90ed90>
+n = convolution
+
+    def run_node(self, n : Node) -> Any:
+        try:
+            if self.fake_module is not None:
+                # Hacky swap. Alternatively, we could do this with overriding
+                # call_module and get_attr.
+                self.module = self.fake_module
+            try:
+                if self.fake_mode is not None:
+                    with self.fake_mode, enable_python_dispatcher():
+>                       result = super().run_node(n)
+
+env/venv/lib/python3.11/site-packages/torch/fx/passes/shape_prop.py:152:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+env/venv/lib/python3.11/site-packages/torch/fx/interpreter.py:203: in run_node
+    return getattr(self, n.op)(n.target, args, kwargs)
+env/venv/lib/python3.11/site-packages/torch/fx/interpreter.py:275: in call_function
+    return target(*args, **kwargs)
+env/venv/lib/python3.11/site-packages/torch/_ops.py:716: in __call__
+    return self._op(*args, **kwargs)
+env/venv/lib/python3.11/site-packages/torch/utils/_stats.py:21: in wrapper
+    return fn(*args, **kwargs)
+env/venv/lib/python3.11/site-packages/torch/_subclasses/fake_tensor.py:1238: in __torch_dispatch__
+    return self.dispatch(func, types, args, kwargs)
+env/venv/lib/python3.11/site-packages/torch/_subclasses/fake_tensor.py:1692: in dispatch
+    return self._cached_dispatch_impl(func, types, args, kwargs)
+env/venv/lib/python3.11/site-packages/torch/_subclasses/fake_tensor.py:1339: in _cached_dispatch_impl
+    output = self._dispatch_impl(func, types, args, kwargs)
+env/venv/lib/python3.11/site-packages/torch/_subclasses/fake_tensor.py:1983: in _dispatch_impl
+    op_impl_out = op_impl(self, func, *args, **kwargs)
+env/venv/lib/python3.11/site-packages/torch/_subclasses/fake_impls.py:147: in dispatch_to_op_implementations_dict
+    return op_implementations_dict[func](fake_mode, func, *args, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+fake_mode = <torch._subclasses.fake_tensor.FakeTensorMode object at 0x7f2beeee75d0>
+func = <OpOverload(op='aten.convolution', overload='default')>
+args = (FakeTensor(..., size=(), dtype=torch.int64), FakeTensor(..., size=(32, 3, 3, 3), dtype=torch.bfloat16), None, [2, 2], [1, 1], [1, 1], ...)
+kwargs = {'bias': None, 'dilation': [1, 1], 'groups': 1, 'input': FakeTensor(..., size=(), dtype=torch.int64), ...}
+_ = (), k = 4
+
+    @register_op_impl([aten.convolution.default, aten.convolution_backward.default])
+    def conv(fake_mode, func, *args, **kwargs):
+        _, kwargs = normalize_function(
+            func, args=args, kwargs=kwargs, normalize_to_only_use_kwargs=True
+        )
+        device = kwargs["input"].fake_device
+        # need to re-enable mode so the tensors report fake device
+        with fake_mode:
+            # if the input is unsqueezed is done in Convolution.cpp we get segfault
+            k = kwargs["weight"].ndim
+>           batch = kwargs["input"].shape[0]
+E           IndexError: tuple index out of range
+
+env/venv/lib/python3.11/site-packages/torch/_subclasses/fake_impls.py:670: IndexError
+
+The above exception was the direct cause of the following exception:
+
+self = <torch._dynamo.output_graph.OutputGraph object at 0x7f2beb798b90>
+gm = GraphModule(
+  (L__self___features_0_0): Conv2d(3, 32, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+..._0): Dropout(p=0.2, inplace=False)
+  (L__self___classifier_1): Linear(in_features=1280, out_features=1000, bias=True)
+)
+
+    def _call_user_compiler(self, gm: fx.GraphModule) -> CompiledFn:
+        assert self.compiler_fn is not None
+        tot = 0
+        placeholders = []
+        for node in gm.graph.nodes:
+            if node.op in ("call_function", "call_method", "call_module"):
+                tot += 1
+            if node.op == "placeholder":
+                placeholders.append(node)
+        increment_op_count(tot)
+        for pl in placeholders:
+            arg = pl.meta["grapharg"]
+            # TODO: Why isn't this stored in meta :think:
+            pl._dynamo_source = arg.source
+
+        gm._param_name_to_source = self.param_name_to_source  # type: ignore[assignment]
+        gm._source_to_user_stacks = self.source_to_user_stacks  # type: ignore[assignment]
+
+        try:
+            name = (
+                self.compiler_fn.__name__
+                if hasattr(self.compiler_fn, "__name__")
+                else ""
+            )
+            _step_logger()(logging.INFO, f"calling compiler function {name}")
+            compiler_fn = self.compiler_fn
+            if config.verify_correctness:
+                compiler_fn = WrapperBackend(compiler_fn)
+>           compiled_fn = compiler_fn(gm, self.example_inputs())
+
+env/venv/lib/python3.11/site-packages/torch/_dynamo/output_graph.py:1446:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+env/venv/lib/python3.11/site-packages/torch/_dynamo/repro/after_dynamo.py:129: in __call__
+    compiled_gm = compiler_fn(gm, example_inputs)
+env/venv/lib/python3.11/site-packages/torch/__init__.py:2280: in __call__
+    return self.compiler_fn(model_, inputs_, **self.kwargs)
+tt_torch/dynamo/backend.py:521: in backend
+    return aot_module_simplified(
+env/venv/lib/python3.11/site-packages/torch/_functorch/aot_autograd.py:1071: in aot_module_simplified
+    compiled_fn = dispatch_and_compile()
+env/venv/lib/python3.11/site-packages/torch/_functorch/aot_autograd.py:1056: in dispatch_and_compile
+    compiled_fn, _ = create_aot_dispatcher_function(
+env/venv/lib/python3.11/site-packages/torch/_functorch/aot_autograd.py:522: in create_aot_dispatcher_function
+    return _create_aot_dispatcher_function(
+env/venv/lib/python3.11/site-packages/torch/_functorch/aot_autograd.py:759: in _create_aot_dispatcher_function
+    compiled_fn, fw_metadata = compiler_fn(
+env/venv/lib/python3.11/site-packages/torch/_functorch/_aot_autograd/jit_compile_runtime_wrappers.py:179: in aot_dispatch_base
+    compiled_fw = compiler(fw_module, updated_flat_args)
+tt_torch/dynamo/backend.py:472: in _base_backend
+    gm, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
+tt_torch/dynamo/passes.py:257: in pass_pipeline
+    run_shape_prop(gm, example_inputs + constant_inputs)
+tt_torch/dynamo/passes.py:31: in run_shape_prop
+    shape_prop.run(*fake_args)
+env/venv/lib/python3.11/site-packages/torch/fx/interpreter.py:146: in run
+    self.env[node] = self.run_node(node)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <torch.fx.passes.shape_prop.ShapeProp object at 0x7f2bce90ed90>
+n = convolution
+
+    def run_node(self, n : Node) -> Any:
+        try:
+            if self.fake_module is not None:
+                # Hacky swap. Alternatively, we could do this with overriding
+                # call_module and get_attr.
+                self.module = self.fake_module
+            try:
+                if self.fake_mode is not None:
+                    with self.fake_mode, enable_python_dispatcher():
+                        result = super().run_node(n)
+                else:
+                    result = super().run_node(n)
+            finally:
+                self.module = self.real_module
+        except Exception as e:
+            traceback.print_exc()
+>           raise RuntimeError(
+                f"ShapeProp error for: node={n.format_node()} with "
+                f"meta={n.meta}"
+            ) from e
+E           RuntimeError: ShapeProp error for: node=%convolution : [num_users=1] = call_function[target=torch.ops.aten.convolution.default](args = (%arg314_1, %arg0_1, None, [2, 2], [1, 1], [1, 1], False, [0, 0], 1), kwargs = {}) with meta={'stack_trace': '  File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torchvision-0.20.0a0+afc54f7-py3.11-linux-x86_64.egg/torchvision/models/mobilenetv2.py", line 174, in forward\n    return self._forward_impl(x)\n  File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torchvision-0.20.0a0+afc54f7-py3.11-linux-x86_64.egg/torchvision/models/mobilenetv2.py", line 166, in _forward_impl\n    x = self.features(x)\n', 'nn_module_stack': {'L__self___features': ("L['self'].features", <class 'torch.nn.modules.container.Sequential'>), 'L__self___features_0': ("getattr(L['self'].features, '0')", <class 'torchvision.ops.misc.Conv2dNormActivation'>), 'L__self___features_0_0': ("getattr(getattr(L['self'].features, '0'), '0')", <class 'torch.nn.modules.conv.Conv2d'>)}, 'source_fn_stack': [('l__self___features_0_0', <class 'torch.nn.modules.conv.Conv2d'>)], 'original_aten': <OpOverload(op='aten.convolution', overload='default')>, 'from_node': [('l__self___features_0_0', 'L__self___features_0_0')], 'seq_nr': 631, 'val': FakeTensor(..., size=(1, 32, 112, 112), dtype=torch.bfloat16), 'tensor_meta': TensorMetadata(shape=torch.Size([1, 32, 112, 112]), dtype=torch.bfloat16, requires_grad=False, stride=(401408, 12544, 112, 1), memory_format=torch.contiguous_format, is_quantized=False, qparams={})}
+E
+E           While executing %convolution : [num_users=1] = call_function[target=torch.ops.aten.convolution.default](args = (%arg314_1, %arg0_1, None, [2, 2], [1, 1], [1, 1], False, [0, 0], 1), kwargs = {})
+E           Original traceback:
+E             File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torchvision-0.20.0a0+afc54f7-py3.11-linux-x86_64.egg/torchvision/models/mobilenetv2.py", line 174, in forward
+E               return self._forward_impl(x)
+E             File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torchvision-0.20.0a0+afc54f7-py3.11-linux-x86_64.egg/torchvision/models/mobilenetv2.py", line 166, in _forward_impl
+E               x = self.features(x)
+
+env/venv/lib/python3.11/site-packages/torch/fx/passes/shape_prop.py:159: RuntimeError
+
+The above exception was the direct cause of the following exception:
+
+record_property = <function record_property.<locals>.append_property at 0x7f2bcf9204a0>
+mode = 'eval', nightly = True
+
+    @pytest.mark.parametrize(
+        "mode",
+        ["eval"],
+    )
+    def test_MobileNetV2(record_property, mode, nightly):
+        model_name = "MobileNetV2"
+        record_property("model_name", model_name)
+        record_property("mode", mode)
+        cc = CompilerConfig()
+        cc.enable_consteval = True
+        cc.consteval_parameters = True
+        if nightly:
+            cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
+
+        tester = ThisTester(model_name, mode, compiler_config=cc)
+>       results = tester.test_model()
+
+tests/models/MobileNetV2/test_MobileNetV2.py:49:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests/utils.py:165: in test_model
+    return self.test_model_eval(on_device)
+env/venv/lib/python3.11/site-packages/torch/utils/_contextlib.py:116: in decorate_context
+    return func(*args, **kwargs)
+tests/utils.py:157: in test_model_eval
+    outputs = self.run_model(model, inputs)
+tests/utils.py:85: in run_model
+    return model(inputs)
+env/venv/lib/python3.11/site-packages/torch/nn/modules/module.py:1736: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+env/venv/lib/python3.11/site-packages/torch/nn/modules/module.py:1747: in _call_impl
+    return forward_call(*args, **kwargs)
+env/venv/lib/python3.11/site-packages/torch/_dynamo/eval_frame.py:465: in _fn
+    return fn(*args, **kwargs)
+env/venv/lib/python3.11/site-packages/torch/nn/modules/module.py:1736: in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+env/venv/lib/python3.11/site-packages/torch/nn/modules/module.py:1747: in _call_impl
+    return forward_call(*args, **kwargs)
+env/venv/lib/python3.11/site-packages/torch/_dynamo/convert_frame.py:1269: in __call__
+    return self._torchdynamo_orig_callable(
+env/venv/lib/python3.11/site-packages/torch/_dynamo/convert_frame.py:1064: in __call__
+    result = self._inner_convert(
+env/venv/lib/python3.11/site-packages/torch/_dynamo/convert_frame.py:526: in __call__
+    return _compile(
+env/venv/lib/python3.11/site-packages/torch/_dynamo/convert_frame.py:924: in _compile
+    guarded_code = compile_inner(code, one_graph, hooks, transform)
+env/venv/lib/python3.11/site-packages/torch/_dynamo/convert_frame.py:666: in compile_inner
+    return _compile_inner(code, one_graph, hooks, transform)
+env/venv/lib/python3.11/site-packages/torch/_utils_internal.py:87: in wrapper_function
+    return function(*args, **kwargs)
+env/venv/lib/python3.11/site-packages/torch/_dynamo/convert_frame.py:699: in _compile_inner
+    out_code = transform_code_object(code, transform)
+env/venv/lib/python3.11/site-packages/torch/_dynamo/bytecode_transformation.py:1322: in transform_code_object
+    transformations(instructions, code_options)
+env/venv/lib/python3.11/site-packages/torch/_dynamo/convert_frame.py:219: in _fn
+    return fn(*args, **kwargs)
+env/venv/lib/python3.11/site-packages/torch/_dynamo/convert_frame.py:634: in transform
+    tracer.run()
+env/venv/lib/python3.11/site-packages/torch/_dynamo/symbolic_convert.py:2796: in run
+    super().run()
+env/venv/lib/python3.11/site-packages/torch/_dynamo/symbolic_convert.py:983: in run
+    while self.step():
+env/venv/lib/python3.11/site-packages/torch/_dynamo/symbolic_convert.py:895: in step
+    self.dispatch_table[inst.opcode](self, inst)
+env/venv/lib/python3.11/site-packages/torch/_dynamo/symbolic_convert.py:2987: in RETURN_VALUE
+    self._return(inst)
+env/venv/lib/python3.11/site-packages/torch/_dynamo/symbolic_convert.py:2972: in _return
+    self.output.compile_subgraph(
+env/venv/lib/python3.11/site-packages/torch/_dynamo/output_graph.py:1117: in compile_subgraph
+    self.compile_and_call_fx_graph(tx, list(reversed(stack_values)), root)
+env/venv/lib/python3.11/site-packages/torch/_dynamo/output_graph.py:1369: in compile_and_call_fx_graph
+    compiled_fn = self.call_user_compiler(gm)
+env/venv/lib/python3.11/site-packages/torch/_dynamo/output_graph.py:1416: in call_user_compiler
+    return self._call_user_compiler(gm)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <torch._dynamo.output_graph.OutputGraph object at 0x7f2beb798b90>
+gm = GraphModule(
+  (L__self___features_0_0): Conv2d(3, 32, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+..._0): Dropout(p=0.2, inplace=False)
+  (L__self___classifier_1): Linear(in_features=1280, out_features=1000, bias=True)
+)
+
+    def _call_user_compiler(self, gm: fx.GraphModule) -> CompiledFn:
+        assert self.compiler_fn is not None
+        tot = 0
+        placeholders = []
+        for node in gm.graph.nodes:
+            if node.op in ("call_function", "call_method", "call_module"):
+                tot += 1
+            if node.op == "placeholder":
+                placeholders.append(node)
+        increment_op_count(tot)
+        for pl in placeholders:
+            arg = pl.meta["grapharg"]
+            # TODO: Why isn't this stored in meta :think:
+            pl._dynamo_source = arg.source
+
+        gm._param_name_to_source = self.param_name_to_source  # type: ignore[assignment]
+        gm._source_to_user_stacks = self.source_to_user_stacks  # type: ignore[assignment]
+
+        try:
+            name = (
+                self.compiler_fn.__name__
+                if hasattr(self.compiler_fn, "__name__")
+                else ""
+            )
+            _step_logger()(logging.INFO, f"calling compiler function {name}")
+            compiler_fn = self.compiler_fn
+            if config.verify_correctness:
+                compiler_fn = WrapperBackend(compiler_fn)
+            compiled_fn = compiler_fn(gm, self.example_inputs())
+            _step_logger()(logging.INFO, f"done compiler function {name}")
+            assert callable(compiled_fn), "compiler_fn did not return callable"
+        except exceptions_allowed_to_be_fallback as e:
+            if self.has_user_defined_allowed_in_graph:
+                raise BackendCompilerFailed(self.compiler_fn, e).with_traceback(
+                    e.__traceback__
+                ) from None
+            msg = (
+                "Backend compiler failed with a fake tensor exception at \n"
+                f"{self.root_tx.format_frame_summary()}"
+                "Adding a graph break."
+            )
+            unimplemented_with_warning(e, self.root_tx.f_code, msg)
+        except SkipFrame as e:
+            # The backend compiler has requested that we skip the frame, instead of
+            # aborting execution.
+            raise e
+        except Exception as e:
+>           raise BackendCompilerFailed(self.compiler_fn, e) from e
+E           torch._dynamo.exc.BackendCompilerFailed: backend='backend' raised:
+E           RuntimeError: ShapeProp error for: node=%convolution : [num_users=1] = call_function[target=torch.ops.aten.convolution.default](args = (%arg314_1, %arg0_1, None, [2, 2], [1, 1], [1, 1], False, [0, 0], 1), kwargs = {}) with meta={'stack_trace': '  File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torchvision-0.20.0a0+afc54f7-py3.11-linux-x86_64.egg/torchvision/models/mobilenetv2.py", line 174, in forward\n    return self._forward_impl(x)\n  File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torchvision-0.20.0a0+afc54f7-py3.11-linux-x86_64.egg/torchvision/models/mobilenetv2.py", line 166, in _forward_impl\n    x = self.features(x)\n', 'nn_module_stack': {'L__self___features': ("L['self'].features", <class 'torch.nn.modules.container.Sequential'>), 'L__self___features_0': ("getattr(L['self'].features, '0')", <class 'torchvision.ops.misc.Conv2dNormActivation'>), 'L__self___features_0_0': ("getattr(getattr(L['self'].features, '0'), '0')", <class 'torch.nn.modules.conv.Conv2d'>)}, 'source_fn_stack': [('l__self___features_0_0', <class 'torch.nn.modules.conv.Conv2d'>)], 'original_aten': <OpOverload(op='aten.convolution', overload='default')>, 'from_node': [('l__self___features_0_0', 'L__self___features_0_0')], 'seq_nr': 631, 'val': FakeTensor(..., size=(1, 32, 112, 112), dtype=torch.bfloat16), 'tensor_meta': TensorMetadata(shape=torch.Size([1, 32, 112, 112]), dtype=torch.bfloat16, requires_grad=False, stride=(401408, 12544, 112, 1), memory_format=torch.contiguous_format, is_quantized=False, qparams={})}
+E
+E           While executing %convolution : [num_users=1] = call_function[target=torch.ops.aten.convolution.default](args = (%arg314_1, %arg0_1, None, [2, 2], [1, 1], [1, 1], False, [0, 0], 1), kwargs = {})
+E           Original traceback:
+E             File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torchvision-0.20.0a0+afc54f7-py3.11-linux-x86_64.egg/torchvision/models/mobilenetv2.py", line 174, in forward
+E               return self._forward_impl(x)
+E             File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torchvision-0.20.0a0+afc54f7-py3.11-linux-x86_64.egg/torchvision/models/mobilenetv2.py", line 166, in _forward_impl
+E               x = self.features(x)
+E
+E
+E           Set TORCH_LOGS="+dynamo" and TORCHDYNAMO_VERBOSE=1 for more information
+E
+E
+E           You can suppress this exception and fall back to eager by setting:
+E               import torch._dynamo
+E               torch._dynamo.config.suppress_errors = True
+
+env/venv/lib/python3.11/site-packages/torch/_dynamo/output_graph.py:1465: BackendCompilerFailed
+=========================== short test summary info ============================
+FAILED tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[True-eval] - torch._dynamo.exc.BackendCompilerFailed: backend='backend' raised:
+RuntimeError: ShapeProp error for: node=%convolution : [num_users=1] = call_function[target=torch.ops.aten.convolution.default](args = (%arg314_1, %arg0_1, None, [2, 2], [1, 1], [1, 1], False, [0, 0], 1), kwargs = {}) with meta={'stack_trace': '  File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torchvision-0.20.0a0+afc54f7-py3.11-linux-x86_64.egg/torchvision/models/mobilenetv2.py", line 174, in forward\n    return self._forward_impl(x)\n  File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torchvision-0.20.0a0+afc54f7-py3.11-linux-x86_64.egg/torchvision/models/mobilenetv2.py", line 166, in _forward_impl\n    x = self.features(x)\n', 'nn_module_stack': {'L__self___features': ("L['self'].features", <class 'torch.nn.modules.container.Sequential'>), 'L__self___features_0': ("getattr(L['self'].features, '0')", <class 'torchvision.ops.misc.Conv2dNormActivation'>), 'L__self___features_0_0': ("getattr(getattr(L['self'].features, '0'), '0')", <class 'torch.nn.modules.conv.Conv2d'>)}, 'source_fn_stack': [('l__self___features_0_0', <class 'torch.nn.modules.conv.Conv2d'>)], 'original_aten': <OpOverload(op='aten.convolution', overload='default')>, 'from_node': [('l__self___features_0_0', 'L__self___features_0_0')], 'seq_nr': 631, 'val': FakeTensor(..., size=(1, 32, 112, 112), dtype=torch.bfloat16), 'tensor_meta': TensorMetadata(shape=torch.Size([1, 32, 112, 112]), dtype=torch.bfloat16, requires_grad=False, stride=(401408, 12544, 112, 1), memory_format=torch.contiguous_format, is_quantized=False, qparams={})}
+
+While executing %convolution : [num_users=1] = call_function[target=torch.ops.aten.convolution.default](args = (%arg314_1, %arg0_1, None, [2, 2], [1, 1], [1, 1], False, [0, 0], 1), kwargs = {})
+Original traceback:
+  File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torchvision-0.20.0a0+afc54f7-py3.11-linux-x86_64.egg/torchvision/models/mobilenetv2.py", line 174, in forward
+    return self._forward_impl(x)
+  File "/localdev/ddilbaz/tt-torch/env/venv/lib/python3.11/site-packages/torchvision-0.20.0a0+afc54f7-py3.11-linux-x86_64.egg/torchvision/models/mobilenetv2.py", line 166, in _forward_impl
+    x = self.features(x)
+
+
+Set TORCH_LOGS="+dynamo" and TORCHDYNAMO_VERBOSE=1 for more information
+
+
+You can suppress this exception and fall back to eager by setting:
+    import torch._dynamo
+    torch._dynamo.config.suppress_errors = True
+============================== 1 failed in 5.32s ===============================

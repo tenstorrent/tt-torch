@@ -1,0 +1,149 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.0rc1, pytest-8.3.5, pluggy-1.5.0 -- /localdev/ddilbaz/tt-torch/env/venv/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /localdev/ddilbaz/tt-torch
+collecting ... The cache for model files in Transformers v4.22.0 has been updated. Migrating your old cache. This is a one-time only operation. You can interrupt this and resume the migration later on by calling `transformers.utils.move_cache()`.
+0it [00:00, ?it/s]0it [00:00, ?it/s]
+collected 4 items
+
+tests/models/autoencoder_conv/test_autoencoder_conv.py::test_autoencoder_conv[True-train] SKIPPED
+tests/models/autoencoder_conv/test_autoencoder_conv.py::test_autoencoder_conv[True-eval] SKIPPED
+tests/models/autoencoder_conv/test_autoencoder_conv_v2.py::test_autoencoder_conv_v2[True-train] Generating train split:   0%|          | 0/60000 [00:00<?, ? examples/s]Generating train split: 100%|██████████| 60000/60000 [00:00<00:00, 658989.59 examples/s]
+Generating test split:   0%|          | 0/10000 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 10000/10000 [00:00<00:00, 627429.58 examples/s]
+Compiling 0/23: primals_1
+Compiling 1/23: primals_2
+Compiling 2/23: primals_3
+Compiling 3/23: primals_4
+Compiling 4/23: primals_5
+Compiling 5/23: primals_6
+Compiling 6/23: primals_7
+Compiling 7/23: primals_8
+Compiling 8/23: primals_9
+Compiling 9/23: aten.convolution.default
+
+[32m2025-03-20 21:40:12.885[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:40:12.885[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:40:12.885[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:40:12.902[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Timeout
+Ran: 9/23: aten.convolution.default
+Failed to execute 9/23: aten.convolution.default: Failed to execute
+Compiling 10/23: aten.relu.default
+
+[32m2025-03-20 21:40:17.966[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:40:17.966[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:40:17.966[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:40:18.004[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 10/23: aten.relu.default
+Compiling 11/23: aten.max_pool2d_with_indices.default
+loc("-":7:12): error: failed to legalize operation 'stablehlo.reduce_window'
+Process Process-5:
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/lib/python3.11/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/localdev/ddilbaz/tt-torch/tt_torch/dynamo/backend.py", line 72, in compile_process
+    ttir = tt_mlir.compile_stable_hlo_to_ttir(asm)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Failed to run StableHLO to TTIR compiler pass pipeline.
+Compiling 12/23: <built-in function getitem>
+Compiling 13/23: <built-in function getitem>
+Compiling 14/23: aten.convolution.default
+
+[32m2025-03-20 21:40:21.377[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:40:21.378[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:40:21.378[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:40:21.414[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Timeout
+Ran: 14/23: aten.convolution.default
+Failed to execute 14/23: aten.convolution.default: Failed to execute
+Compiling 15/23: aten.relu.default
+
+[32m2025-03-20 21:40:26.454[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:40:26.455[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:40:26.455[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:40:26.489[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 15/23: aten.relu.default
+Compiling 16/23: aten.max_pool2d_with_indices.default
+loc("-":7:12): error: failed to legalize operation 'stablehlo.reduce_window'
+Process Process-10:
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/lib/python3.11/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/localdev/ddilbaz/tt-torch/tt_torch/dynamo/backend.py", line 72, in compile_process
+    ttir = tt_mlir.compile_stable_hlo_to_ttir(asm)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Failed to run StableHLO to TTIR compiler pass pipeline.
+Compiling 17/23: <built-in function getitem>
+Compiling 18/23: <built-in function getitem>
+Compiling 19/23: aten.convolution.default
+loc("-":6:10): error: failed to legalize operation 'ttir.reverse'
+Process Process-11:
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/lib/python3.11/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/localdev/ddilbaz/tt-torch/tt_torch/dynamo/backend.py", line 75, in compile_process
+    binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Failed to run TTIR TO TTNN compiler pass pipeline.
+Compiling 20/23: aten.relu.default
+
+[32m2025-03-20 21:40:29.922[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:40:29.922[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:40:29.922[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:40:29.957[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 20/23: aten.relu.default
+Compiling 21/23: aten.convolution.default
+loc("-":6:10): error: failed to legalize operation 'ttir.reverse'
+Process Process-14:
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/lib/python3.11/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/localdev/ddilbaz/tt-torch/tt_torch/dynamo/backend.py", line 75, in compile_process
+    binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Failed to run TTIR TO TTNN compiler pass pipeline.
+Compiling 22/23: output
+#####  Saving unique ops to results/models/tests/models/autoencoder_conv/test_autoencoder_conv_v2_py_test_autoencoder_conv_v2_True-train_ (call)_unique_ops.json#####
+Compiling 0/47: primals_1
+Compiling 1/47: primals_3
+Compiling 2/47: primals_5
+Compiling 3/47: primals_7
+Compiling 4/47: primals_9
+Compiling 5/47: relu
+Compiling 6/47: getitem
+Compiling 7/47: getitem_1
+Compiling 8/47: relu_1
+Compiling 9/47: getitem_2
+Compiling 10/47: getitem_3
+Compiling 11/47: relu_2
+Compiling 12/47: tangents_1
+Compiling 13/47: aten.detach.default
+
+[32m2025-03-20 21:40:33.362[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:40:33.362[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:40:33.362[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:40:33.398[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 13/47: aten.detach.default
+Compiling 14/47: aten.detach.default
+Compiling 15/47: aten.detach.default
+
+[32m2025-03-20 21:40:34.578[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:40:34.578[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:40:34.578[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:40:34.613[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 15/47: aten.detach.default
+Compiling 16/47: aten.detach.default
+Compiling 17/47: aten.detach.default
+
+[32m2025-03-20 21:40:35.743[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 21:40:35.744[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 21:40:35.744[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 21:40:35.782[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)

@@ -1,0 +1,4 @@
+iteration,start_memory_mb,peak_memory_mb,end_memory_mb,execution_time_s,status
+1,13.77,13.77,13.77,1.34,FAIL (code: 4)
+2,13.77,13.77,13.77,1.33,FAIL (code: 4)
+3,13.77,13.77,13.77,1.33,FAIL (code: 4)

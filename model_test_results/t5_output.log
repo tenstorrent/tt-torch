@@ -1,0 +1,18 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.0rc1, pytest-8.3.5, pluggy-1.5.0 -- /localdev/ddilbaz/tt-torch/env/venv/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /localdev/ddilbaz/tt-torch
+collecting ... collected 3 items
+
+tests/models/t5/test_t5.py::test_t5[True-t5-small-eval] You are using the default legacy behaviour of the <class 'transformers.models.t5.tokenization_t5.T5Tokenizer'>. This is expected, and simply means that the `legacy` (previous) behavior will be used so nothing changes for you. If you want to use the new behaviour, set `legacy=False`. This should only be set if you understand what it means, and thoroughly read the reason why this was added as explained in https://github.com/huggingface/transformers/pull/24565
+XFAIL (Fails due
+to pt2 compile issue when finishing generation, but we can still
+generate a graph)
+tests/models/t5/test_t5.py::test_t5[True-t5-base-eval] XFAIL (Fails due
+to pt2 compile issue when finishing generation, but we can still
+generate a graph)
+tests/models/t5/test_t5.py::test_t5[True-t5-large-eval] XFAIL (Fails due
+to pt2 compile issue when finishing generation, but we can still
+generate a graph)
+
+======================== 3 xfailed in 319.82s (0:05:19) ========================

@@ -1,0 +1,76 @@
+Model Test Summary (Thu Mar 20 07:48:13 PM UTC 2025)
+====================================
+
+[1/51] Test: stable_diffusion
+  Status: FAILED
+
+[2/51] Test: Qwen
+  Status: PASSED
+
+[3/51] Test: MobileNetV2
+  Status: FAILED
+
+[4/51] Test: clip
+  Status: PASSED
+
+[5/51] Test: flan_t5
+  Status: PASSED
+
+[6/51] Test: mlpmixer
+  Status: PASSED
+
+[7/51] Test: resnet
+  Status: FAILED
+
+[8/51] Test: vilt
+  Status: PASSED
+
+[9/51] Test: albert
+  Status: PASSED
+
+[10/51] Test: codegen
+  Status: PASSED
+
+[11/51] Test: glpn_kitti
+  Status: FAILED
+
+[12/51] Test: mnist
+  Status: PASSED
+
+[13/51] Test: resnet50
+  Status: FAILED
+
+[14/51] Test: RMBG
+  Status: PASSED
+
+[15/51] Test: unet_carvana
+  Status: FAILED
+
+[16/51] Test: mgp-str-base
+  Status: PASSED
+
+[17/51] Test: musicgen_small
+  Status: PASSED
+
+[18/51] Test: segformer
+  Status: FAILED
+
+[19/51] Test: torchvision
+  Status: PASSED
+
+[20/51] Test: yolos
+  Status: PASSED
+
+[21/51] Test: t5
+  Status: PASSED
+
+[22/51] Test: whisper
+  Status: PASSED
+
+[23/51] Test: autoencoder_conv
+====================================
+SUMMARY:
+Total tests: 51
+Passed: 15
+Failed: 7
+Success rate: 29%

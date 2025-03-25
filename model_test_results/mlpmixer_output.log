@@ -1,0 +1,1218 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.0rc1, pytest-8.3.5, pluggy-1.5.0 -- /localdev/ddilbaz/tt-torch/env/venv/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /localdev/ddilbaz/tt-torch
+collecting ... collected 2 items
+
+tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[True-train] SKIPPED
+tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[True-eval] Compiling 0/837: arg0_1
+Compiling 1/837: arg1_1
+Compiling 2/837: arg2_1
+Compiling 3/837: arg3_1
+Compiling 4/837: arg4_1
+Compiling 5/837: arg5_1
+Compiling 6/837: arg6_1
+Compiling 7/837: arg7_1
+Compiling 8/837: arg8_1
+Compiling 9/837: arg9_1
+Compiling 10/837: arg10_1
+Compiling 11/837: arg11_1
+Compiling 12/837: arg12_1
+Compiling 13/837: arg13_1
+Compiling 14/837: arg14_1
+Compiling 15/837: arg15_1
+Compiling 16/837: arg16_1
+Compiling 17/837: arg17_1
+Compiling 18/837: arg18_1
+Compiling 19/837: arg19_1
+Compiling 20/837: arg20_1
+Compiling 21/837: arg21_1
+Compiling 22/837: arg22_1
+Compiling 23/837: arg23_1
+Compiling 24/837: arg24_1
+Compiling 25/837: arg25_1
+Compiling 26/837: arg26_1
+Compiling 27/837: arg27_1
+Compiling 28/837: arg28_1
+Compiling 29/837: arg29_1
+Compiling 30/837: arg30_1
+Compiling 31/837: arg31_1
+Compiling 32/837: arg32_1
+Compiling 33/837: arg33_1
+Compiling 34/837: arg34_1
+Compiling 35/837: arg35_1
+Compiling 36/837: arg36_1
+Compiling 37/837: arg37_1
+Compiling 38/837: arg38_1
+Compiling 39/837: arg39_1
+Compiling 40/837: arg40_1
+Compiling 41/837: arg41_1
+Compiling 42/837: arg42_1
+Compiling 43/837: arg43_1
+Compiling 44/837: arg44_1
+Compiling 45/837: arg45_1
+Compiling 46/837: arg46_1
+Compiling 47/837: arg47_1
+Compiling 48/837: arg48_1
+Compiling 49/837: arg49_1
+Compiling 50/837: arg50_1
+Compiling 51/837: arg51_1
+Compiling 52/837: arg52_1
+Compiling 53/837: arg53_1
+Compiling 54/837: arg54_1
+Compiling 55/837: arg55_1
+Compiling 56/837: arg56_1
+Compiling 57/837: arg57_1
+Compiling 58/837: arg58_1
+Compiling 59/837: arg59_1
+Compiling 60/837: arg60_1
+Compiling 61/837: arg61_1
+Compiling 62/837: arg62_1
+Compiling 63/837: arg63_1
+Compiling 64/837: arg64_1
+Compiling 65/837: arg65_1
+Compiling 66/837: arg66_1
+Compiling 67/837: arg67_1
+Compiling 68/837: arg68_1
+Compiling 69/837: arg69_1
+Compiling 70/837: arg70_1
+Compiling 71/837: arg71_1
+Compiling 72/837: arg72_1
+Compiling 73/837: arg73_1
+Compiling 74/837: arg74_1
+Compiling 75/837: arg75_1
+Compiling 76/837: arg76_1
+Compiling 77/837: arg77_1
+Compiling 78/837: arg78_1
+Compiling 79/837: arg79_1
+Compiling 80/837: arg80_1
+Compiling 81/837: arg81_1
+Compiling 82/837: arg82_1
+Compiling 83/837: arg83_1
+Compiling 84/837: arg84_1
+Compiling 85/837: arg85_1
+Compiling 86/837: arg86_1
+Compiling 87/837: arg87_1
+Compiling 88/837: arg88_1
+Compiling 89/837: arg89_1
+Compiling 90/837: arg90_1
+Compiling 91/837: arg91_1
+Compiling 92/837: arg92_1
+Compiling 93/837: arg93_1
+Compiling 94/837: arg94_1
+Compiling 95/837: arg95_1
+Compiling 96/837: arg96_1
+Compiling 97/837: arg97_1
+Compiling 98/837: arg98_1
+Compiling 99/837: arg99_1
+Compiling 100/837: arg100_1
+Compiling 101/837: arg101_1
+Compiling 102/837: arg102_1
+Compiling 103/837: arg103_1
+Compiling 104/837: arg104_1
+Compiling 105/837: arg105_1
+Compiling 106/837: arg106_1
+Compiling 107/837: arg107_1
+Compiling 108/837: arg108_1
+Compiling 109/837: arg109_1
+Compiling 110/837: arg110_1
+Compiling 111/837: arg111_1
+Compiling 112/837: arg112_1
+Compiling 113/837: arg113_1
+Compiling 114/837: arg114_1
+Compiling 115/837: arg115_1
+Compiling 116/837: arg116_1
+Compiling 117/837: arg117_1
+Compiling 118/837: arg118_1
+Compiling 119/837: arg119_1
+Compiling 120/837: arg120_1
+Compiling 121/837: arg121_1
+Compiling 122/837: arg122_1
+Compiling 123/837: arg123_1
+Compiling 124/837: arg124_1
+Compiling 125/837: arg125_1
+Compiling 126/837: arg126_1
+Compiling 127/837: arg127_1
+Compiling 128/837: arg128_1
+Compiling 129/837: arg129_1
+Compiling 130/837: arg130_1
+Compiling 131/837: arg131_1
+Compiling 132/837: arg132_1
+Compiling 133/837: arg133_1
+Compiling 134/837: arg134_1
+Compiling 135/837: arg135_1
+Compiling 136/837: arg136_1
+Compiling 137/837: arg137_1
+Compiling 138/837: arg138_1
+Compiling 139/837: arg139_1
+Compiling 140/837: arg140_1
+Compiling 141/837: arg141_1
+Compiling 142/837: arg142_1
+Compiling 143/837: arg143_1
+Compiling 144/837: arg144_1
+Compiling 145/837: arg145_1
+Compiling 146/837: arg146_1
+Compiling 147/837: arg147_1
+Compiling 148/837: arg148_1
+Compiling 149/837: arg149_1
+Compiling 150/837: arg150_1
+Compiling 151/837: aten.view.default
+
+[32m2025-03-20 20:40:51.109[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:40:51.110[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:40:51.110[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:40:51.152[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 151/837: aten.view.default
+Compiling 152/837: aten.permute.default
+
+[32m2025-03-20 20:40:53.570[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:40:53.571[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:40:53.571[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:40:53.616[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 152/837: aten.permute.default
+Compiling 153/837: aten.clone.default
+
+[32m2025-03-20 20:40:56.182[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:40:56.183[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:40:56.183[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:40:56.218[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 0 is not contiguous. Converting to contiguous in-place.
+Ran: 153/837: aten.clone.default
+Failed to execute 153/837: aten.clone.default: Failed to execute
+Compiling 154/837: aten._unsafe_view.default
+
+[32m2025-03-20 20:40:57.434[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:40:57.434[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:40:57.434[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:40:57.469[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 154/837: aten._unsafe_view.default
+Compiling 155/837: aten.view.default
+
+[32m2025-03-20 20:40:59.895[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:40:59.896[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:40:59.896[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:40:59.932[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 155/837: aten.view.default
+Compiling 156/837: aten.transpose.int
+
+[32m2025-03-20 20:41:01.406[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:01.407[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:01.407[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:01.449[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 156/837: aten.transpose.int
+Compiling 157/837: prims.convert_element_type.default
+
+[32m2025-03-20 20:41:03.217[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:03.217[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:03.217[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:03.253[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 157/837: prims.convert_element_type.default
+Compiling 158/837: prims.convert_element_type.default
+
+[32m2025-03-20 20:41:05.128[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:05.128[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:05.128[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:05.172[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 158/837: prims.convert_element_type.default
+Compiling 159/837: prims.convert_element_type.default
+
+[32m2025-03-20 20:41:06.990[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:06.990[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:06.990[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:07.025[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 0 is not contiguous. Converting to contiguous in-place.
+Ran: 159/837: prims.convert_element_type.default
+Compiling 160/837: aten.mm.default
+
+[32m2025-03-20 20:41:08.853[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:08.854[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:08.854[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:08.896[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 1 is not contiguous. Converting to contiguous in-place.
+Ran: 160/837: aten.mm.default
+Compiling 161/837: aten.mul.Tensor
+
+[32m2025-03-20 20:41:10.415[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:10.416[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:10.416[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:10.450[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 161/837: aten.mul.Tensor
+Compiling 162/837: aten.mul.Tensor
+
+[32m2025-03-20 20:41:12.827[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:12.828[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:12.828[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:12.864[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 162/837: aten.mul.Tensor
+Compiling 163/837: aten.add.Tensor
+
+[32m2025-03-20 20:41:15.692[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:15.693[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:15.693[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:15.730[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 163/837: aten.add.Tensor
+Compiling 164/837: prims.convert_element_type.default
+
+[32m2025-03-20 20:41:17.503[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:17.503[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:17.503[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:17.537[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 164/837: prims.convert_element_type.default
+Compiling 165/837: aten.view.default
+
+[32m2025-03-20 20:41:18.963[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:18.964[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:18.964[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:18.997[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 165/837: aten.view.default
+Compiling 166/837: prims.convert_element_type.default
+
+[32m2025-03-20 20:41:20.422[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:20.423[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:20.423[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:20.463[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 166/837: prims.convert_element_type.default
+Compiling 167/837: aten.var_mean.correction
+
+[32m2025-03-20 20:41:22.288[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:22.288[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:22.289[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:22.325[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Timeout
+Ran: 167/837: aten.var_mean.correction
+Failed to execute 167/837: aten.var_mean.correction: Failed to execute
+Compiling 168/837: <built-in function getitem>
+Compiling 169/837: <built-in function getitem>
+Compiling 170/837: aten.add.Tensor
+
+[32m2025-03-20 20:41:27.359[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:27.360[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:27.360[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:27.404[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 170/837: aten.add.Tensor
+Compiling 171/837: aten.rsqrt.default
+
+[32m2025-03-20 20:41:29.872[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:29.872[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:29.872[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:29.909[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 171/837: aten.rsqrt.default
+Compiling 172/837: aten.sub.Tensor
+
+[32m2025-03-20 20:41:31.432[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:31.433[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:31.433[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:31.465[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 172/837: aten.sub.Tensor
+Compiling 173/837: aten.mul.Tensor
+
+[32m2025-03-20 20:41:33.946[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:33.947[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:33.947[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:33.985[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 173/837: aten.mul.Tensor
+Compiling 174/837: aten.mul.Tensor
+
+[32m2025-03-20 20:41:35.708[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:35.708[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:35.708[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:35.748[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 174/837: aten.mul.Tensor
+Compiling 175/837: aten.add.Tensor
+
+[32m2025-03-20 20:41:38.223[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:38.223[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:38.223[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:38.259[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 175/837: aten.add.Tensor
+Compiling 176/837: prims.convert_element_type.default
+
+[32m2025-03-20 20:41:40.736[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:40.737[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:40.737[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:40.772[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 176/837: prims.convert_element_type.default
+Compiling 177/837: aten.convolution.default
+
+[32m2025-03-20 20:41:42.250[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:42.250[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:42.250[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:42.269[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Timeout
+Ran: 177/837: aten.convolution.default
+Failed to execute 177/837: aten.convolution.default: Failed to execute
+Compiling 178/837: aten.gelu.default
+
+[32m2025-03-20 20:41:47.345[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:47.346[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:47.346[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:47.409[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Timeout
+Ran: 178/837: aten.gelu.default
+Failed to execute 178/837: aten.gelu.default: Failed to execute
+Compiling 179/837: aten.clone.default
+
+[32m2025-03-20 20:41:52.416[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:52.417[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:52.417[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:52.452[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 179/837: aten.clone.default
+Compiling 180/837: aten.convolution.default
+
+[32m2025-03-20 20:41:53.577[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:53.578[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:53.578[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:53.618[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Timeout
+Ran: 180/837: aten.convolution.default
+Failed to execute 180/837: aten.convolution.default: Failed to execute
+Compiling 181/837: aten.clone.default
+
+[32m2025-03-20 20:41:58.657[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:58.658[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:58.658[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:58.713[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 181/837: aten.clone.default
+Compiling 182/837: aten.add.Tensor
+
+[32m2025-03-20 20:41:59.815[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:41:59.816[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:41:59.816[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:41:59.853[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 182/837: aten.add.Tensor
+Compiling 183/837: prims.convert_element_type.default
+Compiling 184/837: aten.var_mean.correction
+Compiling 185/837: <built-in function getitem>
+Compiling 186/837: <built-in function getitem>
+Compiling 187/837: aten.add.Tensor
+Compiling 188/837: aten.rsqrt.default
+Compiling 189/837: aten.sub.Tensor
+Compiling 190/837: aten.mul.Tensor
+Compiling 191/837: aten.mul.Tensor
+Compiling 192/837: aten.add.Tensor
+Compiling 193/837: prims.convert_element_type.default
+Compiling 194/837: aten.view.default
+
+[32m2025-03-20 20:42:01.727[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:01.728[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:01.728[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:01.761[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 194/837: aten.view.default
+Compiling 195/837: aten.transpose.int
+
+[32m2025-03-20 20:42:03.237[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:03.238[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:03.238[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:03.276[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 195/837: aten.transpose.int
+Compiling 196/837: prims.convert_element_type.default
+
+[32m2025-03-20 20:42:05.048[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:05.049[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:05.049[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:05.088[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 196/837: prims.convert_element_type.default
+Compiling 197/837: prims.convert_element_type.default
+
+[32m2025-03-20 20:42:06.859[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:06.860[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:06.860[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:06.900[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 197/837: prims.convert_element_type.default
+Compiling 198/837: prims.convert_element_type.default
+
+[32m2025-03-20 20:42:08.721[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:08.722[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:08.722[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:08.762[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 0 is not contiguous. Converting to contiguous in-place.
+Ran: 198/837: prims.convert_element_type.default
+Compiling 199/837: aten.mm.default
+
+[32m2025-03-20 20:42:10.535[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:10.536[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:10.536[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:10.573[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 1 is not contiguous. Converting to contiguous in-place.
+Ran: 199/837: aten.mm.default
+Compiling 200/837: aten.mul.Tensor
+
+[32m2025-03-20 20:42:12.247[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:12.248[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:12.248[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:12.271[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 200/837: aten.mul.Tensor
+Compiling 201/837: aten.mul.Tensor
+
+[32m2025-03-20 20:42:14.360[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:14.361[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:14.361[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:14.397[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 201/837: aten.mul.Tensor
+Compiling 202/837: aten.add.Tensor
+
+[32m2025-03-20 20:42:17.224[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:17.225[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:17.225[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:17.264[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 202/837: aten.add.Tensor
+Compiling 203/837: prims.convert_element_type.default
+
+[32m2025-03-20 20:42:19.086[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:19.086[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:19.086[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:19.127[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 203/837: prims.convert_element_type.default
+Compiling 204/837: aten.view.default
+
+[32m2025-03-20 20:42:20.596[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:20.597[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:20.597[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:20.630[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 204/837: aten.view.default
+Compiling 205/837: aten.gelu.default
+
+[32m2025-03-20 20:42:22.069[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:22.070[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:22.070[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:22.111[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Timeout
+Ran: 205/837: aten.gelu.default
+Failed to execute 205/837: aten.gelu.default: Failed to execute
+Compiling 206/837: aten.clone.default
+
+[32m2025-03-20 20:42:27.151[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:27.152[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:27.152[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:27.207[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 206/837: aten.clone.default
+Compiling 207/837: aten.view.default
+
+[32m2025-03-20 20:42:28.311[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:28.311[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:28.311[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:28.345[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 207/837: aten.view.default
+Compiling 208/837: aten.transpose.int
+
+[32m2025-03-20 20:42:29.821[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:29.822[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:29.822[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:29.860[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 208/837: aten.transpose.int
+Compiling 209/837: prims.convert_element_type.default
+Compiling 210/837: prims.convert_element_type.default
+
+[32m2025-03-20 20:42:31.632[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:31.632[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:31.632[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:31.672[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 210/837: prims.convert_element_type.default
+Compiling 211/837: prims.convert_element_type.default
+Compiling 212/837: aten.mm.default
+
+[32m2025-03-20 20:42:33.495[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:33.495[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:33.495[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:33.529[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 1 is not contiguous. Converting to contiguous in-place.
+Ran: 212/837: aten.mm.default
+Compiling 213/837: aten.mul.Tensor
+Compiling 214/837: aten.mul.Tensor
+Compiling 215/837: aten.add.Tensor
+Compiling 216/837: prims.convert_element_type.default
+Compiling 217/837: aten.view.default
+Compiling 218/837: aten.clone.default
+Compiling 219/837: aten.add.Tensor
+Compiling 220/837: prims.convert_element_type.default
+Compiling 221/837: aten.var_mean.correction
+Compiling 222/837: <built-in function getitem>
+Compiling 223/837: <built-in function getitem>
+Compiling 224/837: aten.add.Tensor
+Compiling 225/837: aten.rsqrt.default
+Compiling 226/837: aten.sub.Tensor
+Compiling 227/837: aten.mul.Tensor
+Compiling 228/837: aten.mul.Tensor
+Compiling 229/837: aten.add.Tensor
+Compiling 230/837: prims.convert_element_type.default
+Compiling 231/837: aten.convolution.default
+Compiling 232/837: aten.gelu.default
+Compiling 233/837: aten.clone.default
+Compiling 234/837: aten.convolution.default
+Compiling 235/837: aten.clone.default
+Compiling 236/837: aten.add.Tensor
+Compiling 237/837: prims.convert_element_type.default
+Compiling 238/837: aten.var_mean.correction
+Compiling 239/837: <built-in function getitem>
+Compiling 240/837: <built-in function getitem>
+Compiling 241/837: aten.add.Tensor
+Compiling 242/837: aten.rsqrt.default
+Compiling 243/837: aten.sub.Tensor
+Compiling 244/837: aten.mul.Tensor
+Compiling 245/837: aten.mul.Tensor
+Compiling 246/837: aten.add.Tensor
+Compiling 247/837: prims.convert_element_type.default
+Compiling 248/837: aten.view.default
+Compiling 249/837: aten.transpose.int
+Compiling 250/837: prims.convert_element_type.default
+Compiling 251/837: prims.convert_element_type.default
+Compiling 252/837: prims.convert_element_type.default
+Compiling 253/837: aten.mm.default
+Compiling 254/837: aten.mul.Tensor
+Compiling 255/837: aten.mul.Tensor
+Compiling 256/837: aten.add.Tensor
+Compiling 257/837: prims.convert_element_type.default
+Compiling 258/837: aten.view.default
+Compiling 259/837: aten.gelu.default
+Compiling 260/837: aten.clone.default
+Compiling 261/837: aten.view.default
+Compiling 262/837: aten.transpose.int
+Compiling 263/837: prims.convert_element_type.default
+Compiling 264/837: prims.convert_element_type.default
+Compiling 265/837: prims.convert_element_type.default
+Compiling 266/837: aten.mm.default
+Compiling 267/837: aten.mul.Tensor
+Compiling 268/837: aten.mul.Tensor
+Compiling 269/837: aten.add.Tensor
+Compiling 270/837: prims.convert_element_type.default
+Compiling 271/837: aten.view.default
+Compiling 272/837: aten.clone.default
+Compiling 273/837: aten.add.Tensor
+Compiling 274/837: prims.convert_element_type.default
+Compiling 275/837: aten.var_mean.correction
+Compiling 276/837: <built-in function getitem>
+Compiling 277/837: <built-in function getitem>
+Compiling 278/837: aten.add.Tensor
+Compiling 279/837: aten.rsqrt.default
+Compiling 280/837: aten.sub.Tensor
+Compiling 281/837: aten.mul.Tensor
+Compiling 282/837: aten.mul.Tensor
+Compiling 283/837: aten.add.Tensor
+Compiling 284/837: prims.convert_element_type.default
+Compiling 285/837: aten.convolution.default
+Compiling 286/837: aten.gelu.default
+Compiling 287/837: aten.clone.default
+Compiling 288/837: aten.convolution.default
+Compiling 289/837: aten.clone.default
+Compiling 290/837: aten.add.Tensor
+Compiling 291/837: prims.convert_element_type.default
+Compiling 292/837: aten.var_mean.correction
+Compiling 293/837: <built-in function getitem>
+Compiling 294/837: <built-in function getitem>
+Compiling 295/837: aten.add.Tensor
+Compiling 296/837: aten.rsqrt.default
+Compiling 297/837: aten.sub.Tensor
+Compiling 298/837: aten.mul.Tensor
+Compiling 299/837: aten.mul.Tensor
+Compiling 300/837: aten.add.Tensor
+Compiling 301/837: prims.convert_element_type.default
+Compiling 302/837: aten.view.default
+Compiling 303/837: aten.transpose.int
+Compiling 304/837: prims.convert_element_type.default
+Compiling 305/837: prims.convert_element_type.default
+Compiling 306/837: prims.convert_element_type.default
+Compiling 307/837: aten.mm.default
+Compiling 308/837: aten.mul.Tensor
+Compiling 309/837: aten.mul.Tensor
+Compiling 310/837: aten.add.Tensor
+Compiling 311/837: prims.convert_element_type.default
+Compiling 312/837: aten.view.default
+Compiling 313/837: aten.gelu.default
+Compiling 314/837: aten.clone.default
+Compiling 315/837: aten.view.default
+Compiling 316/837: aten.transpose.int
+Compiling 317/837: prims.convert_element_type.default
+Compiling 318/837: prims.convert_element_type.default
+Compiling 319/837: prims.convert_element_type.default
+Compiling 320/837: aten.mm.default
+Compiling 321/837: aten.mul.Tensor
+Compiling 322/837: aten.mul.Tensor
+Compiling 323/837: aten.add.Tensor
+Compiling 324/837: prims.convert_element_type.default
+Compiling 325/837: aten.view.default
+Compiling 326/837: aten.clone.default
+Compiling 327/837: aten.add.Tensor
+Compiling 328/837: prims.convert_element_type.default
+Compiling 329/837: aten.var_mean.correction
+Compiling 330/837: <built-in function getitem>
+Compiling 331/837: <built-in function getitem>
+Compiling 332/837: aten.add.Tensor
+Compiling 333/837: aten.rsqrt.default
+Compiling 334/837: aten.sub.Tensor
+Compiling 335/837: aten.mul.Tensor
+Compiling 336/837: aten.mul.Tensor
+Compiling 337/837: aten.add.Tensor
+Compiling 338/837: prims.convert_element_type.default
+Compiling 339/837: aten.convolution.default
+Compiling 340/837: aten.gelu.default
+Compiling 341/837: aten.clone.default
+Compiling 342/837: aten.convolution.default
+Compiling 343/837: aten.clone.default
+Compiling 344/837: aten.add.Tensor
+Compiling 345/837: prims.convert_element_type.default
+Compiling 346/837: aten.var_mean.correction
+Compiling 347/837: <built-in function getitem>
+Compiling 348/837: <built-in function getitem>
+Compiling 349/837: aten.add.Tensor
+Compiling 350/837: aten.rsqrt.default
+Compiling 351/837: aten.sub.Tensor
+Compiling 352/837: aten.mul.Tensor
+Compiling 353/837: aten.mul.Tensor
+Compiling 354/837: aten.add.Tensor
+Compiling 355/837: prims.convert_element_type.default
+Compiling 356/837: aten.view.default
+Compiling 357/837: aten.transpose.int
+Compiling 358/837: prims.convert_element_type.default
+Compiling 359/837: prims.convert_element_type.default
+Compiling 360/837: prims.convert_element_type.default
+Compiling 361/837: aten.mm.default
+Compiling 362/837: aten.mul.Tensor
+Compiling 363/837: aten.mul.Tensor
+Compiling 364/837: aten.add.Tensor
+Compiling 365/837: prims.convert_element_type.default
+Compiling 366/837: aten.view.default
+Compiling 367/837: aten.gelu.default
+Compiling 368/837: aten.clone.default
+Compiling 369/837: aten.view.default
+Compiling 370/837: aten.transpose.int
+Compiling 371/837: prims.convert_element_type.default
+Compiling 372/837: prims.convert_element_type.default
+Compiling 373/837: prims.convert_element_type.default
+Compiling 374/837: aten.mm.default
+Compiling 375/837: aten.mul.Tensor
+Compiling 376/837: aten.mul.Tensor
+Compiling 377/837: aten.add.Tensor
+Compiling 378/837: prims.convert_element_type.default
+Compiling 379/837: aten.view.default
+Compiling 380/837: aten.clone.default
+Compiling 381/837: aten.add.Tensor
+Compiling 382/837: prims.convert_element_type.default
+Compiling 383/837: aten.var_mean.correction
+Compiling 384/837: <built-in function getitem>
+Compiling 385/837: <built-in function getitem>
+Compiling 386/837: aten.add.Tensor
+Compiling 387/837: aten.rsqrt.default
+Compiling 388/837: aten.sub.Tensor
+Compiling 389/837: aten.mul.Tensor
+Compiling 390/837: aten.mul.Tensor
+Compiling 391/837: aten.add.Tensor
+Compiling 392/837: prims.convert_element_type.default
+Compiling 393/837: aten.convolution.default
+Compiling 394/837: aten.gelu.default
+Compiling 395/837: aten.clone.default
+Compiling 396/837: aten.convolution.default
+Compiling 397/837: aten.clone.default
+Compiling 398/837: aten.add.Tensor
+Compiling 399/837: prims.convert_element_type.default
+Compiling 400/837: aten.var_mean.correction
+Compiling 401/837: <built-in function getitem>
+Compiling 402/837: <built-in function getitem>
+Compiling 403/837: aten.add.Tensor
+Compiling 404/837: aten.rsqrt.default
+Compiling 405/837: aten.sub.Tensor
+Compiling 406/837: aten.mul.Tensor
+Compiling 407/837: aten.mul.Tensor
+Compiling 408/837: aten.add.Tensor
+Compiling 409/837: prims.convert_element_type.default
+Compiling 410/837: aten.view.default
+Compiling 411/837: aten.transpose.int
+Compiling 412/837: prims.convert_element_type.default
+Compiling 413/837: prims.convert_element_type.default
+Compiling 414/837: prims.convert_element_type.default
+Compiling 415/837: aten.mm.default
+Compiling 416/837: aten.mul.Tensor
+Compiling 417/837: aten.mul.Tensor
+Compiling 418/837: aten.add.Tensor
+Compiling 419/837: prims.convert_element_type.default
+Compiling 420/837: aten.view.default
+Compiling 421/837: aten.gelu.default
+Compiling 422/837: aten.clone.default
+Compiling 423/837: aten.view.default
+Compiling 424/837: aten.transpose.int
+Compiling 425/837: prims.convert_element_type.default
+Compiling 426/837: prims.convert_element_type.default
+Compiling 427/837: prims.convert_element_type.default
+Compiling 428/837: aten.mm.default
+Compiling 429/837: aten.mul.Tensor
+Compiling 430/837: aten.mul.Tensor
+Compiling 431/837: aten.add.Tensor
+Compiling 432/837: prims.convert_element_type.default
+Compiling 433/837: aten.view.default
+Compiling 434/837: aten.clone.default
+Compiling 435/837: aten.add.Tensor
+Compiling 436/837: prims.convert_element_type.default
+Compiling 437/837: aten.var_mean.correction
+Compiling 438/837: <built-in function getitem>
+Compiling 439/837: <built-in function getitem>
+Compiling 440/837: aten.add.Tensor
+Compiling 441/837: aten.rsqrt.default
+Compiling 442/837: aten.sub.Tensor
+Compiling 443/837: aten.mul.Tensor
+Compiling 444/837: aten.mul.Tensor
+Compiling 445/837: aten.add.Tensor
+Compiling 446/837: prims.convert_element_type.default
+Compiling 447/837: aten.convolution.default
+Compiling 448/837: aten.gelu.default
+Compiling 449/837: aten.clone.default
+Compiling 450/837: aten.convolution.default
+Compiling 451/837: aten.clone.default
+Compiling 452/837: aten.add.Tensor
+Compiling 453/837: prims.convert_element_type.default
+Compiling 454/837: aten.var_mean.correction
+Compiling 455/837: <built-in function getitem>
+Compiling 456/837: <built-in function getitem>
+Compiling 457/837: aten.add.Tensor
+Compiling 458/837: aten.rsqrt.default
+Compiling 459/837: aten.sub.Tensor
+Compiling 460/837: aten.mul.Tensor
+Compiling 461/837: aten.mul.Tensor
+Compiling 462/837: aten.add.Tensor
+Compiling 463/837: prims.convert_element_type.default
+Compiling 464/837: aten.view.default
+Compiling 465/837: aten.transpose.int
+Compiling 466/837: prims.convert_element_type.default
+Compiling 467/837: prims.convert_element_type.default
+Compiling 468/837: prims.convert_element_type.default
+Compiling 469/837: aten.mm.default
+Compiling 470/837: aten.mul.Tensor
+Compiling 471/837: aten.mul.Tensor
+Compiling 472/837: aten.add.Tensor
+Compiling 473/837: prims.convert_element_type.default
+Compiling 474/837: aten.view.default
+Compiling 475/837: aten.gelu.default
+Compiling 476/837: aten.clone.default
+Compiling 477/837: aten.view.default
+Compiling 478/837: aten.transpose.int
+Compiling 479/837: prims.convert_element_type.default
+Compiling 480/837: prims.convert_element_type.default
+Compiling 481/837: prims.convert_element_type.default
+Compiling 482/837: aten.mm.default
+Compiling 483/837: aten.mul.Tensor
+Compiling 484/837: aten.mul.Tensor
+Compiling 485/837: aten.add.Tensor
+Compiling 486/837: prims.convert_element_type.default
+Compiling 487/837: aten.view.default
+Compiling 488/837: aten.clone.default
+Compiling 489/837: aten.add.Tensor
+Compiling 490/837: prims.convert_element_type.default
+Compiling 491/837: aten.var_mean.correction
+Compiling 492/837: <built-in function getitem>
+Compiling 493/837: <built-in function getitem>
+Compiling 494/837: aten.add.Tensor
+Compiling 495/837: aten.rsqrt.default
+Compiling 496/837: aten.sub.Tensor
+Compiling 497/837: aten.mul.Tensor
+Compiling 498/837: aten.mul.Tensor
+Compiling 499/837: aten.add.Tensor
+Compiling 500/837: prims.convert_element_type.default
+Compiling 501/837: aten.convolution.default
+Compiling 502/837: aten.gelu.default
+Compiling 503/837: aten.clone.default
+Compiling 504/837: aten.convolution.default
+Compiling 505/837: aten.clone.default
+Compiling 506/837: aten.add.Tensor
+Compiling 507/837: prims.convert_element_type.default
+Compiling 508/837: aten.var_mean.correction
+Compiling 509/837: <built-in function getitem>
+Compiling 510/837: <built-in function getitem>
+Compiling 511/837: aten.add.Tensor
+Compiling 512/837: aten.rsqrt.default
+Compiling 513/837: aten.sub.Tensor
+Compiling 514/837: aten.mul.Tensor
+Compiling 515/837: aten.mul.Tensor
+Compiling 516/837: aten.add.Tensor
+Compiling 517/837: prims.convert_element_type.default
+Compiling 518/837: aten.view.default
+Compiling 519/837: aten.transpose.int
+Compiling 520/837: prims.convert_element_type.default
+Compiling 521/837: prims.convert_element_type.default
+Compiling 522/837: prims.convert_element_type.default
+Compiling 523/837: aten.mm.default
+Compiling 524/837: aten.mul.Tensor
+Compiling 525/837: aten.mul.Tensor
+Compiling 526/837: aten.add.Tensor
+Compiling 527/837: prims.convert_element_type.default
+Compiling 528/837: aten.view.default
+Compiling 529/837: aten.gelu.default
+Compiling 530/837: aten.clone.default
+Compiling 531/837: aten.view.default
+Compiling 532/837: aten.transpose.int
+Compiling 533/837: prims.convert_element_type.default
+Compiling 534/837: prims.convert_element_type.default
+Compiling 535/837: prims.convert_element_type.default
+Compiling 536/837: aten.mm.default
+Compiling 537/837: aten.mul.Tensor
+Compiling 538/837: aten.mul.Tensor
+Compiling 539/837: aten.add.Tensor
+Compiling 540/837: prims.convert_element_type.default
+Compiling 541/837: aten.view.default
+Compiling 542/837: aten.clone.default
+Compiling 543/837: aten.add.Tensor
+Compiling 544/837: prims.convert_element_type.default
+Compiling 545/837: aten.var_mean.correction
+Compiling 546/837: <built-in function getitem>
+Compiling 547/837: <built-in function getitem>
+Compiling 548/837: aten.add.Tensor
+Compiling 549/837: aten.rsqrt.default
+Compiling 550/837: aten.sub.Tensor
+Compiling 551/837: aten.mul.Tensor
+Compiling 552/837: aten.mul.Tensor
+Compiling 553/837: aten.add.Tensor
+Compiling 554/837: prims.convert_element_type.default
+Compiling 555/837: aten.convolution.default
+Compiling 556/837: aten.gelu.default
+Compiling 557/837: aten.clone.default
+Compiling 558/837: aten.convolution.default
+Compiling 559/837: aten.clone.default
+Compiling 560/837: aten.add.Tensor
+Compiling 561/837: prims.convert_element_type.default
+Compiling 562/837: aten.var_mean.correction
+Compiling 563/837: <built-in function getitem>
+Compiling 564/837: <built-in function getitem>
+Compiling 565/837: aten.add.Tensor
+Compiling 566/837: aten.rsqrt.default
+Compiling 567/837: aten.sub.Tensor
+Compiling 568/837: aten.mul.Tensor
+Compiling 569/837: aten.mul.Tensor
+Compiling 570/837: aten.add.Tensor
+Compiling 571/837: prims.convert_element_type.default
+Compiling 572/837: aten.view.default
+Compiling 573/837: aten.transpose.int
+Compiling 574/837: prims.convert_element_type.default
+Compiling 575/837: prims.convert_element_type.default
+Compiling 576/837: prims.convert_element_type.default
+Compiling 577/837: aten.mm.default
+Compiling 578/837: aten.mul.Tensor
+Compiling 579/837: aten.mul.Tensor
+Compiling 580/837: aten.add.Tensor
+Compiling 581/837: prims.convert_element_type.default
+Compiling 582/837: aten.view.default
+Compiling 583/837: aten.gelu.default
+Compiling 584/837: aten.clone.default
+Compiling 585/837: aten.view.default
+Compiling 586/837: aten.transpose.int
+Compiling 587/837: prims.convert_element_type.default
+Compiling 588/837: prims.convert_element_type.default
+Compiling 589/837: prims.convert_element_type.default
+Compiling 590/837: aten.mm.default
+Compiling 591/837: aten.mul.Tensor
+Compiling 592/837: aten.mul.Tensor
+Compiling 593/837: aten.add.Tensor
+Compiling 594/837: prims.convert_element_type.default
+Compiling 595/837: aten.view.default
+Compiling 596/837: aten.clone.default
+Compiling 597/837: aten.add.Tensor
+Compiling 598/837: prims.convert_element_type.default
+Compiling 599/837: aten.var_mean.correction
+Compiling 600/837: <built-in function getitem>
+Compiling 601/837: <built-in function getitem>
+Compiling 602/837: aten.add.Tensor
+Compiling 603/837: aten.rsqrt.default
+Compiling 604/837: aten.sub.Tensor
+Compiling 605/837: aten.mul.Tensor
+Compiling 606/837: aten.mul.Tensor
+Compiling 607/837: aten.add.Tensor
+Compiling 608/837: prims.convert_element_type.default
+Compiling 609/837: aten.convolution.default
+Compiling 610/837: aten.gelu.default
+Compiling 611/837: aten.clone.default
+Compiling 612/837: aten.convolution.default
+Compiling 613/837: aten.clone.default
+Compiling 614/837: aten.add.Tensor
+Compiling 615/837: prims.convert_element_type.default
+Compiling 616/837: aten.var_mean.correction
+Compiling 617/837: <built-in function getitem>
+Compiling 618/837: <built-in function getitem>
+Compiling 619/837: aten.add.Tensor
+Compiling 620/837: aten.rsqrt.default
+Compiling 621/837: aten.sub.Tensor
+Compiling 622/837: aten.mul.Tensor
+Compiling 623/837: aten.mul.Tensor
+Compiling 624/837: aten.add.Tensor
+Compiling 625/837: prims.convert_element_type.default
+Compiling 626/837: aten.view.default
+Compiling 627/837: aten.transpose.int
+Compiling 628/837: prims.convert_element_type.default
+Compiling 629/837: prims.convert_element_type.default
+Compiling 630/837: prims.convert_element_type.default
+Compiling 631/837: aten.mm.default
+Compiling 632/837: aten.mul.Tensor
+Compiling 633/837: aten.mul.Tensor
+Compiling 634/837: aten.add.Tensor
+Compiling 635/837: prims.convert_element_type.default
+Compiling 636/837: aten.view.default
+Compiling 637/837: aten.gelu.default
+Compiling 638/837: aten.clone.default
+Compiling 639/837: aten.view.default
+Compiling 640/837: aten.transpose.int
+Compiling 641/837: prims.convert_element_type.default
+Compiling 642/837: prims.convert_element_type.default
+Compiling 643/837: prims.convert_element_type.default
+Compiling 644/837: aten.mm.default
+Compiling 645/837: aten.mul.Tensor
+Compiling 646/837: aten.mul.Tensor
+Compiling 647/837: aten.add.Tensor
+Compiling 648/837: prims.convert_element_type.default
+Compiling 649/837: aten.view.default
+Compiling 650/837: aten.clone.default
+Compiling 651/837: aten.add.Tensor
+Compiling 652/837: prims.convert_element_type.default
+Compiling 653/837: aten.var_mean.correction
+Compiling 654/837: <built-in function getitem>
+Compiling 655/837: <built-in function getitem>
+Compiling 656/837: aten.add.Tensor
+Compiling 657/837: aten.rsqrt.default
+Compiling 658/837: aten.sub.Tensor
+Compiling 659/837: aten.mul.Tensor
+Compiling 660/837: aten.mul.Tensor
+Compiling 661/837: aten.add.Tensor
+Compiling 662/837: prims.convert_element_type.default
+Compiling 663/837: aten.convolution.default
+Compiling 664/837: aten.gelu.default
+Compiling 665/837: aten.clone.default
+Compiling 666/837: aten.convolution.default
+Compiling 667/837: aten.clone.default
+Compiling 668/837: aten.add.Tensor
+Compiling 669/837: prims.convert_element_type.default
+Compiling 670/837: aten.var_mean.correction
+Compiling 671/837: <built-in function getitem>
+Compiling 672/837: <built-in function getitem>
+Compiling 673/837: aten.add.Tensor
+Compiling 674/837: aten.rsqrt.default
+Compiling 675/837: aten.sub.Tensor
+Compiling 676/837: aten.mul.Tensor
+Compiling 677/837: aten.mul.Tensor
+Compiling 678/837: aten.add.Tensor
+Compiling 679/837: prims.convert_element_type.default
+Compiling 680/837: aten.view.default
+Compiling 681/837: aten.transpose.int
+Compiling 682/837: prims.convert_element_type.default
+Compiling 683/837: prims.convert_element_type.default
+Compiling 684/837: prims.convert_element_type.default
+Compiling 685/837: aten.mm.default
+Compiling 686/837: aten.mul.Tensor
+Compiling 687/837: aten.mul.Tensor
+Compiling 688/837: aten.add.Tensor
+Compiling 689/837: prims.convert_element_type.default
+Compiling 690/837: aten.view.default
+Compiling 691/837: aten.gelu.default
+Compiling 692/837: aten.clone.default
+Compiling 693/837: aten.view.default
+Compiling 694/837: aten.transpose.int
+Compiling 695/837: prims.convert_element_type.default
+Compiling 696/837: prims.convert_element_type.default
+Compiling 697/837: prims.convert_element_type.default
+Compiling 698/837: aten.mm.default
+Compiling 699/837: aten.mul.Tensor
+Compiling 700/837: aten.mul.Tensor
+Compiling 701/837: aten.add.Tensor
+Compiling 702/837: prims.convert_element_type.default
+Compiling 703/837: aten.view.default
+Compiling 704/837: aten.clone.default
+Compiling 705/837: aten.add.Tensor
+Compiling 706/837: prims.convert_element_type.default
+Compiling 707/837: aten.var_mean.correction
+Compiling 708/837: <built-in function getitem>
+Compiling 709/837: <built-in function getitem>
+Compiling 710/837: aten.add.Tensor
+Compiling 711/837: aten.rsqrt.default
+Compiling 712/837: aten.sub.Tensor
+Compiling 713/837: aten.mul.Tensor
+Compiling 714/837: aten.mul.Tensor
+Compiling 715/837: aten.add.Tensor
+Compiling 716/837: prims.convert_element_type.default
+Compiling 717/837: aten.convolution.default
+Compiling 718/837: aten.gelu.default
+Compiling 719/837: aten.clone.default
+Compiling 720/837: aten.convolution.default
+Compiling 721/837: aten.clone.default
+Compiling 722/837: aten.add.Tensor
+Compiling 723/837: prims.convert_element_type.default
+Compiling 724/837: aten.var_mean.correction
+Compiling 725/837: <built-in function getitem>
+Compiling 726/837: <built-in function getitem>
+Compiling 727/837: aten.add.Tensor
+Compiling 728/837: aten.rsqrt.default
+Compiling 729/837: aten.sub.Tensor
+Compiling 730/837: aten.mul.Tensor
+Compiling 731/837: aten.mul.Tensor
+Compiling 732/837: aten.add.Tensor
+Compiling 733/837: prims.convert_element_type.default
+Compiling 734/837: aten.view.default
+Compiling 735/837: aten.transpose.int
+Compiling 736/837: prims.convert_element_type.default
+Compiling 737/837: prims.convert_element_type.default
+Compiling 738/837: prims.convert_element_type.default
+Compiling 739/837: aten.mm.default
+Compiling 740/837: aten.mul.Tensor
+Compiling 741/837: aten.mul.Tensor
+Compiling 742/837: aten.add.Tensor
+Compiling 743/837: prims.convert_element_type.default
+Compiling 744/837: aten.view.default
+Compiling 745/837: aten.gelu.default
+Compiling 746/837: aten.clone.default
+Compiling 747/837: aten.view.default
+Compiling 748/837: aten.transpose.int
+Compiling 749/837: prims.convert_element_type.default
+Compiling 750/837: prims.convert_element_type.default
+Compiling 751/837: prims.convert_element_type.default
+Compiling 752/837: aten.mm.default
+Compiling 753/837: aten.mul.Tensor
+Compiling 754/837: aten.mul.Tensor
+Compiling 755/837: aten.add.Tensor
+Compiling 756/837: prims.convert_element_type.default
+Compiling 757/837: aten.view.default
+Compiling 758/837: aten.clone.default
+Compiling 759/837: aten.add.Tensor
+Compiling 760/837: prims.convert_element_type.default
+Compiling 761/837: aten.var_mean.correction
+Compiling 762/837: <built-in function getitem>
+Compiling 763/837: <built-in function getitem>
+Compiling 764/837: aten.add.Tensor
+Compiling 765/837: aten.rsqrt.default
+Compiling 766/837: aten.sub.Tensor
+Compiling 767/837: aten.mul.Tensor
+Compiling 768/837: aten.mul.Tensor
+Compiling 769/837: aten.add.Tensor
+Compiling 770/837: prims.convert_element_type.default
+Compiling 771/837: aten.convolution.default
+Compiling 772/837: aten.gelu.default
+Compiling 773/837: aten.clone.default
+Compiling 774/837: aten.convolution.default
+Compiling 775/837: aten.clone.default
+Compiling 776/837: aten.add.Tensor
+Compiling 777/837: prims.convert_element_type.default
+Compiling 778/837: aten.var_mean.correction
+Compiling 779/837: <built-in function getitem>
+Compiling 780/837: <built-in function getitem>
+Compiling 781/837: aten.add.Tensor
+Compiling 782/837: aten.rsqrt.default
+Compiling 783/837: aten.sub.Tensor
+Compiling 784/837: aten.mul.Tensor
+Compiling 785/837: aten.mul.Tensor
+Compiling 786/837: aten.add.Tensor
+Compiling 787/837: prims.convert_element_type.default
+Compiling 788/837: aten.view.default
+Compiling 789/837: aten.transpose.int
+Compiling 790/837: prims.convert_element_type.default
+Compiling 791/837: prims.convert_element_type.default
+Compiling 792/837: prims.convert_element_type.default
+Compiling 793/837: aten.mm.default
+Compiling 794/837: aten.mul.Tensor
+Compiling 795/837: aten.mul.Tensor
+Compiling 796/837: aten.add.Tensor
+Compiling 797/837: prims.convert_element_type.default
+Compiling 798/837: aten.view.default
+Compiling 799/837: aten.gelu.default
+Compiling 800/837: aten.clone.default
+Compiling 801/837: aten.view.default
+Compiling 802/837: aten.transpose.int
+Compiling 803/837: prims.convert_element_type.default
+Compiling 804/837: prims.convert_element_type.default
+Compiling 805/837: prims.convert_element_type.default
+Compiling 806/837: aten.mm.default
+Compiling 807/837: aten.mul.Tensor
+Compiling 808/837: aten.mul.Tensor
+Compiling 809/837: aten.add.Tensor
+Compiling 810/837: prims.convert_element_type.default
+Compiling 811/837: aten.view.default
+Compiling 812/837: aten.clone.default
+Compiling 813/837: aten.add.Tensor
+Compiling 814/837: prims.convert_element_type.default
+Compiling 815/837: aten.var_mean.correction
+Compiling 816/837: <built-in function getitem>
+Compiling 817/837: <built-in function getitem>
+Compiling 818/837: aten.add.Tensor
+Compiling 819/837: aten.rsqrt.default
+Compiling 820/837: aten.sub.Tensor
+Compiling 821/837: aten.mul.Tensor
+Compiling 822/837: aten.mul.Tensor
+Compiling 823/837: aten.add.Tensor
+Compiling 824/837: prims.convert_element_type.default
+Compiling 825/837: aten.permute.default
+
+[32m2025-03-20 20:42:35.185[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:35.185[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:35.185[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:35.224[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 825/837: aten.permute.default
+Compiling 826/837: aten.mean.dim
+
+[32m2025-03-20 20:42:37.046[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:37.047[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:37.047[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:37.087[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 0 is not contiguous. Converting to contiguous in-place.
+Timeout
+Ran: 826/837: aten.mean.dim
+Failed to execute 826/837: aten.mean.dim: Failed to execute
+Compiling 827/837: aten.transpose.int
+
+[32m2025-03-20 20:42:42.115[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:42.115[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:42.115[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:42.135[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 827/837: aten.transpose.int
+Compiling 828/837: prims.convert_element_type.default
+
+[32m2025-03-20 20:42:43.925[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:43.926[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:43.926[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:43.962[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 828/837: prims.convert_element_type.default
+Compiling 829/837: prims.convert_element_type.default
+
+[32m2025-03-20 20:42:45.787[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:45.787[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:45.787[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:45.825[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 829/837: prims.convert_element_type.default
+Compiling 830/837: prims.convert_element_type.default
+
+[32m2025-03-20 20:42:47.597[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:47.598[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:47.598[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:47.639[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 0 is not contiguous. Converting to contiguous in-place.
+Ran: 830/837: prims.convert_element_type.default
+Compiling 831/837: aten.mm.default
+
+[32m2025-03-20 20:42:49.461[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:49.461[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:49.461[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:49.504[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+WARINING: Input 1 is not contiguous. Converting to contiguous in-place.
+Ran: 831/837: aten.mm.default
+Compiling 832/837: aten.mul.Tensor
+
+[32m2025-03-20 20:42:51.021[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:51.022[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:51.022[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:51.058[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 832/837: aten.mul.Tensor
+Compiling 833/837: aten.mul.Tensor
+
+[32m2025-03-20 20:42:53.885[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:53.886[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:53.886[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:53.924[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 833/837: aten.mul.Tensor
+Compiling 834/837: aten.add.Tensor
+
+[32m2025-03-20 20:42:56.698[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:56.699[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:56.699[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:56.735[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 834/837: aten.add.Tensor
+Compiling 835/837: prims.convert_element_type.default
+
+[32m2025-03-20 20:42:58.208[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.31.0, IOMMU: disabled
+[32m2025-03-20 20:42:58.209[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-03-20 20:42:58.209[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {}
+[32m2025-03-20 20:42:58.248[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+Ran: 835/837: prims.convert_element_type.default
+Compiling 836/837: output
+#####  Saving unique ops to results/models/tests/models/mlpmixer/test_mlpmixer_py_test_mlpmixer_True-eval_ (call)_unique_ops.json#####
+PASSED
+
+=================== 1 passed, 1 skipped in 131.01s (0:02:11) ===================

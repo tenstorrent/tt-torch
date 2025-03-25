@@ -1,0 +1,122 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.0rc1, pytest-8.3.5, pluggy-1.5.0 -- /localdev/ddilbaz/tt-torch/env/venv/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /localdev/ddilbaz/tt-torch
+collecting ... collected 56 items
+
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode0] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode1] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode2] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode3] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode4] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode5] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode6] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode7] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode8] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode9] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode10] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode11] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode12] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode13] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode14] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode15] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode16] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode17] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode18] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode19] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode20] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode21] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode22] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode23] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode24] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode25] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode26] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode27] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode28] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode29] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode30] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode31] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode32] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode33] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode34] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode35] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode36] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode37] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode38] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode39] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode40] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode41] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode42] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode43] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode44] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode45] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode46] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode47] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode48] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode49] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode50] SKIPPED
+tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[model_info_and_mode51] SKIPPED
+tests/models/torchvision/test_torchvision_object_detection.py::test_torchvision_object_detection[model_info0-eval] SKIPPED
+tests/models/torchvision/test_torchvision_object_detection.py::test_torchvision_object_detection[model_info1-eval] SKIPPED
+tests/models/torchvision/test_torchvision_object_detection.py::test_torchvision_object_detection[model_info2-eval] SKIPPED
+tests/models/torchvision/test_torchvision_object_detection.py::test_torchvision_object_detection[model_info3-eval] SKIPPED
+
+=============================== warnings summary ===============================
+tests/models/torchvision/test_torchvision_image_classification.py:56
+  /localdev/ddilbaz/tt-torch/tests/models/torchvision/test_torchvision_image_classification.py:56: PytestUnknownMarkWarning: Unknown pytest.mark.compilation_xfail - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    [("vgg11", "VGG11_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+
+tests/models/torchvision/test_torchvision_image_classification.py:59
+  /localdev/ddilbaz/tt-torch/tests/models/torchvision/test_torchvision_image_classification.py:59: PytestUnknownMarkWarning: Unknown pytest.mark.compilation_xfail - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    [("vgg11_bn", "VGG11_BN_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+
+tests/models/torchvision/test_torchvision_image_classification.py:62
+  /localdev/ddilbaz/tt-torch/tests/models/torchvision/test_torchvision_image_classification.py:62: PytestUnknownMarkWarning: Unknown pytest.mark.compilation_xfail - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    [("vgg13", "VGG13_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+
+tests/models/torchvision/test_torchvision_image_classification.py:65
+  /localdev/ddilbaz/tt-torch/tests/models/torchvision/test_torchvision_image_classification.py:65: PytestUnknownMarkWarning: Unknown pytest.mark.compilation_xfail - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    [("vgg13_bn", "VGG13_BN_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+
+tests/models/torchvision/test_torchvision_image_classification.py:68
+  /localdev/ddilbaz/tt-torch/tests/models/torchvision/test_torchvision_image_classification.py:68: PytestUnknownMarkWarning: Unknown pytest.mark.compilation_xfail - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    [("vgg16", "VGG16_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+
+tests/models/torchvision/test_torchvision_image_classification.py:71
+  /localdev/ddilbaz/tt-torch/tests/models/torchvision/test_torchvision_image_classification.py:71: PytestUnknownMarkWarning: Unknown pytest.mark.compilation_xfail - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    [("vgg16_bn", "VGG16_BN_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+
+tests/models/torchvision/test_torchvision_image_classification.py:74
+  /localdev/ddilbaz/tt-torch/tests/models/torchvision/test_torchvision_image_classification.py:74: PytestUnknownMarkWarning: Unknown pytest.mark.compilation_xfail - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    [("vgg19", "VGG19_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+
+tests/models/torchvision/test_torchvision_image_classification.py:77
+  /localdev/ddilbaz/tt-torch/tests/models/torchvision/test_torchvision_image_classification.py:77: PytestUnknownMarkWarning: Unknown pytest.mark.compilation_xfail - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    [("vgg19_bn", "VGG19_BN_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+
+tests/models/torchvision/test_torchvision_image_classification.py:102
+  /localdev/ddilbaz/tt-torch/tests/models/torchvision/test_torchvision_image_classification.py:102: PytestUnknownMarkWarning: Unknown pytest.mark.compilation_xfail - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    [("swin_t", "Swin_T_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+
+tests/models/torchvision/test_torchvision_image_classification.py:105
+  /localdev/ddilbaz/tt-torch/tests/models/torchvision/test_torchvision_image_classification.py:105: PytestUnknownMarkWarning: Unknown pytest.mark.compilation_xfail - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    [("swin_s", "Swin_S_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+
+tests/models/torchvision/test_torchvision_image_classification.py:108
+  /localdev/ddilbaz/tt-torch/tests/models/torchvision/test_torchvision_image_classification.py:108: PytestUnknownMarkWarning: Unknown pytest.mark.compilation_xfail - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    [("swin_b", "Swin_B_Weights"), "eval"], marks=pytest.mark.compilation_xfail
+
+tests/models/torchvision/test_torchvision_image_classification.py:112
+  /localdev/ddilbaz/tt-torch/tests/models/torchvision/test_torchvision_image_classification.py:112: PytestUnknownMarkWarning: Unknown pytest.mark.compilation_xfail - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    marks=pytest.mark.compilation_xfail,
+
+tests/models/torchvision/test_torchvision_image_classification.py:116
+  /localdev/ddilbaz/tt-torch/tests/models/torchvision/test_torchvision_image_classification.py:116: PytestUnknownMarkWarning: Unknown pytest.mark.compilation_xfail - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    marks=pytest.mark.compilation_xfail,
+
+tests/models/torchvision/test_torchvision_image_classification.py:120
+  /localdev/ddilbaz/tt-torch/tests/models/torchvision/test_torchvision_image_classification.py:120: PytestUnknownMarkWarning: Unknown pytest.mark.compilation_xfail - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    marks=pytest.mark.compilation_xfail,
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 56 skipped, 14 warnings in 0.92s =======================
