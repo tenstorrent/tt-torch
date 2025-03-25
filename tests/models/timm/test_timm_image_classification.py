@@ -78,6 +78,12 @@ def test_timm_image_classification(record_property, model_name, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    model_group = (
+        "red"
+        if any(keyword in model_name.lower() for keyword in ["efficientnet", "vovnet"])
+        else "generality"
+    )
+
     tester = ThisTester(
         model_name,
         mode,
@@ -85,6 +91,7 @@ def test_timm_image_classification(record_property, model_name, mode, op_by_op):
         assert_pcc=False,
         assert_atol=False,
         record_property_handle=record_property,
+        model_group=model_group,
     )
     results = tester.test_model()
     if mode == "eval":
