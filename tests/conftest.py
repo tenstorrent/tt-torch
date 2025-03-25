@@ -8,7 +8,8 @@ import sys
 from datetime import datetime, timezone
 from tt_torch.tools.utils import OpByOpBackend
 from tt_torch.tools.crashsafe_utils import crashsafe_suffix
-
+import xml.etree.ElementTree as ET
+import socket
 import os
 import json
 import shutil
@@ -93,10 +94,6 @@ def record_test_timestamp(record_property):
     yield
     end_timestamp = datetime.now(timezone.utc).isoformat()
     record_property("end_timestamp", end_timestamp)
-
-
-import xml.etree.ElementTree as ET
-import socket
 
 
 @pytest.fixture
