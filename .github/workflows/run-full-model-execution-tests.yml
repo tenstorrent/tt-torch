@@ -40,7 +40,7 @@ jobs:
                   tests/models/openpose/test_openpose_v2.py::test_openpose_v2[full-eval]
                   tests/models/resnet/test_resnet.py::test_resnet[full-eval]
                   tests/models/resnet50/test_resnet50.py::test_resnet[full-eval]
-                  tests/models/distilbert/test_distilbert.py::test_distilbert_multiloop[full-distilbert-base-uncased-eval-64]
+                  tests/models/distilbert/test_distilbert.py::test_distilbert_multiloop[full-distilbert-base-uncased-multiloop-eval-64]
             "
           },
           {
