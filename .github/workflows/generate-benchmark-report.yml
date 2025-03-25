@@ -47,13 +47,14 @@ jobs:
         merge-multiple: true
     - run: ls -lshR ./depth-benchmark-artifacts
 
-    - name: Untar Depth Benchmark Artifacts
-      shell: bash
-      run: |
-        mkdir -p ./depth-benchmark-data
-        for tar_file in ./depth-benchmark-artifacts/*.tar; do
-          tar -xvf "$tar_file" -C ./depth-benchmark-data
-        done
+    # I think download artifact already untars the artifacts and packs them in the ./depth-benchmark-artifacts directory
+    # - name: Untar Depth Benchmark Artifacts
+    #   shell: bash
+    #   run: |
+    #     mkdir -p ./depth-benchmark-data
+    #     for tar_file in ./depth-benchmark-artifacts/*.tar; do
+    #       tar -xvf "$tar_file" -C ./depth-benchmark-data
+    #     done
 
     - name: install tt-torch
       shell: bash
@@ -77,12 +78,13 @@ jobs:
     - name: Generate Benchmark Report
       shell: bash
       run: |
-            python tt_torch/tools/generate_benchmark_report.py \
+            source env/activate
+            python "${{ steps.strings.outputs.work-dir }}/tt_torch/tools/generate_benchmark_report.py" \
             --xml-dir ./depth-benchmark-data \
-            --compile-yaml .github/workflows/run-e2e-tests.yml \
-            --execution-yaml .github/workflows/run-full-model-execution-tests.yml \
-            --execution-nightly-yaml .github/workflows/run-full-model-execution-tests-nightly.yml \
-            --output-file ${{ steps.git-info.outputs.spreadsheet_name }}
+            --compile-yaml "${{ steps.strings.outputs.work-dir }}/.github/workflows/run-e2e-tests.yml" \
+            --execution-yaml "${{ steps.strings.outputs.work-dir }}/.github/workflows/run-full-model-execution-tests.yml" \
+            --execution-nightly-yaml "${{ steps.strings.outputs.work-dir }}/.github/workflows/run-full-model-execution-tests-nightly.yml" \
+            --output-file "${{ steps.strings.outputs.work-dir }}/results/${{ steps.git-info.outputs.spreadsheet_name }}"
 
 
     - name: Upload benchmark report to archive
