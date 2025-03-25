@@ -66,7 +66,7 @@ def test_distilbert(record_property, model_name, mode, op_by_op):
     "mode",
     ["eval"],
 )
-@pytest.mark.parametrize("model_name", ["distilbert-base-uncased"])
+@pytest.mark.parametrize("model_name", ["distilbert-base-uncased-multiloop"])
 @pytest.mark.parametrize(
     "op_by_op",
     [None],
