@@ -262,6 +262,18 @@ std::vector<at::Tensor> run_end_to_end(std::vector<at::Tensor> &inputs,
   return outputs;
 }
 
+tt::runtime::Device
+open_mesh_device(const std::vector<uint32_t> &mesh_shape,
+                 const tt::runtime::MeshDeviceOptions &options) {
+  const char *system_desc_path = std::getenv("SYSTEM_DESC_PATH");
+  if (system_desc_path) {
+    std::remove(system_desc_path);
+    tt::runtime::getCurrentSystemDesc().first.store(system_desc_path);
+  }
+
+  return tt::runtime::openMeshDevice(mesh_shape, options);
+}
+
 PYBIND11_MODULE(tt_mlir, m) {
   m.doc() = "tt_mlir";
   py::class_<tt::runtime::Binary>(m, "Binary")
@@ -310,9 +322,10 @@ PYBIND11_MODULE(tt_mlir, m) {
         "A function that compiles TTIR to a bytestream");
   m.def("compile_stable_hlo_to_ttir", &compile_stable_hlo_to_ttir,
         "A function that compiles stableHLO to TTIR");
-  m.def("open_mesh_device", &tt::runtime::openMeshDevice, py::arg("mesh_shape"),
+  m.def("open_mesh_device", &open_mesh_device, py::arg("mesh_shape"),
         py::arg("options"),
-        "Open a mesh of devices for execution using the new API");
+        "Open a mesh of devices for execution using the new API and create "
+        "system description");
   m.def("close_mesh_device", &tt::runtime::closeMeshDevice,
         py::arg("parent_mesh"), "Close the mesh device using new API");
   m.def("create_sub_mesh_device", &tt::runtime::createSubMeshDevice,
