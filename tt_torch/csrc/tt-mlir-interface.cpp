@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
 
 #include "tt-mlir-interface.hpp"
@@ -131,6 +132,11 @@ compileTTIRToTTNN(std::string_view code) {
     pm.enableIRPrinting();
   }
   mlir::tt::ttnn::TTIRToTTNNBackendPipelineOptions options;
+  const char *system_desc_path = std::getenv("SYSTEM_DESC_PATH");
+  if (system_desc_path && std::ifstream(system_desc_path).good()) {
+    options.systemDescPath = system_desc_path;
+  }
+
   mlir::tt::ttnn::createTTIRToTTNNBackendPipeline(pm, options);
 
   // Run the pass manager.
