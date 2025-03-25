@@ -131,6 +131,7 @@ compileTTIRToTTNN(std::string_view code) {
     pm.enableIRPrinting();
   }
   mlir::tt::ttnn::TTIRToTTNNBackendPipelineOptions options;
+  options.eraseInverseOpsEnabled = true;
   mlir::tt::ttnn::createTTIRToTTNNBackendPipeline(pm, options);
 
   // Run the pass manager.
