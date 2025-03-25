@@ -55,6 +55,7 @@ def test_albert_token_classification(record_property, model_name, mode, op_by_op
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
+        model_name_suffix="-token-cls",
     )
     results = tester.test_model()
 

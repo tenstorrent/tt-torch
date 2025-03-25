@@ -33,6 +33,7 @@ class ModelTester:
         record_property_handle=None,
         model_group="generality",
         is_token_output=False,
+        model_name_suffix="",
     ):
         if mode not in ["train", "eval"]:
             raise ValueError(f"Current mode is not supported: {mode}")
@@ -70,12 +71,12 @@ class ModelTester:
         self.record_property = record_property_handle
         self.record_tag_cache = {}  # Holds for tags to be written out at finalize()
 
-        self.record_property("model_name", model_name)
+        self.record_property("model_name", model_name + model_name_suffix)
         self.record_property("frontend", "tt-torch")
         self.record_property("owner", "tt-torch")
         self.record_property("group", model_group)
 
-        self.record_tag_cache["model_name"] = model_name
+        self.record_tag_cache["model_name"] = model_name + model_name_suffix
         self.record_tag_cache["frontend"] = "tt-torch"
 
         # configs should be set at test start, so they can be flushed immediately
