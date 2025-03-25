@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include <cstdlib>
+#include <filesystem>
 #include <iostream>
 
 #include "tt-mlir-interface.hpp"
@@ -131,6 +132,30 @@ compileTTIRToTTNN(std::string_view code) {
     pm.enableIRPrinting();
   }
   mlir::tt::ttnn::TTIRToTTNNBackendPipelineOptions options;
+
+  if (std::filesystem::path system_desc_path = std::getenv("SYSTEM_DESC_PATH");
+      !system_desc_path.empty() && std::filesystem::exists(system_desc_path)) {
+
+    // TODO: avoid copying to temp file and create system desc every time
+    // https://github.com/tenstorrent/tt-torch/issues/580
+    std::filesystem::path system_desc_temp_path =
+        std::filesystem::temp_directory_path() /
+        (system_desc_path.stem().string() + "_tmp" +
+         system_desc_path.extension().string());
+
+    std::filesystem::copy_file(
+        system_desc_path, system_desc_temp_path,
+        std::filesystem::copy_options::overwrite_existing);
+
+    options.systemDescPath = system_desc_temp_path;
+  } else { // SYSTEM_DESC_PATH is not set or the file does not exist
+    std::cout << "WARNING: "
+              << (system_desc_path.empty()
+                      ? "SYSTEM_DESC_PATH environment variable is not set"
+                      : "The file in SYSTEM_DESC_PATH does not exist")
+              << ". Default system description will be used instead.\n";
+  }
+
   mlir::tt::ttnn::createTTIRToTTNNBackendPipeline(pm, options);
 
   // Run the pass manager.
