@@ -32,7 +32,7 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-@pytest.mark.parametrize("model_name", ["albert/albert-base-v2-token-classification"])
+@pytest.mark.parametrize("model_name", ["albert/albert-base-v2"])
 @pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
