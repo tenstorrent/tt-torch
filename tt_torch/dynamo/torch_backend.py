@@ -210,9 +210,9 @@ class TorchExecutor(OpByOpExecutor):
 
         graph = torch.fx.Graph()
         placeholders = []
-        for inp in inputs:
+        for i, inp in enumerate(inputs):
             if isinstance(inp, torch.Tensor):
-                placeholders.append(graph.placeholder("input"))
+                placeholders.append(graph.placeholder(f"input_{i}"))
             elif isinstance(inp, (list, tuple)):
                 inps = torch.fx.immutable_collections.immutable_list(
                     [
@@ -287,14 +287,14 @@ class TorchExecutor(OpByOpExecutor):
             def forward(self, x, y):
                 return x + y
 
-        breakpoint()
-        mod = copy.deepcopy(self.program.graph_module())
+        import copy
+        mod = copy.deepcopy(self.program.graph_module)
         mod.graph = graph
-        program = torch.export.export(mod)
-        module = import_graph(graph)
-        op.compilation_status = OpCompilationStatus.CONVERTED_TO_TORCH_IR
-        op.add_torch_ir_graph(module.operation.get_asm())
+        # torch.export.export requires example inputs. The only placeholder nodes we assign to `graph`
+        # are those which are tensors. So this filters out the tensor inputs before exporting
+        program = torch.export.export(mod, tuple([i for i in inputs if isinstance(i, torch.Tensor)]))
         module = lower_to_stable_hlo(program, op=op)
+        op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
         op.add_stable_hlo_graph(module.operation.get_asm())
         return module, op
 
@@ -342,7 +342,10 @@ class TorchExecutor(OpByOpExecutor):
                     and binary is not None
                 ):
                     try:
-                        calculated, runtime_stack_dump = self.run_op(binary, *args)
+                        # Again, only want to pass in tensors. Also, torch.export.export REVERSES the args.
+                        # Since we're now torch.export.export-ing each op we need to reverse the order of the args
+                        # each op.
+                        calculated, runtime_stack_dump = self.run_op(binary, *[arg for arg in reversed(args) if isinstance(arg, torch.Tensor)])
                         self.compiler_config.unique_ops[
                             op.unique_key()
                         ].runtime_stack_dump = runtime_stack_dump
