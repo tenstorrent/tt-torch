@@ -15,8 +15,6 @@ import torch.nn.functional as F
 @pytest.mark.parametrize("scale_factor", [0.5, 2])
 @pytest.mark.parametrize("align_corners", [False, True])
 def test_linear_upsample(inW, scale_factor, align_corners):
-    pytest.skip()  # https://github.com/tenstorrent/tt-torch/issues/405
-
     class Interpolate(nn.Module):
         def __init__(self):
             super().__init__()
@@ -47,8 +45,6 @@ def test_linear_upsample(inW, scale_factor, align_corners):
 @pytest.mark.parametrize("scale_factor", [0.5, 2])
 @pytest.mark.parametrize("align_corners", [False, True])
 def test_bilinear_upsample(inH, inW, scale_factor, align_corners):
-    pytest.skip()  # https://github.com/tenstorrent/tt-torch/issues/405
-
     class Interpolate(nn.Module):
         def __init__(self):
             super().__init__()
@@ -80,8 +76,6 @@ def test_bilinear_upsample(inH, inW, scale_factor, align_corners):
 @pytest.mark.parametrize("scale_factor", [0.5, 2])
 @pytest.mark.parametrize("align_corners", [False, True])
 def test_trilinear_upsample(inZ, inH, inW, scale_factor, align_corners):
-    pytest.skip()  # https://github.com/tenstorrent/tt-torch/issues/405
-
     class Interpolate(nn.Module):
         def __init__(self):
             super().__init__()
@@ -110,8 +104,6 @@ def test_trilinear_upsample(inZ, inH, inW, scale_factor, align_corners):
 @pytest.mark.parametrize("inW", [50, 128, 224, 540])
 @pytest.mark.parametrize("scale_factor", [0.5, 2])
 def test_nearest_upsample1d(inW, scale_factor):
-    pytest.skip()  # https://github.com/tenstorrent/tt-torch/issues/405
-
     class Interpolate(nn.Module):
         def __init__(self):
             super().__init__()
@@ -140,8 +132,6 @@ def test_nearest_upsample1d(inW, scale_factor):
 @pytest.mark.parametrize("inW", [128, 224, 540])
 @pytest.mark.parametrize("scale_factor", [0.5, 2])
 def test_nearest_upsample2d(inH, inW, scale_factor):
-    pytest.skip()  # https://github.com/tenstorrent/tt-torch/issues/405
-
     class Interpolate(nn.Module):
         def __init__(self):
             super().__init__()
@@ -171,8 +161,6 @@ def test_nearest_upsample2d(inH, inW, scale_factor):
 @pytest.mark.parametrize("inW", [224, 540])
 @pytest.mark.parametrize("scale_factor", [0.5, 2])
 def test_nearest_upsample3d(inZ, inH, inW, scale_factor):
-    pytest.skip()  # https://github.com/tenstorrent/tt-torch/issues/405
-
     class Interpolate(nn.Module):
         def __init__(self):
             super().__init__()

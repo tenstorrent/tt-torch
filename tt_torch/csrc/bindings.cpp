@@ -276,6 +276,7 @@ PYBIND11_MODULE(tt_mlir, m) {
         py::arg("l1_small_size") = py::none(),
         py::arg("dispatch_core_type") = py::none(),
         py::arg("enable_async_ttnn") = py::none(),
+        py::arg("enable_program_cache") = py::none(),
         "Open a mesh of devices for execution");
   m.def("close_device", &tt::runtime::closeDevice, "Close the device");
   m.def("deallocate_tensor", &tt::runtime::deallocateTensor, py::arg("tensor"),
