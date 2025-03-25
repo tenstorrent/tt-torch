@@ -1,11 +1,12 @@
-# This workflow automates running model depth benchmarks
+# This workflow automates running model tests.
 
-name: Depth Benchmarks
+name: Weekly Depth Benchmarks
 
 on:
   schedule:
-    - cron: '0 4 * * *'  # Runs at 04:00 UTC every day
+    - cron: '0 6 * * 0'  # Runs at 06:00 UTC every Sunday
   workflow_dispatch:  # Manual trigger
+
 
 jobs:
   pre-commit:
@@ -23,9 +24,13 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  run_benchmark:
+  run-benchmark:
     needs: [docker-build, build]
     uses: ./.github/workflows/run-depth-benchmark-tests.yml
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
+  generate-report:
+    needs: [run-benchmark]
+    uses: ./.github/workflows/generate-benchmark-report.yml
+    secrets: inherit
