@@ -14,8 +14,12 @@ import math
 import sys
 import shutil
 
-# from tt_mlir import open_device, close_device, is_runtime_debug_enabled
-from tt_mlir import open_mesh_device, close_mesh_device, MeshDeviceOptions, is_runtime_debug_enabled
+from tt_mlir import (
+    open_mesh_device,
+    close_mesh_device,
+    MeshDeviceOptions,
+    is_runtime_debug_enabled,
+)
 
 
 """
@@ -267,10 +271,11 @@ class CompilerConfig:
         self._verify_op_by_op = False
         self.typecast_inputs = True
         self.runtime_device = None
-        self.enable_async = False
         self.cache_preprocessed_constants = False
         self.inline_parameters = False
+        self.mesh_device_shape = [1, 1]
         self.mesh_device_options = MeshDeviceOptions()
+        self.mesh_device_options.enable_async_ttnn = False
 
         self.apply_environment_overrides()
         self.post_init()
@@ -347,17 +352,14 @@ class CompilerConfig:
         assert self.runtime_device is None
         if device_ids is None:
             device_ids = [0]
-        self.mesh_device_options.meshShape = [1, len(device_ids)]
-        self.mesh_device_options.deviceIds = device_ids
-        self.mesh_device_options.enableAsyncTTNN = self.enable_async
-        self.runtime_device = open_mesh_device(self.mesh_device_options)
-        # self.runtime_device = open_device(
-        #     device_ids=device_ids, enable_async_ttnn=self.enable_async
-        # )
+        self.mesh_device_shape = [1, len(device_ids)]
+        self.mesh_device_options.device_ids = device_ids
+        self.runtime_device = open_mesh_device(
+            self.mesh_device_shape, self.mesh_device_options
+        )
 
     def cleanup_device(self):
         assert self.runtime_device is not None
-        # close_device(self.runtime_device)
         close_mesh_device(self.runtime_device)
         self.runtime_device = None
 
