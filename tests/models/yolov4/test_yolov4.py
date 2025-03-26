@@ -58,7 +58,11 @@ def test_yolov4(record_property, mode, op_by_op):
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     tester = ThisTester(
-        model_name, mode, compiler_config=cc, record_property_handle=record_property
+        model_name,
+        mode,
+        compiler_config=cc,
+        record_property_handle=record_property,
+        model_group="red",
     )
     with torch.no_grad():
         tester.test_model()

@@ -1,4 +1,5 @@
 *.pyc
+.cache
 env/venv
 build
 dist
