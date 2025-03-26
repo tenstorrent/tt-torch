@@ -196,9 +196,17 @@ class Executor:
     def _get_device(self):
         if self.compiler_config.runtime_device is not None:
             return self.compiler_config.runtime_device
-
-        return tt_mlir.open_device(
-            device_ids=[0], enable_async_ttnn=self.compiler_config.enable_async
+        if self.compiler_config.mesh_device_options is None:
+            self.compiler_config.mesh_device_options = tt_mlir.MeshDeviceOptions()
+        assert (
+            self.compiler_config.mesh_device_shape is not None
+        ), "Please set mesh_device_shape within compiler_config"
+        assert (
+            len(self.compiler_config.mesh_device_shape) == 2
+        ), "Only a 2D mesh is supported for now"
+        return tt_mlir.open_mesh_device(
+            self.compiler_config.mesh_device_shape,
+            self.compiler_config.mesh_device_options,
         )
 
     def _cache_constants_if_needed(self, preprocessed_constants):
@@ -214,7 +222,7 @@ class Executor:
             tt_mlir.deallocate_tensor(t, force=True)
 
         if self.compiler_config.runtime_device is None:
-            tt_mlir.close_device(device)
+            tt_mlir.close_mesh_device(device)
 
     def __call__(self, *inputs):
         if self.compiler_config.compile_depth != CompileDepth.EXECUTE:
