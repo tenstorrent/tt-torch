@@ -98,9 +98,29 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
 
     reduce_graph(gm)
     program = torch.export.export(gm, tuple(example_inputs), strict=False)
+
+    ######################################################
+    # THIS IS COMMENTED OUT AS IT IS TORCH-MLIR SPECIFIC #
+    ######################################################
+
     # The proper order of inputs when outlining everything is constants + parameters + buffers + example_inputs
-    if not compiler_config.inline_parameters:
-        constant_inputs = (
+    # if not compiler_config.inline_parameters:
+    #     constant_inputs = (
+    #         list(program.tensor_constants.values())
+    #         + [
+    #             param.contiguous() if not param.is_contiguous() else param
+    #             for param in program.parameters()
+    #         ]
+    #         + list(program.buffers())
+    #     )
+    #     for i in range(len(program._graph_signature.input_specs)):
+    #         if program._graph_signature.input_specs[i].kind != InputKind.USER_INPUT:
+    #             program._graph_signature.input_specs[i].kind = InputKind.USER_INPUT
+    # else:
+    #     constant_inputs = []
+
+    # Still need the constant inputs like this to run shape_prop
+    constant_inputs = (
             list(program.tensor_constants.values())
             + [
                 param.contiguous() if not param.is_contiguous() else param
@@ -108,12 +128,7 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
             ]
             + list(program.buffers())
         )
-        for i in range(len(program._graph_signature.input_specs)):
-            if program._graph_signature.input_specs[i].kind != InputKind.USER_INPUT:
-                program._graph_signature.input_specs[i].kind = InputKind.USER_INPUT
-    else:
-        constant_inputs = []
 
     # Need to run shape_prop again to populate tensor_meta
     run_shape_prop(program.graph_module, constant_inputs + example_inputs)
-    return program, constant_inputs
+    return program

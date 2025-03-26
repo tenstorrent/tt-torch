@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import torch
+from torch.export.graph_signature import InputKind
 import operator
 import tt_mlir
 import torch_mlir
@@ -140,7 +141,8 @@ def import_program(program: torch.export.ExportedProgram):
 
 
 def lower_to_stable_hlo(program: torch.export.ExportedProgram, op=None, enable_ir_printing=False):
-    module_str = exported_program_to_stablehlo(program).get_stablehlo_text()
+    stablehlo_graph_module = exported_program_to_stablehlo(program)
+    module_str = stablehlo_graph_module.get_stablehlo_text()
     with Context() as ctx:
         stablehlo.register_dialect(ctx)
         module = Module.parse(module_str)
@@ -148,7 +150,7 @@ def lower_to_stable_hlo(program: torch.export.ExportedProgram, op=None, enable_i
     if op is not None:
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
     
-    return module
+    return module, stablehlo_graph_module
 
 
 ##################################################################
@@ -160,7 +162,6 @@ class TorchExecutor(OpByOpExecutor):
     def __init__(
         self,
         program,
-        graph_constants,
         compiler_config=None,
         required_pcc=0.99,
         required_atol=1e-2,
@@ -171,11 +172,6 @@ class TorchExecutor(OpByOpExecutor):
             required_atol=required_atol,
         )
         self.program = program
-        self.graph_constants = (
-            (graph_constants,)
-            if isinstance(graph_constants, (int, float))
-            else tuple(graph_constants)
-        )
         if self.compiler_config is None:
             compiler_config = CompilerConfig()
         self.compiler_config = compiler_config
@@ -199,14 +195,14 @@ class TorchExecutor(OpByOpExecutor):
         if not isinstance(node.target, torch._ops.OpOverload):
             if "getitem" not in name:
                 raise ValueError(f"Node target is not an OpOverload: {name}")
-            return None, None
+            return None, None, None
 
         op = Op(name, input_shapes_and_constants, self.compiler_config.model_name)
         if op.unique_key() not in self.compiler_config.unique_ops:
             self.compiler_config.unique_ops[op.unique_key()] = op
         else:
             self.compiler_config.unique_ops[op.unique_key()].num_ops += 1
-            return None, None
+            return None, None, None
 
         graph = torch.fx.Graph()
         placeholders = []
@@ -279,26 +275,27 @@ class TorchExecutor(OpByOpExecutor):
         for out in out_meta:
             op.output_shapes.append([dim for dim in out.shape])
 
-
-        class Basic(torch.nn.Module):
-            def __init__(self):
-                super().__init__()
-
-            def forward(self, x, y):
-                return x + y
-
         import copy
         mod = copy.deepcopy(self.program.graph_module)
         mod.graph = graph
         # torch.export.export requires example inputs. The only placeholder nodes we assign to `graph`
         # are those which are tensors. So this filters out the tensor inputs before exporting
         program = torch.export.export(mod, tuple([i for i in inputs if isinstance(i, torch.Tensor)]))
-        module = lower_to_stable_hlo(program, op=op)
+        module, stablehlo_graph_module = lower_to_stable_hlo(program, op=op)
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
         op.add_stable_hlo_graph(module.operation.get_asm())
-        return module, op
+        return module, stablehlo_graph_module, op
 
     def run_gm_op_by_op(self, *inputs):
+        
+        fx_target_to_program_target = {}
+        for input_spec in self.program.graph_signature.input_specs:
+            fx_target_to_program_target[input_spec.arg.name] = {"target": input_spec.target, "kind": input_spec.kind}
+
+        buffers = dict(self.program.named_buffers())
+        parameters = dict(self.program.named_parameters())
+        constants = self.program.tensor_constants
+
         node_to_tensor = {}
         input_index = 0
         outputs = []
@@ -308,8 +305,21 @@ class TorchExecutor(OpByOpExecutor):
             print(f"Compiling {idx}/{num_nodes}: {node.target}")
             out_degree[node] = len(node.users)
             if node.op == "placeholder":
-                node_to_tensor[node] = inputs[input_index]
-                input_index += 1
+                # if node.target in self.program.graph_signature.
+                program_target = fx_target_to_program_target[node.target]
+                if program_target["kind"] == InputKind.PARAMETER:
+                    node_to_tensor[node] = parameters[program_target["target"]]
+                elif program_target["kind"] == InputKind.CONSTANT_TENSOR:
+                    node_to_tensor[node] = constants[program_target["target"]]
+                elif program_target["kind"] == InputKind.BUFFER:
+                    node_to_tensor[node] = buffers[program_target["target"]]
+                elif program_target["kind"] == InputKind.USER_INPUT:
+                    node_to_tensor[node] = inputs[input_index]
+                    input_index += 1
+                else:
+                    raise ValueError(f"Unexpected input kind: {program_target['kind']}")
+                
+
             elif node.op == "get_attr":
                 for buffer in self.program.graph_module.named_buffers():
                     if buffer[0] == node.target:
@@ -332,7 +342,7 @@ class TorchExecutor(OpByOpExecutor):
                     else:
                         args.append(arg)
                 try:
-                    binary, op = self.compile_op(node, *args, **node.kwargs)
+                    binary, stablehlo_graph_module, op = self.compile_op(node, *args, **node.kwargs)
                 except Exception as e:
                     binary = None
                     print(f"Failed to compile {idx}/{num_nodes}: {node.target}: {e}")
@@ -342,10 +352,9 @@ class TorchExecutor(OpByOpExecutor):
                     and binary is not None
                 ):
                     try:
-                        # Again, only want to pass in tensors. Also, torch.export.export REVERSES the args.
-                        # Since we're now torch.export.export-ing each op we need to reverse the order of the args
-                        # each op.
-                        calculated, runtime_stack_dump = self.run_op(binary, *[arg for arg in reversed(args) if isinstance(arg, torch.Tensor)])
+                        # Only want to pass in tensors.
+                        call_args = self._extract_call_args([arg for arg in args if isinstance(arg, torch.Tensor)], stablehlo_graph_module)
+                        calculated, runtime_stack_dump = self.run_op(binary, call_args)
                         self.compiler_config.unique_ops[
                             op.unique_key()
                         ].runtime_stack_dump = runtime_stack_dump
@@ -403,7 +412,7 @@ class TorchExecutor(OpByOpExecutor):
             CompileDepth.COMPILE_OP_BY_OP,
         ):
             return self.run_gm_op_by_op(
-                *(self.graph_constants + tuple(self.program.buffers()) + inputs)
+                *inputs
             )
         else:
             return self.program.graph_module(*inputs)
