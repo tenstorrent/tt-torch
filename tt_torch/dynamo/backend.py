@@ -101,7 +101,9 @@ def shlo_to_flatbuffer(executor, module, compiler_config):
 
 
 def _base_backend(gm, example_inputs, compiler_config):
-    shlo, program, stablehlo_graph_module = torch_to_shlo(gm, example_inputs, compiler_config)
+    shlo, program, stablehlo_graph_module = torch_to_shlo(
+        gm, example_inputs, compiler_config
+    )
     executor = Executor(program, stablehlo_graph_module, compiler_config)
 
     compiler_config.record_property("achieved_compile_depth", "STABLEHLO")
