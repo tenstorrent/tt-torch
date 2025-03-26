@@ -24,6 +24,9 @@ class ThisTester(OnnxModelTester):
         os.remove(f"{self.model_name}.onnx")
         return model
 
+    def _extract_outputs(self, output_object):
+        return (torch.from_numpy(output_object),)
+
     def _load_torch_inputs(self):
         # Define a transformation to preprocess the input image using the weights transforms
         preprocess = self.weights.transforms()

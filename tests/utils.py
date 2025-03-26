@@ -379,6 +379,7 @@ class OnnxModelTester(ModelTester):
         assert_pcc=True,
         assert_atol=True,
         record_property_handle=None,
+        model_group="generality",
     ):
 
         super().__init__(
@@ -391,6 +392,7 @@ class OnnxModelTester(ModelTester):
             assert_pcc,
             assert_atol,
             record_property_handle,
+            model_group,
         )
         # Hold an onnxruntime session for golden / non-full compile execution
         self.sess = onnxruntime.InferenceSession(
@@ -432,7 +434,7 @@ class OnnxModelTester(ModelTester):
     def test_model_train(self, on_device=True):
         raise NotImplementedError("TODO: Implement this method")
 
-    def test_model_eval(self, on_device=True):
+    def test_model_eval(self, on_device=True, _assert_eval_token_mismatch=False):
         golden = self.run_model(self.framework_model, self.numpy_inputs)
 
         if on_device == True:
