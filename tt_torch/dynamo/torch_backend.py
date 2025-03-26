@@ -140,7 +140,9 @@ def import_program(program: torch.export.ExportedProgram):
         return importer.module
 
 
-def lower_to_stable_hlo(program: torch.export.ExportedProgram, op=None, enable_ir_printing=False):
+def lower_to_stable_hlo(
+    program: torch.export.ExportedProgram, op=None, enable_ir_printing=False
+):
     stablehlo_graph_module = exported_program_to_stablehlo(program)
     module_str = stablehlo_graph_module.get_stablehlo_text()
     with Context() as ctx:
@@ -149,7 +151,7 @@ def lower_to_stable_hlo(program: torch.export.ExportedProgram, op=None, enable_i
 
     if op is not None:
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
-    
+
     return module, stablehlo_graph_module
 
 
@@ -276,21 +278,27 @@ class TorchExecutor(OpByOpExecutor):
             op.output_shapes.append([dim for dim in out.shape])
 
         import copy
+
         mod = copy.deepcopy(self.program.graph_module)
         mod.graph = graph
         # torch.export.export requires example inputs. The only placeholder nodes we assign to `graph`
         # are those which are tensors. So this filters out the tensor inputs before exporting
-        program = torch.export.export(mod, tuple([i for i in inputs if isinstance(i, torch.Tensor)]))
+        program = torch.export.export(
+            mod, tuple([i for i in inputs if isinstance(i, torch.Tensor)])
+        )
         module, stablehlo_graph_module = lower_to_stable_hlo(program, op=op)
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
         op.add_stable_hlo_graph(module.operation.get_asm())
         return module, stablehlo_graph_module, op
 
     def run_gm_op_by_op(self, *inputs):
-        
+
         fx_target_to_program_target = {}
         for input_spec in self.program.graph_signature.input_specs:
-            fx_target_to_program_target[input_spec.arg.name] = {"target": input_spec.target, "kind": input_spec.kind}
+            fx_target_to_program_target[input_spec.arg.name] = {
+                "target": input_spec.target,
+                "kind": input_spec.kind,
+            }
 
         buffers = dict(self.program.named_buffers())
         parameters = dict(self.program.named_parameters())
@@ -318,7 +326,6 @@ class TorchExecutor(OpByOpExecutor):
                     input_index += 1
                 else:
                     raise ValueError(f"Unexpected input kind: {program_target['kind']}")
-                
 
             elif node.op == "get_attr":
                 for buffer in self.program.graph_module.named_buffers():
@@ -342,7 +349,9 @@ class TorchExecutor(OpByOpExecutor):
                     else:
                         args.append(arg)
                 try:
-                    binary, stablehlo_graph_module, op = self.compile_op(node, *args, **node.kwargs)
+                    binary, stablehlo_graph_module, op = self.compile_op(
+                        node, *args, **node.kwargs
+                    )
                 except Exception as e:
                     binary = None
                     print(f"Failed to compile {idx}/{num_nodes}: {node.target}: {e}")
@@ -353,7 +362,10 @@ class TorchExecutor(OpByOpExecutor):
                 ):
                     try:
                         # Only want to pass in tensors.
-                        call_args = self._extract_call_args([arg for arg in args if isinstance(arg, torch.Tensor)], stablehlo_graph_module)
+                        call_args = self._extract_call_args(
+                            [arg for arg in args if isinstance(arg, torch.Tensor)],
+                            stablehlo_graph_module,
+                        )
                         calculated, runtime_stack_dump = self.run_op(binary, call_args)
                         self.compiler_config.unique_ops[
                             op.unique_key()
@@ -411,8 +423,6 @@ class TorchExecutor(OpByOpExecutor):
             CompileDepth.EXECUTE_OP_BY_OP,
             CompileDepth.COMPILE_OP_BY_OP,
         ):
-            return self.run_gm_op_by_op(
-                *inputs
-            )
+            return self.run_gm_op_by_op(*inputs)
         else:
             return self.program.graph_module(*inputs)

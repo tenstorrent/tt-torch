@@ -121,13 +121,13 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
 
     # Still need the constant inputs like this to run shape_prop
     constant_inputs = (
-            list(program.tensor_constants.values())
-            + [
-                param.contiguous() if not param.is_contiguous() else param
-                for param in program.parameters()
-            ]
-            + list(program.buffers())
-        )
+        list(program.tensor_constants.values())
+        + [
+            param.contiguous() if not param.is_contiguous() else param
+            for param in program.parameters()
+        ]
+        + list(program.buffers())
+    )
 
     # Need to run shape_prop again to populate tensor_meta
     run_shape_prop(program.graph_module, constant_inputs + example_inputs)
