@@ -62,10 +62,9 @@ def _shlo_backend(
 
 def _torch_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     with torch.no_grad():
-        program, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
+        program = pass_pipeline(gm, example_inputs, compiler_config)
     executor = TorchExecutor(
         program=program,
-        graph_constants=graph_constants,
         compiler_config=compiler_config,
     )
     return executor
@@ -73,13 +72,13 @@ def _torch_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
 
 def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     with torch.no_grad():
-        program, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
+        program = pass_pipeline(gm, example_inputs, compiler_config)
 
-    module = lower_to_stable_hlo(program)
+    module, stablehlo_graph_module = lower_to_stable_hlo(program)
 
     dump_module(module=module, name="StableHLO module", compiler_config=compiler_config)
 
-    return module, program, graph_constants
+    return module, program, stablehlo_graph_module
 
 
 def shlo_to_flatbuffer(executor, module, compiler_config):
@@ -102,8 +101,8 @@ def shlo_to_flatbuffer(executor, module, compiler_config):
 
 
 def _base_backend(gm, example_inputs, compiler_config):
-    shlo, program, graph_constants = torch_to_shlo(gm, example_inputs, compiler_config)
-    executor = Executor(program, graph_constants, compiler_config)
+    shlo, program, stablehlo_graph_module = torch_to_shlo(gm, example_inputs, compiler_config)
+    executor = Executor(program, stablehlo_graph_module, compiler_config)
 
     compiler_config.record_property("achieved_compile_depth", "STABLEHLO")
 
