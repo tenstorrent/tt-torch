@@ -71,6 +71,16 @@ def pytest_collection_modifyitems(config, items):
     using_torch = config.getoption("--op_by_op_torch")
     using_stablehlo = config.getoption("--op_by_op_stablehlo")
 
+    # Check if the --crashsafe option is enabled
+    if config.getoption("--crashsafe"):
+        # Count the number of collected tests
+        num_tests = len(items)
+        if num_tests > 1:
+            pytest.exit(
+                f"Error: --crashsafe can only be used with a single test. {num_tests} tests were specified.",
+                returncode=1,
+            )
+
     for item in items:
         for param in item.iter_markers(name="parametrize"):
             if "op_by_op" in param.args[0]:

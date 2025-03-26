@@ -56,13 +56,9 @@ def test_crashsafe_utils():
         if not os.path.exists(merged_report_dir):
             os.mkdir(merged_report_dir)
 
-        report_name = report_dir + "autoencoder_linear.xml"
         sigkilled_report_name = report_dir + "mnist.xml"
 
-        crashsafe_name = report_name + crashsafe_suffix
         merged_report_name = merged_report_dir + "merged_report.xml"
-
-        run_command = ["-svv", "--crashsafe", f"--junit-xml={report_name}", test_name]
 
         try_sigkill_safe_logging(
             [
@@ -74,15 +70,14 @@ def test_crashsafe_utils():
             ]
         )
 
-        pytest.main(["-svv", "--crashsafe", f"--junit-xml={report_name}", test_name])
-
-        # check if crashsafe report is generated
+        # check if sigkilled crashsafe report is generated
+        sigkilled_report_name += crashsafe_suffix
         assert os.path.exists(
-            crashsafe_name
-        ), f"Crashsafe report not generated, expected at {crashsafe_name}"
+            sigkilled_report_name
+        ), f"Crashsafe report not generated, expected at {sigkilled_report_name}"
 
         # check crashsafe report format
-        compile_depths = get_achieved_compile_depths(crashsafe_name)
+        compile_depths = get_achieved_compile_depths(sigkilled_report_name)
         print(compile_depths)
 
         assert compile_depths, "No compile depths found in crashsafe report"
@@ -91,7 +86,7 @@ def test_crashsafe_utils():
         n_dupes = 5
         for i in range(n_dupes):
             subprocess.run(
-                f"cp {crashsafe_name} {insert_digit_into_filename(crashsafe_name, i)}",
+                f"cp {sigkilled_report_name} {insert_digit_into_filename(sigkilled_report_name, i)}",
                 shell=True,
                 check=True,
             )
@@ -108,10 +103,11 @@ def test_crashsafe_utils():
         # check for 1+n_dupes models in the merged report
         bm_results = parse_benchmark_xml(merged_report_dir)
         print("Benchmark results:")
-        # +2 for original test and sigkilled test
+
+        # +2 for original test
         assert (
-            len(bm_results) == 2 + n_dupes
-        ), f"Expected {2 + n_dupes} models in the merged report, found {len(bm_results)}"
+            len(bm_results) == 1 + n_dupes
+        ), f"Expected {1 + n_dupes} models in the merged report, found {len(bm_results)}"
 
         # check structure of results
         for result in bm_results:
@@ -132,6 +128,37 @@ def test_crashsafe_utils():
         raise e
     finally:
         # cleanup files
+        # return
+        print(f"Cleaning up test files in {report_dir}")
+        shutil.rmtree(report_dir)
+
+
+def test_crashsafe_multitest_assert():
+    # This test is expected to fail because it runs all parameterizations of test_mnist_train
+    # which is not permitted with --crashsafe. You must specify a specific parameterization so only one
+    # test runs at a time.
+    print("\nChecking that running multiple tests in crashsafe mode fails.")
+    multitest = "tests/models/mnist/test_mnist.py::test_mnist_train"
+
+    report_dir = "results/__tmp__crashsafe_assertion_test/"
+    report_name = report_dir + "dummy.xml"
+    try:
+        if not os.path.exists(report_dir):
+            os.mkdir(report_dir)
+
+        return_code = try_sigkill_safe_logging(
+            [
+                "pytest",
+                "-svv",
+                "--crashsafe",
+                f"--junit-xml={report_name}",
+                multitest,
+            ]
+        )
+        assert (
+            return_code == 1
+        ), f"Expected return code 1 to abort tests when attempting to run multiple in crashsafe mode. Instead got code {return_code}"
+    finally:
         print(f"Cleaning up test files in {report_dir}")
         shutil.rmtree(report_dir)
 
@@ -146,6 +173,7 @@ def try_sigkill_safe_logging(test_command):
         text=True,
         bufsize=1,
     )
+    error_message = None
 
     try:
         # Monitor the stdout line by line
@@ -159,13 +187,15 @@ def try_sigkill_safe_logging(test_command):
                 break
 
         # Wait for the process to terminate
-        process.wait()
+        error_message = process.wait()
     except Exception as e:
         print(f"An error occurred: {e}")
         process.kill()  # Ensure the process is terminated in case of an error
+        error_message = e
     finally:
         # Cleanup: Close stdout and stderr
         if process.stdout:
             process.stdout.close()
         if process.stderr:
             process.stderr.close()
+        return error_message
