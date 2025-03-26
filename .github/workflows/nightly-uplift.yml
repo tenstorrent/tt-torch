@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-          fetch-depth: 0 # Fetch all history and tags
+          fetch-depth: 0 # fetch all history
           ref: main
 
       - name: Set env variable

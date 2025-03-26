@@ -45,6 +45,7 @@ jobs:
       with:
         submodules: recursive
         lfs: true
+        fetch-depth: 0
 
     - name: Override tt-mlir SHA mlir_override is set
       if: ${{ inputs.mlir_override }}

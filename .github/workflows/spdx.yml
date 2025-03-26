@@ -12,6 +12,9 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
     - uses: enarx/spdx@master
       with:
         licenses: |-
