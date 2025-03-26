@@ -23,6 +23,7 @@ from tt_torch.tools.utils import (
 from typing import Union
 from torch_xla.stablehlo import VariableType, _extract_call_parameters
 
+
 def gb_to_bytes(gb):
     return gb * 1024 * 1024 * 1024
 
@@ -220,19 +221,25 @@ class Executor:
     # This functionality mimics env/venv/lib/python3.11/site-packages/torch_xla/stablehlo.py::_extract_call_parameters
     # I use this function because that one requires that the weights have been exported as numpy tensors
     def _extract_call_args(self, inputs, stablehlo_graph_module=None):
-        stablehlo_graph_module = self.stablehlo_graph_module if stablehlo_graph_module is None else stablehlo_graph_module
+        stablehlo_graph_module = (
+            self.stablehlo_graph_module
+            if stablehlo_graph_module is None
+            else stablehlo_graph_module
+        )
         call_args = []
         all_tensors = dict(self.program.named_parameters())
         all_tensors.update(dict(self.program.named_buffers()))
 
         # if meta.input_pytree_spec is not None:
         #     args, _ = pytree.tree_flatten(args)
-        for loc in stablehlo_graph_module._name_to_stablehlo['forward'].meta.input_locations:
+        for loc in stablehlo_graph_module._name_to_stablehlo[
+            "forward"
+        ].meta.input_locations:
             if loc.name in all_tensors:
                 call_args.append(all_tensors[loc.name])
             else:
                 call_args.append(inputs[loc.position])
-        
+
         return call_args
 
     def __call__(self, *inputs):
@@ -240,9 +247,7 @@ class Executor:
             assert (
                 self.program.graph_module != None
             ), "Cannot run base executor without torch graph"
-            return self.program.graph_module(
-                *inputs
-            )
+            return self.program.graph_module(*inputs)
 
         assert self.binary is not None
         if self.compiler_config.typecast_inputs:
@@ -454,7 +459,11 @@ class OpByOpExecutor(Executor):
             time.sleep(0.01)
         process.join()
         print(f"json len {len(op.json)}")
-        return binary, input_locations, op,
+        return (
+            binary,
+            input_locations,
+            op,
+        )
 
     def run_op(self, binary, *inputs):
         inputs = self.pre_process_inputs(*inputs)

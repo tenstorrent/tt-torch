@@ -147,9 +147,7 @@ class ModelTester:
 
     def compile_model(self, model, compiler_config):
         # Compile model
-        model = torch.compile(
-            model, backend=backend, options=compiler_config
-        )
+        model = torch.compile(model, backend=backend, options=compiler_config)
         self.compiled_model = model
         return self.compiled_model
 
