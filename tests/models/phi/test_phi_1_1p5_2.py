@@ -1,7 +1,9 @@
 # SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-# https://huggingface.co/microsoft/phi-1
+# Phi 1: https://huggingface.co/microsoft/phi-1
+# Phi 1.5: https://huggingface.co/microsoft/phi-1_5
+# Phi 2: https://huggingface.co/microsoft/phi-2
 
 import torch
 import pytest
@@ -35,18 +37,16 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-@pytest.mark.parametrize("model_name", ["microsoft/phi-2"])
+@pytest.mark.parametrize(
+    "model_name", ["microsoft/phi-1", "microsoft/phi-1.5", "microsoft/phi-2"]
+)
 @pytest.mark.parametrize(
     "op_by_op",
-    # [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
-    [OpByOpBackend.TORCH],
-    # ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
-    ids=["op_by_op_torch"],
+    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
+    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_phi_1(record_property, model_name, mode, op_by_op):
+def test_phi(record_property, model_name, mode, op_by_op):
     cc = CompilerConfig()
-    # cc.enable_consteval = True
-    # cc.consteval_parameters = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
@@ -55,9 +55,6 @@ def test_phi_1(record_property, model_name, mode, op_by_op):
     tester = ThisTester(
         model_name,
         mode,
-        # relative_atol=0.01,
-        # assert_pcc=False,
-        # assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
         is_token_output=True,
