@@ -232,7 +232,7 @@ jobs:
           # },
           {
             runs-on: wormhole_b0, name: "gliner", tests: "
-              tests/models/mistral/test_gliner.py::test_gliner
+              tests/models/gliner/test_gliner.py::test_gliner
               "
           }
         ]

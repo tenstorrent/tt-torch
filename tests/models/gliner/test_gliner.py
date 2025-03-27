@@ -10,10 +10,10 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model = GLiNER.from_pretrained(
+        self.model = GLiNER.from_pretrained(
             "urchade/gliner_largev2", torch_dtype=torch.bfloat16
         )
-        return model.predict_entities
+        return self.model
 
     def _load_inputs(self):
         text = """
@@ -21,7 +21,8 @@ class ThisTester(ModelTester):
         """
 
         labels = ["person", "award", "date", "competitions", "teams"]
-        return (text, labels)
+        model_input, raw_batch = self.model.prepare_model_inputs([text], labels)
+        return model_input
 
 
 @pytest.mark.parametrize(

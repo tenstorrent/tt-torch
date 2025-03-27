@@ -80,24 +80,43 @@ def constant_fold(gm):
 def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     decompositions = torch.export.default_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
-
+    print("1")
+    # breakpoint()
     # we use the export API to run the decompositions, as this maintains the
     # soruce locations in stack_trace
-    gm = (
+    gm0 = (
         torch.export.export_for_training(gm, tuple(example_inputs), strict=False)
         .run_decompositions(decompositions)
         .module()
     )
 
     if compiler_config.enable_consteval:
-        gm = constant_fold(gm)
+        gm1 = constant_fold(gm0)
     elif compiler_config.consteval_parameters:
         raise Exception("consteval_parameters is enabled but enable_consteval is not")
 
-    gm = bypass_redundant_getitem(gm)
+    gm2 = bypass_redundant_getitem(gm1)
+    import copy
 
-    reduce_graph(gm)
-    program = torch.export.export(gm, tuple(example_inputs), strict=False)
+    gm3 = copy.deepcopy(gm2)
+    reduce_graph(gm3)
+    print("2")
+    print("Shapes of example_inputs:")
+    for i, input_tensor in enumerate(example_inputs):
+        print(f"  Input {i}: {input_tensor.shape}")
+    if len(example_inputs) == 7:
+        breakpoint()
+
+    def print_gm_ops(gm: torch.fx.GraphModule):
+        """Prints the operations (nodes) of a GraphModule."""
+        for node in gm.graph.nodes:
+            print(
+                f"Name: {node.name}, Op: {node.op}, Target: {node.target}, Args: {node.args}, Kwargs: {node.kwargs}"
+            )
+
+    print_gm_ops(gm3)
+    program = torch.export.export(gm3, tuple(example_inputs), strict=False)
+    print("3")
     # The proper order of inputs when outlining everything is constants + parameters + buffers + example_inputs
     if not compiler_config.inline_parameters:
         constant_inputs = (
