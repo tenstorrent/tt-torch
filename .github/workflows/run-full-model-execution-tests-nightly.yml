@@ -1,4 +1,4 @@
-name: Run Full Model Execution Tests
+name: Run Full Model Execution Tests (Nightly)
 
 on:
   workflow_dispatch:

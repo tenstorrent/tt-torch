@@ -111,7 +111,7 @@ class AllOps:
             atol = "N/A"
             self.process_ops(ttnn_mlir, pcc, atol)
 
-    def parse_xlsx(self, excel_path):
+    def parse_xlsx(self, excel_path, failures_only):
         """
         Parse the 'All Ops' sheet from an Excel file, extracting operation details.
 
@@ -122,7 +122,7 @@ class AllOps:
         df = pd.read_excel(excel_path, sheet_name="All Ops")
 
         # Validate required columns are present
-        required_columns = ["Raw TTNNIR", "Torch Name", "PCC", "ATOL"]
+        required_columns = ["Compile Error", "Raw TTNNIR", "Torch Name", "PCC", "ATOL"]
         missing_columns = [col for col in required_columns if col not in df.columns]
 
         if missing_columns:
@@ -135,6 +135,16 @@ class AllOps:
         for index, row in df_cleaned.iterrows():
             # Remove quotes from Raw TTNNIR if present
             raw_ttnnir = row["Raw TTNNIR"].strip("'\"")
+
+            # If outputing failures only, skip if row is empty, Nan, or "Error message not extracted."
+            if failures_only:
+                compile_error = row.get("Compile Error", "")
+                if (
+                    pd.isna(compile_error)
+                    or str(compile_error).strip() == ""
+                    or str(compile_error).strip() == "Error message not extracted."
+                ):
+                    continue
 
             # Extract row details
             pcc = row["PCC"]
@@ -384,12 +394,15 @@ if __name__ == "__main__":
         --json_dir DIR
             The path to the directory where the generated JSON files will be saved.
 
+        --failures_only
+            Only output .json/.md results for ops that have legitimate errors.
+
     Examples:
         python generate_md.py --excel_path /path/to/models_op_per_op.xlsx --md_dir /path/to/md/output/
         python generate_md.py --json_path /path/to/model.json --json_dir /path/to/json/output/
 
     Notes:
-        - You must provide either --excel_path or --json_path, but not both.
+        - You must provide either --excel_path and/or --json_path
     """
     parser = argparse.ArgumentParser(description="Create ttnn ops md files")
     parser.add_argument(
@@ -425,6 +438,13 @@ if __name__ == "__main__":
         metavar="DIR",
     )
 
+    parser.add_argument(
+        "--failures_only",
+        dest="failures_only",
+        action="store_true",
+        help="Only output ops that have legitimate errors",
+    )
+
     args = parser.parse_args()
     if args.excel_path is None and args.json_path is None:
         # if neither paths are provided
@@ -438,7 +458,7 @@ if __name__ == "__main__":
     if args.excel_path is not None:
         try:
             myOps = AllOps()
-            myOps.parse_xlsx(args.excel_path)
+            myOps.parse_xlsx(args.excel_path, args.failures_only)
         except Exception as e:
             print(f"Exception occured at generate_md.py: {e}")
     if args.json_path is not None:
@@ -456,13 +476,13 @@ if __name__ == "__main__":
     if args.md_dir is not None:
         try:
             myOps.create_md_files(args.md_dir)
-            print(f"Successfully generated files in {args.md_dir}")
+            print(f"Successfully generated .md files in {args.md_dir}")
         except Exception as e:
             print(f"Exception occured at generate_md.py: {e}")
 
     if args.json_dir is not None:
         try:
             myOps.save_json_files(args.json_dir)
-            print(f"Successfully generated files in {args.json_dir}")
+            print(f"Successfully generated .json files in {args.json_dir}")
         except Exception as e:
             print(f"Exception occured at generate_md.py: {e}")
