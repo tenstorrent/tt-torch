@@ -137,6 +137,7 @@ def import_program(program: torch.export.ExportedProgram):
 
 
 def lower_to_stable_hlo(module, op=None, enable_ir_printing=False):
+    breakpoint()
     run_pipeline_with_repro_report(
         module,
         f"builtin.module(torchdynamo-export-to-torch-backend-pipeline)",
@@ -192,7 +193,7 @@ class TorchExecutor(OpByOpExecutor):
         return name
 
     def get_stable_hlo_graph(self, node, inputs, **kwargs):
-
+        breakpoint()
         input_shapes_and_constants = self.get_input_shapes_and_constants(*inputs)
 
         name = node.target.name() if hasattr(node.target, "name") else node.name
@@ -255,6 +256,7 @@ class TorchExecutor(OpByOpExecutor):
 
             # if the output of the getitem node is not used, we don't append it to the graph
             unused_output = [len(user.users) == 0 for user in node.users]
+            breakpoint()
             for idx, tensor_meta in enumerate(node.meta["tensor_meta"]):
                 if unused_output[idx]:
                     continue
@@ -294,6 +296,7 @@ class TorchExecutor(OpByOpExecutor):
         out_degree = {}
         for idx, node in enumerate(self.program.graph_module.graph.nodes):
             print(f"Compiling {idx}/{num_nodes}: {node.target}")
+
             out_degree[node] = len(node.users)
             if node.op == "placeholder":
                 node_to_tensor[node] = inputs[input_index]
@@ -320,7 +323,11 @@ class TorchExecutor(OpByOpExecutor):
                     else:
                         args.append(arg)
                 try:
-                    binary, op = self.compile_op(node, *args, **node.kwargs)
+                    if idx == 11 and num_nodes == 13:
+                        breakpoint()
+                        binary, op = self.compile_op(node, *args, **node.kwargs)
+                    else:
+                        binary = None
                 except Exception as e:
                     binary = None
                     print(f"Failed to compile {idx}/{num_nodes}: {node.target}: {e}")
