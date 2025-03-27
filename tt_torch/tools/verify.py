@@ -7,7 +7,6 @@ from onnxruntime import InferenceSession
 import numpy as np
 import tt_mlir
 from tt_torch.onnx_compile import compile_onnx
-from tt_torch.dynamo.backend import backend
 from tt_torch.tools.utils import calculate_atol, calculate_pcc
 from tt_torch.tools.utils import CompileDepth
 
@@ -169,6 +168,8 @@ def _verify_torch_module(
         input_data_types = [torch.float32] * (
             len(input_shapes) if input_shapes is not None else len(inputs)
         )
+
+    from tt_torch.dynamo.backend import backend  # avoid circular import
 
     tt_mod = torch.compile(mod, backend=backend, options=compiler_config)
     if inputs is None:
