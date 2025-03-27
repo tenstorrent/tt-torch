@@ -29,7 +29,7 @@ if (BUILD_TOOLCHAIN)
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tt-mlir/src/tt-mlir
     )
 else()
-    set(TT_RUNTIME_DEBUG OFF CACHE BOOL "Enable runtime debugging")
+    set(TT_RUNTIME_DEBUG ON CACHE BOOL "Enable runtime debugging")
     message(STATUS "TT_RUNTIME_DEBUG is set to: ${TT_RUNTIME_DEBUG}")
 
     set(TT_RUNTIME_ENABLE_PERF_TRACE OFF CACHE BOOL "Enable runtime Tracy perf tracing")
