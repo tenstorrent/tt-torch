@@ -17,6 +17,8 @@ import shutil
 from tt_mlir import (
     open_mesh_device,
     close_mesh_device,
+    create_sub_mesh_device,
+    release_sub_mesh_device,
     MeshDeviceOptions,
     is_runtime_debug_enabled,
 )
@@ -276,6 +278,7 @@ class CompilerConfig:
         self.mesh_device_shape = [1, 1]
         self.mesh_device_options = MeshDeviceOptions()
         self.mesh_device_options.enable_async_ttnn = False
+        self.is_sub_mesh_device = False
         self.record_property = None
         self.record_property = lambda *args, **kwargs: None  # Default to no-op
 
@@ -350,19 +353,33 @@ class CompilerConfig:
             self.dump_debug = dump_intermediates == "DEBUG"
             self.dump_info = self.dump_debug or dump_intermediates == "INFO"
 
-    def initialize_device(self, device_ids=None):
+    def initialize_device(self, device_ids=None, parent_mesh=None, sub_mesh_offset=None, sub_mesh_shape=[1, 1]):
         assert self.runtime_device is None
-        if device_ids is None:
-            device_ids = [0]
-        self.mesh_device_shape = [1, len(device_ids)]
-        self.mesh_device_options.device_ids = device_ids
-        self.runtime_device = open_mesh_device(
-            self.mesh_device_shape, self.mesh_device_options
-        )
+        if not self.is_sub_mesh_device:
+            if device_ids is None:
+                device_ids = [0]
+            self.mesh_device_shape = [1, len(device_ids)]
+            self.mesh_device_options.device_ids = device_ids
+            self.runtime_device = open_mesh_device(
+                self.mesh_device_shape, self.mesh_device_options
+            )
+        else:
+            assert parent_mesh is not None, "Parent mesh must be provided when creating a sub-mesh"
+            self.runtime_device = create_sub_mesh_device(parent_mesh, sub_mesh_shape, sub_mesh_offset)
+
+
+    def initialize_sub_mesh_device(self, parent_mesh, mesh_offset, mesh_shape = [1, 1]):
+        assert self.runtime_device is None
+        assert parent_mesh is not None
+        self.runtime_device = create_sub_mesh_device(parent_mesh, mesh_shape, mesh_offset)
+
 
     def cleanup_device(self):
         assert self.runtime_device is not None
-        close_mesh_device(self.runtime_device)
+        if self.is_sub_mesh_device:
+            release_sub_mesh_device(self.runtime_device)
+        else:
+            close_mesh_device(self.runtime_device)
         self.runtime_device = None
 
     def post_init(self):
