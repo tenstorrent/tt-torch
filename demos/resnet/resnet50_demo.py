@@ -22,8 +22,10 @@ def main():
     cc.enable_consteval = True
     cc.consteval_parameters = True
 
+    # devices = tt_torch.query_devices()
     tt_model = torch.compile(model, backend=backend, dynamic=False, options=cc)
 
+    # tt_model(*inputs, devices[0])
     headers = ["Top 5 Predictions"]
     topk = 5
     prompt = 'Enter the path of the image (type "stop" to exit or hit enter to use a default image): '

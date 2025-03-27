@@ -278,7 +278,7 @@ class Executor:
                 tensor = node.target(*args, **node.kwargs)
                 node_to_tensor[node] = tensor
 
-    def __call__(self, *inputs):
+    def __call__(self, *inputs, device=None):
         if self.compiler_config.compile_depth != CompileDepth.EXECUTE:
             assert (
                 self.program.graph_module != None
