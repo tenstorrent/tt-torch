@@ -161,7 +161,7 @@ class Executor:
         self.preprocessed_graph_constants = None
 
     def register_intermediate_callback(self, callback):
-        if not is_runtime_debug_enabled():
+        if not tt_mlir.is_runtime_debug_enabled():
             raise RuntimeError(
                 "Runtime debug is required to use intermediate callbacks. Please recompile this project with -DTT_RUNTIME_DEBUG=ON."
             )

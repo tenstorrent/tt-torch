@@ -29,6 +29,7 @@ def profile(test_command: str, output_filename: str = Profiler.DEFAULT_OUTPUT_FI
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
     testProcess.communicate()  # block until the test process exits
+    print("Test process exited.")
 
     profiler.close_capture_tool_process()
     profiler.process_csvexport()
