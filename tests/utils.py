@@ -339,7 +339,7 @@ class ModelTester:
         if compile_depth is not CompileDepth.EXECUTE:
             return compile_depth_translation_table[compile_depth]
 
-        return "PASSED" if min_pcc >= 0.99 else "INCORRECT_RESULT"
+        return "PASSED" if min_pcc >= self.required_pcc else "INCORRECT_RESULT"
 
     def flush_tag_cache_to_record(self):
         # record the tags property at the very end of the test as data may
