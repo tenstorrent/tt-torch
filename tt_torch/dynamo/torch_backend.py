@@ -40,7 +40,7 @@ from tt_torch.dynamo.executor import (
     Executor,
     OpByOpExecutor,
 )
-from torch_xla.stablehlo import exported_program_to_stablehlo
+from torch_xla.stablehlo import exported_program_to_stablehlo, StableHLOExportOptions
 from mlir.ir import Context, Module
 import mlir.dialects.stablehlo as stablehlo
 
@@ -143,7 +143,7 @@ def import_program(program: torch.export.ExportedProgram):
 def lower_to_stable_hlo(
     program: torch.export.ExportedProgram, op=None, enable_ir_printing=False
 ):
-    stablehlo_graph_module = exported_program_to_stablehlo(program)
+    stablehlo_graph_module = exported_program_to_stablehlo(program, StableHLOExportOptions(export_weights=False))
     module_str = stablehlo_graph_module.get_stablehlo_text()
     with Context() as ctx:
         stablehlo.register_dialect(ctx)
