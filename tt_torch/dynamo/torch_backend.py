@@ -8,6 +8,7 @@ import tt_mlir
 import torch_mlir
 import os
 import re
+import copy
 import ml_dtypes
 import numpy as np
 from torch_mlir.dialects import torch as torch_dialect
@@ -199,14 +200,14 @@ class TorchExecutor(OpByOpExecutor):
         if not isinstance(node.target, torch._ops.OpOverload):
             if "getitem" not in name:
                 raise ValueError(f"Node target is not an OpOverload: {name}")
-            return None, None, None
+            return None, None, None, None
 
         op = Op(name, input_shapes_and_constants, self.compiler_config.model_name)
         if op.unique_key() not in self.compiler_config.unique_ops:
             self.compiler_config.unique_ops[op.unique_key()] = op
         else:
             self.compiler_config.unique_ops[op.unique_key()].num_ops += 1
-            return None, None, None
+            return None, None, None, None
 
         graph = torch.fx.Graph()
         placeholders = []
@@ -216,7 +217,7 @@ class TorchExecutor(OpByOpExecutor):
             elif isinstance(inp, (list, tuple)):
                 inps = torch.fx.immutable_collections.immutable_list(
                     [
-                        graph.placeholder(f"input_{idx}")
+                        graph.placeholder(f"input_{idx}_{i}")
                         if isinstance(sub_inp, torch.Tensor)
                         else sub_inp
                         for idx, sub_inp in enumerate(inp)
@@ -279,19 +280,27 @@ class TorchExecutor(OpByOpExecutor):
         for out in out_meta:
             op.output_shapes.append([dim for dim in out.shape])
 
-        import copy
-
         mod = copy.deepcopy(self.program.graph_module)
         mod.graph = graph
-        # torch.export.export requires example inputs. The only placeholder nodes we assign to `graph`
-        # are those which are tensors. So this filters out the tensor inputs before exporting
-        program = torch.export.export(
-            mod, tuple([i for i in inputs if isinstance(i, torch.Tensor)])
-        )
+
+        # If there are lists/tuples of tensors as inputs, each element of that sequence has been
+        # created as a separate placeholder in the graph. So we must flattedn the inputs.
+        def flatten(x):
+            if isinstance(x, torch.Tensor):
+                return [x]
+
+            flat = []
+            if isinstance(x, (list, tuple)):
+                for i in x:
+                    flat.extend(flatten(i))
+            return flat
+
+        inputs = flatten(inputs)
+        program = torch.export.export(mod, tuple(inputs))
         module, stablehlo_graph_module = lower_to_stable_hlo(program, op=op)
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
         op.add_stable_hlo_graph(module.operation.get_asm())
-        return module, stablehlo_graph_module, op
+        return module, stablehlo_graph_module, inputs, op
 
     def run_gm_op_by_op(self, *inputs):
 
@@ -351,7 +360,7 @@ class TorchExecutor(OpByOpExecutor):
                     else:
                         args.append(arg)
                 try:
-                    binary, stablehlo_graph_module, op = self.compile_op(
+                    binary, stablehlo_graph_module, flat_args, op = self.compile_op(
                         node, *args, **node.kwargs
                     )
                 except Exception as e:
@@ -365,7 +374,7 @@ class TorchExecutor(OpByOpExecutor):
                     try:
                         # Only want to pass in tensors.
                         call_args = self._extract_call_args(
-                            [arg for arg in args if isinstance(arg, torch.Tensor)],
+                            [arg for arg in flat_args if isinstance(arg, torch.Tensor)],
                             stablehlo_graph_module,
                         )
                         calculated, runtime_stack_dump = self.run_op(binary, call_args)
