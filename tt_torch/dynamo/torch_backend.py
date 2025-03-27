@@ -143,7 +143,9 @@ def import_program(program: torch.export.ExportedProgram):
 def lower_to_stable_hlo(
     program: torch.export.ExportedProgram, op=None, enable_ir_printing=False
 ):
-    stablehlo_graph_module = exported_program_to_stablehlo(program, StableHLOExportOptions(export_weights=False))
+    stablehlo_graph_module = exported_program_to_stablehlo(
+        program, StableHLOExportOptions(export_weights=False)
+    )
     module_str = stablehlo_graph_module.get_stablehlo_text()
     with Context() as ctx:
         stablehlo.register_dialect(ctx)
