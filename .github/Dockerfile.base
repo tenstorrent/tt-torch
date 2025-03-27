@@ -11,6 +11,8 @@ RUN apt-get update && apt-get install -y \
     python3-dev \
     python3-venv \
     python3-pip \
+    python3.11-dev \
+    python3.11-venv \
     git \
     git-lfs \
     libhwloc-dev \
@@ -30,7 +32,15 @@ RUN apt-get update && apt-get install -y \
     libboost-all-dev \
     jq \
     curl \
-    lcov
+    lcov \
+    libgl1 \
+    libglx-mesa0
+
+# Install python3.11 packages
+RUN python3.11 -m pip install \
+    setuptools \
+    wheel \
+    torch@https://download.pytorch.org/whl/cpu-cxx11-abi/torch-2.6.0%2Bcpu.cxx11.abi-cp311-cp311-linux_x86_64.whl
 
 # Install clang 17
 RUN wget https://apt.llvm.org/llvm.sh && \
