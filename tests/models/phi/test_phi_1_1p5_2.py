@@ -58,6 +58,7 @@ def test_phi(record_property, model_name, mode, op_by_op):
         compiler_config=cc,
         record_property_handle=record_property,
         is_token_output=True,
+        model_group="red",
     )
     results = tester.test_model()
 
