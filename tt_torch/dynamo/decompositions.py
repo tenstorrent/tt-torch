@@ -309,6 +309,26 @@ def clamp(
     return out
 
 
+def erf(input, out=None):
+    input = torch.clamp(input, -3.0, 3.0)
+    p = 0.3275911
+    a1 = 0.254829592
+    a2 = -0.284496736
+    a3 = 1.421413741
+    a4 = -1.453152027
+    a5 = 1.061405429
+
+    t = 1.0 / (1 + p * input)
+
+    return torch.clamp(
+        1
+        - (a1 * t + a2 * t**2 + a3 * t**3 + a4 * t**4 + a5 * t**5)
+        * torch.exp(-(input * input)),
+        -1.0,
+        1.0,
+    )
+
+
 # TODO: DO we ever need this?
 def _get_default_decomposition_ops() -> DecompositionOpsList:
     aten = torch.ops.aten
@@ -374,6 +394,7 @@ def _get_custom_decopositions() -> DecompositionTable:
         aten.avg_pool2d.default: avg_pool2d,
         aten.split_with_sizes.default: split_with_sizes,
         aten.clamp.default: clamp,
+        aten.erf.default: erf,
     }
 
 
