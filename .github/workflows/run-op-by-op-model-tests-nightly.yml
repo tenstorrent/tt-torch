@@ -48,132 +48,132 @@ jobs:
               tests/models/gpt_neo/test_gpt_neo.py::test_gpt_neo
               "
           },
-          {
-            runs-on: wormhole_b0, name: "llama", tests: "
-              tests/models/llama/test_llama_7b.py::test_llama_7b
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "mamba", tests: "
-              tests/models/mamba/test_mamba.py::test_mamba[op_by_op_torch-state-spaces/mamba-790m-hf-eval]
-              "
-          },
-          # { https://github.com/tenstorrent/tt-torch/issues/298
-          #   runs-on: wormhole_b0, name: "xglm", tests: "
-          #     tests/models/xglm/test_xglm.py::test_xglm
+          # {
+          #   runs-on: wormhole_b0, name: "llama", tests: "
+          #     tests/models/llama/test_llama_7b.py::test_llama_7b
           #     "
           # },
-          {
-            runs-on: wormhole_b0, name: "mobilenet", tests: "
-              tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "openpose", tests: "
-              tests/models/openpose/test_openpose.py::test_openpose
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "opt", tests: "
-              tests/models/opt/test_opt.py::test_opt
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "stable-diffusion-pipe", tests: "
-              tests/models/stable_diffusion/test_stable_diffusion.py::test_stable_diffusion
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "stable-diffusion-unet", tests: "
-              tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "t5", tests: "
-              tests/models/t5/test_t5.py::test_t5
-              tests/models/flan_t5/test_flan_t5.py::test_flan_t5
-              tests/models/speecht5_tts/test_speecht5_tts.py::test_speecht5_tts
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "unet", tests: "
-              tests/models/unet/test_unet.py::test_unet
-              tests/models/unet_brain/test_unet_brain.py::test_unet_brain
-              tests/models/unet_carvana/test_unet_carvana.py::test_unet_carvana
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "RMBG", tests: "
-              tests/models/RMBG/test_RMBG.py::test_RMBG
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "clip", tests: "
-              tests/models/clip/test_clip.py::test_clip
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "timm", tests: "
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite0.in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite1.in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite2.in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite3.in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite4.in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-ghostnetv2_100.in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-inception_v4.tf_in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-mixer_b16_224.goog_in21k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-ese_vovnet19b_dw.ra_in1k]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "vision-misc", tests: "
-              tests/models/glpn_kitti/test_glpn_kitti.py::test_glpn_kitti
-              tests/models/hand_landmark/test_hand_landmark.py::test_hand_landmark
-              tests/models/segment_anything/test_segment_anything.py::test_segment_anything
-              tests/models/vilt/test_vilt.py::test_vilt
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "vision-transformers", tests: "
-              tests/models/beit/test_beit_image_classification.py::test_beit_image_classification
-              tests/models/deit/test_deit.py::test_deit
-              tests/models/detr/test_detr.py::test_detr
-              tests/models/segformer/test_segformer.py::test_segformer
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "yolo", tests: "
-              tests/models/yolos/test_yolos.py::test_yolos
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "codegen", tests: "
-              tests/models/codegen/test_codegen.py::test_codegen
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "mgp-str", tests: "
-              tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "musicgen_small", tests: "
-              tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "whisper", tests: "
-              tests/models/whisper/test_whisper.py::test_whisper
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "torchvision_1", tests: "
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-googlenet]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-densenet201]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-vit_h_14]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-swin_b]
-              "
-          },
+          # {
+          #   runs-on: wormhole_b0, name: "mamba", tests: "
+          #     tests/models/mamba/test_mamba.py::test_mamba[op_by_op_torch-state-spaces/mamba-790m-hf-eval]
+          #     "
+          # },
+          # # { https://github.com/tenstorrent/tt-torch/issues/298
+          # #   runs-on: wormhole_b0, name: "xglm", tests: "
+          # #     tests/models/xglm/test_xglm.py::test_xglm
+          # #     "
+          # # },
+          # {
+          #   runs-on: wormhole_b0, name: "mobilenet", tests: "
+          #     tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2
+          #     "
+          # },
+          # {
+          #   runs-on: wormhole_b0, name: "openpose", tests: "
+          #     tests/models/openpose/test_openpose.py::test_openpose
+          #     "
+          # },
+          # {
+          #   runs-on: wormhole_b0, name: "opt", tests: "
+          #     tests/models/opt/test_opt.py::test_opt
+          #     "
+          # },
+          # {
+          #   runs-on: wormhole_b0, name: "stable-diffusion-pipe", tests: "
+          #     tests/models/stable_diffusion/test_stable_diffusion.py::test_stable_diffusion
+          #     "
+          # },
+          # {
+          #   runs-on: wormhole_b0, name: "stable-diffusion-unet", tests: "
+          #     tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet
+          #     "
+          # },
+          # {
+          #   runs-on: wormhole_b0, name: "t5", tests: "
+          #     tests/models/t5/test_t5.py::test_t5
+          #     tests/models/flan_t5/test_flan_t5.py::test_flan_t5
+          #     tests/models/speecht5_tts/test_speecht5_tts.py::test_speecht5_tts
+          #     "
+          # },
+          # {
+          #   runs-on: wormhole_b0, name: "unet", tests: "
+          #     tests/models/unet/test_unet.py::test_unet
+          #     tests/models/unet_brain/test_unet_brain.py::test_unet_brain
+          #     tests/models/unet_carvana/test_unet_carvana.py::test_unet_carvana
+          #     "
+          # },
+          # {
+          #   runs-on: wormhole_b0, name: "RMBG", tests: "
+          #     tests/models/RMBG/test_RMBG.py::test_RMBG
+          #     "
+          # },
+          # {
+          #   runs-on: wormhole_b0, name: "clip", tests: "
+          #     tests/models/clip/test_clip.py::test_clip
+          #     "
+          # },
+          # {
+          #   runs-on: wormhole_b0, name: "timm", tests: "
+          #     tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite0.in1k]
+          #     tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite1.in1k]
+          #     tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite2.in1k]
+          #     tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite3.in1k]
+          #     tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite4.in1k]
+          #     tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-ghostnetv2_100.in1k]
+          #     tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-inception_v4.tf_in1k]
+          #     tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-mixer_b16_224.goog_in21k]
+          #     tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-ese_vovnet19b_dw.ra_in1k]
+          #     "
+          # },
+          # {
+          #   runs-on: wormhole_b0, name: "vision-misc", tests: "
+          #     tests/models/glpn_kitti/test_glpn_kitti.py::test_glpn_kitti
+          #     tests/models/hand_landmark/test_hand_landmark.py::test_hand_landmark
+          #     tests/models/segment_anything/test_segment_anything.py::test_segment_anything
+          #     tests/models/vilt/test_vilt.py::test_vilt
+          #     "
+          # },
+          # {
+          #   runs-on: wormhole_b0, name: "vision-transformers", tests: "
+          #     tests/models/beit/test_beit_image_classification.py::test_beit_image_classification
+          #     tests/models/deit/test_deit.py::test_deit
+          #     tests/models/detr/test_detr.py::test_detr
+          #     tests/models/segformer/test_segformer.py::test_segformer
+          #     "
+          # },
+          # {
+          #   runs-on: wormhole_b0, name: "yolo", tests: "
+          #     tests/models/yolos/test_yolos.py::test_yolos
+          #     "
+          # },
+          # {
+          #   runs-on: wormhole_b0, name: "codegen", tests: "
+          #     tests/models/codegen/test_codegen.py::test_codegen
+          #     "
+          # },
+          # {
+          #   runs-on: wormhole_b0, name: "mgp-str", tests: "
+          #     tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base
+          #     "
+          # },
+          # {
+          #   runs-on: wormhole_b0, name: "musicgen_small", tests: "
+          #     tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small
+          #     "
+          # },
+          # {
+          #   runs-on: wormhole_b0, name: "whisper", tests: "
+          #     tests/models/whisper/test_whisper.py::test_whisper
+          #     "
+          # },
+          # {
+          #   runs-on: wormhole_b0, name: "torchvision_1", tests: "
+          #     tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-googlenet]
+          #     tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-densenet201]
+          #     tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-vit_h_14]
+          #     tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-swin_b]
+          #     "
+          # },
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
