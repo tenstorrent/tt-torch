@@ -180,6 +180,8 @@ def _verify_torch_module(
             len(input_shapes) if input_shapes is not None else len(inputs)
         )
 
+    from tt_torch.dynamo.backend import backend  # avoid circular import
+
     tt_mod = torch.compile(mod, backend=backend, options=compiler_config)
     if inputs is None:
         if all([dtype.is_floating_point for dtype in input_data_types]):

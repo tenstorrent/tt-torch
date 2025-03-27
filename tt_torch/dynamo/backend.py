@@ -7,6 +7,8 @@ import tt_mlir
 import sys
 import torch_mlir
 
+# from tt_torch.tools.verify import verify_against_golden
+
 from tt_torch.dynamo.torch_backend import (
     TorchExecutor,
     import_graph,
@@ -34,14 +36,74 @@ from tt_torch.tools.utils import (
 )
 
 
-def verify_golden_callback(binary, callback_context, op_context):
-    # Using these parameters, we should be able to query information
-    # about the op described by op_context, and its output. I.e. location:
-    location = tt_mlir.get_op_loc_info(op_context)
-    # ...
+def create_verify_golden_callback(executor: Executor):
+    # Closure to capture external state in the callback.
 
-    # We will need to provide the bindings necesarry in this frontend.
-    # Those bindings will interact with the runtime API
+    def verify_golden_callback(binary, callback_context, op_context):
+        # Using these parameters, we should be able to query information
+        # about the op described by op_context, and its output. I.e. location:
+        raw_location = tt_mlir.get_op_loc_info(
+            op_context
+        )  # Do we care about other context?
+        output_intermediate_tensor: Tensor = None  # Grab runtime tensor and inject here
+
+        # format 'loc("<torchfx node UID>")'
+        print(f"raw location = {raw_location}")
+
+        location = ""
+        fused_locations = []
+
+        # Characters to remove
+        # handle fused locations
+        if "fused" in raw_location:
+            fused_locations = raw_location.split("fused")[1]
+            fused_locations = fused_locations.split(",")
+            fused_locations = [
+                loc.translate(str.maketrans("", "", "()[]{}\"' "))
+                for loc in fused_locations
+            ]
+
+        if "loc(unknown)" in raw_location:
+            return
+
+        print("torchfx node UID =", fused_locations)
+        location = fused_locations[1]
+
+        intermediate_data: RuntimeIntermediate = (
+            executor.runtime_intermediate_cache.get(location, None)
+        )
+
+        if intermediate_data is not None:
+            print(f"Found golden for op @ {intermediate_data.node.name} == {location}")
+
+            # TESTING ONLY - Add the golden tensor as a fake output, to check that
+            # verification can get PCC = 1 for all cases.
+            intermediate_data.decomposed_intermediate_outputs.append(
+                output_intermediate_tensor
+            )  # actual output
+            intermediate_data.decomposed_intermediate_outputs.append(
+                intermediate_data.golden
+            )  # fake output
+
+            # if intermediate_data.golden != None:
+            print(
+                f"Decomposition added fake tensor too. Total ct {len(intermediate_data.decomposed_intermediate_outputs)}"
+            )
+
+            # pdb.set_trace()
+
+        # atol = calculate_atol(calculated, golden)
+        # if atol > executor.required_atol:
+        #     print(f"atol too high for {location}: {atol}")
+        # pcc = calculate_pcc(calculated, golden)
+        # if pcc < executor.required_pcc:
+        #     print(f"pcc too low for {location}: {pcc}")
+
+        # pdb.set_trace()
+        # We will need to provide the bindings necesarry in this frontend.
+        # Those bindings will interact with the runtime API
+
+    return verify_golden_callback
 
 
 def dump_module(module, name, compiler_config):
@@ -111,7 +173,7 @@ def shlo_to_flatbuffer(executor, module, compiler_config):
     dump_module(module=ttir, name="TTIR module", compiler_config=compiler_config)
 
     if compiler_config.enable_intermediate_verification:
-        executor.register_intermediate_callback(verify_golden_callback)
+        executor.register_intermediate_callback(create_verify_golden_callback(executor))
 
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
     dump_module(module=ttnn, name="TTNN module", compiler_config=compiler_config)
@@ -146,24 +208,28 @@ def backend(gm, example_inputs, options=None):
     # Apply environment overrides at start of compilation to allow overriding what was set in the test
     options.apply_environment_overrides()
 
+    _backend = None
+
     if (
         options.compile_depth == CompileDepth.COMPILE_OP_BY_OP
         or options.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
+        or options._enable_intermediate_verification
     ):
         if options.op_by_op_backend == OpByOpBackend.TORCH:
             # run torch graph op-by-op
-            return _torch_backend(gm, example_inputs, compiler_config=options)
+            _backend = _torch_backend(gm, example_inputs, compiler_config=options)
         else:
             # op_by_op_backend == OpByOpBackend.STABLEHLO
             # convert torch to stablehlo, then run stablehlo op-by-op
             module, program, graph_constants = torch_to_shlo(
                 gm, example_inputs, compiler_config=options
             )
-            return _shlo_backend(
+            _backend = _shlo_backend(
                 shlo=module,
                 example_inputs=example_inputs,
                 compiler_config=options,
                 program=program,
                 graph_constants=graph_constants,
             )
-    return _base_backend(gm, example_inputs, compiler_config=options)
+    _backend = _base_backend(gm, example_inputs, compiler_config=options)
+    return _backend
