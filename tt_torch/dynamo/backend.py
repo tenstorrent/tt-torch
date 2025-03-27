@@ -122,11 +122,16 @@ def _base_backend(gm, example_inputs, compiler_config):
     shlo, program, graph_constants = torch_to_shlo(gm, example_inputs, compiler_config)
     executor = Executor(program, graph_constants, compiler_config)
 
+    compiler_config.record_property("achieved_compile_depth", "STABLEHLO")
+
     if compiler_config.compile_depth == CompileDepth.STABLEHLO:
         return executor
 
     binary = shlo_to_flatbuffer(executor, shlo, compiler_config)
     executor.set_binary(binary)
+
+    compiler_config.record_property("achieved_compile_depth", "TTNN_IR")
+
     return executor
 
 

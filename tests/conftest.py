@@ -7,6 +7,15 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 from tt_torch.tools.utils import OpByOpBackend
+from tt_torch.tools.crashsafe_utils import crashsafe_suffix
+import xml.etree.ElementTree as ET
+import socket
+import os
+import json
+import shutil
+
+global junitxml_path
+junitxml_path = None
 
 
 @pytest.fixture(autouse=True)
@@ -41,6 +50,12 @@ def pytest_addoption(parser):
         default=False,
         help="Run test in torch op-by-op mode",
     )
+    parser.addoption(
+        "--crashsafe",
+        action="store_true",
+        default=False,
+        help="Create transacted output logs",
+    )
 
 
 # Print more details for skipped and xfailed tests
@@ -55,6 +70,16 @@ def pytest_collection_modifyitems(config, items):
     selected_items = []
     using_torch = config.getoption("--op_by_op_torch")
     using_stablehlo = config.getoption("--op_by_op_stablehlo")
+
+    # Check if the --crashsafe option is enabled
+    if config.getoption("--crashsafe"):
+        # Count the number of collected tests
+        num_tests = len(items)
+        if num_tests > 1:
+            pytest.exit(
+                f"Error: --crashsafe can only be used with a single test. {num_tests} tests were specified.",
+                returncode=1,
+            )
 
     for item in items:
         for param in item.iter_markers(name="parametrize"):
@@ -79,3 +104,90 @@ def record_test_timestamp(record_property):
     yield
     end_timestamp = datetime.now(timezone.utc).isoformat()
     record_property("end_timestamp", end_timestamp)
+
+
+@pytest.fixture
+def record_property(request):
+    """Override the built-in record_property fixture with transactional writes to XML."""
+    global junitxml_path
+
+    def _original_record_property(name, value):
+        # Copied from https://docs.pytest.org/en/7.1.x/_modules/_pytest/junitxml.html
+        request.node.user_properties.append((name, value))
+
+    # If junitxml_path is not set, fallback to the original behavior
+    if not junitxml_path:
+        return _original_record_property
+
+    property_file = f"{junitxml_path}{crashsafe_suffix}"
+    print(f"Writing to {property_file}")
+
+    def _crashsafe_record_property(name, value):
+        # Add to the standard pytest user_properties
+        request.node.user_properties.append((name, value))
+
+        # Load the existing XML file
+        tree = ET.parse(property_file)
+        root = tree.getroot()
+
+        # Find or create a <testsuite> element for the current test
+        test_name = request.node.nodeid
+        testsuite = root.find(f"./testsuite[@name='pytest']")
+        if testsuite is None:
+            testsuite = ET.SubElement(
+                root,
+                "testsuite",
+                name="pytest",
+                errors="0",
+                failures="0",
+                skipped="0",
+                tests="1",
+                time="0",  # Placeholder, can be updated later
+                timestamp=datetime.now().isoformat(),
+                hostname=socket.gethostname(),
+            )
+
+        # Find or create a <testcase> element for the current test
+        testcase = testsuite.find(f"./testcase[@name='{test_name}']")
+        if testcase is None:
+            testcase = ET.SubElement(
+                testsuite,
+                "testcase",
+                classname=request.node.module.__name__,
+                name=test_name,
+                time="0",  # Placeholder, can be updated later
+            )
+
+        # Add the property to the <testcase>
+        properties = testcase.find("properties")
+        if properties is None:
+            properties = ET.SubElement(testcase, "properties")
+
+        # Ensure the value is properly formatted (e.g., JSON for complex objects)
+        if isinstance(value, (dict, list)):
+            value = str(value)
+
+        ET.SubElement(properties, "property", name=name, value=value)
+
+        # Write the updated XML back to the file
+        temp_file = f"{property_file}.tmp"
+        tree.write(temp_file, encoding="utf-8", xml_declaration=True)
+
+        os.replace(temp_file, property_file)
+
+    return _crashsafe_record_property
+
+
+def pytest_configure(config):
+    global junitxml_path
+
+    # Check if the --crashsafe option is enabled
+    if config.getoption("--crashsafe"):
+        junitxml_path = config.getoption("--junit-xml")
+        property_file = f"{junitxml_path}{crashsafe_suffix}"
+        print(f"Writing crashsafe log to {property_file}")
+
+        # Ensure the XML file exists and has a root element
+        root = ET.Element("testsuites")
+        tree = ET.ElementTree(root)
+        tree.write(property_file)

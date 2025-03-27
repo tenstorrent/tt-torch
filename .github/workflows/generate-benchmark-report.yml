@@ -1,0 +1,85 @@
+name: Generate Benchmark Report
+
+on:
+  workflow_call:
+jobs:
+  tests:
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+
+    runs-on:
+      - wormhole_b0
+
+    container:
+      image: ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:latest
+      options: --user root --device /dev/tenstorrent/0
+      volumes:
+        - /dev/hugepages:/dev/hugepages
+        - /dev/hugepages-1G:/dev/hugepages-1G
+        - /etc/udev/rules.d:/etc/udev/rules.d
+        - /lib/modules:/lib/modules
+        - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        lfs: true
+
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: |
+        echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
+        echo "install-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
+        echo "dist-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
+        echo "test-output-dir=$(pwd)/results/models/tests/" >> "$GITHUB_OUTPUT"
+        echo "xml-dir=$(pwd)/depth-benchmark-artifacts" >> "$GITHUB_OUTPUT"
+    - name: Git safe dir
+      run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
+
+    - name: Download Depth Benchmark Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        pattern: test-reports-models-benchmark*
+        path:  ${{ steps.strings.outputs.xml-dir }}
+        merge-multiple: true
+    - run: ls -lshR ${{ steps.strings.outputs.xml-dir }}
+
+    - name: install tt-torch
+      shell: bash
+      run: |
+        source env/activate
+        pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
+
+    - name: Get git metadata and set artifact name
+      id: git-info
+      shell: bash
+      run: |
+        branch=$(git rev-parse --abbrev-ref HEAD | sed 's/[":<>|*?\\\/]/_/g' | tr -d '\r\n')
+        commit=$(git rev-parse --short HEAD)
+        date=$(date +'%Y-%m-%d')
+        echo "branch=$branch" >> "$GITHUB_OUTPUT"
+        echo "commit=$commit" >> "$GITHUB_OUTPUT"
+        echo "date=$date" >> "$GITHUB_OUTPUT"
+        spreadsheet_name="benchmark_results_${date}_${branch}_${commit}.xlsx"
+        echo "spreadsheet_name=$spreadsheet_name" >> "$GITHUB_OUTPUT"
+
+    - name: Generate Benchmark Report
+      shell: bash
+      run: |
+            source env/activate
+            python "${{ steps.strings.outputs.work-dir }}/tt_torch/tools/generate_benchmark_report.py" \
+            --xml-dir ${{ steps.strings.outputs.xml-dir}} \
+            --compile-yaml "${{ steps.strings.outputs.work-dir }}/.github/workflows/run-e2e-tests.yml" \
+            --execution-yaml "${{ steps.strings.outputs.work-dir }}/.github/workflows/run-full-model-execution-tests.yml" \
+            --execution-nightly-yaml "${{ steps.strings.outputs.work-dir }}/.github/workflows/run-full-model-execution-tests-nightly.yml" \
+            --output-file "${{ steps.strings.outputs.work-dir }}/results/${{ steps.git-info.outputs.spreadsheet_name }}"
+
+
+    - name: Upload benchmark report to archive
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.git-info.outputs.spreadsheet_name }}
+        path: "${{ steps.strings.outputs.work-dir }}/results/${{ steps.git-info.outputs.spreadsheet_name }}"
