@@ -410,9 +410,12 @@ class OpByOpExecutor(Executor):
 
     def compile_op(self, node, *inputs, **kwargs):
         # get_stablehlo_graph is a method implemented in inheriting classes
-        module, input_locations, op = self.get_stable_hlo_graph(node, inputs, **kwargs)
+        module, stablehlo_graph_module, inputs, op = self.get_stable_hlo_graph(
+            node, inputs, **kwargs
+        )
+
         if module is None or op is None:
-            return None, None, None
+            return None, None, None, None
 
         sender = mp.Queue()
         receiver = mp.Queue()
@@ -461,7 +464,8 @@ class OpByOpExecutor(Executor):
         print(f"json len {len(op.json)}")
         return (
             binary,
-            input_locations,
+            stablehlo_graph_module,
+            inputs,
             op,
         )
 
