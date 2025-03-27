@@ -224,7 +224,7 @@ class Executor:
         if self.compiler_config.runtime_device is None:
             tt_mlir.close_mesh_device(device)
 
-    def __call__(self, *inputs):
+    def __call__(self, *inputs, device=None):
         if self.compiler_config.compile_depth != CompileDepth.EXECUTE:
             assert (
                 self.program.graph_module != None

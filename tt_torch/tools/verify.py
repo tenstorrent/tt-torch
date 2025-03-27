@@ -169,7 +169,9 @@ def _verify_torch_module(
             ]
 
     ret = tt_mod(*inputs)
+    print(f"Output of the compiled module: {ret}")
     golden = mod(*inputs)
+    print(f"Output of the original module: {golden}")
 
     if isinstance(golden, torch.Tensor):
         golden = (golden,)
