@@ -278,6 +278,7 @@ class CompilerConfig:
         self.mesh_device_options.enable_async_ttnn = False
         self.record_property = None
         self.record_property = lambda *args, **kwargs: None  # Default to no-op
+        self.runtime_intermediate_cache = {}
 
         self.apply_environment_overrides()
         self.post_init()

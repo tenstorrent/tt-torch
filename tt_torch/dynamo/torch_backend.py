@@ -39,6 +39,9 @@ from tt_torch.dynamo.executor import (
     Executor,
     OpByOpExecutor,
 )
+from tests.utils import RuntimeIntermediate
+
+# from tt_torch.dynamo.backend import RuntimeIntermediate
 
 #########################################################
 # Helper functions
@@ -69,8 +72,9 @@ class TTContextCache(ContextCache):
             for filename, line in stack_frames:
                 if filename:
                     locations.append(
-                        Location.file(filename, line, col=0, context=self._c)
+                        Location.file(filename, line, col=0, context=self._c),
                     )
+            locations.append(Location.name(node.name))
             return Location.fused(locations, context=self._c)
         return Location.unknown(context=self._c)
 
@@ -290,7 +294,7 @@ class TorchExecutor(OpByOpExecutor):
         op.add_stable_hlo_graph(module.operation.get_asm())
         return module, op
 
-    def run_gm_op_by_op(self, *inputs):
+    def run_gm_op_by_op(self, *inputs, cache_intermediate_goldens=False):
         node_to_tensor = {}
         input_index = 0
         outputs = []
@@ -328,6 +332,11 @@ class TorchExecutor(OpByOpExecutor):
                 except Exception as e:
                     binary = None
                     print(f"Failed to compile {idx}/{num_nodes}: {node.target}: {e}")
+
+                if cache_intermediate_goldens:
+                    golden = node.target(*args, **node.kwargs)
+                    cache_entry = RuntimeIntermediate(node, golden)
+                    # <???>.runtime_intermediate_cache[node.name] = cache_entry
 
                 if (
                     self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
@@ -392,6 +401,9 @@ class TorchExecutor(OpByOpExecutor):
         if self.compiler_config.compile_depth in (
             CompileDepth.EXECUTE_OP_BY_OP,
             CompileDepth.COMPILE_OP_BY_OP,
+        ) or (
+            self.compiler_config.compile_depth == CompileDepth.EXECUTE
+            and self.compiler_config._enable_intermediate_verification
         ):
             return self.run_gm_op_by_op(
                 *(self.graph_constants + tuple(self.program.buffers()) + inputs)
