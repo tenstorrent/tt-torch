@@ -402,6 +402,117 @@ def create_summary_worksheet(workbook, model_names):
     )
 
 
+# Generate All Ops summary worksheets (all and those not making it to execute)
+def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=False):
+
+    row = 0
+    unique_ops = set()
+    # xlsxwriter fails to write anything after 'Compiled Json' field; so it is
+    # being written to the last column.
+    header = (
+        "Torch Name",
+        "Input Shapes",
+        "Output Shapes",
+        "NumOps",
+        "Status",
+        "PCC",
+        "ATOL",
+        "Ops",
+        "Torch IR",
+        "Raw SHLO",
+        "Raw TTIR",
+        "Raw TTNNIR",
+        "Compile Error",
+        "Trace dump",
+        "Compiled JSON",
+    )
+    worksheet.write_row(row, 0, header, bold)
+
+    # Set some reasonable column widths for quick visual scanning.
+    worksheet.set_column(0, 0, 30)  # Torch Name
+    worksheet.set_column(1, 1, 50)  # Input Shapes
+    worksheet.set_column(2, 2, 20)  # Output Shapes
+    worksheet.set_column(12, 12, 250)  # Compile Error
+
+    row += 1
+    torch_ops = {}
+    for key, value in sorted(all_ops.items()):
+
+        # Ability to skip ops that are fully executing.
+        if not_executing_only and value["compilation_status"] == 7:
+            continue
+
+        if key in unique_ops:
+            continue
+        unique_ops.add(key)
+        if value["torch_name"] not in torch_ops:
+            torch_ops[value["torch_name"]] = []
+
+        torch_ops[value["torch_name"]].append(
+            {
+                "torch_name": value["torch_name"],
+                "input_shapes": value["input_shapes"],
+                "output_shapes": value["output_shapes"],
+                "num_ops": value["num_ops"],
+                "status": value["compilation_status"],
+                "pcc": value["pcc"],
+                "atol": value["atol"],
+                "torch_ir_graph": value["torch_ir_graph"],
+                "stable_hlo_graph": value["stable_hlo_graph"],
+                "ops": value["stable_hlo_ops"],
+                "ttir_graph": value["ttir_graph"],
+                "ttnn_graph": value["ttnn_graph"],
+                "compiled_json": value["compiled_json"],
+                "error": value["error"],
+                "trace_dump": value["trace_dump"],
+            }
+        )
+
+    for torch_name, torch_op in sorted(torch_ops.items()):
+        name = torch_name
+        for op in torch_op:
+            num_ops = op["num_ops"]
+            input_shapes = extract_shape(op["input_shapes"])
+            output_shapes = extract_shape(op["output_shapes"])
+            status = op["status"]
+            pcc = op["pcc"]
+            atol = op["atol"]
+            torch_ir_graph = op["torch_ir_graph"]
+            raw_shlo = op["stable_hlo_graph"]
+            ops = op["ops"]
+            ttir_graph = op["ttir_graph"]
+            ttnn_graph = op["ttnn_graph"]
+            compiled_json = op["compiled_json"]
+            error = op["error"]
+            trace_dump = op["trace_dump"]
+            row_data = [
+                name,
+                input_shapes,
+                output_shapes,
+                num_ops,
+                status,
+                pcc,
+                atol,
+                "",
+                torch_ir_graph,
+                raw_shlo,
+                ttir_graph,
+                ttnn_graph,
+                error,
+                trace_dump,
+                compiled_json,
+            ]
+            worksheet.write_row(row, 0, row_data)
+            row += 1
+            for shlo_op in ops:
+                row_data = ["", "", "", "", "", shlo_op[-1]]
+                worksheet.write_row(row, 0, row_data)
+                worksheet.set_row(row, None, None, {"hidden": True})
+                row += 1
+
+    # worksheet.autofit()
+
+
 # Main entry point to generate detailed xlsx files of op status by model with summary sheet.
 def generate_op_reports_xlsx():
     json_files = find_json_files()
@@ -417,8 +528,12 @@ def generate_op_reports_xlsx():
     stable_hlo_ops_per_torch_op = {}
     workbook = xlsxwriter.Workbook("results/models_op_per_op.xlsx")
     bold = workbook.add_format({"bold": True})
+    yellow = workbook.add_format({"bg_color": "#FFEB3B"})
 
     worksheet = workbook.add_worksheet("Per Model Compile Depths")
+    worksheet_all_ops_1 = workbook.add_worksheet("All Ops")
+    worksheet_all_ops_2 = workbook.add_worksheet("All Ops (Not Executing)")
+
     for json_file in json_files:
         # indicator that the JSON is a model report, not an op report
         if "_unique_ops.json" not in json_file:
@@ -606,7 +721,13 @@ def generate_op_reports_xlsx():
                 ]
                 all_ops[op["key"]]["error"] = error
                 all_ops[op["key"]]["trace_dump"] = trace_dump
-                worksheet.write_row(row, 0, row_data)
+
+                # Make it easier to visualize ops not making it to EXECUTE(7)
+                if status == 7:
+                    worksheet.write_row(row, 0, row_data)
+                else:
+                    worksheet.write_row(row, 0, row_data, yellow)
+
                 name = ""
                 row += 1
                 for shlo_op in ops:
@@ -630,101 +751,11 @@ def generate_op_reports_xlsx():
             stable_hlo_models_per_op[shlo_op].append(model_name)
         worksheet.autofit()
 
-    row = 0
-    unique_ops = set()
-    worksheet = workbook.add_worksheet("All Ops")
-    # xlsxwriter fails to write anything after 'Compiled Json' field; so it is
-    # being written to the last column.
-    header = (
-        "Torch Name",
-        "Input Shapes",
-        "Output Shapes",
-        "NumOps",
-        "Status",
-        "PCC",
-        "ATOL",
-        "Ops",
-        "Torch IR",
-        "Raw SHLO",
-        "Raw TTIR",
-        "Raw TTNNIR",
-        "Compile Error",
-        "Trace dump",
-        "Compiled JSON",
-    )
-    worksheet.write_row(row, 0, header, bold)
-    row += 1
-    torch_ops = {}
-    for key, value in sorted(all_ops.items()):
-        if key in unique_ops:
-            continue
-        unique_ops.add(key)
-        if value["torch_name"] not in torch_ops:
-            torch_ops[value["torch_name"]] = []
+    # Generate All Ops worksheet for ops in all compile stages
+    generate_all_ops_worksheet(worksheet_all_ops_1, bold, all_ops, False)
 
-        torch_ops[value["torch_name"]].append(
-            {
-                "torch_name": value["torch_name"],
-                "input_shapes": value["input_shapes"],
-                "output_shapes": value["output_shapes"],
-                "num_ops": value["num_ops"],
-                "status": value["compilation_status"],
-                "pcc": value["pcc"],
-                "atol": value["atol"],
-                "torch_ir_graph": value["torch_ir_graph"],
-                "stable_hlo_graph": value["stable_hlo_graph"],
-                "ops": value["stable_hlo_ops"],
-                "ttir_graph": value["ttir_graph"],
-                "ttnn_graph": value["ttnn_graph"],
-                "compiled_json": value["compiled_json"],
-                "error": value["error"],
-                "trace_dump": value["trace_dump"],
-            }
-        )
-
-    for torch_name, torch_op in sorted(torch_ops.items()):
-        name = torch_name
-        for op in torch_op:
-            num_ops = op["num_ops"]
-            input_shapes = extract_shape(op["input_shapes"])
-            output_shapes = extract_shape(op["output_shapes"])
-            status = op["status"]
-            pcc = op["pcc"]
-            atol = op["atol"]
-            torch_ir_graph = op["torch_ir_graph"]
-            raw_shlo = op["stable_hlo_graph"]
-            ops = op["ops"]
-            ttir_graph = op["ttir_graph"]
-            ttnn_graph = op["ttnn_graph"]
-            compiled_json = op["compiled_json"]
-            error = op["error"]
-            trace_dump = op["trace_dump"]
-            row_data = [
-                name,
-                input_shapes,
-                output_shapes,
-                num_ops,
-                status,
-                pcc,
-                atol,
-                "",
-                torch_ir_graph,
-                raw_shlo,
-                ttir_graph,
-                ttnn_graph,
-                error,
-                trace_dump,
-                compiled_json,
-            ]
-            worksheet.write_row(row, 0, row_data)
-            row += 1
-            for shlo_op in ops:
-                row_data = ["", "", "", "", "", shlo_op[-1]]
-                worksheet.write_row(row, 0, row_data)
-                worksheet.set_row(row, None, None, {"hidden": True})
-                row += 1
-
-    # worksheet.autofit()
+    # Generate All Ops worksheet for ops not making it to execute
+    generate_all_ops_worksheet(worksheet_all_ops_2, bold, all_ops, True)
 
     ops = list(models_per_op.keys())
     ops.sort()

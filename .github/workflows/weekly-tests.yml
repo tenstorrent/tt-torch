@@ -1,12 +1,11 @@
 # This workflow automates running model tests.
 
-name: Nightly Tests
+name: Weekly Tests
 
 on:
   schedule:
-    - cron: '0 4 * * *'  # Runs at 04:00 UTC every day
+    - cron: '0 10 * * 6' # Runs at 10:00 UTC every Saturday, 6 hours after Nightly Tests
   workflow_dispatch:  # Manual trigger
-
 
 jobs:
   pre-commit:
@@ -24,33 +23,22 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  test_op_by_op:
+
+  test_op_by_op_nightly:
     needs: [docker-build, build]
     uses: ./.github/workflows/run-op-by-op-model-tests-nightly.yml
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  test_e2e:
+  test_op_by_op_weekly:
     needs: [docker-build, build]
-    uses: ./.github/workflows/run-e2e-tests.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  test_full_model:
-    needs: [docker-build, build]
-    uses: ./.github/workflows/run-full-model-execution-tests.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  test_full_model_nightly:
-    needs: [docker-build, build]
-    uses: ./.github/workflows/run-full-model-execution-tests-nightly.yml
+    uses: ./.github/workflows/run-op-by-op-model-tests-weekly.yml
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
   download-report:
     if: success() || failure()
-    needs: test_op_by_op
+    needs: [test_op_by_op_nightly, test_op_by_op_weekly]
     uses: ./.github/workflows/generate-model-report.yml
     secrets: inherit
   generate-ttnn-md:
