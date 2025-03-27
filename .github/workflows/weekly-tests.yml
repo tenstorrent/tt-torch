@@ -6,6 +6,8 @@ on:
   schedule:
     - cron: '0 10 * * 6' # Runs at 10:00 UTC every Saturday, 6 hours after Nightly Tests
   workflow_dispatch:  # Manual trigger
+  push:
+    branches: [ "kmabee/weekly_op_by_op_flow_list.debug" ]
 
 jobs:
   pre-commit:
