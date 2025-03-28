@@ -179,6 +179,11 @@ jobs:
               tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-1.5-eval]
               tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-2-eval]
               "
+          },
+          {
+            runs-on: wormhole_b0, name: "vit", tests: "
+              tests/models/vit/test_vit.py::test_vit[op_by_op_torch-eval]
+              "
           }
         ]
     runs-on:
