@@ -1,0 +1,319 @@
+name: Run Op-By-Op Model Tests (Nightly)
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      docker-image:
+        description: 'Docker image to use for build'
+        required: true
+        type: string
+  workflow_run:
+    workflows: [Build]
+    types: [completed]
+
+jobs:
+  tests:
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        build: [
+          {
+            runs-on: wormhole_b0, name: "qwen", tests: "
+              tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm
+              tests/models/Qwen/test_qwen2_token_classification.py::test_qwen2_token_classification
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "autoencoder", tests: "
+              tests/models/autoencoder_conv/test_autoencoder_conv.py::test_autoencoder_conv
+              tests/models/autoencoder_conv/test_autoencoder_conv_v2.py::test_autoencoder_conv_v2
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "bert", tests: "
+              tests/models/squeeze_bert/test_squeeze_bert.py::test_squeeze_bert
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "falcon", tests: "
+              tests/models/falcon/test_falcon.py::test_falcon
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "gpt", tests: "
+              tests/models/gpt2/test_gpt2.py::test_gpt2
+              tests/models/gpt_neo/test_gpt_neo.py::test_gpt_neo
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "llama", tests: "
+              tests/models/llama/test_llama_7b.py::test_llama_7b
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "mamba", tests: "
+              tests/models/mamba/test_mamba.py::test_mamba[op_by_op_torch-state-spaces/mamba-790m-hf-eval]
+              "
+          },
+          # { https://github.com/tenstorrent/tt-torch/issues/298
+          #   runs-on: wormhole_b0, name: "xglm", tests: "
+          #     tests/models/xglm/test_xglm.py::test_xglm
+          #     "
+          # },
+          {
+            runs-on: wormhole_b0, name: "mobilenet", tests: "
+              tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "openpose", tests: "
+              tests/models/openpose/test_openpose.py::test_openpose
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "opt", tests: "
+              tests/models/opt/test_opt.py::test_opt
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "stable-diffusion-pipe", tests: "
+              tests/models/stable_diffusion/test_stable_diffusion.py::test_stable_diffusion
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "stable-diffusion-unet", tests: "
+              tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "t5", tests: "
+              tests/models/t5/test_t5.py::test_t5
+              tests/models/flan_t5/test_flan_t5.py::test_flan_t5
+              tests/models/speecht5_tts/test_speecht5_tts.py::test_speecht5_tts
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "unet", tests: "
+              tests/models/unet/test_unet.py::test_unet
+              tests/models/unet_brain/test_unet_brain.py::test_unet_brain
+              tests/models/unet_carvana/test_unet_carvana.py::test_unet_carvana
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "RMBG", tests: "
+              tests/models/RMBG/test_RMBG.py::test_RMBG
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "clip", tests: "
+              tests/models/clip/test_clip.py::test_clip
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "timm", tests: "
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite0.in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite1.in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite2.in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite3.in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite4.in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-ghostnetv2_100.in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-inception_v4.tf_in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-mixer_b16_224.goog_in21k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-ese_vovnet19b_dw.ra_in1k]
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "vision-misc", tests: "
+              tests/models/glpn_kitti/test_glpn_kitti.py::test_glpn_kitti
+              tests/models/hand_landmark/test_hand_landmark.py::test_hand_landmark
+              tests/models/segment_anything/test_segment_anything.py::test_segment_anything
+              tests/models/vilt/test_vilt.py::test_vilt
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "vision-transformers", tests: "
+              tests/models/beit/test_beit_image_classification.py::test_beit_image_classification
+              tests/models/deit/test_deit.py::test_deit
+              tests/models/detr/test_detr.py::test_detr
+              tests/models/segformer/test_segformer.py::test_segformer
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "yolo", tests: "
+              tests/models/yolos/test_yolos.py::test_yolos
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "codegen", tests: "
+              tests/models/codegen/test_codegen.py::test_codegen
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "mgp-str", tests: "
+              tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "musicgen_small", tests: "
+              tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "whisper", tests: "
+              tests/models/whisper/test_whisper.py::test_whisper
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "torchvision_1", tests: "
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-googlenet]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-densenet201]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-vit_h_14]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-swin_b]
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "phi", tests: "
+              tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-1-eval]
+              tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-1.5-eval]
+              tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-2-eval]
+              "
+          }
+        ]
+    runs-on:
+      - ${{ matrix.build.runs-on }}
+
+    name: "tests op_by_op nightly (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
+
+    container:
+      image: ${{ inputs.docker-image }}
+      options: --user root --device /dev/tenstorrent/0 --shm-size=4gb
+      volumes:
+        - /dev/hugepages:/dev/hugepages
+        - /dev/hugepages-1G:/dev/hugepages-1G
+        - /etc/udev/rules.d:/etc/udev/rules.d
+        - /lib/modules:/lib/modules
+        - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
+        - /mnt/dockercache:/mnt/dockercache
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        lfs: true
+
+    - name: Fetch job id
+      id: fetch-job-id
+      uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
+      with:
+        job_name: "tests op_by_op nightly (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})" # reference above tests.name
+
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      env:
+        JOB_ID: ${{ steps.fetch-job-id.outputs.job_id }}
+      run: |
+        echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
+        echo "install-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
+        echo "dist-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
+        echo "test-output-dir=$(pwd)/results/models/tests/" >> "$GITHUB_OUTPUT"
+
+    - name: Git safe dir
+      run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
+
+    - name: Use build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: install-artifacts
+        path: ${{ steps.strings.outputs.install-dir }}
+
+    - name: 'Untar install directory'
+      shell: bash
+      working-directory: ${{ steps.strings.outputs.install-dir }}
+      run: |
+        tar xvf artifact.tar
+        mkdir -p ${{ steps.strings.outputs.dist-dir }}
+        mv wheels/* ${{ steps.strings.outputs.dist-dir }}
+
+    - name: install tt-torch
+      shell: bash
+      run: |
+        source env/activate
+        pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
+
+    - name: Run Model Tests
+      env:
+        HF_HOME: /mnt/dockercache/huggingface
+        TORCH_HOME: /mnt/dockercache/torch
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      shell: bash
+      run: |
+        source env/activate
+
+        # Make sure we don't stop on first failure
+        set +e
+
+        tests_list=$(echo "${{ matrix.build.tests }}" | xargs -n1 echo)
+        total_tests=$(echo "$tests_list" | wc -l)
+
+        failures=0
+        counter=0
+
+        for test_case in $tests_list; do
+          counter=$((counter + 1))
+
+          pytest_log="test_${counter}.log"
+
+          pytest -svv "$test_case" --op_by_op_torch > "$pytest_log" 2>&1
+          exit_code=$?
+
+          echo "====== BEGIN LOG: $test_case ======" >> full_job_output.log
+          cat "$pytest_log" >> full_job_output.log
+          echo "====== END LOG: $test_case ========" >> full_job_output.log
+          echo >> full_job_output.log
+          rm "$pytest_log"
+
+          if [ $exit_code -eq 0 ]; then
+            echo "[ $counter / $total_tests ] $test_case PASSED"
+          else
+            echo "[ $counter / $total_tests ] $test_case FAILED"
+            failures=$((failures + 1))
+          fi
+        done
+
+
+        # If any test failed, exit nonzero to mark the job as failed
+        if [ $failures -ne 0 ]; then
+          echo "Total failures: $failures"
+          exit 1
+        fi
+
+    - name: Tar results
+      if: success() || failure()
+      shell: bash
+      run: |
+        TEST_DIR="${{ steps.strings.outputs.test-output-dir }}"
+        OUTPUT_TAR="${{ matrix.build.name }}_${{ steps.fetch-job-id.outputs.job_id }}.tar"
+
+        if [ ! -d "$TEST_DIR" ]; then
+          echo "WARNING: Test output dir '$TEST_DIR' does not exist. Please check if test ran properly. Skipping tar."
+        else
+          cd "$TEST_DIR"
+          tar cvf "$OUTPUT_TAR" .
+        fi
+
+    - name: Upload test folder to archive
+      if: success() || failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-reports-nightly-${{ matrix.build.name }}.tar
+        path: ${{ steps.strings.outputs.test-output-dir }}/${{ matrix.build.name }}_${{ steps.fetch-job-id.outputs.job_id }}.tar
+
+    - name: Upload full logs
+      if: success() || failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: full-logs-nightly-${{ matrix.build.name }}
+        path: full_job_output.log

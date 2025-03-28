@@ -97,8 +97,6 @@ jobs:
       shell: bash
       run: |
         source env/activate
-        apt-get update
-        apt install -y libgl1 libglx-mesa0
         set +e
         mkdir -p ${{ steps.strings.outputs.work-dir }}/pytest-logs
         counter=0
