@@ -279,7 +279,7 @@ class CompilerConfig:
         self.mesh_device_options.enable_async_ttnn = False
         self.record_property = None
         self.record_property = lambda *args, **kwargs: None  # Default to no-op
-        self.runtime_intermediate_cache = {}
+        self.runtime_intermediate_cache = None  # Do not serialize.
 
         self.apply_environment_overrides()
         self.post_init()
@@ -315,6 +315,7 @@ class CompilerConfig:
             )
 
         self._enable_intermediate_verification = True
+        self.runtime_intermediate_cache = {}
 
     @property
     def consteval_parameters(self):
@@ -813,3 +814,45 @@ def run_model_proto(
     }
     output = sess.run(None, inputs_dict)
     return output
+class RuntimeIntermediate:
+    def __init__(self, node: torch.fx.Node, golden):
+        self.node = node
+        self.golden = golden
+        # each fxnode can be decomposed into multiple ttnn ops.
+        # we store all their intermediate outputs here
+        # TODO - Need a way to uniquely reference ttnn intermediates
+
+        self.decomposed_intermediate_outputs = []
+        self.pcc = None
+        self.atol = None
+        self.passed_pcc = False
+        self.passed_atol = False
+
+    def calculate_metrics(self):
+        # calculate the metrics for the golden tensor after all decomposition steps done
+
+        if (
+            len(self.decomposed_intermediate_outputs) == 0
+            and self.node.op == "call_function"
+        ):
+            return  # getitem_4 has no intermediates? - if there are no intermediates for a call_function node; what to do
+            assert False, f"No decomposed intermediates found for {self.node.name}"
+
+        final_decomposed_output = self.decomposed_intermediate_outputs[
+            -1
+        ]  # could be a tuple of tensors
+
+        # verify_against_golden expects a tuple of tensors as inputs. need to preprocess
+        if not isinstance(final_decomposed_output, tuple):
+            final_decomposed_output = (final_decomposed_output,)
+        if not isinstance(self.golden, tuple):
+            self.golden = (self.golden,)
+
+        (
+            self.passed_pcc,
+            self.passed_atol,
+            _,
+            _,
+            self.pcc,
+            self.atol,
+        ) = verify_against_golden(self.golden, final_decomposed_output, 0.99, 1e-2)
