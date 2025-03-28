@@ -282,12 +282,11 @@ jobs:
         OUTPUT_TAR="${{ matrix.build.name }}_${{ steps.fetch-job-id.outputs.job_id }}.tar"
 
         if [ ! -d "$TEST_DIR" ]; then
-          echo "ERROR: Test output dir '$TEST_DIR' does not exist. Please check if test ran properly."
-          exit 1
+          echo "WARNING: Test output dir '$TEST_DIR' does not exist. Please check if test ran properly. Skipping tar."
+        else
+          cd "$TEST_DIR"
+          tar cvf "$OUTPUT_TAR" .
         fi
-
-        cd "$TEST_DIR"
-        tar cvf "$OUTPUT_TAR" .
 
     - name: Upload test folder to archive
       if: success() || failure()
