@@ -118,7 +118,6 @@ jobs:
 
             echo "====== BEGIN LOG: $test_case ======" >> full_job_output.log
             cat "$pytest_log" >> full_job_output.log
-            dmesg >> full_job_output.log
             sudo dmesg >> full_job_output.log
 
             echo "====== END LOG: $test_case ========" >> full_job_output.log
