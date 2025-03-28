@@ -120,6 +120,11 @@ def generate_spreadsheet(output_file, benchmark_data, compile_tests, execution_t
     for col, header in enumerate(headers):
         worksheet.write(0, col, header)
 
+    color_formats = {
+        "green": workbook.add_format({"bg_color": "#4CAF50"}),
+        "red": workbook.add_format({"bg_color": "#F44336"}),
+    }
+
     # Initialize counters for regressed and promotable rows
     regressed_count = 0
     promotable_count = 0
@@ -158,6 +163,34 @@ def generate_spreadsheet(output_file, benchmark_data, compile_tests, execution_t
         worksheet.write(row, 4, "Yes" if in_execution else "No")
         worksheet.write(row, 5, "Yes" if regressed else "No")
         worksheet.write(row, 6, "Yes" if promotable else "No")
+
+    # Apply conditional formatting for "Regressed?" column (column 5)
+    worksheet.conditional_format(
+        1,
+        5,
+        len(benchmark_data),
+        5,  # From row 1 to the last row in column 5
+        {
+            "type": "text",
+            "criteria": "containing",
+            "value": "Yes",
+            "format": color_formats["red"],
+        },
+    )
+
+    # Apply conditional formatting for "Promotable?" column (column 6)
+    worksheet.conditional_format(
+        1,
+        6,
+        len(benchmark_data),
+        6,  # From row 1 to the last row in column 6
+        {
+            "type": "text",
+            "criteria": "containing",
+            "value": "Yes",
+            "format": color_formats["green"],
+        },
+    )
 
     # Print counts of regressed and promotable rows
     print(f"Number of regressed rows: {regressed_count}")
