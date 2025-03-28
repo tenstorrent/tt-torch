@@ -26,11 +26,11 @@ jobs:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
   run-benchmark:
     needs: [docker-build, build]
-<<<<<<< HEAD
-    uses: ./.github/workflows/run-op-by-op-model-tests-nightly.yml
-=======
     uses: ./.github/workflows/run-depth-benchmark-tests.yml
->>>>>>> e5146fc (Add dummy test suite to test out changes from main dev branch)
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
+  generate-report:
+    needs: [run-benchmark]
+    uses: ./.github/workflows/generate-benchmark-report.yml
+    secrets: inherit
