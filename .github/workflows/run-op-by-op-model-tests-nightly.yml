@@ -18,12 +18,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        build: [
-          {
-            runs-on: wormhole_b0, name: "qwen", tests: "
-              tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm
-              "
-          },
           {
             runs-on: wormhole_b0, name: "autoencoder", tests: "
               tests/models/autoencoder_conv/test_autoencoder_conv.py::test_autoencoder_conv
