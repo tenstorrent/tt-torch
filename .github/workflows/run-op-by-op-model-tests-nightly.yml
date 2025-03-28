@@ -293,12 +293,12 @@ jobs:
       if: success() || failure()
       uses: actions/upload-artifact@v4
       with:
-        name: test-reports-${{ matrix.build.name }}.tar
+        name: test-reports-nightly-${{ matrix.build.name }}.tar
         path: ${{ steps.strings.outputs.test-output-dir }}/${{ matrix.build.name }}_${{ steps.fetch-job-id.outputs.job_id }}.tar
 
     - name: Upload full logs
       if: success() || failure()
       uses: actions/upload-artifact@v4
       with:
-        name: full-logs-${{ matrix.build.name }}
+        name: full-logs-nightly-${{ matrix.build.name }}
         path: full_job_output.log
