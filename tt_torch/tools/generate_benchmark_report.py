@@ -80,7 +80,13 @@ def parse_tests_from_matrix(yaml_file):
     all_tests = []
     for entry in matrix:
         if "tests" in entry:
-            all_tests.extend(entry["tests"].split())
+            test_entry = entry["tests"]
+            if isinstance(test_entry, list):
+                all_tests.extend(test_entry)
+            elif isinstance(test_entry, str):
+                all_tests.extend(test_entry.split())
+            else:
+                assert False, f"Invalid tests format specification from {file}"
     print(f"Found {len(all_tests)} tests in {yaml_file}.")
     return all_tests
 
