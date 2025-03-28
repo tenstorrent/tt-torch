@@ -105,7 +105,7 @@ jobs:
       shell: bash
       run: |
         branch=$(git rev-parse --abbrev-ref HEAD | sed 's/[":<>|*?\\\/]/_/g' | tr -d '\r\n')
-        commit=$(git rev-parse --short HEAD)
+        commit=$(git rev-parse --short=8 HEAD)
         date=$(date +'%Y-%m-%d')
         echo "branch=$branch" >> "$GITHUB_OUTPUT"
         echo "commit=$commit" >> "$GITHUB_OUTPUT"
