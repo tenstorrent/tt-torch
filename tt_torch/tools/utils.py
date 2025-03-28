@@ -756,3 +756,27 @@ class FileManager:
             raise Exception(f"an unexpected error occurred: {e}")
 
         return exists
+
+
+def tt_torch_error_message(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            print(
+                """
+\033[91m[tt-torch] An error occurred during compilation.
+
+We'd appreciate it if you could file a bug report so we can fix the issue!
+
+Please include:
+- The source code or model that triggered the error
+- Steps to reproduce the issue
+
+Submit an issue here: https://github.com/tenstorrent/tt-torch/issues/new\033[0m
+            """,
+                file=sys.stderr,
+            )
+            raise
+
+    return wrapper
