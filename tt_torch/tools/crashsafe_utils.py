@@ -120,6 +120,17 @@ def inject_param_into_tags(xml_file, tag_name, tag_value):
     tree.write(xml_file, encoding="utf-8", xml_declaration=True)
 
 
+def remap_max_achieved_compile_depth_to_bringup_status(maxdepth):
+    translation_table = {
+        "FAILED_FE": "FAILED_FE_COMPILATION",
+        "STABLEHLO": "FAILED_TTMLIR_COMPILATION",
+        "TTNN_IR": "FAILED_RUNTIME",
+        "EXECUTE": "INCORRECT_RESULT",
+        "PASSED": "PASSED",
+    }
+    return translation_table.get(maxdepth, "UNKNOWN_BRINGUP_STATUS")
+
+
 def rewrite_crashsafe_xml(xml_file):
     check_valid_xml(xml_file)
     max_achieved_compile_depth = get_max_achieved_compile_depth(xml_file)
@@ -127,50 +138,7 @@ def rewrite_crashsafe_xml(xml_file):
         xml_file, "max_achieved_compile_depth", max_achieved_compile_depth
     )
 
-
-def enumerate_all_tests():
-    test_dir = "tests/models"
-    try:
-        # Run pytest with --collect-only and capture the output
-        result = subprocess.run(
-            ["pytest", test_dir, "--collect-only", "-q"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-        )
-
-        # Check if pytest ran successfully
-        if result.returncode != 0:
-            raise RuntimeError(f"pytest failed: {result.stderr}")
-
-        # Extract test names using a regex
-        test_cases = re.findall(r"(\S+::\S+)", result.stdout)
-
-        return test_cases
-
-    except Exception as e:
-        print(f"Error: {e}")
-        return []
-
-
-def generate_test_matrix(test_list):
-    full_eval_test_list = test_list
-    matrix = []
-    n_groups = 8  # arbitrary number of groups ~ # CI test runners
-    group_size = max(
-        1, len(full_eval_test_list) // n_groups
-    )  # Ensure group_size is at least 1
-
-    for i in range(0, len(full_eval_test_list), group_size):
-        # Slice up to the end of the list to avoid out-of-bounds errors
-        group = full_eval_test_list[i : min(i + group_size, len(full_eval_test_list))]
-        matrix.append(
-            {
-                "runs-on": "wormhole_b0",
-                "name": f"benchmark_{len(matrix) + 1}",
-                "tests": group,
-            }
-        )
-
-    print(matrix)
-    return matrix
+    bringup_status = remap_max_achieved_compile_depth_to_bringup_status(
+        max_achieved_compile_depth
+    )
+    inject_param_into_tags(xml_file, "bringup_status", bringup_status)
