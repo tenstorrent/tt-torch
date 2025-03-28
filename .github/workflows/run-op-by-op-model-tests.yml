@@ -234,6 +234,13 @@ jobs:
               tests/models/deepseek/test_deepseek.py::test_deepseek
               tests/models/deepseek/test_deepseek_qwen.py::test_deepseek_qwen
               "
+          },
+          {
+            runs-on: wormhole_b0, name: "phi", tests: "
+              tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-1-eval]
+              tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-1.5-eval]
+              tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-2-eval]
+              "
           }
         ]
     runs-on:
