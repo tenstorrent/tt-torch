@@ -105,26 +105,33 @@ jobs:
         failures=0
         counter=0
 
-        for test_case in $tests_list; do
-          counter=$((counter + 1))
+        for i in $(seq 1 10); do
+          echo "===== RUN $i ====="
 
-          pytest_log="test_${counter}.log"
+          for test_case in $tests_list; do
+            counter=$((counter + 1))
 
-          pytest -svv "$test_case" --op_by_op_torch
-          exit_code=$?
+            pytest_log="test_${counter}.log"
 
-          echo "====== BEGIN LOG: $test_case ======" >> full_job_output.log
-          cat "$pytest_log" >> full_job_output.log
-          echo "====== END LOG: $test_case ========" >> full_job_output.log
-          echo >> full_job_output.log
-          rm "$pytest_log"
+            pytest -svv "$test_case" --op_by_op_torch
+            exit_code=$?
 
-          if [ $exit_code -eq 0 ]; then
-            echo "[ $counter / $total_tests ] $test_case PASSED"
-          else
-            echo "[ $counter / $total_tests ] $test_case FAILED"
-            failures=$((failures + 1))
-          fi
+            echo "====== BEGIN LOG: $test_case ======" >> full_job_output.log
+            cat "$pytest_log" >> full_job_output.log
+            dmesg >> full_job_output.log
+            sudo dmesg >> full_job_output.log
+
+            echo "====== END LOG: $test_case ========" >> full_job_output.log
+            echo >> full_job_output.log
+            rm "$pytest_log"
+
+            if [ $exit_code -eq 0 ]; then
+              echo "[ $counter / $total_tests ] $test_case PASSED"
+            else
+              echo "[ $counter / $total_tests ] $test_case FAILED"
+              failures=$((failures + 1))
+            fi
+          done
         done
 
 

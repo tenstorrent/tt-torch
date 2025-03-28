@@ -17,3 +17,8 @@ jobs:
         licenses: |-
           Apache-2.0
           MIT
+    - name: try dmesg
+      run: |
+        sudo dmesg
+        dmesg
+        journalctl -b
