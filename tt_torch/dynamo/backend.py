@@ -35,8 +35,9 @@ from tt_torch.tools.utils import (
 )
 
 
-def create_verify_golden_callback(executor: Executor):
+def create_verify_golden_callback(compiler_config: CompilerConfig):
     # Closure to capture external state in the callback.
+    # using CompilerConfig as a context cache
 
     def verify_golden_callback(binary, callback_context, op_context):
         # Using these parameters, we should be able to query information
@@ -68,8 +69,8 @@ def create_verify_golden_callback(executor: Executor):
         print("torchfx node UID =", fused_locations)
         location = fused_locations[1]
 
-        intermediate_data: RuntimeIntermediate = (
-            executor.runtime_intermediate_cache.get(location, None)
+        intermediate_data = compiler_config.runtime_intermediate_cache.get(
+            location, None
         )
 
         if intermediate_data is not None:
@@ -80,6 +81,7 @@ def create_verify_golden_callback(executor: Executor):
             intermediate_data.decomposed_intermediate_outputs.append(
                 output_intermediate_tensor
             )  # actual output
+
             intermediate_data.decomposed_intermediate_outputs.append(
                 intermediate_data.golden
             )  # fake output
@@ -172,7 +174,9 @@ def shlo_to_flatbuffer(executor, module, compiler_config):
     dump_module(module=ttir, name="TTIR module", compiler_config=compiler_config)
 
     if compiler_config.enable_intermediate_verification:
-        executor.register_intermediate_callback(create_verify_golden_callback(executor))
+        executor.register_intermediate_callback(
+            create_verify_golden_callback(compiler_config)
+        )
 
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
     dump_module(module=ttnn, name="TTNN module", compiler_config=compiler_config)
@@ -195,34 +199,33 @@ def _base_backend(gm, example_inputs, compiler_config):
 def backend(gm, example_inputs, options=None):
     assert isinstance(gm, torch.fx.GraphModule), "Backend only supports torch graphs"
 
+    print(f"running backend with {options.compile_depth}")
+
     if options is None:
         options = CompilerConfig()
 
     # Apply environment overrides at start of compilation to allow overriding what was set in the test
     options.apply_environment_overrides()
 
-    _backend = None
-
     if (
         options.compile_depth == CompileDepth.COMPILE_OP_BY_OP
         or options.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
-        or options._enable_intermediate_verification
     ):
         if options.op_by_op_backend == OpByOpBackend.TORCH:
             # run torch graph op-by-op
-            _backend = _torch_backend(gm, example_inputs, compiler_config=options)
+            return _torch_backend(gm, example_inputs, compiler_config=options)
         else:
             # op_by_op_backend == OpByOpBackend.STABLEHLO
             # convert torch to stablehlo, then run stablehlo op-by-op
             module, program, graph_constants = torch_to_shlo(
                 gm, example_inputs, compiler_config=options
             )
-            _backend = _shlo_backend(
+            return _shlo_backend(
                 shlo=module,
                 example_inputs=example_inputs,
                 compiler_config=options,
                 program=program,
                 graph_constants=graph_constants,
             )
-    _backend = _base_backend(gm, example_inputs, compiler_config=options)
-    return _backend
+
+    return _base_backend(gm, example_inputs, compiler_config=options)
