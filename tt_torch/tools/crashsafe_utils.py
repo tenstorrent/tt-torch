@@ -120,9 +120,25 @@ def inject_param_into_tags(xml_file, tag_name, tag_value):
     tree.write(xml_file, encoding="utf-8", xml_declaration=True)
 
 
+def remap_max_achieved_compile_depth_to_bringup_status(maxdepth):
+    translation_table = {
+        "FAILED_FE": "FAILED_FE_COMPILATION",
+        "STABLEHLO": "FAILED_TTMLIR_COMPILATION",
+        "TTNN_IR": "FAILED_RUNTIME",
+        "EXECUTE": "INCORRECT_RESULT",
+        "PASSED": "PASSED",
+    }
+    return translation_table.get(maxdepth, "UNKNOWN_BRINGUP_STATUS")
+
+
 def rewrite_crashsafe_xml(xml_file):
     check_valid_xml(xml_file)
     max_achieved_compile_depth = get_max_achieved_compile_depth(xml_file)
     inject_param_into_tags(
         xml_file, "max_achieved_compile_depth", max_achieved_compile_depth
     )
+
+    bringup_status = remap_max_achieved_compile_depth_to_bringup_status(
+        max_achieved_compile_depth
+    )
+    inject_param_into_tags(xml_file, "bringup_status", bringup_status)
