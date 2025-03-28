@@ -22,6 +22,7 @@ import json
 from onnx import version_converter
 from pathlib import Path
 from tt_torch.tools.verify import verify_against_golden
+from tt_torch.tools.utils import RuntimeIntermediate, OpByOpBackend
 
 
 class ModelTester:
@@ -162,6 +163,7 @@ class ModelTester:
         model = torch.compile(
             model, backend=backend, dynamic=False, options=compiler_config
         )
+
         self.compiled_model = model
         return self.compiled_model
 
@@ -301,11 +303,34 @@ class ModelTester:
         model = self.get_framework_model()
         golden = self.get_golden_outputs(model, self.inputs)
 
+        # This additional call to compile creates a TorchExecutor and runs the gm
+        # op by op on cpu to caching the intermediate golden
+        # tensors inside the compiler config.
+        if (
+            self.compiler_config.compile_depth == CompileDepth.EXECUTE
+            and self.compiler_config._enable_intermediate_verification
+        ):
+            print("Attempting to cache intermediate tensors")
+            self.compiler_config.compile_depth = CompileDepth.COMPILE_OP_BY_OP
+            self.compiler_config.op_by_op_backend = OpByOpBackend.TORCH
+
+            cpu_model = self.compile_model(model, self.compiler_config)
+            self.run_model(cpu_model, self.inputs)
+            self.compiler_config.compile_depth = CompileDepth.EXECUTE
+
+            # restore mutation from executor
+            model = self.get_framework_model()
+
         if on_device == True:
-            model = self.compile_model(model, self.compiler_config)
+            model = self.compile_model(
+                model, self.compiler_config
+            )  # this seems to hold some wierd state now. wtf? I think the model itself got mutated as a side effect of something previous.
 
         outputs = self.run_model(model, self.inputs)
         self.record_property("achieved_compile_depth", "EXECUTE")
+
+        if self.compiler_config._enable_intermediate_verification:
+            self.verify_intermediates_after_execution()
 
         if self.is_token_output:
             decoded_outputs = self.tokenizer.batch_decode(
@@ -412,6 +437,23 @@ class ModelTester:
 
         self.flush_tag_cache_to_record()
 
+    def verify_intermediates_after_execution(self):
+        import pdb
+
+        pdb.set_trace()
+        for _, intermediate in self.compiler_config.runtime_intermediate_cache.items():
+            intermediate.calculate_metrics()
+            print(
+                f"Metrics for {intermediate.node.name}: pcc {intermediate.pcc}\tatol {intermediate.atol}"
+            )
+
+            if not intermediate.passed_atol:
+                print(
+                    f"atol too high for {intermediate.node.name}: {intermediate.atol}"
+                )
+            if not intermediate.passed_pcc:
+                print(f"pcc too low for {intermediate.node.name}: {intermediate.pcc}")
+
 
 class OnnxModelTester(ModelTester):
     def __init__(
@@ -495,47 +537,3 @@ class OnnxModelTester(ModelTester):
             torch.from_numpy(out) if isinstance(out, np.ndarray) else out
             for out in outputs
         ]
-
-
-class RuntimeIntermediate:
-    def __init__(self, node: torch.fx.Node, golden):
-        self.node = node
-        self.golden = golden
-        # each fxnode can be decomposed into multiple ttnn ops.
-        # we store all their intermediate outputs here
-        # TODO - Need a way to uniquely reference ttnn intermediates
-
-        self.decomposed_intermediate_outputs = []
-        self.pcc = None
-        self.atol = None
-        self.passed_pcc = False
-        self.passed_atol = False
-
-    def calculate_metrics(self):
-        # calculate the metrics for the golden tensor after all decomposition steps done
-
-        if (
-            len(self.decomposed_intermediate_outputs) == 0
-            and self.node.op == "call_function"
-        ):
-            return  # getitem_4 has no intermediates? - if there are no intermediates for a call_function node; what to do
-            assert False, f"No decomposed intermediates found for {self.node.name}"
-
-        final_decomposed_output = self.decomposed_intermediate_outputs[
-            -1
-        ]  # could be a tuple of tensors
-
-        # verify_against_golden expects a tuple of tensors as inputs. need to preprocess
-        if not isinstance(final_decomposed_output, tuple):
-            final_decomposed_output = (final_decomposed_output,)
-        if not isinstance(self.golden, tuple):
-            self.golden = (self.golden,)
-
-        (
-            self.passed_pcc,
-            self.passed_atol,
-            _,
-            _,
-            self.pcc,
-            self.atol,
-        ) = verify_against_golden(self.golden, final_decomposed_output, 0.99, 1e-2)

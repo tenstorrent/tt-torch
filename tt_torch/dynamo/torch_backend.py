@@ -39,9 +39,8 @@ from tt_torch.dynamo.executor import (
     Executor,
     OpByOpExecutor,
 )
-from tests.utils import RuntimeIntermediate
 
-# from tt_torch.dynamo.backend import RuntimeIntermediate
+from tt_torch.tools.utils import RuntimeIntermediate
 
 #########################################################
 # Helper functions
@@ -354,7 +353,10 @@ class TorchExecutor(OpByOpExecutor):
                 if cache_intermediate_goldens:
                     golden = node.target(*args, **node.kwargs)
                     cache_entry = RuntimeIntermediate(node, golden)
-                    # <???>.runtime_intermediate_cache[node.name] = cache_entry
+                    self.compiler_config.runtime_intermediate_cache[
+                        node.name
+                    ] = cache_entry
+                    print(f"Caching runtime intermediate for {node.name}")
 
                 if (
                     self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
@@ -420,12 +422,10 @@ class TorchExecutor(OpByOpExecutor):
         if self.compiler_config.compile_depth in (
             CompileDepth.EXECUTE_OP_BY_OP,
             CompileDepth.COMPILE_OP_BY_OP,
-        ) or (
-            self.compiler_config.compile_depth == CompileDepth.EXECUTE
-            and self.compiler_config._enable_intermediate_verification
         ):
             return self.run_gm_op_by_op(
-                *(self.graph_constants + tuple(self.program.buffers()) + inputs)
+                *(self.graph_constants + tuple(self.program.buffers()) + inputs),
+                cache_intermediate_goldens=True,
             )
         else:
             inputs = self.typecast_inputs(inputs)
