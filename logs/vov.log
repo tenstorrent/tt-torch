@@ -1,0 +1,260 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.0rc1, pytest-8.3.5, pluggy-1.5.0 -- /localdev/achoudhury/up/tt-torch/env/venv/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /localdev/achoudhury/up/tt-torch
+configfile: pyproject.toml
+plugins: cov-6.0.0
+collecting ... collected 2 items / 1 deselected / 1 selected
+
+tests/models/vovnet/test_vovnet_onnx.py::test_vovnet[full-eval] Looking in indexes: https://pypi.org/simple, https://download.pytorch.org/whl/cpu
+Collecting timm==1.0.9
+  Using cached timm-1.0.9-py3-none-any.whl.metadata (42 kB)
+Requirement already satisfied: torch in ./env/venv/lib/python3.11/site-packages (from timm==1.0.9) (2.6.0+cpu.cxx11.abi)
+Requirement already satisfied: torchvision in ./env/venv/lib/python3.11/site-packages (from timm==1.0.9) (0.21.0+7af6987)
+Requirement already satisfied: pyyaml in ./env/venv/lib/python3.11/site-packages (from timm==1.0.9) (6.0.2)
+Requirement already satisfied: huggingface_hub in ./env/venv/lib/python3.11/site-packages (from timm==1.0.9) (0.29.3)
+Requirement already satisfied: safetensors in ./env/venv/lib/python3.11/site-packages (from timm==1.0.9) (0.5.3)
+Requirement already satisfied: filelock in ./env/venv/lib/python3.11/site-packages (from huggingface_hub->timm==1.0.9) (3.18.0)
+Requirement already satisfied: fsspec>=2023.5.0 in ./env/venv/lib/python3.11/site-packages (from huggingface_hub->timm==1.0.9) (2024.12.0)
+Requirement already satisfied: packaging>=20.9 in ./env/venv/lib/python3.11/site-packages (from huggingface_hub->timm==1.0.9) (24.2)
+Requirement already satisfied: requests in ./env/venv/lib/python3.11/site-packages (from huggingface_hub->timm==1.0.9) (2.32.3)
+Requirement already satisfied: tqdm>=4.42.1 in ./env/venv/lib/python3.11/site-packages (from huggingface_hub->timm==1.0.9) (4.67.1)
+Requirement already satisfied: typing-extensions>=3.7.4.3 in ./env/venv/lib/python3.11/site-packages (from huggingface_hub->timm==1.0.9) (4.13.0)
+Requirement already satisfied: networkx in ./env/venv/lib/python3.11/site-packages (from torch->timm==1.0.9) (3.4.2)
+Requirement already satisfied: jinja2 in ./env/venv/lib/python3.11/site-packages (from torch->timm==1.0.9) (3.1.6)
+Requirement already satisfied: sympy==1.13.1 in ./env/venv/lib/python3.11/site-packages (from torch->timm==1.0.9) (1.13.1)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in ./env/venv/lib/python3.11/site-packages (from sympy==1.13.1->torch->timm==1.0.9) (1.3.0)
+Requirement already satisfied: numpy in ./env/venv/lib/python3.11/site-packages (from torchvision->timm==1.0.9) (2.1.3)
+Requirement already satisfied: pillow!=8.3.*,>=5.3.0 in ./env/venv/lib/python3.11/site-packages (from torchvision->timm==1.0.9) (11.1.0)
+Requirement already satisfied: MarkupSafe>=2.0 in ./env/venv/lib/python3.11/site-packages (from jinja2->torch->timm==1.0.9) (3.0.2)
+Requirement already satisfied: charset-normalizer<4,>=2 in ./env/venv/lib/python3.11/site-packages (from requests->huggingface_hub->timm==1.0.9) (3.4.1)
+Requirement already satisfied: idna<4,>=2.5 in ./env/venv/lib/python3.11/site-packages (from requests->huggingface_hub->timm==1.0.9) (3.10)
+Requirement already satisfied: urllib3<3,>=1.21.1 in ./env/venv/lib/python3.11/site-packages (from requests->huggingface_hub->timm==1.0.9) (2.3.0)
+Requirement already satisfied: certifi>=2017.4.17 in ./env/venv/lib/python3.11/site-packages (from requests->huggingface_hub->timm==1.0.9) (2025.1.31)
+Using cached timm-1.0.9-py3-none-any.whl (2.3 MB)
+Installing collected packages: timm
+Successfully installed timm-1.0.9
+[1;31m2025-03-27 21:05:29.392420110 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296968, index: 0, mask: {48, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.392479499 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296969, index: 1, mask: {1, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.392512849 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296970, index: 2, mask: {49, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.392580288 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296971, index: 3, mask: {2, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.392613948 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296972, index: 4, mask: {50, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.392661398 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296973, index: 5, mask: {3, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.392752877 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296974, index: 6, mask: {51, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.392874956 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296975, index: 7, mask: {4, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.393180003 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296981, index: 13, mask: {7, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.393197273 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296976, index: 8, mask: {52, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.394622920 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296977, index: 9, mask: {5, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.397957719 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296978, index: 10, mask: {53, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.405718737 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296979, index: 11, mask: {6, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.408018966 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296980, index: 12, mask: {54, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.412046859 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297040, index: 71, mask: {36, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.414138790 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297042, index: 73, mask: {37, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.416081362 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297044, index: 75, mask: {38, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.418954775 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297046, index: 77, mask: {39, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.420035655 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297047, index: 78, mask: {87, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.422356334 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296982, index: 14, mask: {55, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.425972860 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296988, index: 19, mask: {10, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.429945634 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296989, index: 20, mask: {58, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.433995906 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296990, index: 21, mask: {11, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.438011899 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296991, index: 22, mask: {59, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.444199212 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296992, index: 23, mask: {12, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.448940969 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296993, index: 24, mask: {60, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.453024371 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296994, index: 25, mask: {13, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.456948215 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296984, index: 15, mask: {8, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.459332123 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296995, index: 26, mask: {61, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.463941640 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296996, index: 27, mask: {14, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.469813436 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296997, index: 28, mask: {62, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.471446181 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296985, index: 16, mask: {56, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.472949537 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296998, index: 29, mask: {15, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.473212615 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296986, index: 17, mask: {9, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.474457823 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296999, index: 30, mask: {63, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.475005478 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297001, index: 32, mask: {64, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.475126217 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297002, index: 33, mask: {17, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.478950202 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 296987, index: 18, mask: {57, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.482943865 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297003, index: 34, mask: {65, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.486023077 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297004, index: 35, mask: {18, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.489459145 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297005, index: 36, mask: {66, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.489503075 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297007, index: 38, mask: {67, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.491997422 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297006, index: 37, mask: {19, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.492936073 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297008, index: 39, mask: {20, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.495976635 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297009, index: 40, mask: {68, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.499124236 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297010, index: 41, mask: {21, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.502936471 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297011, index: 42, mask: {69, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.502968771 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297012, index: 43, mask: {22, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.506043462 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297013, index: 44, mask: {70, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.509939136 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297014, index: 45, mask: {23, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.513942049 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297015, index: 46, mask: {71, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.519936584 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297017, index: 48, mask: {72, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.522035865 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297019, index: 50, mask: {73, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.527997860 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297021, index: 52, mask: {74, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.532951554 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297035, index: 66, mask: {81, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.537305754 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297037, index: 68, mask: {82, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.537349274 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297023, index: 54, mask: {75, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.540679703 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297039, index: 70, mask: {83, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.544037642 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297041, index: 72, mask: {84, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.548940707 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297025, index: 56, mask: {76, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.552936190 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297027, index: 58, mask: {77, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.552998609 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297029, index: 60, mask: {78, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.563951558 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297043, index: 74, mask: {85, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.563960668 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297033, index: 64, mask: {80, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.563954168 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297000, index: 31, mask: {16, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.563959978 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297031, index: 62, mask: {79, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.567930022 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297045, index: 76, mask: {86, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.570867035 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297056, index: 83, mask: {42, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.574934347 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297053, index: 80, mask: {88, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.575523682 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297062, index: 89, mask: {45, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.571110022 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297055, index: 82, mask: {89, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.578934620 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297058, index: 85, mask: {43, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.571962984 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297052, index: 79, mask: {40, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.571172762 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297061, index: 88, mask: {92, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.580935042 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297064, index: 91, mask: {46, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.572015404 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297054, index: 81, mask: {41, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.582935003 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297060, index: 87, mask: {44, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.584935675 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297066, index: 93, mask: {47, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.585946846 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297065, index: 92, mask: {94, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.572045064 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297057, index: 84, mask: {90, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.588048296 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297067, index: 94, mask: {95, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.572069423 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297059, index: 86, mask: {91, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+[1;31m2025-03-27 21:05:29.578937080 [E:onnxruntime:Default, env.cc:234 ThreadMain] pthread_setaffinity_np failed for thread: 297063, index: 90, mask: {93, }, error code: 22 error msg: Invalid argument. Specify the number of threads explicitly so the affinity is not set.[m
+loc("/stages/stages.1/pool/MaxPool"): error: 'stablehlo.reduce_window' op inferred type(s) 'tensor<1x256x27x27xf32>' are incompatible with return type(s) of operation 'tensor<1x256x28x28xf32>'
+loc("/stages/stages.1/pool/MaxPool"): error: 'stablehlo.reduce_window' op failed to infer returned types
+Neither required_atol, or relative_atol is provided. Setting required_atol=0.01.
+FAILEDFound existing installation: timm 1.0.9
+Uninstalling timm-1.0.9:
+  Successfully uninstalled timm-1.0.9
+
+
+=================================== FAILURES ===================================
+____________________________ test_vovnet[full-eval] ____________________________
+
+record_property = <function record_property.<locals>.append_property at 0x73b7b172ee80>
+mode = 'eval', op_by_op = False
+
+    @pytest.mark.usefixtures("manage_dependencies")
+    @pytest.mark.parametrize(
+        "mode",
+        ["eval"],
+    )
+    @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+    def test_vovnet(record_property, mode, op_by_op):
+        model_name = "vovnet"
+        cc = CompilerConfig()
+        cc.compile_depth = CompileDepth.STABLEHLO
+        cc.enable_consteval = True
+        cc.consteval_parameters = True
+
+        if op_by_op:
+            cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
+
+        tester = ThisTester(
+            model_name,
+            mode,
+            assert_pcc=False,
+            assert_atol=False,
+            compiler_config=cc,
+            record_property_handle=record_property,
+            model_group="red",
+        )
+>       results = tester.test_model()
+
+tests/models/vovnet/test_vovnet_onnx.py:73:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests/utils.py:307: in test_model
+    return self.test_model_eval(on_device, assert_eval_token_mismatch)
+tests/utils.py:441: in test_model_eval
+    model = self.compile_model(self.framework_model, self.compiler_config)
+tests/utils.py:423: in compile_model
+    model = compile_onnx(model, compiler_config)
+tt_torch/onnx_compile/onnx_compile.py:101: in compile_onnx
+    module = torch_backend_ir_to_stablehlo(module, compiler_config)
+tt_torch/onnx_compile/onnx_compile.py:65: in torch_backend_ir_to_stablehlo
+    lower_mlir_module(False, OutputType.STABLEHLO, module)
+install/torch_mlir/compiler_utils.py:216: in lower_mlir_module
+    run_pipeline_with_repro_report(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+module = <torch_mlir._mlir_libs._mlir.ir.Operation object at 0x73b7af203c80>
+pipeline = 'builtin.module(torch-backend-to-stablehlo-backend-pipeline)'
+description = 'Lowering Torch Backend IR -> StableHLO Backend IR'
+enable_ir_printing = False
+
+    def run_pipeline_with_repro_report(
+        module, pipeline: str, description: str, enable_ir_printing: bool = False
+    ):
+        """Runs `pipeline` on `module`, with a nice repro report if it fails."""
+        module_name = get_module_name_for_debug_dump(module)
+        original_stderr = sys.stderr
+        try:
+            sys.stderr = StringIO()
+            asm_for_error_report = module.operation.get_asm(
+                large_elements_limit=10, enable_debug_info=True
+            )
+            # Lower module in place to make it ready for compiler backends.
+            with module.context as ctx:
+                # TODO(#3506): Passes can emit errors but not signal failure,
+                # which causes a native assert.
+                ctx.emit_error_diagnostics = True
+                pm = PassManager.parse(pipeline)
+                if enable_ir_printing:
+                    ctx.enable_multithreading(False)
+                    pm.enable_ir_printing()
+                pm.run(module.operation)
+        except Exception as e:
+            # TODO: More robust.
+            # - don't arbitrarily clutter up /tmp. When a test suite has many
+            #   tests, this can be a big disk cost (also, /tmp/ is frequently a
+            #   RAM fs, which increases worries about capacity).
+            # - don't have colliding filenames (hard to do without cluttering
+            #   up /tmp)
+            # - if we do have have colliding filenames, writes should at least
+            #   avoid being racy.
+            filename = os.path.join(tempfile.gettempdir(), module_name + ".mlir")
+            with open(filename, "w") as f:
+                f.write(asm_for_error_report)
+            debug_options = "-mlir-print-ir-after-all -mlir-disable-threading"
+            # Put something descriptive here even if description is empty.
+            description = description or f"{module_name} compile"
+
+            message = f"""\
+                {description} failed with the following diagnostics:
+                {sys.stderr.getvalue()}
+
+                python exception: {e}
+
+                For Torch-MLIR developers, the error can be reproduced with:
+                $ torch-mlir-opt -pass-pipeline='{pipeline}' {filename}
+                Add '{debug_options}' to get the IR dump for debugging purpose.
+                """
+            trimmed_message = "\n".join([m.lstrip() for m in message.split("\n")])
+>           raise TorchMlirCompilerError(trimmed_message) from None
+E           torch_mlir.compiler_utils.TorchMlirCompilerError: Lowering Torch Backend IR -> StableHLO Backend IR failed with the following diagnostics:
+E
+E
+E           python exception: Failure while executing pass pipeline
+E
+E           For Torch-MLIR developers, the error can be reproduced with:
+E           $ torch-mlir-opt -pass-pipeline='builtin.module(torch-backend-to-stablehlo-backend-pipeline)' /tmp/UnnammedModule.mlir
+E           Add '-mlir-print-ir-after-all -mlir-disable-threading' to get the IR dump for debugging purpose.
+
+install/torch_mlir/compiler_utils.py:127: TorchMlirCompilerError
+=============================== warnings summary ===============================
+tt_torch/tools/utils.py:25
+  /localdev/achoudhury/up/tt-torch/tt_torch/tools/utils.py:25: DeprecationWarning: invalid escape sequence '\-'
+    """
+
+install/torch_mlir/extras/onnx_importer.py:745
+  /localdev/achoudhury/up/tt-torch/install/torch_mlir/extras/onnx_importer.py:745: DeprecationWarning: invalid escape sequence '\w'
+    return re.sub("[^\w\.]", "_", name)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/models/vovnet/test_vovnet_onnx.py::test_vovnet[full-eval] - torch_mlir.compiler_utils.TorchMlirCompilerError: Lowering Torch Backend IR -> StableHLO Backend IR failed with the following diagnostics:
+
+
+python exception: Failure while executing pass pipeline
+
+For Torch-MLIR developers, the error can be reproduced with:
+$ torch-mlir-opt -pass-pipeline='builtin.module(torch-backend-to-stablehlo-backend-pipeline)' /tmp/UnnammedModule.mlir
+Add '-mlir-print-ir-after-all -mlir-disable-threading' to get the IR dump for debugging purpose.
+================= 1 failed, 1 deselected, 2 warnings in 7.94s ==================
