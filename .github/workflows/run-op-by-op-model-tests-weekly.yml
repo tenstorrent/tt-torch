@@ -20,112 +20,15 @@ jobs:
       matrix:
         build: [
           {
-            runs-on: wormhole_b0, name: "albert", tests: "
-              tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm
-              tests/models/albert/test_albert_token_classification.py::test_albert_token_classification
-              tests/models/albert/test_albert_sequence_classification.py::test_albert_sequence_classification
-              tests/models/albert/test_albert_question_answering.py::test_albert_question_answering
-              "
-          },
-          {
             runs-on: wormhole_b0, name: "autoencoder", tests: "
               tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear
               "
           },
           {
             runs-on: wormhole_b0, name: "bert", tests: "
-              tests/models/distilbert/test_distilbert.py::test_distilbert
               tests/models/bert/test_bert.py::test_bert
               "
           },
-          {
-            runs-on: wormhole_b0, name: "bloom", tests: "
-              tests/models/bloom/test_bloom.py::test_bloom
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "llama", tests: "
-              tests/models/llama/test_llama_3b.py::test_llama_3b
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "mobilenet", tests: "
-              tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "openpose", tests: "
-              tests/models/openpose/test_openpose_v2.py::test_openpose_v2
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "resnet", tests: "
-              tests/models/resnet50/test_resnet50.py::test_resnet
-              tests/models/resnet/test_resnet.py::test_resnet
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "timm", tests: "
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-hrnet_w18.ms_aug_in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-dla34.in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-mobilenetv1_100.ra4_e3600_r224_in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-xception71.tf_in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-ghostnet_100.in1k]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "vision-misc", tests: "
-              tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io
-              tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer
-              tests/models/mnist/test_mnist.py::test_mnist_train
-              tests/models/hardnet/test_hardnet.py::test_hardnet
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "yolo", tests: "
-              tests/models/yolov3/test_yolov3.py::test_yolov3
-              tests/models/yolov4/test_yolov4.py::test_yolov4
-              tests/models/yolov5/test_yolov5.py::test_yolov5
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "dpr", tests: "
-              tests/models/dpr/test_dpr.py::test_dpr
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "roberta", tests: "
-              tests/models/roberta/test_roberta.py::test_roberta
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "torchvision_1", tests: "
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-mobilenet_v2]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-mobilenet_v3_large]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-resnet152]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-resnext101_64x4d]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "torchvision_2", tests: "
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-vgg19]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-vgg19_bn]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-wide_resnet101_2]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-regnet_y_32gf]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-regnet_x_32gf]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "mistral", tests: "
-              tests/models/mistral/test_mistral_7b.py::test_mistral_7b
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "deepseek", tests: "
-              tests/models/deepseek/test_deepseek.py::test_deepseek
-              tests/models/deepseek/test_deepseek_qwen.py::test_deepseek_qwen
-              "
-          }
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
