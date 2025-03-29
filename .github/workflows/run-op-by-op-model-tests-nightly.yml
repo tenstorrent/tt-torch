@@ -21,7 +21,6 @@ jobs:
         build: [
           {
             runs-on: wormhole_b0, name: "qwen", tests: "
-              tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm
               tests/models/Qwen/test_qwen2_token_classification.py::test_qwen2_token_classification
               "
           },
@@ -73,11 +72,6 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "opt", tests: "
-              tests/models/opt/test_opt.py::test_opt
-              "
-          },
-          {
             runs-on: wormhole_b0, name: "stable-diffusion-pipe", tests: "
               tests/models/stable_diffusion/test_stable_diffusion.py::test_stable_diffusion
               "
@@ -113,11 +107,6 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "timm", tests: "
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite0.in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite1.in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite2.in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite3.in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite4.in1k]
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-ghostnetv2_100.in1k]
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-inception_v4.tf_in1k]
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-mixer_b16_224.goog_in21k]
@@ -137,7 +126,6 @@ jobs:
               tests/models/beit/test_beit_image_classification.py::test_beit_image_classification
               tests/models/deit/test_deit.py::test_deit
               tests/models/detr/test_detr.py::test_detr
-              tests/models/segformer/test_segformer.py::test_segformer
               "
           },
           {
@@ -186,8 +174,6 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "phi", tests: "
-              tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-1-eval]
-              tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-1.5-eval]
               tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-2-eval]
               "
           },

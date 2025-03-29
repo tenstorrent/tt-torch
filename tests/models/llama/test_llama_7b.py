@@ -41,8 +41,6 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-
-# Note - llama-7b is too large to fit on single device, but we can still generate a graph. Don't run it in full-eval execute mode.
 @pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
@@ -56,6 +54,9 @@ def test_llama_7b(record_property, mode, op_by_op):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+
+    if op_by_op is None and cc.compile_depth == CompileDepth.EXECUTE:
+        pytest.skip("Model is too large to fit on single device during execution.")
 
     tester = ThisTester(
         model_name,

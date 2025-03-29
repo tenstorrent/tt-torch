@@ -20,6 +20,11 @@ jobs:
       matrix:
         build: [
           {
+            runs-on: wormhole_b0, name: "qwen", tests: "
+              tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm
+              "
+          },
+          {
             runs-on: wormhole_b0, name: "albert", tests: "
               tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm
               tests/models/albert/test_albert_token_classification.py::test_albert_token_classification
@@ -59,6 +64,11 @@ jobs:
               "
           },
           {
+            runs-on: wormhole_b0, name: "opt", tests: "
+              tests/models/opt/test_opt.py::test_opt
+              "
+          },
+          {
             runs-on: wormhole_b0, name: "resnet", tests: "
               tests/models/resnet50/test_resnet50.py::test_resnet
               tests/models/resnet/test_resnet.py::test_resnet
@@ -71,6 +81,11 @@ jobs:
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-mobilenetv1_100.ra4_e3600_r224_in1k]
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-xception71.tf_in1k]
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-ghostnet_100.in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite0.in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite1.in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite2.in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite3.in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite4.in1k]
               "
           },
           {
@@ -79,6 +94,11 @@ jobs:
               tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer
               tests/models/mnist/test_mnist.py::test_mnist_train
               tests/models/hardnet/test_hardnet.py::test_hardnet
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "vision-transformers", tests: "
+              tests/models/segformer/test_segformer.py::test_segformer
               "
           },
           {
@@ -113,6 +133,12 @@ jobs:
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-wide_resnet101_2]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-regnet_y_32gf]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-regnet_x_32gf]
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "phi", tests: "
+              tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-1-eval]
+              tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-1.5-eval]
               "
           }
         ]
