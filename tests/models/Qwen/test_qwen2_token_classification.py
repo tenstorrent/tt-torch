@@ -50,6 +50,9 @@ def test_qwen2_token_classification(record_property, model_name, mode, op_by_op)
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    if op_by_op is None and cc.compile_depth == CompileDepth.EXECUTE:
+        pytest.skip("Model is too large to fit on single device during execution.")
+
     tester = ThisTester(
         model_name,
         mode,
