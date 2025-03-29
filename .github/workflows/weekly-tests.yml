@@ -35,7 +35,7 @@ jobs:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
   download-report:
     if: success() || failure()
-    needs: [test_op_by_op_nightly, test_op_by_op_weekly]
+    needs: [test_op_by_op_weekly]
     uses: ./.github/workflows/generate-model-report.yml
     secrets: inherit
   generate-ttnn-md:
