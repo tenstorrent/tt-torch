@@ -174,6 +174,17 @@ jobs:
               "
           },
           {
+            runs-on: wormhole_b0, name: "mistral", tests: "
+              tests/models/mistral/test_mistral_7b.py::test_mistral_7b
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "deepseek", tests: "
+              tests/models/deepseek/test_deepseek.py::test_deepseek
+              tests/models/deepseek/test_deepseek_qwen.py::test_deepseek_qwen
+              "
+          },
+          {
             runs-on: wormhole_b0, name: "phi", tests: "
               tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-1-eval]
               tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-1.5-eval]
@@ -184,7 +195,7 @@ jobs:
     runs-on:
       - ${{ matrix.build.runs-on }}
 
-    name: "tests op_by_op nightly (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
+    name: "tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
 
     container:
       image: ${{ inputs.docker-image }}
@@ -207,7 +218,7 @@ jobs:
       id: fetch-job-id
       uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
       with:
-        job_name: "tests op_by_op nightly (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})" # reference above tests.name
+        job_name: "tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})" # reference above tests.name
 
     - name: Set reusable strings
       id: strings
