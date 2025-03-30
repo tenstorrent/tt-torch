@@ -245,7 +245,8 @@ class Executor:
             inputs = self.graph_constants + inputs
 
         inputs = list(inputs)
-        device = self._get_device()
+        if device is None:
+            device = self._get_device()
 
         binary = tt_mlir.create_binary_from_bytestream(self.binary)
         program_idx = 0
