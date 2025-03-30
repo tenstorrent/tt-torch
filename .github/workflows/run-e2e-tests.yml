@@ -80,6 +80,15 @@ jobs:
                   tests/models/vit/test_vit.py::test_vit[full-eval]
             "
           },
+          {
+            runs-on: wormhole_b0, name: "compile_new_4", tests: "
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_128gf]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vit_l_32]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vit_b_16]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vit_b_32]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vit_l_16]
+            "
+          }
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}

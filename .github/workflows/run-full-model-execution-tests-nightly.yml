@@ -89,6 +89,17 @@ jobs:
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-tf_efficientnet_lite3.in1k]
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-tf_efficientnet_lite4.in1k]
             "
+          },
+          {
+            runs-on: wormhole_b0, name: "eval_new_7", tests: "
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vgg16]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vgg16_bn]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vgg13_bn]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vgg11_bn]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vgg11]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vgg13]
+              tests/models/torchvision/test_torchvision_object_detection.py::test_torchvision_object_detection[full-ssdlite320_mobilenet_v3_large-eval]
+            "
           }
         ]
     runs-on:
