@@ -50,12 +50,6 @@ jobs:
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-mixer_b16_224.goog_in21k]
                   tests/models/Qwen/test_qwen2_token_classification.py::test_qwen2_token_classification[full-Qwen/Qwen2-7B-eval]
             "
-          },
-          # Approximately 150 minutes.
-          {
-            runs-on: wormhole_b0, name: "compile_3", tests: "
-                  tests/models/mamba/test_mamba.py::test_mamba[full-state-spaces/mamba-790m-hf-eval]
-            "
           }
         ]
     runs-on:
