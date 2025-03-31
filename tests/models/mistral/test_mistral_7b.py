@@ -34,14 +34,14 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_mistral_7b(record_property, mode, op_by_op):
-    if op_by_op is None:
-        pytest.skip("full-eval: Mistral-7B is too large to fit on a single device")
-
     model_name = "Mistral-7B"
 
     cc = CompilerConfig()
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
+
+    if op_by_op is None and cc.compile_depth == CompileDepth.EXECUTE:
+        pytest.skip("Model is too large to fit on single device during execution.")
 
     tester = ThisTester(
         model_name,
