@@ -312,7 +312,11 @@ class CompilerConfig:
             )
 
         self._enable_intermediate_verification = True
-        self.runtime_intermediate_cache = {}
+        print(
+            "setup runtime intermediate cache"
+        )  # uh - why does this get called 4 times? that is not right
+        if self.runtime_intermediate_cache is None:
+            self.runtime_intermediate_cache = {}
 
     @property
     def consteval_parameters(self):

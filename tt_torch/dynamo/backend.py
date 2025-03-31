@@ -39,6 +39,10 @@ def create_verify_golden_callback(compiler_config: CompilerConfig):
     # Closure to capture external state in the callback.
     # using CompilerConfig as a context cache
 
+    # oh shit it's a closure and therefore captured at the point of callback creation?
+    ## but it's a reference so...
+    print("register verify golden closure")
+
     def verify_golden_callback(binary, callback_context, op_context):
         # Using these parameters, we should be able to query information
         # about the op described by op_context, and its output. I.e. location:
@@ -46,7 +50,7 @@ def create_verify_golden_callback(compiler_config: CompilerConfig):
             op_context
         )  # Do we care about other context?
         output_intermediate_tensor: Tensor = None  # Grab runtime tensor and inject here
-
+        print(f"CompilerConfig ID in callback: {id(compiler_config)}")
         # format 'loc("<torchfx node UID>")'
         print(f"raw location = {raw_location}")
 
@@ -72,6 +76,9 @@ def create_verify_golden_callback(compiler_config: CompilerConfig):
         intermediate_data = compiler_config.runtime_intermediate_cache.get(
             location, None
         )
+
+        print("Location to query from", location)
+        print("from ", compiler_config.runtime_intermediate_cache.keys())
 
         if intermediate_data is not None:
             print(f"Found golden for op @ {intermediate_data.node.name} == {location}")
