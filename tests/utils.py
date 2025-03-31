@@ -308,7 +308,9 @@ class ModelTester:
             self.compiler_config.compile_depth = CompileDepth.COMPILE_OP_BY_OP
             self.compiler_config.op_by_op_backend = OpByOpBackend.TORCH
 
-            cpu_model = self.compile_model(model, self.compiler_config)
+            cpu_model = self.compile_model(
+                model, self.compiler_config
+            )  # THIS IS A MUTATION on the model itself...
             self.run_model(cpu_model, self.inputs)
             self.compiler_config.compile_depth = CompileDepth.EXECUTE
 
@@ -317,7 +319,7 @@ class ModelTester:
 
         if on_device == True:
             model = self.compile_model(
-                model, self.compiler_config
+                self.get_framework_model, self.compiler_config
             )  # this seems to hold some wierd state now. wtf? I think the model itself got mutated as a side effect of something previous.
 
         outputs = self.run_model(model, self.inputs)
