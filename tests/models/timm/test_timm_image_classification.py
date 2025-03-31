@@ -80,7 +80,7 @@ def test_timm_image_classification(record_property, model_name, mode, op_by_op):
 
     model_group = (
         "red"
-        if any(keyword in model_name.lower() for keyword in ["efficientnet", "vovnet"])
+        if any(keyword in model_name.lower() for keyword in ["vovnet"])
         else "generality"
     )
 
