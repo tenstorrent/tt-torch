@@ -83,7 +83,10 @@ class ModelTester:
         self.record_tag_cache["frontend"] = "tt-torch"
 
         # configs should be set at test start, so they can be flushed immediately
-        self.record_property("config", {"compiler_config": compiler_config.to_dict()})
+        self.record_property(
+            "config",
+            {"model_group": model_group, "compiler_config": compiler_config.to_dict()},
+        )
 
     def _load_model(self):
         raise NotImplementedError(
