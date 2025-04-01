@@ -4,7 +4,6 @@
 [Getting Started](./getting_started.md)
 
 # User guide
-- [Overview](./overview.md)
 - [Building](./build.md)
 - [Testing](./test.md)
 - [Controlling Compiler](./controlling.md)
