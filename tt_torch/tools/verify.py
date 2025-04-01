@@ -20,6 +20,40 @@ def verify_against_golden(
     required_atol=None,
     relative_atol=None,
 ):
+    (
+        pccs,
+        pcc_passeds,
+        atols,
+        atols_passeds,
+        atol_thresholds,
+    ) = get_golden_comparison_results(
+        golden_tensors, calculated_tensors, required_pcc, required_atol, relative_atol
+    )
+
+    if assert_pcc or assert_atol:
+        assert_golden_comparison_results(
+            pccs,
+            pcc_passeds,
+            atols,
+            atols_passeds,
+            atol_thresholds,
+            assert_pcc,
+            assert_atol,
+            required_pcc=required_pcc,
+            required_atol=required_atol,
+            relative_atol=relative_atol,
+        )
+
+    return pccs, atols
+
+
+def get_golden_comparison_results(
+    golden_tensors,
+    calculated_tensors,
+    required_pcc=0.99,
+    required_atol=None,
+    relative_atol=None,
+):
     assert (required_atol is not None) != (
         relative_atol is not None
     ), "Exactly one of atol or relative_atol should be provided."
@@ -64,6 +98,22 @@ def verify_against_golden(
         atols.append(atol_)
         atols_passeds.append(atol_ <= required_atol)
 
+    return pccs, pcc_passeds, atols, atols_passeds, atol_thresholds
+
+
+def assert_golden_comparison_results(
+    pccs,
+    pcc_passeds,
+    atols,
+    atols_passeds,
+    atol_thresholds,
+    assert_pcc,
+    assert_atol,
+    required_pcc=0.99,
+    required_atol=None,
+    relative_atol=None,
+):
+
     check_mark = "\U00002705"
     red_x = "\U0000274C"
     warning = "\U0000274E"
@@ -75,6 +125,9 @@ def verify_against_golden(
     passed_atol = True
     err_msg = ""
     msg = ""
+
+    SKIPPED_PCC_CALCULATION_FOR_SINGLE_VALUE = None
+
     for i, ((pcc_passed, pcc_), (atol_passed, atol_), atol_threshold) in enumerate(
         zip(zip(pcc_passeds, pccs), zip(atols_passeds, atols), atol_thresholds)
     ):
@@ -126,8 +179,6 @@ def verify_against_golden(
                 assert False, err_msg
         else:
             print(msg)
-
-    return pccs, atols
 
 
 def _verify_torch_module(

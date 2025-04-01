@@ -200,8 +200,6 @@ def _base_backend(gm, example_inputs, compiler_config):
 def backend(gm, example_inputs, options=None):
     assert isinstance(gm, torch.fx.GraphModule), "Backend only supports torch graphs"
 
-    print(f"running backend with {options.compile_depth}")
-
     if options is None:
         options = CompilerConfig()
 
