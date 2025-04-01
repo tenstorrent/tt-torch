@@ -10,6 +10,7 @@ from torchvision import transforms
 import torchvision.models as models
 import tabulate
 import requests
+from tt_torch.tools.device_manager import DeviceManager
 
 
 def main():
@@ -22,10 +23,12 @@ def main():
     cc.enable_consteval = True
     cc.consteval_parameters = True
 
-    # devices = tt_torch.query_devices()
-    tt_model = torch.compile(model, backend=backend, dynamic=False, options=cc)
+    devices = DeviceManager.get_available_devices()
+    options = {}
+    options["compiler_config"] = cc
+    options["device"] = devices[0]
+    tt_model = torch.compile(model, backend=backend, dynamic=False, options=options)
 
-    # tt_model(*inputs, devices[0])
     headers = ["Top 5 Predictions"]
     topk = 5
     prompt = 'Enter the path of the image (type "stop" to exit or hit enter to use a default image): '
@@ -55,6 +58,7 @@ def main():
         print()
 
         img_path = input(prompt)
+    DeviceManager.release_devices()
 
 
 if __name__ == "__main__":

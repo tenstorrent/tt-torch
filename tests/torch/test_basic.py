@@ -10,13 +10,7 @@ import threading
 import tt_torch
 from tt_torch.tools.verify import verify_module
 from tt_torch.tools.utils import CompilerConfig
-from tt_mlir import (
-    open_mesh_device,
-    close_mesh_device,
-    MeshDeviceOptions,
-    create_sub_mesh_device,
-    release_sub_mesh_device,
-)
+from tt_torch.tools.device_manager import DeviceManager
 
 
 def test_abs():
@@ -40,9 +34,17 @@ def test_add():
 
     verify_module(Basic(), input_shapes=[(256, 256)] * 2)
 
-def verify_module_helper(module, input_shapes, compiler_config):
-    verify_module(module, input_shapes=input_shapes, compiler_config=compiler_config)
 
+def verify_module_helper(module, input_shapes, compiler_config, device):
+    verify_module(
+        module,
+        input_shapes=input_shapes,
+        compiler_config=compiler_config,
+        device=device,
+    )
+
+
+# Runs the AddOp on all detected chips in parallel
 def test_add_multidevice():
     class AddOp(nn.Module):
         def __init__(self):
@@ -50,45 +52,35 @@ def test_add_multidevice():
 
         def forward(self, x, y):
             return torch.add(x, y)
-    
-    class MultOp(nn.Module):
-        def __init__(self):
-            super().__init__()
 
-        def forward(self, x, y):
-            return x * y
-
-    mesh_options = MeshDeviceOptions()
-    mesh_options.device_ids = [0, 1]
-    parent_mesh_shape = [1, 2] # 2 devices
-    parent_mesh = open_mesh_device(parent_mesh_shape, mesh_options)
-    
+    num_devices = DeviceManager.get_num_available_devices()
+    print("Number of available devices: ", num_devices)
+    device_list = DeviceManager.get_available_devices()
+    assert (
+        len(device_list) == num_devices
+    ), "Number of devices is not equal to expected."
+    print("Submeshes secured: ", device_list)
+    print("Parent mesh: ", DeviceManager._parent)
     threads = []
-    compiler_configs = [CompilerConfig() for i in range(len(mesh_options.device_ids))]
-    for i in range(len(mesh_options.device_ids)):
+    compiler_configs = [CompilerConfig() for _ in range(num_devices)]
+    for i in range(num_devices):
         cc = compiler_configs[i]
-        cc.is_sub_mesh_device = True
-        cc.initialize_device(parent_mesh=parent_mesh, sub_mesh_offset=(0, i))
-        mod = AddOp() if i == 0 else MultOp()
-        if i == 0:
-            mod = AddOp()
-            input_shapes = [(256,256)] * 2
-        else:
-            mod = MultOp()
-            input_shapes = [(32, 32), (32, 32)]
-
-        thread = threading.Thread(target=verify_module_helper, args=(mod, input_shapes, cc))
+        device = device_list[i]
+        mod = AddOp()
+        input_shapes = [(256, 256)] * 2
+        thread = threading.Thread(
+            target=verify_module_helper, args=(mod, input_shapes, cc, device)
+        )
         threads.append(thread)
 
     for thread in threads:
         thread.start()
     for thread in threads:
         thread.join()
-    for i in range(len(threads)):
-        compiler_configs[i].cleanup_device()
-    
-    close_mesh_device(parent_mesh)
 
+    DeviceManager.release_devices()
+    assert DeviceManager._parent is None, "Parent device is not released."
+    assert len(DeviceManager._devices) == 0, "Submesh devices are not released."
 
 
 def test_concat_dim0():
