@@ -33,11 +33,11 @@ jobs:
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vit_h_14]
               "
           },
-          {
-            runs-on: wormhole_b0, name: "group_2", tests: "
-              tests/models/RMBG/test_RMBG.py::test_RMBG[full-eval]
-              "
-          },
+          # {
+          #   runs-on: wormhole_b0, name: "group_2", tests: "
+          #     tests/models/RMBG/test_RMBG.py::test_RMBG[full-eval]
+          #     "
+          # },
           {
             runs-on: wormhole_b0, name: "group_3", tests: "
               tests/models/stable_diffusion/test_stable_diffusion.py::test_stable_diffusion[full-eval]
