@@ -335,13 +335,6 @@ class TorchExecutor(OpByOpExecutor):
                         node.name
                     ] = cache_entry
                     print(f"Caching runtime intermediate for {node.name}")
-                    print(
-                        "Cache keys",
-                        self.compiler_config.runtime_intermediate_cache.keys(),
-                    )
-                    print(
-                        f"CompilerConfig ID in executor context: {id(self.compiler_config)}"
-                    )
 
                 if (
                     self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
