@@ -40,20 +40,10 @@ def create_verify_golden_callback(compiler_config: CompilerConfig):
     # Closure to capture external state in the callback.
     # using CompilerConfig as a context cache
 
-    # oh shit it's a closure and therefore captured at the point of callback creation?
-    ## but it's a reference so...
-    print("register verify golden closure")
-
     def verify_golden_callback(binary, callback_context, op_context):
         # Using these parameters, we should be able to query information
         # about the op described by op_context, and its output. I.e. location:
-        raw_location = tt_mlir.get_op_loc_info(
-            op_context
-        )  # Do we care about other context?
-        output_intermediate_tensor: Tensor = None  # Grab runtime tensor and inject here
-        print(f"CompilerConfig ID in callback: {id(compiler_config)}")
-        # format 'loc("<torchfx node UID>")'
-        print(f"raw location = {raw_location}")
+        raw_location = tt_mlir.get_op_loc_info(op_context)
 
         location = ""
         fused_locations = []
@@ -71,33 +61,37 @@ def create_verify_golden_callback(compiler_config: CompilerConfig):
         if "loc(unknown)" in raw_location:
             return
 
-        print("torchfx node UID =", fused_locations)
-        location = fused_locations[1]
+        # there multiple source locations, the actual name of the node is at the end
+        location = fused_locations[-1]
 
         intermediate_data = compiler_config.runtime_intermediate_cache.get(
             location, None
         )
 
-        print("Location to query from", location)
-        print("from ", compiler_config.runtime_intermediate_cache.keys())
+        print("Node Location:", location)
 
         if intermediate_data is not None:
-            print(f"Found golden for op @ {intermediate_data.node.name} == {location}")
+            print(f"Found golden for op @ {intermediate_data.node.name} == {location}.")
 
-            # TESTING ONLY - Add the golden tensor as a fake output, to check that
-            # verification can get PCC = 1 for all cases.
-            intermediate_data.decomposed_intermediate_outputs.append(
-                output_intermediate_tensor
-            )  # actual output
+            # return a null tensor for decomposed ops with invalid output tensors (eg. deallocate)
+            output_intermediate_tensor = tt_mlir.get_op_output_torch_tensor(
+                op_context, callback_context
+            )
+            print("output intermediate tensor", output_intermediate_tensor)
 
-            intermediate_data.decomposed_intermediate_outputs.append(
-                intermediate_data.golden
-            )  # fake output
+            if output_intermediate_tensor is not None:
+                intermediate_data.decomposed_intermediate_outputs.append(
+                    output_intermediate_tensor
+                )
+
+            # intermediate_data.decomposed_intermediate_outputs.append(
+            #    intermediate_data.golden
+            # )  # fake output
 
             # if intermediate_data.golden != None:
-            print(
-                f"Decomposition added fake tensor too. Total ct {len(intermediate_data.decomposed_intermediate_outputs)}"
-            )
+            # print(
+            #     f"Decomposition added fake tensor too. Total ct {len(intermediate_data.decomposed_intermediate_outputs)}"
+            # )
 
             # pdb.set_trace()
 
@@ -242,4 +236,5 @@ def backend(gm, example_inputs, options=None):
                 graph_constants=graph_constants,
             )
 
+    print("[James] Running in EXECUTE")
     return _base_backend(gm, example_inputs, compiler_config=options)
