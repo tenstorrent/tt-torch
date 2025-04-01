@@ -174,13 +174,16 @@ def _verify_torch_module(
     input_range_int,
     compiler_config,
     do_assert,
+    device,
 ):
     if input_data_types is None:
         input_data_types = [torch.float32] * (
             len(input_shapes) if input_shapes is not None else len(inputs)
         )
-
-    tt_mod = torch.compile(mod, backend=backend, options=compiler_config)
+    torch_options = {}
+    torch_options["compiler_config"] = compiler_config
+    torch_options["device"] = device
+    tt_mod = torch.compile(mod, backend=backend, options=torch_options)
     if inputs is None:
         if all([dtype.is_floating_point for dtype in input_data_types]):
             low, high = input_range
@@ -201,9 +204,7 @@ def _verify_torch_module(
             ]
 
     ret = tt_mod(*inputs)
-    print(f"Output of the compiled module: {ret}")
     golden = mod(*inputs)
-    print(f"Output of the original module: {golden}")
 
     if isinstance(golden, torch.Tensor):
         golden = (golden,)
@@ -295,6 +296,7 @@ def verify_module(
     input_range_int=(0, 1000),
     compiler_config=None,
     do_assert=True,
+    device=None,
 ):
 
     if isinstance(mod, torch.nn.Module):
@@ -312,6 +314,7 @@ def verify_module(
             input_range_int,
             compiler_config,
             do_assert,
+            device,
         )
     elif isinstance(mod, onnx.ModelProto):
         assert (
