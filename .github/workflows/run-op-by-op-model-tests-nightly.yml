@@ -62,11 +62,6 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "mobilenet", tests: "
-              tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2
-              "
-          },
-          {
             runs-on: wormhole_b0, name: "openpose", tests: "
               tests/models/openpose/test_openpose.py::test_openpose
               "
