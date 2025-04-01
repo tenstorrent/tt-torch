@@ -839,6 +839,8 @@ class RuntimeIntermediate:
         self.passed_atol = False
 
     def calculate_metrics(self):
+        from tt_torch.tools.verify import verify_against_golden
+
         # calculate the metrics for the golden tensor after all decomposition steps done
 
         if (
@@ -858,11 +860,10 @@ class RuntimeIntermediate:
         if not isinstance(self.golden, tuple):
             self.golden = (self.golden,)
 
-        (
-            self.passed_pcc,
-            self.passed_atol,
-            _,
-            _,
-            self.pcc,
-            self.atol,
-        ) = verify_against_golden(self.golden, final_decomposed_output, 0.99, 1e-2)
+        (self.pcc, self.atol,) = verify_against_golden(
+            self.golden,
+            final_decomposed_output,
+            assert_pcc=False,
+            assert_atol=False,
+            required_atol=0.01,
+        )
