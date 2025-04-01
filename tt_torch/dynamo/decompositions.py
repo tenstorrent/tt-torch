@@ -332,7 +332,6 @@ def _get_default_decomposition_ops() -> DecompositionOpsList:
         aten._native_batch_norm_legit_no_training,
         aten._native_batch_norm_legit,
         aten._native_batch_norm_legit.no_stats,
-        aten.squeeze.dims,
         # decompositions for miscellaneous ops that are not handled in torch-mlir but have available decompositions
         aten.soft_margin_loss,
         aten.im2col,
