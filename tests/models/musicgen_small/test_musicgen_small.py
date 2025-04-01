@@ -5,20 +5,21 @@
 
 from transformers import AutoProcessor, MusicgenForConditionalGeneration
 import pytest
+import torch
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.tokenizer = AutoProcessor.from_pretrained("facebook/musicgen-small")
         model = MusicgenForConditionalGeneration.from_pretrained(
             "facebook/musicgen-small"
         )
-        return model.generate
+        return model
 
     def _load_inputs(self):
-        inputs = self.tokenizer(
+        processor = AutoProcessor.from_pretrained("facebook/musicgen-small")
+        inputs = processor(
             text=[
                 "80s pop track with bassy drums and synth",
                 "90s rock song with loud guitars and heavy drums",
@@ -26,8 +27,21 @@ class ThisTester(ModelTester):
             padding=True,
             return_tensors="pt",
         )
+        pad_token_id = self.framework_model.generation_config.pad_token_id
+        decoder_input_ids = (
+            torch.ones(
+                (
+                    inputs.input_ids.shape[0]
+                    * self.framework_model.decoder.num_codebooks,
+                    1,
+                ),
+                dtype=torch.long,
+            )
+            * pad_token_id
+        )
 
         inputs["max_new_tokens"] = 1
+        inputs["decoder_input_ids"] = decoder_input_ids
         return inputs
 
     def set_model_eval(self, model):
@@ -63,7 +77,6 @@ def test_musicgen_small(record_property, mode, op_by_op):
         assert_atol=False,
         assert_pcc=False,
         record_property_handle=record_property,
-        is_token_output=True,
     )
     results = tester.test_model()
     tester.finalize()
