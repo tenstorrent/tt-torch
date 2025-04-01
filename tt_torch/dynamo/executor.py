@@ -132,6 +132,7 @@ class Executor:
         compiler_config=None,
         required_pcc=0.99,
         required_atol=1e-2,
+        device=None,
     ):
         self.program = program
         self.binary = None
@@ -159,6 +160,7 @@ class Executor:
 
         self.binary = None
         self.preprocessed_graph_constants = None
+        self.device = device
 
     def register_intermediate_callback(self, callback):
         if not is_runtime_debug_enabled():
@@ -194,20 +196,13 @@ class Executor:
         self.binary = binary
 
     def _get_device(self):
-        if self.compiler_config.runtime_device is not None:
-            return self.compiler_config.runtime_device
-        if self.compiler_config.mesh_device_options is None:
-            self.compiler_config.mesh_device_options = tt_mlir.MeshDeviceOptions()
-        assert (
-            self.compiler_config.mesh_device_shape is not None
-        ), "Please set mesh_device_shape within compiler_config"
-        assert (
-            len(self.compiler_config.mesh_device_shape) == 2
-        ), "Only a 2D mesh is supported for now"
-        return tt_mlir.open_mesh_device(
-            self.compiler_config.mesh_device_shape,
-            self.compiler_config.mesh_device_options,
-        )
+        if self.device is not None:
+            print("Reusing device: ", self.device)
+            return self.device
+        # Return a default parent mesh
+        device = tt_mlir.open_mesh_device([1, 1], tt_mlir.MeshDeviceOptions())
+        print("Opened default parent device: ", device)
+        return device
 
     def _cache_constants_if_needed(self, preprocessed_constants):
         if (
@@ -221,10 +216,11 @@ class Executor:
         for t in preprocessed_activations:
             tt_mlir.deallocate_tensor(t, force=True)
 
-        if self.compiler_config.runtime_device is None:
+        if self.device is None:
             tt_mlir.close_mesh_device(device)
+            print("Closed default parent device: ", device)
 
-    def __call__(self, *inputs, device=None):
+    def __call__(self, *inputs):
         if self.compiler_config.compile_depth != CompileDepth.EXECUTE:
             assert (
                 self.program.graph_module != None
@@ -245,8 +241,7 @@ class Executor:
             inputs = self.graph_constants + inputs
 
         inputs = list(inputs)
-        if device is None:
-            device = self._get_device()
+        device = self.device if self.device is not None else self._get_device()
 
         binary = tt_mlir.create_binary_from_bytestream(self.binary)
         program_idx = 0
@@ -302,6 +297,7 @@ class OpByOpExecutor(Executor):
         compiler_config=None,
         required_pcc=0.99,
         required_atol=1e-2,
+        device=None,
     ):
         super().__init__(
             program=None,
@@ -309,6 +305,7 @@ class OpByOpExecutor(Executor):
             compiler_config=compiler_config,
             required_pcc=required_pcc,
             required_atol=required_atol,
+            device=device,
         )
 
         # Opening a device in a new process is very slow as the pcie device needs to be initializes
