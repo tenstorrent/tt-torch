@@ -258,6 +258,27 @@ std::vector<at::Tensor> run_end_to_end(std::vector<at::Tensor> &inputs,
   return outputs;
 }
 
+torch::Tensor
+get_op_output_torch_tensor(tt::runtime::OpContext opContextHandle,
+                           tt::runtime::CallbackContext programContextHandle) {
+
+  tt::runtime::Tensor tensor =
+      tt::runtime::getOpOutputTensor(opContextHandle, programContextHandle);
+
+  // Some ops in a decomposed tfx node may not have valid output tensors (eg.
+  // deallocate) For these, return an empty tensor
+
+  if (tensor.handle == nullptr) {
+    std::cout << "Warning: getOpOutputTensor returned a null tensor."
+              << std::endl;
+    return torch::Tensor(); // Return an empty PyTorch tensor
+  }
+
+  tt::runtime::TensorDesc desc = tt::runtime::getTensorDesc(tensor);
+
+  return create_torch_tensor(tensor, desc);
+}
+
 PYBIND11_MODULE(tt_mlir, m) {
   m.doc() = "tt_mlir";
   py::class_<tt::runtime::Binary>(m, "Binary")
@@ -344,6 +365,8 @@ PYBIND11_MODULE(tt_mlir, m) {
       .def_readonly("itemsize", &tt::runtime::TensorDesc::itemsize)
       .def_readonly("dataType", &tt::runtime::TensorDesc::dataType);
   m.def("get_op_output_tensor", &tt::runtime::getOpOutputTensor);
+  m.def("get_op_output_tensor_desc", &tt::runtime::getTensorDesc);
+  m.def("get_op_output_torch_tensor", &get_op_output_torch_tensor);
   m.def("get_op_debug_str", &tt::runtime::getOpDebugString,
         "Get the debug string of the op");
   m.def("get_op_loc_info", &tt::runtime::getOpLocInfo,
