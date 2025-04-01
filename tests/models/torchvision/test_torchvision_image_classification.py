@@ -89,17 +89,20 @@ model_info_list = [
     ("swin_v2_b", "Swin_V2_B_Weights"),
 ]
 
+# Filter models into two categories
+red_model_info_list = [
+    info
+    for info in model_info_list
+    if any(keyword in info[0].lower() for keyword in ["mobilenet_v2", "vit", "swin"])
+]
+generality_model_info_list = [
+    info for info in model_info_list if info not in red_model_info_list
+]
 
-@pytest.mark.parametrize(
-    "model_info", model_info_list, ids=[info[0] for info in model_info_list]
-)
-@pytest.mark.parametrize("mode", ["train", "eval"])
-@pytest.mark.parametrize(
-    "op_by_op",
-    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
-    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
-)
-def test_torchvision_image_classification(record_property, model_info, mode, op_by_op):
+
+def run_torchvision_image_classification_test(
+    record_property, model_info, mode, op_by_op, model_group
+):
     if mode == "train":
         pytest.skip()
 
@@ -110,15 +113,6 @@ def test_torchvision_image_classification(record_property, model_info, mode, op_
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
-
-    model_group = (
-        "red"
-        if any(
-            model_name in model_info[0].lower()
-            for model_name in ["mobilenet_v2", "vit", "swin"]
-        )
-        else "generality"
-    )
 
     tester = ThisTester(
         model_info,
@@ -138,3 +132,41 @@ def test_torchvision_image_classification(record_property, model_info, mode, op_
         print(f"Model: {model_info[0]} | Top 5 predictions: {indices[0].tolist()}")
 
     tester.finalize()
+
+
+# Generality Model Tests
+@pytest.mark.parametrize(
+    "model_info",
+    generality_model_info_list,
+    ids=[info[0] for info in generality_model_info_list],
+)
+@pytest.mark.parametrize("mode", ["train", "eval"])
+@pytest.mark.parametrize(
+    "op_by_op",
+    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
+    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+)
+def test_torchvision_image_classification_generality(
+    record_property, model_info, mode, op_by_op
+):
+    run_torchvision_image_classification_test(
+        record_property, model_info, mode, op_by_op, "generality"
+    )
+
+
+# Red Model Tests
+@pytest.mark.parametrize(
+    "model_info", red_model_info_list, ids=[info[0] for info in red_model_info_list]
+)
+@pytest.mark.parametrize("mode", ["train", "eval"])
+@pytest.mark.parametrize(
+    "op_by_op",
+    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
+    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+)
+def test_torchvision_image_classification_red(
+    record_property, model_info, mode, op_by_op
+):
+    run_torchvision_image_classification_test(
+        record_property, model_info, mode, op_by_op, "red"
+    )
