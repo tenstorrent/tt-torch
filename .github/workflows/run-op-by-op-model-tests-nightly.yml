@@ -181,6 +181,11 @@ jobs:
             runs-on: wormhole_b0, name: "vit", tests: "
               tests/models/vit/test_vit.py::test_vit[op_by_op_torch-eval]
               "
+          },
+          {
+            runs-on: wormhole_b0, name: "gliner", tests: "
+              tests/models/gliner/test_gliner.py::test_gliner[op_by_op_torch-eval]
+              "
           }
         ]
     runs-on:
