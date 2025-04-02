@@ -300,47 +300,11 @@ class ModelTester:
     @torch.inference_mode()
     def test_model_eval(self, on_device=True, assert_eval_token_mismatch=True):
         model = self.get_framework_model()
-        import copy
-
-        model_copy = copy.deepcopy(model)
-        fw_model_copy = copy.deepcopy(self.framework_model)
         golden = self.get_golden_outputs(model, self.inputs)
 
-        # This additional call to compile creates a TorchExecutor and runs the gm
-        # op by op on cpu to caching the intermediate golden
-        # tensors inside the compiler config.
-        if (
-            self.compiler_config.compile_depth == CompileDepth.EXECUTE
-            and self.compiler_config._enable_intermediate_verification
-        ):
-            print("Attempting to cache intermediate tensors")
-            self.compiler_config.compile_depth = CompileDepth.COMPILE_OP_BY_OP
-            self.compiler_config.op_by_op_backend = OpByOpBackend.TORCH
-
-            cpu_model = self.compile_model(model, self.compiler_config)
-            self.run_model(cpu_model, self.inputs)
-            self.compiler_config.compile_depth = CompileDepth.EXECUTE
-
-            # restore mutation from executor ?
-            # model = self.get_framework_model()
-
-        # print("Check equality:")
-        # if self.framework_model == fw_model_copy:
-        #     print("Framework model and model copy are equal")
-        # else:
-        #     print(
-        #         "Framework model and model copy are NOT equal. This may be expected if the model has internal state that changes."
-        #     )
-        # if model == model_copy:
-        #     print("Compiled model and model copy are equal")
-        # else:
-        #     print(
-        #         "Compiled model and model copy are NOT equal. This may be expected if the compilation process mutates the model."
-        #     )
-
         if on_device == True:
-            print("compiling model properly now.")
-            model = self.compile_model(model_copy, self.compiler_config)
+            model = self.compile_model(model, self.compiler_config)
+
         outputs = self.run_model(model, self.inputs)
         self.record_property("achieved_compile_depth", "EXECUTE")
 
