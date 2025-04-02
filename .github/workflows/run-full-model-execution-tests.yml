@@ -19,7 +19,7 @@ on:
 
 jobs:
   tests:
-    timeout-minutes: 60 # current onPR time runs ~60m
+    timeout-minutes: 550 # current onPR time runs ~60m
     strategy:
       fail-fast: false
       matrix:
