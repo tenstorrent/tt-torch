@@ -101,6 +101,11 @@ jobs:
               "
           },
           {
+            runs-on: wormhole_b0, name: "opt", tests: "
+              tests/models/opt/test_opt.py::test_opt
+              "
+          },
+          {
             runs-on: wormhole_b0, name: "timm", tests: "
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-ghostnetv2_100.in1k]
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-inception_v4.tf_in1k]

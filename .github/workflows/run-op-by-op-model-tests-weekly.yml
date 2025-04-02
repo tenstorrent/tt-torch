@@ -65,11 +65,6 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "opt", tests: "
-              tests/models/opt/test_opt.py::test_opt
-              "
-          },
-          {
             runs-on: wormhole_b0, name: "resnet", tests: "
               tests/models/resnet50/test_resnet50.py::test_resnet
               tests/models/resnet/test_resnet.py::test_resnet

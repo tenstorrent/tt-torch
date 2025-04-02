@@ -75,12 +75,6 @@ jobs:
             "
           },
           {
-            # Approximately 50 minutes.
-            runs-on: wormhole_b0, name: "eval_4", tests: "
-                  tests/models/opt/test_opt.py::test_opt[full-eval]
-            "
-          },
-          {
             # Approximately 45 minutes.
             runs-on: wormhole_b0, name: "eval_5", tests: "
                   tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[full-Qwen/Qwen2.5-1.5B-eval]
