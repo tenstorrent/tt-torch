@@ -20,6 +20,7 @@ pillow
 pre-commit
 protobuf
 pybind11
+py-cpuinfo
 pytest
 pytest-cov
 pytorchcv
@@ -29,6 +30,7 @@ sentencepiece
 seaborn
 setuptools
 soundfile
+supervision
 tabulate
 tiktoken
 timm
