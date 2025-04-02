@@ -68,6 +68,13 @@ if "--build_perf" in sys.argv:
     ]
     sys.argv.remove("--build_perf")
 
+if "--build_runtime_debug" in sys.argv:
+    cmake_args += [
+        "-DTT_RUNTIME_DEBUG=ON",
+    ]
+    sys.argv.remove("--build_runtime_debug")
+
+
 with open("README.md", "r") as f:
     long_description = f.read()
 

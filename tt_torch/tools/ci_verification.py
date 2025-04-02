@@ -8,6 +8,7 @@ import argparse
 from tt_torch.tools.generate_benchmark_report import parse_tests_from_matrix
 from tt_torch.tools.benchmark_promotion import enumerate_all_tests
 import difflib
+import subprocess
 
 
 def scan_workflow_test_matrices():
@@ -65,6 +66,46 @@ def scan_workflow_test_matrices():
     print("No issues found in the workflow test matrices. All matrices are valid!")
 
 
+def run_iv_tests_and_generate_summary(yaml_files, summary_file="iv_test_summary.txt"):
+    """
+    Extract test names from YAML files, run them, and generate a summary file.
+
+    Args:
+        yaml_files (list): List of paths to YAML files containing test matrices.
+        summary_file (str): Path to the summary file to write test results.
+    """
+    all_tests = []
+
+    # Extract test names from each YAML file
+    for yaml_file in yaml_files:
+        print(f"Parsing tests from {yaml_file}...")
+        tests = parse_tests_from_matrix(yaml_file)
+        all_tests.extend(tests)
+
+    print(f"Found {len(all_tests)} tests in total.")
+
+    # Prepare the summary file
+    with open(summary_file, "w") as summary:
+        summary.write("Test Name | Result\n")
+        summary.write("------------------\n")
+
+        # Run each test and log the result
+        for test in all_tests:
+            test_name = test.strip()
+            log_file = f"{test_name.replace('/', '_').replace(':', '_')}.ri.log"
+            print(f"Running test: {test_name}")
+            command = f"TT_TORCH_VERIFY_INTERMEDIATES=1 pytest -svv {test_name} | tee {log_file}"
+
+            # Run the test and capture the return code
+            result = subprocess.run(command, shell=True)
+            test_result = "PASSED" if result.returncode == 0 else "FAILED"
+
+            # Write the result to the summary file
+            summary.write(f"{test_name} | {test_result}\n")
+
+    print(f"Test summary written to {summary_file}")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Utility script for CI reflection.")
     parser.add_argument(
@@ -72,8 +113,20 @@ if __name__ == "__main__":
         action="store_true",
         help="Scan .github/workflows for test matrices and validate them.",
     )
+    parser.add_argument(
+        "--run-iv-tests",
+        action="store_true",
+        help="Run full eval tests with intermediate verification from the given YAML files.",
+    )
 
     args = parser.parse_args()
 
     if args.scan_workflows:
         scan_workflow_test_matrices()
+
+    if args.run_iv_tests:
+        yaml_files = [
+            "./.github/workflows/run-full-model-execution-tests.yml",
+            "./.github/workflows/run-full-model-execution-tests-nightly.yml",
+        ]
+        run_iv_tests_and_generate_summary(yaml_files)
