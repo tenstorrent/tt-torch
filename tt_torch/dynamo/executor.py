@@ -19,6 +19,7 @@ from tt_torch.tools.utils import (
     CompilerConfig,
     Op,
     OpCompilationStatus,
+    RuntimeIntermediate,
 )
 from typing import Union
 
@@ -224,6 +225,49 @@ class Executor:
         if self.compiler_config.runtime_device is None:
             tt_mlir.close_mesh_device(device)
 
+    def _generate_golden_intermediate_cache(self, gm, inputs):
+
+        print("generating golden intermediate cache")
+        node_to_tensor = {}
+        input_index = 0
+        outputs = []
+        num_nodes = len(gm.graph.nodes)
+        out_degree = {}
+        for idx, node in enumerate(gm.graph.nodes):
+            print(f"Compiling {idx}/{num_nodes}: <{node.op}>{node.name}\t{node.target}")
+            out_degree[node] = len(node.users)
+            if node.op == "placeholder":
+                node_to_tensor[node] = inputs[input_index]
+                input_index += 1
+            elif node.op == "get_attr":
+                for buffer in gm.named_buffers():
+                    if buffer[0] == node.target:
+                        node_to_tensor[node] = buffer[1]
+                        break
+            elif node.op == "call_function":
+                args = []
+                for arg in node.args:
+                    if isinstance(arg, torch.fx.node.Node):
+                        args.append(node_to_tensor[arg])
+                    elif isinstance(arg, list):
+                        args.append(
+                            [
+                                node_to_tensor[a]
+                                if isinstance(a, torch.fx.node.Node)
+                                else a
+                                for a in arg
+                            ]
+                        )
+                    else:
+                        args.append(arg)
+
+                golden = node.target(*args, **node.kwargs)
+                cache_entry = RuntimeIntermediate(node, golden)
+                self.compiler_config.runtime_intermediate_cache[node.name] = cache_entry
+                print(f"Caching runtime intermediate for {node.name}")
+                tensor = node.target(*args, **node.kwargs)
+                node_to_tensor[node] = tensor
+
     def __call__(self, *inputs):
         if self.compiler_config.compile_depth != CompileDepth.EXECUTE:
             assert (
@@ -257,6 +301,10 @@ class Executor:
             preprocessed_inputs = (
                 self.preprocessed_graph_constants + preprocessed_inputs
             )
+
+        if self.compiler_config._enable_intermediate_verification:
+            # put this as close to the binding as possible to ensure the GM is not mutated
+            self._generate_golden_intermediate_cache(self.program, inputs)
 
         outputs = tt_mlir.run(device, binary, program_idx, preprocessed_inputs)
 
