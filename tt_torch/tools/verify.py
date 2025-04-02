@@ -31,7 +31,7 @@ def verify_against_golden(
     ), f"Expecting the calculated tensors to be a tuple of tensors after _extract_outputs. Got type: {type(calculated_tensors)}"
     assert len(golden_tensors) == len(
         calculated_tensors
-    ), "Expecting the number of golden and calculated tensors to be the same."
+    ), f"Expecting the number of golden tensors (ct: {len(golden_tensors)}) and calculated tensors (ct: {len(calculated_tensors)}) to be the same."
 
     pccs, pcc_passeds = [], []
     atols, atol_thresholds, atols_passeds = [], [], []
