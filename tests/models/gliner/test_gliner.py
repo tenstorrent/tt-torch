@@ -49,6 +49,7 @@ def test_gliner(record_property, mode, op_by_op):
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
+        model_group="red",
     )
     entities = tester.test_model()
     if mode == "eval":
