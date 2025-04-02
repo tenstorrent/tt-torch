@@ -20,7 +20,7 @@ jobs:
       matrix:
         build: [
           {
-            # Approximately 12 minutes.
+            # Approximately 65 minutes.
             runs-on: wormhole_b0, name: "compile_1", tests: "
                   tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[full-microsoft/beit-base-patch16-224-eval]
                   tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[full-microsoft/beit-large-patch16-224-eval]
@@ -33,6 +33,7 @@ jobs:
                   tests/models/llama/test_llama_7b.py::test_llama_7b[full-eval]
                   tests/models/mistral/test_mistral_7b.py::test_mistral_7b[full-eval]
                   tests/models/vit/test_vit.py::test_vit[full-eval]
+                  tests/models/opt/test_opt.py::test_opt[full-eval]
             "
           },
           {
