@@ -91,6 +91,12 @@ jobs:
         source env/activate
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
+    - name: Verify CI model test matrices
+      shell: bash
+      run: |
+        source env/activate
+        python tt_torch/tools/ci_verification.py --scan-workflows
+
     - name: Run PyTorch Unit tests
       shell: bash
       run: |

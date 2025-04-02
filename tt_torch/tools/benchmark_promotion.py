@@ -8,26 +8,32 @@ from collections import Counter
 import csv
 
 
-def enumerate_all_tests():
+def enumerate_all_tests(filter_full_eval=True):
     test_dir = "tests/models"
     try:
         # Run pytest with --collect-only and capture the output
         # sudo apt install -y libgl1 libglx-mesa0 # (may be needed locally)
+        print(f"Running pytest collect command: pytest {test_dir} --collect-only -q")
         result = subprocess.run(
             ["pytest", test_dir, "--collect-only", "-q"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
         )
-
         # Check if pytest ran successfully
         if result.returncode != 0:
-            raise RuntimeError(f"pytest failed: {result.stderr}")
+            raise RuntimeError(
+                f"pytest failed with\n\tstderr:\n{result.stderr}\n\tstdout:\n{result.stdout}"
+            )
 
         # Extract test names using a regex
         test_cases = re.findall(r"(\S+::\S+)", result.stdout)
 
-        return [tc for tc in test_cases if "full" in tc and "eval" in tc]
+        return (
+            [tc for tc in test_cases if "full" in tc and "eval" in tc]
+            if filter_full_eval
+            else test_cases
+        )
 
     except Exception as e:
         print(f"Error: {e}")

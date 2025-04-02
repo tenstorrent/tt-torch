@@ -58,16 +58,18 @@ model_list = [
     "hrnet_w18.ms_aug_in1k",
 ]
 
+# Separate lists for models
+red_model_list = [
+    model_name for model_name in model_list if "vovnet" in model_name.lower()
+]
+generality_model_list = [
+    model_name for model_name in model_list if model_name not in red_model_list
+]
 
-@pytest.mark.usefixtures("manage_dependencies")
-@pytest.mark.parametrize("model_name", model_list)
-@pytest.mark.parametrize("mode", ["train", "eval"])
-@pytest.mark.parametrize(
-    "op_by_op",
-    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
-    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
-)
-def test_timm_image_classification(record_property, model_name, mode, op_by_op):
+
+def run_timm_image_classification_test(
+    record_property, model_name, mode, op_by_op, model_group
+):
     if mode == "train":
         pytest.skip()
     cc = CompilerConfig()
@@ -77,12 +79,6 @@ def test_timm_image_classification(record_property, model_name, mode, op_by_op):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
-
-    model_group = (
-        "red"
-        if any(keyword in model_name.lower() for keyword in ["vovnet"])
-        else "generality"
-    )
 
     tester = ThisTester(
         model_name,
@@ -98,8 +94,39 @@ def test_timm_image_classification(record_property, model_name, mode, op_by_op):
         top5_probabilities, top5_class_indices = torch.topk(
             results.softmax(dim=1) * 100, k=5
         )
-
         print(
-            f"Model: {model_name} | Predicted class ID: {top5_class_indices[0]} | Probabiliy: {top5_probabilities[0]}"
+            f"Model: {model_name} | Predicted class ID: {top5_class_indices[0]} | Probability: {top5_probabilities[0]}"
         )
     tester.finalize()
+
+
+# Generality Model Tests
+@pytest.mark.usefixtures("manage_dependencies")
+@pytest.mark.parametrize("model_name", generality_model_list)
+@pytest.mark.parametrize("mode", ["train", "eval"])
+@pytest.mark.parametrize(
+    "op_by_op",
+    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
+    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+)
+def test_timm_image_classification_generality(
+    record_property, model_name, mode, op_by_op
+):
+    run_timm_image_classification_test(
+        record_property, model_name, mode, op_by_op, "generality"
+    )
+
+
+# Red Model Tests
+@pytest.mark.usefixtures("manage_dependencies")
+@pytest.mark.parametrize("model_name", red_model_list)
+@pytest.mark.parametrize("mode", ["train", "eval"])
+@pytest.mark.parametrize(
+    "op_by_op",
+    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
+    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+)
+def test_timm_image_classification_red(record_property, model_name, mode, op_by_op):
+    run_timm_image_classification_test(
+        record_property, model_name, mode, op_by_op, "red"
+    )
