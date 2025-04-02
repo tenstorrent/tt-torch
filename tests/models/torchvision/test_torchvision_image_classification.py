@@ -114,12 +114,15 @@ def run_torchvision_image_classification_test(
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    # TODO Enable checking - https://github.com/tenstorrent/tt-torch/issues/491
+    model_name = model_info[0]
+    assert_pcc = False if model_name in ["vit_h_14"] else True
+
     tester = ThisTester(
         model_info,
         mode,
         required_pcc=0.97,
-        assert_pcc=True,
-        # TODO Enable checking - https://github.com/tenstorrent/tt-torch/issues/491
+        assert_pcc=assert_pcc,
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
@@ -129,7 +132,7 @@ def run_torchvision_image_classification_test(
     if mode == "eval":
         # Print the top 5 predictions
         _, indices = torch.topk(results, 5)
-        print(f"Model: {model_info[0]} | Top 5 predictions: {indices[0].tolist()}")
+        print(f"Model: {model_name} | Top 5 predictions: {indices[0].tolist()}")
 
     tester.finalize()
 

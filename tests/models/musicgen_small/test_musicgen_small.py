@@ -52,9 +52,6 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
-@pytest.mark.xfail(
-    reason="Fails due to pt2 compile issue when finishing generation, but we can still generate a graph"
-)
 @pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],

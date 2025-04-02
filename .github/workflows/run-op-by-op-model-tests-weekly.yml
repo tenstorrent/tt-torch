@@ -41,6 +41,7 @@ jobs:
             runs-on: wormhole_b0, name: "bert", tests: "
               tests/models/distilbert/test_distilbert.py::test_distilbert
               tests/models/bert/test_bert.py::test_bert
+              tests/models/squeeze_bert/test_squeeze_bert.py::test_squeeze_bert
               "
           },
           {
@@ -82,6 +83,7 @@ jobs:
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[op_by_op_torch-eval-tf_efficientnet_lite2.in1k]
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[op_by_op_torch-eval-tf_efficientnet_lite3.in1k]
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[op_by_op_torch-eval-tf_efficientnet_lite4.in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[op_by_op_torch-eval-mixer_b16_224.goog_in21k]
               "
           },
           {
@@ -95,6 +97,9 @@ jobs:
           {
             runs-on: wormhole_b0, name: "vision-transformers", tests: "
               tests/models/segformer/test_segformer.py::test_segformer
+              tests/models/deit/test_deit.py::test_deit
+              tests/models/beit/test_beit_image_classification.py::test_beit_image_classification
+              tests/models/detr/test_detr.py::test_detr
               "
           },
           {
@@ -102,6 +107,17 @@ jobs:
               tests/models/yolov3/test_yolov3.py::test_yolov3
               tests/models/yolov4/test_yolov4.py::test_yolov4
               tests/models/yolov5/test_yolov5.py::test_yolov5
+              tests/models/yolos/test_yolos.py::test_yolos
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "mgp-str", tests: "
+              tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "musicgen_small", tests: "
+              tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small
               "
           },
           {
@@ -120,6 +136,7 @@ jobs:
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[op_by_op_torch-eval-mobilenet_v3_large]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[op_by_op_torch-eval-resnet152]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[op_by_op_torch-eval-resnext101_64x4d]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[op_by_op_torch-eval-vit_h_14]
               "
           },
           {
@@ -135,6 +152,11 @@ jobs:
             runs-on: wormhole_b0, name: "phi", tests: "
               tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-1-eval]
               tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-1.5-eval]
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "vit", tests: "
+              tests/models/vit/test_vit.py::test_vit[op_by_op_torch-eval]
               "
           }
         ]
