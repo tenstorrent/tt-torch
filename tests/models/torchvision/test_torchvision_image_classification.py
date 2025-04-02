@@ -114,7 +114,6 @@ def run_torchvision_image_classification_test(
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-
     # TODO Enable checking - https://github.com/tenstorrent/tt-torch/issues/491
     model_name = model_info[0]
     assert_pcc = False if model_name in ["vit_h_14"] else True

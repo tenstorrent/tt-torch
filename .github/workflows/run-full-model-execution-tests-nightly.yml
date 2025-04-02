@@ -25,65 +25,19 @@ jobs:
       matrix:
         build: [
           {
-            # Approximately 45 minutes.
+            # 15 minutes.
+            # tests/models/whisper/test_whisper.py::test_whisper[full-eval]
             runs-on: wormhole_b0, name: "eval_1", tests: "
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg19]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg19_bn]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg16]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg16_bn]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg13_bn]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg11_bn]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg11]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg13]
-                  tests/models/dpr/test_dpr.py::test_dpr[full-eval]
-                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-xlarge-v2-eval]
-                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-large-v2-eval]
-                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-base-v2-eval]
-                  tests/models/albert/test_albert_sequence_classification.py::test_albert_sequence_classification[full-textattack/albert-base-v2-imdb-eval]
-                  tests/models/albert/test_albert_token_classification.py::test_albert_token_classification[full-albert/albert-base-v2-eval]
-                  tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[full-eval]
-                  tests/models/roberta/test_roberta.py::test_roberta[full-eval]
-                  tests/models/hardnet/test_hardnet.py::test_hardnet[full-eval]
-                  tests/models/bert/test_bert.py::test_bert[full-eval]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-tf_efficientnet_lite0.in1k]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-tf_efficientnet_lite1.in1k]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-tf_efficientnet_lite2.in1k]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-tf_efficientnet_lite3.in1k]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-tf_efficientnet_lite4.in1k]
-                  tests/models/segformer/test_segformer.py::test_segformer[full-eval]
-                  tests/models/torchvision/test_torchvision_object_detection.py::test_torchvision_object_detection[full-ssdlite320_mobilenet_v3_large-eval]
-            "
-          },
-          {
-            # Approximately 60 minutes.
-            runs-on: wormhole_b0, name: "eval_2", tests: "
-                  tests/models/bloom/test_bloom.py::test_bloom[full-eval]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-hrnet_w18.ms_aug_in1k]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-ghostnet_100.in1k]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-xception71.tf_in1k]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-mobilenetv1_100.ra4_e3600_r224_in1k]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-dla34.in1k]
-                  tests/models/yolov5/test_yolov5.py::test_yolov5[full-eval]
-                  tests/models/albert/test_albert_question_answering.py::test_albert_question_answering[full-twmkn9/albert-base-v2-squad2-eval]
-                  tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-1-eval]
-            "
-          },
-          {
-            # Approximately 40 minutes.
-            runs-on: wormhole_b0, name: "eval_3", tests: "
-                  tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-1.5-eval]
-            "
-          },
-          {
-            # Approximately 45 minutes.
-            runs-on: wormhole_b0, name: "eval_5", tests: "
-                  tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[full-Qwen/Qwen2.5-1.5B-eval]
-            "
-          },
-          {
-            # Approximately 60 minutes.
-            runs-on: wormhole_b0, name: "eval_6", tests: "
-                  tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet[full-eval]
+              tests/models/squeeze_bert/test_squeeze_bert.py::test_squeeze_bert[full-eval]
+              tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[full-microsoft/beit-base-patch16-224-eval]
+              tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[full-microsoft/beit-large-patch16-224-eval]
+              tests/models/deit/test_deit.py::test_deit[full-facebook/deit-base-patch16-224-eval]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-mixer_b16_224.goog_in21k]
+              tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base[full-eval]
+              tests/models/detr/test_detr.py::test_detr[full-eval]
+              tests/models/vit/test_vit.py::test_vit[full-eval]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-vit_h_14]
+              tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small[full-eval]
             "
           }
         ]
