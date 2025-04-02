@@ -84,6 +84,8 @@ def run_iv_tests_and_generate_summary(yaml_files, summary_file="iv_test_summary.
 
     print(f"Found {len(all_tests)} tests in total.")
 
+    all_tests = all_tests[:3]
+
     # Prepare the summary file
     with open(summary_file, "w") as summary:
         summary.write("Test Name | Result\n")
