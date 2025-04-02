@@ -295,7 +295,7 @@ class TorchExecutor(OpByOpExecutor):
         op.add_stable_hlo_graph(module.operation.get_asm())
         return module, op
 
-    def run_gm_op_by_op(self, *inputs, cache_intermediate_goldens=False):
+    def run_gm_op_by_op(self, *inputs):
         node_to_tensor = {}
         input_index = 0
         outputs = []
@@ -307,6 +307,7 @@ class TorchExecutor(OpByOpExecutor):
 
             out_degree[node] = len(node.users)
             if node.op == "placeholder":
+                print("input_index = ", input_index)
                 node_to_tensor[node] = inputs[input_index]
                 input_index += 1
             elif node.op == "get_attr":
@@ -350,13 +351,13 @@ class TorchExecutor(OpByOpExecutor):
                             "Failed to compile", idx, num_nodes, node.target, e
                         )
 
-                if cache_intermediate_goldens:
-                    golden = node.target(*args, **node.kwargs)
-                    cache_entry = RuntimeIntermediate(node, golden)
-                    self.compiler_config.runtime_intermediate_cache[
-                        node.name
-                    ] = cache_entry
-                    print(f"Caching runtime intermediate for {node.name}")
+                # if cache_intermediate_goldens:
+                #     golden = node.target(*args, **node.kwargs)
+                #     cache_entry = RuntimeIntermediate(node, golden)
+                #     self.compiler_config.runtime_intermediate_cache[
+                #         node.name
+                #     ] = cache_entry
+                #     print(f"Caching runtime intermediate for {node.name}")
 
                 if (
                     self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
@@ -424,8 +425,7 @@ class TorchExecutor(OpByOpExecutor):
             CompileDepth.COMPILE_OP_BY_OP,
         ):
             return self.run_gm_op_by_op(
-                *(self.graph_constants + tuple(self.program.buffers()) + inputs),
-                cache_intermediate_goldens=True,
+                *(self.graph_constants + tuple(self.program.buffers()) + inputs)
             )
         else:
             inputs = self.typecast_inputs(inputs)
