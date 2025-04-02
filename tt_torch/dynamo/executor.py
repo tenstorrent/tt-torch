@@ -262,6 +262,11 @@ class Executor:
                         args.append(arg)
 
                 golden = node.target(*args, **node.kwargs)
+                if len(golden) > 1:
+                    golden = golden[0]
+                    print(
+                        f"[WARNING] {node.name} has {len(golden)} outputs, but we can only get one from runtime."
+                    )
                 cache_entry = RuntimeIntermediate(node, golden)
                 self.compiler_config.runtime_intermediate_cache[node.name] = cache_entry
                 print(f"Caching runtime intermediate for {node.name}")

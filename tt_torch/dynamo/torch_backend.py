@@ -401,7 +401,6 @@ class TorchExecutor(OpByOpExecutor):
         return outputs
 
     def __call__(self, *inputs):
-        inputs = self.typecast_inputs(inputs)
         if self.compiler_config.compile_depth in (
             CompileDepth.EXECUTE_OP_BY_OP,
             CompileDepth.COMPILE_OP_BY_OP,
