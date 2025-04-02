@@ -861,9 +861,9 @@ class RuntimeIntermediate:
             self.golden = (self.golden,)
 
         print("Analyzing node:", self.node.name)
-        for i, tensor in enumerate(self.decomposed_intermediate_outputs):
-            print(f"dco {i}:")
-            print(tensor)
+        # for i, tensor in enumerate(self.decomposed_intermediate_outputs):
+        #     print(f"dco {i}:")
+        #     print(tensor)
 
         (self.pcc, self.atol,) = verify_against_golden(
             self.golden,
