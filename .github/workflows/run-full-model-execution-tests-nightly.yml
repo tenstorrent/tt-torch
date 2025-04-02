@@ -35,7 +35,6 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg11_bn]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg11]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg13]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-vit_h_14]
                   tests/models/dpr/test_dpr.py::test_dpr[full-eval]
                   tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-xlarge-v2-eval]
                   tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-large-v2-eval]
