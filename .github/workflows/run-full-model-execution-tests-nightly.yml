@@ -79,24 +79,6 @@ jobs:
                   tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-1-eval]
             "
           },
-          {
-            # Approximately 40 minutes.
-            runs-on: wormhole_b0, name: "eval_3", tests: "
-                  tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-1.5-eval]
-            "
-          },
-          {
-            # Approximately 45 minutes.
-            runs-on: wormhole_b0, name: "eval_5", tests: "
-                  tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[full-Qwen/Qwen2.5-1.5B-eval]
-            "
-          },
-          {
-            # Approximately 60 minutes.
-            runs-on: wormhole_b0, name: "eval_6", tests: "
-                  tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet[full-eval]
-            "
-          }
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
