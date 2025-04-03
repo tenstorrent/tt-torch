@@ -201,10 +201,6 @@ class TorchExecutor(OpByOpExecutor):
                 raise ValueError(f"Node target is not an OpOverload: {name}")
             return None, None
 
-        if name == "aten::copy_":
-            raise ValueError(f"inline ops are not supported: {name}")
-            return None, None
-
         op = Op(name, input_shapes_and_constants, self.compiler_config.model_name)
         if op.unique_key() not in self.compiler_config.unique_ops:
             self.compiler_config.unique_ops[op.unique_key()] = op
@@ -334,10 +330,7 @@ class TorchExecutor(OpByOpExecutor):
                     and binary is not None
                 ):
                     try:
-                        typecast_args = self.typecast_inputs(args)
-                        calculated, runtime_stack_dump = self.run_op(
-                            binary, *typecast_args
-                        )
+                        calculated, runtime_stack_dump = self.run_op(binary, *args)
                         self.compiler_config.unique_ops[
                             op.unique_key()
                         ].runtime_stack_dump = runtime_stack_dump
@@ -389,6 +382,7 @@ class TorchExecutor(OpByOpExecutor):
         return outputs
 
     def __call__(self, *inputs):
+        inputs = self.typecast_inputs(inputs)
         if self.compiler_config.compile_depth in (
             CompileDepth.EXECUTE_OP_BY_OP,
             CompileDepth.COMPILE_OP_BY_OP,
@@ -397,5 +391,4 @@ class TorchExecutor(OpByOpExecutor):
                 *(self.graph_constants + tuple(self.program.buffers()) + inputs)
             )
         else:
-            inputs = self.typecast_inputs(inputs)
             return self.program.graph_module(*inputs)

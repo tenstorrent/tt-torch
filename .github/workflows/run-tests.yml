@@ -131,7 +131,7 @@ jobs:
       shell: bash
       run: |
         source env/activate
-        TT_TORCH_CHECK_ALL_OPS_RUN=1 pytest -svv tests/models/mnist/test_mnist.py --op_by_op_torch \
+        TT_TORCH_CHECK_ALL_OPS_EXECUTE=1 pytest -svv tests/models/mnist/test_mnist.py --op_by_op_torch \
             --junit-xml=${{ steps.strings.outputs.test_report_path_mnist }} \
             --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
 
