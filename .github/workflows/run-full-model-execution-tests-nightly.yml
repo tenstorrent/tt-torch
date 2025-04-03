@@ -44,7 +44,17 @@ jobs:
                   tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[full-eval]
                   tests/models/roberta/test_roberta.py::test_roberta[full-eval]
                   tests/models/hardnet/test_hardnet.py::test_hardnet[full-eval]
+            "
+          },
+          {
+            # Approximately 50 minutes.
+            runs-on: wormhole_b0, name: "eval_2", tests: "
                   tests/models/bert/test_bert.py::test_bert[full-eval]
+            "
+          },
+          {
+            # Approximately 50 minutes.
+            runs-on: wormhole_b0, name: "eval_3", tests: "
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-tf_efficientnet_lite0.in1k]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-tf_efficientnet_lite1.in1k]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-tf_efficientnet_lite2.in1k]
@@ -63,38 +73,6 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-vit_h_14]
                   tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small[full-eval]
                   tests/models/yolos/test_yolos.py::test_yolos[full-eval]
-            "
-          },
-          {
-            # Approximately 60 minutes.
-            runs-on: wormhole_b0, name: "eval_2", tests: "
-                  tests/models/bloom/test_bloom.py::test_bloom[full-eval]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-hrnet_w18.ms_aug_in1k]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-ghostnet_100.in1k]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-xception71.tf_in1k]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-mobilenetv1_100.ra4_e3600_r224_in1k]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-dla34.in1k]
-                  tests/models/yolov5/test_yolov5.py::test_yolov5[full-eval]
-                  tests/models/albert/test_albert_question_answering.py::test_albert_question_answering[full-twmkn9/albert-base-v2-squad2-eval]
-                  tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-1-eval]
-            "
-          },
-          {
-            # Approximately 40 minutes.
-            runs-on: wormhole_b0, name: "eval_3", tests: "
-                  tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-1.5-eval]
-            "
-          },
-          {
-            # Approximately 45 minutes.
-            runs-on: wormhole_b0, name: "eval_5", tests: "
-                  tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[full-Qwen/Qwen2.5-1.5B-eval]
-            "
-          },
-          {
-            # Approximately 60 minutes.
-            runs-on: wormhole_b0, name: "eval_6", tests: "
-                  tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet[full-eval]
             "
           }
         ]
