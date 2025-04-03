@@ -44,17 +44,7 @@ jobs:
                   tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[full-eval]
                   tests/models/roberta/test_roberta.py::test_roberta[full-eval]
                   tests/models/hardnet/test_hardnet.py::test_hardnet[full-eval]
-            "
-          },
-          {
-            # Approximately 50 minutes.
-            runs-on: wormhole_b0, name: "eval_2", tests: "
                   tests/models/bert/test_bert.py::test_bert[full-eval]
-            "
-          },
-          {
-            # Approximately 50 minutes.
-            runs-on: wormhole_b0, name: "eval_3", tests: "
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-tf_efficientnet_lite0.in1k]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-tf_efficientnet_lite1.in1k]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-tf_efficientnet_lite2.in1k]
