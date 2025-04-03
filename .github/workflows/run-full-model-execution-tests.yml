@@ -154,9 +154,40 @@ jobs:
       run: |
         source env/activate
 
-        pytest --durations=50 -v ${{matrix.build.tests}} \
-          --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
-          --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
+
+        # prevent script termination on failure
+        set +e
+
+        failure=0
+
+        # Split the test string into individual tests and run them one by one
+        echo "${{ matrix.build.tests }}" | tr ' ' '\n' | while read -r test; do
+          if [[ -n "$test" ]]; then
+            echo "Running test: $test"
+            report_file="$(echo $test | tr '/' '_' | tr ':' '_')__${{ steps.strings.outputs.test_report_path_models }}"
+            echo "JUnitXML logged to $report_file"
+
+            pytest --durations=0 -v "$test" \
+              --junit-xml="$report_file" \
+              --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
+            # Check the return code of pytest
+            if [[ $? -ne 0 ]]; then
+              echo "Test failed: $test"
+              failure=1
+            fi
+          fi
+        done
+
+        set -e
+
+        # Exit with the appropriate code
+        if [[ $failure -ne 0 ]]; then
+          echo "One or more tests failed."
+          exit 1
+        else
+          echo "All tests passed."
+          exit 0
+        fi
 
     - name: Upload Test Report Models
       uses: actions/upload-artifact@v4
