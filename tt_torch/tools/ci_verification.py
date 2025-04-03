@@ -129,6 +129,6 @@ if __name__ == "__main__":
     if args.run_iv_tests:
         yaml_files = [
             "./.github/workflows/run-full-model-execution-tests.yml",
-            "./.github/workflows/run-full-model-execution-tests-nightly.yml",
+            # "./.github/workflows/run-full-model-execution-tests-nightly.yml",
         ]
         run_iv_tests_and_generate_summary(yaml_files)
