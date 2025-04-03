@@ -83,6 +83,8 @@ jobs:
         echo "install-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
         echo "dist-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
         echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+        echo "test_report_dir=$(pwd)/test-reports" >> "$GITHUB_OUTPUT"
+
     - name: Use build artifacts
       uses: actions/download-artifact@v4
       with:
@@ -112,6 +114,7 @@ jobs:
       run: |
         source env/activate
 
+        mkdir -p ${{ steps.strings.outputs.test_report_dir }}
 
         # prevent script termination on failure
         set +e
@@ -122,7 +125,7 @@ jobs:
         echo "${{ matrix.build.tests }}" | tr ' ' '\n' | while read -r test; do
           if [[ -n "$test" ]]; then
             echo "Running test: $test"
-            report_file="$(echo $test | tr '/' '_' | tr ':' '_')__${{ steps.strings.outputs.test_report_path_models }}"
+            report_file="${{ steps.strings.outputs.test_report_dir }}/$(echo $test | tr '/' '_' | tr ':' '_')__${{ steps.strings.outputs.test_report_path_models }}"
             echo "JUnitXML logged to $report_file"
 
             pytest --durations=0 -v "$test" \
@@ -152,7 +155,7 @@ jobs:
       if: success() || failure()
       with:
         name: test-reports-models-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
-        path: ${{ steps.strings.outputs.test_report_path_models }}
+        path: ${{ steps.strings.outputs.test_report_dir }}
 
     - name: Upload coverage reports to Codecov
       if: ${{ (success() || failure()) && inputs.run-codecov == 'true' }}
