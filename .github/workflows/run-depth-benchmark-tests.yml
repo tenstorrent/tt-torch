@@ -9,7 +9,7 @@ on:
         required: true
         type: string
       matrix-json:
-        description: 'Matrix of tests to run'
+        description: 'Matrix of tests to run as a JSON string'
         required: true
         type: string
   workflow_run:

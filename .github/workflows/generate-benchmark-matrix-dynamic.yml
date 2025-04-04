@@ -4,7 +4,7 @@ on:
   workflow_call:
     outputs:
         matrix-json:
-            description: "Path to the generated test matrix JSON file"
+            description: "Generated test matrix JSON string"
             value: ${{ jobs.tests.outputs.matrix-json }} # Expose job output as workflow output
 jobs:
   tests:
@@ -78,4 +78,4 @@ jobs:
         python tt_torch/tools/benchmark_promotion.py --gen-matrix
 
         # hardcoded filename to avoid cluttering cliargs for benchmark promotion
-        echo "matrix_name=benchmark_test_matrix.json" >> "$GITHUB_OUTPUT"
+        echo "matrix-json=$(cat benchmark_test_matrix.json)" >> "$GITHUB_OUTPUT"
