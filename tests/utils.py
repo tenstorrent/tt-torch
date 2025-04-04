@@ -101,6 +101,10 @@ class ModelTester:
     def _extract_outputs(self, output_object):
         if isinstance(output_object, torch.Tensor):
             return (output_object,)
+        elif isinstance(output_object, (int, float)):
+            return (torch.tensor(output_object),)
+        elif isinstance(output_object, str):
+            return (output_object,)
         elif isinstance(output_object, (tuple, list)):
 
             def flatten_tensor_lists(obj):
@@ -325,12 +329,17 @@ class ModelTester:
         avg_metric = default_value
         min_metric = default_value
         max_metric = default_value
+        filtered_metrics = [
+            x for x in metric_list if x is not None
+        ]  # remove None values
 
-        if metric_list:  # check null or empty list
-            metric_list = [x for x in metric_list if isinstance(x, (int, float))]
-            avg_metric = sum(metric_list) / len(metric_list)
-            min_metric = min(metric_list)
-            max_metric = max(metric_list)
+        if filtered_metrics:  # check null or empty list
+            filtered_metrics = [
+                x for x in filtered_metrics if isinstance(x, (int, float))
+            ]
+            avg_metric = sum(filtered_metrics) / len(filtered_metrics)
+            min_metric = min(filtered_metrics)
+            max_metric = max(filtered_metrics)
 
         self.record_tag_cache["avg_" + metric_key] = avg_metric
         self.record_tag_cache["min_" + metric_key] = min_metric

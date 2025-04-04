@@ -151,6 +151,11 @@ jobs:
             runs-on: wormhole_b0, name: "phi", tests: "
               tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-2-eval]
               "
+          },
+          {
+            runs-on: wormhole_b0, name: "gliner", tests: "
+              tests/models/gliner/test_gliner.py::test_gliner[op_by_op_torch-eval]
+              "
           }
         ]
     runs-on:

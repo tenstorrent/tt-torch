@@ -96,7 +96,7 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
 
     gm = bypass_redundant_getitem(gm)
 
-    reduce_graph(gm)
+    # reduce_graph(gm) - ISSUE: https://github.com/tenstorrent/tt-torch/issues/513
     program = torch.export.export(gm, tuple(example_inputs), strict=False)
     # The proper order of inputs when outlining everything is constants + parameters + buffers + example_inputs
     if not compiler_config.inline_parameters:

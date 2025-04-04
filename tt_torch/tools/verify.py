@@ -39,8 +39,27 @@ def verify_against_golden(
 
     # Distinct value to put in the `pccs` list so we can append the correct log
     SKIPPED_PCC_CALCULATION_FOR_SINGLE_VALUE = None
+    SKIPPED_NON_TENSOR_ITEM = None
 
     for i, (golden, calculated) in enumerate(zip(golden_tensors, calculated_tensors)):
+        if not isinstance(golden, torch.Tensor) or not isinstance(
+            calculated, torch.Tensor
+        ):
+            # For non-tensor items, check exact equality
+            if golden == calculated:
+                pccs.append(SKIPPED_NON_TENSOR_ITEM)
+                pcc_passeds.append(True)
+                atols.append(SKIPPED_NON_TENSOR_ITEM)
+                atol_thresholds.append(0)
+                atols_passeds.append(True)
+            else:
+                # Items don't match
+                pccs.append(SKIPPED_NON_TENSOR_ITEM)
+                pcc_passeds.append(False)
+                atols.append(SKIPPED_NON_TENSOR_ITEM)
+                atol_thresholds.append(0)
+                atols_passeds.append(False)
+            continue
         assert (
             golden.shape == calculated.shape
         ), f"Shape mismatch on output {i}: {golden.shape} vs {calculated.shape}"
@@ -81,7 +100,10 @@ def verify_against_golden(
     ):
         msg = msg + f"Results for output {i}:\n"
         if pcc_passed:
-            if pcc_ != SKIPPED_PCC_CALCULATION_FOR_SINGLE_VALUE:
+            if (
+                pcc_ != SKIPPED_PCC_CALCULATION_FOR_SINGLE_VALUE
+                or pcc_ != SKIPPED_NON_TENSOR_ITEM
+            ):
                 msg = msg + f"  PCC: {pcc_:0,.4f}, threshold: {required_pcc} "
                 msg = msg + f"{check_mark}\n"
         else:
@@ -93,11 +115,13 @@ def verify_against_golden(
             )
             passed_pcc = False
 
-        msg = (
-            msg
-            + f"  ATOL: {atol_:0,.4f}, threshold: {atol_threshold}{f' (calculated using relative_atol: {relative_atol})' if relative_atol is not None else ''} "
-        )
         if atol_passed:
+            if atol_ != SKIPPED_NON_TENSOR_ITEM:
+                msg = (
+                    msg
+                    + f"  ATOL: {atol_:0,.4f}, threshold: {atol_threshold}{f' (calculated using relative_atol: {relative_atol})' if relative_atol is not None else ''} "
+                )
+                msg = msg + f"{check_mark}\n"
             msg = msg + f"{check_mark}\n"
         else:
             msg = msg + f"{red_x if assert_atol else atol_warning}\n"

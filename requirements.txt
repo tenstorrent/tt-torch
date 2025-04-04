@@ -35,3 +35,4 @@ scikit-build
 nanobind
 loguru
 seaborn
+gliner
