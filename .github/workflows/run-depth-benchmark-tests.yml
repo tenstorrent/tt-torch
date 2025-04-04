@@ -8,7 +8,7 @@ on:
         description: 'Docker image to use for build'
         required: true
         type: string
-      test_matrix:
+      matrix-json:
         description: 'Matrix of tests to run'
         required: true
         type: string
@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 500
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(inputs.test_matrix) }} # Use the input matrix from the workflow call
+      matrix: ${{ fromJson(inputs.matrix-json) }} # Use the input matrix from the workflow call
 
     runs-on:
       - ${{ matrix.build.runs-on }}

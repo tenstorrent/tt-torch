@@ -34,6 +34,7 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      matrix-json: ${{ needs.generate-matrix-dynamic.outputs.matrix-json }} # Pass the dynamically generated matrix to the benchmark job
   generate-report:
     needs: [run-benchmark]
     uses: ./.github/workflows/generate-benchmark-report.yml

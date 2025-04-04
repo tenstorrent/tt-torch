@@ -3,13 +3,13 @@ name: Generate Benchmark Test Matrix Dynamically
 on:
   workflow_call:
     outputs:
-        matrix_json:
+        matrix-json:
             description: "Path to the generated test matrix JSON file"
-            value: ${{ jobs.tests.outputs.matrix_json }} # Expose job output as workflow output
+            value: ${{ jobs.tests.outputs.matrix-json }} # Expose job output as workflow output
 jobs:
   tests:
     outputs:
-        matrix_json: ${{ steps.generate_matrix.outputs.matrix_json }}
+        matrix-json: ${{ steps.generate_matrix.outputs.matrix-json }}
     timeout-minutes: 30
     strategy:
       fail-fast: false
