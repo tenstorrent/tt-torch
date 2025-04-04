@@ -106,7 +106,7 @@ def discover_tests():
     return added_tests
 
 
-def load_balance_tests_greedy(test_durations, n_partitions=10, print_summary=False):
+def load_balance_tests_greedy(test_durations, n_partitions=10, print_summary=True):
     """
     Load balances test names into N partitions based on test execution time.
 
