@@ -149,11 +149,12 @@ class AllOps:
             # Extract row details
             pcc = row["PCC"]
             atol = row["ATOL"]
+            status = row["Status"]
 
             # Process operation details
-            self.process_ops(raw_ttnnir, pcc, atol)
+            self.process_ops(raw_ttnnir, pcc, atol, status)
 
-    def process_ops(self, ttnnir_string, pcc, atol):
+    def process_ops(self, ttnnir_string, pcc, atol, status):
         """
         Process TTNN operations from an IR string, extracting shapes, layouts, and metadata.
 
@@ -161,6 +162,7 @@ class AllOps:
             ttnnir_string: TTNN Intermediate Representation string
             pcc: Percent Correct Classification metric
             atol: Absolute tolerance for numerical comparisons
+            status: Compilation status for the op
         """
 
         ttnn_parser = TTNNOps(ttnnir_string)
@@ -229,6 +231,7 @@ class AllOps:
             opToWrite["output_layouts"] = output_layouts
             opToWrite["pcc"] = pcc
             opToWrite["atol"] = atol
+            opToWrite["status"] = status
             if self.ops.get(opToWrite["name"]) is None:
                 self.ops[opToWrite["name"]] = [opToWrite]
             else:
@@ -313,6 +316,7 @@ class AllOps:
                 atol = (
                     "N/A" if pd.isna(item.get("atol")) else str(item.get("atol", "N/A"))
                 )
+                status = item.get("status", "N/A")
 
                 input_layouts = item.get("input_layouts", [])
                 processed_input_layouts = [
@@ -345,6 +349,7 @@ class AllOps:
                     "output_layouts": processed_output_layouts,
                     "pcc": pcc,
                     "atol": atol,
+                    "compilation_status": status,
                 }
 
                 processed_items.append(processed_item)
