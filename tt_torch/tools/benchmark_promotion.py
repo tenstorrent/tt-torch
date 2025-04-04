@@ -10,6 +10,7 @@ import argparse
 import pandas as pd
 import os
 import pprint
+import json
 
 
 def enumerate_all_tests(filter_full_eval=True):
@@ -215,9 +216,9 @@ def generate_formatted_test_matrix_from_partitions(
         )
 
     # Format the matrix as a string
-    formatted_matrix = "build: [\n"
+    formatted_matrix = "build: ["
     for job in matrix:
-        formatted_matrix += f"  {{runs-on: '{job['runs-on']}', name: '{job['name']}', tests: {job['tests']}}},\n"
+        formatted_matrix += f"  {{runs-on: '{job['runs-on']}', name: '{job['name']}', tests: {job['tests']}}},"
     formatted_matrix += "]"
 
     return formatted_matrix

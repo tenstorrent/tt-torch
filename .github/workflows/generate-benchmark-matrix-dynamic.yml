@@ -85,4 +85,5 @@ jobs:
         python tt_torch/tools/benchmark_promotion.py --gen-matrix
 
         # hardcoded filename to avoid cluttering cliargs for benchmark promotion
+        # this does not work for multilined output..
         echo "matrix-json=$(cat benchmark_test_matrix.json)" >> "$GITHUB_OUTPUT"
