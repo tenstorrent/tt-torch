@@ -24,8 +24,12 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
+  generate-matrix-dynamic:
+    needs: [build]
+    uses: ./.github/workflows/generate-benchmark-matrix-dynamic.yml
+    secrets: inherit
   run-benchmark:
-    needs: [docker-build, build]
+    needs: [docker-build, build, generate-matrix-dynamic]
     uses: ./.github/workflows/run-depth-benchmark-tests.yml
     secrets: inherit
     with:

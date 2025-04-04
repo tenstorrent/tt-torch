@@ -288,6 +288,11 @@ def main():
         default=4,
         help="Number of concurrent download threads (default: 4)",
     )
+    parser.add_argument(
+        "--output-folder",
+        "-o",
+        help="Output directory for artifacts",
+    )
 
     args = parser.parse_args()
 
@@ -308,6 +313,8 @@ def main():
 
     # Retrieve run details (either specific run-id or the latest run)
     run_id, date_str, folder_name = get_run_details(args, headers, workflow_name)
+
+    folder_name = args.output_folder if args.output_folder else folder_name
 
     if args.list:
         print(f"Listing artifacts for run {run_id}.")

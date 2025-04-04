@@ -1,0 +1,79 @@
+name: Generate Benchmark Test Matrix Dynamically
+
+on:
+  workflow_call:
+    outputs:
+        matrix_json:
+            description: "Path to the generated test matrix JSON file"
+            value: ${{ jobs.tests.outputs.matrix_json }} # Expose job output as workflow output
+jobs:
+  tests:
+    outputs:
+        matrix_json: ${{ steps.generate_matrix.outputs.matrix_json }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+
+    runs-on:
+      - wormhole_b0
+
+    container:
+      image: ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:latest
+      options: --user root --device /dev/tenstorrent/0
+      volumes:
+        - /dev/hugepages:/dev/hugepages
+        - /dev/hugepages-1G:/dev/hugepages-1G
+        - /etc/udev/rules.d:/etc/udev/rules.d
+        - /lib/modules:/lib/modules
+        - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        lfs: true
+
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: |
+        echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
+        echo "install-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
+        echo "dist-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
+        echo "test-output-dir=$(pwd)/results/models/tests/" >> "$GITHUB_OUTPUT"
+
+    - name: Git safe dir
+      run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
+
+    - name: Use build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: install-artifacts
+        path: ${{ steps.strings.outputs.install-dir }}
+
+    - name: 'Untar install directory'
+      shell: bash
+      working-directory: ${{ steps.strings.outputs.install-dir }}
+      run: |
+        tar xvf artifact.tar
+        mkdir -p ${{ steps.strings.outputs.dist-dir }}
+        mv wheels/* ${{ steps.strings.outputs.dist-dir }}
+
+    - name: install tt-torch
+      shell: bash
+      run: |
+        source env/activate
+        pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
+
+
+    - name: Generate test matrix
+      id: generate_matrix
+      shell: bash
+      working-directory: ${{ steps.strings.outputs.work-dir }}
+      run: |
+        source env/activate
+
+        python tt_torch/tools/benchmark_promotion.py --gen-matrix
+
+        # hardcoded filename to avoid cluttering cliargs for benchmark promotion
+        echo "matrix_name=benchmark_test_matrix.json" >> "$GITHUB_OUTPUT"
