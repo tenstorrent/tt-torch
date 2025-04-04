@@ -69,6 +69,8 @@ jobs:
     - name: Generate test matrix
       id: generate_matrix
       shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }} # needed to download artifacts
       working-directory: ${{ steps.strings.outputs.work-dir }}
       run: |
         source env/activate

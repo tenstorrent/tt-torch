@@ -228,6 +228,7 @@ def generate_dynamic_benchmark_test_matrix():
     output_file = "benchmark_test_matrix.json"  # hardcoded into CI
     report_dir = "benchmark_report"
 
+    # download previous report from run of depth-benchmarks workflow on main
     subprocess.run(
         [
             "python",
