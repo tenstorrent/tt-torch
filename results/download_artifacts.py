@@ -32,6 +32,11 @@ def get_token(cli_token):
     if env_token:
         return env_token
 
+    # Priority 3.5: Environment variable (as commonly used in our CI)
+    env_token = os.environ.get("GH_TOKEN")
+    if env_token:
+        return env_token
+
     # Priority 4: Fallback to GitHub CLI (gh)
     try:
         token = subprocess.check_output(["gh", "auth", "token"], text=True).strip()
