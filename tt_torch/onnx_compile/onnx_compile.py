@@ -11,7 +11,7 @@ from torch_mlir.dialects import torch as torch_dialect
 import os
 import sys
 
-from tt_torch.tools.utils import CompilerConfig, CompileDepth
+from tt_torch.tools.utils import CompilerConfig, CompileDepth, tt_torch_error_message
 
 from torch_mlir.compiler_utils import (
     OutputType,
@@ -67,6 +67,7 @@ def torch_backend_ir_to_stablehlo(module: Module, compiler_config: CompilerConfi
     return module
 
 
+@tt_torch_error_message
 def compile_onnx(model_proto: onnx.ModelProto, compiler_config: CompilerConfig = None):
     if compiler_config is None:
         compiler_config = CompilerConfig()
