@@ -64,7 +64,7 @@ jobs:
         echo "dist-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
         echo "job-id=$JOB_ID" >> "$GITHUB_OUTPUT"
         echo "test_report_path_torch=report_torch_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
-        echo "test_report_path_mnist=report_mnist_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+        echo "test_report_path_check_all_ops_execute=report_check_all_ops_execute_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
         echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
         echo "test_report_path_onnx=report_onnx_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
 
@@ -127,20 +127,20 @@ jobs:
         name: test-reports-onnx-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: ${{ steps.strings.outputs.test_report_path_onnx }}
 
-    - name: Run Mnist Op-By-Op and Check All Ops Execute
+    - name: Check All Ops Execute
       shell: bash
       run: |
         source env/activate
-        TT_TORCH_CHECK_ALL_OPS_EXECUTE=1 pytest -svv tests/models/mnist/test_mnist.py --op_by_op_torch \
-            --junit-xml=${{ steps.strings.outputs.test_report_path_mnist }} \
+        TT_TORCH_CHECK_ALL_OPS_EXECUTE=1 pytest -svv tests/models/MobileNetV2/test_MobileNetV2.py tests/models/mnist/test_mnist.py --op_by_op_torch \
+            --junit-xml=${{ steps.strings.outputs.test_report_path_check_all_ops_execute }} \
             --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
 
-    - name: Upload Test Report Mnist
+    - name: Upload Test Report - Check All Ops Execute
       uses: actions/upload-artifact@v4
       if: success() || failure()
       with:
-        name: test-reports-mnist-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
-        path: ${{ steps.strings.outputs.test_report_path_mnist }}
+        name: test-reports-check-all-ops-execute-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        path: ${{ steps.strings.outputs.test_report_path_check_all_ops_execute }}
 
 
     - name: Show Test Report
@@ -168,6 +168,6 @@ jobs:
       continue-on-error: true
       uses: codecov/test-results-action@v1
       with:
-        files: ${{ steps.strings.outputs.test_report_path_torch }}, ${{ steps.strings.outputs.test_report_path_onnx }}, ${{ steps.strings.outputs.test_report_path_mnist }}
+        files: ${{ steps.strings.outputs.test_report_path_torch }}, ${{ steps.strings.outputs.test_report_path_onnx }}, ${{ steps.strings.outputs.test_report_path_check_all_ops_execute }}
         disable_search: true
         token: ${{ secrets.CODECOV_TOKEN }}
