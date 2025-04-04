@@ -80,7 +80,7 @@ jobs:
         source env/activate
 
         # Using the actual built docker image seems to cause git corruption
-        sudo apt install -y libgl1 libglx-mesa0
+        apt install -y libgl1 libglx-mesa0
 
         python tt_torch/tools/benchmark_promotion.py --gen-matrix
 
