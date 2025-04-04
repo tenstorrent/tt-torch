@@ -11,6 +11,9 @@ on:
         matrix-json:
             description: "Generated test matrix JSON string"
             value: ${{ jobs.tests.outputs.matrix-json }} # Expose job output as workflow output
+  workflow_run:
+    workflows: [Build]
+    types: [completed]
 jobs:
   tests:
     outputs:
