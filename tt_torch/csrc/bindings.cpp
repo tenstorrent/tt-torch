@@ -212,7 +212,11 @@ preprocess_inputs(tt::runtime::Device device, std::vector<at::Tensor> &inputs,
                    tt::runtime::Layout layout = tt::runtime::getLayout(
                        binary, program_idx, rt_inputs_with_layout.size());
 
-                   return tt::runtime::toLayout(t, device, layout);
+                   tt::runtime::Tensor tensor =
+                       tt::runtime::toLayout(t, device, layout);
+
+                   tt::runtime::setTensorRetain(tensor, /*retain=*/true);
+                   return tensor;
                  });
 
   return rt_inputs_with_layout;
@@ -220,7 +224,7 @@ preprocess_inputs(tt::runtime::Device device, std::vector<at::Tensor> &inputs,
 
 std::vector<at::Tensor> run(tt::runtime::Device device,
                             tt::runtime::Binary binary, uint32_t program_idx,
-                            const std::vector<tt::runtime::Tensor> &rt_inputs) {
+                            std::vector<tt::runtime::Tensor> &rt_inputs) {
 
   std::vector<tt::runtime::Tensor> rt_outputs =
       tt::runtime::submit(device, binary, program_idx, rt_inputs);
