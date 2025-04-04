@@ -35,6 +35,30 @@ jobs:
             runs-on: wormhole_b0, name: "eval_2_bert_qrtn", tests: "
                   tests/models/bert/test_bert.py::test_bert[full-eval]
             "
+          },
+          {
+            # Approximately 60 minutes.
+            runs-on: wormhole_b0, name: "eval_3_bert_qrtn", tests: "
+                  tests/models/bert/test_bert.py::test_bert[full-eval]
+            "
+          },
+          {
+            # Approximately 60 minutes.
+            runs-on: wormhole_b0, name: "eval_4_bert_qrtn", tests: "
+                  tests/models/bert/test_bert.py::test_bert[full-eval]
+            "
+          },
+          {
+            # Approximately 60 minutes.
+            runs-on: wormhole_b0, name: "eval_5_bert_qrtn", tests: "
+                  tests/models/bert/test_bert.py::test_bert[full-eval]
+            "
+          },
+          {
+            # Approximately 60 minutes.
+            runs-on: wormhole_b0, name: "eval_6_bert_qrtn", tests: "
+                  tests/models/bert/test_bert.py::test_bert[full-eval]
+            "
           }
         ]
     runs-on:
@@ -114,9 +138,9 @@ jobs:
 
         failure=0
 
-        # Outer loop to run tests 20 times
-        for iter in {1..20}; do
-          echo "Starting iteration $iter of 20"
+        # Outer loop to run tests 40 times
+        for iter in {1..40}; do
+          echo "Starting iteration $iter of 40"
 
           # Split the test string into individual tests and run them one by one
           echo "${{ matrix.build.tests }}" | tr ' ' '\n' | while read -r test; do
