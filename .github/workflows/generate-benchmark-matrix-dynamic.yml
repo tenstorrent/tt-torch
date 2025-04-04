@@ -2,11 +2,6 @@ name: Generate Benchmark Test Matrix Dynamically
 
 on:
   workflow_call:
-    inputs:
-      docker-image:
-        description: 'Docker image to use for build'
-        required: true
-        type: string
     outputs:
         matrix-json:
             description: "Generated test matrix JSON string"
@@ -14,6 +9,7 @@ on:
   workflow_run:
     workflows: [Build]
     types: [completed]
+
 jobs:
   tests:
     outputs:
@@ -26,15 +22,14 @@ jobs:
       - wormhole_b0
 
     container:
-      image: ${{ inputs.docker-image }}
-      options: --user root --device /dev/tenstorrent/0 --shm-size=4gb
+      image: ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:latest
+      options: --user root --device /dev/tenstorrent/0
       volumes:
         - /dev/hugepages:/dev/hugepages
         - /dev/hugepages-1G:/dev/hugepages-1G
         - /etc/udev/rules.d:/etc/udev/rules.d
         - /lib/modules:/lib/modules
         - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
-        - /mnt/dockercache:/mnt/dockercache
 
     steps:
     - uses: actions/checkout@v4
@@ -83,6 +78,9 @@ jobs:
       working-directory: ${{ steps.strings.outputs.work-dir }}
       run: |
         source env/activate
+
+        # Using the actual built docker image seems to cause git corruption
+        sudo apt install -y libgl1 libglx-mesa0
 
         python tt_torch/tools/benchmark_promotion.py --gen-matrix
 
