@@ -93,6 +93,10 @@ setup(
     zip_safe=False,
     install_requires=[
         "torch@https://download.pytorch.org/whl/cpu-cxx11-abi/torch-2.6.0%2Bcpu.cxx11.abi-cp311-cp311-linux_x86_64.whl",
+        "ml_dtypes",
         "numpy",
+        "onnx",
+        "onnxruntime",
+        "stablehlo@https://github.com/openxla/stablehlo/releases/download/v1.0.0/stablehlo-1.0.0.1715728102+6051bcdf-cp311-cp311-linux_x86_64.whl",
     ],
 )
