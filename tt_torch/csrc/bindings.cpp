@@ -2,16 +2,24 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "tt-mlir-interface.hpp"
-#include "tt/runtime/types.h"
+// c++ standard library includes
 #include <optional>
+
+// other library includes
 #include <pybind11/cast.h>
-#if defined(TT_RUNTIME_DEBUG) && TT_RUNTIME_DEBUG == 1
-#include "tt/runtime/detail/debug.h"
-#include "tt/runtime/runtime.h"
-#endif
 #include <pybind11/pybind11.h>
 #include <torch/extension.h>
+
+// tt-mlir includes
+#if defined(TT_RUNTIME_DEBUG) && TT_RUNTIME_DEBUG == 1
+#include "tt/runtime/detail/debug.h"
+#endif
+#include "tt/runtime/runtime.h"
+#include "tt/runtime/types.h"
+#include "tt/runtime/utils.h"
+
+// tt-torch includes
+#include "tt-mlir-interface.hpp"
 
 namespace py = pybind11;
 
@@ -73,13 +81,6 @@ static torch::ScalarType dt_to_torch_scalar_type(tt::target::DataType df) {
 }
 
 static tt::runtime::Tensor create_tensor(const torch::Tensor &tensor) {
-  auto data = std::shared_ptr<void>(
-      tensor.data_ptr(),
-      [tensor](void *) {
-        (void)tensor;
-      } // Capture tensor by value to increase ref count and keep it alive
-  );
-
   auto shape =
       std::vector<uint32_t>(tensor.sizes().begin(), tensor.sizes().end());
   if (shape.empty()) {
@@ -98,13 +99,10 @@ static tt::runtime::Tensor create_tensor(const torch::Tensor &tensor) {
   // Our runtime expects that this stride is accurate. So, we will require
   // that this torch tensor is contiguous and then calculate a fully-accurate
   // stride for it.
-  std::vector<uint32_t> stride(shape.size(), 1);
-  for (int i = shape.size() - 2; i >= 0; --i) {
-    stride[i] = shape[i + 1] * stride[i + 1];
-  }
+  std::vector<uint32_t> stride = tt::runtime::utils::calculateStride(shape);
 
   return tt::runtime::createTensor(
-      data, shape, stride, tensor.element_size(),
+      tensor.data_ptr(), shape, stride, tensor.element_size(),
       torch_scalar_type_to_dt(tensor.scalar_type()));
 }
 
