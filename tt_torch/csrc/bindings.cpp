@@ -101,7 +101,7 @@ static tt::runtime::Tensor create_tensor(const torch::Tensor &tensor) {
   // stride for it.
   std::vector<uint32_t> stride = tt::runtime::utils::calculateStride(shape);
 
-  return tt::runtime::createTensor(
+  return tt::runtime::createBorrowedHostTensor(
       tensor.data_ptr(), shape, stride, tensor.element_size(),
       torch_scalar_type_to_dt(tensor.scalar_type()));
 }
