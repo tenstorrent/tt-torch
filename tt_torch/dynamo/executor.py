@@ -504,6 +504,7 @@ class OpByOpExecutor(Executor):
         result = {}
         start = time.time()
         outputs = [None]
+        timeout_exceeded = False
         while True:
             if not self.execute_process.is_alive():
                 self.execute_process = None
@@ -518,6 +519,7 @@ class OpByOpExecutor(Executor):
             if time.time() - start > self.compiler_config.single_op_timeout:
                 self.execute_process.terminate()
                 self.execute_process = None
+                timeout_exceeded = True
                 break
 
         if inputs_file_path and os.path.isfile(inputs_file_path):
@@ -536,5 +538,10 @@ class OpByOpExecutor(Executor):
             stderr_data = stderr_data.replace("\n", "\\n")
             stderr_data = re.sub(r"[^\x20-\x7E]", "", stderr_data)
             file_stderr.close()
+
+            # If timeout is exceeded and stderr empty, add message and print to stdout.
+            if timeout_exceeded and not stderr_data:
+                stderr_data = f"Timeout exceeded for op after {self.compiler_config.single_op_timeout} seconds."
+                print(stderr_data, flush=True)
 
         return outputs, stderr_data
