@@ -54,13 +54,10 @@ def test_add_multidevice():
             return torch.add(x, y)
 
     num_devices = DeviceManager.get_num_available_devices()
-    print("Number of available devices: ", num_devices)
     device_list = DeviceManager.get_available_devices()
     assert (
         len(device_list) == num_devices
     ), "Number of devices is not equal to expected."
-    print("Submeshes secured: ", device_list)
-    print("Parent mesh: ", DeviceManager._parent)
     threads = []
     compiler_configs = [CompilerConfig() for _ in range(num_devices)]
     for i in range(num_devices):
