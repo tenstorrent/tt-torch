@@ -8,7 +8,6 @@ import warnings
 class DeviceManager:
     _devices = set()
     _parent = None
-    _num_available = tt_mlir.get_num_available_devices()
 
     @staticmethod
     def _get_parent_mesh_options(
@@ -36,8 +35,7 @@ class DeviceManager:
 
     @classmethod
     def get_num_available_devices(self):
-        """Get the number of available devices."""
-        return self._num_available
+        return tt_mlir.get_num_available_devices()
 
     @classmethod
     def get_available_devices(
@@ -50,15 +48,20 @@ class DeviceManager:
         l1_small_size=None,
         dispatch_core_type=None,
     ):
+        num_available = tt_mlir.get_num_available_devices()
         if mesh_shape is None:
-            mesh_shape = [1, self._num_available]
+            mesh_shape = [1, num_available]
         if len(self._devices) > 0:
             assert self._parent is not None, "Parent device is not set."
+            warnings.warn(
+                "Devices already created, returning existing devices."
+                "If you want to create new devices, please call release_devices() first."
+            )
             return list(self._devices)
 
         assert len(mesh_shape) == 2, "Mesh shape must be a list of two integers."
         assert (
-            mesh_shape[0] * mesh_shape[1] <= self._num_available
+            mesh_shape[0] * mesh_shape[1] <= num_available
         ), "Mesh shape exceeds available devices."
 
         options = self._get_parent_mesh_options(
