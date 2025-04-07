@@ -23,10 +23,8 @@ def main():
     cc.enable_consteval = True
     cc.consteval_parameters = True
 
-    devices = DeviceManager.get_available_devices()
     options = {}
     options["compiler_config"] = cc
-    options["device"] = devices[0]
     tt_model = torch.compile(model, backend=backend, dynamic=False, options=options)
 
     headers = ["Top 5 Predictions"]
@@ -58,7 +56,6 @@ def main():
         print()
 
         img_path = input(prompt)
-    DeviceManager.release_devices()
 
 
 if __name__ == "__main__":
