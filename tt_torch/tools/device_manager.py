@@ -35,6 +35,9 @@ class DeviceManager:
 
     @classmethod
     def get_num_available_devices(self):
+        """
+        Returns the number of available devices.
+        """
         return tt_mlir.get_num_available_devices()
 
     @classmethod
@@ -48,6 +51,10 @@ class DeviceManager:
         l1_small_size=None,
         dispatch_core_type=None,
     ):
+        """
+        Returns a list of available devices based on the specified mesh shape and options.
+        If no mesh shape is provided, returns all available devices in a 1D mesh.
+        """
         num_available = tt_mlir.get_num_available_devices()
         if mesh_shape is None:
             mesh_shape = [1, num_available]
@@ -86,6 +93,10 @@ class DeviceManager:
 
     @classmethod
     def release_devices(self, device=None):
+        """
+        Releases the specified device.
+        If no device is specified, releases all currently acquired devices.
+        """
         devices_copy = self._devices.copy()
         if device is None:
             # If no device is specified, release all devices
