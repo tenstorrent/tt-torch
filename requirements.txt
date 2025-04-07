@@ -37,3 +37,4 @@ nanobind
 loguru
 seaborn
 gliner
+ultralytics

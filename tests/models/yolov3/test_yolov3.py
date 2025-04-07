@@ -7,6 +7,7 @@ import torch
 from PIL import Image
 from torchvision import transforms
 import requests
+import os
 from pathlib import Path
 import pytest
 
@@ -20,7 +21,13 @@ class ThisTester(ModelTester):
         # Download model weights
         url = "https://www.ollihuotari.com/data/yolov3_pytorch/yolov3_coco_01.h5"
 
-        download_dir = Path.home() / ".cache/custom_weights"
+        if (
+            "DOCKER_CACHE_ROOT" in os.environ
+            and Path(os.environ["DOCKER_CACHE_ROOT"]).exists()
+        ):
+            download_dir = Path(os.environ["DOCKER_CACHE_ROOT"]) / "custom_weights"
+        else:
+            download_dir = Path.home() / ".cache/custom_weights"
         download_dir.mkdir(parents=True, exist_ok=True)
 
         load_path = download_dir / url.split("/")[-1]
