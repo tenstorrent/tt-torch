@@ -76,6 +76,8 @@ def verify_against_golden(
     passed_atol = True
     err_msg = ""
     msg = ""
+
+    # Iterate over all tensors and their results and build a message for printing.
     for i, ((pcc_passed, pcc_), (atol_passed, atol_), atol_threshold) in enumerate(
         zip(zip(pcc_passeds, pccs), zip(atols_passeds, atols), atol_thresholds)
     ):
@@ -108,25 +110,26 @@ def verify_against_golden(
             )
             passed_atol = False
 
-        if assert_pcc and assert_atol:
-            if passed_pcc and passed_atol:
-                print(msg)
-            else:
-                assert False, err_msg
-        elif not assert_pcc and assert_atol:
-            print("Ignoring PCC check\n")
-            if passed_atol:
-                print(msg)
-            else:
-                assert False, err_msg
-        elif assert_pcc and not assert_atol:
-            print("Ignoring ATOL check\n")
-            if passed_pcc:
-                print(msg)
-            else:
-                assert False, err_msg
-        else:
+    # Now that all tensors are checked, print the final message
+    if assert_pcc and assert_atol:
+        if passed_pcc and passed_atol:
             print(msg)
+        else:
+            assert False, err_msg
+    elif not assert_pcc and assert_atol:
+        print("Ignoring PCC check\n")
+        if passed_atol:
+            print(msg)
+        else:
+            assert False, err_msg
+    elif assert_pcc and not assert_atol:
+        print("Ignoring ATOL check\n")
+        if passed_pcc:
+            print(msg)
+        else:
+            assert False, err_msg
+    else:
+        print(msg)
 
     return pccs, atols, passed_pcc, passed_atol
 
