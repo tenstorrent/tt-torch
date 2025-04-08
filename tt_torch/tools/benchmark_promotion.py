@@ -207,7 +207,9 @@ def generate_formatted_test_matrix_from_partitions(
         # Append the test name to the job name for quarantined tests
         if len(partition) == 1:
             # sanitize partition names.
-            job_name += "_qtn_" + re.sub(r"[^\w\-]", "_", partition[0].split("::")[-1])
+            job_name += "_qtn_" + re.sub(
+                r"[^\w\-]", "_", partition[0][0].split("::")[-1]
+            )
         matrix.append(
             {
                 "runs-on": runs_on,
@@ -221,9 +223,8 @@ def generate_formatted_test_matrix_from_partitions(
     # for job in matrix:
     #     formatted_matrix += f"  {{runs-on: '{job['runs-on']}', name: '{job['name']}', tests: {job['tests']}}},"
     # formatted_matrix += "]"
-    build = [matrix]
 
-    return json.dumps(build, indent=2).replace('"', '\\"')
+    return json.dumps(matrix).replace('"', '\\"')
 
 
 def generate_dynamic_benchmark_test_matrix():
@@ -242,6 +243,8 @@ def generate_dynamic_benchmark_test_matrix():
             "xlsx",
             "-o",
             report_dir,
+            "--run-lookback-idx",
+            "2",
         ],
         check=True,
         shell=False,
