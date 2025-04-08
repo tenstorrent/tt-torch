@@ -4,8 +4,12 @@ on:
   workflow_call:
     outputs:
         matrix-json:
-            description: "Generated test matrix JSON string"
-            value: ${{ jobs.tests.outputs.matrix-json }} # Expose job output as workflow output
+            description: "Generated test matrix JSON filepath (due to 64k string size limit in Github Actions)"
+            value: ${{ jobs.tests.outputs.matrix-json }}
+        matrix-json-splits:
+            description: "Test splits JSON STRING"
+            value: ${{ jobs.tests.outputs.matrix-json-splits }}
+  workflow_dispatch:
   workflow_run:
     workflows: [Build]
     types: [completed]
@@ -14,7 +18,9 @@ jobs:
   tests:
     outputs:
         matrix-json: ${{ steps.generate_matrix.outputs.matrix-json }}
-    timeout-minutes: 30
+        matrix-json-splits: ${{ steps.generate_matrix.outputs.matrix-json-splits }}
+
+    timeout-minutes: 10
     strategy:
       fail-fast: false
 
@@ -69,7 +75,6 @@ jobs:
         source env/activate
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
-
     - name: Generate test matrix
       id: generate_matrix
       shell: bash
@@ -79,11 +84,18 @@ jobs:
       run: |
         source env/activate
 
-        # Using the actual built docker image seems to cause git corruption
         apt install -y libgl1 libglx-mesa0
 
         python tt_torch/tools/benchmark_promotion.py --gen-matrix
 
         # hardcoded filename to avoid cluttering cliargs for benchmark promotion
-        # this does not work for multilined output..
-        echo "matrix-json=$(cat benchmark_test_matrix.json)" >> "$GITHUB_OUTPUT"
+
+        # pass benchmark test matrix with actual testname/duration pairs as artifact?
+        echo "matrix-json=benchmark_test_matrix.json" >> "$GITHUB_OUTPUT"
+        echo "matrix-json-splits=$(cat benchmark_test_matrix_splits.json | jq -c .)" >> $GITHUB_OUTPUT
+
+    - name: Upload Benchmark Test Matrix
+      uses: actions/upload-artifact@v4
+      with:
+        name: benchmark-test-matrix
+        path: ${{ steps.generate_matrix.outputs.matrix-json }}
