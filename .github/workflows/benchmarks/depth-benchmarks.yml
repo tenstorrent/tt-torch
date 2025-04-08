@@ -24,13 +24,18 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
+  generate-matrix:
+    needs: [build]
+    uses: ./.github/workflows/benchmarks/generate-benchmark-matrix.yml
+    secrets: inherit
   run-benchmark:
-    needs: [docker-build, build]
-    uses: ./.github/workflows/run-depth-benchmark-tests.yml
+    needs: [docker-build, build, generate-matrix]
+    uses: ./.github/workflows/benchmarks/run-depth-benchmark-tests.yml
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      matrix-json: ${{ needs.generate-matrix.outputs.matrix-json }}
   generate-report:
     needs: [run-benchmark]
-    uses: ./.github/workflows/generate-benchmark-report.yml
+    uses: ./.github/workflows/benchmarks/generate-benchmark-report.yml
     secrets: inherit

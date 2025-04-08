@@ -8,6 +8,10 @@ on:
         description: 'Docker image to use for build'
         required: true
         type: string
+      matrix-json:
+        description: 'Matrix JSON to use for build'
+        required: true
+        type: string
   workflow_run:
     workflows: [Build] # backref to run-build as dependency
     types: [completed]
