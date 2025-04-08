@@ -37,7 +37,7 @@ target_link_directories(TT_TORCH_MLIR PUBLIC
     ${TTMLIR_INSTALL_PREFIX}/lib
 )
 
-set(TORCH_INSTALL_PREFIX ${TTTORCH_SOURCE_DIR}/env/venv/lib/python3.10site-packages/torch)
+set(TORCH_INSTALL_PREFIX ${TTTORCH_SOURCE_DIR}/env/venv/lib/python3.10/site-packages/torch)
 set(CMAKE_PREFIX_PATH ${TORCH_INSTALL_PREFIX})
 
 find_package(Torch REQUIRED)
