@@ -110,6 +110,8 @@ class ModelTester:
                         flattened.append(item)
                     elif isinstance(item, (np.ndarray)):
                         flattened.append(torch.from_numpy(item))
+                    elif np.isscalar(item):
+                        flattened.append(torch.tensor(item))
                     elif isinstance(item, (tuple, list)):
                         flattened.extend(flatten_tensor_lists(item))
                     else:
