@@ -37,5 +37,5 @@ jobs:
       matrix-json: ${{ needs.generate-matrix.outputs.matrix-json }}
   generate-report:
     needs: [run-benchmark]
-    uses: ./.github/workflows/generate-benchmark-report.yml
+    uses: ./.github/workflows/benchmarks/generate-benchmark-report.yml
     secrets: inherit
