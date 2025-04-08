@@ -122,3 +122,20 @@ notebook: 0.005523681640625
 {3 other URL results}
 ****************************************
 ```
+
+## resnet50_single_vs_multi_device_compare.py
+
+This file just performs a simple performance test to verify the speedup of using multiple devices to split up the workload, compared to using only a single device.
+
+It tests the performance of two functions:
+- `singledevice()`: which compiles the ResNet model on a single device and uses that model to process 10 Image URLs.
+- `multidevice()`: which compiles the ResNet model on all available devices and uses each model to process an equal subset of the 10 Image URLs in parallel.
+
+Each function is ran for 10 iterations and the durations are averaged out.
+
+Running this on an N300 board with 2 available devices gives the following results:
+
+```
+Average Single device time (in s):  75.16102676391601
+Average Multi device time (in s):  41.56483373641968
+```

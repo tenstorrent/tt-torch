@@ -83,11 +83,7 @@ def test_distilbert_multiloop(record_property, model_name, mode, op_by_op, num_l
     devices = DeviceManager.get_available_devices(
         mesh_shape=[1, 1], enable_async_ttnn=True
     )
-    assert len(devices) == 1, (
-        "Failed to get available devices"
-        if len(devices) == 0
-        else "More than 1 device taken"
-    )
+    assert len(devices) == 1, f"Expected 1 device, got {len(devices)}"
     tester = ThisTester(
         model_name,
         mode,
