@@ -7,7 +7,9 @@ on:
                 description: 'Path to the benchmark XLSX report file relative to repo root.'
                 required: false
                 default: 'benchmark_report.xlsx'
-
+    push:
+        branches:
+        - '**'
 jobs:
   upload-benchmark-file:
     runs-on: ubuntu-latest
