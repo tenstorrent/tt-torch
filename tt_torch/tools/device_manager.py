@@ -34,7 +34,7 @@ class DeviceManager:
         return options
 
     @classmethod
-    def get_num_available_devices(self):
+    def get_num_available_devices(cls):
         """
         Returns the number of available devices.
         """
@@ -42,7 +42,7 @@ class DeviceManager:
 
     @classmethod
     def get_available_devices(
-        self,
+        cls,
         mesh_shape=None,
         device_ids=None,
         num_hw_cqs=None,
@@ -58,20 +58,20 @@ class DeviceManager:
         num_available = tt_mlir.get_num_available_devices()
         if mesh_shape is None:
             mesh_shape = [1, num_available]
-        if len(self._devices) > 0:
-            assert self._parent is not None, "Parent device is not set."
+        if len(cls._devices) > 0:
+            assert cls._parent is not None, "Parent device is not set."
             warnings.warn(
                 "Devices already created, returning existing devices."
                 "If you want to create new devices, please call release_devices() first."
             )
-            return list(self._devices)
+            return list(cls._devices)
 
         assert len(mesh_shape) == 2, "Mesh shape must be a list of two integers."
         assert (
             mesh_shape[0] * mesh_shape[1] <= num_available
         ), "Mesh shape exceeds available devices."
 
-        options = self._get_parent_mesh_options(
+        options = cls._get_parent_mesh_options(
             device_ids,
             num_hw_cqs,
             enable_async_ttnn,
@@ -81,40 +81,41 @@ class DeviceManager:
         )
 
         # Secure a parent mesh device
-        self._parent = tt_mlir.open_mesh_device(
+        cls._parent = tt_mlir.open_mesh_device(
             mesh_shape=mesh_shape,
             options=options,
         )
         num_devices = mesh_shape[0] * mesh_shape[1]
         for i in range(num_devices):
-            sub_device = tt_mlir.create_sub_mesh_device(self._parent, (1, 1), (0, i))
-            self._devices.add(sub_device)
-        return list(self._devices)
+            sub_device = tt_mlir.create_sub_mesh_device(
+                cls._parent, mesh_shape=(1, 1), mesh_offset=(0, i)
+            )
+            cls._devices.add(sub_device)
+        return list(cls._devices)
 
     @classmethod
-    def release_devices(self, device=None):
+    def release_devices(cls, device=None):
         """
         Releases the specified device.
         If no device is specified, releases all currently acquired devices.
         """
-        devices_copy = self._devices.copy()
         if device is None:
             # If no device is specified, release all devices
-            for device in devices_copy:
+            for device in cls._devices:
                 tt_mlir.release_sub_mesh_device(device)
-                self._devices.remove(device)
+            cls._devices.clear()
         else:
-            if device in devices_copy:
+            if device in cls._devices:
                 tt_mlir.release_sub_mesh_device(device)
-                self._devices.remove(device)
+                cls._devices.remove(device)
             else:
                 warnings.warn(
                     f"Device {device} not found in the list of managed devices. Ignoring it."
                 )
 
-        if len(self._devices) == 0:
+        if len(cls._devices) == 0:
             assert (
-                self._parent is not None
+                cls._parent is not None
             ), "Trying to release a non-existent parent device"
-            tt_mlir.close_mesh_device(self._parent)
-            self._parent = None
+            tt_mlir.close_mesh_device(cls._parent)
+            cls._parent = None
