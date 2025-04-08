@@ -224,12 +224,16 @@ def generate_formatted_test_matrix_from_partitions(
     #     formatted_matrix += f"  {{runs-on: '{job['runs-on']}', name: '{job['name']}', tests: {job['tests']}}},"
     # formatted_matrix += "]"
 
+    # we cannot pass the matrix JSON string directly as a job output due to output size limits
+
     return json.dumps(matrix).replace('"', '\\"')
 
 
 def generate_dynamic_benchmark_test_matrix():
 
     output_file = "benchmark_test_matrix.json"  # hardcoded into CI
+    output_file_splits = "benchmark_test_matrix_splits.json"  # hardcoded into CI
+
     report_dir = "benchmark_report"
 
     # download previous report from run of depth-benchmarks workflow on main
@@ -290,6 +294,12 @@ def generate_dynamic_benchmark_test_matrix():
     with open(output_file, "w") as f:
         f.write(fmt_matrix)
     print(f"Test matrix written to {output_file}")
+
+    # Write the splits to a file.
+    test_runner_ids = f"{list(range(0, len(test_splits)))}"
+    with open(output_file_splits, "w") as f:
+        f.write(test_runner_ids)
+    print(f"Test matrix written to {output_file_splits}")
 
 
 if __name__ == "__main__":

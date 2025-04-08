@@ -4,8 +4,11 @@ on:
   workflow_call:
     outputs:
         matrix-json:
-            description: "Generated test matrix JSON string"
+            description: "Generated test matrix JSON filepath"
             value: ${{ jobs.tests.outputs.matrix-json }} # Expose job output as workflow output
+        matrix-json-splits:
+            description: "Test splits JSON filepath"
+            value: ${{ jobs.tests.outputs.matrix-json-splits }} # Expose job output as workflow output
   workflow_run:
     workflows: [Build]
     types: [completed]
@@ -14,6 +17,8 @@ jobs:
   tests:
     outputs:
         matrix-json: ${{ steps.generate_matrix.outputs.matrix-json }}
+        matrix-json-splits: ${{ steps.generate_matrix.outputs.matrix-json-splits }}
+
     timeout-minutes: 30
     strategy:
       fail-fast: false
@@ -86,4 +91,6 @@ jobs:
 
         # hardcoded filename to avoid cluttering cliargs for benchmark promotion
         # this does not work for multilined output..
-        echo "matrix-json=$(cat benchmark_test_matrix.json)" >> "$GITHUB_OUTPUT"
+
+        echo "matrix-json=benchmark_test_matrix.json" >> "$GITHUB_OUTPUT"
+        echo "matrix-json-splits=benchmark_test_matrix_splits.json" >> "$GITHUB_OUTPUT"

@@ -8,8 +8,12 @@ on:
         description: 'Docker image to use for build'
         required: true
         type: string
-      matrix-json:
+      matrix-split-json:
         description: 'Matrix JSON to use for build'
+        required: true
+        type: string
+      testlist-file:
+        description: 'Testlist for use in build'
         required: true
         type: string
   workflow_run:
