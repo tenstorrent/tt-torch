@@ -131,12 +131,17 @@ def process_zip_file(zip_path, folder_name):
         print(f"Failed to process zip file '{zip_path}': {e}")
 
 
-def get_run_details(args, headers, workflow_name):
+def get_run_details(args, headers, workflow_name, run_index_n=0):
     """
     Retrieves run details either from a specified run-id or by fetching the latest run.
     Returns a tuple of (run_id, date_str, folder_name).
+
+    lookback
     """
     if args.run_id:
+
+        assert run_index_n == 0, "run_index_n is incompatible with run_id"
+
         run_id = args.run_id
         run_detail_url = (
             f"https://api.github.com/repos/{args.repo}/actions/runs/{run_id}"
@@ -151,7 +156,10 @@ def get_run_details(args, headers, workflow_name):
     else:
         print("Fetching workflow runs for", workflow_name)
         runs_url = f"https://api.github.com/repos/{args.repo}/actions/workflows/{args.workflow}/runs"
-        params = {"branch": args.branch, "per_page": 1}  # fetch only the latest run
+        params = {
+            "branch": args.branch,
+            "per_page": run_index_n + 1,
+        }  # fetch up to the specified latest run
         runs_response = requests.get(runs_url, headers=headers, params=params)
         if runs_response.status_code != 200:
             print("Failed to get workflow runs:", runs_response.text)
@@ -160,9 +168,16 @@ def get_run_details(args, headers, workflow_name):
         if not runs_data.get("workflow_runs"):
             print(f"No workflow runs found on branch '{args.branch}'")
             exit(1)
-        latest_run = runs_data["workflow_runs"][0]
-        run_id = latest_run["id"]
-        created_at = latest_run["created_at"]
+        try:
+            nth_latest_run = runs_data["workflow_runs"][run_index_n]
+        except IndexError:
+            print(f"Error: No run found at index {run_index_n}.")
+            print(
+                "\tHelp: If not specifying a run-id, specify the index of the latest run to download artifacts from. 0 is the latest run, 1 is the second latest, etc."
+            )
+            exit(1)
+        run_id = nth_latest_run["id"]
+        created_at = nth_latest_run["created_at"]
         date_str = dt.fromisoformat(created_at.rstrip("Z")).strftime("%Y%m%d")
     folder_name = f"{workflow_name}_artifacts_{date_str}_run_id_{run_id}"
     return run_id, date_str, folder_name
@@ -299,6 +314,13 @@ def main():
         help="Output directory for artifacts",
     )
 
+    parser.add_argument(
+        "--run-lookback-idx",
+        type=int,
+        default=0,
+        help="If not specifying a run-id, specify the index of the latest run to download artifacts from. 0 is the latest run, 1 is the second latest, etc.",
+    )
+
     args = parser.parse_args()
 
     token = get_token(args.token)
@@ -317,7 +339,9 @@ def main():
     workflow_name = os.path.splitext(args.workflow)[0]
 
     # Retrieve run details (either specific run-id or the latest run)
-    run_id, date_str, folder_name = get_run_details(args, headers, workflow_name)
+    run_id, date_str, folder_name = get_run_details(
+        args, headers, workflow_name, run_index_n=args.run_lookback_idx
+    )
 
     folder_name = args.output_folder if args.output_folder else folder_name
 
