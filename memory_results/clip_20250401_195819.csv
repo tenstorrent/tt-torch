@@ -1,0 +1,3 @@
+iteration,start_memory_mb,peak_memory_mb,end_memory_mb,execution_time_s,status
+1,12.79,12.79,12.79,2.08,FAIL (code: 2)
+2,12.79,12.79,12.79,2.12,FAIL (code: 2)
