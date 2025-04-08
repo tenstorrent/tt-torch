@@ -1,0 +1,25 @@
+name: Upload Benchmark File
+
+on:
+    workflow_dispatch:
+        inputs:
+            benchmark_report_path:
+                description: 'Path to the benchmark XLSX report file relative to repo root.'
+                required: false
+                default: 'benchmark_report.xlsx'
+
+jobs:
+  upload-benchmark-file:
+    runs-on: ubuntu-latest
+    env:
+        GH_TOKEN: ${{ github.token }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        lfs: true
+    - name: Upload benchmark report to archive
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.benchmark_report_path }}
+        path: ${{ inputs.benchmark_report_path }}
