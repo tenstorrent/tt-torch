@@ -76,7 +76,7 @@ def find_duplicates(string_array):
 def discover_tests():
     in_tree_tests = enumerate_all_tests()
     benchmark_tests = parse_tests_from_matrix(
-        ".github/workflows/run-depth-benchmark-tests.yml"
+        ".github/workflows/benchmarks/run-depth-benchmark-tests.yml"
     )
 
     print("Verifying test sets contain no duplicates.")
@@ -139,12 +139,12 @@ def load_balance_tests_greedy(test_durations, n_partitions=10, print_summary=Tru
     for test_name, test_time in known_tests:
         # Find the partition with the smallest total time
         min_index = partition_times.index(min(partition_times))
-        partitions[min_index].append(test_name)
+        partitions[min_index].append((test_name, test_time))
         partition_times[min_index] += test_time
 
     # Add unknown tests (-1 duration) to their own partitions
     for test_name in unknown_tests:
-        partitions.append([test_name])
+        partitions.append([(test_name, -1)])
 
     if print_summary:
         print("\nPartition Summary:")
@@ -206,7 +206,8 @@ def generate_formatted_test_matrix_from_partitions(
         job_name = f"{base_name}_{i}"
         # Append the test name to the job name for quarantined tests
         if len(partition) == 1:
-            job_name += "_qtn_" + partition[0].split("::")[-1]
+            # sanitize partition names.
+            job_name += "_qtn_" + re.sub(r"[^\w\-]", "_", partition[0].split("::")[-1])
         matrix.append(
             {
                 "runs-on": runs_on,
@@ -216,12 +217,13 @@ def generate_formatted_test_matrix_from_partitions(
         )
 
     # Format the matrix as a string
-    formatted_matrix = "build: ["
-    for job in matrix:
-        formatted_matrix += f"  {{runs-on: '{job['runs-on']}', name: '{job['name']}', tests: {job['tests']}}},"
-    formatted_matrix += "]"
+    # formatted_matrix = "build: ["
+    # for job in matrix:
+    #     formatted_matrix += f"  {{runs-on: '{job['runs-on']}', name: '{job['name']}', tests: {job['tests']}}},"
+    # formatted_matrix += "]"
+    build = [matrix]
 
-    return formatted_matrix
+    return json.dumps(build, indent=2).replace('"', '\\"')
 
 
 def generate_dynamic_benchmark_test_matrix():
@@ -288,7 +290,6 @@ def generate_dynamic_benchmark_test_matrix():
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(
         description="Utilities for new pytest promotion to benchmarks"
     )
