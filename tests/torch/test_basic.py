@@ -35,15 +35,6 @@ def test_add():
     verify_module(Basic(), input_shapes=[(256, 256)] * 2)
 
 
-def verify_module_helper(module, input_shapes, compiler_config, device):
-    verify_module(
-        module,
-        input_shapes=input_shapes,
-        compiler_config=compiler_config,
-        device=device,
-    )
-
-
 # Runs the AddOp on all detected chips in parallel
 def test_add_multidevice():
     class AddOp(nn.Module):
@@ -66,7 +57,13 @@ def test_add_multidevice():
         mod = AddOp()
         input_shapes = [(256, 256)] * 2
         thread = threading.Thread(
-            target=verify_module_helper, args=(mod, input_shapes, cc, device)
+            target=verify_module,
+            kwargs={
+                "mod": mod,
+                "input_shapes": input_shapes,
+                "compiler_config": cc,
+                "device": device,
+            },
         )
         threads.append(thread)
 
