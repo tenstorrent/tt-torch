@@ -194,9 +194,11 @@ class Executor:
 
     def _get_device(self):
         if self.device is not None:
+            print("[EXECUTOR] Reusing provided device: ", self.device)
             return self.device
         # Return a default parent mesh
         device = tt_mlir.open_mesh_device([1, 1], tt_mlir.MeshDeviceOptions())
+        print("[EXECUTOR] Created new parent mesh device", device)
         return device
 
     def _cache_constants_if_needed(self, preprocessed_constants):
@@ -212,6 +214,7 @@ class Executor:
             tt_mlir.deallocate_tensor(t, force=True)
 
         if self.device is None:
+            print("[EXECUTOR] Closing new parent mesh device")
             tt_mlir.close_mesh_device(device)
 
     def __call__(self, *inputs):

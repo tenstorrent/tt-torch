@@ -157,6 +157,7 @@ def backend(gm, example_inputs, options=None):
         else:
             cc = options["compiler_config"]
         device = options["device"] if "device" in options else None
+    print("[BACKEND] Device used for compilation: ", device)
 
     # Apply environment overrides at start of compilation to allow overriding what was set in the test
     cc.apply_environment_overrides()

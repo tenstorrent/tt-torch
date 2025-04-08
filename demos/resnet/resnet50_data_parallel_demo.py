@@ -12,6 +12,8 @@ import tabulate
 from threading import Thread
 import requests
 from tt_torch.tools.device_manager import DeviceManager
+import time
+import pprint
 
 # A custom thread class to simplify returning values from threads
 class CustomThread(Thread):
@@ -68,7 +70,7 @@ def get_predictions(tt_model, urls, topk=5):
     return results
 
 
-def main():
+def multidevice(divided_urls):
     """
     This demo shows how to run the ResNet image classification model on all available devices on the board in parallel.
     Each device will process a different set of images.
@@ -81,16 +83,60 @@ def main():
     options = {}
     options["compiler_config"] = cc
     devices = DeviceManager.get_available_devices()  # Acquire all available devices
+    print("Sub devices: ", devices)
     num_devices = len(devices)
     tt_models = []
     for device in devices:
-        options["device"] = device
+        # options["device"] = device
+        new_options = options.copy()
+        new_options["device"] = device
         # Compile the model for each device
+        print("COMPILING FOR DEVICE: ", device)
         tt_models.append(
-            torch.compile(model, backend=backend, dynamic=False, options=options)
+            torch.compile(model, backend=backend, dynamic=False, options=new_options)
         )
+    print("NUM COMPILED_MODELS: ", len(tt_models))
+    print("ARE MODELS EQUAL: ", tt_models[0] == tt_models[1])
 
-    # List of image URLs to be processed
+    threads = []
+    for i in range(num_devices):
+        thread = CustomThread(
+            target=get_predictions, args=(tt_models[i], divided_urls[i])
+        )
+        threads.append(thread)
+
+    for thread in threads:
+        thread.start()
+
+    final_results = []
+    for thread in threads:
+        predictions = thread.join()
+        final_results.append(predictions)
+    DeviceManager.release_devices()  # Release all devices after use
+    return final_results
+
+    # # Print the results
+    # for device_used, prediction_results in final_results:
+    #     print("*" * 40)
+    #     print(f"Results from Device: {device_used}")
+    #     for result in prediction_results:
+    #         print(result)
+    #         print()
+    #     print("*" * 40)
+
+
+def singledevice(image_urls):
+    cc = CompilerConfig()
+    cc.enable_consteval = True
+    cc.consteval_parameters = True
+
+    options = {}
+    options["compiler_config"] = cc
+    tt_model = torch.compile(model, backend=backend, dynamic=False, options=options)
+
+    return get_predictions(tt_model, image_urls)
+
+if __name__ == "__main__":
     image_urls = [
         "http://images.cocodataset.org/val2017/000000039769.jpg",  # Two cats
         "https://farm5.staticflickr.com/4106/4962771032_82d3b7ccea_z.jpg",  # Two zebras
@@ -106,38 +152,24 @@ def main():
     # Evenly distribute the image URLs across all devices.
     # This creates a list of lists of length num_devices, where the ith sublist
     # contains the image URLs that will be processed by the ith device.
+    num_devices = DeviceManager.get_num_available_devices()
     k, m = divmod(len(image_urls), num_devices)
     divided_urls = [
         image_urls[i * k + min(i, m) : (i + 1) * k + min(i + 1, m)]
         for i in range(num_devices)
     ]
+    # start_time = time.time()
+    # single_results = singledevice(image_urls)
+    # end_time = time.time()
+    print("\n" * 5)
+    # print("Single device time: ", end_time - start_time)
+    start_time = time.time()
+    multi_results = multidevice(divided_urls)
+    end_time = time.time()
+    print("Multi device time: ", end_time - start_time)
 
-    threads = []
-    for i in range(num_devices):
-        thread = CustomThread(
-            target=get_predictions, args=(tt_models[i], divided_urls[i])
-        )
-        threads.append((devices[i], thread))
-
-    for _, thread in threads:
-        thread.start()
-
-    final_results = []
-    for device_used, thread in threads:
-        predictions = thread.join()
-        final_results.append((device_used, predictions))
-
-    # Print the results
-    for device_used, prediction_results in final_results:
-        print("*" * 40)
-        print(f"Results from Device: {device_used}")
-        for result in prediction_results:
-            print(result)
-            print()
-        print("*" * 40)
-
-    DeviceManager.release_devices()  # Release all devices after use
-
-
-if __name__ == "__main__":
-    main()
+    print("SINGLE DEVICE RESULTS")
+    # pprint.pprint(single_results)
+    print("*" * 50)
+    print("MULTI DEVICE RESULTS")
+    pprint.pprint(multi_results)
