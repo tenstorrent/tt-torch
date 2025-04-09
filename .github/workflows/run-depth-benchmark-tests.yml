@@ -92,8 +92,8 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: benchmark-test-matrix-json
-        path: ${{ steps.generate_matrix.outputs.matrix-json-path }}
-
+        merge-multiple: true # download raw file into path and don't pack into directory
+        path: ${{ inputs.matrix-json-path }}
     - name: Run Execution Benchmark Tests
       env:
         DOCKER_CACHE_ROOT: /mnt/dockercache
@@ -107,23 +107,25 @@ jobs:
         mkdir -p ${{ steps.strings.outputs.work-dir }}/pytest-logs
 
         echo "Matrix group ${{ matrix.group.name }} runs-on ${{ matrix.group.runs-on }} with index ${{ matrix.group.group-id }}"
-        echo "Expected path to matrix json: ${{ steps.generate_matrix.outputs.matrix-json-path }}"
+        echo "Expected path to matrix json: ${{ inputs.matrix-json-path }}"
 
         # TODO: remove this debug statement
-        cat ${{ steps.generate_matrix.outputs.matrix-json-path }}
+        cat ${{ inputs.matrix-json-path }}
 
         # Read the JSON file and extract the per-matrix testlist assigned to this runner (from its group-id)
-        testlist=$(cat ${{ steps.generate_matrix.outputs.matrix-json-path }} | jq ".[${{ matrix.group.group-id }}]")
+        testlist=$(cat ${{ inputs.matrix-json-path }} | jq ".[${{ matrix.group.group-id }}]")
 
         # Print all tests to be run in this group
         echo "Tests to be run in matrix with group ${{ matrix.group.group-id }}"
         echo "$testlist" | jq -c '.tests[] | {name: .["full-test-name"], duration: .["test-duration"]}'
 
+
         counter=0
         total_tests=$(echo $testlist | jq -r '.[]' | wc -l)
 
         # Given a test with known runtime, allow it to run up to timeout_buffer X its expected runtime before killing it.
-        timeout_buffer=5
+        timeout_buffer=5 # Bash only supports integer arithmetic
+        timeout_logname="${{ steps.strings.outputs.work-dir }}/pytest-logs/group_${{matrix.group.group-id}}_timeout.log"
 
         # iterate over all tests in testlist
         echo "$testlist" | jq -c '.tests[]' | while read -r test; do
@@ -132,12 +134,13 @@ jobs:
 
             test_name=$(echo "$test" | jq -r '.["full-test-name"]' | sed 's/[^a-zA-Z0-9]/_/g')
             test_duration=$(echo "$test" | jq -r '.["test-duration"]')
-            buffered_duration=$((test_duration * timeout_buffer)) # Note - bash only supports integer arithmetic
+            buffered_duration=$((test_duration * timeout_buffer))
 
             counter=$((counter + 1))
 
             echo "========================================"
-            echo "Running test $counter of $total_tests: $test_name" with timeout $buffered_duration (expected $test_duration x $timeout_buffer)"
+            echo "Running test $counter of $total_tests: $test_name"
+            echo "Timeout: $buffered_duration seconds (expected $test_duration x $timeout_buffer)"
             echo "========================================"
 
             # use GNU timeout to autokill test after test_duration seconds
@@ -150,7 +153,7 @@ jobs:
             if [ $exit_status -eq 124 ]; then
                 echo "Test $test_name timed out after $test_duration seconds."
                 # Perform conditional actions for timeout, e.g., log or mark as failed
-                echo "Timeout occurred for $test_name" >> ${{ steps.strings.outputs.work-dir }}/pytest-logs/timeout.log
+                echo "Timeout occurred for $test_name" >> timeout_logname
             else
                 echo "Test $test_name completed successfully."
                 echo "Wrote junitxml report ${{ steps.strings.outputs.test_report_path_models }}_subtest_${test_name}.xml"
@@ -165,7 +168,7 @@ jobs:
     - name: Upload Pytest Logs
       uses: actions/upload-artifact@v4
       with:
-        name: pytest-logs-${{ matrix.build.runs-on }}-${{ matrix.build.name }}
+        name: pytest-logs-${{ matrix.group.group-id }}-${{ matrix.group.name }}
         path: ${{ steps.strings.outputs.work-dir }}/pytest-logs
 
     - name: Postprocess and Fuse Test Reports
@@ -178,5 +181,5 @@ jobs:
       uses: actions/upload-artifact@v4
       if: success() || failure()
       with:
-        name: test-reports-models-benchmark-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        name: test-reports-models-benchmark-${{ matrix.group.runs-on }}-${{ matrix.group.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: ${{ steps.strings.outputs.test_report_path_models }}
