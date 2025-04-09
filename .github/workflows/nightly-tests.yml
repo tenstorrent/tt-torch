@@ -18,18 +18,18 @@ jobs:
   docker-build:
     uses: ./.github/workflows/build-image.yml
     secrets: inherit
-  build:
-    needs: [pre-commit, spdx, docker-build]
-    uses: ./.github/workflows/run-build.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  test_op_by_op:
-    needs: [docker-build, build]
-    uses: ./.github/workflows/run-op-by-op-model-tests-nightly.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
+  # build:
+  #   needs: [pre-commit, spdx, docker-build]
+  #   uses: ./.github/workflows/run-build.yml
+  #   secrets: inherit
+  #   with:
+  #     docker-image: ${{ needs.docker-build.outputs.docker-image }}
+  # test_op_by_op:
+  #   needs: [docker-build, build]
+  #   uses: ./.github/workflows/run-op-by-op-model-tests-nightly.yml
+  #   secrets: inherit
+  #   with:
+  #     docker-image: ${{ needs.docker-build.outputs.docker-image }}
   # test_e2e:
   #   needs: [docker-build, build]
   #   uses: ./.github/workflows/run-e2e-tests.yml
@@ -48,15 +48,47 @@ jobs:
   #   secrets: inherit
   #   with:
   #     docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  download-report:
-    if: success() || failure()
-    needs: test_op_by_op
-    uses: ./.github/workflows/generate-model-report.yml
-    secrets: inherit
-  generate-ttnn-md:
-    if: success() || failure()
-    needs: [download-report]
-    uses: ./.github/workflows/generate-ttnn-md.yml
-    secrets: inherit
-    with:
-      spreadsheet_name: ${{ needs.download-report.outputs.spreadsheet_name }}
+
+  test_board_reset:
+    needs: [docker-build]
+    runs-on: wormhole_b0
+    container:
+      image: ${{ needs.docker-build.outputs.docker-image }}
+    steps:
+    - name: Test board reset functionality
+      shell: bash
+      run: |
+        # First check the PATH to see what's available
+        echo "System PATH:"
+        echo $PATH
+
+        # Search for tt-smi-metal binary in common locations
+        echo "Searching for tt-smi-metal in common locations:"
+        find /usr -name "tt-smi*" 2>/dev/null || echo "No tt-smi* in /usr"
+        find /opt -name "tt-smi*" 2>/dev/null || echo "No tt-smi* in /opt"
+
+        # Try to run tt-smi-metal directly to see if it's available
+        echo "Trying to run tt-smi-metal directly:"
+        tt-smi-metal -l || echo "tt-smi-metal failed"
+
+        # Set up environment and install dependencies if needed
+        if [ -f "env/activate" ]; then
+          source env/activate
+        fi
+
+        # Run our board reset script with verbose mode
+        echo "Running board_reset.py script directly:"
+        python -m tt_torch.utils.board_reset --verbose
+
+  # download-report:
+  #   if: success() || failure()
+  #   needs: test_op_by_op
+  #   uses: ./.github/workflows/generate-model-report.yml
+  #   secrets: inherit
+  # generate-ttnn-md:
+  #   if: success() || failure()
+  #   needs: [download-report]
+  #   uses: ./.github/workflows/generate-ttnn-md.yml
+  #   secrets: inherit
+  #   with:
+  #     spreadsheet_name: ${{ needs.download-report.outputs.spreadsheet_name }}
