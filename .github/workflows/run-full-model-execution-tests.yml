@@ -149,8 +149,9 @@ jobs:
 
     - name: Run Full Model Execution Tests
       env:
-        HF_HOME: /mnt/dockercache/huggingface
-        TORCH_HOME: /mnt/dockercache/torch
+        DOCKER_CACHE_ROOT: /mnt/dockercache
+        HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
+        TORCH_HOME: ${{ env.DOCKER_CACHE_ROOT }}/torch
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
       shell: bash
       run: |
