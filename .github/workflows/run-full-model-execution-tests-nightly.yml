@@ -62,6 +62,7 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-vit_h_14]
                   tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small[full-eval]
                   tests/models/yolos/test_yolos.py::test_yolos[full-eval]
+                  tests/models/whisper/test_whisper.py::test_whisper[full-eval]
             "
           },
           {
@@ -85,9 +86,10 @@ jobs:
             "
           },
           {
-            # Approximately 45 minutes.
+            # Approximately 80 minutes.
             runs-on: wormhole_b0, name: "eval_5", tests: "
                   tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[full-Qwen/Qwen2.5-1.5B-eval]
+                  tests/models/opt/test_opt.py::test_opt[full-eval]
             "
           },
           {
