@@ -74,21 +74,21 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     with torch.no_grad():
         program = pass_pipeline(gm, example_inputs, compiler_config)
 
-    module, stablehlo_graph_module = lower_to_stable_hlo(program)
+    module_str, stablehlo_graph_module = lower_to_stable_hlo(program)
 
-    dump_module(module=module, name="StableHLO module", compiler_config=compiler_config)
+    dump_module(
+        module=module_str, name="StableHLO module", compiler_config=compiler_config
+    )
 
-    return module, program, stablehlo_graph_module
+    return module_str, program, stablehlo_graph_module
 
 
-def shlo_to_flatbuffer(executor, module, compiler_config):
+def shlo_to_flatbuffer(executor, module_str, compiler_config):
 
     if compiler_config.profile_ops:
-        compiler_config.set_stablehlo_mlir_module(module.operation.get_asm())
+        compiler_config.set_stablehlo_mlir_module(module_str)
 
-    ttir = tt_mlir.compile_stable_hlo_to_ttir(
-        module.operation.get_asm(enable_debug_info=True)
-    )
+    ttir = tt_mlir.compile_stable_hlo_to_ttir(module_str)
     dump_module(module=ttir, name="TTIR module", compiler_config=compiler_config)
 
     if compiler_config.enable_intermediate_verification:
@@ -101,7 +101,7 @@ def shlo_to_flatbuffer(executor, module, compiler_config):
 
 
 def _base_backend(gm, example_inputs, compiler_config):
-    shlo, program, stablehlo_graph_module = torch_to_shlo(
+    shlo_str, program, stablehlo_graph_module = torch_to_shlo(
         gm, example_inputs, compiler_config
     )
     executor = Executor(program, stablehlo_graph_module, compiler_config)
@@ -111,7 +111,7 @@ def _base_backend(gm, example_inputs, compiler_config):
     if compiler_config.compile_depth == CompileDepth.STABLEHLO:
         return executor
 
-    binary = shlo_to_flatbuffer(executor, shlo, compiler_config)
+    binary = shlo_to_flatbuffer(executor, shlo_str, compiler_config)
     executor.set_binary(binary)
 
     compiler_config.record_property("achieved_compile_depth", "TTNN_IR")

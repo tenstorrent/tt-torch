@@ -148,14 +148,11 @@ def lower_to_stable_hlo(
         program, StableHLOExportOptions(export_weights=False)
     )
     module_str = stablehlo_graph_module.get_stablehlo_text()
-    with Context() as ctx:
-        stablehlo.register_dialect(ctx)
-        module = Module.parse(module_str)
 
     if op is not None:
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
 
-    return module, stablehlo_graph_module
+    return module_str, stablehlo_graph_module
 
 
 ##################################################################
@@ -297,10 +294,10 @@ class TorchExecutor(OpByOpExecutor):
 
         inputs = flatten(inputs)
         program = torch.export.export(mod, tuple(inputs))
-        module, stablehlo_graph_module = lower_to_stable_hlo(program, op=op)
+        module_str, stablehlo_graph_module = lower_to_stable_hlo(program, op=op)
         op.compilation_status = OpCompilationStatus.CONVERTED_TO_STABLE_HLO
-        op.add_stable_hlo_graph(module.operation.get_asm())
-        return module, stablehlo_graph_module, inputs, op
+        op.add_stable_hlo_graph(module_str)
+        return module_str, stablehlo_graph_module, inputs, op
 
     def run_gm_op_by_op(self, *inputs):
 

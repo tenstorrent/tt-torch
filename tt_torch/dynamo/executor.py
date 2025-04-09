@@ -410,11 +410,11 @@ class OpByOpExecutor(Executor):
 
     def compile_op(self, node, *inputs, **kwargs):
         # get_stablehlo_graph is a method implemented in inheriting classes
-        module, stablehlo_graph_module, inputs, op = self.get_stable_hlo_graph(
+        module_str, stablehlo_graph_module, inputs, op = self.get_stable_hlo_graph(
             node, inputs, **kwargs
         )
 
-        if module is None or op is None:
+        if module_str is None or op is None:
             return None, None, None, None
 
         sender = mp.Queue()
@@ -422,7 +422,7 @@ class OpByOpExecutor(Executor):
         ttir_event = mp.Event()
         ttnn_event = mp.Event()
         json_event = mp.Event()
-        obj = {"asm": module.operation.get_asm()}
+        obj = {"asm": module_str}
         process = mp.Process(
             target=compile_process,
             args=(sender, receiver, ttir_event, ttnn_event, json_event),
