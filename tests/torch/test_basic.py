@@ -45,7 +45,7 @@ def test_add_multidevice():
             return torch.add(x, y)
 
     num_devices = DeviceManager.get_num_available_devices()
-    device_list = DeviceManager.get_available_devices()
+    parent, device_list = DeviceManager.acquire_available_devices()
     assert (
         len(device_list) == num_devices
     ), "Number of devices is not equal to expected."
@@ -72,9 +72,8 @@ def test_add_multidevice():
     for thread in threads:
         thread.join()
 
-    DeviceManager.release_devices()
-    assert DeviceManager._parent is None, "Parent device is not released."
-    assert len(DeviceManager._devices) == 0, "Submesh devices are not released."
+    DeviceManager.release_parent_device(parent, cleanup_sub_devices=True)
+    assert len(DeviceManager._devices) == 0, "Some devices are not released."
 
 
 def test_concat_dim0():
