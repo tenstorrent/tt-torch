@@ -72,6 +72,11 @@ jobs:
               "
           },
           {
+            runs-on: wormhole_b0, name: "opt", tests: "
+              tests/models/opt/test_opt.py::test_opt
+              "
+          },
+          {
             runs-on: wormhole_b0, name: "timm", tests: "
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[op_by_op_torch-eval-hrnet_w18.ms_aug_in1k]
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[op_by_op_torch-eval-dla34.in1k]
@@ -128,6 +133,11 @@ jobs:
           {
             runs-on: wormhole_b0, name: "roberta", tests: "
               tests/models/roberta/test_roberta.py::test_roberta
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "whisper", tests: "
+              tests/models/whisper/test_whisper.py::test_whisper
               "
           },
           {
