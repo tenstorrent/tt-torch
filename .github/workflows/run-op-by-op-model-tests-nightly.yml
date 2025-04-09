@@ -157,6 +157,11 @@ jobs:
               tests/models/bi_lstm_crf/test_bi_lstm_crf.py::test_bi_lstm_crf[op_by_op_torch-eval-lstm]
               tests/models/bi_lstm_crf/test_bi_lstm_crf.py::test_bi_lstm_crf[op_by_op_torch-eval-gru]
               "
+          },
+          {
+            runs-on: wormhole_b0, name: "gliner", tests: "
+              tests/models/gliner/test_gliner.py::test_gliner[op_by_op_torch-eval]
+              "
           }
         ]
     runs-on:
