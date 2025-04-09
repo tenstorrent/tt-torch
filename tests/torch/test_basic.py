@@ -568,6 +568,17 @@ def test_cosine_op():
     )
 
 
+def test_erf():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.erf(x)
+
+    verify_module(Basic(), input_shapes=[(8192, 8192)], required_atol=0.016)
+
+
 import os
 
 
