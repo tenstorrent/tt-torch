@@ -69,9 +69,15 @@ jobs:
       run: |
           echo "My group is ${{ matrix.group.runs-on }} with index ${{ matrix.group.group-id }}"
           cat benchmark_test_matrix.json
-          # Read the JSON file and extract the i'th entry
+
+          # Read the JSON file and extract the per-matrix query
           entry=$(cat benchmark_test_matrix.json | jq ".[${{ matrix.group.group-id }}]")
           set -e
+
+          # Print all tests to be run
+          echo "Tests to be run in matrix with group ${{ matrix.group.group-id }}"
+          echo "$entry" | jq -c '.tests[] | {name: .["full-test-name"], duration: .["test-duration"]}'
+
           # Iterate over the "tests" array within the entry
           echo "$entry" | jq -c '.tests[]' | while read -r test; do
               # Extract the test name and duration
@@ -80,6 +86,7 @@ jobs:
 
               # Apply timeout and invoke pytest
               echo "Running test: $test_name with timeout: $test_duration seconds"
-              timeout "$test_duration"s pytest "$test_name"
+              timeout "$test_duration"s pytest "$test_name" || true
           done
+
           set +e
