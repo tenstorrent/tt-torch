@@ -37,20 +37,20 @@ def mock_tt_mlir():
 
 def test_get_available_devices_all(mock_tt_mlir):
     """Test acquiring all available devices."""
-    devices = DeviceManager.get_available_devices()
+    parent, devices = DeviceManager.acquire_available_devices()
 
     assert mock_tt_mlir.open_mesh_device.call_count == 1
     assert mock_tt_mlir.create_sub_mesh_device.call_count == 4
     assert len(devices) == 4
-    assert DeviceManager._parent is not None
+    assert parent is not None
 
 
 def test_get_available_devices_reuse(mock_tt_mlir):
     """Test get_available_devices returns existing devices if already previously created."""
     # Call once to initialize
-    initial_devices = DeviceManager.get_available_devices()
+    initial_devices = DeviceManager.acquire_available_devices()
     # Call again to see if the same devices are returned
-    reused_devices = DeviceManager.get_available_devices()
+    reused_devices = DeviceManager.acquire_available_devices()
     # The parent and mesh subdevice calls should not be made again
     # since we are reusing the devices
     assert mock_tt_mlir.open_mesh_device.call_count == 1
