@@ -310,6 +310,8 @@ def clamp(
 
 
 def erf(input, out=None):
+    # ERF of +/- 3.0 is 0.99998. So we will clamp the input here to aid in numerical stability of the decomposition.
+    torch.clamp(input, -3.0, 3.0)
     p = 0.3275911
     a1 = 0.254829592
     a2 = -0.284496736
