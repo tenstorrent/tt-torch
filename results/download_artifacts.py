@@ -136,7 +136,8 @@ def get_run_details(args, headers, workflow_name, run_index_n=0):
     Retrieves run details either from a specified run-id or by fetching the latest run.
     Returns a tuple of (run_id, date_str, folder_name).
 
-    lookback
+    run_index_n: If not specifying a run-id, specify the index of the nth latest run to download artifacts from.
+    0 is the latest run, 1 is the second latest, etc.
     """
     if args.run_id:
 
