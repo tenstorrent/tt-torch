@@ -19,6 +19,7 @@ class ThisTester(ModelTester):
             "openai/whisper-small", torch_dtype=torch.bfloat16
         )
         model.config.forced_decoder_ids = None
+        model.config.use_cache = False
         return model
 
     def _load_inputs(self):
