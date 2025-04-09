@@ -13,6 +13,8 @@ from threading import Thread
 import requests
 from tt_torch.tools.device_manager import DeviceManager
 
+import pprint
+
 # A custom thread class to simplify returning values from threads
 class CustomThread(Thread):
     def __init__(
@@ -80,7 +82,14 @@ def main():
 
     options = {}
     options["compiler_config"] = cc
-    devices = DeviceManager.get_available_devices()  # Acquire all available devices
+    (
+        parent,
+        devices,
+    ) = DeviceManager.acquire_available_devices()  # Acquire all available devices
+    print("AFTER ACQUIRE:")
+    for _parent in DeviceManager.get_parent_devices():
+        print("Parent Device:", _parent)
+        print("Sub Devices:", DeviceManager.get_sub_mesh_devices(_parent))
     num_devices = len(devices)
     tt_models = []
     for device in devices:
@@ -136,7 +145,12 @@ def main():
             print()
         print("*" * 40)
 
-    DeviceManager.release_devices()  # Release all devices after use
+    # DeviceManager.release_devices()  # Release all devices after use
+    DeviceManager.release_parent_device(parent, cleanup_sub_devices=True)
+    print("AFTER RELEASE:")
+    for _parent in DeviceManager.get_parent_devices():
+        print("Parent Device:", _parent)
+        print("Sub Devices:", DeviceManager.get_sub_mesh_devices(_parent))
 
 
 if __name__ == "__main__":
