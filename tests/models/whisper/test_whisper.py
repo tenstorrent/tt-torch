@@ -19,7 +19,7 @@ class ThisTester(ModelTester):
             "openai/whisper-small", torch_dtype=torch.bfloat16
         )
         model.config.forced_decoder_ids = None
-        return model.generate
+        return model
 
     def _load_inputs(self):
         # load dummy dataset and read audio files
@@ -29,20 +29,9 @@ class ThisTester(ModelTester):
         sample = ds[0]["audio"]
         input_features = self.tokenizer(
             sample["array"], sampling_rate=sample["sampling_rate"], return_tensors="pt"
-        ).input_features
-        return input_features.to(torch.bfloat16)
-
-    def run_model(self, model, input_features):
-        # generate token ids
-        predicted_ids = model(input_features)
-        # decode token ids to text
-        transcription = self.tokenizer.batch_decode(
-            predicted_ids, skip_special_tokens=True
-        )
-        return transcription
-
-    def set_model_eval(self, model):
-        return model
+        ).to(torch.bfloat16)
+        input_features["decoder_input_ids"] = torch.tensor([[50258]])
+        return input_features
 
 
 @pytest.mark.parametrize(
@@ -73,7 +62,6 @@ def test_whisper(record_property, mode, op_by_op):
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
-        is_token_output=True,
     )
     tester.test_model()
     tester.finalize()

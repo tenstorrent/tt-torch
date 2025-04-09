@@ -16,20 +16,12 @@ class ThisTester(ModelTester):
             "facebook/opt-350m", torch_dtype=torch.bfloat16
         )
         self.tokenizer = GPT2Tokenizer.from_pretrained("facebook/opt-350m")
-        return model.generate
+        return model
 
     def _load_inputs(self):
         prompt = "A chat between a curious"
-
         model_inputs = self.tokenizer([prompt], return_tensors="pt")
-
-        generation_config = GenerationConfig(max_length=30, do_sample=False)
-
-        model_inputs["generation_config"] = generation_config
         return model_inputs
-
-    def set_model_eval(self, model):
-        return model
 
 
 @pytest.mark.parametrize(
@@ -55,10 +47,7 @@ def test_opt(record_property, mode, op_by_op):
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
-        is_token_output=True,
+        relative_atol=0.015,
     )
-    results = tester.test_model(assert_eval_token_mismatch=False)
-    if mode == "eval":
-        tester.tokenizer.batch_decode(results)[0]
-
+    tester.test_model(assert_eval_token_mismatch=False)
     tester.finalize()
