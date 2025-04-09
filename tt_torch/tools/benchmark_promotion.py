@@ -199,7 +199,7 @@ def generate_formatted_test_matrix_from_partitions(
 ):
     matrix = []
     splits = []
-    for i, partition in enumerate(partitions, start=1):
+    for i, partition in enumerate(partitions):
         job_name = f"{base_name}_{i}"
         # Append the test name to the job name for quarantined tests
         if len(partition) == 1:
@@ -216,7 +216,7 @@ def generate_formatted_test_matrix_from_partitions(
             {
                 "runs-on": runs_on,
                 "name": job_name,
-                "group-id": i,
+                "group-id": i,  # zero indexed
             }
         )
     # we cannot pass the matrix JSON string directly as a job output due to output size limits
