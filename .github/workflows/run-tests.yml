@@ -15,7 +15,7 @@ on:
 permissions:
   packages: write
   checks: write
-  pull-requests: write # only required if `comment: true` was enabled
+  # pull-requests: write # only required if `comment: true` was enabled
 
 jobs:
   tests:
@@ -144,6 +144,7 @@ jobs:
 
 
     - name: Show Test Report
+      continue-on-error: true
       uses: mikepenz/action-junit-report@v5
       if: success() || failure()
       with:
