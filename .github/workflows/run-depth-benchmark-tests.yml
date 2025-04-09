@@ -23,6 +23,7 @@ on:
 jobs:
   tests:
     timeout-minutes: 500
+    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:

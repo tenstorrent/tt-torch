@@ -39,5 +39,5 @@ jobs:
   generate-report:
     needs: [run-benchmark]
     if: always()
-    uses: ./.github/workflows/benchmarks/generate-benchmark-report.yml
+    uses: ./.github/workflows/generate-benchmark-report.yml
     secrets: inherit

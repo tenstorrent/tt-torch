@@ -76,7 +76,7 @@ def find_duplicates(string_array):
 def discover_tests():
     in_tree_tests = enumerate_all_tests()
     benchmark_tests = parse_tests_from_matrix(
-        ".github/workflows/benchmarks/run-depth-benchmark-tests.yml"
+        ".github/workflows/run-depth-benchmark-tests.yml"
     )
 
     print("Verifying test sets contain no duplicates.")
