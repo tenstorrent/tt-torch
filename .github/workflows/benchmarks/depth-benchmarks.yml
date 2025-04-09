@@ -34,8 +34,10 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-      matrix-json: ${{ needs.generate-matrix.outputs.matrix-json }}
+      matrix-json-path: ${{ needs.generate-matrix.outputs.matrix-json-path }}
+      matrix-json-splits: ${{ needs.generate-matrix.outputs.matrix-json-splits}}
   generate-report:
     needs: [run-benchmark]
+    if: always()
     uses: ./.github/workflows/benchmarks/generate-benchmark-report.yml
     secrets: inherit

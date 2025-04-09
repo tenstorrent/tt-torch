@@ -3,11 +3,11 @@ name: Generate Benchmark Test Matrix Dynamically
 on:
   workflow_call:
     outputs:
-        matrix-json:
+        matrix-json-path:
             description: "Generated test matrix JSON filepath (due to 64k string size limit in Github Actions)"
-            value: ${{ jobs.tests.outputs.matrix-json }}
+            value: ${{ jobs.tests.outputs.matrix-json-path }}
         matrix-json-splits:
-            description: "Test splits JSON STRING"
+            description: "Test splits JSON string, to be dereferenced in consuming job with fromJSON call to generate a test matrix"
             value: ${{ jobs.tests.outputs.matrix-json-splits }}
   workflow_dispatch:
   workflow_run:
@@ -17,7 +17,7 @@ on:
 jobs:
   tests:
     outputs:
-        matrix-json: ${{ steps.generate_matrix.outputs.matrix-json }}
+        matrix-json-path: ${{ steps.generate_matrix.outputs.matrix-json-path }}
         matrix-json-splits: ${{ steps.generate_matrix.outputs.matrix-json-splits }}
 
     timeout-minutes: 10
@@ -91,11 +91,13 @@ jobs:
         # hardcoded filename to avoid cluttering cliargs for benchmark promotion
 
         # pass benchmark test matrix with actual testname/duration pairs as artifact?
-        echo "matrix-json=benchmark_test_matrix.json" >> "$GITHUB_OUTPUT"
-        echo "matrix-json-splits=$(cat benchmark_test_matrix_splits.json | jq -c .)" >> $GITHUB_OUTPUT
+        echo "matrix-json-path=benchmark_test_matrix.json" >> "$GITHUB_OUTPUT"
+
+        # pass splits matrix as string directly
+        echo "matrix-json-splits=$(cat benchmark_test_matrix_splits.json)" >> $GITHUB_OUTPUT
 
     - name: Upload Benchmark Test Matrix
       uses: actions/upload-artifact@v4
       with:
-        name: benchmark-test-matrix
-        path: ${{ steps.generate_matrix.outputs.matrix-json }}
+        name: benchmark-test-matrix-json
+        path: ${{ steps.generate_matrix.outputs.matrix-json-path }}
