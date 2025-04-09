@@ -12,7 +12,7 @@ transformers==4.47.1
 protobuf
 tiktoken
 sentencepiece
-setuptools
+setuptools==77.0.3
 pytorchcv
 diffusers
 scipy
