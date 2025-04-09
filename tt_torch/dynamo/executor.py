@@ -20,6 +20,7 @@ from tt_torch.tools.utils import (
     Op,
     OpCompilationStatus,
 )
+from tt_torch.utils.board_reset import reset_board
 from typing import Union
 
 
@@ -298,6 +299,8 @@ class OpByOpExecutor(Executor):
         compiler_config=None,
         required_pcc=0.99,
         required_atol=1e-2,
+        enable_board_reset=False,
+        board_reset_device_id=0,
     ):
         super().__init__(
             program=None,
@@ -319,6 +322,23 @@ class OpByOpExecutor(Executor):
         self.stderror_redirected = False
         self.file_stderr = None
         self.op_memory_limit = gb_to_bytes(0.5)  # 512MB limit
+
+        # For board reset functionality
+        self.enable_board_reset = enable_board_reset
+        self.board_reset_device_id = board_reset_device_id
+        self.board_reset_attempts = 0
+        self.max_board_reset_attempts = (
+            3  # Limit the number of resets in a single session
+        )
+
+        # Apply any environment-based overrides for board reset settings
+        self.apply_environment_overrides()
+
+    def apply_environment_overrides(self):
+        enable_board_reset = os.environ.get("TT_TORCH_OP_BY_OP_BOARD_RESET")
+        if enable_board_reset and int(enable_board_reset):
+            self.enable_board_reset = True
+            print("Board reset enabled via environment variable")
 
     def transform_input(self, inp):
         # Convert torch.nn.Parameter to torch.Tensor and convert non-contiguous
@@ -514,9 +534,27 @@ class OpByOpExecutor(Executor):
             stderr_data = re.sub(r"[^\x20-\x7E]", "", stderr_data)
             file_stderr.close()
 
+            # Mechanism to attempt to reset board if timeout is exceeded.
+            if timeout_exceeded and self.enable_board_reset:
+
+                print(
+                    f"Timeout exceeded for op after {self.compiler_config.single_op_timeout} seconds. Going to try board reset. Attempts: {self.board_reset_attempts} of {self.max_board_reset_attempts}"
+                )
+
+                reset_successful = reset_board(
+                    device_id=self.board_reset_device_id,
+                    max_attempts=10,
+                    sleep_seconds=1,
+                )
+                self.board_reset_attempts += 1
+                reset_msg = "Board reset " + (
+                    "successful." if reset_successful else "failed."
+                )
+                print(reset_msg, flush=True)
+
             # If timeout is exceeded and stderr empty, add message and print to stdout.
             if timeout_exceeded and not stderr_data:
-                stderr_data = f"Timeout exceeded for op after {self.compiler_config.single_op_timeout} seconds."
+                stderr_data = f"Timeout exceeded for op after {self.compiler_config.single_op_timeout} seconds. {reset_msg}"
                 print(stderr_data, flush=True)
 
         return outputs, stderr_data

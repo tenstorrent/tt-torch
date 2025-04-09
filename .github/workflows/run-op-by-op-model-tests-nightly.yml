@@ -231,6 +231,7 @@ jobs:
         HF_HOME: /mnt/dockercache/huggingface
         TORCH_HOME: /mnt/dockercache/torch
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        TT_TORCH_OP_BY_OP_BOARD_RESET: 1  # Automatically attempt to reset board on op hangs.
       shell: bash
       run: |
         source env/activate
