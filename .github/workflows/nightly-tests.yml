@@ -64,21 +64,30 @@ jobs:
 
         # Search for tt-smi-metal binary in common locations
         echo "Searching for tt-smi-metal in common locations:"
+        echo "In /usr:"
         find /usr -name "tt-smi*" 2>/dev/null || echo "No tt-smi* in /usr"
+        echo "In /opt:"
         find /opt -name "tt-smi*" 2>/dev/null || echo "No tt-smi* in /opt"
 
-        # Try to run tt-smi-metal directly to see if it's available
-        echo "Trying to run tt-smi-metal directly:"
-        tt-smi-metal -l || echo "tt-smi-metal failed"
+        # Show current directory contents
+        echo "Current directory contents:"
+        ls -la
 
-        # Set up environment and install dependencies if needed
-        if [ -f "env/activate" ]; then
-          source env/activate
-        fi
+        # Check if env directory exists
+        echo "Checking for environment directory:"
+        ls -la env/ || echo "No env directory found"
 
-        # Run our board reset script with verbose mode
+        # Activate Python environment
+        echo "Activating Python environment:"
+        source env/activate && echo "Environment activated" || echo "Failed to activate environment"
+
+        # Check Python version after activation
+        echo "Python version after activation:"
+        python --version || echo "Python not found after activation"
+
+        # Run the script directly with verbose mode
         echo "Running board_reset.py script directly:"
-        python -m tt_torch.utils.board_reset --verbose
+        python tt_torch/utils/board_reset.py --verbose
 
   # download-report:
   #   if: success() || failure()
