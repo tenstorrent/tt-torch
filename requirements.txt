@@ -12,7 +12,7 @@ transformers==4.47.1
 protobuf
 tiktoken
 sentencepiece
-setuptools==59.6.0
+setuptools==59.6.0 #  pinned torchvision wheel build in env/activate requires lower setuptools pinned version. tt-torch #589
 pytorchcv
 diffusers
 scipy
