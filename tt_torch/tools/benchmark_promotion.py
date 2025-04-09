@@ -139,17 +139,24 @@ def load_balance_tests_greedy(test_durations, n_partitions=10, print_summary=Tru
     for test_name, test_time in known_tests:
         # Find the partition with the smallest total time
         min_index = partition_times.index(min(partition_times))
-        partitions[min_index].append((test_name, test_time))
+        partitions[min_index].append(
+            {"full-test-name": test_name, "test-duration": test_time}
+        )
         partition_times[min_index] += test_time
 
     # Add unknown tests (-1 duration) to their own partitions
     for test_name in unknown_tests:
-        partitions.append([(test_name, -1)])
+
+        partitions.append([{"full-test-name": test_name, "test-duration": -1}])
 
     if print_summary:
         print("\nPartition Summary:")
         for i, partition in enumerate(partitions):
-            partition_duration = sum(test_durations.get(test, 0) for test in partition)
+            for test in partition:
+                print("test in partition: ", test)
+                print("\ttime ", test["test-duration"])
+
+            partition_duration = sum(test.get("test-duration") for test in partition)
             print(f"Partition {i + 1}:")
             print(f"  Tests: {partition}")
             print(f"  Estimated Duration: {partition_duration:.2f} seconds\n")
@@ -190,43 +197,30 @@ def parse_benchmark_results_xlsx(file_path):
 def generate_formatted_test_matrix_from_partitions(
     partitions, base_name="bmk", runs_on="wormhole_b0"
 ):
-    """
-    Generate a formatted test matrix for GitHub Actions based on test partitions.
-
-    Args:
-        partitions (list of lists): A list of partitions, where each partition is a list of test names.
-        base_name (str): Base name for the benchmark jobs (default: "benchmark").
-        runs_on (str): The runner type for the jobs (default: "wormhole_b0").
-
-    Returns:
-        str: A formatted test matrix as a string.
-    """
     matrix = []
+    splits = []
     for i, partition in enumerate(partitions, start=1):
         job_name = f"{base_name}_{i}"
         # Append the test name to the job name for quarantined tests
         if len(partition) == 1:
             # sanitize partition names.
             job_name += "_qtn_" + re.sub(
-                r"[^\w\-]", "_", partition[0][0].split("::")[-1]
+                r"[^\w\-]", "_", partition[0]["full-test-name"].split("::")[-1]
             )
         matrix.append(
             {
-                "runs-on": runs_on,
-                "name": job_name,
                 "tests": partition,
             }
         )
-
-    # Format the matrix as a string
-    # formatted_matrix = "build: ["
-    # for job in matrix:
-    #     formatted_matrix += f"  {{runs-on: '{job['runs-on']}', name: '{job['name']}', tests: {job['tests']}}},"
-    # formatted_matrix += "]"
-
+        splits.append(
+            {
+                "runs-on": runs_on,
+                "name": job_name,
+                "group-idx": i,
+            }
+        )
     # we cannot pass the matrix JSON string directly as a job output due to output size limits
-
-    return json.dumps(matrix).replace('"', '\\"')
+    return json.dumps(matrix), json.dumps(splits)
 
 
 def generate_dynamic_benchmark_test_matrix():
@@ -287,8 +281,13 @@ def generate_dynamic_benchmark_test_matrix():
 
     # Load balance the tests into a dynamic test matrix
     test_splits = load_balance_tests_greedy(actual_test_durations_list)
-    fmt_matrix = generate_formatted_test_matrix_from_partitions(test_splits)
-    # print(fmt_matrix)
+    fmt_matrix, splits_matrix = generate_formatted_test_matrix_from_partitions(
+        test_splits
+    )
+    print("Formatted test matrix:")
+    pprint.pprint(fmt_matrix)
+    print("Test splits matrix")
+    pprint.pprint(splits_matrix)
 
     # Write the matrix to a file
     with open(output_file, "w") as f:
@@ -296,9 +295,9 @@ def generate_dynamic_benchmark_test_matrix():
     print(f"Test matrix written to {output_file}")
 
     # Write the splits to a file.
-    test_runner_ids = f"{list(range(0, len(test_splits)))}"
+
     with open(output_file_splits, "w") as f:
-        f.write(test_runner_ids)
+        f.write(splits_matrix)
     print(f"Test matrix written to {output_file_splits}")
 
 

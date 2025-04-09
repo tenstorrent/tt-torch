@@ -40,6 +40,7 @@ jobs:
     strategy:
       matrix:
         group: ${{ fromJSON(needs.job0.outputs.matrix) }}
+    name: ${{ matrix.group.name }}
     steps:
     - name: checkout
       uses: actions/checkout@v4
