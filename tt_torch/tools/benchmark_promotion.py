@@ -216,7 +216,7 @@ def generate_formatted_test_matrix_from_partitions(
             {
                 "runs-on": runs_on,
                 "name": job_name,
-                "group-idx": i,
+                "group-id": i,
             }
         )
     # we cannot pass the matrix JSON string directly as a job output due to output size limits
