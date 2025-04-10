@@ -90,8 +90,15 @@ jobs:
 
         # hardcoded filename to avoid cluttering cliargs for benchmark promotion
 
-        # pass benchmark test matrix with actual testname/duration pairs as artifact?
-        echo "matrix-json-path=benchmark_test_matrix.json" >> "$GITHUB_OUTPUT"
+        # Ensure the file exists
+        if [ ! -f "benchmark_test_matrix.json" ]; then
+        echo "Error: benchmark_test_matrix.json not found!"
+        exit 1
+        fi
+
+        # Use the absolute path to avoid ambiguity
+        matrix_json_path=$(realpath benchmark_test_matrix.json)
+        echo "matrix-json-path=$matrix_json_path" >> "$GITHUB_OUTPUT"
 
         # pass splits matrix as string directly
         echo "matrix-json-splits=$(cat benchmark_test_matrix_splits.json)" >> $GITHUB_OUTPUT
