@@ -54,6 +54,7 @@ def create_verify_golden_callback(compiler_config: CompilerConfig):
             fused_locations = raw_location.split("fused")[1]
             fused_locations = fused_locations.split(",")
             fused_locations = [
+                # strip unnecessary characters
                 loc.translate(str.maketrans("", "", "()[]{}\"' "))
                 for loc in fused_locations
             ]
@@ -61,7 +62,7 @@ def create_verify_golden_callback(compiler_config: CompilerConfig):
         if "loc(unknown)" in raw_location:
             return
 
-        # there multiple source locations, the actual name of the node is at the end
+        # there may be multiple source locations so fused_locations has len>=2, the actual "name" of the node is at the end
         location = fused_locations[-1]
 
         intermediate_data = compiler_config.runtime_intermediate_cache.get(
@@ -80,6 +81,10 @@ def create_verify_golden_callback(compiler_config: CompilerConfig):
             print("output intermediate tensor", output_intermediate_tensor)
 
             if output_intermediate_tensor is not None:
+                if output_intermediate_tensor.dim == 0:
+                    print("Got scalar as output:", output_intermediate_tensor)
+                    output_intermediate_tensor = output_intermediate_tensor.unsqueeze(0)
+
                 intermediate_data.decomposed_intermediate_outputs.append(
                     output_intermediate_tensor
                 )
