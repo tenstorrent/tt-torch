@@ -11,6 +11,8 @@ from tests.models.bevdepth.src.base_bev_depth import BaseBEVDepth
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
+dependencies = ["mmdet==3.3.0", "mmcv==2.2.0", "mmdet3d==1.4.0"]
+
 
 class ThisTester(ModelTester):
     def _load_model(self):
@@ -127,8 +129,10 @@ class ThisTester(ModelTester):
     "op_by_op",
     # [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     # ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
-    [None],
-    ids=["full"],
+    [OpByOpBackend.TORCH],
+    ids=["op_by_op_torch"],
+    # [None],
+    # ids=["full"],
 )
 def test_bevdepth(record_property, mode, op_by_op):
     model_name = "BEVDepth"

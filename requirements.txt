@@ -25,6 +25,9 @@ librosa
 soundfile
 matplotlib
 mlp_mixer_pytorch
+mmcv==2.2.0
+mmdet==3.3.0
+mmdet3d==1.4.0
 wheel
 xlsxwriter
 onnx==1.17.0 # 1.18.0 fails with "Unsupported model IR version: 11, max supported IR version: 10"
