@@ -9,6 +9,9 @@ on:
         type: string
   pull_request:
     branches: [ "main" ]
+    types:
+      - review_requested
+      - ready_for_review
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.mlir_override }}
