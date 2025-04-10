@@ -80,10 +80,11 @@ def test_distilbert_multiloop(record_property, model_name, mode, op_by_op, num_l
     cc.enable_consteval = True
     cc.consteval_parameters = True
     cc.cache_preprocessed_constants = True
-    devices = DeviceManager.get_available_devices(
+
+    device = DeviceManager.create_parent_mesh_device(
         mesh_shape=[1, 1], enable_async_ttnn=True
     )
-    assert len(devices) == 1, f"Expected 1 device, got {len(devices)}"
+
     tester = ThisTester(
         model_name,
         mode,
@@ -92,7 +93,7 @@ def test_distilbert_multiloop(record_property, model_name, mode, op_by_op, num_l
         compiler_config=cc,
         record_property_handle=record_property,
         model_name_suffix="-multiloop",
-        device=devices[0],
+        device=device,
     )
     model = tester.compile_model(tester.get_framework_model(), tester.compiler_config)
 
@@ -106,4 +107,4 @@ def test_distilbert_multiloop(record_property, model_name, mode, op_by_op, num_l
         print(f"{num_loops} iterations took {(end_time - start_time)} seconds")
 
     tester.finalize()
-    DeviceManager.release_devices()
+    DeviceManager.release_parent_device(device)
