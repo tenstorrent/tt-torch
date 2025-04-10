@@ -3,9 +3,6 @@ name: Generate Benchmark Test Matrix Dynamically
 on:
   workflow_call:
     outputs:
-        matrix-json-path:
-            description: "Generated test matrix JSON filepath (due to 64k string size limit in Github Actions)"
-            value: ${{ jobs.tests.outputs.matrix-json-path }}
         matrix-json-splits:
             description: "Test splits JSON string, to be dereferenced in consuming job with fromJSON call to generate a test matrix"
             value: ${{ jobs.tests.outputs.matrix-json-splits }}
@@ -17,8 +14,7 @@ on:
 jobs:
   tests:
     outputs:
-        matrix-json-path: ${{ steps.generate_matrix.outputs.matrix-json-path }}
-        matrix-json-splits: ${{ steps.generate_matrix.outputs.matrix-json-splits }}
+       matrix-json-splits: ${{ steps.generate_matrix.outputs.matrix-json-splits }}
 
     timeout-minutes: 10
     strategy:
@@ -106,5 +102,6 @@ jobs:
     - name: Upload Benchmark Test Matrix
       uses: actions/upload-artifact@v4
       with:
+        # hardcoded artifact name for the test matrix JSON
         name: benchmark-test-matrix-json
         path: ${{ steps.generate_matrix.outputs.matrix-json-path }}
