@@ -138,16 +138,17 @@ jobs:
 
             # Extract the test name and duration from JSON object "test"
 
-            test_name=$(echo "$test" | jq -r '.["full-test-name"]' | sed 's/[^a-zA-Z0-9]/_/g')
+            raw_test_name=$(echo "$test" | jq -r '.["full-test-name"]')
+            test_name=$(echo "$raw_test_name" | sed 's/[^a-zA-Z0-9]/_/g')
+
             test_duration=$(echo "$test" | jq -r '.["test-duration"]')
 
             # Bash only supports integer arithmetic, so to compute fp timeout * int buffer we need to pipe it to
-            # something that supports fp arithmetic
+            # something that supports fp arithmetic like python
 
-            # also pass through -1 here so we can disable the timeout for quarantined tests
             buffered_duration=-1
 
-            # Determine buffered duration
+            # Determine buffered duration and quarantine status
             if [ "$test_duration" = "-1" ]; then
                 buffered_duration=-1
                 echo "Timeout: $buffered_duration seconds (test_duration is -1, no timeout applied for quarantined tests.)"
@@ -158,18 +159,18 @@ jobs:
             counter=$((counter + 1))
 
             echo "========================================"
-            echo "Running test $counter of $total_tests: $test_name"
+            echo "Running test $counter of $total_tests: $raw_test_name"
             echo "========================================"
 
             # use GNU timeout to autokill test after test_duration seconds
-            # sends sigterm by default on timeout but override to sigkill
+            # sends sigterm by default
 
             if [ "$buffered_duration" != "-1" ]; then
-                timeout "${buffered_duration}s" -s SIGKILL pytest -svv "$test_name" \
+                timeout "${buffered_duration}s" pytest -svv "$raw_test_name" \
                     --junit-xml=${{ steps.strings.outputs.test_report_path_models }}_subtest_${test_name}.xml \
                     --crashsafe | tee ${{ steps.strings.outputs.work-dir }}/pytest-logs/${test_name}.log
             else
-                pytest -svv "$test_name" \
+                pytest -svv "$raw_test_name" \
                     --junit-xml=${{ steps.strings.outputs.test_report_path_models }}_subtest_${test_name}.xml \
                     --crashsafe | tee ${{ steps.strings.outputs.work-dir }}/pytest-logs/${test_name}.log
             fi
@@ -177,11 +178,11 @@ jobs:
             # Check the exit status of the timeout command for timeout detection.
             exit_status=$?
             if [ $exit_status -eq 124 ]; then
-                echo "Test $test_name timed out after $test_duration seconds."
+                echo "Test $raw_test_name timed out after $test_duration seconds."
                 # Perform conditional actions for timeout, e.g., log or mark as failed
-                echo "Timeout occurred for $test_name" >> timeout_logname
+                echo "$raw_test_name" >> timeout_logname
             else
-                echo "Test $test_name completed successfully."
+                echo "Test $raw_test_name completed successfully."
             fi
             echo "Wrote junitxml report ${{ steps.strings.outputs.test_report_path_models }}_subtest_${test_name}.xml"
             echo "wrote log ${{ steps.strings.outputs.work-dir }}/pytest-logs/${test_name}.log"
