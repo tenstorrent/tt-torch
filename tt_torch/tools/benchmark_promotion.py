@@ -230,20 +230,24 @@ def generate_dynamic_benchmark_test_matrix():
 
     report_dir = "benchmark_report"
 
-    # download previous report from run of depth-benchmarks workflow on main
+    report_branch = "benchmark_report_fs"
+
+    download_artifact_command = [
+        "python",
+        "results/download_artifacts.py",
+        "--workflow",
+        "upload-benchmark-file.yml",
+        "--filter",
+        "xlsx",
+        "--branch",
+        report_branch,
+        "-o",
+        report_dir,
+    ]
+    print("Running download artifact command: ", " ".join(download_artifact_command))
+    # download previous report from reporting path
     subprocess.run(
-        [
-            "python",
-            "results/download_artifacts.py",
-            "--workflow",
-            "depth-benchmarks.yml",
-            "--filter",
-            "xlsx",
-            "-o",
-            report_dir,
-            "--run-lookback-idx",
-            "2",
-        ],
+        download_artifact_command,
         check=True,
         shell=False,
     )
