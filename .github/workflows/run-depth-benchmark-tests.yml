@@ -95,21 +95,12 @@ jobs:
         name: benchmark-test-matrix-json
         merge-multiple: true
         # [From job input] > matrix-json-path: benchmark_test_matrix.json
-
-        path: ${{ inputs.matrix-json-path }}
+        path: ${{ steps.strings.outputs.work-dir }}
 
     - name: List directory
       shell: bash
       run: |
-        ls -l ${{ inputs.matrix-json-path }}
-        ls -l ${{ inputs.matrix-json-path }}/..
-        realpath ${{ inputs.matrix-json-path }}
-
-        # unpack from directory
-        set -e
-        cp ${{ inputs.matrix-json-path }}/${{ inputs.matrix-json-path }} ${{ inputs.matrix-json-path }}/../${{ inputs.matrix-json-path }}
-        set +e
-        exit 0
+        ls -l ${{ steps.strings.outputs.work-dir }}
 
     - name: Run Execution Benchmark Tests
       env:
@@ -151,8 +142,7 @@ jobs:
 
             test_name=$(echo "$test" | jq -r '.["full-test-name"]' | sed 's/[^a-zA-Z0-9]/_/g')
             test_duration=$(echo "$test" | jq -r '.["test-duration"]')
-            buffered_duration=$((test_duration * timeout_buffer))
-
+            buffered_duration=$(echo "$test_duration * $timeout_buffer" | bc)
             counter=$((counter + 1))
 
             echo "========================================"
