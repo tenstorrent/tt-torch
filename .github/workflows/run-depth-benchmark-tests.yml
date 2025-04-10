@@ -132,7 +132,7 @@ jobs:
         total_tests=$(echo $testlist | jq -r '.[]' | wc -l)
 
         # Given a test with known runtime, allow it to run up to timeout_buffer X its expected runtime before killing it.
-        timeout_buffer=5 # Bash only supports integer arithmetic
+        timeout_buffer=5
         timeout_logname="${{ steps.strings.outputs.work-dir }}/pytest-logs/group_${{matrix.group.group-id}}_timeout.log"
 
         # iterate over all tests in testlist
@@ -142,7 +142,11 @@ jobs:
 
             test_name=$(echo "$test" | jq -r '.["full-test-name"]' | sed 's/[^a-zA-Z0-9]/_/g')
             test_duration=$(echo "$test" | jq -r '.["test-duration"]')
-            buffered_duration=$(echo "$test_duration * $timeout_buffer" | bc)
+
+            # Bash only supports integer arithmetic, so to compute fp timeout * int buffer we need to pipe it to
+            # something that supports fp arithmetic
+
+            buffered_duration=$(python -c "print(int($test_duration * $timeout_buffer))")
             counter=$((counter + 1))
 
             echo "========================================"
@@ -151,7 +155,8 @@ jobs:
             echo "========================================"
 
             # use GNU timeout to autokill test after test_duration seconds
-            timeout "$buffered_duration"s pytest -svv "$test" \
+            # sends sigterm by default but override to sigkill
+            timeout "$buffered_duration"s -s SIGKILL pytest -svv "$test" \
                 --junit-xml=${{ steps.strings.outputs.test_report_path_models }}_subtest_${test_name}.xml \
                 --crashsafe | tee ${{ steps.strings.outputs.work-dir }}/pytest-logs/${test_name}.log
 
@@ -163,9 +168,10 @@ jobs:
                 echo "Timeout occurred for $test_name" >> timeout_logname
             else
                 echo "Test $test_name completed successfully."
-                echo "Wrote junitxml report ${{ steps.strings.outputs.test_report_path_models }}_subtest_${test_name}.xml"
-                echo "wrote log ${{ steps.strings.outputs.work-dir }}/pytest-logs/${test_name}.log"
             fi
+
+            echo "Wrote junitxml report ${{ steps.strings.outputs.test_report_path_models }}_subtest_${test_name}.xml"
+            echo "wrote log ${{ steps.strings.outputs.work-dir }}/pytest-logs/${test_name}.log"
 
         done
 
