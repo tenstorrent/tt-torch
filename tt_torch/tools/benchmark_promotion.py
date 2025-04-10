@@ -107,13 +107,16 @@ def discover_tests():
     return added_tests
 
 
-def load_balance_tests_greedy(test_durations, n_partitions=10, print_summary=True):
+def load_balance_tests_greedy(
+    test_durations, n_partitions=10, print_summary=True, do_linearize=False
+):
     """
     Load balances test names into N partitions based on test execution time.
 
     Args:
         test_durations (dict): A dictionary where keys are test names and values are their execution times.
         n_partitions (int): Number of partitions to split the test names into.
+        do_linearize (bool): If True, do not load balance and run all tests in individual partitions.
 
     Returns:
         list of lists: A list containing N partitions, each with a subset of test names.
@@ -131,23 +134,35 @@ def load_balance_tests_greedy(test_durations, n_partitions=10, print_summary=Tru
     # Sort known tests by execution time in descending order
     known_tests.sort(key=lambda x: x[1], reverse=True)
 
-    # Initialize partitions and their total times
-    partitions = [[] for _ in range(n_partitions)]
-    partition_times = [0] * n_partitions
+    partitions = None
 
-    # Distribute known tests greedily to minimize the maximum partition time
-    for test_name, test_time in known_tests:
-        # Find the partition with the smallest total time
-        min_index = partition_times.index(min(partition_times))
-        partitions[min_index].append(
-            {"full-test-name": test_name, "test-duration": test_time}
-        )
-        partition_times[min_index] += test_time
+    if not do_linearize:
+        # Initialize partitions and their total times
+        partitions = [[] for _ in range(n_partitions)]
+        partition_times = [0] * n_partitions
 
-    # Add unknown tests (-1 duration) to their own partitions
-    for test_name in unknown_tests:
+        # Distribute known tests greedily to minimize the maximum partition time
+        for test_name, test_time in known_tests:
+            # Find the partition with the smallest total time
+            min_index = partition_times.index(min(partition_times))
+            partitions[min_index].append(
+                {"full-test-name": test_name, "test-duration": test_time}
+            )
+            partition_times[min_index] += test_time
 
-        partitions.append([{"full-test-name": test_name, "test-duration": -1}])
+        # Add unknown tests (-1 duration) to their own partitions
+        for test_name in unknown_tests:
+
+            partitions.append([{"full-test-name": test_name, "test-duration": -1}])
+    else:
+        # don't load balance and run all tests in a individual partitions
+        partitions = []
+        for test_name in unknown_tests:
+            partitions.append([{"full-test-name": test_name, "test-duration": -1}])
+        for test_name, test_time in known_tests:
+            partitions.append(
+                [{"full-test-name": test_name, "test-duration": test_time}]
+            )
 
     if print_summary:
         print("\nPartition Summary:")
@@ -281,7 +296,9 @@ def generate_dynamic_benchmark_test_matrix():
     print(f"Actual test list (ct: {len(actual_test_durations_list)})")
 
     # Load balance the tests into a dynamic test matrix
-    test_splits = load_balance_tests_greedy(actual_test_durations_list)
+    test_splits = load_balance_tests_greedy(
+        actual_test_durations_list, do_linearize=True
+    )
     fmt_matrix, splits_matrix = generate_formatted_test_matrix_from_partitions(
         test_splits
     )
