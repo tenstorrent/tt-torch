@@ -135,10 +135,10 @@ class AllOps:
         for index, row in df_cleaned.iterrows():
             # Remove quotes from Raw TTNNIR if present
             raw_ttnnir = row["Raw TTNNIR"].strip("'\"")
+            compile_error = row.get("Compile Error", "")
 
             # If outputing failures only, skip if row is empty, Nan, or "Error message not extracted."
             if failures_only:
-                compile_error = row.get("Compile Error", "")
                 if (
                     pd.isna(compile_error)
                     or str(compile_error).strip() == ""
@@ -152,9 +152,9 @@ class AllOps:
             status = row["Status"]
 
             # Process operation details
-            self.process_ops(raw_ttnnir, pcc, atol, status)
+            self.process_ops(raw_ttnnir, pcc, atol, status, compile_error)
 
-    def process_ops(self, ttnnir_string, pcc, atol, status):
+    def process_ops(self, ttnnir_string, pcc, atol, status, compile_error):
         """
         Process TTNN operations from an IR string, extracting shapes, layouts, and metadata.
 
@@ -163,6 +163,7 @@ class AllOps:
             pcc: Percent Correct Classification metric
             atol: Absolute tolerance for numerical comparisons
             status: Compilation status for the op
+            compile_error: Optional compile error for the op, if there was one
         """
 
         ttnn_parser = TTNNOps(ttnnir_string)
@@ -232,6 +233,7 @@ class AllOps:
             opToWrite["pcc"] = pcc
             opToWrite["atol"] = atol
             opToWrite["status"] = status
+            opToWrite["compile_error"] = compile_error
             if self.ops.get(opToWrite["name"]) is None:
                 self.ops[opToWrite["name"]] = [opToWrite]
             else:
@@ -317,6 +319,7 @@ class AllOps:
                     "N/A" if pd.isna(item.get("atol")) else str(item.get("atol", "N/A"))
                 )
                 status = item.get("status", "N/A")
+                compile_error = item.get("compile_error", "")
 
                 input_layouts = item.get("input_layouts", [])
                 processed_input_layouts = [
@@ -350,6 +353,7 @@ class AllOps:
                     "pcc": pcc,
                     "atol": atol,
                     "compilation_status": status,
+                    "compile_error": compile_error,
                 }
 
                 processed_items.append(processed_item)
