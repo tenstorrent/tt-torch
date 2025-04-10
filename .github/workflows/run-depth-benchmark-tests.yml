@@ -114,10 +114,6 @@ jobs:
 
         echo "Matrix group ${{ matrix.group.name }} runs-on ${{ matrix.group.runs-on }} with index ${{ matrix.group.group-id }}"
 
-        # TODO: remove this debug statement
-        # Assume the matrix json was downloaded into work-dir (so this cat is from work-dir/benchmark_test_matrix.json)
-        cat ${{ steps.strings.outputs.matrix-json }}
-
         # Read the JSON file and extract the per-matrix testlist assigned to this runner (from its group-id)
         testlist=$(cat ${{ steps.strings.outputs.matrix-json }} | jq ".[${{ matrix.group.group-id }}]")
 
