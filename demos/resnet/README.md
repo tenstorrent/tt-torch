@@ -9,7 +9,7 @@ for the interactive demo that uses a single-device to classify an image using Re
 
 Or run,
 ```
-python demos/resnet/resnet50_data_parallel_demo.py
+python demos/resnet/resnet50_data_parallel_demo.py [--use_simplified_manager]
 ```
 for the demo on how to leverage the `DeviceManager` module to run ResNet image classification across multiple chips in parallel.
 
@@ -50,7 +50,7 @@ def main():
     options = {}
     options["compiler_config"] = cc
     # Acquires all available devices and returns them in a list
-    devices = DeviceManager.get_available_devices()
+    parent, devices = DeviceManager.acquire_available_devices()
     tt_models = []
     for device in devices:
         options["device"] = device # Explicitly compile the model for a specific device
@@ -58,7 +58,8 @@ def main():
             torch.compile(model, backend=backend, dynamic=False, options=options)
         )
     ...
-    DeviceManager.release_devices() # Release all acquired devices after use
+    # Release all acquired devices after use
+    DeviceManager.release_parent_device(parent, cleanup_sub_devices=True)
 ```
 Note that in this case, the user is responsible for releasing the acquired devices.
 
