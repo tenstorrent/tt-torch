@@ -5,7 +5,6 @@ import torch
 from tt_torch.tools.utils import CompilerConfig
 from tt_torch.dynamo.backend import backend
 from PIL import Image
-import torch
 from torchvision import transforms
 import torchvision.models as models
 import tabulate
@@ -80,7 +79,7 @@ def multidevice(divided_urls):
 
     options = {}
     options["compiler_config"] = cc
-    devices = DeviceManager.get_available_devices()  # Acquire all available devices
+    parent, devices = DeviceManager.acquire_available_devices()
     num_devices = len(devices)
     tt_models = []
     for device in devices:
@@ -104,7 +103,7 @@ def multidevice(divided_urls):
     for thread in threads:
         predictions = thread.join()
         final_results.append(predictions)
-    DeviceManager.release_devices()  # Release all devices after use
+    DeviceManager.release_parent_device(parent, cleanup_sub_devices=True)
     return final_results
 
 
