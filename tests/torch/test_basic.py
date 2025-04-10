@@ -73,7 +73,9 @@ def test_add_multidevice():
         thread.join()
 
     DeviceManager.release_parent_device(parent, cleanup_sub_devices=True)
-    assert len(DeviceManager._devices) == 0, "Some devices are not released."
+    assert (
+        len(DeviceManager.get_parent_devices()) == 0
+    ), "Some devices are not released."
 
 
 def test_concat_dim0():

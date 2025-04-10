@@ -9,7 +9,7 @@ for the interactive demo that uses a single-device to classify an image using Re
 
 Or run,
 ```
-python demos/resnet/resnet50_data_parallel_demo.py
+python demos/resnet/resnet50_data_parallel_demo.py [--use_simplified_manager]
 ```
 for the demo on how to leverage the `DeviceManager` module to run ResNet image classification across multiple chips in parallel.
 
@@ -50,7 +50,7 @@ def main():
     options = {}
     options["compiler_config"] = cc
     # Acquires all available devices and returns them in a list
-    devices = DeviceManager.get_available_devices()
+    parent, devices = DeviceManager.acquire_available_devices()
     tt_models = []
     for device in devices:
         options["device"] = device # Explicitly compile the model for a specific device
@@ -58,7 +58,8 @@ def main():
             torch.compile(model, backend=backend, dynamic=False, options=options)
         )
     ...
-    DeviceManager.release_devices() # Release all acquired devices after use
+    # Release all acquired devices after use
+    DeviceManager.release_parent_device(parent, cleanup_sub_devices=True)
 ```
 Note that in this case, the user is responsible for releasing the acquired devices.
 
@@ -121,21 +122,4 @@ notebook: 0.005523681640625
 .
 {3 other URL results}
 ****************************************
-```
-
-## resnet50_single_vs_multi_device_compare.py
-
-This file just performs a simple performance test to verify the speedup of using multiple devices to split up the workload, compared to using only a single device.
-
-It tests the performance of two functions:
-- `singledevice()`: which compiles the ResNet model on a single device and uses that model to process 10 Image URLs.
-- `multidevice()`: which compiles the ResNet model on all available devices and uses each model to process an equal subset of the 10 Image URLs in parallel.
-
-Each function is ran for 10 iterations and the durations are averaged out.
-
-Running this on an N300 board with 2 available devices gives the following results:
-
-```
-Average Single device time (in s):  75.16102676391601
-Average Multi device time (in s):  41.56483373641968
 ```

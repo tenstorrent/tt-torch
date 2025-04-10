@@ -5,7 +5,6 @@ import torch
 from tt_torch.tools.utils import CompilerConfig
 from tt_torch.dynamo.backend import backend
 from PIL import Image
-import torch
 from torchvision import transforms
 import torchvision.models as models
 import tabulate
@@ -70,30 +69,14 @@ def get_predictions(tt_model, urls, topk=5):
     return results
 
 
-def multidevice(divided_urls):
+def multidevice(multi_models, divided_urls):
     """
     Running the ResNet model on all available devices in parallel.
     """
-    cc = CompilerConfig()
-    cc.enable_consteval = True
-    cc.consteval_parameters = True
-
-    options = {}
-    options["compiler_config"] = cc
-    devices = DeviceManager.get_available_devices()  # Acquire all available devices
-    num_devices = len(devices)
-    tt_models = []
-    for device in devices:
-        options["device"] = device
-        # Compile the model for each device
-        tt_models.append(
-            torch.compile(model, backend=backend, dynamic=False, options=options)
-        )
-
     threads = []
     for i in range(num_devices):
         thread = CustomThread(
-            target=get_predictions, args=(tt_models[i], divided_urls[i])
+            target=get_predictions, args=(multi_models[i], divided_urls[i])
         )
         threads.append(thread)
 
@@ -104,22 +87,13 @@ def multidevice(divided_urls):
     for thread in threads:
         predictions = thread.join()
         final_results.append(predictions)
-    DeviceManager.release_devices()  # Release all devices after use
     return final_results
 
 
-def singledevice(image_urls):
+def singledevice(tt_model, image_urls):
     """
     Running the ResNet model on a single device.
     """
-    cc = CompilerConfig()
-    cc.enable_consteval = True
-    cc.consteval_parameters = True
-
-    options = {}
-    options["compiler_config"] = cc
-    tt_model = torch.compile(model, backend=backend, dynamic=False, options=options)
-
     return get_predictions(tt_model, image_urls)
 
 
@@ -148,22 +122,54 @@ if __name__ == "__main__":
         for i in range(num_devices)
     ]
 
+    # Compile for single device
+    cc = CompilerConfig()
+    cc.enable_consteval = True
+    cc.consteval_parameters = True
+
+    single_options = {}
+    single_options["compiler_config"] = cc
+    single_model = torch.compile(
+        model, backend=backend, dynamic=False, options=single_options
+    )
+    print("Compiled model for single device")
+    # Execute this once to get the compilation overhead out of the way
+    singledevice(single_model, image_urls[:2])
+
     single_results = None
-    multi_results = None
     acc_duration = 0
-    for _ in range(NUM_ITERATIONS):
+    print("Starting single device inference perf testing runs")
+    for i in range(NUM_ITERATIONS):
+        print("Starting iteration: ", i + 1, " of ", NUM_ITERATIONS)
         start_time = time.time()
-        single_results = singledevice(image_urls)
+        single_results = singledevice(single_model, image_urls)
         end_time = time.time()
         acc_duration += end_time - start_time
     avg_duration_single = acc_duration / NUM_ITERATIONS
+
+    # Compile for multi-device
+    parent, devices = DeviceManager.acquire_available_devices()
+    multi_models = []
+    for device in devices:
+        multi_options = {}
+        multi_options["compiler_config"] = cc
+        multi_options["device"] = device
+        multi_models.append(
+            torch.compile(model, backend=backend, dynamic=False, options=multi_options)
+        )
+    print("Compiled models for multi device")
+    # Execute this once to get the compilation overhead out of the way
+    multidevice(multi_models, [[divided_urls[0][0]], [divided_urls[1][0]]])
+    multi_results = None
     acc_duration = 0
-    for _ in range(NUM_ITERATIONS):
+    for i in range(NUM_ITERATIONS):
+        print("Starting iteration: ", i + 1, " of ", NUM_ITERATIONS)
         start_time = time.time()
-        multi_results = multidevice(divided_urls)
+        multi_results = multidevice(multi_models, divided_urls)
         end_time = time.time()
         acc_duration += end_time - start_time
     avg_duration_multi = acc_duration / NUM_ITERATIONS
+    DeviceManager.release_parent_device(parent, cleanup_sub_devices=True)
     print("\n" * 5)
     print("Average Single device time (in s): ", avg_duration_single)
     print("Average Multi device time (in s): ", avg_duration_multi)
