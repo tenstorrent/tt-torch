@@ -224,8 +224,7 @@ class Executor:
             tt_mlir.close_mesh_device(device)
 
     def _generate_golden_intermediate_cache(self, gm, inputs):
-
-        print("generating golden intermediate cache")
+        print("Generating golden intermediate cache")
         node_to_tensor = {}
         input_index = 0
         outputs = []
@@ -260,7 +259,14 @@ class Executor:
                         args.append(arg)
 
                 golden = node.target(*args, **node.kwargs)
-                if len(golden) > 1:
+
+                # some ops return scalar (0D tensor) as output (e.g. aten.select.int)
+                if isinstance(golden, torch.Tensor) and golden.dim == 0:
+                    golden = golden.unsqueeze(0)
+
+                # some ops return a tuple of tensors as output (e.g. max_pool_2d_with_indices)
+                # we expect to only use the first, though this may be changed in the future
+                elif len(golden) > 1:
                     golden = golden[0]
                     print(
                         f"[WARNING] {node.name} has {len(golden)} outputs, but we can only get one from runtime."
@@ -306,7 +312,7 @@ class Executor:
             )
 
         if self.compiler_config._enable_intermediate_verification:
-            # put this as close to the binding as possible to ensure the GM is not mutated
+            # put this as close to the binding as possible to ensure the GM is not mutated past this point
             self._generate_golden_intermediate_cache(self.program, inputs)
 
         outputs = tt_mlir.run(device, binary, program_idx, preprocessed_inputs)
