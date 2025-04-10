@@ -173,21 +173,13 @@ jobs:
             report_file="${{ steps.strings.outputs.test_report_dir }}/$(echo $test | tr '/' '_' | tr ':' '_')__${{ steps.strings.outputs.test_report_path_models }}"
             echo "JUnitXML will be logged to $report_file"
 
-            # pytest --durations=0 -v "$test" \
-            #   --junit-xml="$report_file" \
-            #   --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
+            pytest --durations=0 -v "$test" \
+              --junit-xml="$report_file" \
+              --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
 
-            # Randomly decide the exit code
-            if (( RANDOM % 2 == 0 )); then
-                echo "Simulating failure for test: $test"
-                ec=1
-            else
-                echo "Simulating success for test: $test"
-                ec=0  # Simulate success
-            fi
 
-            # Check the return code of pytest (TODO FIX)
-            if [[ $ec -ne 0 ]]; then
+            # Check the return code of pytest
+            if [[ $? -ne 0 ]]; then
               echo "Test failed: $test"
               failure=1
             fi
