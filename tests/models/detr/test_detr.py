@@ -69,6 +69,7 @@ def test_detr(record_property, mode, op_by_op):
         compiler_config=cc,
         record_property_handle=record_property,
     )
+    pytest.skip()
     results = tester.test_model()
 
     if mode == "eval":

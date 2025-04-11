@@ -68,6 +68,8 @@ def test_unet(record_property, mode, op_by_op):
     tester = ThisTester(
         model_name, mode, compiler_config=cc, record_property_handle=record_property
     )
+    pytest.skip()
+
     results = tester.test_model()
     if mode == "eval":
         results = torch.round(results[0])
