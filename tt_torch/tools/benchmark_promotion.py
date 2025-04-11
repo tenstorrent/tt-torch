@@ -76,7 +76,7 @@ def find_duplicates(string_array):
 def discover_tests():
     in_tree_tests = enumerate_all_tests()
     benchmark_tests = parse_tests_from_matrix(
-        ".github/workflows/benchmarks/run-depth-benchmark-tests.yml"
+        ".github/workflows/run-depth-benchmark-tests.yml"
     )
 
     print("Verifying test sets contain no duplicates.")
@@ -107,13 +107,16 @@ def discover_tests():
     return added_tests
 
 
-def load_balance_tests_greedy(test_durations, n_partitions=10, print_summary=True):
+def load_balance_tests_greedy(
+    test_durations, n_partitions=10, print_summary=True, do_linearize=False
+):
     """
     Load balances test names into N partitions based on test execution time.
 
     Args:
         test_durations (dict): A dictionary where keys are test names and values are their execution times.
         n_partitions (int): Number of partitions to split the test names into.
+        do_linearize (bool): If True, do not load balance and run all tests in individual partitions.
 
     Returns:
         list of lists: A list containing N partitions, each with a subset of test names.
@@ -131,25 +134,44 @@ def load_balance_tests_greedy(test_durations, n_partitions=10, print_summary=Tru
     # Sort known tests by execution time in descending order
     known_tests.sort(key=lambda x: x[1], reverse=True)
 
-    # Initialize partitions and their total times
-    partitions = [[] for _ in range(n_partitions)]
-    partition_times = [0] * n_partitions
+    partitions = None
 
-    # Distribute known tests greedily to minimize the maximum partition time
-    for test_name, test_time in known_tests:
-        # Find the partition with the smallest total time
-        min_index = partition_times.index(min(partition_times))
-        partitions[min_index].append((test_name, test_time))
-        partition_times[min_index] += test_time
+    if not do_linearize:
+        # Initialize partitions and their total times
+        partitions = [[] for _ in range(n_partitions)]
+        partition_times = [0] * n_partitions
 
-    # Add unknown tests (-1 duration) to their own partitions
-    for test_name in unknown_tests:
-        partitions.append([(test_name, -1)])
+        # Distribute known tests greedily to minimize the maximum partition time
+        for test_name, test_time in known_tests:
+            # Find the partition with the smallest total time
+            min_index = partition_times.index(min(partition_times))
+            partitions[min_index].append(
+                {"full-test-name": test_name, "test-duration": test_time}
+            )
+            partition_times[min_index] += test_time
+
+        # Add unknown tests (-1 duration) to their own partitions
+        for test_name in unknown_tests:
+
+            partitions.append([{"full-test-name": test_name, "test-duration": -1}])
+    else:
+        # don't load balance and run all tests in a individual partitions
+        partitions = []
+        for test_name in unknown_tests:
+            partitions.append([{"full-test-name": test_name, "test-duration": -1}])
+        for test_name, test_time in known_tests:
+            partitions.append(
+                [{"full-test-name": test_name, "test-duration": test_time}]
+            )
 
     if print_summary:
         print("\nPartition Summary:")
         for i, partition in enumerate(partitions):
-            partition_duration = sum(test_durations.get(test, 0) for test in partition)
+            for test in partition:
+                print("test in partition: ", test)
+                print("\ttime ", test["test-duration"])
+
+            partition_duration = sum(test.get("test-duration") for test in partition)
             print(f"Partition {i + 1}:")
             print(f"  Tests: {partition}")
             print(f"  Estimated Duration: {partition_duration:.2f} seconds\n")
@@ -190,59 +212,75 @@ def parse_benchmark_results_xlsx(file_path):
 def generate_formatted_test_matrix_from_partitions(
     partitions, base_name="bmk", runs_on="wormhole_b0"
 ):
-    """
-    Generate a formatted test matrix for GitHub Actions based on test partitions.
-
-    Args:
-        partitions (list of lists): A list of partitions, where each partition is a list of test names.
-        base_name (str): Base name for the benchmark jobs (default: "benchmark").
-        runs_on (str): The runner type for the jobs (default: "wormhole_b0").
-
-    Returns:
-        str: A formatted test matrix as a string.
-    """
     matrix = []
-    for i, partition in enumerate(partitions, start=1):
+    splits = []
+    for i, partition in enumerate(partitions):
         job_name = f"{base_name}_{i}"
         # Append the test name to the job name for quarantined tests
         if len(partition) == 1:
             # sanitize partition names.
-            job_name += "_qtn_" + re.sub(r"[^\w\-]", "_", partition[0].split("::")[-1])
+            job_name += "_qtn_" + re.sub(
+                r"[^\w\-]", "_", partition[0]["full-test-name"].split("::")[-1]
+            )
         matrix.append(
             {
-                "runs-on": runs_on,
-                "name": job_name,
                 "tests": partition,
             }
         )
+        splits.append(
+            {
+                "runs-on": runs_on,
+                "name": job_name,
+                "group-id": i,  # zero indexed
+            }
+        )
+    # we cannot pass the matrix JSON string directly as a job output due to output size limits
+    return json.dumps(matrix), json.dumps(splits)
 
-    # Format the matrix as a string
-    # formatted_matrix = "build: ["
-    # for job in matrix:
-    #     formatted_matrix += f"  {{runs-on: '{job['runs-on']}', name: '{job['name']}', tests: {job['tests']}}},"
-    # formatted_matrix += "]"
-    build = [matrix]
 
-    return json.dumps(build, indent=2).replace('"', '\\"')
+def get_existing_execute_tests():
+    # We don't care about tests that already run in execute.
+    # Benchmarks tell us:
+    #   if a model regressed (eg. expect to run in execute, but now run in compile)
+    #   if a model is promotable (eg. expect to run in compile, runs in execute)
+    # Regression testing here is redundant to full model exec tests in nightly
+    # Models cannot be promoted beyond execute so we don't care about promotability either
+
+    exec_tests = []
+    exec_tests = parse_tests_from_matrix(
+        ".github/workflows/run-full-model-execution-tests.yml"
+    )
+    exec_tests.extend(
+        parse_tests_from_matrix(
+            ".github/workflows/run-full-model-execution-tests-nightly.yml"
+        )
+    )
+    return exec_tests
 
 
 def generate_dynamic_benchmark_test_matrix():
 
     output_file = "benchmark_test_matrix.json"  # hardcoded into CI
+    output_file_splits = "benchmark_test_matrix_splits.json"  # hardcoded into CI
     report_dir = "benchmark_report"
+    report_branch = "benchmark_report_fs"
 
-    # download previous report from run of depth-benchmarks workflow on main
+    download_artifact_command = [
+        "python",
+        "results/download_artifacts.py",
+        "--workflow",
+        "upload-benchmark-file.yml",
+        "--filter",
+        "xlsx",
+        "--branch",
+        report_branch,
+        "-o",
+        report_dir,
+    ]
+    print("Running download artifact command: ", " ".join(download_artifact_command))
+    # download previous report from reporting path
     subprocess.run(
-        [
-            "python",
-            "results/download_artifacts.py",
-            "--workflow",
-            "depth-benchmarks.yml",
-            "--filter",
-            "xlsx",
-            "-o",
-            report_dir,
-        ],
+        download_artifact_command,
         check=True,
         shell=False,
     )
@@ -254,12 +292,15 @@ def generate_dynamic_benchmark_test_matrix():
     ), f"Expected exactly one xlsx file in {report_dir}, found: {reports}"
     previous_run_results = parse_benchmark_results_xlsx(report_dir + "/" + reports[0])
 
+    # All pytests defined in tests/models
     in_tree_tests = enumerate_all_tests()
-    actual_test_durations_list = {}
 
+    actual_test_durations_list = {}
     quarantined_tests = []
 
     for test in in_tree_tests:
+
+        # Workaround to prevent quarantine of renamed tests with red/generality suffixing
         modified_test_name = test.replace("_red", "").replace("_generality", "")
 
         if test in previous_run_results.keys():
@@ -273,20 +314,44 @@ def generate_dynamic_benchmark_test_matrix():
             quarantined_tests.append(test)
 
     print(f"Quarantined test list (ct: {len(quarantined_tests)})")
-    # pprint.pprint(quarantined_tests)
-
     print(f"Actual test list (ct: {len(actual_test_durations_list)})")
-    # pprint.pprint(actual_test_durations_list)
+
+    # Remove all pytests already assessed in full model exec tests
+    already_executing_tests = get_existing_execute_tests()
+
+    initial_count = len(actual_test_durations_list)
+    # Prune the actual_test_durations_list
+    actual_test_durations_list = {
+        test: duration
+        for test, duration in actual_test_durations_list.items()
+        if test not in already_executing_tests
+    }
+    print(
+        f"{initial_count - len(actual_test_durations_list)} tests removed from the test list because they already are tested in EXECUTE"
+    )
 
     # Load balance the tests into a dynamic test matrix
-    test_splits = load_balance_tests_greedy(actual_test_durations_list)
-    fmt_matrix = generate_formatted_test_matrix_from_partitions(test_splits)
-    # print(fmt_matrix)
+    test_splits = load_balance_tests_greedy(
+        actual_test_durations_list, do_linearize=True
+    )
+    fmt_matrix, splits_matrix = generate_formatted_test_matrix_from_partitions(
+        test_splits
+    )
+    print("Formatted test matrix:")
+    print(fmt_matrix)
+    print("Test splits matrix")
+    print(splits_matrix)
 
     # Write the matrix to a file
     with open(output_file, "w") as f:
         f.write(fmt_matrix)
     print(f"Test matrix written to {output_file}")
+
+    # Write the splits to a file.
+
+    with open(output_file_splits, "w") as f:
+        f.write(splits_matrix)
+    print(f"Test matrix written to {output_file_splits}")
 
 
 if __name__ == "__main__":

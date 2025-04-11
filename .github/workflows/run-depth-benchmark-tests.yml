@@ -8,8 +8,8 @@ on:
         description: 'Docker image to use for build'
         required: true
         type: string
-      matrix-json:
-        description: 'Matrix JSON to use for build'
+      matrix-json-splits:
+        description: 'JSON string describing build matrix group configuration, an array of (id, name, runs-on) objects'
         required: true
         type: string
   workflow_run:
@@ -19,35 +19,17 @@ on:
 jobs:
   tests:
     timeout-minutes: 500
+    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
-        build: [
-          {runs-on: 'wormhole_b0', name: 'bmk_1_qtn_test_mamba[full-state-spaces/mamba-2.8b-hf-eval]', tests: ['tests/models/mamba/test_mamba.py::test_mamba[full-state-spaces/mamba-2.8b-hf-eval]']},
-          {runs-on: 'wormhole_b0', name: 'bmk_2_qtn_test_mamba[full-state-spaces/mamba-370m-hf-eval]', tests: ['tests/models/mamba/test_mamba.py::test_mamba[full-state-spaces/mamba-370m-hf-eval]']},
-          {runs-on: 'wormhole_b0', name: 'bmk_3_qtn_test_mamba[full-state-spaces/mamba-1.4b-hf-eval]', tests: ['tests/models/mamba/test_mamba.py::test_mamba[full-state-spaces/mamba-1.4b-hf-eval]']},
-          {runs-on: 'wormhole_b0', name: 'bmk_4_qtn_test_mamba[full-state-spaces/mamba-790m-hf-eval]', tests: ['tests/models/mamba/test_mamba.py::test_mamba[full-state-spaces/mamba-790m-hf-eval]']},
-          {runs-on: 'wormhole_b0', name: 'bmk_5', tests: ['tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-1-eval]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-regnet_y_16gf]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-regnet_x_32gf]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-regnet_y_3_2gf]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-regnet_y_800mf]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-regnet_x_8gf]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-resnet101]', 'tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-dla34.in1k]', 'tests/models/unet_carvana/test_unet_carvana.py::test_unet_carvana[full-eval]', 'tests/models/bloom/test_bloom.py::test_bloom[full-eval]', 'tests/models/roberta/test_roberta.py::test_roberta[full-eval]', 'tests/models/unet_brain/test_unet_brain.py::test_unet_brain[full-eval]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-resnet18]', 'tests/models/albert/test_albert_question_answering.py::test_albert_question_answering[full-twmkn9/albert-base-v2-squad2-eval]', 'tests/models/clip/test_clip.py::test_clip[full-eval]', 'tests/models/xglm/test_xglm.py::test_xglm[full-eval]', 'tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[full-microsoft/beit-base-patch16-224-eval]', 'tests/models/yolos/test_yolos.py::test_yolos[full-eval]', 'tests/models/gpt2/test_gpt2.py::test_gpt2[full-eval]']},
-          {runs-on: 'wormhole_b0', name: 'bmk_6', tests: ['tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-1.5-eval]', 'tests/models/t5/test_t5.py::test_t5[full-t5-base-eval]', 'tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[full-eval]', 'tests/models/flan_t5/test_flan_t5.py::test_flan_t5[full-eval]', 'tests/models/RMBG/test_RMBG.py::test_RMBG[full-eval]', 'tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-tf_efficientnet_lite0.in1k]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-wide_resnet101_2]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg19]', 'tests/models/llama/test_llama_3b.py::test_llama_3b[full-meta-llama/Llama-3.2-3B-eval]', 'tests/models/resnet50/test_resnet50.py::test_resnet[full-eval]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-resnext50_32x4d]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-regnet_x_800mf]', 'tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-xlarge-v2-eval]', 'tests/models/falcon/test_falcon.py::test_falcon[full-eval]', 'tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-base-v2-eval]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-vit_l_16]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-swin_v2_s]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-swin_s]', 'tests/models/vilt/test_vilt.py::test_vilt[full-eval]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-swin_v2_t]', 'tests/models/torchvision/test_torchvision_object_detection.py::test_torchvision_object_detection[full-ssd300_vgg16-eval]', 'tests/models/autoencoder_conv/test_autoencoder_conv_v2.py::test_autoencoder_conv_v2[full-eval]', 'tests/models/stable_diffusion/test_stable_diffusion.py::test_stable_diffusion[full-eval]']},
-          {runs-on: 'wormhole_b0', name: 'bmk_7', tests: ['tests/models/gpt_neo/test_gpt_neo.py::test_gpt_neo[full-eval]', 'tests/models/deepseek/test_deepseek_qwen.py::test_deepseek_qwen[full-deepseek-ai/DeepSeek-R1-Distill-Qwen-32B-eval]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-regnet_y_32gf]', 'tests/models/hardnet/test_hardnet.py::test_hardnet[full-eval]', 'tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-tf_efficientnet_lite2.in1k]', 'tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-tf_efficientnet_lite1.in1k]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-resnext101_64x4d]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-regnet_y_400mf]', 'tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io[full-eval]', 'tests/models/whisper/test_whisper.py::test_whisper[full-eval]', 'tests/models/distilbert/test_distilbert.py::test_distilbert_multiloop[full-distilbert-base-uncased-eval-64]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-regnet_x_3_2gf]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg11]', 'tests/models/openpose/test_openpose_v2.py::test_openpose_v2[full-eval]', 'tests/models/Qwen/test_qwen2_token_classification.py::test_qwen2_token_classification[full-Qwen/Qwen2-7B-eval]', 'tests/models/dpr/test_dpr.py::test_dpr[full-eval]', 'tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[full-microsoft/beit-large-patch16-224-eval]', 'tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-inception_v4.tf_in1k]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-densenet169]', 'tests/models/deit/test_deit.py::test_deit[full-facebook/deit-base-patch16-224-eval]', 'tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval]', 'tests/models/torchvision/test_torchvision_object_detection.py::test_torchvision_object_detection[full-retinanet_resnet50_fpn_v2-eval]']},
-          {runs-on: 'wormhole_b0', name: 'bmk_8', tests: ['tests/models/opt/test_opt.py::test_opt[full-eval]', 'tests/models/glpn_kitti/test_glpn_kitti.py::test_glpn_kitti[full-eval]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-vit_h_14]', 'tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-tf_efficientnet_lite4.in1k]', 'tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-ghostnet_100.in1k]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-mobilenet_v3_large]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-mobilenet_v3_small]', 'tests/models/t5/test_t5.py::test_t5[full-t5-small-eval]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg19_bn]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg16]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg13_bn]', 'tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval]', 'tests/models/llama/test_llama_7b.py::test_llama_7b[full-eval]', 'tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base[full-eval]', 'tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-large-v2-eval]', 'tests/models/squeeze_bert/test_squeeze_bert.py::test_squeeze_bert[full-eval]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-swin_v2_b]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-densenet201]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-densenet161]', 'tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-ghostnetv2_100.in1k]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-vit_b_16]', 'tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_red[full-eval-ese_vovnet19b_dw.ra_in1k]', 'tests/models/codegen/test_codegen.py::test_codegen[full-eval]']},
-          {runs-on: 'wormhole_b0', name: 'bmk_9', tests: ['tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[full-Qwen/Qwen2.5-1.5B-eval]', 'tests/models/t5/test_t5.py::test_t5[full-t5-large-eval]', 'tests/models/yolov3/test_yolov3.py::test_yolov3[full-eval]', 'tests/models/yolov4/test_yolov4.py::test_yolov4[full-eval]', 'tests/models/torchvision/test_torchvision_object_detection.py::test_torchvision_object_detection[full-ssdlite320_mobilenet_v3_large-eval]', 'tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-tf_efficientnet_lite3.in1k]', 'tests/models/detr/test_detr.py::test_detr[full-eval]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-regnet_y_1_6gf]', 'tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-regnet_x_16gf]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-wide_resnet50_2]', 'tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-xxlarge-v2-eval]', 'tests/models/bert/test_bert.py::test_bert[full-eval]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg11_bn]', 'tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-mobilenetv1_100.ra4_e3600_r224_in1k]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-resnet34]', 'tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval]', 'tests/models/albert/test_albert_sequence_classification.py::test_albert_sequence_classification[full-textattack/albert-base-v2-imdb-eval]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-vit_l_32]', 'tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-densenet121]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-vit_b_32]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-swin_t]']},
-          {runs-on: 'wormhole_b0', name: 'bmk_10', tests: ['tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet[full-eval]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-regnet_y_128gf]', 'tests/models/deepseek/test_deepseek.py::test_deepseek[full-deepseek-ai/DeepSeek-V3-eval]', 'tests/models/segformer/test_segformer.py::test_segformer[full-eval]', 'tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-hrnet_w18.ms_aug_in1k]', 'tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-xception71.tf_in1k]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-regnet_y_8gf]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-resnext101_32x8d]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-resnet152]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-mobilenet_v2]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg16_bn]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-resnet50]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg13]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-regnet_x_1_6gf]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-regnet_x_400mf]', 'tests/models/unet/test_unet.py::test_unet[full-eval]', 'tests/models/resnet/test_resnet.py::test_resnet[full-eval]', 'tests/models/albert/test_albert_token_classification.py::test_albert_token_classification[full-albert/albert-base-v2-eval]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-swin_b]', 'tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-2-eval]', 'tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-mixer_b16_224.goog_in21k]', 'tests/models/torchvision/test_torchvision_object_detection.py::test_torchvision_object_detection[full-retinanet_resnet50_fpn-eval]', 'tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-googlenet]', 'tests/models/MobileNetV2/test_MobileNetV2_onnx.py::test_MobileNetV2[full-eval]']},
-          {runs-on: 'wormhole_b0', name: 'bmk_11_qtn_test_autoencoder_conv[full-eval]', tests: ['tests/models/autoencoder_conv/test_autoencoder_conv.py::test_autoencoder_conv[full-eval]']},
-          {runs-on: 'wormhole_b0', name: 'bmk_12_qtn_test_hand_landmark[full-eval]', tests: ['tests/models/hand_landmark/test_hand_landmark.py::test_hand_landmark[full-eval]']},
-          {runs-on: 'wormhole_b0', name: 'bmk_13_qtn_test_mistral_7b[full-eval]', tests: ['tests/models/mistral/test_mistral_7b.py::test_mistral_7b[full-eval]']},
-          {runs-on: 'wormhole_b0', name: 'bmk_14_qtn_test_musicgen_small[full-eval]', tests: ['tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small[full-eval]']},
-          {runs-on: 'wormhole_b0', name: 'bmk_15_qtn_test_openpose[full-eval]', tests: ['tests/models/openpose/test_openpose.py::test_openpose[full-eval]']},
-          {runs-on: 'wormhole_b0', name: 'bmk_16_qtn_test_segment_anything[full-eval]', tests: ['tests/models/segment_anything/test_segment_anything.py::test_segment_anything[full-eval]']},
-          {runs-on: 'wormhole_b0', name: 'bmk_17_qtn_test_speecht5_tts[full-eval]', tests: ['tests/models/speecht5_tts/test_speecht5_tts.py::test_speecht5_tts[full-eval]']},
-          {runs-on: 'wormhole_b0', name: 'bmk_18_qtn_test_vit[full-eval]', tests: ['tests/models/vit/test_vit.py::test_vit[full-eval]']},
-          {runs-on: 'wormhole_b0', name: 'bmk_19_qtn_test_yolov5[full-eval]', tests: ['tests/models/yolov5/test_yolov5.py::test_yolov5[full-eval]']},
-        ]
+        group: ${{ fromJson(inputs.matrix-json-splits) }}
 
     runs-on:
-      - ${{ matrix.build.runs-on }}
+      - ${{ matrix.group.runs-on }}
 
-    name: "test benchmark (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
+    # use short names because github actions GUI crops long names including model names
+    name: "bmk (${{ matrix.group.name }})"
 
     container:
       image: ${{ inputs.docker-image }}
@@ -69,7 +51,7 @@ jobs:
       id: fetch-job-id
       uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
       with:
-        job_name: "test benchmark (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})" # reference above tests.name
+        job_name: "bmk (${{ matrix.group.name }})" # reference above tests.name
 
     - name: Set reusable strings
       id: strings
@@ -82,6 +64,10 @@ jobs:
         echo "install-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
         echo "dist-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
         echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+
+        # hardcoded output filename
+        echo "matrix-json=benchmark_test_matrix.json" >> "$GITHUB_OUTPUT"
+
     - name: Use build artifacts
       uses: actions/download-artifact@v4
       with:
@@ -102,6 +88,18 @@ jobs:
         source env/activate
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
+    - name: Download test matrix JSON file
+      uses: actions/download-artifact@v4
+      with:
+        name: benchmark-test-matrix-json
+        merge-multiple: true
+        path: ${{ steps.strings.outputs.work-dir }}
+
+    - name: List directory
+      shell: bash
+      run: |
+        ls -l ${{ steps.strings.outputs.work-dir }}
+
     - name: Run Execution Benchmark Tests
       env:
         DOCKER_CACHE_ROOT: /mnt/dockercache
@@ -113,29 +111,93 @@ jobs:
         source env/activate
         set +e
         mkdir -p ${{ steps.strings.outputs.work-dir }}/pytest-logs
+
+        echo "Matrix group ${{ matrix.group.name }} runs-on ${{ matrix.group.runs-on }} with index ${{ matrix.group.group-id }}"
+
+        # Read the JSON file and extract the per-matrix testlist assigned to this runner (from its group-id)
+        testlist=$(cat ${{ steps.strings.outputs.matrix-json }} | jq ".[${{ matrix.group.group-id }}]")
+
+        # Print all tests to be run in this group
+        echo "Tests to be run in matrix with group ${{ matrix.group.group-id }}"
+        echo "$testlist" | jq -c '.tests[] | {name: .["full-test-name"], duration: .["test-duration"]}'
+
+
         counter=0
-        total_tests=$(echo '${{ toJSON(matrix.build.tests) }}' | jq -r '.[]' | wc -l)
-        for test in $(echo '${{ toJSON(matrix.build.tests) }}' | jq -r '.[]'); do
+        total_tests=$(echo $testlist | jq -r '.[]' | wc -l)
+
+        # Given a test with known runtime, allow it to run up to timeout_buffer X its expected runtime before killing it.
+        # timeout_buffer=5
+        # timeout_logname="${{ steps.strings.outputs.work-dir }}/pytest-logs/group_${{matrix.group.group-id}}_timeout.log"
+
+        # iterate over all tests in testlist
+        echo "$testlist" | jq -c '.tests[]' | while read -r test; do
+
+            # Extract the test name and duration from JSON object "test"
+
+            raw_test_name=$(echo "$test" | jq -r '.["full-test-name"]')
+            test_name=$(echo "$raw_test_name" | sed 's/[^a-zA-Z0-9]/_/g')
+
+            test_duration=$(echo "$test" | jq -r '.["test-duration"]')
+
+            # Bash only supports integer arithmetic, so to compute fp timeout * int buffer we need to pipe it to
+            # something that supports fp arithmetic like python
+
+            # buffered_duration=-1
+
+            # Determine buffered duration and quarantine status
+            # if [ "$test_duration" = "-1" ]; then
+            #     buffered_duration=-1
+            #     echo "Timeout: $buffered_duration seconds (test_duration is -1, no timeout applied for quarantined tests.)"
+            # else
+            #     buffered_duration=$(python -c "print(int($test_duration * $timeout_buffer))")
+            #     echo "Timeout: $buffered_duration seconds (expected $test_duration x $timeout_buffer)"
+            # fi
+
             counter=$((counter + 1))
-            test_name=$(echo "$test" | sed 's/[^a-zA-Z0-9]/_/g')  # Sanitize test name for filename
+
             echo "========================================"
-            echo "Running test $counter of $total_tests: $test_name"
+            echo "Running test $counter of $total_tests: $raw_test_name" in this job
+            echo "with expected duration $test_duration seconds"
             echo "========================================"
 
-            pytest -svv "$test" \
-                --junit-xml=${{ steps.strings.outputs.test_report_path_models }}_subtest_${test_name}.xml \
-                --crashsafe | tee ${{ steps.strings.outputs.work-dir }}/pytest-logs/${test_name}.log
+            # use GNU timeout to autokill test after test_duration seconds
+            # sends sigterm by default
+
+            # if [ "$buffered_duration" != "-1" ]; then
+            #     timeout "${buffered_duration}s" pytest -svv "$raw_test_name" \
+            #         --junit-xml=${{ steps.strings.outputs.test_report_path_models }}_subtest_${test_name}.xml \
+            #         --crashsafe | tee ${{ steps.strings.outputs.work-dir }}/pytest-logs/${test_name}.log
+            # else
+            #     pytest -svv "$raw_test_name" \
+            #         --junit-xml=${{ steps.strings.outputs.test_report_path_models }}_subtest_${test_name}.xml \
+            #         --crashsafe | tee ${{ steps.strings.outputs.work-dir }}/pytest-logs/${test_name}.log
+            # fi
+
+            pytest -svv "$raw_test_name" \
+              --junit-xml=${{ steps.strings.outputs.test_report_path_models }}_subtest_${test_name}.xml \
+              --crashsafe | tee ${{ steps.strings.outputs.work-dir }}/pytest-logs/${test_name}.log
+
+            # # Check the exit status of the timeout command for timeout detection.
+            # exit_status=$?
+            # if [ $exit_status -eq 124 ]; then
+            #     echo "Test $raw_test_name timed out after $test_duration seconds."
+            #     # Perform conditional actions for timeout, e.g., log or mark as failed
+            #     echo "$raw_test_name" >> timeout_logname
+            # else
+            #     echo "Test $raw_test_name completed successfully."
+            # fi
 
             echo "Wrote junitxml report ${{ steps.strings.outputs.test_report_path_models }}_subtest_${test_name}.xml"
             echo "wrote log ${{ steps.strings.outputs.work-dir }}/pytest-logs/${test_name}.log"
         done
+
         set -e
         exit 0 # force successful exit
 
     - name: Upload Pytest Logs
       uses: actions/upload-artifact@v4
       with:
-        name: pytest-logs-${{ matrix.build.runs-on }}-${{ matrix.build.name }}
+        name: pytest-logs-${{ matrix.group.group-id }}-${{ matrix.group.name }}
         path: ${{ steps.strings.outputs.work-dir }}/pytest-logs
 
     - name: Postprocess and Fuse Test Reports
@@ -148,5 +210,5 @@ jobs:
       uses: actions/upload-artifact@v4
       if: success() || failure()
       with:
-        name: test-reports-models-benchmark-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        name: test-reports-models-benchmark-${{ matrix.group.runs-on }}-${{ matrix.group.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: ${{ steps.strings.outputs.test_report_path_models }}
