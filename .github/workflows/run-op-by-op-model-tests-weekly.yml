@@ -41,6 +41,7 @@ jobs:
             runs-on: wormhole_b0, name: "bert", tests: "
               tests/models/distilbert/test_distilbert.py::test_distilbert
               tests/models/bert/test_bert.py::test_bert
+              tests/models/bert/test_bert_turkish.py::test_bert_turkish
               tests/models/squeeze_bert/test_squeeze_bert.py::test_squeeze_bert
               "
           },
