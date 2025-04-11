@@ -190,6 +190,10 @@ def parse_runtime_output(output):
 
         return error_message
 
+    timeout_message = re.search(r"Timeout exceeded for op.*", output)
+    if timeout_message is not None:
+        return timeout_message.group(0)
+
     return "Error message not extracted."
 
 
@@ -359,10 +363,6 @@ def create_summary_worksheet(workbook, model_names):
         worksheet.write(row, 16, executing_formula)
         worksheet.set_column(16, 16, 15)
 
-        # Apply conditional formatting to the percentage columns per model.
-        apply_percentage_conditional_format(worksheet, row, 12, color_formats, True)
-        apply_percentage_conditional_format(worksheet, row, 15, color_formats, True)
-
         # Determine how many ops for model hit unknown error (column M is "Compile error")
         unknown_errors_formula = f'=COUNTIF(INDIRECT("\'" & "{model_name}" & "\'!M:M"), "Error message not extracted.")'
         worksheet.set_column(17, 17, 2)
@@ -370,6 +370,19 @@ def create_summary_worksheet(workbook, model_names):
         worksheet.write(2, 18, "Unknown Errors")
         worksheet.write(row, 18, unknown_errors_formula)
         worksheet.set_column(19, 19, 2)
+        apply_non_zero_conditional_format(worksheet, row, 18, 6, color_formats)
+
+        # Determine how many ops for model hit timeout error
+        timeout_errors_formula = f'=COUNTIFS(INDIRECT("\'" & "{model_name}" & "\'!M:M"), "*Timeout exceeded for op*")'
+        worksheet.set_column(20, 20, 13)
+        worksheet.write(2, 20, "Timeouts")
+        worksheet.write(row, 20, timeout_errors_formula)
+        worksheet.set_column(21, 21, 2)
+        apply_non_zero_conditional_format(worksheet, row, 20, 6, color_formats)
+
+        # Apply conditional formatting to the percentage columns per model.
+        apply_percentage_conditional_format(worksheet, row, 12, color_formats, True)
+        apply_percentage_conditional_format(worksheet, row, 15, color_formats, True)
 
         # Finished the per-model row now, move to the next.
         row += 1
@@ -384,20 +397,26 @@ def create_summary_worksheet(workbook, model_names):
         total_formula = f"=SUM({xl_rowcol_to_cell(data_start_row, col)}:{xl_rowcol_to_cell(data_end_row, col)})"
         worksheet.write(row, col, total_formula)
 
+    # Add totals for unknown errors and timeouts
+    total_formula = f"=SUM({xl_rowcol_to_cell(data_start_row, 18)}:{xl_rowcol_to_cell(data_end_row, 18)})"
+    worksheet.write(row, 18, total_formula)
+    total_formula = f"=SUM({xl_rowcol_to_cell(data_start_row, 20)}:{xl_rowcol_to_cell(data_end_row, 20)})"
+    worksheet.write(row, 20, total_formula)
+
     # Add more top-level summaries to the right of existing data
-    worksheet.set_column(20, 20, 25)
-    worksheet.write(2, 20, "Models Total:")
-    worksheet.write(2, 21, len(model_names))
-    worksheet.write(3, 20, "Models Fully Compiling to TTNN:")
+    worksheet.set_column(22, 22, 25)
+    worksheet.write(2, 22, "Models Total:")
+    worksheet.write(2, 23, len(model_names))
+    worksheet.write(3, 22, "Models Fully Compiling to TTNN:")
     worksheet.write_formula(
         3,
-        21,
+        23,
         f"=COUNTIF({xl_rowcol_to_cell(3, 12)}:{xl_rowcol_to_cell(3+len(model_names)-1, 12)}, 100%)",
     )
-    worksheet.write(4, 20, "Models Fully Executing on Device:")
+    worksheet.write(4, 22, "Models Fully Executing on Device:")
     worksheet.write_formula(
         4,
-        21,
+        23,
         f"=COUNTIF({xl_rowcol_to_cell(3, 15)}:{xl_rowcol_to_cell(3+len(model_names)-1, 15)}, 100%)",
     )
 

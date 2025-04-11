@@ -19,7 +19,8 @@ class ThisTester(ModelTester):
             "openai/whisper-small", torch_dtype=torch.bfloat16
         )
         model.config.forced_decoder_ids = None
-        return model.generate
+        model.config.use_cache = False
+        return model
 
     def _load_inputs(self):
         # load dummy dataset and read audio files
@@ -29,28 +30,14 @@ class ThisTester(ModelTester):
         sample = ds[0]["audio"]
         input_features = self.tokenizer(
             sample["array"], sampling_rate=sample["sampling_rate"], return_tensors="pt"
-        ).input_features
-        return input_features.to(torch.bfloat16)
-
-    def run_model(self, model, input_features):
-        # generate token ids
-        predicted_ids = model(input_features)
-        # decode token ids to text
-        transcription = self.tokenizer.batch_decode(
-            predicted_ids, skip_special_tokens=True
-        )
-        return transcription
-
-    def set_model_eval(self, model):
-        return model
+        ).to(torch.bfloat16)
+        input_features["decoder_input_ids"] = torch.tensor([[50258]])
+        return input_features
 
 
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
-)
-@pytest.mark.xfail(
-    reason="Fails due to pt2 compile issue when finishing generation, but we can still generate a graph"
 )
 @pytest.mark.parametrize(
     "op_by_op",
@@ -68,12 +55,14 @@ def test_whisper(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    # TODO Enable checking - https://github.com/tenstorrent/tt-torch/issues/593
     tester = ThisTester(
         model_name,
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
-        is_token_output=True,
+        assert_pcc=False,
+        assert_atol=False,
     )
     tester.test_model()
     tester.finalize()

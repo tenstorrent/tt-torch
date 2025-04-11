@@ -172,9 +172,6 @@ class Executor:
         for input in inputs:
             # Handle scalar inputs.
             if not hasattr(input, "dtype"):
-                assert (
-                    type(input) is not bool
-                ), "Conversion for scalar boolean is not supported."
                 new_inputs = new_inputs + ((input),)
                 continue
 
@@ -349,29 +346,7 @@ class OpByOpExecutor(Executor):
                 transformed_inp = self.transform_input(inp)
                 if transformed_inp is not None:
                     processed_inputs.append(transformed_inp)
-
-        # Typecast the unsupported data types to hardware supported types.
-        supported_inputs = ()
-        for input in processed_inputs:
-            # Handle scalar inputs.
-            if not hasattr(input, "dtype"):
-                assert (
-                    type(input) is not bool
-                ), "Conversion for scalar boolean is not supported."
-                supported_inputs = supported_inputs + ((input),)
-                continue
-
-            # Apply type conversion if required.
-            input_type = input.dtype
-            if input_type in self.type_conversion.keys():
-                supported_inputs = supported_inputs + (
-                    (input.to(dtype=self.type_conversion[input_type])),
-                )
-                continue
-
-            # No conversion required.
-            supported_inputs = supported_inputs + ((input),)
-
+        supported_inputs = self.typecast_inputs(processed_inputs)
         return supported_inputs
 
     def get_input_shapes_and_constants(self, *inputs):
@@ -504,6 +479,7 @@ class OpByOpExecutor(Executor):
         result = {}
         start = time.time()
         outputs = [None]
+        timeout_exceeded = False
         while True:
             if not self.execute_process.is_alive():
                 self.execute_process = None
@@ -518,6 +494,7 @@ class OpByOpExecutor(Executor):
             if time.time() - start > self.compiler_config.single_op_timeout:
                 self.execute_process.terminate()
                 self.execute_process = None
+                timeout_exceeded = True
                 break
 
         if inputs_file_path and os.path.isfile(inputs_file_path):
@@ -536,5 +513,10 @@ class OpByOpExecutor(Executor):
             stderr_data = stderr_data.replace("\n", "\\n")
             stderr_data = re.sub(r"[^\x20-\x7E]", "", stderr_data)
             file_stderr.close()
+
+            # If timeout is exceeded and stderr empty, add message and print to stdout.
+            if timeout_exceeded and not stderr_data:
+                stderr_data = f"Timeout exceeded for op after {self.compiler_config.single_op_timeout} seconds."
+                print(stderr_data, flush=True)
 
         return outputs, stderr_data

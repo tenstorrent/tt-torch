@@ -30,6 +30,7 @@ from tt_torch.tools.utils import (
     OpByOpBackend,
     CompilerConfig,
     CompileDepth,
+    tt_torch_error_message,
 )
 
 
@@ -135,6 +136,7 @@ def _base_backend(gm, example_inputs, compiler_config):
     return executor
 
 
+@tt_torch_error_message
 def backend(gm, example_inputs, options=None):
     assert isinstance(gm, torch.fx.GraphModule), "Backend only supports torch graphs"
 

@@ -44,7 +44,6 @@ jobs:
                   tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[full-eval]
                   tests/models/roberta/test_roberta.py::test_roberta[full-eval]
                   tests/models/hardnet/test_hardnet.py::test_hardnet[full-eval]
-                  tests/models/bert/test_bert.py::test_bert[full-eval]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-tf_efficientnet_lite0.in1k]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-tf_efficientnet_lite1.in1k]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-tf_efficientnet_lite2.in1k]
@@ -63,6 +62,7 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-vit_h_14]
                   tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small[full-eval]
                   tests/models/yolos/test_yolos.py::test_yolos[full-eval]
+                  tests/models/whisper/test_whisper.py::test_whisper[full-eval]
             "
           },
           {
@@ -86,15 +86,22 @@ jobs:
             "
           },
           {
-            # Approximately 45 minutes.
+            # Approximately 80 minutes.
             runs-on: wormhole_b0, name: "eval_5", tests: "
                   tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[full-Qwen/Qwen2.5-1.5B-eval]
+                  tests/models/opt/test_opt.py::test_opt[full-eval]
             "
           },
           {
             # Approximately 60 minutes.
             runs-on: wormhole_b0, name: "eval_6", tests: "
                   tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet[full-eval]
+            "
+          },
+          {
+            # Approximately 60 minutes.
+            runs-on: wormhole_b0, name: "eval_7_bert_qrtn", tests: "
+                  tests/models/bert/test_bert.py::test_bert[full-eval]
             "
           }
         ]
@@ -136,6 +143,8 @@ jobs:
         echo "install-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
         echo "dist-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
         echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+        echo "test_report_dir=$(pwd)/test-reports" >> "$GITHUB_OUTPUT"
+
     - name: Use build artifacts
       uses: actions/download-artifact@v4
       with:
@@ -158,23 +167,58 @@ jobs:
 
     - name: Run Full Model Execution Tests
       env:
-        HF_HOME: /mnt/dockercache/huggingface
-        TORCH_HOME: /mnt/dockercache/torch
+        DOCKER_CACHE_ROOT: /mnt/dockercache
+        HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
+        TORCH_HOME: ${{ env.DOCKER_CACHE_ROOT }}/torch
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
       shell: bash
       run: |
         source env/activate
 
-        pytest --durations=50 -v ${{matrix.build.tests}} \
-          --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
-          --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
+        # Create a directory for test reports
+        mkdir -p ${{ steps.strings.outputs.test_report_dir }}
+
+        # prevent script termination on failure
+        set +e
+
+        failure=0
+
+        # Split the test string into individual tests and run them one by one
+        echo "${{ matrix.build.tests }}" | tr ' ' '\n' | while read -r test; do
+          if [[ -n "$test" ]]; then
+            echo "Running test: $test"
+            report_file="${{ steps.strings.outputs.test_report_dir }}/$(echo $test | tr '/' '_' | tr ':' '_')__${{ steps.strings.outputs.test_report_path_models }}"
+
+            echo "JUnitXML logged to $report_file"
+
+            pytest --durations=0 -v "$test" \
+              --junit-xml="$report_file" \
+              --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
+            # Check the return code of pytest
+            if [[ $? -ne 0 ]]; then
+              echo "Test failed: $test"
+              failure=1
+            fi
+          fi
+        done
+
+        set -e
+
+        # Exit with the appropriate code
+        if [[ $failure -ne 0 ]]; then
+          echo "One or more tests failed."
+          exit 1
+        else
+          echo "All tests passed."
+          exit 0
+        fi
 
     - name: Upload Test Report Models
       uses: actions/upload-artifact@v4
       if: success() || failure()
       with:
         name: test-reports-models-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
-        path: ${{ steps.strings.outputs.test_report_path_models }}
+        path: ${{ steps.strings.outputs.test_report_dir }}
 
     - name: Upload coverage reports to Codecov
       if: ${{ (success() || failure()) && inputs.run-codecov == 'true' }}

@@ -40,6 +40,7 @@ def verify_against_golden(
     # Distinct value to put in the `pccs` list so we can append the correct log
     SKIPPED_PCC_CALCULATION_FOR_SINGLE_VALUE = None
     SKIPPED_NON_TENSOR_ITEM = None
+
     for i, (golden, calculated) in enumerate(zip(golden_tensors, calculated_tensors)):
         if not isinstance(golden, torch.Tensor) or not isinstance(
             calculated, torch.Tensor
@@ -94,6 +95,8 @@ def verify_against_golden(
     passed_atol = True
     err_msg = ""
     msg = ""
+
+    # Iterate over all tensors and their results and build a message for printing.
     for i, ((pcc_passed, pcc_), (atol_passed, atol_), atol_threshold) in enumerate(
         zip(zip(pcc_passeds, pccs), zip(atols_passeds, atols), atol_thresholds)
     ):
@@ -121,6 +124,7 @@ def verify_against_golden(
                     + f"  ATOL: {atol_:0,.4f}, threshold: {atol_threshold}{f' (calculated using relative_atol: {relative_atol})' if relative_atol is not None else ''} "
                 )
                 msg = msg + f"{check_mark}\n"
+            msg = msg + f"{check_mark}\n"
         else:
             msg = msg + f"{red_x if assert_atol else atol_warning}\n"
 
@@ -130,25 +134,26 @@ def verify_against_golden(
             )
             passed_atol = False
 
-        if assert_pcc and assert_atol:
-            if passed_pcc and passed_atol:
-                print(msg)
-            else:
-                assert False, err_msg
-        elif not assert_pcc and assert_atol:
-            print("Ignoring PCC check\n")
-            if passed_atol:
-                print(msg)
-            else:
-                assert False, err_msg
-        elif assert_pcc and not assert_atol:
-            print("Ignoring ATOL check\n")
-            if passed_pcc:
-                print(msg)
-            else:
-                assert False, err_msg
-        else:
+    # Now that all tensors are checked, print the final message
+    if assert_pcc and assert_atol:
+        if passed_pcc and passed_atol:
             print(msg)
+        else:
+            assert False, err_msg
+    elif not assert_pcc and assert_atol:
+        print("Ignoring PCC check\n")
+        if passed_atol:
+            print(msg)
+        else:
+            assert False, err_msg
+    elif assert_pcc and not assert_atol:
+        print("Ignoring ATOL check\n")
+        if passed_pcc:
+            print(msg)
+        else:
+            assert False, err_msg
+    else:
+        print(msg)
 
     return pccs, atols, passed_pcc, passed_atol
 

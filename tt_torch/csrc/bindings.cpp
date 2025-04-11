@@ -2,16 +2,24 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "tt-mlir-interface.hpp"
-#include "tt/runtime/types.h"
+// c++ standard library includes
 #include <optional>
+
+// other library includes
 #include <pybind11/cast.h>
-#if defined(TT_RUNTIME_DEBUG) && TT_RUNTIME_DEBUG == 1
-#include "tt/runtime/detail/debug.h"
-#include "tt/runtime/runtime.h"
-#endif
 #include <pybind11/pybind11.h>
 #include <torch/extension.h>
+
+// tt-mlir includes
+#if defined(TT_RUNTIME_DEBUG) && TT_RUNTIME_DEBUG == 1
+#include "tt/runtime/detail/debug.h"
+#endif
+#include "tt/runtime/runtime.h"
+#include "tt/runtime/types.h"
+#include "tt/runtime/utils.h"
+
+// tt-torch includes
+#include "tt-mlir-interface.hpp"
 
 namespace py = pybind11;
 
@@ -73,13 +81,6 @@ static torch::ScalarType dt_to_torch_scalar_type(tt::target::DataType df) {
 }
 
 static tt::runtime::Tensor create_tensor(const torch::Tensor &tensor) {
-  auto data = std::shared_ptr<void>(
-      tensor.data_ptr(),
-      [tensor](void *) {
-        (void)tensor;
-      } // Capture tensor by value to increase ref count and keep it alive
-  );
-
   auto shape =
       std::vector<uint32_t>(tensor.sizes().begin(), tensor.sizes().end());
   if (shape.empty()) {
@@ -98,13 +99,10 @@ static tt::runtime::Tensor create_tensor(const torch::Tensor &tensor) {
   // Our runtime expects that this stride is accurate. So, we will require
   // that this torch tensor is contiguous and then calculate a fully-accurate
   // stride for it.
-  std::vector<uint32_t> stride(shape.size(), 1);
-  for (int i = shape.size() - 2; i >= 0; --i) {
-    stride[i] = shape[i + 1] * stride[i + 1];
-  }
+  std::vector<uint32_t> stride = tt::runtime::utils::calculateStride(shape);
 
-  return tt::runtime::createTensor(
-      data, shape, stride, tensor.element_size(),
+  return tt::runtime::createBorrowedHostTensor(
+      tensor.data_ptr(), shape, stride, tensor.element_size(),
       torch_scalar_type_to_dt(tensor.scalar_type()));
 }
 
@@ -212,7 +210,11 @@ preprocess_inputs(tt::runtime::Device device, std::vector<at::Tensor> &inputs,
                    tt::runtime::Layout layout = tt::runtime::getLayout(
                        binary, program_idx, rt_inputs_with_layout.size());
 
-                   return tt::runtime::toLayout(t, device, layout);
+                   tt::runtime::Tensor tensor =
+                       tt::runtime::toLayout(t, device, layout);
+
+                   tt::runtime::setTensorRetain(tensor, /*retain=*/true);
+                   return tensor;
                  });
 
   return rt_inputs_with_layout;
@@ -220,7 +222,7 @@ preprocess_inputs(tt::runtime::Device device, std::vector<at::Tensor> &inputs,
 
 std::vector<at::Tensor> run(tt::runtime::Device device,
                             tt::runtime::Binary binary, uint32_t program_idx,
-                            const std::vector<tt::runtime::Tensor> &rt_inputs) {
+                            std::vector<tt::runtime::Tensor> &rt_inputs) {
 
   std::vector<tt::runtime::Tensor> rt_outputs =
       tt::runtime::submit(device, binary, program_idx, rt_inputs);
@@ -256,6 +258,18 @@ std::vector<at::Tensor> run_end_to_end(std::vector<at::Tensor> &inputs,
   tt::runtime::closeMeshDevice(device);
 
   return outputs;
+}
+
+tt::runtime::Device
+open_mesh_device(const std::vector<uint32_t> &mesh_shape,
+                 const tt::runtime::MeshDeviceOptions &options) {
+  const char *system_desc_path = std::getenv("SYSTEM_DESC_PATH");
+  if (system_desc_path) {
+    std::remove(system_desc_path);
+    tt::runtime::getCurrentSystemDesc().first.store(system_desc_path);
+  }
+
+  return tt::runtime::openMeshDevice(mesh_shape, options);
 }
 
 PYBIND11_MODULE(tt_mlir, m) {
@@ -306,9 +320,10 @@ PYBIND11_MODULE(tt_mlir, m) {
         "A function that compiles TTIR to a bytestream");
   m.def("compile_stable_hlo_to_ttir", &compile_stable_hlo_to_ttir,
         "A function that compiles stableHLO to TTIR");
-  m.def("open_mesh_device", &tt::runtime::openMeshDevice, py::arg("mesh_shape"),
+  m.def("open_mesh_device", &open_mesh_device, py::arg("mesh_shape"),
         py::arg("options"),
-        "Open a mesh of devices for execution using the new API");
+        "Open a mesh of devices for execution using the new API and create "
+        "system description");
   m.def("close_mesh_device", &tt::runtime::closeMeshDevice,
         py::arg("parent_mesh"), "Close the mesh device using new API");
   m.def("create_sub_mesh_device", &tt::runtime::createSubMeshDevice,

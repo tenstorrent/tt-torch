@@ -114,6 +114,8 @@ class ModelTester:
                         flattened.append(item)
                     elif isinstance(item, (np.ndarray)):
                         flattened.append(torch.from_numpy(item))
+                    elif np.isscalar(item):
+                        flattened.append(torch.tensor(item))
                     elif isinstance(item, (tuple, list)):
                         flattened.extend(flatten_tensor_lists(item))
                     else:
@@ -322,6 +324,22 @@ class ModelTester:
         else:
             raise ValueError(f"Current mode is not supported: {self.mode}")
 
+    def filter_nan_inf_for_record(self, metric_key):
+        metric_list = self.record_tag_cache.get(metric_key, [])
+        if metric_list:
+            metric_list = [
+                -1
+                if (isinstance(x, float) and x != x)
+                else -1  # NaN case
+                if (isinstance(x, float) and x == float("inf"))
+                else -1
+                if (isinstance(x, float) and x == -float("inf"))
+                else x
+                for x in metric_list
+                if isinstance(x, (int, float)) or isinstance(x, str)
+            ]
+        self.record_tag_cache[metric_key] = metric_list
+
     def record_aggregate_model_metric(self, metric_key, default_value=-1):
         # read a metric from the tag cache and write out the average and min values
 
@@ -368,6 +386,9 @@ class ModelTester:
 
     def finalize(self):
         # to be called at the end of the test
+
+        self.filter_nan_inf_for_record("pccs")
+        self.filter_nan_inf_for_record("atols")
 
         self.record_aggregate_model_metric("pccs")
         self.record_aggregate_model_metric("atols")
