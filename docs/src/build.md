@@ -6,7 +6,7 @@ Main project dependencies are:
  - Ninja
  - CMake >= 3.30
  - git LFS
- - python 0
+ - python 3.10
 
 On Ubuntu 22.04 systems these can be installed using the following commands:
 
