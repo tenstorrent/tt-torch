@@ -5,7 +5,6 @@ Main project dependencies are:
  - clang 17
  - Ninja
  - CMake >= 3.30
- - git LFS
  - python 3.10
 
 On Ubuntu 22.04 systems these can be installed using the following commands:
@@ -20,9 +19,6 @@ sudo apt install clang-17
 
 # Install Ninja
 sudo apt install ninja-build
-
-# Install Git LFS
-sudo apt install git-lfs
 
 # Install CMake
 sudo apt remove cmake -y
