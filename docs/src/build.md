@@ -5,7 +5,7 @@ Main project dependencies are:
  - clang 17
  - Ninja
  - CMake >= 3.30
- - python 3.11
+ - python 3.10
 
 On Ubuntu 22.04 systems these can be installed using the following commands:
 
