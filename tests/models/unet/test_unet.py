@@ -15,6 +15,7 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 class ThisTester(ModelTester):
     def _load_model(self):
+        torch.hub._validate_not_a_forked_repo = lambda a, b, c: True
         model = torch.hub.load(
             "mateuszbuda/brain-segmentation-pytorch",
             "unet",
