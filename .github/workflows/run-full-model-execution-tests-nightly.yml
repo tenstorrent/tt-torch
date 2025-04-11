@@ -184,7 +184,7 @@ jobs:
         failure=0
 
         # Split the test string into individual tests and run them one by one
-        echo "${{ matrix.build.tests }}" | tr ' ' '\n' | while read -r test; do
+        while read -r test; do
           if [[ -n "$test" ]]; then
             echo "Running test: $test"
             report_file="${{ steps.strings.outputs.test_report_dir }}/$(echo $test | tr '/' '_' | tr ':' '_')__${{ steps.strings.outputs.test_report_path_models }}"
@@ -200,7 +200,8 @@ jobs:
               failure=1
             fi
           fi
-        done
+        # execute while loop with process substitution so it doesn't run in a subshell and value of $failure is preserved
+        done < <(echo "${{ matrix.build.tests }}" | tr ' ' '\n')
 
         set -e
 
