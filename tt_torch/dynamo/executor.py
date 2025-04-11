@@ -327,6 +327,7 @@ class OnnxExecutor(Executor):
         self.model_proto = model_proto
         self.binary = None
         self.sess = None
+        self.device = None
 
     def typecast_inputs(self, inputs):
         raise NotImplementedError("This should not be called on an OnnxExecutor.")

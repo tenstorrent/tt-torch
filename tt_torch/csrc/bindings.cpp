@@ -140,8 +140,9 @@ std::string compile_stable_hlo_to_ttir(std::string_view code) {
 }
 
 std::tuple<py::bytes, std::string>
-compile_ttir_to_bytestream(std::string_view code) {
-  auto [binary_ptr, ttnn] = tt::torch::compileTTIRToTTNN(code);
+compile_ttir_to_bytestream(std::string_view code,
+                           std::optional<tt::runtime::Device> device) {
+  auto [binary_ptr, ttnn] = tt::torch::compileTTIRToTTNN(code, device);
   auto size = ::flatbuffers::GetSizePrefixedBufferLength(
       static_cast<const uint8_t *>(binary_ptr->get()));
   tt::runtime::Binary binary = tt::runtime::Binary(*binary_ptr);
@@ -258,18 +259,6 @@ std::vector<at::Tensor> run_end_to_end(std::vector<at::Tensor> &inputs,
   return outputs;
 }
 
-tt::runtime::Device
-open_mesh_device(const std::vector<uint32_t> &mesh_shape,
-                 const tt::runtime::MeshDeviceOptions &options) {
-  const char *system_desc_path = std::getenv("SYSTEM_DESC_PATH");
-  if (system_desc_path) {
-    std::remove(system_desc_path);
-    tt::runtime::getCurrentSystemDesc().first.store(system_desc_path);
-  }
-
-  return tt::runtime::openMeshDevice(mesh_shape, options);
-}
-
 torch::Tensor
 get_op_output_torch_tensor(tt::runtime::OpContext opContextHandle,
                            tt::runtime::CallbackContext programContextHandle) {
@@ -336,10 +325,11 @@ PYBIND11_MODULE(tt_mlir, m) {
   m.def("compile", &compile_stablehlo_to_bytestream,
         "A function that compiles stableHLO to a bytestream");
   m.def("compile_ttir_to_bytestream", &compile_ttir_to_bytestream,
+        py::arg("ttir"), py::arg("device") = py::none(),
         "A function that compiles TTIR to a bytestream");
   m.def("compile_stable_hlo_to_ttir", &compile_stable_hlo_to_ttir,
         "A function that compiles stableHLO to TTIR");
-  m.def("open_mesh_device", &open_mesh_device, py::arg("mesh_shape"),
+  m.def("open_mesh_device", &tt::runtime::openMeshDevice, py::arg("mesh_shape"),
         py::arg("options"),
         "Open a mesh of devices for execution using the new API and create "
         "system description");
@@ -360,8 +350,6 @@ PYBIND11_MODULE(tt_mlir, m) {
   m.def("run_end_to_end", &run_end_to_end,
         "Run binary end to end, isolating all steps such as device opening, "
         "input preprocessing, execution and device closing");
-  m.def("get_current_system_desc", &tt::runtime::getCurrentSystemDesc,
-        "Get the current system descriptor");
   m.def("get_num_available_devices", &tt::runtime::getNumAvailableDevices,
         "Get the number of available devices");
   m.def("bytestream_to_json", &bytestream_to_json,
