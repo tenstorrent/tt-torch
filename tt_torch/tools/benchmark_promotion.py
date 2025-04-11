@@ -238,13 +238,31 @@ def generate_formatted_test_matrix_from_partitions(
     return json.dumps(matrix), json.dumps(splits)
 
 
+def get_existing_execute_tests():
+    # We don't care about tests that already run in execute.
+    # Benchmarks tell us:
+    #   if a model regressed (eg. expect to run in execute, but now run in compile)
+    #   if a model is promotable (eg. expect to run in compile, runs in execute)
+    # Regression testing here is redundant to full model exec tests in nightly
+    # Models cannot be promoted beyond execute so we don't care about promotability either
+
+    exec_tests = []
+    exec_tests = parse_tests_from_matrix(
+        ".github/workflows/run-full-model-execution-tests.yml"
+    )
+    exec_tests.extend(
+        parse_tests_from_matrix(
+            ".github/workflows/run-full-model-execution-tests-nightly.yml"
+        )
+    )
+    return exec_tests
+
+
 def generate_dynamic_benchmark_test_matrix():
 
     output_file = "benchmark_test_matrix.json"  # hardcoded into CI
     output_file_splits = "benchmark_test_matrix_splits.json"  # hardcoded into CI
-
     report_dir = "benchmark_report"
-
     report_branch = "benchmark_report_fs"
 
     download_artifact_command = [
@@ -274,12 +292,15 @@ def generate_dynamic_benchmark_test_matrix():
     ), f"Expected exactly one xlsx file in {report_dir}, found: {reports}"
     previous_run_results = parse_benchmark_results_xlsx(report_dir + "/" + reports[0])
 
+    # All pytests defined in tests/models
     in_tree_tests = enumerate_all_tests()
-    actual_test_durations_list = {}
 
+    actual_test_durations_list = {}
     quarantined_tests = []
 
     for test in in_tree_tests:
+
+        # Workaround to prevent quarantine of renamed tests with red/generality suffixing
         modified_test_name = test.replace("_red", "").replace("_generality", "")
 
         if test in previous_run_results.keys():
@@ -294,6 +315,20 @@ def generate_dynamic_benchmark_test_matrix():
 
     print(f"Quarantined test list (ct: {len(quarantined_tests)})")
     print(f"Actual test list (ct: {len(actual_test_durations_list)})")
+
+    # Remove all pytests already assessed in full model exec tests
+    already_executing_tests = get_existing_execute_tests()
+
+    initial_count = len(actual_test_durations_list)
+    # Prune the actual_test_durations_list
+    actual_test_durations_list = {
+        test: duration
+        for test, duration in actual_test_durations_list.items()
+        if test not in already_executing_tests
+    }
+    print(
+        f"{initial_count - len(actual_test_durations_list)} tests removed from the test list because they already are tested in EXECUTE"
+    )
 
     # Load balance the tests into a dynamic test matrix
     test_splits = load_balance_tests_greedy(
