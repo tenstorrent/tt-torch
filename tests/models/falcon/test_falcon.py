@@ -53,7 +53,6 @@ def test_falcon(record_property, mode, op_by_op):
         relative_atol=0.015,
         compiler_config=cc,
         record_property_handle=record_property,
-        model_group="red",
     )
     results = tester.test_model()
 
