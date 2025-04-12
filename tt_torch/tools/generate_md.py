@@ -136,6 +136,7 @@ class AllOps:
             # Remove quotes from Raw TTNNIR if present
             raw_ttnnir = row["Raw TTNNIR"].strip("'\"")
             compile_error = row.get("Compile Error", "")
+            model_names = row.get("Models", "")
 
             # If outputing failures only, skip if row is empty, Nan, or "Error message not extracted."
             if failures_only:
@@ -152,9 +153,9 @@ class AllOps:
             status = row["Status"]
 
             # Process operation details
-            self.process_ops(raw_ttnnir, pcc, atol, status, compile_error)
+            self.process_ops(raw_ttnnir, pcc, atol, status, compile_error, model_names)
 
-    def process_ops(self, ttnnir_string, pcc, atol, status, compile_error):
+    def process_ops(self, ttnnir_string, pcc, atol, status, compile_error, model_names):
         """
         Process TTNN operations from an IR string, extracting shapes, layouts, and metadata.
 
@@ -164,6 +165,7 @@ class AllOps:
             atol: Absolute tolerance for numerical comparisons
             status: Compilation status for the op
             compile_error: Optional compile error for the op, if there was one
+            model_names: Optional list of model names that use this op
         """
 
         ttnn_parser = TTNNOps(ttnnir_string)
@@ -234,6 +236,7 @@ class AllOps:
             opToWrite["atol"] = atol
             opToWrite["status"] = status
             opToWrite["compile_error"] = compile_error
+            opToWrite["model_names"] = model_names
             if self.ops.get(opToWrite["name"]) is None:
                 self.ops[opToWrite["name"]] = [opToWrite]
             else:
@@ -320,6 +323,7 @@ class AllOps:
                 )
                 status = item.get("status", "N/A")
                 compile_error = item.get("compile_error", "")
+                model_names = item.get("model_names", "")
 
                 input_layouts = item.get("input_layouts", [])
                 processed_input_layouts = [
@@ -354,6 +358,7 @@ class AllOps:
                     "atol": atol,
                     "compilation_status": status,
                     "compile_error": compile_error,
+                    "model_names": model_names,
                 }
 
                 processed_items.append(processed_item)
