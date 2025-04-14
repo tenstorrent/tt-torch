@@ -566,3 +566,101 @@ def test_cosine_op():
     verify_module(
         Basic(), input_shapes=[(32, 32)], input_range=(-2 * math.pi, 2 * math.pi)
     )
+
+
+def test_reverse_op():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.flip(x, [0, 1])
+
+    verify_module(
+        Basic(), input_shapes=[(32, 32)], input_range_int=(-6, 6), required_atol=0.02
+    )
+
+
+def test_atan2_op():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x, y):
+            return torch.atan2(x, y)
+
+    verify_module(
+        Basic(),
+        input_shapes=[(32, 32), (32, 32)],
+        input_data_types=[torch.int32, torch.int32],
+        input_range_int=(-6, 6),
+        required_atol=0.02,
+    )
+
+
+def test_bitwise_and_op():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x, y):
+            return torch.bitwise_and(x, y)
+
+    verify_module(
+        Basic(),
+        input_shapes=[(32, 32), (32, 32)],
+        input_data_types=[torch.int32, torch.int32],
+        input_range_int=(1, 10),
+        required_atol=0.02,
+    )
+
+
+def test_bitwise_or_op():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x, y):
+            return torch.bitwise_or(x, y)
+
+    verify_module(
+        Basic(),
+        input_shapes=[(32, 32), (32, 32)],
+        input_data_types=[torch.int32, torch.int32],
+        input_range_int=(1, 10),
+        required_atol=0.02,
+    )
+
+
+def test_bitwise_xor_op():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x, y):
+            return torch.bitwise_xor(x, y)
+
+    verify_module(
+        Basic(),
+        input_shapes=[(32, 32), (32, 32)],
+        input_data_types=[torch.int32, torch.int32],
+        input_range_int=(1, 10),
+        required_atol=0.02,
+    )
+
+
+def test_bitwise_not_op():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.bitwise_not(x)
+
+    verify_module(
+        Basic(),
+        input_shapes=[(32, 32), (32, 32)],
+        input_data_types=[torch.int32, torch.int32],
+        input_range_int=(1, 10),
+        required_atol=0.02,
+    )
