@@ -3,9 +3,10 @@ name: Generate Benchmark Test Matrix Dynamically
 on:
   workflow_call:
     outputs:
-        matrix-json:
-            description: "Generated test matrix JSON string"
-            value: ${{ jobs.tests.outputs.matrix-json }} # Expose job output as workflow output
+        matrix-json-splits:
+            description: "Test splits JSON string, to be dereferenced in consuming job with fromJSON call to generate a test matrix"
+            value: ${{ jobs.tests.outputs.matrix-json-splits }}
+  workflow_dispatch:
   workflow_run:
     workflows: [Build]
     types: [completed]
@@ -13,8 +14,9 @@ on:
 jobs:
   tests:
     outputs:
-        matrix-json: ${{ steps.generate_matrix.outputs.matrix-json }}
-    timeout-minutes: 30
+       matrix-json-splits: ${{ steps.generate_matrix.outputs.matrix-json-splits }}
+
+    timeout-minutes: 10
     strategy:
       fail-fast: false
 
@@ -69,7 +71,6 @@ jobs:
         source env/activate
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
-
     - name: Generate test matrix
       id: generate_matrix
       shell: bash
@@ -79,11 +80,28 @@ jobs:
       run: |
         source env/activate
 
-        # Using the actual built docker image seems to cause git corruption
         apt install -y libgl1 libglx-mesa0
 
         python tt_torch/tools/benchmark_promotion.py --gen-matrix
 
         # hardcoded filename to avoid cluttering cliargs for benchmark promotion
-        # this does not work for multilined output..
-        echo "matrix-json=$(cat benchmark_test_matrix.json)" >> "$GITHUB_OUTPUT"
+
+        # Ensure the file exists
+        if [ ! -f "benchmark_test_matrix.json" ]; then
+        echo "Error: benchmark_test_matrix.json not found!"
+        exit 1
+        fi
+
+        # Use the absolute path to avoid ambiguity
+        matrix_json_path=$(realpath benchmark_test_matrix.json)
+        echo "matrix-json-path=$matrix_json_path" >> "$GITHUB_OUTPUT"
+
+        # pass splits matrix as string directly
+        echo "matrix-json-splits=$(cat benchmark_test_matrix_splits.json)" >> $GITHUB_OUTPUT
+
+    - name: Upload Benchmark Test Matrix
+      uses: actions/upload-artifact@v4
+      with:
+        # hardcoded artifact name for the test matrix JSON
+        name: benchmark-test-matrix-json
+        path: ${{ steps.generate_matrix.outputs.matrix-json-path }}
