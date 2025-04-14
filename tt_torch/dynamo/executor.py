@@ -261,12 +261,13 @@ class Executor:
                 golden = node.target(*args, **node.kwargs)
 
                 # some ops return scalar (0D tensor) as output (e.g. aten.select.int)
-                if isinstance(golden, torch.Tensor) and golden.dim == 0:
+                if isinstance(golden, torch.Tensor) and golden.dim() == 0:
+                    print(f"Unsqueezing golden {golden} to {golden.unsqueeze(0)}")
                     golden = golden.unsqueeze(0)
 
                 # some ops return a tuple of tensors as output (e.g. max_pool_2d_with_indices)
                 # we expect to only use the first, though this may be changed in the future
-                elif len(golden) > 1:
+                elif isinstance(golden, (tuple, list)) and len(golden) > 1:
                     golden = golden[0]
                     print(
                         f"[WARNING] {node.name} has {len(golden)} outputs, but we can only get one from runtime."
