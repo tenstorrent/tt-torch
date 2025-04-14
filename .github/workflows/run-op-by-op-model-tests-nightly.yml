@@ -157,6 +157,11 @@ jobs:
             runs-on: wormhole_b0, name: "YOLOv10", tests: "
               tests/models/yolov10/test_yolov10.py::test_yolov10[op_by_op_torch-eval]
               "
+          },
+          {
+            runs-on: wormhole_b0, name: "OFT", tests: "
+              tests/models/oft/test_oft.py::test_oft[op_by_op_torch-eval]
+              "
           }
         ]
     runs-on:
