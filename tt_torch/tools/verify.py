@@ -19,6 +19,7 @@ def verify_against_golden(
     required_pcc=0.99,
     required_atol=None,
     relative_atol=None,
+    disable_print=False,
 ):
     assert (required_atol is not None) != (
         relative_atol is not None
@@ -135,25 +136,18 @@ def verify_against_golden(
 
     # Now that all tensors are checked, print the final message
     if assert_pcc and assert_atol:
-        if passed_pcc and passed_atol:
-            print(msg)
-        else:
+        if not passed_pcc and passed_atol:
             assert False, err_msg
     elif not assert_pcc and assert_atol:
         print("Ignoring PCC check\n")
-        if passed_atol:
-            print(msg)
-        else:
+        if not passed_atol:
             assert False, err_msg
     elif assert_pcc and not assert_atol:
         print("Ignoring ATOL check\n")
-        if passed_pcc:
-            print(msg)
-        else:
+        if not passed_pcc:
             assert False, err_msg
-    else:
+    if not disable_print:
         print(msg)
-
     return pccs, atols, passed_pcc, passed_atol
 
 

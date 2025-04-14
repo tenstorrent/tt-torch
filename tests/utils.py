@@ -412,18 +412,18 @@ class ModelTester:
         self.flush_tag_cache_to_record()
 
     def verify_intermediates_after_execution(self):
+        print("[Start Intermediate Verification Report]")
         for _, intermediate in self.compiler_config.runtime_intermediate_cache.items():
             intermediate.calculate_metrics()
-            print(
-                f"Metrics for {intermediate.node.name}: pcc {intermediate.pcc}\tatol {intermediate.atol}"
-            )
-
-            # if not intermediate.passed_atol:
-            #     print(
-            #         f"atol too high for {intermediate.node.name}: {intermediate.atol}"
-            #     )
-            # if not intermediate.passed_pcc:
-            #     print(f"pcc too low for {intermediate.node.name}: {intermediate.pcc}")
+            if intermediate.error_message:
+                print(
+                    f"Metrics for {intermediate.node.name}: ERROR: {intermediate.error_message}"
+                )
+            else:
+                print(
+                    f"Metrics for {intermediate.node.name}: pcc {intermediate.pcc}\tatol {intermediate.atol}"
+                )
+        print("[End Intermediate Verification Report]")
 
 
 class OnnxModelTester(ModelTester):
