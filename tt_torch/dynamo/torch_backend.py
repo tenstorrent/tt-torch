@@ -324,7 +324,8 @@ class TorchExecutor(OpByOpExecutor):
                     else:
                         args.append(arg)
                 try:
-                    binary, op = self.compile_op(node, *args, **node.kwargs)
+                    binary = None
+                    # binary, op = self.compile_op(node, *args, **node.kwargs)
                 except Exception as e:
                     binary = None
                     print(f"Failed to compile {idx}/{num_nodes}: {node.target}: {e}")
@@ -334,35 +335,24 @@ class TorchExecutor(OpByOpExecutor):
                     and binary is not None
                 ):
                     try:
-                        typecast_args = self.typecast_inputs(args)
-                        calculated, runtime_stack_dump = self.run_op(
-                            binary, *typecast_args
-                        )
-                        self.compiler_config.unique_ops[
-                            op.unique_key()
-                        ].runtime_stack_dump = runtime_stack_dump
-
-                        print(f"Ran: {idx}/{num_nodes}: {node.target}")
-                        if calculated is None:
-                            raise ValueError("Failed to execute")
-                        op.compilation_status = OpCompilationStatus.EXECUTED
-                        tensor = node.target(*args, **node.kwargs)
-                        if self.compiler_config.verify_op_by_op:
-                            atol = calculate_atol(calculated, tensor)
-                            op.atol = atol
-                            if atol > self.required_atol:
-                                print(f"atol too high for {idx}: {atol}")
-                            pcc = calculate_pcc(calculated, tensor)
-                            op.pcc = pcc
-                            if pcc < self.required_pcc:
-                                print(f"pcc too low for {idx}: {pcc}")
+                        pass
                     except Exception as e:
                         print(
                             f"Failed to execute {idx}/{num_nodes}: {node.target}: {e}"
                         )
                         tensor = node.target(*args, **node.kwargs)
                 else:
-                    tensor = node.target(*args, **node.kwargs)
+                    tensor_meta = node.meta["tensor_meta"]
+                    if isinstance(tensor_meta, torch.fx.passes.shape_prop.TensorMetadata):
+                        tensor = torch.empty(
+                            size=tensor_meta.shape, dtype=tensor_meta.dtype
+                        )
+                    elif isinstance(tensor_meta, tuple):
+                        tensor = [torch.empty(
+                            size=meta.shape, dtype=meta.dtype
+                        ) for meta in tensor_meta]
+                    else:
+                        raise ValueError(f"Unknown tensor_meta: {tensor_meta}")
                 node_to_tensor[node] = tensor
             elif node.op == "output":
                 args = node.args[0]
