@@ -63,6 +63,7 @@ jobs:
                   tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small[full-eval]
                   tests/models/yolos/test_yolos.py::test_yolos[full-eval]
                   tests/models/whisper/test_whisper.py::test_whisper[full-eval]
+                  tests/models/bert/test_bert_turkish.py::test_bert_turkish[full-eval]
             "
           },
           {
