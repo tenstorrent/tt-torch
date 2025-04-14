@@ -82,58 +82,90 @@ def scan_workflow_test_matrices():
     print("No issues found in the workflow test matrices. All matrices are valid!")
 
 
-def dissect_runtime_verification_report(log_file, output_xlsx):
+def dissect_runtime_verification_report(log_folder, output_xlsx):
     """
-    Parses a runtime intermediate verification report log file and generates an Excel file.
+    Parses runtime intermediate verification report log files in a folder and generates an Excel file with multiple worksheets.
 
     Args:
-        log_file (str): Path to the log file containing the verification report.
+        log_folder (str): Path to the folder containing log files.
         output_xlsx (str): Path to the output Excel file.
     """
     # Regex patterns to extract data
     error_pattern = r"Metrics for (\w+): ERROR: (.+)"
     metrics_pattern = r"Metrics for (\w+): pcc \[([\d.]+)\]\tatol \[([\d.]+)\]"
-
-    # Data storage
-    rows = []
-
-    # Read the log file
-    with open(log_file, "r") as file:
-        for line in file:
-            # Match error lines
-            error_match = re.match(error_pattern, line)
-            if error_match:
-                node_name, error_message = error_match.groups()
-                rows.append([node_name, None, None, error_message])
-                continue
-
-            # Match metrics lines
-            metrics_match = re.match(metrics_pattern, line)
-            if metrics_match:
-                node_name, pcc, atol = metrics_match.groups()
-                rows.append([node_name, float(pcc), float(atol), None])
+    module_pattern = r"tests/models/.+/test_(\w+)\.py::.+"
 
     # Create an Excel file
     workbook = xlsxwriter.Workbook(output_xlsx)
-    worksheet = workbook.add_worksheet("Verification Report")
-
-    # Define header and write it
-    headers = ["Node Name", "PCC", "ATOL", "Error Message"]
-    for col_num, header in enumerate(headers):
-        worksheet.write(0, col_num, header)
 
     # Define formats
-    default_format = workbook.add_format({"border": 1})
-    red_format = workbook.add_format({"bg_color": "#FFCCCC", "border": 1})
+    formats = {
+        "default": workbook.add_format({"border": 1}),
+        "red": workbook.add_format({"bg_color": "#FFCCCC", "border": 1}),
+        "yellow": workbook.add_format({"bg_color": "#FFF2CC", "border": 1}),
+        "green": workbook.add_format({"bg_color": "#C6EFCE", "border": 1}),
+    }
 
-    # Write data rows
-    for row_num, row in enumerate(rows, start=1):
-        for col_num, cell in enumerate(row):
-            # Apply conditional formatting directly while writing
-            if (row[1] is not None and row[1] < 0.99) or (row[3] is not None):
-                worksheet.write(row_num, col_num, cell, red_format)
-            else:
-                worksheet.write(row_num, col_num, cell, default_format)
+    # Iterate through all log files in the folder
+    for log_file in os.listdir(log_folder):
+        print(f"Processing {log_file}")
+        log_path = os.path.join(log_folder, log_file)
+        if not os.path.isfile(log_path) or not log_file.endswith(".log"):
+            continue
+
+        # Data storage
+        rows = []
+        module_name = None
+
+        # Read the log file
+        with open(log_path, "r") as file:
+            for line in file:
+                # Extract module name
+                if not module_name:
+                    module_match = re.search(module_pattern, line)
+                    if module_match:
+                        module_name = module_match.group(1)
+
+                # Match error lines
+                error_match = re.match(error_pattern, line)
+                if error_match:
+                    node_name, error_message = error_match.groups()
+                    rows.append([node_name, None, None, error_message])
+                    continue
+
+                # Match metrics lines
+                metrics_match = re.match(metrics_pattern, line)
+                if metrics_match:
+                    node_name, pcc, atol = metrics_match.groups()
+                    rows.append([node_name, float(pcc), float(atol), None])
+
+        # Skip if no module name was found
+        if not module_name:
+            print(f"Could not extract module name from {log_file}. Skipping...")
+            continue
+
+        # Create a worksheet for the module
+        worksheet = workbook.add_worksheet(module_name[:31])
+
+        # Define header and write it
+        headers = ["Node Name", "PCC", "ATOL", "Error Message"]
+        for col_num, header in enumerate(headers):
+            worksheet.write(0, col_num, header)
+
+        # Write data rows with conditional formatting
+        for row_num, row in enumerate(rows, start=1):
+            for col_num, cell in enumerate(row):
+                if row[3] is not None:  # Error message exists
+                    worksheet.write(row_num, col_num, cell, formats["red"])
+                elif row[1] is not None:
+                    if row[1] < 0.99:
+                        worksheet.write(row_num, col_num, cell, formats["red"])
+                    elif 0.99 <= row[1] < 1.0:
+                        worksheet.write(row_num, col_num, cell, formats["yellow"])
+                    else:
+                        worksheet.write(row_num, col_num, cell, formats["green"])
+                else:
+                    worksheet.write(row_num, col_num, cell, formats["default"])
 
     # Close the workbook
     workbook.close()
@@ -191,8 +223,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--dissect-report",
         nargs=2,
-        metavar=("LOG_FILE", "OUTPUT_XLSX"),
-        help="Dissect a runtime intermediate verification report and save it as an Excel file.",
+        metavar=("LOG_FOLDER", "OUTPUT_XLSX"),
+        help="Dissect runtime intermediate verification reports in a folder and save them as an Excel file.",
     )
     parser.add_argument(
         "--run-iv-tests",
@@ -213,5 +245,5 @@ if __name__ == "__main__":
         run_iv_tests_and_generate_summary(yaml_files)
 
     if args.dissect_report:
-        log_file, output_xlsx = args.dissect_report
-        dissect_runtime_verification_report(log_file, output_xlsx)
+        log_folder, output_xlsx = args.dissect_report
+        dissect_runtime_verification_report(log_folder, output_xlsx)
