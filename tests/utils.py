@@ -12,7 +12,12 @@ import re
 from typing import List, Dict, Tuple
 from tt_torch.dynamo.backend import backend
 from tt_torch.onnx_compile import compile_onnx
-from tt_torch.tools.utils import CompilerConfig, CompileDepth
+from tt_torch.tools.utils import (
+    CompilerConfig,
+    CompileDepth,
+    prepare_inference_session,
+    onnx_output_to_torch,
+)
 import json
 from onnx import version_converter
 from pathlib import Path
@@ -435,9 +440,7 @@ class OnnxModelTester(ModelTester):
             model_group,
         )
         # Hold an onnxruntime session for golden / non-full compile execution
-        self.sess = onnxruntime.InferenceSession(
-            self.framework_model.SerializeToString()
-        )
+        self.sess = prepare_inference_session(model_proto=self.framework_model)
         self.torch_inputs = self._load_torch_inputs()
         self.numpy_inputs = self._load_numpy_inputs()
 
@@ -467,7 +470,7 @@ class OnnxModelTester(ModelTester):
     def run_model(self, model, inputs):
         if isinstance(model, onnx.ModelProto):
             outputs = self.sess.run(None, inputs)
-            return outputs
+            return onnx_output_to_torch(outputs)
         else:
             return model(*inputs)
 
