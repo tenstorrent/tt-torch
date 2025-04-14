@@ -391,6 +391,7 @@ PYBIND11_MODULE(tt_mlir, m) {
           "get_debug_hooks",
           [](py::function func) {
             return tt::runtime::debug::Hooks::get(
+                std::nullopt,
                 [func](tt::runtime::Binary binary,
                        tt::runtime::CallbackContext programContext,
                        tt::runtime::OpContext opContext) {
