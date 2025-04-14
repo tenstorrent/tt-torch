@@ -192,7 +192,6 @@ def shlo_to_flatbuffer(executor, module, compiler_config, example_inputs):
 
 
 def _base_backend(gm, example_inputs, compiler_config):
-    print("Entering base backend")
     shlo, program, graph_constants = torch_to_shlo(gm, example_inputs, compiler_config)
     executor = Executor(program, graph_constants, compiler_config)
 
@@ -212,8 +211,6 @@ def _base_backend(gm, example_inputs, compiler_config):
 @tt_torch_error_message
 def backend(gm, example_inputs, options=None):
     assert isinstance(gm, torch.fx.GraphModule), "Backend only supports torch graphs"
-
-    print(f"running backend with {options.compile_depth}")
 
     if options is None:
         options = CompilerConfig()
