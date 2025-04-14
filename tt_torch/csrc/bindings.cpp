@@ -270,6 +270,8 @@ open_mesh_device(const std::vector<uint32_t> &mesh_shape,
   }
 
   return tt::runtime::openMeshDevice(mesh_shape, options);
+}
+
 torch::Tensor
 get_op_output_torch_tensor(tt::runtime::OpContext opContextHandle,
                            tt::runtime::CallbackContext programContextHandle) {
