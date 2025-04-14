@@ -8,6 +8,8 @@ import argparse
 from tt_torch.tools.generate_benchmark_report import parse_tests_from_matrix
 from tt_torch.tools.benchmark_promotion import enumerate_all_tests
 import difflib
+import re
+import xlsxwriter
 
 
 def scan_workflow_test_matrices():
@@ -79,6 +81,64 @@ def scan_workflow_test_matrices():
     print("No issues found in the workflow test matrices. All matrices are valid!")
 
 
+def dissect_runtime_verification_report(log_file, output_xlsx):
+    """
+    Parses a runtime intermediate verification report log file and generates an Excel file.
+
+    Args:
+        log_file (str): Path to the log file containing the verification report.
+        output_xlsx (str): Path to the output Excel file.
+    """
+    # Regex patterns to extract data
+    error_pattern = r"Metrics for (\w+): ERROR: (.+)"
+    metrics_pattern = r"Metrics for (\w+): pcc \[([\d.]+)\]\tatol \[([\d.]+)\]"
+
+    # Data storage
+    rows = []
+
+    # Read the log file
+    with open(log_file, "r") as file:
+        for line in file:
+            # Match error lines
+            error_match = re.match(error_pattern, line)
+            if error_match:
+                node_name, error_message = error_match.groups()
+                rows.append([node_name, None, None, error_message])
+                continue
+
+            # Match metrics lines
+            metrics_match = re.match(metrics_pattern, line)
+            if metrics_match:
+                node_name, pcc, atol = metrics_match.groups()
+                rows.append([node_name, float(pcc), float(atol), None])
+
+    # Create an Excel file
+    workbook = xlsxwriter.Workbook(output_xlsx)
+    worksheet = workbook.add_worksheet("Verification Report")
+
+    # Define header and write it
+    headers = ["Node Name", "PCC", "ATOL", "Error Message"]
+    for col_num, header in enumerate(headers):
+        worksheet.write(0, col_num, header)
+
+    # Define formats
+    default_format = workbook.add_format({"border": 1})
+    red_format = workbook.add_format({"bg_color": "#FFCCCC", "border": 1})
+
+    # Write data rows
+    for row_num, row in enumerate(rows, start=1):
+        for col_num, cell in enumerate(row):
+            # Apply conditional formatting directly while writing
+            if (row[1] is not None and row[1] < 0.99) or (row[3] is not None):
+                worksheet.write(row_num, col_num, cell, red_format)
+            else:
+                worksheet.write(row_num, col_num, cell, default_format)
+
+    # Close the workbook
+    workbook.close()
+    print(f"Verification report saved to {output_xlsx}")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Utility script for CI reflection.")
     parser.add_argument(
@@ -86,8 +146,18 @@ if __name__ == "__main__":
         action="store_true",
         help="Scan .github/workflows for test matrices and validate them.",
     )
+    parser.add_argument(
+        "--dissect-report",
+        nargs=2,
+        metavar=("LOG_FILE", "OUTPUT_XLSX"),
+        help="Dissect a runtime intermediate verification report and save it as an Excel file.",
+    )
 
     args = parser.parse_args()
 
     if args.scan_workflows:
         scan_workflow_test_matrices()
+
+    if args.dissect_report:
+        log_file, output_xlsx = args.dissect_report
+        dissect_runtime_verification_report(log_file, output_xlsx)

@@ -831,6 +831,7 @@ class RuntimeIntermediate:
         self.atol = None
         self.passed_pcc = False
         self.passed_atol = False
+        self.error_message = None
 
     def calculate_metrics(self):
         from tt_torch.tools.verify import verify_against_golden
@@ -844,9 +845,8 @@ class RuntimeIntermediate:
             return  # getitem_4 has no intermediates? - if there are no intermediates for a call_function node; what to do
             assert False, f"No decomposed intermediates found for {self.node.name}"
 
-        final_decomposed_output = self.decomposed_intermediate_outputs[
-            -1
-        ]  # could be a tuple of tensors
+        # could be a tuple of tensors?
+        final_decomposed_output = self.decomposed_intermediate_outputs[-1]
 
         # verify_against_golden expects a tuple of tensors as inputs. need to preprocess
         if not isinstance(final_decomposed_output, tuple):
@@ -854,15 +854,16 @@ class RuntimeIntermediate:
         if not isinstance(self.golden, tuple):
             self.golden = (self.golden,)
 
-        print("Analyzing node:", self.node.name)
-        # for i, tensor in enumerate(self.decomposed_intermediate_outputs):
-        #     print(f"dco {i}:")
-        #     print(tensor)
-
-        (self.pcc, self.atol,) = verify_against_golden(
-            self.golden,
-            final_decomposed_output,
-            assert_pcc=False,
-            assert_atol=False,
-            required_atol=0.01,
-        )
+        try:
+            (self.pcc, self.atol, passed_pcc, passed_atol) = verify_against_golden(
+                self.golden,
+                final_decomposed_output,
+                assert_pcc=False,
+                assert_atol=False,
+                required_atol=0.01,
+                disable_print=True,
+            )
+        except AssertionError as e:
+            self.pcc = "ERROR"
+            self.atol = "ERROR"
+            self.error_message = str(e)
