@@ -15,10 +15,6 @@ on:
         description: 'Arguments to pass to setup.py'
         required: false
         type: string
-      artifact-key:
-        description: 'Key to use for artifact upload'
-        required: false
-        type: string
 
 jobs:
   build:
