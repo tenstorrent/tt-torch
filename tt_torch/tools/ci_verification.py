@@ -105,7 +105,7 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
         "yellow": workbook.add_format({"bg_color": "#FFF2CC", "border": 1}),
         "green": workbook.add_format({"bg_color": "#C6EFCE", "border": 1}),
     }
-
+    counter = 0
     # Iterate through all log files in the folder
     for log_file in os.listdir(log_folder):
         print(f"Processing {log_file}")
@@ -116,7 +116,7 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
         # Data storage
         rows = []
         module_name = None
-
+        counter += 1
         # Read the log file
         with open(log_path, "r") as file:
             for line in file:
@@ -145,7 +145,7 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
             continue
 
         # Create a worksheet for the module
-        worksheet = workbook.add_worksheet(module_name[:31])
+        worksheet = workbook.add_worksheet(module_name[:24] + "_" + str(counter))
 
         # Define header and write it
         headers = ["Node Name", "PCC", "ATOL", "Error Message"]
