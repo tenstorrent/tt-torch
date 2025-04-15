@@ -111,6 +111,16 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
     summary = []
     corrupt_logs = []
 
+    # Helper function to parse numeric values or handle errors
+    def parse_numeric(value):
+        try:
+            ret = float(value.strip("[]"))
+            if ret != ret or ret == float("inf") or ret == -float("inf"):
+                return None
+            return ret
+        except (ValueError, AttributeError):
+            return None  # Treat non-numeric values (e.g., "ERROR") as None
+
     # Iterate through all log files in the folder
     for log_file in os.listdir(log_folder):
         print(f"Processing file {log_file}")
@@ -162,35 +172,29 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
                 corrupt_logs.append(pytest_full_name)
             continue
 
-        # Parse CSV data
-        header = csv_data[0].split(",")
-        for row in csv_data[1:]:
-            values = row.split(",")
-            row_data = dict(zip(header, values))
-            rows.append(
-                [
-                    row_data.get("NodeName"),
-                    float(row_data.get("PCC", "0").strip("[]"))
-                    if row_data.get("PCC")
-                    else None,
-                    float(row_data.get("ATOL", "0").strip("[]"))
-                    if row_data.get("ATOL")
-                    else None,
-                    row_data.get("ErrorMessage"),
-                    float(row_data.get("FlattenedPCC", "0").strip("[]"))
-                    if row_data.get("FlattenedPCC")
-                    else None,
-                    float(row_data.get("FlattenedATOL", "0").strip("[]"))
-                    if row_data.get("FlattenedATOL")
-                    else None,
-                    row_data.get("FlattenedErrorMessage"),
-                ]
-            )
-
         # Skip if no model name was found
         if not model_name:
             print(f"Could not extract model name from {log_file}. Skipping...")
             continue
+
+        # Parse CSV data
+        header = csv_data[0].split(",")
+        for row in csv_data[1:]:
+            values = row.split(",")
+            if len(values) != len(header):
+                continue
+            row_data = dict(zip(header, values))
+            rows.append(
+                [
+                    row_data.get("NodeName"),
+                    parse_numeric(row_data.get("PCC")),
+                    parse_numeric(row_data.get("ATOL")),
+                    row_data.get("ErrorMessage"),
+                    parse_numeric(row_data.get("FlattenedPCC")),
+                    parse_numeric(row_data.get("FlattenedATOL")),
+                    row_data.get("FlattenedErrorMessage"),
+                ]
+            )
 
         # Handle duplicate model names + 31 char limit
         model_name = model_name.lower()
@@ -240,7 +244,7 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
 
         # Get the final PCC value from the last row
         if rows:
-            final_pcc = rows[-2][1]
+            final_pcc = rows[-1][1]
             summary.append((pytest_full_name, model_name, final_pcc))
 
     # Close the workbook
@@ -256,13 +260,15 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
         if isinstance(pcc, float) and pcc >= 0.99:
             passing_set.add(model_name)
 
-    print("Passing set", passing_set)
+    print("\nPassing set", passing_set)
 
     # Print corrupt logs
     if corrupt_logs:
         print("\nCorrupt Logs:")
         for log in corrupt_logs:
             print(log)
+    else:
+        print("\nNo corrupt logs found.")
 
 
 def run_iv_tests_and_generate_summary(yaml_files, summary_file="iv_test_summary.txt"):
