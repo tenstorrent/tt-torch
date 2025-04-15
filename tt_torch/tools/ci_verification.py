@@ -190,6 +190,23 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
                 corrupt_logs.append(pytest_full_name)
             continue
 
+        # Parse CSV data
+        header = csv_data[0].split(",")
+        for row in csv_data[1:]:
+            values = row.split(",")
+            row_data = dict(zip(header, values))
+            rows.append(
+                [
+                    row_data.get("NodeName"),
+                    parse_numeric(row_data.get("PCC")),
+                    parse_numeric(row_data.get("ATOL")),
+                    row_data.get("ErrorMessage"),
+                    parse_numeric(row_data.get("FlattenedPCC")),
+                    parse_numeric(row_data.get("FlattenedATOL")),
+                    row_data.get("FlattenedErrorMessage"),
+                ]
+            )
+
         # Skip if no model name was found
         if not model_name:
             print(f"Could not extract model name from {log_file}. Skipping...")
