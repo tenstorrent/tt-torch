@@ -91,6 +91,8 @@ class ModelTester:
         self.record_tag_cache["model_name"] = model_name + model_name_suffix
         self.record_tag_cache["frontend"] = "tt-torch"
 
+        print("[MODEL NAME]", model_name + model_name_suffix)
+
         # configs should be set at test start, so they can be flushed immediately
         self.record_property(
             "config",

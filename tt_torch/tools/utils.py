@@ -320,9 +320,6 @@ class CompilerConfig:
             )
 
         self._enable_intermediate_verification = True
-        print(
-            "setup runtime intermediate cache"
-        )  # uh - why does this get called 4 times? that is not right
         if self.runtime_intermediate_cache is None:
             self.runtime_intermediate_cache = {}
 
@@ -848,25 +845,23 @@ class RuntimeIntermediate:
     def calculate_metrics(self):
         from tt_torch.tools.verify import verify_against_golden
 
-        # calculate the metrics for the golden tensor after all decomposition steps done
-
+        # Calculate the metrics for the golden tensor after all decomposition steps are
+        # Some torchfx nodes like "getitem" generate no intermediate outputs
         if (
             len(self.decomposed_intermediate_outputs) == 0
             and self.node.op == "call_function"
         ):
-            return  # getitem_4 has no intermediates? - if there are no intermediates for a call_function node; what to do
-            assert False, f"No decomposed intermediates found for {self.node.name}"
+            return
 
-        # could be a tuple of tensors?
         final_decomposed_output = self.decomposed_intermediate_outputs[-1]
 
-        # verify_against_golden expects a tuple of tensors as inputs. need to preprocess
+        # verify_against_golden expects a tuple of tensors as inputs
         if not isinstance(final_decomposed_output, tuple):
             final_decomposed_output = (final_decomposed_output,)
         if not isinstance(self.golden, tuple):
             self.golden = (self.golden,)
 
-        # Get PCCs from raw tensors, which may not work due to TTNN reshaping
+        # Get PCCs from raw tensors, which may not work due to TTNN reshaping (eg. channels last. Ignore as tensor shape mismatch assertionErrors for now.)
         try:
             (self.pcc, self.atol, _, _) = verify_against_golden(
                 self.golden,

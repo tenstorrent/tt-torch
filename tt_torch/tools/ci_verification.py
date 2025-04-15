@@ -84,19 +84,18 @@ def scan_workflow_test_matrices():
 
 def dissect_runtime_verification_report(log_folder, output_xlsx):
     """
-    Parses runtime intermediate verification report log files in a folder and generates an Excel file with multiple worksheets.
+    Parses runtime intermediate verification report log files in a folder
+    and generates an Excel file with multiple worksheets.
 
     Args:
         log_folder (str): Path to the folder containing log files.
         output_xlsx (str): Path to the output Excel file.
     """
     # Regex patterns to extract data
-    error_pattern = r"Metrics for (\w+): ERROR: (.+)"
-    metrics_pattern = r"Metrics for (\w+): pcc \[([\d.]+)\]\tatol \[([\d.]+)\]"
-    module_pattern = r"tests/models/.+/test_(\w+)\.py::.+"
     pytest_name_pattern = r"(tests/models/.+\.py::[^\s]+)"
     model_name_pattern = r"\[MODEL NAME\]\s+(.+)"
     model_names = []
+
     # Create an Excel file
     workbook = xlsxwriter.Workbook(output_xlsx)
 
@@ -113,30 +112,31 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
     corrupt_logs = []
 
     # Iterate through all log files in the folder
-    counter = 0
     for log_file in os.listdir(log_folder):
-        print(f"Processing {log_file}")
+        print(f"Processing file {log_file}")
         log_path = os.path.join(log_folder, log_file)
-        if not os.path.isfile(log_path) or not log_file.endswith(".log"):
+
+        if not os.path.isfile(log_path):
+            print(f"Skipping {log_file} as it is not a file.")
             continue
 
         # Data storage
         rows = []
-        module_name = None
-        model_name = None
         pytest_full_name = None
-        counter += 1
-        start_marker_found = False
-        end_marker_found = False
+        model_name = None
+        csv_data = []
+        inside_csv = False
 
         # Read the log file
         with open(log_path, "r") as file:
             for line in file:
                 # Check for start and end markers
                 if "[Start Intermediate Verification Report]" in line:
-                    start_marker_found = True
+                    inside_csv = True
+                    continue
                 if "[End Intermediate Verification Report]" in line:
-                    end_marker_found = True
+                    inside_csv = False
+                    continue
 
                 # Extract pytest full test name
                 if not pytest_full_name:
@@ -144,42 +144,55 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
                     if pytest_match:
                         pytest_full_name = pytest_match.group(1)
 
-                # Extract module name
-                if not module_name:
-                    module_match = re.search(module_pattern, line)
-                    if module_match:
-                        module_name = module_match.group(1)
+                # Extract model name
                 if not model_name:
                     model_match = re.search(model_name_pattern, line)
                     if model_match:
                         model_name = model_match.group(1)
                         model_name = re.sub(r"[\s\\/:*?\"<>|\[\]\(\)]", "_", model_name)
+                        print(f"\tFound data for model {model_name}")
 
-                # Match error lines
-                error_match = re.match(error_pattern, line)
-                if error_match:
-                    node_name, error_message = error_match.groups()
-                    rows.append([node_name, None, None, error_message])
-                    continue
-
-                # Match metrics lines
-                metrics_match = re.match(metrics_pattern, line)
-                if metrics_match:
-                    node_name, pcc, atol = metrics_match.groups()
-                    rows.append([node_name, float(pcc), float(atol), None])
+                # Collect CSV data
+                if inside_csv:
+                    csv_data.append(line.strip())
 
         # Check for missing markers
-        if not start_marker_found or not end_marker_found:
+        if not csv_data:
             if pytest_full_name:
                 corrupt_logs.append(pytest_full_name)
             continue
 
-        # Skip if no module name was found
-        if not module_name:
-            print(f"Could not extract module name from {log_file}. Skipping...")
+        # Parse CSV data
+        header = csv_data[0].split(",")
+        for row in csv_data[1:]:
+            values = row.split(",")
+            row_data = dict(zip(header, values))
+            rows.append(
+                [
+                    row_data.get("NodeName"),
+                    float(row_data.get("PCC", "0").strip("[]"))
+                    if row_data.get("PCC")
+                    else None,
+                    float(row_data.get("ATOL", "0").strip("[]"))
+                    if row_data.get("ATOL")
+                    else None,
+                    row_data.get("ErrorMessage"),
+                    float(row_data.get("FlattenedPCC", "0").strip("[]"))
+                    if row_data.get("FlattenedPCC")
+                    else None,
+                    float(row_data.get("FlattenedATOL", "0").strip("[]"))
+                    if row_data.get("FlattenedATOL")
+                    else None,
+                    row_data.get("FlattenedErrorMessage"),
+                ]
+            )
+
+        # Skip if no model name was found
+        if not model_name:
+            print(f"Could not extract model name from {log_file}. Skipping...")
             continue
 
-        # handle duplicate model names + 31 char limit
+        # Handle duplicate model names + 31 char limit
         model_name = model_name.lower()
         original_model_name = model_name
         if model_name in model_names:
@@ -192,28 +205,42 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
         worksheet = workbook.add_worksheet(model_name[:30])
 
         # Define header and write it
-        headers = ["Node Name", "PCC", "ATOL", "Error Message"]
+        headers = [
+            "Node Name",
+            "PCC",
+            "ATOL",
+            "Error Message",
+            "Flattened PCC",
+            "Flattened ATOL",
+            "Flattened Error Message",
+        ]
         for col_num, header in enumerate(headers):
             worksheet.write(0, col_num, header)
 
         # Write data rows with conditional formatting
         for row_num, row in enumerate(rows, start=1):
             for col_num, cell in enumerate(row):
-                if row[3] is not None:  # Error message exists
-                    worksheet.write(row_num, col_num, cell, formats["red"])
-                elif row[1] is not None:
-                    if row[1] < 0.99:
+                if col_num == 3 or col_num == 6:  # Error message columns
+                    if cell:
                         worksheet.write(row_num, col_num, cell, formats["red"])
-                    elif 0.99 <= row[1] < 1.0:
-                        worksheet.write(row_num, col_num, cell, formats["yellow"])
                     else:
-                        worksheet.write(row_num, col_num, cell, formats["green"])
+                        worksheet.write(row_num, col_num, cell, formats["default"])
+                elif col_num == 1 or col_num == 4:  # PCC and Flattened PCC columns
+                    if cell is not None:
+                        if cell < 0.99:
+                            worksheet.write(row_num, col_num, cell, formats["red"])
+                        elif 0.99 <= cell < 1.0:
+                            worksheet.write(row_num, col_num, cell, formats["yellow"])
+                        else:
+                            worksheet.write(row_num, col_num, cell, formats["green"])
+                    else:
+                        worksheet.write(row_num, col_num, cell, formats["default"])
                 else:
                     worksheet.write(row_num, col_num, cell, formats["default"])
 
         # Get the final PCC value from the last row
         if rows:
-            final_pcc = rows[-1][1]
+            final_pcc = rows[-2][1]
             summary.append((pytest_full_name, model_name, final_pcc))
 
     # Close the workbook
@@ -228,6 +255,7 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
         print(f"{pytest_name}: Final PCC = {pcc}")
         if isinstance(pcc, float) and pcc >= 0.99:
             passing_set.add(model_name)
+
     print("Passing set", passing_set)
 
     # Print corrupt logs
@@ -239,7 +267,8 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
 
 def run_iv_tests_and_generate_summary(yaml_files, summary_file="iv_test_summary.txt"):
     """
-    Extract test names from YAML files, run them, and generate a summary file.
+    Extract test names from YAML files, run them with intermediate verification report, and generate a summary file.
+    Mostly a validation utility for runtime intermediate task.
     Args:
         yaml_files (list): List of paths to YAML files containing test matrices.
         summary_file (str): Path to the summary file to write test results.
