@@ -803,6 +803,12 @@ class RuntimeIntermediate:
         self.passed_atol = False
         self.error_message = None
 
+        self.golden_shape = None
+        self.intermediate_shape = None
+        self.flattened_pcc = None
+        self.flattened_atol = None
+        self.flattened_error_message = None
+
     def calculate_metrics(self):
         from tt_torch.tools.verify import verify_against_golden
 
@@ -824,8 +830,9 @@ class RuntimeIntermediate:
         if not isinstance(self.golden, tuple):
             self.golden = (self.golden,)
 
+        # Get PCCs from raw tensors, which may not work due to TTNN reshaping
         try:
-            (self.pcc, self.atol, passed_pcc, passed_atol) = verify_against_golden(
+            (self.pcc, self.atol, _, _) = verify_against_golden(
                 self.golden,
                 final_decomposed_output,
                 assert_pcc=False,
@@ -837,3 +844,25 @@ class RuntimeIntermediate:
             self.pcc = "ERROR"
             self.atol = "ERROR"
             self.error_message = str(e)
+
+        try:
+            # at this point, we expect golden and final decomposed output to be a tuple(tensor), with a single tensor
+            flat_golden = None
+            if isinstance(self.golden[0], torch.Tensor):
+                flat_golden = (torch.flatten(self.golden[0]),)
+            flat_intermediate = None
+            if isinstance(final_decomposed_output[0], torch.Tensor):
+                flat_intermediate = (torch.flatten(final_decomposed_output[0]),)
+
+            (self.flattened_pcc, self.flattened_atol, _, _) = verify_against_golden(
+                flat_golden,
+                flat_intermediate,
+                assert_pcc=False,
+                assert_atol=False,
+                required_atol=0.01,
+                disable_print=True,
+            )
+        except Exception as e:
+            self.flattened_pcc = "ERROR"
+            self.flattened_atol = "ERROR"
+            self.flattened_error_message = str(e)
