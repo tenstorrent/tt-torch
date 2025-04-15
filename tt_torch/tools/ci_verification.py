@@ -94,7 +94,9 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
     error_pattern = r"Metrics for (\w+): ERROR: (.+)"
     metrics_pattern = r"Metrics for (\w+): pcc \[([\d.]+)\]\tatol \[([\d.]+)\]"
     module_pattern = r"tests/models/.+/test_(\w+)\.py::.+"
-
+    pytest_name_pattern = r"(tests/models/.+\.py::[^\s]+)"
+    model_name_pattern = r"\[MODEL NAME\]\s+(.+)"
+    model_names = []
     # Create an Excel file
     workbook = xlsxwriter.Workbook(output_xlsx)
 
@@ -105,8 +107,12 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
         "yellow": workbook.add_format({"bg_color": "#FFF2CC", "border": 1}),
         "green": workbook.add_format({"bg_color": "#C6EFCE", "border": 1}),
     }
-    counter = 0
+
+    # Summary storage
+    summary = []
+
     # Iterate through all log files in the folder
+    counter = 0
     for log_file in os.listdir(log_folder):
         print(f"Processing {log_file}")
         log_path = os.path.join(log_folder, log_file)
@@ -116,15 +122,28 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
         # Data storage
         rows = []
         module_name = None
+        model_name = None
+        pytest_full_name = None
         counter += 1
         # Read the log file
         with open(log_path, "r") as file:
             for line in file:
+                # Extract pytest full test name
+                if not pytest_full_name:
+                    pytest_match = re.search(pytest_name_pattern, line)
+                    if pytest_match:
+                        pytest_full_name = pytest_match.group(1)
+
                 # Extract module name
                 if not module_name:
                     module_match = re.search(module_pattern, line)
                     if module_match:
                         module_name = module_match.group(1)
+                if not model_name:
+                    model_match = re.search(model_name_pattern, line)
+                    if model_match:
+                        model_name = model_match.group(1)
+                        model_name = re.sub(r"[\s\\/:*?\"<>|\[\]\(\)]", "_", model_name)
 
                 # Match error lines
                 error_match = re.match(error_pattern, line)
@@ -144,8 +163,17 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
             print(f"Could not extract module name from {log_file}. Skipping...")
             continue
 
+        # handle duplicate model names + 31 char limit
+        model_name = model_name.lower()
+        original_model_name = model_name
+        if model_name in model_names:
+            model_name = (
+                f"{len([m for m in model_names if m == model_name])}_{model_name}"
+            )
+        model_names.append(original_model_name)
+
         # Create a worksheet for the module
-        worksheet = workbook.add_worksheet(module_name[:24] + "_" + str(counter))
+        worksheet = workbook.add_worksheet(model_name[:30])
 
         # Define header and write it
         headers = ["Node Name", "PCC", "ATOL", "Error Message"]
@@ -167,9 +195,24 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
                 else:
                     worksheet.write(row_num, col_num, cell, formats["default"])
 
+        # Get the final PCC value from the last row
+        if rows:
+            final_pcc = rows[-1][1]
+            summary.append((pytest_full_name, model_name, final_pcc))
+
     # Close the workbook
     workbook.close()
     print(f"Verification report saved to {output_xlsx}")
+
+    # Print the summary
+    print("\nSummary of Final PCC Values:")
+    passing_set = set()
+
+    for pytest_name, model_name, pcc in summary:
+        print(f"{pytest_name}: Final PCC = {pcc}")
+        if isinstance(pcc, float) and pcc >= 0.99:
+            passing_set.add(model_name)
+    print("passing set", passing_set)
 
 
 def run_iv_tests_and_generate_summary(yaml_files, summary_file="iv_test_summary.txt"):
