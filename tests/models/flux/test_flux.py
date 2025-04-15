@@ -13,7 +13,7 @@ import torch
 class ThisTester(ModelTester):
     def _load_model(self):
         # Flux Pipeline
-        model_info = "black-forest-labs/FLUX.1-schnell"
+        model_info = self.model_name
         pipe = FluxPipeline.from_pretrained(model_info, torch_dtype=torch.bfloat16)
 
         # CLIP Tokenizer and Text Encoder
@@ -94,17 +94,28 @@ class ThisTester(ModelTester):
         return arguments
 
 
+model_info_list = [
+    ("flux_schnell", "black-forest-labs/FLUX.1-schnell"),
+    ("flux_dev", "black-forest-labs/FLUX.1-dev"),
+]
+
+
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
+)
+@pytest.mark.parametrize(
+    "model_info",
+    model_info_list,
+    ids=[model_info[0] for model_info in model_info_list],
 )
 @pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_flux(record_property, mode, op_by_op):
-    model_name = "Flux Pipeline"
+def test_flux(record_property, model_info, mode, op_by_op):
+    _, model_name = model_info
 
     cc = CompilerConfig()
     cc.enable_consteval = False
