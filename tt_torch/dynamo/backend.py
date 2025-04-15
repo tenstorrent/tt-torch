@@ -7,8 +7,6 @@ import tt_mlir
 import sys
 import torch_mlir
 
-# from tt_torch.tools.verify import verify_against_golden
-
 from tt_torch.dynamo.torch_backend import (
     TorchExecutor,
     import_graph,
@@ -41,15 +39,12 @@ def create_verify_golden_callback(compiler_config: CompilerConfig):
     # using CompilerConfig as a context cache
 
     def verify_golden_callback(binary, callback_context, op_context):
-        # Using these parameters, we should be able to query information
-        # about the op described by op_context, and its output. I.e. location:
+
         raw_location = tt_mlir.get_op_loc_info(op_context)
 
         location = ""
         fused_locations = []
 
-        # Characters to remove
-        # handle fused locations
         if "fused" in raw_location:
             fused_locations = raw_location.split("fused")[1]
             fused_locations = fused_locations.split(",")
@@ -62,14 +57,12 @@ def create_verify_golden_callback(compiler_config: CompilerConfig):
         if "loc(unknown)" in raw_location:
             return
 
-        # there may be multiple source locations so fused_locations has len>=2, the actual "name" of the node is at the end
+        # there may be multiple source locations so fused_locations, the actual "name" of the node is at the end
         location = fused_locations[-1]
 
         intermediate_data = compiler_config.runtime_intermediate_cache.get(
             location, None
         )
-
-        print("Node Location:", location)
 
         if intermediate_data is not None:
             print(f"Found golden for op @ {intermediate_data.node.name} == {location}.")
@@ -78,38 +71,14 @@ def create_verify_golden_callback(compiler_config: CompilerConfig):
             output_intermediate_tensor = tt_mlir.get_op_output_torch_tensor(
                 op_context, callback_context
             )
-            print("output intermediate tensor", output_intermediate_tensor)
 
             if output_intermediate_tensor is not None:
                 if output_intermediate_tensor.dim == 0:
-                    print("Got scalar as output:", output_intermediate_tensor)
                     output_intermediate_tensor = output_intermediate_tensor.unsqueeze(0)
 
                 intermediate_data.decomposed_intermediate_outputs.append(
                     output_intermediate_tensor
                 )
-
-            # intermediate_data.decomposed_intermediate_outputs.append(
-            #    intermediate_data.golden
-            # )  # fake output
-
-            # if intermediate_data.golden != None:
-            # print(
-            #     f"Decomposition added fake tensor too. Total ct {len(intermediate_data.decomposed_intermediate_outputs)}"
-            # )
-
-            # pdb.set_trace()
-
-        # atol = calculate_atol(calculated, golden)
-        # if atol > executor.required_atol:
-        #     print(f"atol too high for {location}: {atol}")
-        # pcc = calculate_pcc(calculated, golden)
-        # if pcc < executor.required_pcc:
-        #     print(f"pcc too low for {location}: {pcc}")
-
-        # pdb.set_trace()
-        # We will need to provide the bindings necesarry in this frontend.
-        # Those bindings will interact with the runtime API
 
     return verify_golden_callback
 
@@ -170,7 +139,7 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     return module, program, graph_constants
 
 
-def shlo_to_flatbuffer(executor, module, compiler_config, example_inputs):
+def shlo_to_flatbuffer(executor, module, compiler_config):
 
     if compiler_config.profile_ops:
         compiler_config.set_stablehlo_mlir_module(module.operation.get_asm())
@@ -200,7 +169,7 @@ def _base_backend(gm, example_inputs, compiler_config):
     if compiler_config.compile_depth == CompileDepth.STABLEHLO:
         return executor
 
-    binary = shlo_to_flatbuffer(executor, shlo, compiler_config, example_inputs)
+    binary = shlo_to_flatbuffer(executor, shlo, compiler_config)
     executor.set_binary(binary)
 
     compiler_config.record_property("achieved_compile_depth", "TTNN_IR")
@@ -238,5 +207,4 @@ def backend(gm, example_inputs, options=None):
                 program=program,
                 graph_constants=graph_constants,
             )
-
     return _base_backend(gm, example_inputs, compiler_config=options)

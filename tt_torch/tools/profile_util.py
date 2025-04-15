@@ -170,8 +170,7 @@ class Profiler:
         try:
             # block until tracy capture tool exits with T/O limit.
             # this should not take long as the client should have exited and the capture tool just needs to write out the tracedump
-            self.tracy_capture_tool_process.terminate()
-            self.tracy_capture_tool_process.communicate(timeout=20)
+            self.tracy_capture_tool_process.communicate(timeout=5)
         except subprocess.TimeoutExpired as e:
             self.tracy_capture_tool_process.terminate()
             self.tracy_capture_tool_process.communicate()
