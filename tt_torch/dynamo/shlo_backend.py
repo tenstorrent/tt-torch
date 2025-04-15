@@ -11,7 +11,12 @@ import re
 import os
 import onnx
 from typing import Union
-from tt_torch.tools.utils import run_model_proto, onnx_output_to_torch
+from tt_torch.tools.utils import (
+    prepare_inference_session,
+    run_model_proto,
+    onnx_output_to_torch,
+    torch_input_to_onnx,
+)
 
 from tt_torch.tools.utils import (
     CompilerConfig,
@@ -242,6 +247,7 @@ class StablehloExecutor(OpByOpExecutor):
         self.gm = None
         self.graph_constants = None
         self.model_proto = None
+        self.sess = None
 
     def set_module(
         self, module: Union[str, "torch_mlir._mlir_libs._mlir.ir.Module"]
@@ -275,6 +281,7 @@ class StablehloExecutor(OpByOpExecutor):
             "onnx model proto can only be added in op by op mode"
         )
         self.model_proto = model_proto
+        self.sess = prepare_inference_session(model_proto=model_proto)
 
     def get_stable_hlo_graph(self, op, inputs, **kwargs):
         if op.unique_key not in self.compiler_config.unique_ops:
@@ -415,23 +422,27 @@ class StablehloExecutor(OpByOpExecutor):
         else:
             assert False, "Invalid compile depth"
 
-        if self.program is not None:
-            return self.program.graph_module(
-                *(self.graph_constants + tuple(self.program.buffers()) + inputs)
-            )
-
         if self.binary is not None:
             try:
-                inputs = self.typecast_inputs(inputs)
-                output = tt_mlir.run_end_to_end(inputs, self.binary)
-            except:
-                if self.model_proto is not None:
-                    output = run_model_proto(
-                        model_proto=self.model_proto, inputs=inputs
-                    )
-                    output = onnx_output_to_torch(output)
-                else:
-                    assert False, "Invalid compile depth"
-            return output
+                output = tt_mlir.run_end_to_end(
+                    self.typecast_inputs(inputs), self.binary
+                )
+            except Exception as e:
+                print(f"Failed to execute binary: {e}")
 
-        assert False, "Invalid compile depth"
+        if self.program is not None:
+            try:
+                return self.program.graph_module(
+                    *(self.graph_constants + tuple(self.program.buffers()) + inputs)
+                )
+            except Exception as e:
+                assert False, f"Failed to execute binary or program: {e}"
+
+        if self.model_proto is not None:
+            try:
+                output = run_model_proto(
+                    sess=self.sess, model_proto=self.model_proto, inputs=inputs
+                )
+                return onnx_output_to_torch(output)
+            except Exception as e:
+                assert False, f"Failed to execute binary or model proto: {e}"

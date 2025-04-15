@@ -182,7 +182,12 @@ jobs:
             runs-on: wormhole_b0, name: "stable-diffusion-unet", tests: "
               tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet
               "
-          }
+          },
+          {
+            runs-on: wormhole_b0, name: "EfficientNetb0", tests: "
+              tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[op_by_op_torch-efficientnet-b0-eval]
+              "
+          },
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
