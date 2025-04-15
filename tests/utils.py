@@ -23,6 +23,8 @@ from onnx import version_converter
 from pathlib import Path
 from tt_torch.tools.verify import verify_against_golden
 from tt_torch.tools.utils import RuntimeIntermediate, OpByOpBackend
+import io
+import csv
 
 
 class ModelTester:
@@ -419,16 +421,44 @@ class ModelTester:
 
     def verify_intermediates_after_execution(self):
         print("[Start Intermediate Verification Report]")
+        # Prepare CSV output
+        output = io.StringIO()
+        csv_writer = csv.writer(output)
+
+        # Write the header
+        csv_writer.writerow(
+            [
+                "NodeName",
+                "PCC",
+                "ATOL",
+                "ErrorMessage",
+                "FlattenedPCC",
+                "FlattenedATOL",
+                "FlattenedErrorMessage",
+            ]
+        )
+
+        # Write each intermediate's metrics as CSV; sanitize out commas
         for _, intermediate in self.compiler_config.runtime_intermediate_cache.items():
             intermediate.calculate_metrics()
-            if intermediate.error_message:
-                print(
-                    f"Metrics for {intermediate.node.name}: ERROR: {intermediate.error_message}"
-                )
-            else:
-                print(
-                    f"Metrics for {intermediate.node.name}: pcc {intermediate.pcc}\tatol {intermediate.atol}"
-                )
+            csv_writer.writerow(
+                [
+                    intermediate.node.name,
+                    intermediate.pcc,
+                    intermediate.atol,
+                    intermediate.error_message.replace(",", ";")
+                    if intermediate.error_message
+                    else "",
+                    intermediate.flattened_pcc,
+                    intermediate.flattened_atol,
+                    intermediate.flattened_error_message.replace(",", ";")
+                    if intermediate.flattened_error_message
+                    else "",
+                ]
+            )
+
+        # Print the CSV content
+        print(output.getvalue())
         print("[End Intermediate Verification Report]")
 
 
