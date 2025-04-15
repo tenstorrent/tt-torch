@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-set(TT_MLIR_VERSION "1cd3fd63c281111469ed5e6294eec42f0dc02ef9")
+set(TT_MLIR_VERSION "2265da2ddf3d05bbc9e0fe67a4bfcc9212cfce2d")
 set(TORCH_MLIR_VERSION "a265d283357f572c5437f9217ea85fa9770d374c")
 
 if (BUILD_TOOLCHAIN)
