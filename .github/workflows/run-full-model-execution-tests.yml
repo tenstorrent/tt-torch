@@ -26,12 +26,8 @@ jobs:
         build: [
           {
             runs-on: wormhole_b0, name: "eval_1", tests: "
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg19_bn]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg16]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-mobilenetv1_100.ra4_e3600_r224_in1k]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-dla34.in1k]
-                  tests/models/yolov5/test_yolov5.py::test_yolov5[full-eval]
-                  tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[full-eval]
+                  tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval]
+                  pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]
               "
           }
         ]
@@ -121,6 +117,13 @@ jobs:
         mkdir -p logs
         mv *.ri.log logs/
         mv iv_test_summary.txt logs/
+
+    - name: Generate report xlsx
+      if: always()
+      shell: bash
+      run: |
+        source env/activate
+        python tt_torch/tools/ci_verification.py --dissect-report logs logs/runtime_intermediate_report.xlsx
 
     - name: Upload Test Logs and Summary
       uses: actions/upload-artifact@v4
