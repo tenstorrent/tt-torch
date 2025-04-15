@@ -71,8 +71,9 @@ class TTContextCache(ContextCache):
             for filename, line in stack_frames:
                 if filename:
                     locations.append(
-                        Location.file(filename, line, col=0, context=self._c),
+                        Location.file(filename, line, col=0, context=self._c)
                     )
+            # Add the torchfx node name as the last location
             locations.append(Location.name(node.name))
             return Location.fused(locations, context=self._c)
         return Location.unknown(context=self._c)
@@ -303,7 +304,6 @@ class TorchExecutor(OpByOpExecutor):
             print(f"Compiling {idx}/{num_nodes}: {node.target}")
             out_degree[node] = len(node.users)
             if node.op == "placeholder":
-                print("input_index = ", input_index)
                 node_to_tensor[node] = inputs[input_index]
                 input_index += 1
             elif node.op == "get_attr":
@@ -332,14 +332,6 @@ class TorchExecutor(OpByOpExecutor):
                 except Exception as e:
                     binary = None
                     print(f"Failed to compile {idx}/{num_nodes}: {node.target}: {e}")
-
-                # if cache_intermediate_goldens:
-                #     golden = node.target(*args, **node.kwargs)
-                #     cache_entry = RuntimeIntermediate(node, golden)
-                #     self.compiler_config.runtime_intermediate_cache[
-                #         node.name
-                #     ] = cache_entry
-                #     print(f"Caching runtime intermediate for {node.name}")
 
                 if (
                     self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
