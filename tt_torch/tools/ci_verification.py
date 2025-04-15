@@ -110,6 +110,7 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
 
     # Summary storage
     summary = []
+    corrupt_logs = []
 
     # Iterate through all log files in the folder
     counter = 0
@@ -125,9 +126,18 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
         model_name = None
         pytest_full_name = None
         counter += 1
+        start_marker_found = False
+        end_marker_found = False
+
         # Read the log file
         with open(log_path, "r") as file:
             for line in file:
+                # Check for start and end markers
+                if "[Start Intermediate Verification Report]" in line:
+                    start_marker_found = True
+                if "[End Intermediate Verification Report]" in line:
+                    end_marker_found = True
+
                 # Extract pytest full test name
                 if not pytest_full_name:
                     pytest_match = re.search(pytest_name_pattern, line)
@@ -157,6 +167,12 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
                 if metrics_match:
                     node_name, pcc, atol = metrics_match.groups()
                     rows.append([node_name, float(pcc), float(atol), None])
+
+        # Check for missing markers
+        if not start_marker_found or not end_marker_found:
+            if pytest_full_name:
+                corrupt_logs.append(pytest_full_name)
+            continue
 
         # Skip if no module name was found
         if not module_name:
@@ -212,7 +228,13 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
         print(f"{pytest_name}: Final PCC = {pcc}")
         if isinstance(pcc, float) and pcc >= 0.99:
             passing_set.add(model_name)
-    print("passing set", passing_set)
+    print("Passing set", passing_set)
+
+    # Print corrupt logs
+    if corrupt_logs:
+        print("\nCorrupt Logs:")
+        for log in corrupt_logs:
+            print(log)
 
 
 def run_iv_tests_and_generate_summary(yaml_files, summary_file="iv_test_summary.txt"):
@@ -283,7 +305,7 @@ if __name__ == "__main__":
     if args.run_iv_tests:
         yaml_files = [
             "./.github/workflows/run-full-model-execution-tests.yml",
-            "./.github/workflows/run-full-model-execution-tests-nightly.yml",
+            # "./.github/workflows/run-full-model-execution-tests-nightly.yml",
         ]
         run_iv_tests_and_generate_summary(yaml_files)
 
