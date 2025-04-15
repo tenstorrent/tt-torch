@@ -869,7 +869,7 @@ class RuntimeIntermediate:
                 required_atol=0.01,
                 disable_print=True,
             )
-        except AssertionError as e:
+        except Exception as e:
             self.pcc = "ERROR"
             self.atol = "ERROR"
             self.error_message = str(e)
