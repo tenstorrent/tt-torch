@@ -815,6 +815,8 @@ def run_model_proto(
     }
     output = sess.run(None, inputs_dict)
     return output
+
+
 class RuntimeIntermediate:
     def __init__(self, node: torch.fx.Node, golden):
         self.node = node
