@@ -7,26 +7,35 @@ import json
 from PIL import Image
 import torch
 from torchvision import transforms
+from efficientnet_pytorch import EfficientNet
+
+import pytest
+from tests.utils import ModelTester
+from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model = EfficientNet.from_pretrained('efficientnet-b0')
+        model = EfficientNet.from_pretrained("efficientnet-b0")
         return model.eval()
 
     def _load_inputs(self):
         # Fetch image from URL
-        url = "https://github.com/lukemelas/EfficientNet-PyTorch/blob/master/examples/simple/img.jpg"
+        url = "http://images.cocodataset.org/val2017/000000039769.jpg"
         response = requests.get(url)
         response.raise_for_status()  # Ensure the request was successful
         img = Image.open(BytesIO(response.content))
 
         # Apply transformations
-        tfms = transforms.Compose([
-            transforms.Resize(224),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-        ])
+        tfms = transforms.Compose(
+            [
+                transforms.Resize(224),
+                transforms.ToTensor(),
+                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+            ]
+        )
         return tfms(img).unsqueeze(0)
+
 
 @pytest.mark.parametrize(
     "mode",
@@ -48,7 +57,7 @@ def test_EfficientNet(record_property, mode, op_by_op):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
-    
+
     tester = ThisTester(
         model_name,
         mode,
@@ -58,22 +67,21 @@ def test_EfficientNet(record_property, mode, op_by_op):
         record_property_handle=record_property,
         model_group="red",
     )
-    with torch.no_grad():
-        results = tester.test_model()
+
+    results = tester.test_model()
+
     if mode == "eval":
         print("eval")
         # Fetch labels_map from URL
-        labels_url = "https://github.com/lukemelas/EfficientNet-PyTorch/blob/master/examples/simple/labels_map.txt"
-        response = requests.get(labels_url)
-        response.raise_for_status()  # Ensure the request was successful
-        labels_map = json.loads(response.text)
+        labels_map = json.load(open("tests/models/EfficientNet/labels_map.txt"))
         labels_map = [labels_map[str(i)] for i in range(1000)]
 
-        print('-----')
+        print("-----")
         for idx in torch.topk(results, k=5).indices.squeeze(0).tolist():
             prob = torch.softmax(results, dim=1)[0, idx].item()
-            print('{label:<75} ({p:.2f}%)'.format(label=labels_map[idx], p=prob*100))
+            print("{label:<75} ({p:.2f}%)".format(label=labels_map[idx], p=prob * 100))
     tester.finalize()
+
 
 # model = EfficientNet.from_pretrained('efficientnet-b0')
 
