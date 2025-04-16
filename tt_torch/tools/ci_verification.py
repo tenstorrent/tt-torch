@@ -91,10 +91,11 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
         log_folder (str): Path to the folder containing log files.
         output_xlsx (str): Path to the output Excel file.
     """
-    # Regex patterns to extract data
+
     pytest_name_pattern = r"(tests/models/.+\.py::[^\s]+)"
     model_name_pattern = r"\[MODEL NAME\]\s+(.+)"
-    model_names = []
+    final_row_pattern = r"Final Row:\s*(.+)"
+    first_failing_op_pattern = r"First Failing Op with PCC < [^:]+:\s*(.+)"
 
     # Create an Excel file
     workbook = xlsxwriter.Workbook(output_xlsx)
@@ -107,9 +108,11 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
         "green": workbook.add_format({"bg_color": "#C6EFCE", "border": 1}),
     }
 
-    # Summary storage
+    model_names = []
     summary = []
     corrupt_logs = []
+    final_rows = []
+    first_failing_ops = []
 
     # Helper function to parse numeric values or handle errors
     def parse_numeric(value):
@@ -130,12 +133,13 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
             print(f"Skipping {log_file} as it is not a file.")
             continue
 
-        # Data storage
         rows = []
+        csv_data = []
         pytest_full_name = None
         model_name = None
-        csv_data = []
         inside_csv = False
+        final_row = None
+        first_failing_op = None
 
         # Read the log file
         with open(log_path, "r") as file:
@@ -166,6 +170,20 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
                 if inside_csv:
                     csv_data.append(line.strip())
 
+                # Extract Final Row
+                final_row_match = re.search(final_row_pattern, line)
+                if final_row_match:
+                    final_row = final_row_match.group(1).strip()
+
+                # Extract First Failing Op
+                first_failing_op_match = re.search(first_failing_op_pattern, line)
+                if first_failing_op_match:
+                    first_failing_op = first_failing_op_match.group(1).strip()
+
+        if final_row:
+            final_rows.append((log_file, final_row))
+        if first_failing_op:
+            first_failing_ops.append((log_file, first_failing_op))
         # Check for missing markers
         if not csv_data:
             if pytest_full_name:
@@ -221,6 +239,11 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
         for col_num, header in enumerate(headers):
             worksheet.write(0, col_num, header)
 
+        # Adjust column widths
+        column_widths = [20, 10, 10, 50, 15, 15, 50]  # Define widths for each column
+        for col_num, width in enumerate(column_widths):
+            worksheet.set_column(col_num, col_num, width)
+
         # Write data rows with conditional formatting
         for row_num, row in enumerate(rows, start=1):
             for col_num, cell in enumerate(row):
@@ -242,25 +265,27 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
                 else:
                     worksheet.write(row_num, col_num, cell, formats["default"])
 
-        # Get the final PCC value from the last row
-        if rows:
-            final_pcc = rows[-1][1]
-            summary.append((pytest_full_name, model_name, final_pcc))
+    # Add a summary worksheet
+    summary_sheet = workbook.add_worksheet("Summary")
+    summary_sheet.write(0, 0, "Log File")
+    summary_sheet.write(0, 1, "Final Row")
+    summary_sheet.write(0, 2, "First Failing Op")
+    summary_sheet_column_widths = [20, 50, 50]  # Define widths for each column
+    for col_num, width in enumerate(summary_sheet_column_widths):
+        summary_sheet.set_column(col_num, col_num, width)
+
+    for idx, (log_file, final_row) in enumerate(final_rows, start=1):
+        summary_sheet.write(idx, 0, log_file)
+        summary_sheet.write(idx, 1, final_row)
+
+        # Find the corresponding first failing op
+        failing_op = next((op for op in first_failing_ops if op[0] == log_file), None)
+        if failing_op:
+            summary_sheet.write(idx, 2, failing_op[1])
 
     # Close the workbook
     workbook.close()
     print(f"Verification report saved to {output_xlsx}")
-
-    # Print the summary
-    print("\nSummary of Final PCC Values:")
-    passing_set = set()
-
-    for pytest_name, model_name, pcc in summary:
-        print(f"{pytest_name}: Final PCC = {pcc}")
-        if isinstance(pcc, float) and pcc >= 0.99:
-            passing_set.add(model_name)
-
-    print("\nPassing set", passing_set)
 
     # Print corrupt logs
     if corrupt_logs:
