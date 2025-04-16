@@ -60,3 +60,16 @@ jobs:
     secrets: inherit
     with:
       spreadsheet_name: ${{ needs.download-report.outputs.spreadsheet_name }}
+  build-debug:
+    needs: [pre-commit, spdx, docker-build]
+    uses: ./.github/workflows/run-build.yml
+    secrets: inherit
+    with:
+      docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      setup-args: "--build_runtime_debug"
+  test-tools:
+    needs: [docker-build, build-debug]
+    uses: ./.github/workflows/run-tools-tests.yml
+    secrets: inherit
+    with:
+      docker-image: ${{ needs.docker-build.outputs.docker-image }}
