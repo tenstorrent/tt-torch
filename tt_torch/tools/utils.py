@@ -17,6 +17,8 @@ import shutil
 from tt_mlir import (
     open_mesh_device,
     close_mesh_device,
+    create_sub_mesh_device,
+    release_sub_mesh_device,
     MeshDeviceOptions,
     is_runtime_debug_enabled,
 )
@@ -363,6 +365,17 @@ class CompilerConfig:
     def cleanup_device(self):
         assert self.runtime_device is not None
         close_mesh_device(self.runtime_device)
+        self.runtime_device = None
+
+    def initialize_sub_device(self, parent_device, mesh_shape, mesh_offset):
+        assert not self.runtime_device
+        self.runtime_device = create_sub_mesh_device(
+            parent_device, mesh_shape, mesh_offset
+        )
+
+    def cleanup_sub_device(self):
+        assert self.runtime_device is not None
+        release_sub_mesh_device(self.runtime_device)
         self.runtime_device = None
 
     def post_init(self):
