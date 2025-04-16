@@ -231,9 +231,9 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
                         worksheet.write(row_num, col_num, cell, formats["default"])
                 elif col_num == 1 or col_num == 4:  # PCC and Flattened PCC columns
                     if cell is not None:
-                        if cell < 0.99:
+                        if cell < 0.95:
                             worksheet.write(row_num, col_num, cell, formats["red"])
-                        elif 0.99 <= cell < 1.0:
+                        elif 0.95 <= cell < 0.99:
                             worksheet.write(row_num, col_num, cell, formats["yellow"])
                         else:
                             worksheet.write(row_num, col_num, cell, formats["green"])

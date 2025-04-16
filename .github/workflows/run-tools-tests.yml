@@ -73,7 +73,7 @@ jobs:
     - name: Use build artifacts
       uses: actions/download-artifact@v4
       with:
-        name: install-artifacts{{ inputs.artifact-key && '-' + inputs.artifact-key || '' }}
+        name: install-artifacts${{ inputs.build-artifact-key }}
         path: ${{ steps.strings.outputs.install-dir }}
 
     - name: 'Untar install directory'
