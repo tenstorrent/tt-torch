@@ -9,8 +9,6 @@ import numpy as np
 from io import BytesIO
 import requests
 import json
-
-# import onnxruntime
 from PIL import Image
 from torchvision import transforms
 from efficientnet_pytorch import EfficientNet
@@ -72,36 +70,10 @@ def test_EfficientNet_onnx(record_property, mode, op_by_op):
         record_property_handle=record_property,
         model_group="red",
     )
-    breakpoint()
-    # onnx_model_path = f"{tester.model_name}.onnx"
-    # onnx.save(tester.model, onnx_model_path)  # Save the loaded ONNX model
-    # ort_session = onnxruntime.InferenceSession(onnx_model_path)
 
-    # # Get input and output names
-    # input_name = ort_session.get_inputs()[0].name
-    # output_name = ort_session.get_outputs()[0].name
-
-    # # Prepare the input
-    # torch_input = tester._load_torch_inputs()
-    # onnx_input = {input_name: torch_input.cpu().numpy()}
-
-    # # Run the ONNX model
-    # ort_outputs = ort_session.run([output_name], onnx_input)
-
-    # # You can now assert on the output of the ONNX model
-    # assert isinstance(ort_outputs, list)
-    # assert len(ort_outputs) == 1
-    # assert isinstance(ort_outputs[0], np.ndarray)
-    # assert ort_outputs[0].shape[0] == 1  # Batch size should be 1
-    # assert ort_outputs[0].shape[1] == 1000 # EfficientNet-b1 has 1000 output classes for ImageNet
-
-    # # Clean up the saved ONNX model
-    # os.remove(onnx_model_path)
     results = tester.test_model()
     if mode == "eval":
         print("eval")
-        breakpoint()
-        # Fetch labels_map from URL
         labels_map = json.load(open("tests/models/EfficientNet/labels_map.txt"))
         labels_map = [labels_map[str(i)] for i in range(1000)]
 

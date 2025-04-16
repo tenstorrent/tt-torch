@@ -17,6 +17,7 @@ from tt_torch.tools.utils import (
     CompileDepth,
     prepare_inference_session,
     onnx_output_to_torch,
+    torch_input_to_onnx,
 )
 import json
 from onnx import version_converter
@@ -455,38 +456,7 @@ class OnnxModelTester(ModelTester):
 
     def _load_numpy_inputs(self):
         torch_inputs = self._load_torch_inputs()
-        input_names = [input.name for input in self.sess.get_inputs()]
-
-        # Helper function to safely convert tensor to numpy, handling bfloat16
-        def tensor_to_numpy(tensor):
-            if tensor.dtype == torch.bfloat16:
-                tensor = tensor.to(torch.float32)
-            return tensor.detach().cpu().numpy()
-
-        # single tensor
-        if isinstance(torch_inputs, torch.Tensor):
-            if len(input_names) == 1:
-                return {input_names[0]: tensor_to_numpy(torch_inputs)}
-
-        # dictionary input
-        if isinstance(torch_inputs, dict):
-            if len(input_names) == len(torch_inputs):
-                return {
-                    name: tensor_to_numpy(tensor)
-                    for name, tensor in zip(input_names, torch_inputs.values())
-                }
-
-        # list or tuple input
-        if isinstance(torch_inputs, (list, tuple)):
-            if len(input_names) == len(torch_inputs):
-                return {
-                    name: tensor_to_numpy(tensor)
-                    for name, tensor in zip(input_names, torch_inputs)
-                }
-
-        raise ValueError(
-            f"Input type {type(torch_inputs)} is not supported or does not match the expected input names."
-        )
+        return torch_input_to_onnx(self.sess, torch_inputs)
 
     def compile_model(self, model, compiler_config):
         model = compile_onnx(model, compiler_config)
