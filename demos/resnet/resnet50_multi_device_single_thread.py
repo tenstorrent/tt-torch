@@ -12,39 +12,6 @@ import tabulate
 from threading import Thread
 import requests
 from tt_torch.tools.device_manager import DeviceManager
-import multiprocessing as mp
-
-# A custom thread class to simplify returning values from threads
-# class CustomThread(Thread):
-#     def __init__(
-#         self, group=None, target=None, name=None, args=(), kwargs={}, verbose=None
-#     ):
-#         super().__init__(group, target, name, args, kwargs)
-#         self._return = None
-
-#     def run(self):
-#         if self._target is not None:
-#             self._return = self._target(*self._args, **self._kwargs)
-
-#     def join(self):
-#         super().join()
-#         return self._return
-
-class CustomProcess(mp.Process):
-    def __init__(
-        self, group=None, target=None, name=None, args=(), kwargs={}, verbose=None
-    ):
-        super().__init__(group, target, name, args, kwargs)
-        self._return = None
-
-    def run(self):
-        if self._target is not None:
-            self._return = self._target(*self._args, **self._kwargs)
-
-    def join(self):
-        super().join()
-        return self._return
-
 
 weights = models.ResNet152_Weights.IMAGENET1K_V2
 model = models.resnet152(weights=weights).to(torch.bfloat16).eval()
@@ -63,19 +30,12 @@ def download_image(url):
     return img
 
 
-def get_predictions(device, urls, topk=5):
+def get_predictions(tt_model, urls, tt_model_index, topk=5):
     """
     Given the compiled tt_model and a list of URLs, this function calls the model
     for each URL and returns the top K predictions.
     """
-    # print("[DEMO][Get Predictions] tt_model_index: ", )
-    cc = CompilerConfig()
-    cc.enable_consteval = True
-    cc.consteval_parameters = True
-    options = {}
-    options["compiler_config"] = cc
-    options["device"] = device
-    tt_model = torch.compile(model, backend=backend, dynamic=False, options=options)
+    print("[DEMO][Get Predictions] tt_model_index: ", tt_model_index)
     results = []
     headers = [f"Top {topk} Predictions"]
     for url in urls:
@@ -101,6 +61,7 @@ def main(use_simplified_manager):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+
     
     num_devices = DeviceManager.get_num_available_devices()
     if use_simplified_manager:
@@ -119,32 +80,32 @@ def main(use_simplified_manager):
             )
         devices = list(DeviceManager.get_sub_mesh_devices(parent))
     print("[DEMO] Acquired sub mesh devices: ", devices)
-    # tt_models = []
-    # for device in devices:
-    #     # Need to create options map within this loop.
-    #     # If you create it outside, the last device will overwrite the options
-    #     # for ALL devices because the options map is passed by reference.
-    #     # This leads to the model only being compiled for a single device.
-    #     options = {}
-    #     options["compiler_config"] = cc
-    #     options["device"] = device
-    #     # Compile the model for each device
-    #     tt_models.append(
-    #         torch.compile(model, backend=backend, dynamic=False, options=options)
-    #     )
+    tt_models = []
+    for device in devices:
+        # Need to create options map within this loop.
+        # If you create it outside, the last device will overwrite the options
+        # for ALL devices because the options map is passed by reference.
+        # This leads to the model only being compiled for a single device.
+        options = {}
+        options["compiler_config"] = cc
+        options["device"] = device
+        # Compile the model for each device
+        tt_models.append(
+            torch.compile(model, backend=backend, dynamic=False, options=options)
+        )
 
     # List of image URLs to be processed
     image_urls = [
         "http://images.cocodataset.org/val2017/000000039769.jpg",  # Two cats
         "https://farm5.staticflickr.com/4106/4962771032_82d3b7ccea_z.jpg",  # Two zebras
-        "https://farm5.staticflickr.com/4039/4184303499_115369327f_z.jpg",  # Pizza
-        "https://farm5.staticflickr.com/4117/4902338213_9c6fb559b8_z.jpg",  # Park bench
-        "https://farm4.staticflickr.com/3744/10085008474_8d72a9dc5e_z.jpg",  # Locomotive
-        "https://farm4.staticflickr.com/3596/3687601495_73a46536b8_z.jpg",  # Baseball player
-        "https://farm2.staticflickr.com/1375/5163062341_fbeb2e6678_z.jpg",  # Person in suit
-        "https://farm2.staticflickr.com/1366/976992600_3927559756_z.jpg",  # Microwave
-        "https://farm6.staticflickr.com/5056/5457805814_df70ed85c3_z.jpg",  # Labrador retriever
-        "https://farm8.staticflickr.com/7325/9536735356_c1e2e5a0d5_z.jpg",  # Two elephants
+        # "https://farm5.staticflickr.com/4039/4184303499_115369327f_z.jpg",  # Pizza
+        # "https://farm5.staticflickr.com/4117/4902338213_9c6fb559b8_z.jpg",  # Park bench
+        # "https://farm4.staticflickr.com/3744/10085008474_8d72a9dc5e_z.jpg",  # Locomotive
+        # "https://farm4.staticflickr.com/3596/3687601495_73a46536b8_z.jpg",  # Baseball player
+        # "https://farm2.staticflickr.com/1375/5163062341_fbeb2e6678_z.jpg",  # Person in suit
+        # "https://farm2.staticflickr.com/1366/976992600_3927559756_z.jpg",  # Microwave
+        # "https://farm6.staticflickr.com/5056/5457805814_df70ed85c3_z.jpg",  # Labrador retriever
+        # "https://farm8.staticflickr.com/7325/9536735356_c1e2e5a0d5_z.jpg",  # Two elephants
     ]
     # Evenly distribute the image URLs across all devices.
     # This creates a list of lists of length num_devices, where the ith sublist
@@ -155,20 +116,10 @@ def main(use_simplified_manager):
         for i in range(num_devices)
     ]
 
-    threads = []
-    for i in range(num_devices):
-        thread = CustomProcess(
-            target=get_predictions, args=(devices[i], divided_urls[i], i)
-        )
-        threads.append((devices[i], thread))
-
-    for _, thread in threads:
-        thread.start()
-
     final_results = []
-    for device_used, thread in threads:
-        predictions = thread.join()
-        final_results.append((device_used, predictions))
+    for i in range(num_devices):
+        prediction_results = get_predictions(tt_models[i], divided_urls[i], i)
+        final_results.append((devices[i], prediction_results))
 
     # Print the results
     for device_used, prediction_results in final_results:

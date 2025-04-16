@@ -13,9 +13,17 @@ import requests
 from tt_torch.tools.device_manager import DeviceManager
 import time
 import pprint
+import torch.multiprocessing as mp
+import torch.distributed as dist
+from torch.nn.parallel import DistributedDataParallel as DDP
+import os
+
+global tt_models
+tt_models = [1]
+
 
 # A custom thread class to simplify returning values from threads
-class CustomThread(Thread):
+class CustomProcess(mp.Process):
     def __init__(
         self, group=None, target=None, name=None, args=(), kwargs={}, verbose=None
     ):
@@ -48,12 +56,17 @@ def download_image(url):
     return img
 
 
-def get_predictions(tt_model, urls, topk=5):
+def get_predictions(model_index, urls, topk=5):
     """
     Given the compiled tt_model and a list of URLs, this function calls the model
     for each URL and returns the top K predictions.
     """
+    global tt_models
     results = []
+    print("MODELS: ", tt_models)
+    print("MODEL INDEX: ", model_index)
+    tt_model = tt_models[model_index]
+    print("GET PREDICTIONS CALLED")
     headers = [f"Top {topk} Predictions"]
     for url in urls:
         img = download_image(url)
@@ -68,31 +81,69 @@ def get_predictions(tt_model, urls, topk=5):
         results.append(url_string + tabulate.tabulate(rows, headers=headers))
     return results
 
+def setup(rank, world_size):
+    # os.environ["MASTER_ADDR"] = "127.0.0.1"
+    # os.environ["MASTER_PORT"] = "43009"
+    print("SETUP CALLED")
+    dist.init_process_group("gloo", init_method="file:///d:/tmp/store_file", rank=rank, world_size=world_size)
 
-def multidevice(tt_models, divided_urls):
+def cleanup():
+    dist.destroy_process_group()
+    print("CLEANUP CALLED")
+
+def worker(rank, world_size, tt_models, divided_urls):
+    setup(rank, world_size)
+    tt_models[rank] = DDP(tt_models[rank], device_ids=None, output_device=None).module
+    results = get_predictions(tt_models[rank], divided_urls[rank])
+    cleanup()
+    return results
+
+def multidevice(divided_urls):
     """
     Running the ResNet model on all available devices in parallel.
     """
-    cc = CompilerConfig()
-    cc.enable_consteval = True
-    cc.consteval_parameters = True
+    global tt_models
+    
+    # processes = []
+    # for i in range(num_devices):
+    #     tt_models[i] = DDP(tt_models[i], device_ids=None, output_device=None).module
+    # mp.spawn(
+    #     worker,
+    #     args=(num_devices, tt_models, divided_urls),
+    #     nprocs=num_devices,
+    # )
+    # for i in range(num_devices):
+    #     setup(i, num_devices)
+    #     print("FINISHED SETUP")
+    #     tt_models[i] = DDP(tt_models[i], device_ids=None, output_device=None).module
+    
+    # with mp.Manager() as manager:
+    #     tt_models = manager.list(tt_models)
+    #     num_devices = len(tt_models)
+    #     print("MULTIDEVICE NUM DEVICES: ", num_devices)
+    #     with mp.Pool(processes=num_devices) as pool:
+    #         final_results = pool.starmap(get_predictions, zip(range(num_devices), divided_urls))
+    #     return final_results
 
-    num_devices = len(tt_models)
-    threads = []
-    for i in range(num_devices):
-        thread = CustomThread(
-            target=get_predictions, args=(tt_models[i], divided_urls[i])
-        )
-        threads.append(thread)
-
-    for thread in threads:
-        thread.start()
-
-    final_results = []
-    for thread in threads:
-        predictions = thread.join()
-        final_results.append(predictions)
+    with mp.Pool(processes=num_devices) as pool:
+        final_results = pool.starmap(get_predictions, zip(range(num_devices), divided_urls))
     return final_results
+
+    # for i in range(num_devices):
+    #     setup(i, num_devices)
+    #     tt_model = DDP(tt_models[i], device_ids=None, output_device=None)
+    #     p = CustomProcess(target=get_predictions, args=(tt_model.module, divided_urls[i]))
+    #     processes.append(p)
+    #     p.start()
+    
+    # final_results = []
+    # for p in processes:
+    #     results = p.join()
+    #     final_results.append(results)
+    # return final_results
+    
+    
+
 
 
 def singledevice(tt_model, image_urls):
@@ -103,7 +154,7 @@ def singledevice(tt_model, image_urls):
 
 
 if __name__ == "__main__":
-    NUM_ITERATIONS = 10  # Number of perf testing iterations to run
+    NUM_ITERATIONS = 1  # Number of perf testing iterations to run
     image_urls = [
         "http://images.cocodataset.org/val2017/000000039769.jpg",  # Two cats
         "https://farm5.staticflickr.com/4106/4962771032_82d3b7ccea_z.jpg",  # Two zebras
@@ -135,59 +186,60 @@ if __name__ == "__main__":
     single_options = {}
     single_options["compiler_config"] = cc
     single_model = torch.compile(model, backend=backend, dynamic=False, options=single_options)
-    print("Executing dummy inference on single device to warm up the devices")
-    # compile and execute this once to get the compilation overhead out of the way
-    singledevice(single_model, image_urls[:2])
-    print("Compiled single device model")
-    single_results = None
-    acc_duration = 0
-    print("Testing single-device performance")
-    for _ in range(NUM_ITERATIONS):
-        start_time = time.time()
-        single_results = singledevice(single_model, image_urls)
-        end_time = time.time()
-        acc_duration += end_time - start_time
-    avg_duration_single = acc_duration / NUM_ITERATIONS
+    
+    # print("Executing dummy inference on single device to warm up the devices")
+    # # compile and execute this once to get the compilation overhead out of the way
+    # singledevice(single_model, image_urls[:2])
+    # print("Compiled single device model")
+    # single_results = None
+    # acc_duration = 0
+    # print("Testing single-device performance")
+    # for _ in range(NUM_ITERATIONS):
+    #     start_time = time.time()
+    #     single_results = singledevice(single_model, image_urls)
+    #     end_time = time.time()
+    #     acc_duration += end_time - start_time
+    # avg_duration_single = acc_duration / NUM_ITERATIONS
 
     parent, devices = DeviceManager.acquire_available_devices()
     num_devices = len(devices)
-    tt_models = []
+
     for device in devices:
         multi_options = {}
         multi_options["compiler_config"] = cc
         multi_options["device"] = device
         # Compile the model for each device
-        tt_models.append(
-            torch.compile(model, backend=backend, dynamic=False, options=multi_options)
-        )
+        multi_model = torch.compile(model, backend=backend, dynamic=False, options=multi_options)
+        tt_models.append(multi_model)
+
     print("Compiled multi device models")
     print("Executing dummy inference on multidevice to warm up the devices")
     # compile and execute this once to get the compilation overhead out of the way
-    multidevice(tt_models, [[divided_urls[0][0]], [divided_urls[1][0]]])
+    multidevice([[divided_urls[0][0]], [divided_urls[1][0]]])
     print("Dummy inference complete")
 
-    multi_results = None
-    acc_duration = 0
-    print("Testing multi-device performance")
-    for _ in range(NUM_ITERATIONS):
-        start_time = time.time()
-        multi_results = multidevice(tt_models, divided_urls)
-        end_time = time.time()
-        acc_duration += end_time - start_time
-    avg_duration_multi = acc_duration / NUM_ITERATIONS
+    # multi_results = None
+    # acc_duration = 0
+    # print("Testing multi-device performance")
+    # for _ in range(NUM_ITERATIONS):
+    #     start_time = time.time()
+    #     multi_results = multidevice(tt_models, divided_urls)
+    #     end_time = time.time()
+    #     acc_duration += end_time - start_time
+    # avg_duration_multi = acc_duration / NUM_ITERATIONS
     
-    DeviceManager.release_parent_device(parent, cleanup_sub_devices=True)
+    # DeviceManager.release_parent_device(parent, cleanup_sub_devices=True)
     
-    print("\n" * 5)
-    print("Average Multi device time (in s): ", avg_duration_multi)
-    print("Average Single device time (in s): ", avg_duration_single)
-    print("\n" * 5)
+    # print("\n" * 5)
+    # print("Average Multi device time (in s): ", avg_duration_multi)
+    # # print("Average Single device time (in s): ", avg_duration_single)
+    # print("\n" * 5)
 
-    print("Multi Device Results from latest iteration:")
-    pprint.pprint(multi_results)
-    print("*" * 50)
-    print("Single Device Results from latest iteration:")
-    pprint.pprint(single_results)
+    # print("Multi Device Results from latest iteration:")
+    # pprint.pprint(multi_results)
+    # print("*" * 50)
+    # print("Single Device Results from latest iteration:")
+    # # pprint.pprint(single_results)
 
 
 # Look at how backend.py handles binary serialization.

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // c++ standard library includes
+#include <memory>
 #include <optional>
 
 // other library includes
@@ -312,7 +313,42 @@ PYBIND11_MODULE(tt_mlir, m) {
                     : std::make_optional(
                           value.cast<tt::runtime::DispatchCoreType>());
           });
+  // py::class_<tt::runtime::Device, std::shared_ptr<tt::runtime::Device>>(m, "Device");
   py::class_<tt::runtime::Device>(m, "Device");
+
+  // py::class_<tt::runtime::Device>(m, "Device")
+  //     .def(py::init<std::shared_ptr<void>, tt::runtime::DeviceRuntime>(),
+  //          py::arg("handle"), py::arg("runtime"))
+  //     .def("get_runtime",
+  //          [](const tt::runtime::Device &d) { return d.associatedRuntime; })
+  //     .def(py::pickle(
+  //         // __getstate__: Serialize the device to a picklable state
+  //         [](const tt::runtime::Device &d) {
+  //           // Serialize the handle as a raw pointer
+  //           auto ptr_val = reinterpret_cast<std::uintptr_t>(d.handle.get());
+  //           return py::make_tuple(ptr_val, d.associatedRuntime);
+  //         },
+  //         // __setstate__: Deserialize the picklable state back into a Device
+  //         // object
+  //         [](py::tuple t) {
+  //           if (t.size() != 2) {
+  //             throw std::runtime_error("Invalid state for Device!");
+  //           }
+
+  //           // Deserialize the handle and runtime
+  //           std::uintptr_t ptr_val = t[0].cast<std::uintptr_t>();
+  //           tt::runtime::DeviceRuntime runtime =
+  //               t[1].cast<tt::runtime::DeviceRuntime>();
+
+  //           // Reconstruct the handle
+  //           void *raw_ptr = reinterpret_cast<void *>(ptr_val);
+  //           std::shared_ptr<void> handle(raw_ptr, [](void *) {
+  //             // No-op deleter
+  //           });
+
+  //           // Reconstruct the Device object
+  //           return tt::runtime::Device(handle, runtime);
+  //         }));
   py::class_<tt::runtime::Tensor>(m, "Tensor");
   m.def("compile", &compile_stablehlo_to_bytestream,
         "A function that compiles stableHLO to a bytestream");

@@ -213,6 +213,7 @@ class Executor:
             tt_mlir.deallocate_tensor(t, force=True)
 
         if self.device is None:
+            print("[EXECUTOR] Closing device: ", device)
             tt_mlir.close_mesh_device(device)
 
     def __call__(self, *inputs):
@@ -237,6 +238,7 @@ class Executor:
 
         inputs = list(inputs)
         device = self._get_device()
+        print("[EXECUTOR] DEVICE USED: ", device)
 
         binary = tt_mlir.create_binary_from_bytestream(self.binary)
         program_idx = 0
