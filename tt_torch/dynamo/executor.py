@@ -20,6 +20,7 @@ from tt_torch.tools.utils import (
     Op,
     OpCompilationStatus,
 )
+from tt_torch.tools.utils import run_model_proto, onnx_output_to_torch
 from typing import Union
 
 
@@ -276,18 +277,10 @@ class OnnxExecutor(Executor):
         if self.binary is None:
             # Only want to load the model proto into one inference session
             # since models can be big
-            if self.sess is None:
-                self.sess = ort.InferenceSession(self.model_proto.SerializeToString())
-            outputs = self.sess.run(
-                None,
-                {
-                    nodearg.name: inp.numpy()
-                    if inp.dtype != torch.bfloat16
-                    else inp.float().numpy()
-                    for nodearg, inp in zip(self.sess.get_inputs(), inputs)
-                },
+            output = run_model_proto(
+                sess=self.sess, model_proto=self.model_proto, inputs=inputs
             )
-            return outputs
+            return onnx_output_to_torch(output)
 
         return tt_mlir.run_end_to_end(inputs, self.binary)
 

@@ -9,7 +9,9 @@ from torch_mlir._mlir_libs._mlir import ir
 import mlir.dialects.stablehlo as stablehlo
 import re
 import os
+import onnx
 from typing import Union
+from tt_torch.tools.utils import run_model_proto, onnx_output_to_torch
 
 from tt_torch.tools.utils import (
     CompilerConfig,
@@ -235,6 +237,7 @@ class StablehloExecutor(OpByOpExecutor):
         self.get_ops_in_module(self.parsed_module)
         self.gm = None
         self.graph_constants = None
+        self.model_proto = None
 
     def set_module(
         self, module: Union[str, "torch_mlir._mlir_libs._mlir.ir.Module"]
@@ -251,7 +254,7 @@ class StablehloExecutor(OpByOpExecutor):
             self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP
             or self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
         ) and self.compiler_config.op_by_op_backend == OpByOpBackend.STABLEHLO, (
-            "gm can only be added in op by op mode"
+            "program can only be added in op by op mode"
         )
         self.program = program
         self.graph_constants = (
@@ -259,6 +262,15 @@ class StablehloExecutor(OpByOpExecutor):
             if isinstance(graph_constants, (int, float))
             else tuple(graph_constants)
         )
+
+    def add_onnx_model_proto(self, model_proto: onnx.ModelProto):
+        assert (
+            self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP
+            or self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
+        ) and self.compiler_config.op_by_op_backend == OpByOpBackend.STABLEHLO, (
+            "onnx model proto can only be added in op by op mode"
+        )
+        self.model_proto = model_proto
 
     def get_stable_hlo_graph(self, op, inputs, **kwargs):
         if op.unique_key not in self.compiler_config.unique_ops:
@@ -374,7 +386,6 @@ class StablehloExecutor(OpByOpExecutor):
             self.print_op(op)
 
     def __call__(self, *inputs):
-        inputs = self.typecast_inputs(inputs)
 
         if self.compiler_config.compile_depth in (
             CompileDepth.EXECUTE_OP_BY_OP,
@@ -390,4 +401,17 @@ class StablehloExecutor(OpByOpExecutor):
             )
 
         if self.binary is not None:
-            return tt_mlir.run_end_to_end(inputs, self.binary)
+            try:
+                inputs = self.typecast_inputs(inputs)
+                output = tt_mlir.run_end_to_end(inputs, self.binary)
+            except:
+                if self.model_proto is not None:
+                    output = run_model_proto(
+                        model_proto=self.model_proto, inputs=inputs
+                    )
+                    output = onnx_output_to_torch(output)
+                else:
+                    assert False, "Invalid compile depth"
+            return output
+
+        assert False, "Invalid compile depth"

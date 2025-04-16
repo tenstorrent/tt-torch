@@ -7,6 +7,11 @@ from onnxruntime import InferenceSession
 import numpy as np
 import tt_mlir
 from tt_torch.onnx_compile import compile_onnx
+from tt_torch.tools.utils import (
+    onnx_output_to_torch,
+    prepare_inference_session,
+    run_model_proto,
+)
 from tt_torch.dynamo.backend import backend
 from tt_torch.tools.utils import calculate_atol, calculate_pcc
 from tt_torch.tools.utils import CompileDepth
@@ -223,13 +228,13 @@ def _verify_onnx_module(
     compiler_config,
     do_assert,
 ):
-
-    sess = InferenceSession(model_proto.SerializeToString())
+    sess = prepare_inference_session(model_proto=model_proto)
     input_shapes = [nodearg.shape for nodearg in sess.get_inputs()]
     if input_data_types is None:
         input_data_types = [torch.float32] * (
             len(input_shapes) if input_shapes is not None else len(inputs)
         )
+
     if inputs is None:
         if all([dtype.is_floating_point for dtype in input_data_types]):
             low, high = input_range
@@ -244,27 +249,20 @@ def _verify_onnx_module(
                 torch.randint(low, high, shape, dtype=torch.int64)
                 for shape in input_shapes
             ]
-
-    inputs_dict = {
-        nodearg.name: input.numpy().astype(np.float32)
-        if input.dtype == torch.bfloat16
-        else input.numpy()
-        for nodearg, input in zip(sess.get_inputs(), inputs)
-    }
-    golden = sess.run(None, inputs_dict)
-
-    for i in range(len(golden)):
-        golden[i] = torch.tensor(golden[i])
-
+    golden = run_model_proto(
+        model_proto=model_proto,
+        sess=sess,
+        inputs=inputs,
+        input_data_types=input_data_types,
+    )
+    golden = onnx_output_to_torch(golden)
     compiled_mod = compile_onnx(model_proto, compiler_config)
-
     ret = compiled_mod(*inputs)
     if compiler_config.compile_depth not in [
         CompileDepth.EXECUTE,
         CompileDepth.EXECUTE_OP_BY_OP,
     ]:
-        for i in range(len(ret)):
-            ret[i] = torch.tensor(ret[i])
+        ret = onnx_output_to_torch(ret)
 
     assert len(golden) == len(
         ret
