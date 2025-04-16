@@ -108,5 +108,5 @@ jobs:
     - name: Upload artifacts to archive
       uses: actions/upload-artifact@v4
       with:
-        name: install-artifacts{{ inputs.artifact-key && '-' + inputs.artifact-key || '' }}
+        name: install-artifacts${{ inputs.artifact-key }}
         path: artifacts/artifact.tar
