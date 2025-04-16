@@ -1,8 +1,11 @@
 # SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
+import os
 import torch
 import pytest
+import requests
+import boto3
 import onnx
 from onnx.tools import update_model_dims
 import onnxruntime
@@ -494,3 +497,71 @@ class OnnxModelTester(ModelTester):
             torch.from_numpy(out) if isinstance(out, np.ndarray) else out
             for out in outputs
         ]
+
+
+@staticmethod
+def get_file(s3_path, s3_bucket):
+    rel_dir, file_name = os.path.split(s3_path)
+
+    """
+    Get Cache directory based on environment variables in the following order:
+    1. DOCKER_CACHE_ROOT: meant for CI tests
+    2. TT_TORCH_CACHE: if user wants to set up a custom cache directory in their local machine
+    3. ~/.cache/tt-torch-test-models: default cache directory
+    """
+    if (
+        "DOCKER_CACHE_ROOT" in os.environ
+        and Path(os.environ["DOCKER_CACHE_ROOT"]).exists()
+    ):
+        cache_dir = (
+            Path(os.environ["DOCKER_CACHE_ROOT"]) / "tt-torch-test-models" / rel_dir
+        )
+        print(f"Using Docker cache directory: {cache_dir}")
+    elif "TT_TORCH_CACHE" in os.environ and Path(os.environ["TT_TORCH_CACHE"]).exists():
+        cache_dir = (
+            Path(os.environ["TT_TORCH_CACHE"]) / "tt-torch-test-models" / rel_dir
+        )
+        print(f"Using custom cache directory: {cache_dir}")
+    else:
+        print(
+            "Warning: Using default cache directory ~/.cache, to specify a custom cache directory, set the TT_TORCH_CACHE environment variable to your desired path."
+        )
+        cache_dir = Path.home() / ".cache/tt-torch-test-models" / rel_dir
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    # Check if file already exists in cache, dowload into cache if not
+    file_path = cache_dir / file_name
+    if not file_path.exists():
+        if "CI_CACHE_ENDPOINT" in os.environ:
+            """
+            If we are running test on CI we can access S3 bucket content via CI cache
+            endpoint which syncs up with S3 bucket every 5 minutes.
+            """
+            cache_endpoint = os.environ["CI_CACHE_ENDPOINT"]
+            url = f"http://{cache_endpoint}/{s3_path}"
+            print(f"Downloading file from CI cache: {url}")
+            response = requests.get(url, stream=True)
+            if response.status_code == 200:
+                with open(file_path, "wb") as f:
+                    for chunk in response.iter_content(chunk_size=8192):
+                        f.write(chunk)
+                print(f"File downloaded and cached at: {file_path}")
+            else:
+                print(f"Failed to download file from CI cache {cache_endpoint}")
+        else:
+            """
+            If we are running tests locally we can access S3 bucket content via boto3.
+            In order to do so user has to set up AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+            and AWS_DEFAULT_REGION environment variables.
+            """
+            print(f"Downloading file from S3 bucket: {s3_bucket}, key: {s3_path}")
+            s3 = boto3.client("s3")
+            try:
+                s3.download_file(s3_bucket, s3_path, str(file_path))
+                print(f"File downloaded and cached at: {file_path}")
+            except Exception as e:
+                raise RuntimeError(f"Failed to download file from S3: {e}")
+            finally:
+                s3.close()
+    # Return Docker Cache File
+    return file_path

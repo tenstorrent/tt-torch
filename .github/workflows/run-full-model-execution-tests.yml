@@ -157,6 +157,7 @@ jobs:
         HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
         TORCH_HOME: ${{ env.DOCKER_CACHE_ROOT }}/torch
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        CI_CACHE_ENDPOINT: ${{ secrets.CI_CACHE_ENDPOINT }}
       shell: bash
       run: |
         source env/activate
