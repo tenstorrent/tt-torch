@@ -2,17 +2,17 @@
 
 ## System Dependencies
 
-`tt-torch` requires the python 3.10 dev package, as well as the venv package. If not already installed, please run the following:
+`tt-torch` requires the python 3.11 dev package, as well as the venv package. If not already installed, please run the following:
 
 ```bash
-sudo apt-get install python3.10-dev python3.10-venv
+sudo apt-get install python3.11-dev python3.11-venv
 ```
 
 ## Creating a Virtual Environment (skip if you already have one)
 
 Create a virtual environment if you do not already have one in your project:
 ```bash
-python3.10 -m venv myvenv
+python3.11 -m venv myvenv
 ```
 This will create a virtual environemnt in the folder `myvenv` in the current directory.
 
@@ -26,7 +26,7 @@ source myvenv/bin/activate
 ### Installation Notes
 - `tt-torch` requires a pytorch installation that ships with their ABI.
     - The `tt-torch` wheel lists the following version of torch as an installation requirement:
-      `torch@https://download.pytorch.org/whl/cpu-cxx11-abi/torch-2.5.0%2Bcpu.cxx11.abi-cp310-cp310-linux_x86_64.whl`
+      `torch@https://download.pytorch.org/whl/cpu-cxx11-abi/torch-2.5.0%2Bcpu.cxx11.abi-cp311-cp311-linux_x86_64.whl`
     - This will be installed by pip upon installing the `tt-torch` wheel
 - The `tt-torch` wheel contains a fork of `torch-mlir`. Please ensure that `torch-mlir` has not been installed in your venv before installing the `tt-torch` wheel.
 
@@ -43,7 +43,7 @@ cd vision
 git checkout v0.20.0 # tt-torch requires PyTorch 2.5.0. torchvision 0.20 is the latest version of torchvision that is compatible with PyTorch 2.5.0
 pip uninstall -y torchvision # Ensure torchvision is not in your virtual environment
 pip install wheel
-pip install torch@https://download.pytorch.org/whl/cpu-cxx11-abi/torch-2.5.0%2Bcpu.cxx11.abi-cp310-cp310-linux_x86_64.whl
+pip install torch@https://download.pytorch.org/whl/cpu-cxx11-abi/torch-2.5.0%2Bcpu.cxx11.abi-cp311-cp311-linux_x86_64.whl
 TORCHVISION_USE_VIDEO_CODEC=0 TORCHVISION_USE_FFMPEG=0 _GLIBCXX_USE_CXX11_ABI=1 USE_CUDA=OFF python setup.py bdist_wheel
 pip install dist/torchvision*.whl --force-reinstall
 ```
