@@ -8,7 +8,7 @@ import pytest
 import os
 from pathlib import Path
 import requests
-from tests.utils import ModelTester, skip_full_eval_test
+from tests.utils import ModelTester, get_file, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from ultralytics import YOLO
 
@@ -16,24 +16,9 @@ from ultralytics import YOLO
 class ThisTester(ModelTester):
     def _load_model(self):
         # Reference: https://github.com/THU-MIG/yolov10
-        url = "https://github.com/THU-MIG/yolov10/releases/download/v1.1/yolov10n.pt"
-
-        if (
-            "DOCKER_CACHE_ROOT" in os.environ
-            and Path(os.environ["DOCKER_CACHE_ROOT"]).exists()
-        ):
-            download_dir = Path(os.environ["DOCKER_CACHE_ROOT"]) / "yolov10_weights"
-        else:
-            download_dir = Path.home() / ".cache/yolov10_weights"
-        download_dir.mkdir(parents=True, exist_ok=True)
-
-        load_path = download_dir / url.split("/")[-1]
-        if not load_path.exists():
-            response = requests.get(url, stream=True)
-            with open(str(load_path), "wb") as f:
-                f.write(response.content)
-
-        model = YOLO(load_path)
+        file = get_file("yolov_10n.pt")
+        model = YOLO(file)
+        print("Successfully loaded model")
         return model.model
 
     def _load_inputs(self):

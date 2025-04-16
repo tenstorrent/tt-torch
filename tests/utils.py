@@ -1,8 +1,11 @@
 # SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
+import os
 import torch
 import pytest
+import requests
+import boto3
 import onnx
 from onnx.tools import update_model_dims
 import onnxruntime
@@ -668,3 +671,60 @@ class OnnxModelTester(ModelTester):
             torch.from_numpy(out) if isinstance(out, np.ndarray) else out
             for out in outputs
         ]
+
+
+@staticmethod
+def get_file(s3_path):
+    rel_dir, file_name = os.path.split(s3_path)
+
+    """
+    Get Cache directory based on environment variables in the following order:
+    1. DOCKER_CACHE_ROOT: meant for CI tests
+    2. TT_TORCH_CACHE: if user wants to set up a custom cache directory in their local machine
+    3. ~/.cache/tt-torch-test-models: default cache directory
+    """
+    if (
+        "DOCKER_CACHE_ROOT" in os.environ
+        and Path(os.environ["DOCKER_CACHE_ROOT"]).exists()
+    ):
+        cache_dir = (
+            Path(os.environ["DOCKER_CACHE_ROOT"])
+            / "models/tt-ci-models-private"
+            / rel_dir
+        )
+    elif "TT_TORCH_CACHE" in os.environ and Path(os.environ["TT_TORCH_CACHE"]).exists():
+        cache_dir = (
+            Path(os.environ["TT_TORCH_CACHE"]) / "models/tt-ci-models-private" / rel_dir
+        )
+    else:
+        cache_dir = Path.home() / ".cache/models/tt-ci-models-private" / rel_dir
+    cache_dir.mkdir(parents=True, exist_ok=True)
+
+    # Check if file already exists in cache, dowload into cache if not
+    file_path = cache_dir / file_name
+    if not file_path.exists():
+        if "DOCKER_CACHE_ROOT" in os.environ:
+            raise FileNotFoundError(
+                f"File {file_path} is not available, check S3 path. If path is correct, DOCKER_CACHE_ROOT syncs automatically with S3 bucket every hour so please wait for the next sync."
+            )
+        else:
+            """
+            If we are running tests locally we can access S3 bucket content via boto3.
+            In order to do so user has to set up AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+            and AWS_DEFAULT_REGION environment variables.
+            """
+            if "S3_BUCKET" not in os.environ:
+                raise ValueError(
+                    "S3_BUCKET environment variable is not set. Please set it to the name of the S3 bucket."
+                )
+            s3_bucket = os.environ["S3_BUCKET"]
+            s3 = boto3.client("s3")
+            try:
+                s3.download_file(s3_bucket, s3_path, str(file_path))
+                print(f"File downloaded and cached at: {file_path}")
+            except Exception as e:
+                raise RuntimeError(f"Failed to download file from S3: {e}")
+            finally:
+                s3.close()
+    # Return Docker Cache File
+    return file_path
