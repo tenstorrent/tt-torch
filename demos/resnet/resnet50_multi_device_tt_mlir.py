@@ -11,24 +11,7 @@ import torchvision.models as models
 import tabulate
 from threading import Thread
 import requests
-from tt_torch.tools.device_manager import DeviceManager
-
-# A custom thread class to simplify returning values from threads
-class CustomThread(Thread):
-    def __init__(
-        self, group=None, target=None, name=None, args=(), kwargs={}, verbose=None
-    ):
-        super().__init__(group, target, name, args, kwargs)
-        self._return = None
-
-    def run(self):
-        if self._target is not None:
-            self._return = self._target(*self._args, **self._kwargs)
-
-    def join(self):
-        super().join()
-        return self._return
-
+import tt_mlir
 
 weights = models.ResNet152_Weights.IMAGENET1K_V2
 model = models.resnet152(weights=weights).to(torch.bfloat16).eval()
@@ -78,30 +61,20 @@ def main(use_simplified_manager):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+
     
-    num_devices = DeviceManager.get_num_available_devices()
-    if use_simplified_manager:
-        print("Using simplified device manager")
-        # The "simplified" acquire_available_devices() method will return a parent mesh
-        # and a list of sub mesh devices in a 1D mesh.
-        parent, devices = DeviceManager.acquire_available_devices()
-    else:
-        print("Using full device manager")
-        # The DeviceManager class also provides methods to manually create parent meshes
-        # and sub mesh devices. This is useful for more complex device topologies.
-        parent = DeviceManager.create_parent_mesh_device(mesh_shape=[1, num_devices])
-        for i in range(num_devices):
-            DeviceManager.create_sub_mesh_device(
-                parent, mesh_offset=(0, i), mesh_shape=[1, 1]
-            )
-        devices = list(DeviceManager.get_sub_mesh_devices(parent))
+    num_devices = tt_mlir.get_num_available_devices()
+    parent_mesh_options = tt_mlir.MeshDeviceOptions()
+    mesh_shape = [1, num_devices]
+    parent_mesh = tt_mlir.open_mesh_device(mesh_shape, parent_mesh_options)
+    devices = []
+    for i in range(num_devices):
+        device = tt_mlir.create_sub_mesh_device(parent_mesh, mesh_shape=(1,1), mesh_offset=(0,i))
+        devices.append(device)
+
     print("[DEMO] Acquired sub mesh devices: ", devices)
     tt_models = []
     for device in devices:
-        # Need to create options map within this loop.
-        # If you create it outside, the last device will overwrite the options
-        # for ALL devices because the options map is passed by reference.
-        # This leads to the model only being compiled for a single device.
         options = {}
         options["compiler_config"] = cc
         options["device"] = device
@@ -114,14 +87,14 @@ def main(use_simplified_manager):
     image_urls = [
         "http://images.cocodataset.org/val2017/000000039769.jpg",  # Two cats
         "https://farm5.staticflickr.com/4106/4962771032_82d3b7ccea_z.jpg",  # Two zebras
-        "https://farm5.staticflickr.com/4039/4184303499_115369327f_z.jpg",  # Pizza
-        "https://farm5.staticflickr.com/4117/4902338213_9c6fb559b8_z.jpg",  # Park bench
-        "https://farm4.staticflickr.com/3744/10085008474_8d72a9dc5e_z.jpg",  # Locomotive
-        "https://farm4.staticflickr.com/3596/3687601495_73a46536b8_z.jpg",  # Baseball player
-        "https://farm2.staticflickr.com/1375/5163062341_fbeb2e6678_z.jpg",  # Person in suit
-        "https://farm2.staticflickr.com/1366/976992600_3927559756_z.jpg",  # Microwave
-        "https://farm6.staticflickr.com/5056/5457805814_df70ed85c3_z.jpg",  # Labrador retriever
-        "https://farm8.staticflickr.com/7325/9536735356_c1e2e5a0d5_z.jpg",  # Two elephants
+        # "https://farm5.staticflickr.com/4039/4184303499_115369327f_z.jpg",  # Pizza
+        # "https://farm5.staticflickr.com/4117/4902338213_9c6fb559b8_z.jpg",  # Park bench
+        # "https://farm4.staticflickr.com/3744/10085008474_8d72a9dc5e_z.jpg",  # Locomotive
+        # "https://farm4.staticflickr.com/3596/3687601495_73a46536b8_z.jpg",  # Baseball player
+        # "https://farm2.staticflickr.com/1375/5163062341_fbeb2e6678_z.jpg",  # Person in suit
+        # "https://farm2.staticflickr.com/1366/976992600_3927559756_z.jpg",  # Microwave
+        # "https://farm6.staticflickr.com/5056/5457805814_df70ed85c3_z.jpg",  # Labrador retriever
+        # "https://farm8.staticflickr.com/7325/9536735356_c1e2e5a0d5_z.jpg",  # Two elephants
     ]
     # Evenly distribute the image URLs across all devices.
     # This creates a list of lists of length num_devices, where the ith sublist
@@ -132,20 +105,10 @@ def main(use_simplified_manager):
         for i in range(num_devices)
     ]
 
-    threads = []
-    for i in range(num_devices):
-        thread = CustomThread(
-            target=get_predictions, args=(tt_models[i], divided_urls[i], i)
-        )
-        threads.append((devices[i], thread))
-
-    for _, thread in threads:
-        thread.start()
-
     final_results = []
-    for device_used, thread in threads:
-        predictions = thread.join()
-        final_results.append((device_used, predictions))
+    for i in range(num_devices):
+        prediction_results = get_predictions(tt_models[i], divided_urls[i], i)
+        final_results.append((devices[i], prediction_results))
 
     # Print the results
     for device_used, prediction_results in final_results:
@@ -156,15 +119,10 @@ def main(use_simplified_manager):
             print()
         print("*" * 40)
 
-    if use_simplified_manager:
-        # The cleanup_sub_devices flag will call the release_sub_mesh_device() method
-        # for each sub mesh under the specified parent device automatically.
-        DeviceManager.release_parent_device(parent, cleanup_sub_devices=True)
-    else:
-        # The option to manually release the sub mesh devices is also available.
-        for device in devices:
-            DeviceManager.release_sub_mesh_device(device)
-        DeviceManager.release_parent_device(parent)
+    # Release devices
+    for device in devices:
+        tt_mlir.release_sub_mesh_device(device)
+    tt_mlir.close_mesh_device(parent_mesh)
 
 
 if __name__ == "__main__":

@@ -211,6 +211,7 @@ class Executor:
         for t in preprocessed_activations:
             tt_mlir.deallocate_tensor(t, force=True)
 
+        assert self.device is not None, "[EXECUTOR] Device should've been passed in"
         if self.device is None:
             tt_mlir.close_mesh_device(device)
 
@@ -236,6 +237,7 @@ class Executor:
 
         inputs = list(inputs)
         device = self._get_device()
+        print("[EXECUTOR] DEVICE USED: ", device)
 
         binary = tt_mlir.create_binary_from_bytestream(self.binary)
         program_idx = 0

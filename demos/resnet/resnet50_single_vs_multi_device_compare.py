@@ -147,29 +147,36 @@ if __name__ == "__main__":
         for i in range(num_devices)
     ]
 
+    # compile and execute this once to get the compilation overhead out of the way
+    multidevice([[divided_urls[0][0]], [divided_urls[1][0]]])
+
     single_results = None
     multi_results = None
-    acc_duration = 0
-    for _ in range(NUM_ITERATIONS):
-        start_time = time.time()
-        single_results = singledevice(image_urls)
-        end_time = time.time()
-        acc_duration += end_time - start_time
-    avg_duration_single = acc_duration / NUM_ITERATIONS
     acc_duration = 0
     for _ in range(NUM_ITERATIONS):
         start_time = time.time()
         multi_results = multidevice(divided_urls)
         end_time = time.time()
         acc_duration += end_time - start_time
+    avg_duration_single = acc_duration / NUM_ITERATIONS
+    acc_duration = 0
+    for _ in range(NUM_ITERATIONS):
+        start_time = time.time()
+        single_results = singledevice(image_urls)
+        end_time = time.time()
+        acc_duration += end_time - start_time
     avg_duration_multi = acc_duration / NUM_ITERATIONS
     print("\n" * 5)
-    print("Average Single device time (in s): ", avg_duration_single)
     print("Average Multi device time (in s): ", avg_duration_multi)
+    print("Average Single device time (in s): ", avg_duration_single)
     print("\n" * 5)
 
-    print("Single Device Results from latest iteration:")
-    pprint.pprint(single_results)
-    print("*" * 50)
     print("Multi Device Results from latest iteration:")
     pprint.pprint(multi_results)
+    print("*" * 50)
+    print("Single Device Results from latest iteration:")
+    pprint.pprint(single_results)
+
+
+# Look at how backend.py handles binary serialization.
+# bindings.cpp has an example of how to convert binary to json and vice versa.
