@@ -8,6 +8,10 @@ on:
         description: 'Docker image to use for build'
         required: true
         type: string
+      build-artifact-key:
+        description: 'Key to use for artifact download'
+        required: false
+        type: string
   workflow_run:
     workflows: [Build] # build debug?
     types: [completed]
@@ -69,7 +73,7 @@ jobs:
     - name: Use build artifacts
       uses: actions/download-artifact@v4
       with:
-        name: install-artifacts
+        name: install-artifacts{{ inputs.artifact-key && '-' + inputs.artifact-key || '' }}
         path: ${{ steps.strings.outputs.install-dir }}
 
     - name: 'Untar install directory'
