@@ -362,12 +362,21 @@ class TorchExecutor(OpByOpExecutor):
                         )
                         tensor = node.target(*args, **node.kwargs)
                 else:
-                    tensor = node.target(*args, **node.kwargs)
+                    tensor_meta = node.meta["tensor_meta"]
+                    if isinstance(
+                        tensor_meta, torch.fx.passes.shape_prop.TensorMetadata
+                    ):
+                        tensor = torch.empty(
+                            size=tensor_meta.shape, dtype=tensor_meta.dtype
+                        )
+                    elif isinstance(tensor_meta, tuple):
+                        tensor = [
+                            torch.empty(size=meta.shape, dtype=meta.dtype)
+                            for meta in tensor_meta
+                        ]
+                    else:
+                        raise ValueError(f"Unknown tensor_meta: {tensor_meta}")
                 node_to_tensor[node] = tensor
-            elif node.op == "output":
-                args = node.args[0]
-                output_tensors = [node_to_tensor[arg] for arg in args]
-                outputs = output_tensors
             args_set = set()
             for arg in node.args:
                 if arg in args_set:
@@ -386,7 +395,7 @@ class TorchExecutor(OpByOpExecutor):
         if self.stderror_redirected:
             os.unlink(self.file_stderr.name)
             self.stderror_redirected = False
-        return outputs
+        return self.program.graph_module(*inputs)
 
     def __call__(self, *inputs):
         if self.compiler_config.compile_depth in (
