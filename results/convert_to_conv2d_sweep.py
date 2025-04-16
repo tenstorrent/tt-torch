@@ -18,6 +18,33 @@ def convert_datatype_to_ttnn(datatype):
     return f"int(ttnn.{ttnn_dtype})"
 
 
+# Helper function to get number of bytes per element based on datatype
+def get_bytes_per_element(datatype):
+    if "bfloat16" in datatype:
+        return 2  # 2 bytes for bf16
+    elif "float32" in datatype:
+        return 4  # 4 bytes for f32
+    else:
+        return 2  # Default to 2 bytes if unknown
+
+
+# Calculate tensor size in MB based on shape and datatype
+def calculate_tensor_size_mb(shape, datatype):
+    # Calculate number of elements in tensor
+    num_elements = 1
+    for dim in shape:
+        num_elements *= dim
+
+    # Get bytes per element based on datatype
+    bytes_per_element = get_bytes_per_element(datatype)
+
+    # Calculate size in MB
+    size_bytes = num_elements * bytes_per_element
+    size_mb = size_bytes / (1024 * 1024)
+
+    return size_mb
+
+
 # Helper function to parse array<i32> format strings into lists of integers
 def parse_array_i32(array_str):
     return [
@@ -125,12 +152,43 @@ def parse_json_to_sweep_entries(json_content):
                 op, "output"
             )
 
+            # Calculate tensor sizes
+            input_tensor_shape = [batch_size, in_channels, input_height, input_width]
+            weight_tensor_shape = [
+                out_channels,
+                in_channels // groups,
+                kernel_height,
+                kernel_width,
+            ]
+            output_tensor_shape = [
+                batch_size,
+                out_channels,
+                input_height,
+                input_width,
+            ]  # This is approximate
+
+            input_size_mb = calculate_tensor_size_mb(input_tensor_shape, input_datatype)
+            weight_size_mb = calculate_tensor_size_mb(
+                weight_tensor_shape, weight_datatype
+            )
+            output_size_mb = calculate_tensor_size_mb(
+                output_tensor_shape, output_datatype
+            )
+
+            total_io_size_mb = input_size_mb + weight_size_mb + output_size_mb
+
             # Check for bias (if there's a third input that's not a device)
             bias = False
             if "input_shapes" in op and len(op["input_shapes"]) > 2:
                 third_input = op["input_shapes"][2]
                 if "!ttnn.device" not in third_input:
                     bias = True
+                    # Add bias tensor size if present
+                    bias_tensor_shape = [out_channels]
+                    bias_size_mb = calculate_tensor_size_mb(
+                        bias_tensor_shape, input_datatype
+                    )  # Assume same datatype as input
+                    total_io_size_mb += bias_size_mb
 
             # Extract compile error if present
             compile_error = op.get("compile_error", "")
@@ -160,7 +218,7 @@ def parse_json_to_sweep_entries(json_content):
                 [output_layout, output_memory, output_datatype],
             ]
 
-            entries.append((sweep_entry, compile_error, model_names))
+            entries.append((sweep_entry, compile_error, model_names, total_io_size_mb))
 
         return entries
 
@@ -170,7 +228,9 @@ def parse_json_to_sweep_entries(json_content):
 
 
 # Format a sweep entry as a string in the expected format, with preceding compile error if present.
-def format_sweep_entry(entry, compile_error="", model_names=None, entry_number=0):
+def format_sweep_entry(
+    entry, compile_error="", model_names=None, entry_number=0, io_size_mb=0
+):
 
     # Add compile error as a comment if present
     # Add Entry number as comment
@@ -194,6 +254,11 @@ def format_sweep_entry(entry, compile_error="", model_names=None, entry_number=0
             else model_names
         )
         result += f"# Models: {formatted_name}\n"
+
+    # Add I/O tensor size information
+    exceeds_limit = io_size_mb > 60
+    limit_warning = " - EXCEEDS 60MB LIMIT!" if exceeds_limit else ""
+    result += f"# I/O Tensor Size: {io_size_mb:.2f} MB{limit_warning}\n"
 
     result += "["
     for i, item in enumerate(entry):
@@ -241,8 +306,10 @@ def main():
         print(f"Generated {len(entries)} TTNN sweep entries\n")
 
         formatted_entries = []
-        for i, (entry, compile_error, model_names) in enumerate(entries):
-            formatted_entry = format_sweep_entry(entry, compile_error, model_names, i)
+        for i, (entry, compile_error, model_names, io_size_mb) in enumerate(entries):
+            formatted_entry = format_sweep_entry(
+                entry, compile_error, model_names, i, io_size_mb
+            )
             formatted_entries.append(formatted_entry)
             print(f"{formatted_entry}\n")
 
