@@ -1,0 +1,93 @@
+name: Run Tests
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      docker-image:
+        description: 'Docker image to use for build'
+        required: true
+        type: string
+  workflow_run:
+    workflows: [Build] # build debug?
+    types: [completed]
+
+jobs:
+  tests:
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        build: [
+          {runs-on: wormhole_b0, name: "run"},
+        ]
+
+    runs-on:
+      - ${{ matrix.build.runs-on }}
+
+    container:
+      image: ${{ inputs.docker-image }}
+      options: --user root --device /dev/tenstorrent/0 --shm-size=2gb
+      volumes:
+        - /dev/hugepages:/dev/hugepages
+        - /dev/hugepages-1G:/dev/hugepages-1G
+        - /etc/udev/rules.d:/etc/udev/rules.d
+        - /lib/modules:/lib/modules
+        - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
+        - /mnt/dockercache:/mnt/dockercache
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        lfs: true
+
+    - name: Fetch job id
+      id: fetch-job-id
+      uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
+      with:
+        job_name: "${{ github.job }} (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
+
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      env:
+        JOB_ID: ${{ steps.fetch-job-id.outputs.job_id }}
+      run: |
+        echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
+        echo "install-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
+        echo "dist-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
+        echo "job-id=$JOB_ID" >> "$GITHUB_OUTPUT"
+        echo "test_report_path_torch=report_torch_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+        echo "test_report_path_check_all_ops_execute=report_check_all_ops_execute_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+        echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+        echo "test_report_path_onnx=report_onnx_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+
+    - name: Git safe dir
+      run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
+
+    - name: Use build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: install-artifacts
+        path: ${{ steps.strings.outputs.install-dir }}
+
+    - name: 'Untar install directory'
+      shell: bash
+      working-directory: ${{ steps.strings.outputs.install-dir }}
+      run: |
+        tar xvf artifact.tar
+        mkdir -p ${{ steps.strings.outputs.dist-dir }}
+        mv wheels/* ${{ steps.strings.outputs.dist-dir }}
+
+    - name: install tt-torch
+      shell: bash
+      run: |
+        source env/activate
+        pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
+
+    - name: Run Tools tests
+      shell: bash
+      run: |
+        source env/activate
+        pytest -svv tests/tools/test_intermediate_verification.py
