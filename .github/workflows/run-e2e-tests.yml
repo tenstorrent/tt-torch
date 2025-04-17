@@ -12,6 +12,9 @@ on:
     workflows: [Build]
     types: [completed]
 
+env:
+  DOCKER_CACHE_ROOT: /mnt/dockercache
+
 jobs:
   tests:
     timeout-minutes: 240
@@ -105,7 +108,6 @@ jobs:
 
     - name: Compile Supported Models
       env:
-        DOCKER_CACHE_ROOT: /mnt/dockercache
         HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
         TORCH_HOME: ${{ env.DOCKER_CACHE_ROOT }}/torch
         HF_TOKEN: ${{ secrets.HF_TOKEN }}

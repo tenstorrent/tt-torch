@@ -8,7 +8,6 @@ import requests
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-import os
 
 
 class ThisTester(ModelTester):
@@ -19,11 +18,6 @@ class ThisTester(ModelTester):
         super().__init__(model_info[0], mode, *args, **kwargs)
 
     def _load_model(self):
-        print(
-            "From python: TORCH_HOME =",
-            os.environ.get("TORCH_HOME", "TORCH_HOME not set"),
-        )
-        print("Observing cache dir: torch.hub.get_dir() =", torch.hub.get_dir())
         model_name, weights_name = self.model_info
         self.weights = getattr(models, weights_name).DEFAULT
         model = models.get_model(model_name, weights=self.weights).to(torch.bfloat16)

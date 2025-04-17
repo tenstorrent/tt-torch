@@ -4,11 +4,8 @@ on:
   workflow_dispatch:
   workflow_call:
 
-env:
-  DOCKER_CACHE_ROOT: /mnt/dockercache
 jobs:
   check-spdx-headers:
-
 
     timeout-minutes: 10
     runs-on: ubuntu-latest
