@@ -136,6 +136,9 @@ jobs:
         echo "TORCH_HOME directory: $TORCH_HOME"
         echo "Contents of TORCH_HOME before tests:"
         ls -la $TORCH_HOME || echo "TORCH_HOME directory does not exist yet"
+        echo "Contents of DOCKER_CACHE_ROOT:"
+        ls -la $DOCKER_CACHE_ROOT
+        echo $DOCKER_CACHE_ROOT
 
         # prevent script termination on failure
         set +e

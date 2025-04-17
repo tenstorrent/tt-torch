@@ -4,8 +4,11 @@ on:
   workflow_dispatch:
   workflow_call:
 
+env:
+  DOCKER_CACHE_ROOT: /mnt/dockercache
 jobs:
   check-spdx-headers:
+
 
     timeout-minutes: 10
     runs-on: ubuntu-latest
@@ -17,3 +20,6 @@ jobs:
         licenses: |-
           Apache-2.0
           MIT
+    - name: test-env
+      run: |
+        echo "DOCKER_CACHE_ROOT=$DOCKER_CACHE_ROOT"
