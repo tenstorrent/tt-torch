@@ -753,8 +753,16 @@ def generate_op_reports_xlsx():
                             capture_output=True,
                             text=True,
                         )
+
+                    # For annotating compile depths, use failure if encountered on rerun here. If there was
+                    # no failure, use runtime_stack_error message if it exists, otherwise report pass in msg.
                     if result.returncode != 0:
                         (error, trace_dump) = parse_error_output(result.stderr)
+                    elif op["runtime_stack_error"]:
+                        trace_dump = op["runtime_stack_error"]
+                        trace_dump = trace_dump.replace("\\n", "\n")
+                        error = parse_runtime_output(trace_dump)
+                        trace_dump = re.sub(r"[^\x20-\x7E]", "", trace_dump)
                     else:
                         error = (
                             "Compile stage passed on rerun, did not encounter error."
