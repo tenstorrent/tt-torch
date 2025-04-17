@@ -54,9 +54,9 @@ def test_intermediate_verification():
         # Open the XLSX file using pandas
         xlsx_data = pd.ExcelFile(xlsx_report_path)
 
-        assert len(xlsx_data.sheet_names) == len(
+        assert len(xlsx_data.sheet_names) == 1 + len(
             model_list
-        ), "Number of worksheets does not match the number of models run."
+        ), "Number of worksheets does not match the number of models run + summary."
 
         # Iterate through each worksheet and validate its structure
         for sheet_name in xlsx_data.sheet_names:
