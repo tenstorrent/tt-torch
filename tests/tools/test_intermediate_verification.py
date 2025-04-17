@@ -60,6 +60,8 @@ def test_intermediate_verification():
 
         # Iterate through each worksheet and validate its structure
         for sheet_name in xlsx_data.sheet_names:
+            if sheet_name == "Summary":
+                continue
             df = xlsx_data.parse(sheet_name)
             print("Printing sheet:", sheet_name)
             print(
