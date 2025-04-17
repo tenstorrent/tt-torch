@@ -165,12 +165,6 @@ jobs:
             runs-on: wormhole_b0, name: "OFT", tests: "
               tests/models/oft/test_oft.py::test_oft[op_by_op_torch-eval]
               "
-          },
-          {
-            runs-on: wormhole_b0, name: "Flux", tests: "
-              tests/models/flux/test_flux.py::test_flux[op_by_op_torch-flux_schnell-eval]
-              tests/models/flux/test_flux.py::test_flux[op_by_op_torch-flux_dev-eval]
-              "
           }
         ]
     runs-on:

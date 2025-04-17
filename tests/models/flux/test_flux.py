@@ -115,6 +115,7 @@ model_info_list = [
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_flux(record_property, model_info, mode, op_by_op):
+    pytest.skip("Large Models can't fit on device for CI")
     _, model_name = model_info
 
     cc = CompilerConfig()
