@@ -92,7 +92,7 @@ setup(
     },
     zip_safe=False,
     install_requires=[
-        "torch@https://download.pytorch.org/whl/cpu-cxx11-abi/torch-2.6.0%2Bcpu.cxx11.abi-cp311-cp311-linux_x86_64.whl",
+        "torch@https://download.pytorch.org/whl/cpu-cxx11-abi/torch-2.6.0%2Bcpu.cxx11.abi-cp310-cp310-linux_x86_64.whl",
         "numpy",
     ],
 )

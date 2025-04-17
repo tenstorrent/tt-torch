@@ -15,6 +15,7 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 class ThisTester(ModelTester):
     def _load_model(self):
+        torch.hub._validate_not_a_forked_repo = lambda a, b, c: True
         model = torch.hub.load("PingoLH/Pytorch-HarDNet", "hardnet68", pretrained=False)
         checkpoint = "https://github.com/PingoLH/Pytorch-HarDNet/raw/refs/heads/master/hardnet68.pth"
         model.load_state_dict(

@@ -88,6 +88,7 @@ def compile_onnx(model_proto: onnx.ModelProto, compiler_config: CompilerConfig =
         module = torch_onnx_to_torch_backend_ir(module, compiler_config)
         module = torch_backend_ir_to_stablehlo(module, compiler_config)
         executor = StablehloExecutor(module=module, compiler_config=compiler_config)
+        executor.add_onnx_model_proto(model_proto)
         return executor
     else:
         model_proto = onnx.shape_inference.infer_shapes(model_proto)

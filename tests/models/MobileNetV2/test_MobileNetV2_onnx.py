@@ -24,9 +24,6 @@ class ThisTester(OnnxModelTester):
         os.remove(f"{self.model_name}.onnx")
         return model
 
-    def _extract_outputs(self, output_object):
-        return (torch.from_numpy(output_object),)
-
     def _load_torch_inputs(self):
         # Define a transformation to preprocess the input image using the weights transforms
         preprocess = self.weights.transforms()
@@ -44,7 +41,7 @@ class ThisTester(OnnxModelTester):
     ["eval"],
 )
 @pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
-def test_MobileNetV2(record_property, mode, op_by_op):
+def test_MobileNetV2_onnx(record_property, mode, op_by_op):
     model_name = "MobileNetV2_onnx"
     cc = CompilerConfig()
     cc.compile_depth = CompileDepth.STABLEHLO

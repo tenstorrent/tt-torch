@@ -17,6 +17,7 @@ class ThisTester(ModelTester):
         The model is from https://github.com/facebookresearch/detr
         """
         # Model
+        torch.hub._validate_not_a_forked_repo = lambda a, b, c: True
         model = torch.hub.load(
             "facebookresearch/detr:main", "detr_resnet50", pretrained=True
         ).to(torch.bfloat16)

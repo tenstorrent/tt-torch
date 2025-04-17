@@ -38,6 +38,20 @@ def scan_workflow_test_matrices():
                 if "matrix" in content.get("jobs", {}).get("tests", {}).get(
                     "strategy", {}
                 ):
+                    matrix_content = (
+                        content.get("jobs", {})
+                        .get("tests", {})
+                        .get("strategy", {})
+                        .get("matrix")
+                    )
+                    build_content = matrix_content.get("build", {})
+                    if build_content == {}:
+                        print(
+                            f"No build matrix found in {filename}. It is probably dynamically generated - the contents of the matrix are \
+                            {build_content}"
+                        )
+                        continue
+
                     tests = parse_tests_from_matrix(filepath)
 
                     # Assert no duplicates within the test matrix

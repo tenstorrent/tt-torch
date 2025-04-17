@@ -13,7 +13,8 @@ import torch
 import math
 import sys
 import shutil
-
+import onnx
+from onnxruntime import SessionOptions, InferenceSession
 from tt_mlir import (
     open_mesh_device,
     close_mesh_device,
@@ -780,3 +781,34 @@ Include the following details in your report:
             raise
 
     return wrapper
+
+
+def onnx_output_to_torch(output):
+    for i in range(len(output)):
+        output[i] = torch.tensor(output[i])
+    return output
+
+
+def prepare_inference_session(
+    model_proto: onnx.ModelProto, intra_op_num_threads=1, inter_op_num_threads=1
+):
+    so = SessionOptions()
+    so.intra_op_num_threads = intra_op_num_threads
+    so.inter_op_num_threads = inter_op_num_threads
+    return InferenceSession(model_proto.SerializeToString(), so)
+
+
+def run_model_proto(
+    model_proto: onnx.ModelProto, inputs, sess=None, input_data_types=None
+):
+    if sess is None:
+        sess = prepare_inference_session(model_proto=model_proto)
+
+    inputs_dict = {
+        nodearg.name: input.numpy().astype(np.float32)
+        if input.dtype == torch.bfloat16
+        else input.numpy()
+        for nodearg, input in zip(sess.get_inputs(), inputs)
+    }
+    output = sess.run(None, inputs_dict)
+    return output

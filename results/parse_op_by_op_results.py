@@ -434,6 +434,7 @@ def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=Fals
         "Output Shapes",
         "NumOps",
         "Status",
+        "Models",
         "PCC",
         "ATOL",
         "Ops",
@@ -451,7 +452,8 @@ def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=Fals
     worksheet.set_column(0, 0, 30)  # Torch Name
     worksheet.set_column(1, 1, 50)  # Input Shapes
     worksheet.set_column(2, 2, 20)  # Output Shapes
-    worksheet.set_column(12, 12, 250)  # Compile Error
+    worksheet.set_column(5, 5, 50)  # Models
+    worksheet.set_column(13, 13, 250)  # Compile Error
 
     row += 1
     torch_ops = {}
@@ -484,6 +486,7 @@ def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=Fals
                 "compiled_json": value["compiled_json"],
                 "error": value["error"],
                 "trace_dump": value["trace_dump"],
+                "model_names": value["model_names"],
             }
         )
 
@@ -504,12 +507,22 @@ def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=Fals
             compiled_json = op["compiled_json"]
             error = op["error"]
             trace_dump = op["trace_dump"]
+            model_names = op["model_names"]
+
+            # Generate string of model names that use this op.
+            models_str = (
+                str(len(model_names))
+                + ":"
+                + (", ".join(model_names) if model_names else "")
+            )
+
             row_data = [
                 name,
                 input_shapes,
                 output_shapes,
                 num_ops,
                 status,
+                models_str,
                 pcc,
                 atol,
                 "",
@@ -530,6 +543,28 @@ def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=Fals
                 row += 1
 
     # worksheet.autofit()
+
+
+# Parse error output from stderr
+def parse_error_output(stderr):
+    stderr_lines = stderr.strip().splitlines()
+
+    # Find the first real error line (MLIR format)
+    error = next((line for line in stderr_lines if ": error:" in line), None)
+
+    # If no error line found, look for crash indicators
+    if not error:
+        crash_keywords = ["Assertion `", "PLEASE submit a bug report", "Stack dump:"]
+        error = next(
+            (
+                line
+                for line in stderr_lines
+                if any(keyword in line for keyword in crash_keywords)
+            ),
+            None,
+        )
+
+    return (error, stderr)
 
 
 # Main entry point to generate detailed xlsx files of op status by model with summary sheet.
@@ -612,8 +647,14 @@ def generate_op_reports_xlsx():
         row += 1
         torch_ops = {}
         for key, value in data.items():
+
+            # Only add unique ops to all_ops, but list which models contain them.
             if key not in all_ops:
                 all_ops[key] = value
+                value["model_names"] = [model_name]
+            else:
+                if model_name not in all_ops[key]["model_names"]:
+                    all_ops[key]["model_names"].append(model_name)
 
             if value["torch_name"] not in torch_ops:
                 torch_ops[value["torch_name"]] = []
@@ -690,7 +731,7 @@ def generate_op_reports_xlsx():
                         result = subprocess.run(
                             [
                                 "ttmlir-opt",
-                                "--stablehlo-to-ttir-pipeline=enable-remove-dead-values=true",
+                                "--stablehlo-to-ttir-pipeline=enable-arith-to-stablehlo=true enable-composite-to-call=true",
                                 f"results/mlir_tests/stable_hlo/{test_name}",
                             ],
                             capture_output=True,
@@ -713,8 +754,11 @@ def generate_op_reports_xlsx():
                             text=True,
                         )
                     if result.returncode != 0:
-                        error = result.stderr.split("\n")[0]
-                        trace_dump = result.stderr
+                        (error, trace_dump) = parse_error_output(result.stderr)
+                    else:
+                        error = (
+                            "Compile stage passed on rerun, did not encounter error."
+                        )
                 elif status == 6:
                     trace_dump = op["runtime_stack_error"]
                     trace_dump = trace_dump.replace("\\n", "\n")

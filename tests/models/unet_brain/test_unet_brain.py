@@ -17,6 +17,7 @@ class ThisTester(ModelTester):
         Test UNet for brain MRI segmentation
         The model is from https://pytorch.org/hub/mateuszbuda_brain-segmentation-pytorch_unet/
         """
+        torch.hub._validate_not_a_forked_repo = lambda a, b, c: True
         model = torch.hub.load(
             "mateuszbuda/brain-segmentation-pytorch",
             "unet",
