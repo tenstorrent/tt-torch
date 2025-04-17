@@ -106,6 +106,7 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
         "red": workbook.add_format({"bg_color": "#FFCCCC", "border": 1}),
         "yellow": workbook.add_format({"bg_color": "#FFF2CC", "border": 1}),
         "green": workbook.add_format({"bg_color": "#C6EFCE", "border": 1}),
+        "bold": workbook.add_format({"bold": True, "border": 1}),
     }
 
     model_names = []
@@ -140,6 +141,7 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
         inside_csv = False
         final_row = None
         first_failing_op = None
+        first_failing_op_row = None
 
         # Read the log file
         with open(log_path, "r") as file:
@@ -178,12 +180,16 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
                 # Extract First Failing Op
                 first_failing_op_match = re.search(first_failing_op_pattern, line)
                 if first_failing_op_match:
-                    first_failing_op = first_failing_op_match.group(1).strip()
+                    first_failing_op_details = (
+                        first_failing_op_match.group(1).strip().split(",")
+                    )
+                    first_failing_op = first_failing_op_details[0]
+                    first_failing_op_row = first_failing_op_details
 
         if final_row:
             final_rows.append((log_file, final_row))
         if first_failing_op:
-            first_failing_ops.append((log_file, first_failing_op))
+            first_failing_ops.append((log_file, first_failing_op, first_failing_op_row))
         # Check for missing markers
         if not csv_data:
             if pytest_full_name:
@@ -247,7 +253,10 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
         # Write data rows with conditional formatting
         for row_num, row in enumerate(rows, start=1):
             for col_num, cell in enumerate(row):
-                if col_num == 3 or col_num == 6:  # Error message columns
+                if first_failing_op and row[0] == first_failing_op:
+                    worksheet.write(row_num, col_num, cell, formats["bold"])
+                    worksheet.write_comment(row_num, col_num, "First failing op")
+                elif col_num == 3 or col_num == 6:  # Error message columns
                     if cell:
                         worksheet.write(row_num, col_num, cell, formats["red"])
                     else:
@@ -270,7 +279,8 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
     summary_sheet.write(0, 0, "Log File")
     summary_sheet.write(0, 1, "Final Row")
     summary_sheet.write(0, 2, "First Failing Op")
-    summary_sheet_column_widths = [20, 50, 50]  # Define widths for each column
+    summary_sheet.write(0, 3, "First Failing Op Row")
+    summary_sheet_column_widths = [20, 50, 50, 100]  # Define widths for each column
     for col_num, width in enumerate(summary_sheet_column_widths):
         summary_sheet.set_column(col_num, col_num, width)
 
@@ -282,6 +292,7 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
         failing_op = next((op for op in first_failing_ops if op[0] == log_file), None)
         if failing_op:
             summary_sheet.write(idx, 2, failing_op[1])
+            summary_sheet.write(idx, 3, str(failing_op[2]))
 
     # Close the workbook
     workbook.close()
