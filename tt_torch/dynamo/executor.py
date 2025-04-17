@@ -49,7 +49,7 @@ def get_inputs_size(inputs):
         for item in inputs.values():
             total_size += get_inputs_size(item)
     else:
-        assert false, f"Unexpected input type: {type(inputs)}"
+        assert False, f"Unexpected input type: {type(inputs)}"
     return total_size
 
 
@@ -270,7 +270,7 @@ class Executor:
                 elif isinstance(golden, (tuple, list)) and len(golden) > 1:
                     golden = golden[0]
                     print(
-                        f"[WARNING] {node.name} has {len(golden)} outputs, but we can only get one from runtime."
+                        f"\033[33m[WARNING] {node.name} has {len(golden)} outputs, but we can only get one from runtime.\033[0m"
                     )
                 cache_entry = RuntimeIntermediate(node, golden)
                 self.compiler_config.runtime_intermediate_cache[node.name] = cache_entry
