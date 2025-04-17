@@ -42,8 +42,8 @@ jobs:
                   tests/models/resnet/test_resnet.py::test_resnet[full-eval]
                   tests/models/resnet50/test_resnet50.py::test_resnet[full-eval]
                   tests/models/distilbert/test_distilbert.py::test_distilbert_multiloop[full-distilbert-base-uncased-eval-64]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-vit_l_16]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-vit_b_16]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vit_l_16]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vit_b_16]
             "
           },
           {
@@ -73,7 +73,7 @@ jobs:
           {
             runs-on: wormhole_b0, name: "eval_5", tests: "
                 tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io[full-eval]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-mobilenet_v2]
+                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-mobilenet_v2]
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-mobilenet_v3_small]
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-mobilenet_v3_large]
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-resnet18]
