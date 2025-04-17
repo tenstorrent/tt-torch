@@ -93,7 +93,7 @@ model_info_list = [
 red_model_info_list = [
     info
     for info in model_info_list
-    if any(keyword in info[0].lower() for keyword in ["mobilenet_v2", "vit", "swin"])
+    if any(keyword in info[0].lower() for keyword in ["swin"])
 ]
 generality_model_info_list = [
     info for info in model_info_list if info not in red_model_info_list
