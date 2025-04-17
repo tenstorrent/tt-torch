@@ -296,8 +296,24 @@ class TorchExecutor(OpByOpExecutor):
         outputs = []
         num_nodes = len(self.program.graph_module.graph.nodes)
         out_degree = {}
+
+        # Debug mode to run only specific op given global_op_idx
+        run_global_op_idx = os.getenv("RUN_GLOBAL_OP_IDX")
+        run_global_op_idx = (
+            None if run_global_op_idx is None else int(run_global_op_idx)
+        )
+
         for idx, node in enumerate(self.program.graph_module.graph.nodes):
-            print(f"Compiling {idx}/{num_nodes}: {node.target}")
+            self.print_marker("\nProcessing", idx, num_nodes, node.target)
+
+            test_this_op = (
+                True
+                if run_global_op_idx is None
+                else (self.global_op_idx == run_global_op_idx)
+            )
+            # Another useful debug method:
+            # test_this_op = str(node.target) == "aten.gelu.default"
+
             out_degree[node] = len(node.users)
             if node.op == "placeholder":
                 node_to_tensor[node] = inputs[input_index]
@@ -323,26 +339,33 @@ class TorchExecutor(OpByOpExecutor):
                         )
                     else:
                         args.append(arg)
-                try:
-                    binary, op = self.compile_op(node, *args, **node.kwargs)
-                except Exception as e:
-                    binary = None
-                    print(f"Failed to compile {idx}/{num_nodes}: {node.target}: {e}")
+
+                binary = None
+                op = None
+
+                if test_this_op:
+                    try:
+                        self.print_marker("Compiling", idx, num_nodes, node.target)
+                        binary, op, msg = self.compile_op(node, *args, **node.kwargs)
+                        self.set_runtime_stack_dump(msg, op)
+
+                    except Exception as e:
+                        binary = None
+                        self.print_marker(
+                            "Failed to compile", idx, num_nodes, node.target, e
+                        )
 
                 if (
                     self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
                     and binary is not None
                 ):
+
                     try:
                         typecast_args = self.typecast_inputs(args)
-                        calculated, runtime_stack_dump = self.run_op(
-                            binary, *typecast_args
-                        )
-                        self.compiler_config.unique_ops[
-                            op.unique_key()
-                        ].runtime_stack_dump = runtime_stack_dump
+                        self.print_marker("Running", idx, num_nodes, node.target)
+                        calculated, stderr = self.run_op(binary, *typecast_args)
+                        self.set_runtime_stack_dump(stderr, op)
 
-                        print(f"Ran: {idx}/{num_nodes}: {node.target}")
                         if calculated is None:
                             raise ValueError("Failed to execute")
                         op.compilation_status = OpCompilationStatus.EXECUTED
@@ -357,12 +380,13 @@ class TorchExecutor(OpByOpExecutor):
                             if pcc < self.required_pcc:
                                 print(f"pcc too low for {idx}: {pcc}")
                     except Exception as e:
-                        print(
-                            f"Failed to execute {idx}/{num_nodes}: {node.target}: {e}"
+                        self.print_marker(
+                            "Failed to execute", idx, num_nodes, node.target, e
                         )
                         tensor = node.target(*args, **node.kwargs)
                 else:
                     tensor = node.target(*args, **node.kwargs)
+
                 node_to_tensor[node] = tensor
             elif node.op == "output":
                 args = node.args[0]
@@ -378,6 +402,9 @@ class TorchExecutor(OpByOpExecutor):
                     if out_degree[arg] == 0 and arg.op != "output":
                         del node_to_tensor[arg]
                         out_degree.pop(arg)
+
+            # Finished handling this op, increment global op index
+            self.global_op_idx += 1
 
         self.compiler_config.save_unique_ops()
         if self.execute_process is not None:

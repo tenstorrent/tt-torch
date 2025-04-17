@@ -319,6 +319,7 @@ class OpByOpExecutor(Executor):
         self.stderror_redirected = False
         self.file_stderr = None
         self.op_memory_limit = gb_to_bytes(0.5)  # 512MB limit
+        self.global_op_idx = 0  # For Debug/Rerunning
 
     def transform_input(self, inp):
         # Convert torch.nn.Parameter to torch.Tensor and convert non-contiguous
@@ -372,12 +373,24 @@ class OpByOpExecutor(Executor):
                 raise ValueError(f"Unexpected input type: {type(inp)}")
         return input_shapes_and_constants
 
+    def set_runtime_stack_dump(self, error, op):
+        if op is None:
+            return
+        self.compiler_config.unique_ops[op.unique_key()].runtime_stack_dump = str(error)
+
+    # Helper function to print markers
+    def print_marker(self, msg, idx, num_nodes, op_info, error=""):
+        print(
+            f"{msg:<10} global_op_idx: {self.global_op_idx} ({idx}/{num_nodes}): {op_info} {error}",
+            flush=True,
+        )
+
     def compile_op(self, node, *inputs, **kwargs):
         # get_stablehlo_graph is a method implemented in inheriting classes
         module, op = self.get_stable_hlo_graph(node, inputs, **kwargs)
 
         if module is None or op is None:
-            return None, None
+            return None, None, None
 
         sender = mp.Queue()
         receiver = mp.Queue()
@@ -393,6 +406,8 @@ class OpByOpExecutor(Executor):
         sender.put(obj)
         start = time.time()
         binary = None
+        msg = None
+        timeout_exceeded = False
         while True:
             try:
                 result = receiver.get_nowait()
@@ -418,13 +433,19 @@ class OpByOpExecutor(Executor):
                 raise e
             if time.time() - start > self.compiler_config.single_op_timeout:
                 process.terminate()
+                timeout_exceeded = True
                 break
             if not process.is_alive():
                 break
             time.sleep(0.01)
         process.join()
-        print(f"json len {len(op.json)}")
-        return binary, op
+
+        if timeout_exceeded:
+            msg = f"Timeout exceeded for op during compile after {self.compiler_config.single_op_timeout} seconds."
+            print(msg, flush=True)
+            binary = None
+
+        return binary, op, msg
 
     def run_op(self, binary, *inputs):
         inputs = self.pre_process_inputs(*inputs)
@@ -516,7 +537,7 @@ class OpByOpExecutor(Executor):
 
             # If timeout is exceeded and stderr empty, add message and print to stdout.
             if timeout_exceeded and not stderr_data:
-                stderr_data = f"Timeout exceeded for op after {self.compiler_config.single_op_timeout} seconds."
+                stderr_data = f"Timeout exceeded for op during run after {self.compiler_config.single_op_timeout} seconds."
                 print(stderr_data, flush=True)
 
         return outputs, stderr_data

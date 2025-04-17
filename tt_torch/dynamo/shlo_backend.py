@@ -330,12 +330,16 @@ class StablehloExecutor(OpByOpExecutor):
         calculated = None
         num_ops = len(self.sub_ops)
         for idx, op in enumerate(self.sub_ops):
-            print(f"Compiling {idx}/{num_ops}: {op.op_name}")
+            self.print_marker("\nProcessing", idx, num_ops, op.op_name)
+
             try:
-                binary, op = self.compile_op(op, None, None)
+                self.print_marker("Compiling", idx, num_ops, op.op_name)
+                binary, op, msg = self.compile_op(op, None, None)
+                self.set_runtime_stack_dump(msg, op)
             except Exception as e:
                 binary = None
-                print(f"Failed to compile {idx}/{num_nodes}: {node.target}: {e}")
+                self.print_marker("Failed to compile", idx, num_nodes, node.target, e)
+
             if (
                 self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
                 and binary is not None
@@ -343,16 +347,15 @@ class StablehloExecutor(OpByOpExecutor):
                 try:
                     inputs = generate_random_inputs_for_shlo(op.stable_hlo_graph)
                     inputs = self.typecast_inputs(inputs)
+                    self.print_marker("Running", idx, num_ops, op.op_name)
                     calculated, runtime_stack_dump = self.run_op(binary, *inputs)
-                    self.compiler_config.unique_ops[
-                        op.unique_key
-                    ].runtime_stack_dump = runtime_stack_dump
-                    print(f"Ran: {idx}/{num_ops}: {op.op_name}")
+                    self.set_runtime_stack_dump(runtime_stack_dump, op)
                     if calculated is None:
                         raise ValueError("Failed to execute")
                     op.compilation_status = OpCompilationStatus.EXECUTED
                 except Exception as e:
-                    print(f"Failed to execute {idx}/{num_ops}: {op.op_name}: {e}")
+                    self.print_marker("Failed to execute", idx, num_ops, op.op_name, e)
+            self.global_op_idx += 1
         self.binary = binary
         self.compiler_config.save_unique_ops()
         if self.execute_process is not None:
