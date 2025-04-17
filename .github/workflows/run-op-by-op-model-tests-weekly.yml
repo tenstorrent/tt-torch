@@ -143,11 +143,11 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "torchvision_1", tests: "
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[op_by_op_torch-eval-mobilenet_v2]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[op_by_op_torch-eval-mobilenet_v2]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[op_by_op_torch-eval-mobilenet_v3_large]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[op_by_op_torch-eval-resnet152]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[op_by_op_torch-eval-resnext101_64x4d]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[op_by_op_torch-eval-vit_h_14]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[op_by_op_torch-eval-vit_h_14]
               "
           },
           {
