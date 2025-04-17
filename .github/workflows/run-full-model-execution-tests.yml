@@ -17,6 +17,9 @@ on:
     workflows: [Build] # backref to run-build as dependency
     types: [completed]
 
+env:
+  DOCKER_CACHE_ROOT: /mnt/dockercache
+
 jobs:
   tests:
     timeout-minutes: 60 # current onPR time runs ~60m
@@ -151,7 +154,6 @@ jobs:
 
     - name: Run Full Model Execution Tests
       env:
-        DOCKER_CACHE_ROOT: /mnt/dockercache
         HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
         TORCH_HOME: ${{ env.DOCKER_CACHE_ROOT }}/torch
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
