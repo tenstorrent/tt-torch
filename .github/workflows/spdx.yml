@@ -20,6 +20,3 @@ jobs:
         licenses: |-
           Apache-2.0
           MIT
-    - name: test-env
-      run: |
-        echo "DOCKER_CACHE_ROOT=$DOCKER_CACHE_ROOT"
