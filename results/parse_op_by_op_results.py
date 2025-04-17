@@ -545,6 +545,28 @@ def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=Fals
     # worksheet.autofit()
 
 
+# Parse error output from stderr
+def parse_error_output(stderr):
+    stderr_lines = stderr.strip().splitlines()
+
+    # Find the first real error line (MLIR format)
+    error = next((line for line in stderr_lines if ": error:" in line), None)
+
+    # If no error line found, look for crash indicators
+    if not error:
+        crash_keywords = ["Assertion `", "PLEASE submit a bug report", "Stack dump:"]
+        error = next(
+            (
+                line
+                for line in stderr_lines
+                if any(keyword in line for keyword in crash_keywords)
+            ),
+            None,
+        )
+
+    return (error, stderr)
+
+
 # Main entry point to generate detailed xlsx files of op status by model with summary sheet.
 def generate_op_reports_xlsx():
     json_files = find_json_files()
@@ -709,7 +731,7 @@ def generate_op_reports_xlsx():
                         result = subprocess.run(
                             [
                                 "ttmlir-opt",
-                                "--stablehlo-to-ttir-pipeline=enable-remove-dead-values=true",
+                                "--stablehlo-to-ttir-pipeline=enable-arith-to-stablehlo=true enable-composite-to-call=true",
                                 f"results/mlir_tests/stable_hlo/{test_name}",
                             ],
                             capture_output=True,
@@ -732,8 +754,11 @@ def generate_op_reports_xlsx():
                             text=True,
                         )
                     if result.returncode != 0:
-                        error = result.stderr.split("\n")[0]
-                        trace_dump = result.stderr
+                        (error, trace_dump) = parse_error_output(result.stderr)
+                    else:
+                        error = (
+                            "Compile stage passed on rerun, did not encounter error."
+                        )
                 elif status == 6:
                     trace_dump = op["runtime_stack_error"]
                     trace_dump = trace_dump.replace("\\n", "\n")
