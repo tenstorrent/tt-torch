@@ -15,6 +15,10 @@ on:
         description: 'Arguments to pass to setup.py'
         required: false
         type: string
+      artifact-key:
+        description: 'Key to use for artifact upload'
+        required: false
+        type: string
 
 jobs:
   build:
@@ -104,5 +108,5 @@ jobs:
     - name: Upload artifacts to archive
       uses: actions/upload-artifact@v4
       with:
-        name: install-artifacts
+        name: install-artifacts${{ inputs.artifact-key }}
         path: artifacts/artifact.tar

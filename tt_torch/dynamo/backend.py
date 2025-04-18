@@ -34,14 +34,53 @@ from tt_torch.tools.utils import (
 )
 
 
-def verify_golden_callback(binary, callback_context, op_context):
-    # Using these parameters, we should be able to query information
-    # about the op described by op_context, and its output. I.e. location:
-    location = tt_mlir.get_op_loc_info(op_context)
-    # ...
+def create_verify_golden_callback(compiler_config: CompilerConfig):
+    # Closure to capture external state in the callback.
+    # using CompilerConfig as a context cache
 
-    # We will need to provide the bindings necesarry in this frontend.
-    # Those bindings will interact with the runtime API
+    def verify_golden_callback(binary, callback_context, op_context):
+
+        raw_location = tt_mlir.get_op_loc_info(op_context)
+
+        location = ""
+        fused_locations = []
+
+        if "fused" in raw_location:
+            fused_locations = raw_location.split("fused")[1]
+            fused_locations = fused_locations.split(",")
+            fused_locations = [
+                # strip unnecessary characters
+                loc.translate(str.maketrans("", "", "()[]{}\"' "))
+                for loc in fused_locations
+            ]
+
+        if "loc(unknown)" in raw_location:
+            return
+
+        # there may be multiple source locations so fused_locations, the actual "name" of the node is at the end
+        location = fused_locations[-1]
+
+        intermediate_data = compiler_config.runtime_intermediate_cache.get(
+            location, None
+        )
+
+        if intermediate_data is not None:
+            print(f"Found golden for op @ {intermediate_data.node.name} == {location}.")
+
+            # return a null tensor for decomposed ops with invalid output tensors (eg. deallocate)
+            output_intermediate_tensor = tt_mlir.get_op_output_torch_tensor(
+                op_context, callback_context
+            )
+
+            if output_intermediate_tensor is not None:
+                if output_intermediate_tensor.dim == 0:
+                    output_intermediate_tensor = output_intermediate_tensor.unsqueeze(0)
+
+                intermediate_data.decomposed_intermediate_outputs.append(
+                    output_intermediate_tensor
+                )
+
+    return verify_golden_callback
 
 
 def dump_module(module, name, compiler_config):
@@ -111,7 +150,9 @@ def shlo_to_flatbuffer(executor, module, compiler_config):
     dump_module(module=ttir, name="TTIR module", compiler_config=compiler_config)
 
     if compiler_config.enable_intermediate_verification:
-        executor.register_intermediate_callback(verify_golden_callback)
+        executor.register_intermediate_callback(
+            create_verify_golden_callback(compiler_config)
+        )
 
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
     dump_module(module=ttnn, name="TTNN module", compiler_config=compiler_config)

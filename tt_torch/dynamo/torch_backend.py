@@ -40,6 +40,8 @@ from tt_torch.dynamo.executor import (
     OpByOpExecutor,
 )
 
+from tt_torch.tools.utils import RuntimeIntermediate
+
 #########################################################
 # Helper functions
 #########################################################
@@ -71,6 +73,8 @@ class TTContextCache(ContextCache):
                     locations.append(
                         Location.file(filename, line, col=0, context=self._c)
                     )
+            # Add the torchfx node name as the last location
+            locations.append(Location.name(node.name))
             return Location.fused(locations, context=self._c)
         return Location.unknown(context=self._c)
 
