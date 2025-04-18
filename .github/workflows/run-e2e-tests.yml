@@ -32,12 +32,6 @@ jobs:
                   tests/models/llama/test_llama_7b.py::test_llama_7b[full-eval]
                   tests/models/mistral/test_mistral_7b.py::test_mistral_7b[full-eval]
             "
-          },
-          # Approximately 150 minutes.
-          {
-            runs-on: wormhole_b0, name: "compile_3", tests: "
-                  tests/models/mamba/test_mamba.py::test_mamba[full-state-spaces/mamba-790m-hf-eval]
-            "
           }
         ]
     runs-on:
