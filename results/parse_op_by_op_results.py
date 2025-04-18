@@ -272,8 +272,11 @@ def apply_non_zero_conditional_format(worksheet, row, col, compile_depth, format
     )
 
 
-def create_summary_worksheet(workbook, model_names):
+# Create summary worksheet with per-model compilation status.
+# models_info - list of tuples containing (model_name, model_group)
+def create_summary_worksheet(workbook, models_info):
 
+    print(f"Creating summary for {len(models_info)} models")
     worksheet = workbook.get_worksheet_by_name("Per Model Compile Depths")
     percentage_format = workbook.add_format({"num_format": "0.00%"})
     centered_format = workbook.add_format({"align": "center"})
@@ -289,7 +292,13 @@ def create_summary_worksheet(workbook, model_names):
     )
     worksheet.write(0, 0, info_str)
 
-    worksheet.write_row(2, 0, ["Model / Compile Depth", 0, 1, 2, 3, 4, 5, 6, 7])
+    worksheet.write_row(
+        2, 0, ["Model / Compile Depth", "Group", 0, 1, 2, 3, 4, 5, 6, 7]
+    )
+    worksheet.freeze_panes(3, 0)  # Freeze rows 0,1,2
+
+    # Extract the model names for writing to the first column
+    model_names = [model[0] for model in models_info]
     worksheet.write_column(3, 0, model_names)
     worksheet.set_column(0, 0, 25)  # first column width
 
@@ -301,36 +310,40 @@ def create_summary_worksheet(workbook, model_names):
     }
 
     # Merge headers for columns that will be populated per model.
-    worksheet.merge_range(2, 12, 2, 13, "Compiled to TTNN (Depth 6,7)", centered_format)
-    worksheet.merge_range(2, 15, 2, 16, "Executed on Device (Depth 7)", centered_format)
+    worksheet.merge_range(2, 13, 2, 14, "Compiled to TTNN (Depth 6,7)", centered_format)
+    worksheet.merge_range(2, 16, 2, 17, "Executed on Device (Depth 7)", centered_format)
 
     row = 3
-    for model_name in model_names:
+    for model_name, model_group in models_info:
+
+        worksheet.write(row, 1, model_group)
+        worksheet.set_column(1, 1, 10)
+
         for compile_depth in range(0, 8):
             # baking dynamic references
             compile_depth_formula = (
-                f'=COUNTIF(INDIRECT("\'" & "{model_name}" & "\'!E:E"), {compile_depth})'
+                f'=COUNTIF(INDIRECT("\'" & "{model_name}" & "\'!F:F"), {compile_depth})'
             )
-            worksheet.write(row, 1 + compile_depth, compile_depth_formula)
+            worksheet.write(row, 2 + compile_depth, compile_depth_formula)
             apply_non_zero_conditional_format(
-                worksheet, row, 1 + compile_depth, compile_depth, color_formats
+                worksheet, row, 2 + compile_depth, compile_depth, color_formats
             )
 
         # Calculate Total Ops for the current row by summing compile depth columns (B to I)
         start_cell = xl_rowcol_to_cell(
-            row, 1
+            row, 2
         )  # first compile depth cell for current row
-        end_cell = xl_rowcol_to_cell(row, 8)  # last compile depth cell for current row
+        end_cell = xl_rowcol_to_cell(row, 10)  # last compile depth cell for current row
         total_ops_formula = f"=SUM({start_cell}:{end_cell})"
-        worksheet.write(2, 10, "Total Ops Per Model")
-        worksheet.write(row, 10, total_ops_formula)
-        worksheet.set_column(10, 10, 15)
-        worksheet.set_column(11, 11, 2)
+        worksheet.write(2, 11, "Total Ops Per Model")
+        worksheet.write(row, 11, total_ops_formula)
+        worksheet.set_column(11, 11, 15)
+        worksheet.set_column(12, 12, 2)
 
         # Compute a summary of ops compiling to TTNN per model
-        compile_depth_6_cell = xl_rowcol_to_cell(row, 7)
-        compile_depth_7_cell = xl_rowcol_to_cell(row, 8)
-        total_ops_cell = xl_rowcol_to_cell(row, 10)
+        compile_depth_6_cell = xl_rowcol_to_cell(row, 8)
+        compile_depth_7_cell = xl_rowcol_to_cell(row, 9)
+        total_ops_cell = xl_rowcol_to_cell(row, 11)
         compiling_formula_percentage = (
             f"=SUM({compile_depth_6_cell}:{compile_depth_7_cell})/{total_ops_cell}"
         )
@@ -340,16 +353,16 @@ def create_summary_worksheet(workbook, model_names):
             f'TEXT(SUM({compile_depth_6_cell}:{compile_depth_7_cell}) - {total_ops_cell},"0") & ") "'
         )
         worksheet.write_formula(
-            row, 12, compiling_formula_percentage, percentage_format
+            row, 13, compiling_formula_percentage, percentage_format
         )
-        worksheet.set_column(12, 12, 12)
-        worksheet.write(row, 13, compiling_formula)
-        worksheet.set_column(13, 13, 15)
-        worksheet.set_column(14, 14, 2)
+        worksheet.set_column(13, 13, 12)
+        worksheet.write(row, 14, compiling_formula)
+        worksheet.set_column(14, 14, 15)
+        worksheet.set_column(15, 15, 2)
 
         # Compute a summary of ops executing on silicon per model
-        compile_depth_7_cell = xl_rowcol_to_cell(row, 8)
-        total_ops_cell = xl_rowcol_to_cell(row, 10)
+        compile_depth_7_cell = xl_rowcol_to_cell(row, 9)
+        total_ops_cell = xl_rowcol_to_cell(row, 11)
         executing_formula_percentage = f"={compile_depth_7_cell}/{total_ops_cell}"
         executing_formula = (
             f'=TEXT({compile_depth_7_cell},"0") & "/" & '
@@ -357,32 +370,32 @@ def create_summary_worksheet(workbook, model_names):
             f'TEXT({compile_depth_7_cell} - {total_ops_cell},"0") & ") "'
         )
         worksheet.write_formula(
-            row, 15, executing_formula_percentage, percentage_format
+            row, 16, executing_formula_percentage, percentage_format
         )
-        worksheet.set_column(15, 15, 12)
-        worksheet.write(row, 16, executing_formula)
-        worksheet.set_column(16, 16, 15)
+        worksheet.set_column(16, 16, 12)
+        worksheet.write(row, 17, executing_formula)
+        worksheet.set_column(17, 17, 15)
 
         # Determine how many ops for model hit unknown error (column M is "Compile error")
         unknown_errors_formula = f'=COUNTIF(INDIRECT("\'" & "{model_name}" & "\'!M:M"), "Error message not extracted.")'
-        worksheet.set_column(17, 17, 2)
-        worksheet.set_column(18, 18, 13)
-        worksheet.write(2, 18, "Unknown Errors")
-        worksheet.write(row, 18, unknown_errors_formula)
-        worksheet.set_column(19, 19, 2)
-        apply_non_zero_conditional_format(worksheet, row, 18, 6, color_formats)
+        worksheet.set_column(18, 18, 2)
+        worksheet.set_column(19, 19, 13)
+        worksheet.write(2, 19, "Unknown Errors")
+        worksheet.write(row, 19, unknown_errors_formula)
+        worksheet.set_column(20, 20, 2)
+        apply_non_zero_conditional_format(worksheet, row, 19, 6, color_formats)
 
         # Determine how many ops for model hit timeout error
         timeout_errors_formula = f'=COUNTIFS(INDIRECT("\'" & "{model_name}" & "\'!M:M"), "*Timeout exceeded for op*")'
-        worksheet.set_column(20, 20, 13)
-        worksheet.write(2, 20, "Timeouts")
-        worksheet.write(row, 20, timeout_errors_formula)
-        worksheet.set_column(21, 21, 2)
-        apply_non_zero_conditional_format(worksheet, row, 20, 6, color_formats)
+        worksheet.set_column(21, 21, 13)
+        worksheet.write(2, 21, "Timeouts")
+        worksheet.write(row, 21, timeout_errors_formula)
+        worksheet.set_column(22, 22, 2)
+        apply_non_zero_conditional_format(worksheet, row, 21, 6, color_formats)
 
         # Apply conditional formatting to the percentage columns per model.
-        apply_percentage_conditional_format(worksheet, row, 12, color_formats, True)
-        apply_percentage_conditional_format(worksheet, row, 15, color_formats, True)
+        apply_percentage_conditional_format(worksheet, row, 13, color_formats, True)
+        apply_percentage_conditional_format(worksheet, row, 16, color_formats, True)
 
         # Finished the per-model row now, move to the next.
         row += 1
@@ -393,31 +406,31 @@ def create_summary_worksheet(workbook, model_names):
     row += 1
     worksheet.write(row, 0, "Total Ops per Compile Depth")
     for compile_depth in range(0, 8):
-        col = 1 + compile_depth
+        col = 2 + compile_depth
         total_formula = f"=SUM({xl_rowcol_to_cell(data_start_row, col)}:{xl_rowcol_to_cell(data_end_row, col)})"
         worksheet.write(row, col, total_formula)
 
     # Add totals for unknown errors and timeouts
-    total_formula = f"=SUM({xl_rowcol_to_cell(data_start_row, 18)}:{xl_rowcol_to_cell(data_end_row, 18)})"
-    worksheet.write(row, 18, total_formula)
-    total_formula = f"=SUM({xl_rowcol_to_cell(data_start_row, 20)}:{xl_rowcol_to_cell(data_end_row, 20)})"
-    worksheet.write(row, 20, total_formula)
+    total_formula = f"=SUM({xl_rowcol_to_cell(data_start_row, 19)}:{xl_rowcol_to_cell(data_end_row, 19)})"
+    worksheet.write(row, 19, total_formula)
+    total_formula = f"=SUM({xl_rowcol_to_cell(data_start_row, 21)}:{xl_rowcol_to_cell(data_end_row, 21)})"
+    worksheet.write(row, 21, total_formula)
 
     # Add more top-level summaries to the right of existing data
-    worksheet.set_column(22, 22, 25)
-    worksheet.write(2, 22, "Models Total:")
-    worksheet.write(2, 23, len(model_names))
-    worksheet.write(3, 22, "Models Fully Compiling to TTNN:")
+    worksheet.set_column(23, 23, 25)
+    worksheet.write(2, 23, "Models Total:")
+    worksheet.write(2, 24, len(model_names))
+    worksheet.write(3, 23, "Models Fully Compiling to TTNN:")
     worksheet.write_formula(
         3,
-        23,
-        f"=COUNTIF({xl_rowcol_to_cell(3, 12)}:{xl_rowcol_to_cell(3+len(model_names)-1, 12)}, 100%)",
+        24,
+        f"=COUNTIF({xl_rowcol_to_cell(3, 13)}:{xl_rowcol_to_cell(3+len(model_names)-1, 13)}, 100%)",
     )
-    worksheet.write(4, 22, "Models Fully Executing on Device:")
+    worksheet.write(4, 23, "Models Fully Executing on Device:")
     worksheet.write_formula(
         4,
-        23,
-        f"=COUNTIF({xl_rowcol_to_cell(3, 15)}:{xl_rowcol_to_cell(3+len(model_names)-1, 15)}, 100%)",
+        24,
+        f"=COUNTIF({xl_rowcol_to_cell(3, 16)}:{xl_rowcol_to_cell(3+len(model_names)-1, 16)}, 100%)",
     )
 
 
@@ -447,6 +460,7 @@ def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=Fals
         "Compiled JSON",
     )
     worksheet.write_row(row, 0, header, bold)
+    worksheet.freeze_panes(1, 0)
 
     # Set some reasonable column widths for quick visual scanning.
     worksheet.set_column(0, 0, 30)  # Torch Name
@@ -577,7 +591,7 @@ def generate_op_reports_xlsx():
     stable_hlo_ops = {}
     models_per_op = {}
     stable_hlo_models_per_op = {}
-    model_names = []
+    model_list = []
     all_ops = {}
     stable_hlo_ops_per_torch_op = {}
     workbook = xlsxwriter.Workbook("results/models_op_per_op.xlsx")
@@ -588,10 +602,12 @@ def generate_op_reports_xlsx():
     worksheet_all_ops_1 = workbook.add_worksheet("All Ops")
     worksheet_all_ops_2 = workbook.add_worksheet("All Ops (Not Executing)")
 
-    for json_file in json_files:
-        # indicator that the JSON is a model report, not an op report
-        if "_unique_ops.json" not in json_file:
-            continue
+    # Filter to only get JSON files with unique_ops in their
+    # name (ie. model reports, not op reports)
+    json_files = [f for f in json_files if "_unique_ops.json" in f]
+    total_json_files = len(json_files)
+
+    for json_idx, json_file in enumerate(json_files, 1):
 
         with open(json_file, "r") as f:
             data = json.load(f)
@@ -606,6 +622,13 @@ def generate_op_reports_xlsx():
                 .split(" ")[0]
                 .split("test")[-1]
             )
+
+        # Get the model group from first op in json.
+        if "model_group" in first_value and len(first_value["model_group"]) > 0:
+            model_group = first_value["model_group"]
+        else:
+            model_group = "unknown"
+
         # If invalid excel char in name: []:*?/\, replace with _
         model_name = re.sub(r"[^a-zA-Z0-9_]", "_", model_name)
         if len(model_name) > 28:
@@ -613,13 +636,15 @@ def generate_op_reports_xlsx():
 
         id = 1
         test_name = model_name
-        while model_name in model_names:
+        while model_name in [model[0] for model in model_list]:
             model_name = test_name + f"_{id}"
             id += 1
 
-        print(f"Processing {model_name}", flush=True)
+        print(
+            f"Processing json ({json_idx}/{total_json_files}) {model_name}", flush=True
+        )
 
-        model_names.append(model_name)
+        model_list.append((model_name, model_group))
         worksheet = workbook.add_worksheet(model_name)
         keys = list(data.keys())
         keys.sort()
@@ -630,6 +655,7 @@ def generate_op_reports_xlsx():
             "Torch Name",
             "Input Shapes",
             "Output Shapes",
+            "Global Op Idx",
             "NumOps",
             "Status",
             "PCC",
@@ -644,6 +670,7 @@ def generate_op_reports_xlsx():
             "Compiled Json",
         )
         worksheet.write_row(row, 0, header, bold)
+        worksheet.freeze_panes(1, 0)
         row += 1
         torch_ops = {}
         for key, value in data.items():
@@ -676,6 +703,8 @@ def generate_op_reports_xlsx():
                     "key": key,
                     "pcc": value["pcc"],
                     "atol": value["atol"],
+                    # Default for back-compat against older .json files
+                    "global_op_idx": value.get("global_op_idx", 0),
                 }
             )
         ops_per_model[model_name] = list(torch_ops.keys())
@@ -700,6 +729,7 @@ def generate_op_reports_xlsx():
                 trace_dump = ""
                 pcc = op["pcc"]
                 atol = op["atol"]
+                global_op_idx = op["global_op_idx"]
 
                 if 2 <= status <= 5:
                     if 2 <= status <= 3:
@@ -777,6 +807,7 @@ def generate_op_reports_xlsx():
                     name,
                     input_shapes,
                     output_shapes,
+                    global_op_idx,
                     num_ops,
                     status,
                     pcc,
@@ -836,17 +867,19 @@ def generate_op_reports_xlsx():
     row_data = ["Total Ops", len(ops)]
     worksheet.write_row(row, 0, row_data, bold)
     row += 1
-    row_data = ["Total Models", len(models)]
+    row_data = ["Total Models", len(model_list)]
     worksheet.write_row(row, 0, row_data, bold)
     row += 1
     worksheet.set_column(0, 0, 35)  # first column width
     header = ["op"]
-    header.extend(models)
+    header.extend([model[0] for model in model_list])
 
     worksheet.write_row(row, 0, header, bold)
     row += 1
     for op in ops:
-        data = [op] + [1 if model in models_per_op[op] else 0 for model in models]
+        data = [op] + [
+            1 if model[0] in models_per_op[op] else 0 for model in model_list
+        ]
         worksheet.write_row(row, 0, data)
         row += 1
 
@@ -899,8 +932,10 @@ def generate_op_reports_xlsx():
         worksheet.write_row(row, 0, data)
         row += 1
 
-    # Summarize Models / Compile Depths in the first sheet
-    create_summary_worksheet(workbook, model_names)
+    # Summarize Models / Compile Depths in the first sheet. Models are
+    # sorted by model_group first then mode_name
+    sorted_model_list = sorted(model_list, key=lambda x: (x[1], x[0]))
+    create_summary_worksheet(workbook, sorted_model_list)
 
     workbook.close()
 
