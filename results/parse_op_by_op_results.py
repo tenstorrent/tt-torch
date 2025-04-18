@@ -16,6 +16,18 @@ import re
 import datetime
 import subprocess
 
+# OpCompilationStatus names, matches utils.py
+OP_STATUS_NAMES = [
+    "NOT_STARTED",
+    "CREATED_GRAPH",
+    "CONVERTED_TO_TORCH_IR",
+    "CONVERTED_TO_TORCH_BACKEND_IR",
+    "CONVERTED_TO_STABLE_HLO",
+    "CONVERTED_TO_TTIR",
+    "CONVERTED_TO_TTNN",
+    "EXECUTED",
+]
+
 # Function to get git branch and commit
 def get_git_info():
     try:
@@ -249,15 +261,15 @@ def apply_percentage_conditional_format(
     )
 
 
-# Conditionally format with color (green/yellow) the ops per model by compile depth
+# Conditionally format with color (green/yellow) the ops per model by compilation status
 # where any ops not compiling to TTNN are orange, ops compiling to TTNN are yellow
 # and ops executing on silicon are green.
-def apply_non_zero_conditional_format(worksheet, row, col, compile_depth, formats):
+def apply_non_zero_conditional_format(worksheet, row, col, compile_status, formats):
     helper_cell = xl_rowcol_to_cell(row, col, row_abs=True, col_abs=True)
 
-    if compile_depth <= 5:
+    if compile_status <= 5:
         fmt = formats["orange"]
-    elif compile_depth == 6:
+    elif compile_status == 6:
         fmt = formats["yellow"]
     else:
         fmt = formats["green"]
@@ -277,9 +289,10 @@ def apply_non_zero_conditional_format(worksheet, row, col, compile_depth, format
 def create_summary_worksheet(workbook, models_info):
 
     print(f"Creating summary for {len(models_info)} models")
-    worksheet = workbook.get_worksheet_by_name("Per Model Compile Depths")
+    worksheet = workbook.get_worksheet_by_name("Per Model Compile Statuses")
     percentage_format = workbook.add_format({"num_format": "0.00%"})
     centered_format = workbook.add_format({"align": "center"})
+    bold_format = workbook.add_format({"bold": True})
 
     # Get current date, time and git branch, commit info.
     branch, commit = get_git_info()
@@ -293,7 +306,10 @@ def create_summary_worksheet(workbook, models_info):
     worksheet.write(0, 0, info_str)
 
     worksheet.write_row(
-        2, 0, ["Model / Compile Depth", "Group", 0, 1, 2, 3, 4, 5, 6, 7]
+        2,
+        0,
+        ["Model / Compilation Status", "Group", 0, 1, 2, 3, 4, 5, 6, 7],
+        bold_format,
     )
     worksheet.freeze_panes(3, 0)  # Freeze rows 0,1,2
 
@@ -310,8 +326,12 @@ def create_summary_worksheet(workbook, models_info):
     }
 
     # Merge headers for columns that will be populated per model.
-    worksheet.merge_range(2, 13, 2, 14, "Compiled to TTNN (Depth 6,7)", centered_format)
-    worksheet.merge_range(2, 16, 2, 17, "Executed on Device (Depth 7)", centered_format)
+    worksheet.merge_range(
+        2, 13, 2, 14, "Compiled to TTNN (Status 6,7)", centered_format
+    )
+    worksheet.merge_range(
+        2, 16, 2, 17, "Executed on Device (Status 7)", centered_format
+    )
 
     row = 3
     for model_name, model_group in models_info:
@@ -319,21 +339,21 @@ def create_summary_worksheet(workbook, models_info):
         worksheet.write(row, 1, model_group)
         worksheet.set_column(1, 1, 10)
 
-        for compile_depth in range(0, 8):
+        for compile_status in range(0, 8):
             # baking dynamic references
-            compile_depth_formula = (
-                f'=COUNTIF(INDIRECT("\'" & "{model_name}" & "\'!F:F"), {compile_depth})'
-            )
-            worksheet.write(row, 2 + compile_depth, compile_depth_formula)
+            compile_status_formula = f'=COUNTIF(INDIRECT("\'" & "{model_name}" & "\'!F:F"), {compile_status})'
+            worksheet.write(row, 2 + compile_status, compile_status_formula)
             apply_non_zero_conditional_format(
-                worksheet, row, 2 + compile_depth, compile_depth, color_formats
+                worksheet, row, 2 + compile_status, compile_status, color_formats
             )
 
-        # Calculate Total Ops for the current row by summing compile depth columns (B to I)
+        # Calculate Total Ops for the current row by summing compilation status columns (B to I)
         start_cell = xl_rowcol_to_cell(
             row, 2
-        )  # first compile depth cell for current row
-        end_cell = xl_rowcol_to_cell(row, 10)  # last compile depth cell for current row
+        )  # first compilation status cell for current row
+        end_cell = xl_rowcol_to_cell(
+            row, 10
+        )  # last compilation status cell for current row
         total_ops_formula = f"=SUM({start_cell}:{end_cell})"
         worksheet.write(2, 11, "Total Ops Per Model")
         worksheet.write(row, 11, total_ops_formula)
@@ -341,16 +361,16 @@ def create_summary_worksheet(workbook, models_info):
         worksheet.set_column(12, 12, 2)
 
         # Compute a summary of ops compiling to TTNN per model
-        compile_depth_6_cell = xl_rowcol_to_cell(row, 8)
-        compile_depth_7_cell = xl_rowcol_to_cell(row, 9)
+        compile_status_6_cell = xl_rowcol_to_cell(row, 8)
+        compile_status_7_cell = xl_rowcol_to_cell(row, 9)
         total_ops_cell = xl_rowcol_to_cell(row, 11)
         compiling_formula_percentage = (
-            f"=SUM({compile_depth_6_cell}:{compile_depth_7_cell})/{total_ops_cell}"
+            f"=SUM({compile_status_6_cell}:{compile_status_7_cell})/{total_ops_cell}"
         )
         compiling_formula = (
-            f'=TEXT(SUM({compile_depth_6_cell}:{compile_depth_7_cell}),"0") & "/" & '
+            f'=TEXT(SUM({compile_status_6_cell}:{compile_status_7_cell}),"0") & "/" & '
             f'TEXT({total_ops_cell},"0") & " (" & '
-            f'TEXT(SUM({compile_depth_6_cell}:{compile_depth_7_cell}) - {total_ops_cell},"0") & ") "'
+            f'TEXT(SUM({compile_status_6_cell}:{compile_status_7_cell}) - {total_ops_cell},"0") & ") "'
         )
         worksheet.write_formula(
             row, 13, compiling_formula_percentage, percentage_format
@@ -361,13 +381,13 @@ def create_summary_worksheet(workbook, models_info):
         worksheet.set_column(15, 15, 2)
 
         # Compute a summary of ops executing on silicon per model
-        compile_depth_7_cell = xl_rowcol_to_cell(row, 9)
+        compile_status_7_cell = xl_rowcol_to_cell(row, 9)
         total_ops_cell = xl_rowcol_to_cell(row, 11)
-        executing_formula_percentage = f"={compile_depth_7_cell}/{total_ops_cell}"
+        executing_formula_percentage = f"={compile_status_7_cell}/{total_ops_cell}"
         executing_formula = (
-            f'=TEXT({compile_depth_7_cell},"0") & "/" & '
+            f'=TEXT({compile_status_7_cell},"0") & "/" & '
             f'TEXT({total_ops_cell},"0") & " (" & '
-            f'TEXT({compile_depth_7_cell} - {total_ops_cell},"0") & ") "'
+            f'TEXT({compile_status_7_cell} - {total_ops_cell},"0") & ") "'
         )
         worksheet.write_formula(
             row, 16, executing_formula_percentage, percentage_format
@@ -400,13 +420,13 @@ def create_summary_worksheet(workbook, models_info):
         # Finished the per-model row now, move to the next.
         row += 1
 
-    # Add blank row and total ops per compile depth across all models.
+    # Add blank row and total ops per compilation status across all models.
     data_end_row = row - 1
     data_start_row = data_end_row - (len(model_names) - 1)
     row += 1
-    worksheet.write(row, 0, "Total Ops per Compile Depth")
-    for compile_depth in range(0, 8):
-        col = 2 + compile_depth
+    worksheet.write(row, 0, "Total Ops per Compile Status")
+    for compile_status in range(0, 8):
+        col = 2 + compile_status
         total_formula = f"=SUM({xl_rowcol_to_cell(data_start_row, col)}:{xl_rowcol_to_cell(data_end_row, col)})"
         worksheet.write(row, col, total_formula)
 
@@ -432,6 +452,11 @@ def create_summary_worksheet(workbook, models_info):
         24,
         f"=COUNTIF({xl_rowcol_to_cell(3, 16)}:{xl_rowcol_to_cell(3+len(model_names)-1, 16)}, 100%)",
     )
+
+    # Print the OpCompilationStatus legend to the summary worksheet
+    worksheet.write(6, 23, "OpCompilationStatus Legend")
+    for status_code, status_name in enumerate(OP_STATUS_NAMES):
+        worksheet.write(8 + status_code, 23, f"{status_code}: {status_name}")
 
 
 # Generate All Ops summary worksheets (all and those not making it to execute)
@@ -463,7 +488,7 @@ def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=Fals
     worksheet.freeze_panes(1, 0)
 
     # Set some reasonable column widths for quick visual scanning.
-    worksheet.set_column(0, 0, 30)  # Torch Name
+    worksheet.set_column(0, 0, 37)  # Torch Name
     worksheet.set_column(1, 1, 50)  # Input Shapes
     worksheet.set_column(2, 2, 20)  # Output Shapes
     worksheet.set_column(5, 5, 50)  # Models
@@ -471,6 +496,9 @@ def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=Fals
 
     row += 1
     torch_ops = {}
+    total_ops = 0
+    # Initialize the status counts dictionary with zeros for all possible statuses
+    status_counts = {i: 0 for i in range(len(OP_STATUS_NAMES))}
     for key, value in sorted(all_ops.items()):
 
         # Ability to skip ops that are fully executing.
@@ -555,8 +583,25 @@ def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=Fals
                 worksheet.write_row(row, 0, row_data)
                 worksheet.set_row(row, None, None, {"hidden": True})
                 row += 1
+            total_ops += 1
+            status_counts[status] = status_counts.get(status, 0) + 1
 
-    # worksheet.autofit()
+    # Add totals at the bottom of the sheet after a separator line.
+    row += 2
+
+    # Write the total ops
+    worksheet.write(row, 0, "Total ops:")
+    worksheet.write(row, 1, f"{total_ops:<4d} (100.0%)")
+    row += 1
+
+    # Write totals for each compilation status and percentages
+    for status_code, status_name in enumerate(OP_STATUS_NAMES):
+        count = status_counts.get(status_code, 0)
+        percent = count / total_ops if total_ops > 0 else 0
+        count_with_percent = f"{count:<4d} ({percent:3.1%})"
+        worksheet.write(row, 0, f"Total {status_name} ({status_code}):")
+        worksheet.write(row, 1, count_with_percent)
+        row += 1
 
 
 # Parse error output from stderr
@@ -598,7 +643,7 @@ def generate_op_reports_xlsx():
     bold = workbook.add_format({"bold": True})
     yellow = workbook.add_format({"bg_color": "#FFEB3B"})
 
-    worksheet = workbook.add_worksheet("Per Model Compile Depths")
+    worksheet = workbook.add_worksheet("Per Model Compile Statuses")
     worksheet_all_ops_1 = workbook.add_worksheet("All Ops")
     worksheet_all_ops_2 = workbook.add_worksheet("All Ops (Not Executing)")
 
@@ -784,7 +829,7 @@ def generate_op_reports_xlsx():
                             text=True,
                         )
 
-                    # For annotating compile depths, use failure if encountered on rerun here. If there was
+                    # For annotating compilation statuses, use failure if encountered on rerun here. If there was
                     # no failure, use runtime_stack_error message if it exists, otherwise report pass in msg.
                     if result.returncode != 0:
                         (error, trace_dump) = parse_error_output(result.stderr)
@@ -932,7 +977,7 @@ def generate_op_reports_xlsx():
         worksheet.write_row(row, 0, data)
         row += 1
 
-    # Summarize Models / Compile Depths in the first sheet. Models are
+    # Summarize Models / OpCompilationStatus in the first sheet. Models are
     # sorted by model_group first then mode_name
     sorted_model_list = sorted(model_list, key=lambda x: (x[1], x[0]))
     create_summary_worksheet(workbook, sorted_model_list)
