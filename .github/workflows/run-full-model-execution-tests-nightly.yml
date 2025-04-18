@@ -107,6 +107,12 @@ jobs:
             runs-on: wormhole_b0, name: "eval_7_bert_qrtn", tests: "
                   tests/models/bert/test_bert.py::test_bert[full-eval]
             "
+          },
+          # Approximately 180 minutes.
+          {
+            runs-on: wormhole_b0, name: "eval_8", tests: "
+                  tests/models/mamba/test_mamba.py::test_mamba[full-state-spaces/mamba-790m-hf-eval]
+            "
           }
         ]
     runs-on:

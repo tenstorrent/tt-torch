@@ -59,6 +59,11 @@ jobs:
               "
           },
           {
+            runs-on: wormhole_b0, name: "mamba", tests: "
+              tests/models/mamba/test_mamba.py::test_mamba[op_by_op_torch-state-spaces/mamba-790m-hf-eval]
+              "
+          },
+          {
             runs-on: wormhole_b0, name: "mobilenet", tests: "
               tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd
               tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2

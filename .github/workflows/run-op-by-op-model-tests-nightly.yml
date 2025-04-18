@@ -54,11 +54,6 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "mamba", tests: "
-              tests/models/mamba/test_mamba.py::test_mamba[op_by_op_torch-state-spaces/mamba-790m-hf-eval]
-              "
-          },
-          {
             runs-on: wormhole_b0, name: "xglm", tests: "
               tests/models/xglm/test_xglm.py::test_xglm
               "
