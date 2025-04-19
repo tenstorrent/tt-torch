@@ -369,7 +369,14 @@ class OpByOpExecutor(Executor):
     def set_runtime_stack_dump(self, error, op):
         if op is None:
             return
-        self.compiler_config.unique_ops[op.unique_key()].runtime_stack_dump = str(error)
+
+        # Handle both implementations of unique_key (method or attribute)
+        key = (
+            op.unique_key()
+            if callable(getattr(op, "unique_key", None))
+            else op.unique_key
+        )
+        self.compiler_config.unique_ops[key].runtime_stack_dump = str(error)
 
     # Helper function to print markers
     def print_marker(self, msg, idx, num_nodes, op_info, error=""):
