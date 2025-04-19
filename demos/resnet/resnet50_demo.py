@@ -10,6 +10,7 @@ from torchvision import transforms
 import torchvision.models as models
 import tabulate
 import requests
+from tt_torch.tools.device_manager import DeviceManager
 
 
 def main():
@@ -22,7 +23,9 @@ def main():
     cc.enable_consteval = True
     cc.consteval_parameters = True
 
-    tt_model = torch.compile(model, backend=backend, dynamic=False, options=cc)
+    options = {}
+    options["compiler_config"] = cc
+    tt_model = torch.compile(model, backend=backend, dynamic=False, options=options)
 
     headers = ["Top 5 Predictions"]
     topk = 5

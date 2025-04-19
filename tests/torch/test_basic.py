@@ -5,10 +5,12 @@ import torch
 from torch import nn
 import pytest
 import math
+import threading
 
 import tt_torch
 from tt_torch.tools.verify import verify_module
 from tt_torch.tools.utils import CompilerConfig
+from tt_torch.tools.device_manager import DeviceManager
 
 
 def test_abs():
@@ -31,6 +33,49 @@ def test_add():
             return torch.add(x, y)
 
     verify_module(Basic(), input_shapes=[(256, 256)] * 2)
+
+
+# Runs the AddOp on all detected chips in parallel
+def test_add_multidevice():
+    class AddOp(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x, y):
+            return torch.add(x, y)
+
+    num_devices = DeviceManager.get_num_available_devices()
+    parent, device_list = DeviceManager.acquire_available_devices()
+    assert (
+        len(device_list) == num_devices
+    ), "Number of devices is not equal to expected."
+    threads = []
+    compiler_configs = [CompilerConfig() for _ in range(num_devices)]
+    for i in range(num_devices):
+        cc = compiler_configs[i]
+        device = device_list[i]
+        mod = AddOp()
+        input_shapes = [(256, 256)] * 2
+        thread = threading.Thread(
+            target=verify_module,
+            kwargs={
+                "mod": mod,
+                "input_shapes": input_shapes,
+                "compiler_config": cc,
+                "device": device,
+            },
+        )
+        threads.append(thread)
+
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+
+    DeviceManager.release_parent_device(parent, cleanup_sub_devices=True)
+    assert (
+        len(DeviceManager.get_parent_devices()) == 0
+    ), "Some devices are not released."
 
 
 def test_concat_dim0():
