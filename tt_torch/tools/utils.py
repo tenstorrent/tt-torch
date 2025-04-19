@@ -108,6 +108,8 @@ class Op:
         self.output_shapes = []
         self.output_tensors = []
         self.frontend = "tt-torch"
+        self.model_group = ""
+        self.global_op_idx = 0
 
         self.torch_ir_graph = ""
         self.stable_hlo_graph = ""
@@ -207,6 +209,8 @@ class Op:
         return {
             "framework_op_name": self.framework_op_name,
             "torch_name": self.framework_op_name,  # For backward compatibility
+            "model_group": self.model_group,
+            "global_op_idx": self.global_op_idx,
             "frontend": self.frontend,
             "model_name": self.model_name,
             "input_shapes": self.print_shapes(self.input_shapes),
@@ -260,6 +264,7 @@ class CompilerConfig:
         self.unique_ops = {}
         self.stable_hlo_ops = []
         self.model_name = ""
+        self.model_group = ""
         self.results_path = "results/models/"
         self.single_op_timeout = 30
         self.op_by_op_backend = OpByOpBackend.TORCH
@@ -427,6 +432,7 @@ class CompilerConfig:
             "unique_ops": self.unique_ops,
             "stable_hlo_ops": self.stable_hlo_ops,
             "model_name": self.model_name,
+            "model_group": self.model_group,
             "results_path": self.results_path,
             "single_op_timeout": self.single_op_timeout,
             "enable_consteval": self.enable_consteval,
