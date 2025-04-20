@@ -193,6 +193,8 @@ class StablehloOp(Op):
         return {
             "frontend": self.frontend,
             "model_name": self.model_name,
+            "model_group": self.model_group,
+            "global_op_idx": self.global_op_idx,
             "input_shapes": self.print_shapes(self.input_shapes),
             "input_tensors": [tensor.to_dict() for tensor in self.input_tensors],
             "output_shapes": self.print_shapes(self.output_shapes),
@@ -341,33 +343,46 @@ class StablehloExecutor(OpByOpExecutor):
     def shlo_op_by_op(self):
         calculated = None
         num_ops = len(self.sub_ops)
+
         for idx, op in enumerate(self.sub_ops):
             self.print_marker("\nProcessing", idx, num_ops, op.op_name)
 
-            try:
-                self.print_marker("Compiling", idx, num_ops, op.op_name)
-                binary, op, msg = self.compile_op(op, None, None)
-                self.set_runtime_stack_dump(msg, op)
-            except Exception as e:
-                binary = None
-                self.print_marker("Failed to compile", idx, num_nodes, node.target, e)
+            op.global_op_idx = OpByOpExecutor.global_op_idx
+            op.model_group = self.compiler_config.model_group
 
-            if (
-                self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
-                and binary is not None
-            ):
+            test_this_op = self.should_test_op()
+            if test_this_op:
                 try:
-                    inputs = generate_random_inputs_for_shlo(op.stable_hlo_graph)
-                    inputs = self.typecast_inputs(inputs)
-                    self.print_marker("Running", idx, num_ops, op.op_name)
-                    calculated, runtime_stack_dump = self.run_op(binary, *inputs)
-                    self.set_runtime_stack_dump(runtime_stack_dump, op)
-                    if calculated is None:
-                        raise ValueError("Failed to execute")
-                    op.compilation_status = OpCompilationStatus.EXECUTED
+                    self.print_marker("Compiling", idx, num_ops, op.op_name)
+                    binary, op, msg = self.compile_op(op, None, None)
+                    self.set_runtime_stack_dump(msg, op)
                 except Exception as e:
-                    self.print_marker("Failed to execute", idx, num_ops, op.op_name, e)
-            self.global_op_idx += 1
+                    binary = None
+                    self.print_marker(
+                        "Failed to compile", idx, num_nodes, node.target, e
+                    )
+
+                if (
+                    self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
+                    and binary is not None
+                ):
+                    try:
+                        inputs = generate_random_inputs_for_shlo(op.stable_hlo_graph)
+                        inputs = self.typecast_inputs(inputs)
+                        self.print_marker("Running", idx, num_ops, op.op_name)
+                        calculated, runtime_stack_dump = self.run_op(binary, *inputs)
+                        self.set_runtime_stack_dump(runtime_stack_dump, op)
+                        if calculated is None:
+                            raise ValueError("Failed to execute")
+                        op.compilation_status = OpCompilationStatus.EXECUTED
+                    except Exception as e:
+                        self.print_marker(
+                            "Failed to execute", idx, num_ops, op.op_name, e
+                        )
+
+            # Finished handling this op, increment global op index
+            OpByOpExecutor.global_op_idx += 1
+
         self.binary = binary
         self.compiler_config.save_unique_ops()
         if self.execute_process is not None:

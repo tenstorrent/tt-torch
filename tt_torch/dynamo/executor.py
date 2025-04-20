@@ -286,6 +286,12 @@ class OnnxExecutor(Executor):
 
 
 class OpByOpExecutor(Executor):
+
+    # Class attributes for identifying each op w/ unique incrementing id
+    # across graph breaks, and for running just a specific op.
+    global_op_idx = 0
+    run_global_op_idx = None
+
     def __init__(
         self,
         compiler_config=None,
@@ -300,6 +306,13 @@ class OpByOpExecutor(Executor):
             required_atol=required_atol,
         )
 
+        # Debug mode to run only specific op given global_op_idx
+        if OpByOpExecutor.run_global_op_idx is None:
+            run_global_op_idx_env = os.getenv("RUN_GLOBAL_OP_IDX")
+            OpByOpExecutor.run_global_op_idx = (
+                None if run_global_op_idx_env is None else int(run_global_op_idx_env)
+            )
+
         # Opening a device in a new process is very slow as the pcie device needs to be initializes
         # So we keep the process alive and reuse it. If the process dies, the next call will create a new process
         self.execute_process = None
@@ -312,7 +325,13 @@ class OpByOpExecutor(Executor):
         self.stderror_redirected = False
         self.file_stderr = None
         self.op_memory_limit = gb_to_bytes(0.5)  # 512MB limit
-        self.global_op_idx = 0  # For Debug/Rerunning
+
+    # Determine if the current op should be tested based on RUN_GLOBAL_OP_IDX
+    def should_test_op(self):
+        return (
+            OpByOpExecutor.run_global_op_idx is None
+            or OpByOpExecutor.global_op_idx == OpByOpExecutor.run_global_op_idx
+        )
 
     def transform_input(self, inp):
         # Convert torch.nn.Parameter to torch.Tensor and convert non-contiguous
@@ -381,7 +400,7 @@ class OpByOpExecutor(Executor):
     # Helper function to print markers
     def print_marker(self, msg, idx, num_nodes, op_info, error=""):
         print(
-            f"{msg:<10} global_op_idx: {self.global_op_idx} ({idx}/{num_nodes}): {op_info} {error}",
+            f"{msg:<10} global_op_idx: {OpByOpExecutor.global_op_idx} ({idx}/{num_nodes}): {op_info} {error}",
             flush=True,
         )
 

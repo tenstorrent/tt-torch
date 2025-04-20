@@ -207,7 +207,7 @@ class TorchExecutor(OpByOpExecutor):
 
         op = Op(name, input_shapes_and_constants, self.compiler_config.model_name)
         if op.unique_key() not in self.compiler_config.unique_ops:
-            op.global_op_idx = self.global_op_idx
+            op.global_op_idx = OpByOpExecutor.global_op_idx
             op.model_group = self.compiler_config.model_group
             self.compiler_config.unique_ops[op.unique_key()] = op
         else:
@@ -299,22 +299,8 @@ class TorchExecutor(OpByOpExecutor):
         num_nodes = len(self.program.graph_module.graph.nodes)
         out_degree = {}
 
-        # Debug mode to run only specific op given global_op_idx
-        run_global_op_idx = os.getenv("RUN_GLOBAL_OP_IDX")
-        run_global_op_idx = (
-            None if run_global_op_idx is None else int(run_global_op_idx)
-        )
-
         for idx, node in enumerate(self.program.graph_module.graph.nodes):
             self.print_marker("\nProcessing", idx, num_nodes, node.target)
-
-            test_this_op = (
-                True
-                if run_global_op_idx is None
-                else (self.global_op_idx == run_global_op_idx)
-            )
-            # Another useful debug method:
-            # test_this_op = str(node.target) == "aten.gelu.default"
 
             out_degree[node] = len(node.users)
             if node.op == "placeholder":
@@ -344,6 +330,10 @@ class TorchExecutor(OpByOpExecutor):
 
                 binary = None
                 op = None
+
+                test_this_op = self.should_test_op()
+                # Another useful debug method:
+                # test_this_op = str(node.target) == "aten.gelu.default"
 
                 if test_this_op:
                     try:
@@ -406,7 +396,7 @@ class TorchExecutor(OpByOpExecutor):
                         out_degree.pop(arg)
 
             # Finished handling this op, increment global op index
-            self.global_op_idx += 1
+            OpByOpExecutor.global_op_idx += 1
 
         self.compiler_config.save_unique_ops()
         if self.execute_process is not None:
