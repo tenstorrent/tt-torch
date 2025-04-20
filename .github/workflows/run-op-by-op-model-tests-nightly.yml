@@ -34,10 +34,6 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "bert", tests: "
-              "
-          },
-          {
             runs-on: wormhole_b0, name: "falcon", tests: "
               tests/models/falcon/test_falcon.py::test_falcon
               "
