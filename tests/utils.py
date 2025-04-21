@@ -43,6 +43,7 @@ class ModelTester:
         model_group="generality",
         is_token_output=False,
         model_name_suffix="",
+        device=None,
     ):
         if mode not in ["train", "eval"]:
             raise ValueError(f"Current mode is not supported: {mode}")
@@ -55,6 +56,7 @@ class ModelTester:
                 "is_token_output is set to True. Please set `self.tokenizer` inside _load_model method."
             )
         self.compiled_model = None
+        self.device = device
         self.inputs = self._load_inputs()
         self.required_pcc = required_pcc
         self.assert_pcc = assert_pcc
@@ -165,10 +167,10 @@ class ModelTester:
 
     def compile_model(self, model, compiler_config):
         # Compile model
-        model = torch.compile(
-            model, backend=backend, dynamic=False, options=compiler_config
-        )
-
+        options = {}
+        options["compiler_config"] = compiler_config
+        options["device"] = self.device
+        model = torch.compile(model, backend=backend, dynamic=False, options=options)
         self.compiled_model = model
         return self.compiled_model
 

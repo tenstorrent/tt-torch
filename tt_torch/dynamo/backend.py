@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import os
+
 import tt_mlir
 import sys
 import torch_mlir
@@ -90,22 +91,30 @@ def dump_module(module, name, compiler_config):
 
 
 def _shlo_backend(
-    shlo, example_inputs, compiler_config, program=None, graph_constants=None
+    shlo,
+    example_inputs,
+    compiler_config,
+    program=None,
+    graph_constants=None,
+    device=None,
 ):
-    executor = StablehloExecutor(module=shlo, compiler_config=compiler_config)
+    executor = StablehloExecutor(
+        module=shlo, compiler_config=compiler_config, device=device
+    )
     if program is not None:
         # original input is a torch graph
         executor.add_program(program, graph_constants)
     return executor
 
 
-def _torch_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
+def _torch_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config, device):
     with torch.no_grad():
         program, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
     executor = TorchExecutor(
         program=program,
         graph_constants=graph_constants,
         compiler_config=compiler_config,
+        device=device,
     )
     return executor
 
@@ -160,9 +169,9 @@ def shlo_to_flatbuffer(executor, module, compiler_config):
     return binary
 
 
-def _base_backend(gm, example_inputs, compiler_config):
+def _base_backend(gm, example_inputs, compiler_config, device):
     shlo, program, graph_constants = torch_to_shlo(gm, example_inputs, compiler_config)
-    executor = Executor(program, graph_constants, compiler_config)
+    executor = Executor(program, graph_constants, compiler_config, device=device)
 
     compiler_config.record_property("achieved_compile_depth", "STABLEHLO")
 
@@ -173,7 +182,6 @@ def _base_backend(gm, example_inputs, compiler_config):
     executor.set_binary(binary)
 
     compiler_config.record_property("achieved_compile_depth", "TTNN_IR")
-
     return executor
 
 
@@ -182,29 +190,37 @@ def backend(gm, example_inputs, options=None):
     assert isinstance(gm, torch.fx.GraphModule), "Backend only supports torch graphs"
 
     if options is None:
-        options = CompilerConfig()
+        cc = CompilerConfig()
+        device = None
+    if options is not None:
+        if "compiler_config" not in options or options["compiler_config"] is None:
+            cc = CompilerConfig()
+        else:
+            cc = options["compiler_config"]
+        device = options["device"] if "device" in options else None
 
     # Apply environment overrides at start of compilation to allow overriding what was set in the test
-    options.apply_environment_overrides()
+    cc.apply_environment_overrides()
 
     if (
-        options.compile_depth == CompileDepth.COMPILE_OP_BY_OP
-        or options.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
+        cc.compile_depth == CompileDepth.COMPILE_OP_BY_OP
+        or cc.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
     ):
-        if options.op_by_op_backend == OpByOpBackend.TORCH:
+        if cc.op_by_op_backend == OpByOpBackend.TORCH:
             # run torch graph op-by-op
-            return _torch_backend(gm, example_inputs, compiler_config=options)
+            return _torch_backend(gm, example_inputs, compiler_config=cc, device=device)
         else:
             # op_by_op_backend == OpByOpBackend.STABLEHLO
             # convert torch to stablehlo, then run stablehlo op-by-op
             module, program, graph_constants = torch_to_shlo(
-                gm, example_inputs, compiler_config=options
+                gm, example_inputs, compiler_config=cc
             )
             return _shlo_backend(
                 shlo=module,
                 example_inputs=example_inputs,
-                compiler_config=options,
+                compiler_config=cc,
                 program=program,
                 graph_constants=graph_constants,
+                device=device,
             )
-    return _base_backend(gm, example_inputs, compiler_config=options)
+    return _base_backend(gm, example_inputs, compiler_config=cc, device=device)

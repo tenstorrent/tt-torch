@@ -18,6 +18,8 @@ from onnxruntime import SessionOptions, InferenceSession
 from tt_mlir import (
     open_mesh_device,
     close_mesh_device,
+    create_sub_mesh_device,
+    release_sub_mesh_device,
     MeshDeviceOptions,
     is_runtime_debug_enabled,
 )
@@ -276,12 +278,8 @@ class CompilerConfig:
         self.check_all_ops_execute = False
         self._verify_op_by_op = False
         self.typecast_inputs = True
-        self.runtime_device = None
         self.cache_preprocessed_constants = False
         self.inline_parameters = False
-        self.mesh_device_shape = [1, 1]
-        self.mesh_device_options = MeshDeviceOptions()
-        self.mesh_device_options.enable_async_ttnn = False
         self.record_property = None
         self.record_property = lambda *args, **kwargs: None  # Default to no-op
         self.runtime_intermediate_cache = None  # Do not serialize.
@@ -358,21 +356,6 @@ class CompilerConfig:
         if dump_intermediates:
             self.dump_debug = dump_intermediates == "DEBUG"
             self.dump_info = self.dump_debug or dump_intermediates == "INFO"
-
-    def initialize_device(self, device_ids=None):
-        assert self.runtime_device is None
-        if device_ids is None:
-            device_ids = [0]
-        self.mesh_device_shape = [1, len(device_ids)]
-        self.mesh_device_options.device_ids = device_ids
-        self.runtime_device = open_mesh_device(
-            self.mesh_device_shape, self.mesh_device_options
-        )
-
-    def cleanup_device(self):
-        assert self.runtime_device is not None
-        close_mesh_device(self.runtime_device)
-        self.runtime_device = None
 
     def post_init(self):
         if self.consteval_parameters:

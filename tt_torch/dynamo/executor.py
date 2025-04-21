@@ -134,6 +134,7 @@ class Executor:
         compiler_config=None,
         required_pcc=0.99,
         required_atol=1e-2,
+        device=None,
     ):
         self.program = program
         self.binary = None
@@ -161,6 +162,7 @@ class Executor:
 
         self.binary = None
         self.preprocessed_graph_constants = None
+        self.device = device
 
     def register_intermediate_callback(self, callback):
         if not tt_mlir.is_runtime_debug_enabled():
@@ -193,20 +195,11 @@ class Executor:
         self.binary = binary
 
     def _get_device(self):
-        if self.compiler_config.runtime_device is not None:
-            return self.compiler_config.runtime_device
-        if self.compiler_config.mesh_device_options is None:
-            self.compiler_config.mesh_device_options = tt_mlir.MeshDeviceOptions()
-        assert (
-            self.compiler_config.mesh_device_shape is not None
-        ), "Please set mesh_device_shape within compiler_config"
-        assert (
-            len(self.compiler_config.mesh_device_shape) == 2
-        ), "Only a 2D mesh is supported for now"
-        return tt_mlir.open_mesh_device(
-            self.compiler_config.mesh_device_shape,
-            self.compiler_config.mesh_device_options,
-        )
+        if self.device is not None:
+            return self.device
+        # Return a default parent mesh
+        device = tt_mlir.open_mesh_device([1, 1], tt_mlir.MeshDeviceOptions())
+        return device
 
     def _cache_constants_if_needed(self, preprocessed_constants):
         if (
@@ -220,7 +213,7 @@ class Executor:
         for t in preprocessed_activations:
             tt_mlir.deallocate_tensor(t, force=True)
 
-        if self.compiler_config.runtime_device is None:
+        if self.device is None:
             tt_mlir.close_mesh_device(device)
 
     def _generate_golden_intermediate_cache(self, gm, inputs):
@@ -357,6 +350,7 @@ class OpByOpExecutor(Executor):
         compiler_config=None,
         required_pcc=0.99,
         required_atol=1e-2,
+        device=None,
     ):
         super().__init__(
             program=None,
@@ -364,6 +358,7 @@ class OpByOpExecutor(Executor):
             compiler_config=compiler_config,
             required_pcc=required_pcc,
             required_atol=required_atol,
+            device=device,
         )
 
         # Debug mode to run only specific op given global_op_idx
