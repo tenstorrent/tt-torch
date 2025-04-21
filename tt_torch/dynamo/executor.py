@@ -48,7 +48,7 @@ def get_inputs_size(inputs):
         for item in inputs.values():
             total_size += get_inputs_size(item)
     else:
-        assert false, f"Unexpected input type: {type(inputs)}"
+        assert False, f"Unexpected input type: {type(inputs)}"
     return total_size
 
 
@@ -216,7 +216,7 @@ class Executor:
             self.preprocessed_graph_constants = preprocessed_constants
 
     def _cleanup_resources(self, preprocessed_activations, device):
-        for t in preprocessed_activations:
+        for i, t in enumerate(preprocessed_activations):
             tt_mlir.deallocate_tensor(t, force=True)
 
         if self.compiler_config.runtime_device is None:
@@ -247,8 +247,13 @@ class Executor:
 
         binary = tt_mlir.create_binary_from_bytestream(self.binary)
         program_idx = 0
+        
+        tensor_start_idx = 0
+        if self.preprocessed_graph_constants is not None:
+            tensor_start_idx = len(self.preprocessed_graph_constants)
+        
         preprocessed_inputs = tt_mlir.preprocess_inputs(
-            device, inputs, binary, program_idx
+            device, inputs, binary, program_idx, tensor_start_idx
         )
 
         if self.preprocessed_graph_constants is not None:

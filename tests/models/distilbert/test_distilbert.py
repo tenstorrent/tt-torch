@@ -95,7 +95,8 @@ def test_distilbert_multiloop(record_property, model_name, mode, op_by_op, num_l
 
     with torch.no_grad():
         start_time = time.time()
-        for _ in range(num_loops):
+        for i in range(num_loops):
+            print(f"Executing iteration {i}")
             results = tester.run_model(model, tester.inputs)
         end_time = time.time()
 
