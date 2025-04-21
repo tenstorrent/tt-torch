@@ -255,7 +255,7 @@ class Executor:
         preprocessed_inputs = tt_mlir.preprocess_inputs(
             device, inputs, binary, program_idx, tensor_start_idx
         )
-
+    
         if self.preprocessed_graph_constants is not None:
             preprocessed_inputs = (
                 self.preprocessed_graph_constants + preprocessed_inputs
