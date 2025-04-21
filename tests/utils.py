@@ -22,6 +22,10 @@ import json
 from onnx import version_converter
 from pathlib import Path
 from tt_torch.tools.verify import verify_against_golden
+from tt_torch.tools.utils import RuntimeIntermediate, OpByOpBackend
+import io
+import csv
+import os
 
 
 class ModelTester:
@@ -87,6 +91,8 @@ class ModelTester:
 
         self.record_tag_cache["model_name"] = model_name + model_name_suffix
         self.record_tag_cache["frontend"] = "tt-torch"
+
+        print("[MODEL NAME]", model_name + model_name_suffix)
 
         # configs should be set at test start, so they can be flushed immediately
         self.record_property(
@@ -162,6 +168,7 @@ class ModelTester:
         model = torch.compile(
             model, backend=backend, dynamic=False, options=compiler_config
         )
+
         self.compiled_model = model
         return self.compiled_model
 
@@ -307,6 +314,9 @@ class ModelTester:
         outputs = self.run_model(model, self.inputs)
         self.record_property("achieved_compile_depth", "EXECUTE")
 
+        if self.compiler_config._enable_intermediate_verification:
+            self.verify_intermediates_after_execution()
+
         if self.is_token_output:
             decoded_outputs = self.tokenizer.batch_decode(
                 outputs, skip_special_tokens=True
@@ -411,6 +421,77 @@ class ModelTester:
         )
 
         self.flush_tag_cache_to_record()
+
+    def verify_intermediates_after_execution(self):
+        # Prepare CSV output
+        output = io.StringIO()
+        csv_writer = csv.writer(output)
+        op_pcc_fail_threshold = float(os.environ.get("RTI_PCC_FAIL_THRESH", 0.99))
+        last_row = None
+        first_failing_row = None
+
+        header = [
+            "NodeName",
+            "PCC",
+            "ATOL",
+            "ErrorMessage",
+            "FlattenedPCC",
+            "FlattenedATOL",
+            "FlattenedErrorMessage",
+        ]
+        # Write the header
+        csv_writer.writerow(header)
+
+        # Helper function to unpack single-element lists/tuples
+        def unpack(value):
+            if isinstance(value, (list, tuple)) and len(value) == 1:
+                return value[0]
+            return value
+
+        # Write each intermediate's metrics as CSV; sanitize out commas
+        for _, intermediate in self.compiler_config.runtime_intermediate_cache.items():
+            intermediate.calculate_metrics()
+            row = [
+                intermediate.node.name,
+                unpack(intermediate.pcc),
+                unpack(intermediate.atol),
+                intermediate.error_message.replace(",", ";")
+                if intermediate.error_message
+                else "",
+                unpack(intermediate.flattened_pcc),
+                unpack(intermediate.flattened_atol),
+                intermediate.flattened_error_message.replace(",", ";")
+                if intermediate.flattened_error_message
+                else "",
+            ]
+            csv_writer.writerow(row)
+
+            # Update the last row
+            last_row = row
+
+            # Check if this row has a numeric PCC less than the threshold
+            pcc_value = unpack(intermediate.pcc)
+            if (
+                isinstance(pcc_value, (int, float))
+                and pcc_value < op_pcc_fail_threshold
+            ):
+                if first_failing_row is None:
+                    first_failing_row = row
+
+        print("[Start Intermediate Verification Report]")
+        print(output.getvalue())
+        print("[End Intermediate Verification Report]")
+
+        # Print Summary Info
+        print("[Intermediate Verification Summary]")
+        print(",".join(header))
+        print("Final Row:", ",".join([str(el) for el in last_row]))
+        print(f"First Failing Op with PCC < {op_pcc_fail_threshold}", end=": ")
+        if first_failing_row:
+            print(",".join([str(el) for el in first_failing_row]))
+        else:
+            print("No failing operations found.")
+        print("[End Intermediate Verification Summary]")
 
 
 class OnnxModelTester(ModelTester):

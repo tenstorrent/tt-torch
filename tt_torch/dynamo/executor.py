@@ -19,6 +19,7 @@ from tt_torch.tools.utils import (
     CompilerConfig,
     Op,
     OpCompilationStatus,
+    RuntimeIntermediate,
 )
 from tt_torch.tools.utils import run_model_proto, onnx_output_to_torch
 from typing import Union
@@ -48,7 +49,7 @@ def get_inputs_size(inputs):
         for item in inputs.values():
             total_size += get_inputs_size(item)
     else:
-        assert false, f"Unexpected input type: {type(inputs)}"
+        assert False, f"Unexpected input type: {type(inputs)}"
     return total_size
 
 
@@ -162,7 +163,7 @@ class Executor:
         self.preprocessed_graph_constants = None
 
     def register_intermediate_callback(self, callback):
-        if not is_runtime_debug_enabled():
+        if not tt_mlir.is_runtime_debug_enabled():
             raise RuntimeError(
                 "Runtime debug is required to use intermediate callbacks. Please recompile this project with -DTT_RUNTIME_DEBUG=ON."
             )
@@ -222,6 +223,61 @@ class Executor:
         if self.compiler_config.runtime_device is None:
             tt_mlir.close_mesh_device(device)
 
+    def _generate_golden_intermediate_cache(self, gm, inputs):
+        print("Generating golden intermediate cache")
+        node_to_tensor = {}
+        input_index = 0
+        outputs = []
+        num_nodes = len(gm.graph.nodes)
+        out_degree = {}
+        for idx, node in enumerate(gm.graph.nodes):
+            print(f"Compiling {idx}/{num_nodes}: <{node.op}>{node.name}\t{node.target}")
+            out_degree[node] = len(node.users)
+            if node.op == "placeholder":
+                node_to_tensor[node] = inputs[input_index]
+                input_index += 1
+            elif node.op == "get_attr":
+                for buffer in gm.named_buffers():
+                    if buffer[0] == node.target:
+                        node_to_tensor[node] = buffer[1]
+                        break
+            elif node.op == "call_function":
+                args = []
+                for arg in node.args:
+                    if isinstance(arg, torch.fx.node.Node):
+                        args.append(node_to_tensor[arg])
+                    elif isinstance(arg, list):
+                        args.append(
+                            [
+                                node_to_tensor[a]
+                                if isinstance(a, torch.fx.node.Node)
+                                else a
+                                for a in arg
+                            ]
+                        )
+                    else:
+                        args.append(arg)
+
+                golden = node.target(*args, **node.kwargs)
+
+                # some ops return scalar (0D tensor) as output (e.g. aten.select.int)
+                if isinstance(golden, torch.Tensor) and golden.dim() == 0:
+                    print(f"Unsqueezing golden {golden} to {golden.unsqueeze(0)}")
+                    golden = golden.unsqueeze(0)
+
+                # some ops return a tuple of tensors as output (e.g. max_pool_2d_with_indices)
+                # we expect to only use the first, though this may be changed in the future
+                elif isinstance(golden, (tuple, list)) and len(golden) > 1:
+                    golden = golden[0]
+                    print(
+                        f"\033[33m[WARNING] {node.name} has {len(golden)} outputs, but we can only get one from runtime.\033[0m"
+                    )
+                cache_entry = RuntimeIntermediate(node, golden)
+                self.compiler_config.runtime_intermediate_cache[node.name] = cache_entry
+                print(f"Caching runtime intermediate for {node.name}")
+                tensor = node.target(*args, **node.kwargs)
+                node_to_tensor[node] = tensor
+
     def __call__(self, *inputs):
         if self.compiler_config.compile_depth != CompileDepth.EXECUTE:
             assert (
@@ -255,6 +311,10 @@ class Executor:
             preprocessed_inputs = (
                 self.preprocessed_graph_constants + preprocessed_inputs
             )
+
+        if self.compiler_config._enable_intermediate_verification:
+            # put this as close to the binding as possible to ensure the GM is not mutated past this point
+            self._generate_golden_intermediate_cache(self.program, inputs)
 
         outputs = tt_mlir.run(device, binary, program_idx, preprocessed_inputs)
 
