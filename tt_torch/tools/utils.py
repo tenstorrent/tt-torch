@@ -881,8 +881,39 @@ class RuntimeIntermediate:
         try:
             # at this point, we expect golden and final decomposed output to be a tuple(tensor), with a single tensor
             flat_golden = None
+            conv_heuristic = False
+
             if isinstance(self.golden[0], torch.Tensor):
-                flat_golden = (torch.flatten(self.golden[0]),)
+                gtens = self.golden[0]
+                rtens = final_decomposed_output[0]
+                gshape = self.golden[0].shape
+                rshape = final_decomposed_output[0].shape
+
+                if (
+                    gshape != rshape
+                    and gtens.dim() == 4
+                    and rtens.dim() == 4
+                    and gshape[0] == rshape[0]
+                    and gshape[2] * gshape[3] == rshape[2]
+                    and gshape[1] == rshape[3]
+                ):
+                    print("detected conv shape mangling in {}".format(self.node.name))
+                    conv_heuristic = True
+
+                if not conv_heuristic:
+                    flat_golden = (torch.flatten(self.golden[0]),)
+                else:
+                    # reshape to direct flat comparison for naive convolution shape mangling
+                    flat_golden = self.golden[0]
+                    flat_golden = torch.transpose(flat_golden, 1, 2)
+                    flat_golden = torch.transpose(flat_golden, 2, 3)
+                    flat_golden = torch.reshape(
+                        flat_golden, (1, 1, -1, flat_golden.shape[-1])
+                    )
+                    flat_golden = (torch.flatten(flat_golden),)
+                    self.flattened_error_message = (
+                        "Applied convolution shape demangling heuristic"
+                    )
             flat_intermediate = None
             if isinstance(final_decomposed_output[0], torch.Tensor):
                 flat_intermediate = (torch.flatten(final_decomposed_output[0]),)
