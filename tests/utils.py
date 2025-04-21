@@ -305,8 +305,16 @@ class ModelTester:
         )
         return model
 
-    @torch.inference_mode()
     def test_model_eval(self, on_device=True, assert_eval_token_mismatch=True):
+        if (
+            self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP
+            or self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
+        ):
+            return self._test_model_eval_op_by_op(on_device)
+        return self._test_model_eval_base(on_device, assert_eval_token_mismatch)
+
+    @torch.inference_mode()
+    def _test_model_eval_base(self, on_device, assert_eval_token_mismatch):
         model = self.get_framework_model()
         golden = self.get_golden_outputs(model, self.inputs)
 
@@ -332,6 +340,18 @@ class ModelTester:
                 ), f'Output mismatch: calculated: "{decoded_outputs} vs golden: "{decoded_golden}"'
         else:
             self.verify_outputs(golden, outputs)
+        return outputs
+
+    @torch.inference_mode()
+    def _test_model_eval_op_by_op(self, on_device):
+        model = self.get_framework_model()
+
+        if on_device == True:
+            model = self.compile_model(model, self.compiler_config)
+
+        outputs = self.run_model(model, self.inputs)
+        self.record_property("achieved_compile_depth", "EXECUTE")
+
         return outputs
 
     def test_model(self, on_device=True, assert_eval_token_mismatch=True):
