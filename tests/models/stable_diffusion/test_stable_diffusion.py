@@ -12,7 +12,9 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 class ThisTester(ModelTester):
     def _load_model(self):
         model_id = "CompVis/stable-diffusion-v1-4"
-        pipe = StableDiffusionPipeline.from_pretrained(model_id)
+        pipe = StableDiffusionPipeline.from_pretrained(
+            model_id, torch_dtype=torch.bfloat16
+        )
         return pipe
 
     def _load_inputs(self):
