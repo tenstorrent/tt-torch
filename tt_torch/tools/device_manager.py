@@ -141,12 +141,12 @@ class DeviceManager:
         return sub_device
 
     @classmethod
-    def get_sub_mesh_devices(cls, parent_mesh: tt_mlir.Device) -> set[tt_mlir.Device]:
+    def get_sub_mesh_devices(cls, parent_mesh: tt_mlir.Device) -> list[tt_mlir.Device]:
         """
         Returns all acquired sub mesh devices under a given parent mesh device.
         """
         assert parent_mesh in cls._devices, "Parent mesh not found."
-        return cls._devices[parent_mesh]
+        return list(cls._devices[parent_mesh])
 
     @classmethod
     def release_sub_mesh_device(

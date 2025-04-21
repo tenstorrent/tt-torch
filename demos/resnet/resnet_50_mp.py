@@ -33,11 +33,10 @@ def get_predictions(urls, model_index=0, tt_model=None, topk=5):
     Given the compiled tt_model and a list of URLs, this function calls the model
     for each URL and returns the top K predictions.
     """
-    global multi_models
-    if tt_model is None:
-        tt_model = multi_models[model_index]
-        print("[MULTIDEVICE] Multi model len: ", len(multi_models))
-        print("[MULTIDEVICE] Using model index: ", model_index)
+    # if tt_model is None:
+    #     tt_model = multi_models[model_index]
+    #     print("[MULTIDEVICE] Multi model len: ", len(multi_models))
+    #     print("[MULTIDEVICE] Using model index: ", model_index)
     assert tt_model is not None, "model not provided"
     results = []
     headers = [f"Top {topk} Predictions"]
@@ -72,12 +71,15 @@ def singledevice(urls):
     global single_model
     return get_predictions(urls, tt_model=single_model)
 
-def multidevice(divided_urls):
-    global num_devices
-    print("[MULTIDEVICE] num_devices: ", num_devices)
 
-    with mp.Pool(processes=num_devices) as pool:
-        final_results = pool.starmap(get_predictions, zip(divided_urls, range(num_devices)))
+def multidevice(models, divided_urls):
+    num_devices = len(models)
+
+    with mp.Manager() as manager:
+        model_list = manager.list(multi_models)
+
+        with mp.Pool(processes=num_devices) as pool:
+            final_results = pool.starmap(get_predictions, zip(divided_urls, range(num_devices), model_list))
     return final_results
 
 weights = models.ResNet152_Weights.IMAGENET1K_V2
@@ -100,7 +102,6 @@ single_options = {}
 single_options["compiler_config"] = cc
 single_model = torch.compile(model, backend=backend, dynamic=False, options=single_options)
 
-multi_models = []
 
 def main():
     global multi_models
@@ -108,9 +109,9 @@ def main():
     global num_devices
     global image_urls
     global cc
-
     parent, devices = DeviceManager.acquire_available_devices()
     num_devices = len(devices)
+    multi_models = []
     for device in devices:
         multi_options = {}
         multi_options["compiler_config"] = cc
@@ -118,10 +119,9 @@ def main():
         # Compile the model for each device
         multi_model = torch.compile(model, backend=backend, dynamic=False, options=multi_options)
         multi_models.append(multi_model)
-
     print("Executing dummy inference on multidevice to warm up the devices")
     # compile and execute this once to get the compilation overhead out of the way
-    multidevice([[divided_urls[0][0]], [divided_urls[1][0]]])
+    multidevice(multi_models, [[divided_urls[0][0]], [divided_urls[1][0]]])
     print("Dummy inference complete")
 
     multi_results = None
@@ -129,7 +129,7 @@ def main():
     print("Testing multi-device performance")
     for _ in range(NUM_ITERATIONS):
         start_time = time.time()
-        multi_results = multidevice(divided_urls)
+        multi_results = multidevice(multi_models, divided_urls)
         end_time = time.time()
         acc_duration += end_time - start_time
     avg_duration_multi = acc_duration / NUM_ITERATIONS
