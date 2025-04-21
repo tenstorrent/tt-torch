@@ -95,14 +95,14 @@ class Profiler:
         # For a wheel build, the binaries are in site-packages and need to be properly copied
         else:
             print("Perf tool binaries not found - Installing from wheel.")
-            # expected to be @ env/venv/lib/python3.10/site-packages/tt_metal/tools/profiler/bin/[...]
+            # expected to be @ env/venv/lib/python3.11/site-packages/tt_metal/tools/profiler/bin/[...]
             # in this context the tt_metal_home is at /env/venv/tt_metal
 
             site_packages_dir = os.path.join(
                 self.get_ttmetal_home_path(),
                 "..",
                 "lib",
-                "python3.10",
+                "python3.11",
                 "site-packages",
                 "tt_metal",
                 "tools",
