@@ -186,7 +186,8 @@ tt::runtime::Binary create_binary_from_bytestream(py::bytes byte_stream) {
 
 std::vector<tt::runtime::Tensor>
 preprocess_inputs(tt::runtime::Device device, std::vector<at::Tensor> &inputs,
-                  tt::runtime::Binary binary, uint32_t program_idx, size_t tensor_start_idx) {
+                  tt::runtime::Binary binary, uint32_t program_idx,
+                  size_t tensor_start_idx) {
   for (int idx = 0; idx < inputs.size(); idx++) {
     if (!inputs[idx].is_contiguous()) {
       std::cout << "WARNING: Input " << idx
@@ -204,11 +205,12 @@ preprocess_inputs(tt::runtime::Device device, std::vector<at::Tensor> &inputs,
 
   std::vector<tt::runtime::Tensor> rt_inputs_with_layout;
   rt_inputs_with_layout.reserve(inputs.size());
-  
+
   // Use a for loop instead of std::transform to properly handle indices
   for (size_t i = 0; i < rt_inputs.size(); ++i) {
     tt::runtime::Tensor &t = rt_inputs[i];
-    tt::runtime::Layout layout = tt::runtime::getLayout(binary, program_idx, i + tensor_start_idx);
+    tt::runtime::Layout layout =
+        tt::runtime::getLayout(binary, program_idx, i + tensor_start_idx);
     tt::runtime::Tensor tensor = tt::runtime::toLayout(t, device, layout);
     tt::runtime::setTensorRetain(tensor, /*retain=*/true);
     rt_inputs_with_layout.push_back(tensor);
