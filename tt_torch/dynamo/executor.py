@@ -216,7 +216,7 @@ class Executor:
             self.preprocessed_graph_constants = preprocessed_constants
 
     def _cleanup_resources(self, preprocessed_activations, device):
-        for i, t in enumerate(preprocessed_activations):
+        for t in preprocessed_activations:
             tt_mlir.deallocate_tensor(t, force=True)
 
         if self.compiler_config.runtime_device is None:
