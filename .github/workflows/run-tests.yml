@@ -25,6 +25,7 @@ jobs:
       matrix:
         build: [
           {runs-on: wormhole_b0, name: "run"},
+          {runs-on: llmbox, name: "run"},
         ]
 
     runs-on:
