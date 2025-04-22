@@ -18,6 +18,8 @@ from onnxruntime import SessionOptions, InferenceSession
 from tt_mlir import (
     open_mesh_device,
     close_mesh_device,
+    create_sub_mesh_device,
+    release_sub_mesh_device,
     MeshDeviceOptions,
     is_runtime_debug_enabled,
 )
@@ -276,14 +278,11 @@ class CompilerConfig:
         self.check_all_ops_execute = False
         self._verify_op_by_op = False
         self.typecast_inputs = True
-        self.runtime_device = None
         self.cache_preprocessed_constants = False
         self.inline_parameters = False
-        self.mesh_device_shape = [1, 1]
-        self.mesh_device_options = MeshDeviceOptions()
-        self.mesh_device_options.enable_async_ttnn = False
         self.record_property = None
         self.record_property = lambda *args, **kwargs: None  # Default to no-op
+        self.runtime_intermediate_cache = None  # Do not serialize.
 
         self.apply_environment_overrides()
         self.post_init()
@@ -319,6 +318,8 @@ class CompilerConfig:
             )
 
         self._enable_intermediate_verification = True
+        if self.runtime_intermediate_cache is None:
+            self.runtime_intermediate_cache = {}
 
     @property
     def consteval_parameters(self):
@@ -355,21 +356,6 @@ class CompilerConfig:
         if dump_intermediates:
             self.dump_debug = dump_intermediates == "DEBUG"
             self.dump_info = self.dump_debug or dump_intermediates == "INFO"
-
-    def initialize_device(self, device_ids=None):
-        assert self.runtime_device is None
-        if device_ids is None:
-            device_ids = [0]
-        self.mesh_device_shape = [1, len(device_ids)]
-        self.mesh_device_options.device_ids = device_ids
-        self.runtime_device = open_mesh_device(
-            self.mesh_device_shape, self.mesh_device_options
-        )
-
-    def cleanup_device(self):
-        assert self.runtime_device is not None
-        close_mesh_device(self.runtime_device)
-        self.runtime_device = None
 
     def post_init(self):
         if self.consteval_parameters:
@@ -818,3 +804,81 @@ def run_model_proto(
     }
     output = sess.run(None, inputs_dict)
     return output
+
+
+class RuntimeIntermediate:
+    def __init__(self, node: torch.fx.Node, golden):
+        self.node = node
+        self.golden = golden
+        # each fxnode can be decomposed into multiple ttnn ops.
+        # we store all their intermediate outputs here
+        # TODO - Need a way to uniquely reference ttnn intermediates
+
+        self.decomposed_intermediate_outputs = []
+        self.pcc = None
+        self.atol = None
+        self.passed_pcc = False
+        self.passed_atol = False
+        self.error_message = None
+
+        self.golden_shape = None
+        self.intermediate_shape = None
+        self.flattened_pcc = None
+        self.flattened_atol = None
+        self.flattened_error_message = None
+
+    def calculate_metrics(self):
+        from tt_torch.tools.verify import verify_against_golden
+
+        # Calculate the metrics for the golden tensor after all decomposition steps are
+        # Some torchfx nodes like "getitem" generate no intermediate outputs
+        if (
+            len(self.decomposed_intermediate_outputs) == 0
+            and self.node.op == "call_function"
+        ):
+            return
+
+        final_decomposed_output = self.decomposed_intermediate_outputs[-1]
+
+        # verify_against_golden expects a tuple of tensors as inputs
+        if not isinstance(final_decomposed_output, tuple):
+            final_decomposed_output = (final_decomposed_output,)
+        if not isinstance(self.golden, tuple):
+            self.golden = (self.golden,)
+
+        # Get PCCs from raw tensors, which may not work due to TTNN reshaping (eg. channels last. Ignore as tensor shape mismatch assertionErrors for now.)
+        try:
+            (self.pcc, self.atol, _, _) = verify_against_golden(
+                self.golden,
+                final_decomposed_output,
+                assert_pcc=False,
+                assert_atol=False,
+                required_atol=0.01,
+                disable_print=True,
+            )
+        except Exception as e:
+            self.pcc = "ERROR"
+            self.atol = "ERROR"
+            self.error_message = str(e)
+
+        try:
+            # at this point, we expect golden and final decomposed output to be a tuple(tensor), with a single tensor
+            flat_golden = None
+            if isinstance(self.golden[0], torch.Tensor):
+                flat_golden = (torch.flatten(self.golden[0]),)
+            flat_intermediate = None
+            if isinstance(final_decomposed_output[0], torch.Tensor):
+                flat_intermediate = (torch.flatten(final_decomposed_output[0]),)
+
+            (self.flattened_pcc, self.flattened_atol, _, _) = verify_against_golden(
+                flat_golden,
+                flat_intermediate,
+                assert_pcc=False,
+                assert_atol=False,
+                required_atol=0.01,
+                disable_print=True,
+            )
+        except Exception as e:
+            self.flattened_pcc = "ERROR"
+            self.flattened_atol = "ERROR"
+            self.flattened_error_message = str(e)

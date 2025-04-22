@@ -22,6 +22,10 @@ import json
 from onnx import version_converter
 from pathlib import Path
 from tt_torch.tools.verify import verify_against_golden
+from tt_torch.tools.utils import RuntimeIntermediate, OpByOpBackend
+import io
+import csv
+import os
 
 
 class ModelTester:
@@ -39,6 +43,7 @@ class ModelTester:
         model_group="generality",
         is_token_output=False,
         model_name_suffix="",
+        device=None,
     ):
         if mode not in ["train", "eval"]:
             raise ValueError(f"Current mode is not supported: {mode}")
@@ -51,6 +56,7 @@ class ModelTester:
                 "is_token_output is set to True. Please set `self.tokenizer` inside _load_model method."
             )
         self.compiled_model = None
+        self.device = device
         self.inputs = self._load_inputs()
         self.required_pcc = required_pcc
         self.assert_pcc = assert_pcc
@@ -87,6 +93,8 @@ class ModelTester:
 
         self.record_tag_cache["model_name"] = model_name + model_name_suffix
         self.record_tag_cache["frontend"] = "tt-torch"
+
+        print("[MODEL NAME]", model_name + model_name_suffix)
 
         # configs should be set at test start, so they can be flushed immediately
         self.record_property(
@@ -159,9 +167,10 @@ class ModelTester:
 
     def compile_model(self, model, compiler_config):
         # Compile model
-        model = torch.compile(
-            model, backend=backend, dynamic=False, options=compiler_config
-        )
+        options = {}
+        options["compiler_config"] = compiler_config
+        options["device"] = self.device
+        model = torch.compile(model, backend=backend, dynamic=False, options=options)
         self.compiled_model = model
         return self.compiled_model
 
@@ -296,8 +305,16 @@ class ModelTester:
         )
         return model
 
-    @torch.inference_mode()
     def test_model_eval(self, on_device=True, assert_eval_token_mismatch=True):
+        if (
+            self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP
+            or self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
+        ):
+            return self._test_model_eval_op_by_op(on_device)
+        return self._test_model_eval_base(on_device, assert_eval_token_mismatch)
+
+    @torch.inference_mode()
+    def _test_model_eval_base(self, on_device, assert_eval_token_mismatch):
         model = self.get_framework_model()
         golden = self.get_golden_outputs(model, self.inputs)
 
@@ -306,6 +323,9 @@ class ModelTester:
 
         outputs = self.run_model(model, self.inputs)
         self.record_property("achieved_compile_depth", "EXECUTE")
+
+        if self.compiler_config._enable_intermediate_verification:
+            self.verify_intermediates_after_execution()
 
         if self.is_token_output:
             decoded_outputs = self.tokenizer.batch_decode(
@@ -320,6 +340,18 @@ class ModelTester:
                 ), f'Output mismatch: calculated: "{decoded_outputs} vs golden: "{decoded_golden}"'
         else:
             self.verify_outputs(golden, outputs)
+        return outputs
+
+    @torch.inference_mode()
+    def _test_model_eval_op_by_op(self, on_device):
+        model = self.get_framework_model()
+
+        if on_device == True:
+            model = self.compile_model(model, self.compiler_config)
+
+        outputs = self.run_model(model, self.inputs)
+        self.record_property("achieved_compile_depth", "EXECUTE")
+
         return outputs
 
     def test_model(self, on_device=True, assert_eval_token_mismatch=True):
@@ -411,6 +443,77 @@ class ModelTester:
         )
 
         self.flush_tag_cache_to_record()
+
+    def verify_intermediates_after_execution(self):
+        # Prepare CSV output
+        output = io.StringIO()
+        csv_writer = csv.writer(output)
+        op_pcc_fail_threshold = float(os.environ.get("RTI_PCC_FAIL_THRESH", 0.99))
+        last_row = None
+        first_failing_row = None
+
+        header = [
+            "NodeName",
+            "PCC",
+            "ATOL",
+            "ErrorMessage",
+            "FlattenedPCC",
+            "FlattenedATOL",
+            "FlattenedErrorMessage",
+        ]
+        # Write the header
+        csv_writer.writerow(header)
+
+        # Helper function to unpack single-element lists/tuples
+        def unpack(value):
+            if isinstance(value, (list, tuple)) and len(value) == 1:
+                return value[0]
+            return value
+
+        # Write each intermediate's metrics as CSV; sanitize out commas
+        for _, intermediate in self.compiler_config.runtime_intermediate_cache.items():
+            intermediate.calculate_metrics()
+            row = [
+                intermediate.node.name,
+                unpack(intermediate.pcc),
+                unpack(intermediate.atol),
+                intermediate.error_message.replace(",", ";")
+                if intermediate.error_message
+                else "",
+                unpack(intermediate.flattened_pcc),
+                unpack(intermediate.flattened_atol),
+                intermediate.flattened_error_message.replace(",", ";")
+                if intermediate.flattened_error_message
+                else "",
+            ]
+            csv_writer.writerow(row)
+
+            # Update the last row
+            last_row = row
+
+            # Check if this row has a numeric PCC less than the threshold
+            pcc_value = unpack(intermediate.pcc)
+            if (
+                isinstance(pcc_value, (int, float))
+                and pcc_value < op_pcc_fail_threshold
+            ):
+                if first_failing_row is None:
+                    first_failing_row = row
+
+        print("[Start Intermediate Verification Report]")
+        print(output.getvalue())
+        print("[End Intermediate Verification Report]")
+
+        # Print Summary Info
+        print("[Intermediate Verification Summary]")
+        print(",".join(header))
+        print("Final Row:", ",".join([str(el) for el in last_row]))
+        print(f"First Failing Op with PCC < {op_pcc_fail_threshold}", end=": ")
+        if first_failing_row:
+            print(",".join([str(el) for el in first_failing_row]))
+        else:
+            print("No failing operations found.")
+        print("[End Intermediate Verification Summary]")
 
 
 class OnnxModelTester(ModelTester):

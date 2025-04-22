@@ -6,6 +6,7 @@ import torch
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from tt_torch.tools.device_manager import DeviceManager
 
 
 class ThisTester(ModelTester):
@@ -78,9 +79,11 @@ def test_distilbert_multiloop(record_property, model_name, mode, op_by_op, num_l
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    cc.mesh_device_options.enable_async_ttnn = True
     cc.cache_preprocessed_constants = True
-    cc.initialize_device()
+
+    device = DeviceManager.create_parent_mesh_device(
+        mesh_shape=[1, 1], enable_async_ttnn=True
+    )
 
     tester = ThisTester(
         model_name,
@@ -90,6 +93,7 @@ def test_distilbert_multiloop(record_property, model_name, mode, op_by_op, num_l
         compiler_config=cc,
         record_property_handle=record_property,
         model_name_suffix="-multiloop",
+        device=device,
     )
     model = tester.compile_model(tester.get_framework_model(), tester.compiler_config)
 
@@ -103,4 +107,4 @@ def test_distilbert_multiloop(record_property, model_name, mode, op_by_op, num_l
         print(f"{num_loops} iterations took {(end_time - start_time)} seconds")
 
     tester.finalize()
-    cc.cleanup_device()
+    DeviceManager.release_parent_device(device)

@@ -25,6 +25,7 @@ def verify_against_golden(
     required_pcc=0.99,
     required_atol=None,
     relative_atol=None,
+    disable_print=False,
 ):
     assert (required_atol is not None) != (
         relative_atol is not None
@@ -37,7 +38,7 @@ def verify_against_golden(
     ), f"Expecting the calculated tensors to be a tuple of tensors after _extract_outputs. Got type: {type(calculated_tensors)}"
     assert len(golden_tensors) == len(
         calculated_tensors
-    ), "Expecting the number of golden and calculated tensors to be the same."
+    ), f"Expecting the number of golden tensors (ct: {len(golden_tensors)}) and calculated tensors (ct: {len(calculated_tensors)}) to be the same."
 
     pccs, pcc_passeds = [], []
     atols, atol_thresholds, atols_passeds = [], [], []
@@ -141,25 +142,18 @@ def verify_against_golden(
 
     # Now that all tensors are checked, print the final message
     if assert_pcc and assert_atol:
-        if passed_pcc and passed_atol:
-            print(msg)
-        else:
+        if not passed_pcc and passed_atol:
             assert False, err_msg
     elif not assert_pcc and assert_atol:
         print("Ignoring PCC check\n")
-        if passed_atol:
-            print(msg)
-        else:
+        if not passed_atol:
             assert False, err_msg
     elif assert_pcc and not assert_atol:
         print("Ignoring ATOL check\n")
-        if passed_pcc:
-            print(msg)
-        else:
+        if not passed_pcc:
             assert False, err_msg
-    else:
+    if not disable_print:
         print(msg)
-
     return pccs, atols, passed_pcc, passed_atol
 
 
@@ -174,13 +168,19 @@ def _verify_torch_module(
     input_range_int,
     compiler_config,
     do_assert,
+    device,
 ):
     if input_data_types is None:
         input_data_types = [torch.float32] * (
             len(input_shapes) if input_shapes is not None else len(inputs)
         )
 
-    tt_mod = torch.compile(mod, backend=backend, options=compiler_config)
+    from tt_torch.dynamo.backend import backend  # avoid circular import
+
+    torch_options = {}
+    torch_options["compiler_config"] = compiler_config
+    torch_options["device"] = device
+    tt_mod = torch.compile(mod, backend=backend, options=torch_options)
     if inputs is None:
         if all([dtype.is_floating_point for dtype in input_data_types]):
             low, high = input_range
@@ -293,6 +293,7 @@ def verify_module(
     input_range_int=(0, 1000),
     compiler_config=None,
     do_assert=True,
+    device=None,
 ):
 
     if isinstance(mod, torch.nn.Module):
@@ -310,6 +311,7 @@ def verify_module(
             input_range_int,
             compiler_config,
             do_assert,
+            device,
         )
     elif isinstance(mod, onnx.ModelProto):
         assert (

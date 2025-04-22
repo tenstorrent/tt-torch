@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import os
+
 import tt_mlir
 import sys
 import torch_mlir
@@ -34,14 +35,53 @@ from tt_torch.tools.utils import (
 )
 
 
-def verify_golden_callback(binary, callback_context, op_context):
-    # Using these parameters, we should be able to query information
-    # about the op described by op_context, and its output. I.e. location:
-    location = tt_mlir.get_op_loc_info(op_context)
-    # ...
+def create_verify_golden_callback(compiler_config: CompilerConfig):
+    # Closure to capture external state in the callback.
+    # using CompilerConfig as a context cache
 
-    # We will need to provide the bindings necesarry in this frontend.
-    # Those bindings will interact with the runtime API
+    def verify_golden_callback(binary, callback_context, op_context):
+
+        raw_location = tt_mlir.get_op_loc_info(op_context)
+
+        location = ""
+        fused_locations = []
+
+        if "fused" in raw_location:
+            fused_locations = raw_location.split("fused")[1]
+            fused_locations = fused_locations.split(",")
+            fused_locations = [
+                # strip unnecessary characters
+                loc.translate(str.maketrans("", "", "()[]{}\"' "))
+                for loc in fused_locations
+            ]
+
+        if "loc(unknown)" in raw_location:
+            return
+
+        # there may be multiple source locations so fused_locations, the actual "name" of the node is at the end
+        location = fused_locations[-1]
+
+        intermediate_data = compiler_config.runtime_intermediate_cache.get(
+            location, None
+        )
+
+        if intermediate_data is not None:
+            print(f"Found golden for op @ {intermediate_data.node.name} == {location}.")
+
+            # return a null tensor for decomposed ops with invalid output tensors (eg. deallocate)
+            output_intermediate_tensor = tt_mlir.get_op_output_torch_tensor(
+                op_context, callback_context
+            )
+
+            if output_intermediate_tensor is not None:
+                if output_intermediate_tensor.dim == 0:
+                    output_intermediate_tensor = output_intermediate_tensor.unsqueeze(0)
+
+                intermediate_data.decomposed_intermediate_outputs.append(
+                    output_intermediate_tensor
+                )
+
+    return verify_golden_callback
 
 
 def dump_module(module, name, compiler_config):
@@ -51,22 +91,30 @@ def dump_module(module, name, compiler_config):
 
 
 def _shlo_backend(
-    shlo, example_inputs, compiler_config, program=None, graph_constants=None
+    shlo,
+    example_inputs,
+    compiler_config,
+    program=None,
+    graph_constants=None,
+    device=None,
 ):
-    executor = StablehloExecutor(module=shlo, compiler_config=compiler_config)
+    executor = StablehloExecutor(
+        module=shlo, compiler_config=compiler_config, device=device
+    )
     if program is not None:
         # original input is a torch graph
         executor.add_program(program, graph_constants)
     return executor
 
 
-def _torch_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config):
+def _torch_backend(gm: torch.fx.GraphModule, example_inputs, compiler_config, device):
     with torch.no_grad():
         program, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
     executor = TorchExecutor(
         program=program,
         graph_constants=graph_constants,
         compiler_config=compiler_config,
+        device=device,
     )
     return executor
 
@@ -111,7 +159,9 @@ def shlo_to_flatbuffer(executor, module, compiler_config):
     dump_module(module=ttir, name="TTIR module", compiler_config=compiler_config)
 
     if compiler_config.enable_intermediate_verification:
-        executor.register_intermediate_callback(verify_golden_callback)
+        executor.register_intermediate_callback(
+            create_verify_golden_callback(compiler_config)
+        )
 
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
     dump_module(module=ttnn, name="TTNN module", compiler_config=compiler_config)
@@ -119,9 +169,9 @@ def shlo_to_flatbuffer(executor, module, compiler_config):
     return binary
 
 
-def _base_backend(gm, example_inputs, compiler_config):
+def _base_backend(gm, example_inputs, compiler_config, device):
     shlo, program, graph_constants = torch_to_shlo(gm, example_inputs, compiler_config)
-    executor = Executor(program, graph_constants, compiler_config)
+    executor = Executor(program, graph_constants, compiler_config, device=device)
 
     compiler_config.record_property("achieved_compile_depth", "STABLEHLO")
 
@@ -132,7 +182,6 @@ def _base_backend(gm, example_inputs, compiler_config):
     executor.set_binary(binary)
 
     compiler_config.record_property("achieved_compile_depth", "TTNN_IR")
-
     return executor
 
 
@@ -141,29 +190,37 @@ def backend(gm, example_inputs, options=None):
     assert isinstance(gm, torch.fx.GraphModule), "Backend only supports torch graphs"
 
     if options is None:
-        options = CompilerConfig()
+        cc = CompilerConfig()
+        device = None
+    if options is not None:
+        if "compiler_config" not in options or options["compiler_config"] is None:
+            cc = CompilerConfig()
+        else:
+            cc = options["compiler_config"]
+        device = options["device"] if "device" in options else None
 
     # Apply environment overrides at start of compilation to allow overriding what was set in the test
-    options.apply_environment_overrides()
+    cc.apply_environment_overrides()
 
     if (
-        options.compile_depth == CompileDepth.COMPILE_OP_BY_OP
-        or options.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
+        cc.compile_depth == CompileDepth.COMPILE_OP_BY_OP
+        or cc.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
     ):
-        if options.op_by_op_backend == OpByOpBackend.TORCH:
+        if cc.op_by_op_backend == OpByOpBackend.TORCH:
             # run torch graph op-by-op
-            return _torch_backend(gm, example_inputs, compiler_config=options)
+            return _torch_backend(gm, example_inputs, compiler_config=cc, device=device)
         else:
             # op_by_op_backend == OpByOpBackend.STABLEHLO
             # convert torch to stablehlo, then run stablehlo op-by-op
             module, program, graph_constants = torch_to_shlo(
-                gm, example_inputs, compiler_config=options
+                gm, example_inputs, compiler_config=cc
             )
             return _shlo_backend(
                 shlo=module,
                 example_inputs=example_inputs,
-                compiler_config=options,
+                compiler_config=cc,
                 program=program,
                 graph_constants=graph_constants,
+                device=device,
             )
-    return _base_backend(gm, example_inputs, compiler_config=options)
+    return _base_backend(gm, example_inputs, compiler_config=cc, device=device)
