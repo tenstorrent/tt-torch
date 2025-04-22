@@ -78,8 +78,6 @@ def main(use_simplified_manager):
     cc.enable_consteval = True
     cc.consteval_parameters = True
 
-    options = {}
-    options["compiler_config"] = cc
     num_devices = DeviceManager.get_num_available_devices()
     if use_simplified_manager:
         print("Using simplified device manager")
@@ -99,6 +97,8 @@ def main(use_simplified_manager):
 
     tt_models = []
     for device in devices:
+        options = {}
+        options["compiler_config"] = cc
         options["device"] = device
         # Compile the model for each device
         tt_models.append(
