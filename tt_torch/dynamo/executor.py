@@ -296,8 +296,13 @@ class Executor:
 
         binary = tt_mlir.create_binary_from_bytestream(self.binary)
         program_idx = 0
+
+        tensor_start_idx = 0
+        if self.preprocessed_graph_constants is not None:
+            tensor_start_idx = len(self.preprocessed_graph_constants)
+
         preprocessed_inputs = tt_mlir.preprocess_inputs(
-            device, inputs, binary, program_idx
+            device, inputs, binary, program_idx, tensor_start_idx
         )
 
         if self.preprocessed_graph_constants is not None:
