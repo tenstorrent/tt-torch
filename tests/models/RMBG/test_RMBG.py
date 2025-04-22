@@ -66,6 +66,7 @@ def test_RMBG(record_property, mode, op_by_op):
     if mode == "eval":
         predictions = results[-1].sigmoid()
         pred = predictions[0].squeeze()
+        pred = pred.to(torch.float32)
         pred_pil = transforms.ToPILImage()(pred)
         mask = pred_pil.resize(tester.image.size)
         tester.image.putalpha(mask)
