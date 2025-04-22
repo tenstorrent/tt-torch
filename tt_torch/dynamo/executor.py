@@ -293,6 +293,7 @@ class Executor:
 
         inputs = list(inputs)
         device = self._get_device()
+        print("[EXECUTOR] Running on device: ", device)
 
         binary = tt_mlir.create_binary_from_bytestream(self.binary)
         program_idx = 0
