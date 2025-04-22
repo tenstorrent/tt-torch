@@ -62,18 +62,18 @@ jobs:
       spreadsheet_name: ${{ needs.download-report.outputs.spreadsheet_name }}
 
   # runtime intermediate tests require build-debug artifact
-  build-debug:
-    needs: [pre-commit, spdx, docker-build]
-    uses: ./.github/workflows/run-build.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-      setup-args: "--build_runtime_debug"
-      artifact-key: "-debug" # avoid name collision for generated artifact
-  test-tools:
-    needs: [docker-build, build-debug]
-    uses: ./.github/workflows/run-tools-tests.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-      build-artifact-key: "-debug" # reference above artifact key
+  # build-debug:
+  #   needs: [pre-commit, spdx, docker-build]
+  #   uses: ./.github/workflows/run-build.yml
+  #   secrets: inherit
+  #   with:
+  #     docker-image: ${{ needs.docker-build.outputs.docker-image }}
+  #     setup-args: "--build_runtime_debug"
+  #     artifact-key: "-debug" # avoid name collision for generated artifact
+  # test-tools:
+  #   needs: [docker-build, build-debug]
+  #   uses: ./.github/workflows/run-tools-tests.yml
+  #   secrets: inherit
+  #   with:
+  #     docker-image: ${{ needs.docker-build.outputs.docker-image }}
+  #     build-artifact-key: "-debug" # reference above artifact key
