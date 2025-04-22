@@ -206,7 +206,6 @@ preprocess_inputs(tt::runtime::Device device, std::vector<at::Tensor> &inputs,
   std::vector<tt::runtime::Tensor> rt_inputs_with_layout;
   rt_inputs_with_layout.reserve(inputs.size());
 
-  // Use a for loop instead of std::transform to properly handle indices
   for (size_t i = 0; i < rt_inputs.size(); ++i) {
     tt::runtime::Tensor &t = rt_inputs[i];
     tt::runtime::Layout layout =
