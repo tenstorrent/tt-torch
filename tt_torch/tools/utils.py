@@ -126,6 +126,7 @@ class Op:
         self.parsed_ttnn_ops = False
         self.pcc = None
         self.atol = None
+        self.golden = None
 
     def parse_json(self):
         # Replace inf with strings until https://github.com/tenstorrent/tt-mlir/issues/2151 is fixed

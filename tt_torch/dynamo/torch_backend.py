@@ -217,8 +217,9 @@ class TorchExecutor(OpByOpExecutor):
             op.model_group = self.compiler_config.model_group
             self.compiler_config.unique_ops[op.unique_key()] = op
         else:
-            self.compiler_config.unique_ops[op.unique_key()].num_ops += 1
-            return None, None
+            op = self.compiler_config.unique_ops[op.unique_key()]
+            op.num_ops += 1
+            return None, op
 
         graph = torch.fx.Graph()
         placeholders = []
@@ -353,6 +354,15 @@ class TorchExecutor(OpByOpExecutor):
                             "Failed to compile", idx, num_nodes, node.target, e
                         )
 
+                if op is not None:
+                    if op.golden is not None:
+                        golden = op.golden
+                    else:
+                        golden = node.target(*args, **node.kwargs)
+                        op.golden = golden
+                else:
+                    golden = node.target(*args, **node.kwargs)
+
                 if (
                     self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
                     and binary is not None
@@ -367,13 +377,12 @@ class TorchExecutor(OpByOpExecutor):
                         if calculated is None:
                             raise ValueError("Failed to execute")
                         op.compilation_status = OpCompilationStatus.EXECUTED
-                        tensor = node.target(*args, **node.kwargs)
                         if self.compiler_config.verify_op_by_op:
-                            atol = calculate_atol(calculated, tensor)
+                            atol = calculate_atol(calculated, golden)
                             op.atol = atol
                             if atol > self.required_atol:
                                 print(f"atol too high for {idx}: {atol}")
-                            pcc = calculate_pcc(calculated, tensor)
+                            pcc = calculate_pcc(calculated, golden)
                             op.pcc = pcc
                             if pcc < self.required_pcc:
                                 print(f"pcc too low for {idx}: {pcc}")
@@ -381,25 +390,12 @@ class TorchExecutor(OpByOpExecutor):
                         self.print_marker(
                             "Failed to execute", idx, num_nodes, node.target, e
                         )
-                        tensor = node.target(*args, **node.kwargs)
-                else:
-                    tensor = node.target(*args, **node.kwargs)
 
-                node_to_tensor[node] = tensor
+                node_to_tensor[node] = golden
             elif node.op == "output":
                 args = node.args[0]
                 output_tensors = [node_to_tensor[arg] for arg in args]
                 outputs = output_tensors
-            args_set = set()
-            for arg in node.args:
-                if arg in args_set:
-                    continue
-                args_set.add(arg)
-                if isinstance(arg, torch.fx.node.Node):
-                    out_degree[arg] -= 1
-                    if out_degree[arg] == 0 and arg.op != "output":
-                        del node_to_tensor[arg]
-                        out_degree.pop(arg)
 
             # Finished handling this op, increment global op index
             OpByOpExecutor.global_op_idx += 1
