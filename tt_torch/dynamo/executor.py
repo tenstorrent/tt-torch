@@ -349,6 +349,9 @@ class OpByOpExecutor(Executor):
     # across graph breaks, and for running just a specific op.
     global_op_idx = 0
     run_global_op_idx = None
+    compiling_time = 0.0
+    running_time = 0.0
+    golden_time = 0.0
 
     def __init__(
         self,
@@ -458,9 +461,9 @@ class OpByOpExecutor(Executor):
         self.compiler_config.unique_ops[key].runtime_stack_dump = str(error)
 
     # Helper function to print markers
-    def print_marker(self, msg, idx, num_nodes, op_info, error=""):
+    def print_marker(self, msg, idx, num_nodes, op_info, error="", time=0.0):
         print(
-            f"{msg:<10} global_op_idx: {OpByOpExecutor.global_op_idx} ({idx}/{num_nodes}): {op_info} {error}",
+            f"{msg:<10} global_op_idx: {OpByOpExecutor.global_op_idx} ({idx}/{num_nodes}): {op_info} | time: {time:.4f} s | {error}",
             flush=True,
         )
 

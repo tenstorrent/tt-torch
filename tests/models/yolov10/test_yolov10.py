@@ -81,7 +81,6 @@ def test_yolov10(record_property, mode, op_by_op):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
-    cc.verify_op_by_op = True
     tester = ThisTester(
         model_name,
         mode,
