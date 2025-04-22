@@ -133,6 +133,9 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
         if not os.path.isfile(log_path):
             print(f"Skipping {log_file} as it is not a file.")
             continue
+        if log_file.endswith(".xlsx"):
+            print(f"Skipping {log_file} as it is a generated report.")
+            continue
 
         rows = []
         csv_data = []

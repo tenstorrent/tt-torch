@@ -829,6 +829,9 @@ class RuntimeIntermediate:
 
     def calculate_metrics(self):
         from tt_torch.tools.verify import verify_against_golden
+        from tt_torch.tools.runtime_intermediate_utils import (
+            try_invert_compiler_transform,
+        )
 
         # Calculate the metrics for the golden tensor after all decomposition steps are
         # Some torchfx nodes like "getitem" generate no intermediate outputs
@@ -863,52 +866,63 @@ class RuntimeIntermediate:
 
         try:
             # at this point, we expect golden and final decomposed output to be a tuple(tensor), with a single tensor
-            flat_golden = None
-            conv_heuristic = False
+            if isinstance(self.golden[0], torch.Tensor) and isinstance(
+                final_decomposed_output[0], torch.Tensor
+            ):
+                self.flattened_pcc, best_pass = try_invert_compiler_transform(
+                    self.golden[0], final_decomposed_output[0], verbose=False
+                )
+                self.flattened_error_message = (
+                    f"Applied a reshaping heuristic: ({best_pass})"
+                )
 
-            if isinstance(self.golden[0], torch.Tensor):
-                gtens = self.golden[0]
-                rtens = final_decomposed_output[0]
-                gshape = self.golden[0].shape
-                rshape = final_decomposed_output[0].shape
+            # if isinstance(self.golden[0], torch.Tensor):
+            #     gtens = self.golden[0]
+            #     rtens = final_decomposed_output[0]
 
-                if (
-                    gshape != rshape
-                    and gtens.dim() == 4
-                    and rtens.dim() == 4
-                    and gshape[0] == rshape[0]
-                    and gshape[2] * gshape[3] == rshape[2]
-                    and gshape[1] == rshape[3]
-                ):
-                    print("detected conv shape mangling in {}".format(self.node.name))
-                    conv_heuristic = True
+            #     torch.save(gtens, f"tensors/gn_{self.node.name}.pt")
+            #     torch.save(rtens, f"tensors/rt_{self.node.name}.pt")
 
-                if not conv_heuristic:
-                    flat_golden = (torch.flatten(self.golden[0]),)
-                else:
-                    # reshape to direct flat comparison for naive convolution shape mangling
-                    flat_golden = self.golden[0]
-                    flat_golden = torch.transpose(flat_golden, 1, 2)
-                    flat_golden = torch.transpose(flat_golden, 2, 3)
-                    flat_golden = torch.reshape(
-                        flat_golden, (1, 1, -1, flat_golden.shape[-1])
-                    )
-                    flat_golden = (torch.flatten(flat_golden),)
-                    self.flattened_error_message = (
-                        "Applied convolution shape demangling heuristic"
-                    )
-            flat_intermediate = None
-            if isinstance(final_decomposed_output[0], torch.Tensor):
-                flat_intermediate = (torch.flatten(final_decomposed_output[0]),)
+            #     gshape = self.golden[0].shape
+            #     rshape = final_decomposed_output[0].shape
 
-            (self.flattened_pcc, self.flattened_atol, _, _) = verify_against_golden(
-                flat_golden,
-                flat_intermediate,
-                assert_pcc=False,
-                assert_atol=False,
-                required_atol=0.01,
-                disable_print=True,
-            )
+            #     if (
+            #         gshape != rshape
+            #         and gtens.dim() == 4
+            #         and rtens.dim() == 4
+            #         and gshape[0] == rshape[0]
+            #         and gshape[2] * gshape[3] == rshape[2]
+            #         and gshape[1] == rshape[3]
+            #     ):
+            #         print("detected conv shape mangling in {}".format(self.node.name))
+            #         conv_heuristic = True
+
+            #     if not conv_heuristic:
+            #         flat_golden = (torch.flatten(self.golden[0]),)
+            #     else:
+            #         # reshape to direct flat comparison for naive convolution shape mangling
+            #         flat_golden = self.golden[0]
+            #         flat_golden = torch.transpose(flat_golden, 1, 2)
+            #         flat_golden = torch.transpose(flat_golden, 2, 3)
+            #         flat_golden = torch.reshape(
+            #             flat_golden, (1, 1, -1, flat_golden.shape[-1])
+            #         )
+            #         flat_golden = (torch.flatten(flat_golden),)
+            #         self.flattened_error_message = (
+            #             "Applied a reshaping heuristic"
+            #         )
+            # flat_intermediate = None
+            # if isinstance(final_decomposed_output[0], torch.Tensor):
+            #     flat_intermediate = (torch.flatten(final_decomposed_output[0]),)
+
+            # (self.flattened_pcc, self.flattened_atol, _, _) = verify_against_golden(
+            #     flat_golden,
+            #     flat_intermediate,
+            #     assert_pcc=False,
+            #     assert_atol=False,
+            #     required_atol=0.01,
+            #     disable_print=True,
+            # )
         except Exception as e:
             self.flattened_pcc = "ERROR"
             self.flattened_atol = "ERROR"
