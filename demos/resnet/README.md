@@ -47,12 +47,15 @@ from tt_torch.tools.device_manager import DeviceManager
 ...
 def main():
     ...
-    options = {}
-    options["compiler_config"] = cc
     # Acquires all available devices and returns them in a list
     parent, devices = DeviceManager.acquire_available_devices()
     tt_models = []
     for device in devices:
+        # It is important that each `options` map being passed to `torch.compile`
+        # is a new object.
+        # Otherwise the "device" key will get overwritten for all previous devices.
+        options = {}
+        options["compiler_config"] = cc
         options["device"] = device # Explicitly compile the model for a specific device
         tt_models.append(
             torch.compile(model, backend=backend, dynamic=False, options=options)
