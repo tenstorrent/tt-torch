@@ -449,7 +449,7 @@ class TorchExecutor(OpByOpExecutor):
             os.unlink(self.file_stderr.name)
             self.stderror_redirected = False
         print(
-            f"Compiling time: {OpByOpExecutor.compiling_time}, Running time: {OpByOpExecutor.running_time}, Golden time: {OpByOpExecutor.golden_time}"
+            f"Total Time. Compiling: {OpByOpExecutor.compiling_time:.2f} s, Running: {OpByOpExecutor.running_time:.2f} s, Golden: {OpByOpExecutor.golden_time:.2f} s"
         )
         return outputs
 
