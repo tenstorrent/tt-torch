@@ -67,9 +67,8 @@ def test_beit_image_classification(record_property, model_name, mode, op_by_op):
         required_atol=required_atol,
         compiler_config=cc,
         record_property_handle=record_property,
-        # TODO Enable checking - https://github.com/tenstorrent/tt-torch/issues/550
-        assert_pcc=False,
-        assert_atol=False,
+        assert_pcc=True,
+        assert_atol=True,
     )
     results = tester.test_model()
 

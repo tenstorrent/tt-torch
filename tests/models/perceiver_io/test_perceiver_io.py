@@ -58,8 +58,8 @@ def test_perceiver_io(record_property, mode, op_by_op):
     tester = ThisTester(
         model_name,
         mode,
-        assert_pcc=False,
-        assert_atol=False,
+        assert_pcc=True,
+        assert_atol=True,
         compiler_config=cc,
         record_property_handle=record_property,
     )
