@@ -177,6 +177,11 @@ jobs:
             runs-on: wormhole_b0, name: "vit", tests: "
               tests/models/vit/test_vit.py::test_vit[op_by_op_torch-eval]
               "
+          },
+          {
+            runs-on: wormhole_b0, name: "stable-diffusion-unet", tests: "
+              tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet
+              "
           }
         ]
     runs-on:
