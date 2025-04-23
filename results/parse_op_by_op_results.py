@@ -399,8 +399,9 @@ def create_summary_worksheet(workbook, models_info):
         worksheet.write(row, 17, executing_formula)
         worksheet.set_column(17, 17, 15)
 
-        # Determine how many ops for model hit unknown error (column M is "Compile error")
-        unknown_errors_formula = f'=COUNTIF(INDIRECT("\'" & "{model_name}" & "\'!N:N"), "Error message not extracted.")'
+        # Determine how many ops for model hit unknown error.
+        col_id = "N"  # Compile Error column
+        unknown_errors_formula = f'=COUNTIF(INDIRECT("\'" & "{model_name}" & "\'!{col_id}:{col_id}"), "Error message not extracted.")'
         worksheet.set_column(18, 18, 2)
         worksheet.set_column(19, 19, 13)
         worksheet.write(2, 19, "Unknown Errors")
@@ -408,8 +409,9 @@ def create_summary_worksheet(workbook, models_info):
         worksheet.set_column(20, 20, 2)
         apply_non_zero_conditional_format(worksheet, row, 19, 6, color_formats)
 
-        # Determine how many ops for model hit timeout error
-        timeout_errors_formula = f'=COUNTIFS(INDIRECT("\'" & "{model_name}" & "\'!N:N"), "*Timeout exceeded for op*")'
+        # Determine how many ops for model hit timeout error.
+        col_id = "N"  # Compile Error column
+        timeout_errors_formula = f'=COUNTIFS(INDIRECT("\'" & "{model_name}" & "\'!{col_id}:{col_id}"), "*Timeout exceeded for op*")'
         worksheet.set_column(21, 21, 13)
         worksheet.write(2, 21, "Timeouts")
         worksheet.write(row, 21, timeout_errors_formula)
