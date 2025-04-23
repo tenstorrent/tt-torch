@@ -61,8 +61,8 @@ def test_whisper(record_property, mode, op_by_op):
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
-        assert_pcc=False,
-        assert_atol=False,
+        assert_pcc=True,
+        assert_atol=True,
     )
     tester.test_model()
     tester.finalize()

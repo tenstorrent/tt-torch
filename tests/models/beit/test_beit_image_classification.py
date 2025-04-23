@@ -61,15 +61,15 @@ def test_beit_image_classification(record_property, model_name, mode, op_by_op):
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     required_atol = 0.032 if model_name == "microsoft/beit-base-patch16-224" else 0.065
+    do_assert = True if model_name == "microsoft/beit-base-patch16-224" else False
     tester = ThisTester(
         model_name,
         mode,
         required_atol=required_atol,
         compiler_config=cc,
         record_property_handle=record_property,
-        # TODO Enable checking - https://github.com/tenstorrent/tt-torch/issues/550
-        assert_pcc=False,
-        assert_atol=False,
+        assert_pcc=do_assert,
+        assert_atol=do_assert,
     )
     results = tester.test_model()
 
