@@ -28,6 +28,9 @@ OP_STATUS_NAMES = [
     "EXECUTED",
 ]
 
+# xlswriter limit, neighbor cells corrupted if exceeded.
+MAX_CELL_LEN = 32767
+
 # Function to get git branch and commit
 def get_git_info():
     try:
@@ -396,8 +399,9 @@ def create_summary_worksheet(workbook, models_info):
         worksheet.write(row, 17, executing_formula)
         worksheet.set_column(17, 17, 15)
 
-        # Determine how many ops for model hit unknown error (column M is "Compile error")
-        unknown_errors_formula = f'=COUNTIF(INDIRECT("\'" & "{model_name}" & "\'!M:M"), "Error message not extracted.")'
+        # Determine how many ops for model hit unknown error.
+        col_id = "N"  # Compile Error column
+        unknown_errors_formula = f'=COUNTIF(INDIRECT("\'" & "{model_name}" & "\'!{col_id}:{col_id}"), "Error message not extracted.")'
         worksheet.set_column(18, 18, 2)
         worksheet.set_column(19, 19, 13)
         worksheet.write(2, 19, "Unknown Errors")
@@ -405,8 +409,9 @@ def create_summary_worksheet(workbook, models_info):
         worksheet.set_column(20, 20, 2)
         apply_non_zero_conditional_format(worksheet, row, 19, 6, color_formats)
 
-        # Determine how many ops for model hit timeout error
-        timeout_errors_formula = f'=COUNTIFS(INDIRECT("\'" & "{model_name}" & "\'!M:M"), "*Timeout exceeded for op*")'
+        # Determine how many ops for model hit timeout error.
+        col_id = "N"  # Compile Error column
+        timeout_errors_formula = f'=COUNTIFS(INDIRECT("\'" & "{model_name}" & "\'!{col_id}:{col_id}"), "*Timeout exceeded for op*")'
         worksheet.set_column(21, 21, 13)
         worksheet.write(2, 21, "Timeouts")
         worksheet.write(row, 21, timeout_errors_formula)
@@ -520,14 +525,14 @@ def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=Fals
                 "status": value["compilation_status"],
                 "pcc": value["pcc"],
                 "atol": value["atol"],
-                "torch_ir_graph": value["torch_ir_graph"],
-                "stable_hlo_graph": value["stable_hlo_graph"],
+                "torch_ir_graph": value["torch_ir_graph"][:MAX_CELL_LEN],
+                "stable_hlo_graph": value["stable_hlo_graph"][:MAX_CELL_LEN],
                 "ops": value["stable_hlo_ops"],
-                "ttir_graph": value["ttir_graph"],
-                "ttnn_graph": value["ttnn_graph"],
-                "compiled_json": value["compiled_json"],
+                "ttir_graph": value["ttir_graph"][:MAX_CELL_LEN],
+                "ttnn_graph": value["ttnn_graph"][:MAX_CELL_LEN],
+                "compiled_json": value["compiled_json"][:MAX_CELL_LEN],
                 "error": value["error"],
-                "trace_dump": value["trace_dump"],
+                "trace_dump": value["trace_dump"][:MAX_CELL_LEN],
                 "model_names": value["model_names"],
             }
         )
@@ -738,13 +743,13 @@ def generate_op_reports_xlsx():
                     "output_shapes": value["output_shapes"],
                     "num_ops": value["num_ops"],
                     "status": value["compilation_status"],
-                    "torch_ir_graph": value["torch_ir_graph"],
-                    "stable_hlo_graph": value["stable_hlo_graph"],
+                    "torch_ir_graph": value["torch_ir_graph"][:MAX_CELL_LEN],
+                    "stable_hlo_graph": value["stable_hlo_graph"][:MAX_CELL_LEN],
                     "ops": value["stable_hlo_ops"],
-                    "ttir_graph": value["ttir_graph"],
-                    "ttnn_graph": value["ttnn_graph"],
-                    "compiled_json": value["compiled_json"],
-                    "runtime_stack_error": value["runtime_stack_dump"],
+                    "ttir_graph": value["ttir_graph"][:MAX_CELL_LEN],
+                    "ttnn_graph": value["ttnn_graph"][:MAX_CELL_LEN],
+                    "compiled_json": value["compiled_json"][:MAX_CELL_LEN],
+                    "runtime_stack_error": value["runtime_stack_dump"][:MAX_CELL_LEN],
                     "key": key,
                     "pcc": value["pcc"],
                     "atol": value["atol"],

@@ -65,11 +65,6 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "stable-diffusion-unet", tests: "
-              tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet
-              "
-          },
-          {
             runs-on: wormhole_b0, name: "t5", tests: "
               tests/models/t5/test_t5.py::test_t5
               tests/models/flan_t5/test_flan_t5.py::test_flan_t5

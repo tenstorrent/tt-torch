@@ -15,7 +15,7 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 class ThisTester(ModelTester):
     def _load_model(self):
         model = AutoModelForImageSegmentation.from_pretrained(
-            "briaai/RMBG-2.0", torch_dtype=torch.float32, trust_remote_code=True
+            "briaai/RMBG-2.0", torch_dtype=torch.bfloat16, trust_remote_code=True
         )
         torch.set_float32_matmul_precision(["high", "highest"][0])
         image_size = (1024, 1024)
@@ -31,7 +31,7 @@ class ThisTester(ModelTester):
     def _load_inputs(self):
         url = "http://images.cocodataset.org/val2017/000000039769.jpg"
         self.image = Image.open(requests.get(url, stream=True).raw)
-        inputs = self.transform_image(self.image).unsqueeze(0).to(dtype=torch.float32)
+        inputs = self.transform_image(self.image).unsqueeze(0).to(dtype=torch.bfloat16)
         return inputs
 
 
@@ -66,6 +66,7 @@ def test_RMBG(record_property, mode, op_by_op):
     if mode == "eval":
         predictions = results[-1].sigmoid()
         pred = predictions[0].squeeze()
+        pred = pred.to(torch.float32)
         pred_pil = transforms.ToPILImage()(pred)
         mask = pred_pil.resize(tester.image.size)
         tester.image.putalpha(mask)

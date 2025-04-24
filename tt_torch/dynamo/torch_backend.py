@@ -7,6 +7,7 @@ import tt_mlir
 import torch_mlir
 import os
 import re
+import time
 import ml_dtypes
 import numpy as np
 from torch_mlir.dialects import torch as torch_dialect
@@ -158,6 +159,27 @@ def lower_to_stable_hlo(module, op=None, enable_ir_printing=False):
 ##################################################################
 # TorchExecutor covers all CompileDepth options except for EXECUTE
 ##################################################################
+
+
+def cast_ios_and_run(node, args, kwargs):
+    try:
+        out_df = node.meta["tensor_meta"].dtype
+        out_df_known = True
+    except Exception:
+        out_df_known = False
+
+    if out_df_known:
+        cast_args = [
+            arg.to(torch.float32)
+            if isinstance(arg, torch.Tensor) and torch.is_floating_point(arg)
+            else arg
+            for arg in args
+        ]
+        golden = node.target(*cast_args, **kwargs)
+        golden = golden.to(out_df)
+    else:
+        golden = node.target(*args, **kwargs)
+    return golden
 
 
 class TorchExecutor(OpByOpExecutor):
@@ -343,8 +365,14 @@ class TorchExecutor(OpByOpExecutor):
 
                 if test_this_op:
                     try:
-                        self.print_marker("Compiling", idx, num_nodes, node.target)
+                        start = time.time()
                         binary, op, msg = self.compile_op(node, *args, **node.kwargs)
+                        end = time.time()
+                        self.print_marker(
+                            "Compiling", idx, num_nodes, node.target, time=(end - start)
+                        )
+                        OpByOpExecutor.compiling_time += end - start
+
                         self.set_runtime_stack_dump(msg, op)
 
                     except Exception as e:
@@ -353,6 +381,13 @@ class TorchExecutor(OpByOpExecutor):
                             "Failed to compile", idx, num_nodes, node.target, e
                         )
 
+                start = time.time()
+                golden = cast_ios_and_run(node, args, node.kwargs)
+                end = time.time()
+                self.print_marker(
+                    "Golden", idx, num_nodes, node.target, time=(end - start)
+                )
+                OpByOpExecutor.golden_time += end - start
                 if (
                     self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
                     and binary is not None
@@ -360,20 +395,24 @@ class TorchExecutor(OpByOpExecutor):
 
                     try:
                         typecast_args = self.typecast_inputs(args)
-                        self.print_marker("Running", idx, num_nodes, node.target)
+                        start = time.time()
                         calculated, stderr = self.run_op(binary, *typecast_args)
+                        end = time.time()
+                        self.print_marker(
+                            "Running", idx, num_nodes, node.target, time=(end - start)
+                        )
+                        OpByOpExecutor.running_time += end - start
                         self.set_runtime_stack_dump(stderr, op)
 
                         if calculated is None:
                             raise ValueError("Failed to execute")
                         op.compilation_status = OpCompilationStatus.EXECUTED
-                        tensor = node.target(*args, **node.kwargs)
                         if self.compiler_config.verify_op_by_op:
-                            atol = calculate_atol(calculated, tensor)
+                            atol = calculate_atol(calculated, golden)
                             op.atol = atol
                             if atol > self.required_atol:
                                 print(f"atol too high for {idx}: {atol}")
-                            pcc = calculate_pcc(calculated, tensor)
+                            pcc = calculate_pcc(calculated, golden)
                             op.pcc = pcc
                             if pcc < self.required_pcc:
                                 print(f"pcc too low for {idx}: {pcc}")
@@ -381,15 +420,13 @@ class TorchExecutor(OpByOpExecutor):
                         self.print_marker(
                             "Failed to execute", idx, num_nodes, node.target, e
                         )
-                        tensor = node.target(*args, **node.kwargs)
-                else:
-                    tensor = node.target(*args, **node.kwargs)
 
-                node_to_tensor[node] = tensor
+                node_to_tensor[node] = golden
             elif node.op == "output":
                 args = node.args[0]
                 output_tensors = [node_to_tensor[arg] for arg in args]
                 outputs = output_tensors
+
             args_set = set()
             for arg in node.args:
                 if arg in args_set:
@@ -411,6 +448,9 @@ class TorchExecutor(OpByOpExecutor):
         if self.stderror_redirected:
             os.unlink(self.file_stderr.name)
             self.stderror_redirected = False
+        print(
+            f"Total Time - Compiling: {OpByOpExecutor.compiling_time:.2f} s, Running: {OpByOpExecutor.running_time:.2f} s, Golden: {OpByOpExecutor.golden_time:.2f} s"
+        )
         return outputs
 
     def __call__(self, *inputs):

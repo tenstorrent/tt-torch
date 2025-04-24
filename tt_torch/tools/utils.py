@@ -6,6 +6,7 @@ import json
 import numpy as np
 from enum import Enum, IntEnum
 from collections.abc import Iterable
+import datetime
 
 from pathlib import Path
 import os
@@ -380,7 +381,8 @@ class CompilerConfig:
         for key, op in self.unique_ops.items():
             unique_op_dict[key] = op.to_dict()
         output_file = Path(f"{self.results_path}{pytest_test}_unique_ops.json")
-        print(f"#####  Saving unique ops to {output_file}#####  ")
+        date_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print(f"#####  Saving unique ops to {output_file} at {date_str} #####")
         output_file.parent.mkdir(exist_ok=True, parents=True)
         with open(output_file, "w") as f:
             json.dump(unique_op_dict, f)

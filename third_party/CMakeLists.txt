@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-set(TT_MLIR_VERSION "78d28222a7427099d6f6318477d92619bee9b21a")
+set(TT_MLIR_VERSION "a3964526d40cd12b200f3f9244d48c54ab0866c9")
 set(TORCH_MLIR_VERSION "a265d283357f572c5437f9217ea85fa9770d374c")
 
 if (BUILD_TOOLCHAIN)
@@ -49,7 +49,7 @@ else()
         INSTALL_COMMAND ${CMAKE_COMMAND} --install ${TTMLIR_BUILD_DIR} --component SharedLib
         CMAKE_GENERATOR Ninja
         CMAKE_ARGS
-          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_BUILD_TYPE=Debug
           -DCMAKE_C_COMPILER=clang-17
           -DCMAKE_CXX_COMPILER=clang++-17
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache

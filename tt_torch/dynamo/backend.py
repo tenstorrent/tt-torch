@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import os
+import warnings
 
 import tt_mlir
 import sys
@@ -187,6 +188,7 @@ def _base_backend(gm, example_inputs, compiler_config, device):
 
 @tt_torch_error_message
 def backend(gm, example_inputs, options=None):
+    warnings.filterwarnings("ignore", message="Failed to fetch module*")
     assert isinstance(gm, torch.fx.GraphModule), "Backend only supports torch graphs"
 
     if options is None:

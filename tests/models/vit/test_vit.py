@@ -60,8 +60,8 @@ def test_vit(record_property, mode, op_by_op):
         compiler_config=cc,
         record_property_handle=record_property,
         model_group="red",
-        assert_pcc=False,
-        assert_atol=False,
+        assert_pcc=True,
+        assert_atol=True,
     )
 
     results = tester.test_model()
