@@ -11,14 +11,31 @@ import tabulate
 from threading import Thread
 import requests
 from tt_torch.tools.device_manager import DeviceManager
-import torch.multiprocessing as mp
 
-mp.set_start_method("spawn", force=True)
+# import torch.multiprocessing as mp
+
+# mp.set_start_method("spawn", force=True)
 
 weights = models.ResNet152_Weights.IMAGENET1K_V2
 model = models.resnet152(weights=weights).to(torch.bfloat16).eval()
 classes = weights.meta["categories"]
 preprocess = weights.transforms()
+
+# A custom thread class to simplify returning values from threads
+class CustomThread(Thread):
+    def __init__(
+        self, group=None, target=None, name=None, args=(), kwargs={}, verbose=None
+    ):
+        super().__init__(group, target, name, args, kwargs)
+        self._return = None
+
+    def run(self):
+        if self._target is not None:
+            self._return = self._target(*self._args, **self._kwargs)
+
+    def join(self):
+        super().join()
+        return self._return
 
 
 def download_image(url):
@@ -37,6 +54,7 @@ def worker(device, urls, topk=5):
     Given a device and a list of URLs, this function compiles the model and calls it
     for each URL, returning the top K predictions.
     """
+    # print(f"Worker ID: {mp.current_process().pid}" f" on Device: {device}")
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
@@ -61,27 +79,25 @@ def worker(device, urls, topk=5):
     return device, results
 
 
-def main(use_simplified_manager):
-    cc = CompilerConfig()
-    cc.enable_consteval = True
-    cc.consteval_parameters = True
-
+def main(use_simplified_manager, enable_async):
+    print("Using async ttnn: ", enable_async)
     num_devices = DeviceManager.get_num_available_devices()
     if use_simplified_manager:
         print("Using simplified device manager")
-        # The "simplified" acquire_available_devices() method will return a parent mesh
-        # and a list of sub mesh devices in a 1D mesh.
-        parent, devices = DeviceManager.acquire_available_devices()
+        parent, devices = DeviceManager.acquire_available_devices(
+            enable_async_ttnn=enable_async
+        )
     else:
         print("Using full device manager")
-        # The DeviceManager class also provides methods to manually create parent meshes
-        # and sub mesh devices. This is useful for more complex device topologies.
-        parent = DeviceManager.create_parent_mesh_device(mesh_shape=[1, num_devices])
+        parent = DeviceManager.create_parent_mesh_device(
+            mesh_shape=[1, num_devices], enable_async_ttnn=enable_async
+        )
         for i in range(num_devices):
             DeviceManager.create_sub_mesh_device(
                 parent, mesh_offset=(0, i), mesh_shape=[1, 1]
             )
         devices = list(DeviceManager.get_sub_mesh_devices(parent))
+    print("Devices acquired: ", devices)
 
     # List of image URLs to be processed
     image_urls = [
@@ -106,12 +122,24 @@ def main(use_simplified_manager):
     ]
 
     final_results = []
-    with mp.get_context("spawn").Pool(processes=num_devices) as pool:
-        device, results = pool.starmap(worker, zip(devices, divided_urls))
-        final_results.append((device, results))
+    if not enable_async:
+        for i in range(num_devices):
+            results = worker(devices[i], divided_urls[i])
+            final_results.append(results)
+    else:
+        # Multi-threaded
+        threads = []
+        for i in range(num_devices):
+            thread = CustomThread(target=worker, args=(devices[i], divided_urls[i]))
+            threads.append(thread)
+            thread.start()
+
+        for thread in threads:
+            result = thread.join()
+            final_results.append(result)
 
     # Print the results
-    for device_used, prediction_results in results:
+    for device_used, prediction_results in final_results:
         print("*" * 40)
         print(f"Results from Device: {device_used}")
         for result in prediction_results:
@@ -137,5 +165,10 @@ if __name__ == "__main__":
         action="store_true",
         help="Use simplified device manager to run file",
     )
+    parser.add_argument(
+        "--enable_async",
+        action="store_true",
+        help="Enable async ttnn execution",
+    )
     args = parser.parse_args()
-    main(args.use_simplified_manager)
+    main(args.use_simplified_manager, args.enable_async)

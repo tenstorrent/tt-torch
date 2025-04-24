@@ -334,36 +334,7 @@ PYBIND11_MODULE(tt_mlir, m) {
                     : std::make_optional(
                           value.cast<tt::runtime::DispatchCoreType>());
           });
-  py::enum_<tt::runtime::DeviceRuntime>(m, "DeviceRuntime")
-      .value("Disabled", tt::runtime::DeviceRuntime::Disabled)
-      .value("TTNN", tt::runtime::DeviceRuntime::TTNN)
-      .value("TTMetal", tt::runtime::DeviceRuntime::TTMetal);
-  py::class_<tt::runtime::Device, std::shared_ptr<tt::runtime::Device>>(
-      m, "Device")
-      .def("getHandle",
-           [](const tt::runtime::Device &device) {
-             return reinterpret_cast<uintptr_t>(device.handle.get());
-           })
-      .def("getAssociatedRuntime",
-           [](const tt::runtime::Device &device) {
-             return device.associatedRuntime;
-           })
-      .def(py::pickle(
-          [](const tt::runtime::Device &device) { // __getstate__
-            uintptr_t raw_handle =
-                reinterpret_cast<uintptr_t>(device.handle.get());
-            return py::make_tuple(raw_handle, device.associatedRuntime);
-          },
-          [](py::tuple t) { // __setstate__
-            if (t.size() != 2) {
-              throw std::runtime_error("Invalid state!");
-            }
-            uintptr_t raw_handle_int = t[0].cast<uintptr_t>();
-            int *raw_handle = reinterpret_cast<int *>(raw_handle_int);
-            std::shared_ptr<void> handle(raw_handle);
-            auto associatedRuntime = t[1].cast<tt::runtime::DeviceRuntime>();
-            return tt::runtime::Device(handle, associatedRuntime);
-          }));
+  py::class_<tt::runtime::Device>(m, "Device");
   py::class_<tt::runtime::Tensor>(m, "Tensor");
   m.def("compile", &compile_stablehlo_to_bytestream,
         "A function that compiles stableHLO to a bytestream");

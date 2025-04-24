@@ -148,7 +148,7 @@ if __name__ == "__main__":
     avg_duration_single = acc_duration / NUM_ITERATIONS
 
     # Compile for multi-device
-    parent, devices = DeviceManager.acquire_available_devices()
+    parent, devices = DeviceManager.acquire_available_devices(enable_async_ttnn=True)
     multi_models = []
     for device in devices:
         multi_options = {}
