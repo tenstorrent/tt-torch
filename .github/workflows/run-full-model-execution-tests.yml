@@ -103,7 +103,7 @@ jobs:
                 tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b5-eval]
                 tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b6-eval]
                 tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b7-eval]
-
+                tests/models/vovnet/test_vovnet_onnx.py::test_vovnet_onnx[full-eval]
             "
           },
         ]
