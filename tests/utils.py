@@ -23,6 +23,7 @@ from onnx import version_converter
 from pathlib import Path
 from tt_torch.tools.verify import verify_against_golden
 from tt_torch.tools.utils import RuntimeIntermediate, OpByOpBackend
+from tt_torch.tools.device_manager import DeviceManager
 import io
 import csv
 import os
@@ -44,6 +45,8 @@ class ModelTester:
         is_token_output=False,
         model_name_suffix="",
         device=None,
+        run_on_all_devices=False,
+        use_async=False,
     ):
         if mode not in ["train", "eval"]:
             raise ValueError(f"Current mode is not supported: {mode}")
@@ -55,8 +58,17 @@ class ModelTester:
             raise ValueError(
                 "is_token_output is set to True. Please set `self.tokenizer` inside _load_model method."
             )
-        self.compiled_model = None
-        self.device = device
+        # self.compiled_model = None
+        self.compiled_models = []
+        # self.device = device
+        self.run_on_all_devices = run_on_all_devices
+        if self.run_on_all_devices:
+            self.parent_device, self.devices = DeviceManager.acquire_available_devices(
+                enable_async_ttnn=use_async
+            )
+        else:
+            self.parent_device = None
+            self.devices = [None]
         self.inputs = self._load_inputs()
         self.required_pcc = required_pcc
         self.assert_pcc = assert_pcc
@@ -162,25 +174,31 @@ class ModelTester:
         if self.golden_outputs is not None:
             return self.golden_outputs
 
-        self.golden_outputs = self.run_model(model, inputs)
+        self.golden_outputs = self.run_models([model], inputs)[0]
         return self.golden_outputs
 
-    def compile_model(self, model, compiler_config):
+    def compile_models(self, model, compiler_config):
         # Compile model
-        options = {}
-        options["compiler_config"] = compiler_config
-        options["device"] = self.device
-        model = torch.compile(model, backend=backend, dynamic=False, options=options)
-        self.compiled_model = model
-        return self.compiled_model
+        for device in self.devices:
+            options = {}
+            options["compiler_config"] = compiler_config
+            options["device"] = device
+            model = torch.compile(
+                model, backend=backend, dynamic=False, options=options
+            )
+            self.compiled_models.append(model)
+        return self.compiled_models
 
-    def run_model(self, model, inputs):
-        if isinstance(inputs, collections.abc.Mapping):
-            return model(**inputs)
-        elif isinstance(inputs, collections.abc.Sequence):
-            return model(*inputs)
-        else:
-            return model(inputs)
+    def run_models(self, models, inputs):
+        model_outputs = []
+        for model in models:
+            if isinstance(inputs, collections.abc.Mapping):
+                model_outputs.append(model(**inputs))
+            elif isinstance(inputs, collections.abc.Sequence):
+                model_outputs.append(model(*inputs))
+            else:
+                model_outputs.append(model(inputs))
+        return model_outputs
 
     def append_fake_loss_function(self, outputs):
         # Using `torch.mean` as the loss function for testing purposes.
@@ -315,41 +333,46 @@ class ModelTester:
 
     @torch.inference_mode()
     def _test_model_eval_base(self, on_device, assert_eval_token_mismatch):
-        model = self.get_framework_model()
-        golden = self.get_golden_outputs(model, self.inputs)
+        base_model = self.get_framework_model()
+        golden = self.get_golden_outputs(base_model, self.inputs)
 
         if on_device == True:
-            model = self.compile_model(model, self.compiler_config)
-
-        outputs = self.run_model(model, self.inputs)
+            compiled_models = self.compile_models(base_model, self.compiler_config)
+            outputs_list = self.run_models(compiled_models, self.inputs)
+        else:
+            outputs_list = self.run_models([base_model], self.inputs)
         self.record_property("achieved_compile_depth", "EXECUTE")
 
         if self.compiler_config._enable_intermediate_verification:
             self.verify_intermediates_after_execution()
 
-        if self.is_token_output:
-            decoded_outputs = self.tokenizer.batch_decode(
-                outputs, skip_special_tokens=True
-            )
-            decoded_golden = self.tokenizer.batch_decode(
-                golden, skip_special_tokens=True
-            )
-            if assert_eval_token_mismatch:
-                assert (
-                    decoded_outputs == decoded_golden
-                ), f'Output mismatch: calculated: "{decoded_outputs} vs golden: "{decoded_golden}"'
-        else:
-            self.verify_outputs(golden, outputs)
-        return outputs
+        for single_model_outputs in outputs_list:
+            if self.is_token_output:
+                decoded_outputs = self.tokenizer.batch_decode(
+                    single_model_outputs, skip_special_tokens=True
+                )
+                decoded_golden = self.tokenizer.batch_decode(
+                    golden, skip_special_tokens=True
+                )
+                if assert_eval_token_mismatch:
+                    assert (
+                        decoded_outputs == decoded_golden
+                    ), f'Output mismatch: calculated: "{decoded_outputs} vs golden: "{decoded_golden}"'
+            else:
+                self.verify_outputs(golden, single_model_outputs)
+        return outputs_list
 
     @torch.inference_mode()
-    def _test_model_eval_op_by_op(self, on_device):
-        model = self.get_framework_model()
+    def _test_model_eval_op_by_op(
+        self, on_device
+    ) -> list[list[torch.Tensor]] | list[torch.Tensor]:
+        base_model = self.get_framework_model()
 
         if on_device == True:
-            model = self.compile_model(model, self.compiler_config)
-
-        outputs = self.run_model(model, self.inputs)
+            compiled_models = self.compile_models(base_model, self.compiler_config)
+            outputs = self.run_models(compiled_models, self.inputs)
+        else:
+            outputs = self.run_models([base_model], self.inputs)[0]
         self.record_property("achieved_compile_depth", "EXECUTE")
 
         return outputs
