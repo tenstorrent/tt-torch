@@ -17,6 +17,7 @@ from tt_torch.tools.utils import (
     CompileDepth,
     prepare_inference_session,
     onnx_output_to_torch,
+    torch_input_to_onnx,
 )
 import json
 from onnx import version_converter
@@ -558,13 +559,7 @@ class OnnxModelTester(ModelTester):
         )
 
     def _load_numpy_inputs(self):
-        torch_inputs = self._load_torch_inputs()
-        return {
-            nodearg.name: inp.numpy()
-            if inp.dtype != torch.bfloat16
-            else inp.float().numpy()
-            for nodearg, inp in zip(self.sess.get_inputs(), torch_inputs)
-        }
+        return torch_input_to_onnx(self.sess, self.torch_inputs)
 
     def compile_model(self, model, compiler_config):
         model = compile_onnx(model, compiler_config)
@@ -575,8 +570,12 @@ class OnnxModelTester(ModelTester):
         if isinstance(model, onnx.ModelProto):
             outputs = self.sess.run(None, inputs)
             return onnx_output_to_torch(outputs)
-        else:
+        elif isinstance(inputs, collections.abc.Mapping):
+            return model(**inputs)
+        elif isinstance(inputs, collections.abc.Sequence):
             return model(*inputs)
+        else:
+            return model(inputs)
 
     def test_model_train(self, on_device=True):
         raise NotImplementedError("TODO: Implement this method")

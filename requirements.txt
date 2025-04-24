@@ -38,3 +38,4 @@ loguru
 seaborn
 gliner
 ultralytics
+efficientnet_pytorch

@@ -90,7 +90,20 @@ jobs:
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-wide_resnet50_2]
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-wide_resnet101_2]
             "
-          }
+          },
+          {
+            runs-on: wormhole_b0, name: "eval_6", tests: "
+                tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b0-eval]
+                tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b1-eval]
+                tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b2-eval]
+                tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b3-eval]
+                tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b4-eval]
+                tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b5-eval]
+                tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b6-eval]
+                tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b7-eval]
+
+            "
+          },
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}

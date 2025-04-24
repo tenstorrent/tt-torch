@@ -777,6 +777,41 @@ Include the following details in your report:
     return wrapper
 
 
+def torch_input_to_onnx(sess: InferenceSession, torch_input):
+    input_names = [input.name for input in sess.get_inputs()]
+
+    # Helper function to safely convert tensor to numpy, handling bfloat16
+    def tensor_to_numpy(tensor):
+        if tensor.dtype == torch.bfloat16:
+            tensor = tensor.to(torch.float32)
+        return tensor.detach().cpu().numpy()
+
+    # single tensor
+    if isinstance(torch_input, torch.Tensor):
+        if len(input_names) == 1:
+            return {input_names[0]: tensor_to_numpy(torch_input)}
+
+    # dictionary input
+    if isinstance(torch_input, dict):
+        if len(input_names) == len(torch_input):
+            return {
+                name: tensor_to_numpy(tensor)
+                for name, tensor in zip(input_names, torch_input.values())
+            }
+
+    # list or tuple input
+    if isinstance(torch_input, (list, tuple)):
+        if len(input_names) == len(torch_input):
+            return {
+                name: tensor_to_numpy(tensor)
+                for name, tensor in zip(input_names, torch_input)
+            }
+
+    raise ValueError(
+        f"Input type {type(torch_input)} is not supported or does not match the expected input names."
+    )
+
+
 def onnx_output_to_torch(output):
     for i in range(len(output)):
         output[i] = torch.tensor(output[i])
@@ -797,13 +832,7 @@ def run_model_proto(
 ):
     if sess is None:
         sess = prepare_inference_session(model_proto=model_proto)
-
-    inputs_dict = {
-        nodearg.name: input.numpy().astype(np.float32)
-        if input.dtype == torch.bfloat16
-        else input.numpy()
-        for nodearg, input in zip(sess.get_inputs(), inputs)
-    }
+    inputs_dict = torch_input_to_onnx(sess, inputs)
     output = sess.run(None, inputs_dict)
     return output
 
