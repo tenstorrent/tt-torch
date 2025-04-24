@@ -28,7 +28,8 @@ class ThisTester(ModelTester):
             padding="max_length",
             truncation=True,
         )
-        return inputs
+        args = {"input_ids": inputs.input_ids, "cache_implementation": "static"}
+        return args
 
     def set_model_eval(self, model):
         return model
