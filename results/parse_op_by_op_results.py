@@ -614,7 +614,7 @@ def parse_error_output(stderr):
     stderr_lines = stderr.strip().splitlines()
 
     # Find the first real error line (MLIR format)
-    error = next((line for line in stderr_lines if ": error:" in line), None)
+    error = next((line for line in stderr_lines if "error:" in line), None)
 
     # If no error line found, look for crash indicators
     if not error:
@@ -627,6 +627,10 @@ def parse_error_output(stderr):
             ),
             None,
         )
+
+    # Fall back to previous behavior if no matches above found.
+    if stderr and not error:
+        error = stderr.split("\n")[0]
 
     return (error, stderr)
 
