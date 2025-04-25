@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-
 from tt_torch.tools.profile_util import Profiler
 import subprocess
 import os
@@ -19,10 +18,12 @@ def profile(
     profiler.assert_perf_build()
     profiler.setup_tracy_server()
 
-    import time
+    # Test process must NOT run in main process, (i.e. via pytest.main) or else tracy capture will deadlock with main
 
-    time.sleep(10)
-    # Test process must not run in main process, (i.e. via pytest.main) or else tracy capture will deadlock with main
+    # Another way to deadlock with main is if the tt_mlir bindings are imported. Something in that import / pybind path
+    #   initializes a tracy client, potentially something in the initialization of tt-metal or tt-mlir that is inadvertently executed.
+    #   This could even be a header import from way down in the stack.
+
     testProcess = subprocess.Popen(
         [test_command], shell=True, env=os.environ.copy(), preexec_fn=os.setsid
     )
@@ -57,8 +58,7 @@ if __name__ == "__main__":
         python tt_torch/tools/profile.py "pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]"
 
     Notes:
-        Providing an output name is optional and defaults to 'device_ops_perf_trace.csv'.
-    """
+        Providing an output name is optional and defaults to 'device_ops_perf_trace.csv'."""
 
     parser = ArgumentParser()
     parser.add_argument("test_command", type=str, help="The test command to run")
