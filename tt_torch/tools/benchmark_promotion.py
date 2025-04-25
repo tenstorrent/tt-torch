@@ -253,7 +253,7 @@ def generate_formatted_test_matrix_from_partitions(
                 "runs-on": runs_on,
                 "name": job_name,
                 "group-id": i,  # zero indexed
-                "t-o": actual_timeout,  # timeout in minutes, for timeout-minutes field
+                "t-o": 2,  # timeout in minutes, for timeout-minutes field
             }
         )
 
