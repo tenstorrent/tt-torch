@@ -10,11 +10,13 @@ import sys
 from argparse import ArgumentParser
 
 
-def profile(test_command: str, output_filename: str = Profiler.DEFAULT_OUTPUT_FILENAME):
-    profiler = Profiler(output_filename)
+def profile(test_command: str, output_filename: str = Profiler.DEFAULT_OUTPUT_FILENAME, port: int = 8086):
+    profiler = Profiler(output_filename, port)
     profiler.assert_perf_build()
     profiler.setup_tracy_server()
 
+    import time 
+    time.sleep(10)
     # Test process must not run in main process, (i.e. via pytest.main) or else tracy capture will deadlock with main
     testProcess = subprocess.Popen(
         [test_command], shell=True, env=os.environ.copy(), preexec_fn=os.setsid
@@ -62,7 +64,15 @@ if __name__ == "__main__":
         type=str,
         default=Profiler.DEFAULT_OUTPUT_FILENAME,
     )
+    parser.add_argument(
+        "-p",
+        "--port",
+        help="Output file path",
+        type=int,
+        default=8086, # tracy client default port
+    )
+
 
     args = parser.parse_args()
 
-    profile(args.test_command, args.output_path)
+    profile(args.test_command, args.output_path, args.port)
