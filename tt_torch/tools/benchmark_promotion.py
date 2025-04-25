@@ -13,6 +13,7 @@ import pprint
 import json
 
 MAXIMUM_JOB_TIMEOUT_MINUTES = 500  # 500 minutes maximum per-job timeout
+DEFAULT_JOB_TIMEOUT_MINUTES = 120
 
 
 def enumerate_all_tests(filter_full_eval=True):
@@ -224,18 +225,20 @@ def generate_formatted_test_matrix_from_partitions(
         for testcase in partition:
             expected_duration_s += testcase["test-duration"]
 
-        # Simplified timeout logic - if a test is expected to take less than 30 minutes, set the timeout to 1 hour.
-        #   Otherwise, if there is no known duration or if the duration exceeds 30 minutes, set it to the MAX_TIMEOUT of 500m
+        # Timeout logic for progressive timeout setting.
+        # 1.  If there is no known duration for the test, set the timeout to a reasonable default of 2 hours
+        # 2.  If a test is expected to take less than 30 minutes, set the timeout to 1 hour.
+        # 3.  If the expected duration exceeds 30 minutes, set it to the MAX_TIMEOUT of 500m
 
         timeout_saturation_threshold_s = 30 * 60
-        actual_timeout = (
-            MAXIMUM_JOB_TIMEOUT_MINUTES
-            if (
-                expected_duration_s < 0
-                or expected_duration_s > timeout_saturation_threshold_s
-            )
-            else 60
-        )
+        actual_timeout = 0
+
+        if expected_duration_s < 0:
+            actual_timeout = DEFAULT_JOB_TIMEOUT_MINUTES
+        elif expected_duration_s < timeout_saturation_threshold_s:
+            actual_timeout = 60
+        else:
+            actual_timeout = MAXIMUM_JOB_TIMEOUT_MINUTES
 
         # Append the test name to the job name for quarantined tests
         if len(partition) == 1:
