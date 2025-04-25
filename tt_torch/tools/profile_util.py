@@ -9,10 +9,10 @@ import socket
 import signal
 import sys
 import shutil
-from tt_torch.tools.utils import FileManager
 import csv
 import json
 import re
+from tt_torch.tools.filemanager import FileManager
 
 
 class Profiler:
@@ -182,6 +182,8 @@ class Profiler:
         tracy_capture_tool_command = (
             f"{self.tracy_capture_tool_path} -o {self.tracy_file_path} -f -p {port}"
         )
+
+        print("Starting capture tool with command:", tracy_capture_tool_command)
 
         self.tracy_capture_tool_process = subprocess.Popen(
             tracy_capture_tool_command, shell=True  # ,env=os.environ.copy()

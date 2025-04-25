@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import tt_torch.tools.ci_verification as ci_tools
 import subprocess
-from tt_torch.tools.utils import FileManager
+from tt_torch.tools.filemanager import FileManager
 import pandas as pd
 import os
 
