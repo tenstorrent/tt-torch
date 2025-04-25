@@ -6,8 +6,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from tests.models.oft.src import resnet  # from . import resnet
-from tests.models.oft.src.oft import OFT  # from .oft import OFT
+from . import resnet
+from .oft import OFT
 
 
 class OftNet(nn.Module):
