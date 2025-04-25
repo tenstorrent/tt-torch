@@ -167,17 +167,9 @@ class Profiler:
             return None
 
         port = get_available_port()
-        # port = "8087"
 
         if not port:
             raise Exception("No available port found")
-
-        os.environ["TT_METAL_DEVICE_PROFILER"] = "1"
-        os.environ["TT_METAL_CLEAR_L1"] = "1"
-        os.environ["TT_METAL_DEVICE_PROFILER_DISPATCH"] = "0"
-
-        env_vars = dict(os.environ)
-        env_vars["TRACY_PORT"] = port
 
         tracy_capture_tool_command = (
             f"{self.tracy_capture_tool_path} -o {self.tracy_file_path} -f -p {port}"
@@ -188,6 +180,8 @@ class Profiler:
         self.tracy_capture_tool_process = subprocess.Popen(
             tracy_capture_tool_command, shell=True  # ,env=os.environ.copy()
         )
+
+        return port
 
     def close_capture_tool_process(self):
         if self.tracy_capture_tool_process is None:
