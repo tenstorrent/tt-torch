@@ -10,7 +10,7 @@ import numpy as np
 import urllib.request
 
 from ..base import ForgeModel
-from .yolov4 import Yolov4
+from .src.yolov4 import Yolov4
 
 
 class YOLOv4Loader(ForgeModel):

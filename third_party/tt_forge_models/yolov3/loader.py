@@ -14,7 +14,7 @@ from torchvision import transforms
 from pathlib import Path
 
 from ..base import ForgeModel
-from .yolov3 import Yolov3
+from .src.yolov3 import Yolov3
 
 
 class YOLOv3Loader(ForgeModel):

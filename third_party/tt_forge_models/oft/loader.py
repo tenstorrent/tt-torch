@@ -7,7 +7,7 @@ OFT (Orthographic Feature Transform) model loader implementation
 import torch
 
 from ..base import ForgeModel
-from .oftnet import OftNet
+from .src.oftnet import OftNet
 
 
 class OFTLoader(ForgeModel):
