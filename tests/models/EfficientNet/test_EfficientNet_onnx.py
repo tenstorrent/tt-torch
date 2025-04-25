@@ -68,7 +68,6 @@ class ThisTester(OnnxModelTester):
 )
 def test_EfficientNet_onnx(record_property, model_name, mode, op_by_op):
     cc = CompilerConfig()
-    cc.compile_depth = CompileDepth.STABLEHLO
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         cc.op_by_op_backend = OpByOpBackend.STABLEHLO
