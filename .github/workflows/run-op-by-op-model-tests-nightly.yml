@@ -232,20 +232,17 @@ jobs:
 
         failures=0
         counter=0
+        rm -f pytest.log
 
         for test_case in $tests_list; do
           counter=$((counter + 1))
 
-          pytest_log="test_${counter}.log"
-
-          pytest -svv "$test_case" --op_by_op_torch > "$pytest_log" 2>&1
+          echo "====== BEGIN LOG: $test_case ======" >> pytest.log
+          pytest -svv "$test_case" --op_by_op_torch 2>&1 | tee -a pytest.log
           exit_code=$?
 
-          echo "====== BEGIN LOG: $test_case ======" >> full_job_output.log
-          cat "$pytest_log" >> full_job_output.log
-          echo "====== END LOG: $test_case ========" >> full_job_output.log
-          echo >> full_job_output.log
-          rm "$pytest_log"
+          echo "====== END LOG: $test_case ========" >> pytest.log
+          echo >> pytest.log
 
           if [ $exit_code -eq 0 ]; then
             echo "[ $counter / $total_tests ] $test_case PASSED"
@@ -287,5 +284,5 @@ jobs:
       if: success() || failure()
       uses: actions/upload-artifact@v4
       with:
-        name: full-logs-nightly-${{ matrix.build.name }}
-        path: full_job_output.log
+        name: test-log-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        path: pytest.log

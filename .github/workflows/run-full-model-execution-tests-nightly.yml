@@ -186,6 +186,7 @@ jobs:
 
         # Create a directory for test reports
         mkdir -p ${{ steps.strings.outputs.test_report_dir }}
+        rm -f pytest.log
 
         # prevent script termination on failure
         set +e
@@ -202,7 +203,8 @@ jobs:
 
             pytest --durations=0 -v "$test" \
               --junit-xml="$report_file" \
-              --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
+              --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append \
+              2>&1 | tee -a pytest.log
             # Check the return code of pytest
             if [[ $? -ne 0 ]]; then
               echo "Test failed: $test"
@@ -222,6 +224,13 @@ jobs:
           echo "All tests passed."
           exit 0
         fi
+
+    - name: Upload Test Log
+      uses: actions/upload-artifact@v4
+      if: success() || failure()
+      with:
+        name: test-log-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        path: pytest.log
 
     - name: Upload Test Report Models
       uses: actions/upload-artifact@v4
