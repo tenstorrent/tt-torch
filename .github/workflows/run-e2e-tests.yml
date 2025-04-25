@@ -113,6 +113,13 @@ jobs:
           --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
           2>&1 | tee pytest.log
 
+    - name: Upload Test Log
+      uses: actions/upload-artifact@v4
+      if: success() || failure()
+      with:
+        name: test-log-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        path: pytest.log
+
     - name: Upload Test Report Models
       uses: actions/upload-artifact@v4
       if: success() || failure()
