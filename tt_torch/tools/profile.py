@@ -16,7 +16,7 @@ def profile(
 ):
     profiler = Profiler(output_filename, port)
     profiler.assert_perf_build()
-    profiler.setup_tracy_server()
+    tracy_port = profiler.setup_tracy_server()
 
     # Test process must NOT run in main process, (i.e. via pytest.main) or else tracy capture will deadlock with main
 
@@ -24,8 +24,16 @@ def profile(
     #   initializes a tracy client, potentially something in the initialization of tt-metal or tt-mlir that is inadvertently executed.
     #   This could even be a header import from way down in the stack.
 
+    # The TRACY_PORT env variable is set in setup_tracy_server.
+
+    env_vars = dict(os.environ)
+    env_vars["TRACY_PORT"] = tracy_port
+    env_vars["TT_METAL_DEVICE_PROFILER"] = "1"
+    env_vars["TT_METAL_CLEAR_L1"] = "1"
+    env_vars["TT_METAL_DEVICE_PROFILER_DISPATCH"] = "0"
+
     testProcess = subprocess.Popen(
-        [test_command], shell=True, env=os.environ.copy(), preexec_fn=os.setsid
+        [test_command], shell=True, env=env_vars, preexec_fn=os.setsid
     )
 
     def signal_handler(sig, frame):
