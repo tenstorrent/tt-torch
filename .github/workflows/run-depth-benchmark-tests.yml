@@ -21,7 +21,7 @@ env:
 
 jobs:
   tests:
-    timeout-minutes: 500
+    timeout-minutes: 550
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -104,6 +104,7 @@ jobs:
         ls -l ${{ steps.strings.outputs.work-dir }}
 
     - name: Run Execution Benchmark Tests
+      timeout-minutes: ${{matrix.group.t-o}}
       env:
         HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
         TORCH_HOME: ${{ env.DOCKER_CACHE_ROOT }}/torch
@@ -114,7 +115,7 @@ jobs:
         set +e
         mkdir -p ${{ steps.strings.outputs.work-dir }}/pytest-logs
 
-        echo "Matrix group ${{ matrix.group.name }} runs-on ${{ matrix.group.runs-on }} with index ${{ matrix.group.group-id }}"
+        echo "Matrix group ${{ matrix.group.name }} runs-on ${{ matrix.group.runs-on }} with index ${{ matrix.group.group-id }} and timeout ${{ matrix.group.t-o }} minutes."
 
         # Read the JSON file and extract the per-matrix testlist assigned to this runner (from its group-id)
         testlist=$(cat ${{ steps.strings.outputs.matrix-json }} | jq ".[${{ matrix.group.group-id }}]")

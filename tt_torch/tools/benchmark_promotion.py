@@ -12,6 +12,8 @@ import os
 import pprint
 import json
 
+MAXIMUM_JOB_TIMEOUT_MINUTES = 500  # 500 minutes maximum per-job timeout
+
 
 def enumerate_all_tests(filter_full_eval=True):
     test_dir = "tests/models"
@@ -213,9 +215,28 @@ def generate_formatted_test_matrix_from_partitions(
     partitions, base_name="bmk", runs_on="wormhole_b0"
 ):
     matrix = []
-    splits = []
+    splits = []  # 65K limit on string size
     for i, partition in enumerate(partitions):
         job_name = f"{base_name}_{i}"
+
+        # test duration is reported in seconds
+        expected_duration_s = 0
+        for testcase in partition:
+            expected_duration_s += testcase["test-duration"]
+
+        # Simplified timeout logic - if a test is expected to take less than 30 minutes, set the timeout to 1 hour.
+        #   Otherwise, if there is no known duration or if the duration exceeds 30 minutes, set it to the MAX_TIMEOUT of 500m
+
+        timeout_saturation_threshold_s = 30 * 60
+        actual_timeout = (
+            MAXIMUM_JOB_TIMEOUT_MINUTES
+            if (
+                expected_duration_s < 0
+                or expected_duration_s > timeout_saturation_threshold_s
+            )
+            else 60
+        )
+
         # Append the test name to the job name for quarantined tests
         if len(partition) == 1:
             # sanitize partition names.
@@ -232,9 +253,11 @@ def generate_formatted_test_matrix_from_partitions(
                 "runs-on": runs_on,
                 "name": job_name,
                 "group-id": i,  # zero indexed
+                "t-o": actual_timeout,  # timeout in minutes, for timeout-minutes field
             }
         )
-    # we cannot pass the matrix JSON string directly as a job output due to output size limits
+
+    # we cannot pass the matrix JSON string directly as a job output due to output string size limits
     return json.dumps(matrix), json.dumps(splits)
 
 
