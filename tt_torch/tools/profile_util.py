@@ -18,7 +18,7 @@ import re
 class Profiler:
     DEFAULT_OUTPUT_FILENAME = "device_ops_perf_trace.csv"
     port = 8086
-    
+
     @staticmethod
     def get_ttmetal_home_path():
         return os.environ.get(
@@ -26,7 +26,9 @@ class Profiler:
             "third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal",
         )
 
-    def __init__(self, output_filename: str = DEFAULT_OUTPUT_FILENAME, port:int = 8086):
+    def __init__(
+        self, output_filename: str = DEFAULT_OUTPUT_FILENAME, port: int = 8086
+    ):
         self.tracy_capture_tool_path = (
             f"{self.get_ttmetal_home_path()}/tools/profiler/bin/capture-release"
         )
@@ -54,7 +56,7 @@ class Profiler:
 
         FileManager.remove_file(self.tracy_ops_times_file_path)
         FileManager.remove_file(self.tracy_ops_data_file_path)
-        
+
         self.port = port
 
     def check_install_tt_metal_tool_binaries(self):
@@ -157,7 +159,7 @@ class Profiler:
                     result = try_bind(port)
                     if result:
                         return result
-                    
+
             # Try binding to the specified port
             else:
                 return try_bind(self.port, do_raise=True)
@@ -173,14 +175,14 @@ class Profiler:
         os.environ["TT_METAL_DEVICE_PROFILER"] = "1"
         os.environ["TT_METAL_CLEAR_L1"] = "1"
         os.environ["TT_METAL_DEVICE_PROFILER_DISPATCH"] = "0"
-        
+
         env_vars = dict(os.environ)
         env_vars["TRACY_PORT"] = port
 
         tracy_capture_tool_command = (
             f"{self.tracy_capture_tool_path} -o {self.tracy_file_path} -f -p {port}"
         )
-        
+
         self.tracy_capture_tool_process = subprocess.Popen(
             tracy_capture_tool_command, shell=True  # ,env=os.environ.copy()
         )
@@ -191,9 +193,11 @@ class Profiler:
         try:
             # block until tracy capture tool exits with T/O limit.
             # this should not take long as the client should have exited and the capture tool just needs to write out the tracedump
-            tracy_exit_start_time = time.time() 
+            tracy_exit_start_time = time.time()
             self.tracy_capture_tool_process.communicate(timeout=60)
-            print(f"Tracy capture tool has exited after {time.time() - tracy_exit_start_time} seconds.")
+            print(
+                f"Tracy capture tool has exited after {time.time() - tracy_exit_start_time} seconds."
+            )
         except subprocess.TimeoutExpired as e:
             self.tracy_capture_tool_process.terminate()
             self.tracy_capture_tool_process.communicate()
@@ -243,9 +247,9 @@ class Profiler:
 
     def post_process_ops(self):
         # Add post-processing steps to insert location data into the ops_perf data file
-        
+
         loc_pattern = r'loc\(fused\[.*?, "([^"]+)"\]\)'
-        
+
         with open(self.profiler_report_csv_path, "r") as perf_file:
             perf_reader = csv.DictReader(perf_file)
             headers = ["LOC"] + list(perf_reader.fieldnames) + ["Raw LOC"]
@@ -268,15 +272,17 @@ class Profiler:
                         # Get the location data from the previous message and add it as new data for the perf_data (as a new col)
                         if len(perf_data) > ops_index:
                             perf_data[ops_index]["Raw LOC"] = prev
-                            
+
                             loc_match = re.search(loc_pattern, prev)
-                            perf_data[ops_index]["LOC"] = loc_match.group(1) if loc_match else "Unknown"
+                            perf_data[ops_index]["LOC"] = (
+                                loc_match.group(1) if loc_match else "Unknown"
+                            )
                             ops_index += 1
                 else:
                     prev = message
             perf_writer = csv.DictWriter(perf_file, fieldnames=headers)
             perf_writer.writeheader()
-            
+
             for row in perf_data:
                 perf_writer.writerow(row)
 
@@ -288,7 +294,7 @@ class Profiler:
         ) as report_file:
             perf_reader = csv.DictReader(perf_file)
             headers = perf_reader.fieldnames
-                                    
+
             ops_writer = csv.DictWriter(report_file, headers)
             ops_writer.writeheader()
             for row in perf_reader:
