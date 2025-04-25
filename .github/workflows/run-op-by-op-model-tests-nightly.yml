@@ -252,6 +252,7 @@ jobs:
           fi
         done
 
+        cp pytest.log full_job_output.log
 
         # If any test failed, exit nonzero to mark the job as failed
         if [ $failures -ne 0 ]; then
@@ -281,6 +282,13 @@ jobs:
         path: ${{ steps.strings.outputs.test-output-dir }}/${{ matrix.build.name }}_${{ steps.fetch-job-id.outputs.job_id }}.tar
 
     - name: Upload full logs
+      if: success() || failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: full-logs-nightly-${{ matrix.build.name }}
+        path: full_job_output.log
+
+    - name: Upload logs for bisect
       if: success() || failure()
       uses: actions/upload-artifact@v4
       with:
