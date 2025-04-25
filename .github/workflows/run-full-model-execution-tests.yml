@@ -40,7 +40,6 @@ jobs:
             runs-on: wormhole_b0, name: "eval_2", tests: "
                   tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]
                   tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval]
-                  tests/models/MobileNetV2/test_MobileNetV2_onnx.py::test_MobileNetV2_onnx[full-eval]
                   tests/models/openpose/test_openpose_v2.py::test_openpose_v2[full-eval]
                   tests/models/resnet/test_resnet.py::test_resnet[full-eval]
                   tests/models/resnet50/test_resnet50.py::test_resnet[full-eval]
@@ -93,16 +92,17 @@ jobs:
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-wide_resnet101_2]
             "
           },
+          # Takes ~40 minutes
           {
             runs-on: wormhole_b0, name: "eval_6", tests: "
-                tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b0-eval]
-                tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b1-eval]
-                tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b2-eval]
-                tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b3-eval]
-                tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b4-eval]
-                tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b5-eval]
-                tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b6-eval]
-                tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b7-eval]
+                tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b0-eval]
+                tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b1-eval]
+                tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b2-eval]
+                tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b3-eval]
+                tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b4-eval]
+                tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b5-eval]
+                tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b6-eval]
+                tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b7-eval]
 
             "
           },

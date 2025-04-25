@@ -44,7 +44,6 @@ class ThisTester(OnnxModelTester):
 def test_MobileNetV2_onnx(record_property, mode, op_by_op):
     model_name = "MobileNetV2_onnx"
     cc = CompilerConfig()
-    cc.compile_depth = CompileDepth.STABLEHLO
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
