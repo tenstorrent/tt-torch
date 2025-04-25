@@ -1,11 +1,11 @@
-# SPDX-FileCopyrightText: © 2025 Tenstorrent Inc.
-
+# SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
+#
 # SPDX-License-Identifier: Apache-2.0
 
 
 import torch
 import torch.nn as nn
-from tests.models.yolov4.src.resblock import ResBlock
+from .resblock import ResBlock
 
 
 class Mish(torch.nn.Module):
@@ -17,26 +17,28 @@ class Mish(torch.nn.Module):
         return x
 
 
-class DownSample4(nn.Module):
+class DownSample5(nn.Module):
     def __init__(self):
         super().__init__()
-        self.c1 = nn.Conv2d(256, 512, 3, 2, 1, bias=False)
-        self.b1 = nn.BatchNorm2d(512)
+        self.c1 = nn.Conv2d(512, 1024, 3, 2, 1, bias=False)
+        self.b1 = nn.BatchNorm2d(1024)
         self.mish = Mish()
 
-        self.c2 = nn.Conv2d(512, 256, 1, 1, 0, bias=False)
-        self.b2 = nn.BatchNorm2d(256)
+        self.c2 = nn.Conv2d(1024, 512, 1, 1, bias=False)
+        self.b2 = nn.BatchNorm2d(512)
 
-        self.c3 = nn.Conv2d(512, 256, 1, 1, 0, bias=False)
-        self.b3 = nn.BatchNorm2d(256)
+        self.c3 = nn.Conv2d(1024, 512, 1, 1, bias=False)
+        self.b3 = nn.BatchNorm2d(512)
 
-        self.res = ResBlock(256, 8)
+        self.res = ResBlock(512, 4)
 
-        self.c4 = nn.Conv2d(256, 256, 1, 1, 0, bias=False)
-        self.b4 = nn.BatchNorm2d(256)
+        self.c4 = nn.Conv2d(512, 512, 1, 1, bias=False)
+        self.b4 = nn.BatchNorm2d(512)
+        self.mish = Mish()
 
-        self.c5 = nn.Conv2d(512, 512, 1, 1, 0, bias=False)
-        self.b5 = nn.BatchNorm2d(512)
+        self.c5 = nn.Conv2d(1024, 1024, 1, 1, bias=False)
+        self.b5 = nn.BatchNorm2d(1024)
+        self.mish = Mish()
 
     def forward(self, input: torch.Tensor):
         x1 = self.c1(input)
