@@ -10,17 +10,22 @@ This repository contains model implementations that are used for testing and ben
 
 ```
 tt_forge_models/
-├── base.py             # Base interface for all model loaders
-├── yolov4/             # YOLOv4 model implementation
-│   ├── __init__.py     # Exports YOLOv4Loader
-│   ├── loader.py       # Implements ForgeModel interface
-│   ├── yolov4.py       # Main model implementation
-│   ├── downsample1.py  # Model components
-│   └── ...
+├── base.py                 # Base interface for all model loaders
+├── yolov4/                 # YOLOv4 model implementation
+│   ├── __init__.py         # Package initialization
+│   ├── loader.py           # Public interface
+│   └── src/                # Model implementation details
+│       ├── yolov4.py       # Main model implementation
+│       ├── downsample1.py  # Model components
+│       └── ...
 ├── yolov3/
-│   └── ...
+│   ├── __init__.py
+│   ├── loader.py
+│   └── src/
 ├── oft/
-│   └── ...
+│   ├── __init__.py
+│   ├── loader.py
+│   └── src/
 └── ...
 ```
 
@@ -46,24 +51,32 @@ outputs = model(inputs)
 To add a new model:
 
 1. Create a new directory for your model
-2. Implement the model files
-3. Create a loader that extends `ForgeModel` base class
-4. Implement `load_model()` and `load_inputs()` methods
+2. Create a `loader.py` file that implements the ForgeModel interface
+3. Create a `src/` directory for your model implementation files
+4. Implement `load_model()` and `load_inputs()` methods in your loader
 
 Example for a new model:
 
 ```python
+# mymodel/loader.py
 from tt_forge_models.base import ForgeModel
+from .src.model import MyModel
 
-class NewModelLoader(ForgeModel):
+class MyModelLoader(ForgeModel):
     @classmethod
-    def load_model(cls, **kwargs):
-        # Load and return model instance
-        pass
+    def load_model(cls, dtype=None, **kwargs):
+        """Load and return the model instance."""
+        model = MyModel(**kwargs)
+
+        if dtype is not None:
+            model = model.to(dtype)
+
+        return model
 
     @classmethod
-    def load_inputs(cls, **kwargs):
-        # Load and return sample inputs
+    def load_inputs(cls, dtype=None, **kwargs):
+        """Load and return sample inputs for the model."""
+        # Implementation here
         pass
 ```
 
