@@ -1,15 +1,16 @@
-# SPDX-FileCopyrightText: © 2025 Tenstorrent Inc.
-
+# SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
+#
 # SPDX-License-Identifier: Apache-2.0
+
 # Reference: https://github.com/tenstorrent/tt-metal/tree/main/models/demos/yolov4/reference
 
-from tests.models.yolov4.src.downsample1 import DownSample1
-from tests.models.yolov4.src.downsample2 import DownSample2
-from tests.models.yolov4.src.downsample3 import DownSample3
-from tests.models.yolov4.src.downsample4 import DownSample4
-from tests.models.yolov4.src.downsample5 import DownSample5
-from tests.models.yolov4.src.neck import Neck
-from tests.models.yolov4.src.head import Head
+from .downsample1 import DownSample1
+from .downsample2 import DownSample2
+from .downsample3 import DownSample3
+from .downsample4 import DownSample4
+from .downsample5 import DownSample5
+from .neck import Neck
+from .head import Head
 
 import torch
 import torch.nn as nn
