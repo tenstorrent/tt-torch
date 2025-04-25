@@ -261,10 +261,16 @@ class Executor:
                 # some ops return a tuple of tensors as output (e.g. max_pool_2d_with_indices)
                 # we expect to only use the first, though this may be changed in the future
                 elif isinstance(golden, (tuple, list)) and len(golden) > 1:
-                    golden = golden[0]
                     print(
                         f"\033[33m[WARNING] {node.name} has {len(golden)} outputs, but we can only get one from runtime.\033[0m"
                     )
+
+                    if "var_mean" in node.name:
+                        # var_mean returns (var, mean) while hardware tensor (mean)
+                        golden = golden[1]
+                    else:
+                        golden = golden[0]
+
                 cache_entry = RuntimeIntermediate(node, golden)
                 self.compiler_config.runtime_intermediate_cache[node.name] = cache_entry
                 print(f"Caching runtime intermediate for {node.name}")

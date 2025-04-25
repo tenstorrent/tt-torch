@@ -283,6 +283,11 @@ class ModelTester:
             golden_tensors = self._extract_outputs(golden)
             output_tensors = self._extract_outputs(outputs)
 
+        print("MODEL OUTPUT INFO")
+        for i in range(len(golden_tensors)):
+            print("Golden tensor shape:", golden_tensors[i].shape)
+            print("Output tensor shape:", output_tensors[i].shape)
+
         pccs, atols, passed_pcc, passed_atol = verify_against_golden(
             golden_tensors,
             output_tensors,
@@ -451,6 +456,28 @@ class ModelTester:
         op_pcc_fail_threshold = float(os.environ.get("RTI_PCC_FAIL_THRESH", 0.99))
         last_row = None
         first_failing_row = None
+        # ANSI color codes for terminal output
+        RED = "\033[91m"
+        YELLOW = "\033[93m"
+        GREEN = "\033[92m"
+        RESET = "\033[0m"
+
+        # Function to colorize PCC values
+        def colorize_pcc(value):
+            if isinstance(value, (int, float)):
+                if value < 0.95:
+                    return f"{RED}{value:<8.5g}{RESET}"
+                elif value < 0.99:
+                    return f"{YELLOW}{value:<8.5g}{RESET}"
+                else:
+                    return f"{GREEN}{value:<8.5g}{RESET}"
+            return value
+
+        # Helper function to unpack single-element lists/tuples
+        def unpack(value):
+            if isinstance(value, (list, tuple)) and len(value) == 1:
+                return value[0]
+            return value
 
         header = [
             "NodeName",
@@ -463,12 +490,8 @@ class ModelTester:
         ]
         # Write the header
         csv_writer.writerow(header)
-
-        # Helper function to unpack single-element lists/tuples
-        def unpack(value):
-            if isinstance(value, (list, tuple)) and len(value) == 1:
-                return value[0]
-            return value
+        colored_output = []
+        colored_output.append(",".join(header))
 
         # Write each intermediate's metrics as CSV; sanitize out commas
         for _, intermediate in self.compiler_config.runtime_intermediate_cache.items():
@@ -488,6 +511,21 @@ class ModelTester:
             ]
             csv_writer.writerow(row)
 
+            # Create colored version of the row for terminal display
+            colored_row = row.copy()
+            colored_row[0] = f"{colored_row[0]:<30}"
+            colored_row[1] = colorize_pcc(row[1])  # PCC
+            colored_row[3] = f"{colored_row[3][:30]:<30}"  # error message
+            colored_row[4] = colorize_pcc(row[4])  # Flattened PCC
+            colored_row[6] = f"{colored_row[6][:30]:<30}"  # flattened error message
+
+            colored_row = [
+                f"{el:<8.5g}" if isinstance(el, (int, float)) else el
+                for el in colored_row
+            ]
+
+            colored_output.append("\t".join([str(el) for el in colored_row]))
+
             # Update the last row
             last_row = row
 
@@ -500,9 +538,16 @@ class ModelTester:
                 if first_failing_row is None:
                     first_failing_row = row
 
+        # Print machine readable output
         print("[Start Intermediate Verification Report]")
         print(output.getvalue())
         print("[End Intermediate Verification Report]")
+
+        # Print colored output for human readability
+        print("\n[Colored Intermediate Verification Report]")
+        for line in colored_output:
+            print(line)
+        print("[End Colored Intermediate Verification Report]\n")
 
         # Print Summary Info
         print("[Intermediate Verification Summary]")
