@@ -114,16 +114,18 @@ def run_torchvision_image_classification_test(
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    # TODO Enable checking - https://github.com/tenstorrent/tt-torch/issues/491
+    # TODO Enable checking (vit_h_14) - https://github.com/tenstorrent/tt-torch/issues/491
+    # TODO Enable checking (swin_b) - https://github.com/tenstorrent/tt-torch/issues/663
     model_name = model_info[0]
-    assert_pcc = False if model_name in ["vit_h_14"] else True
+    assert_pcc = False if model_name in ["vit_h_14", "swin_b"] else True
+    assert_atol = False if model_name in ["swin_b"] else True
 
     tester = ThisTester(
         model_info,
         mode,
         required_pcc=0.97,
         assert_pcc=assert_pcc,
-        assert_atol=False,
+        assert_atol=assert_atol,
         compiler_config=cc,
         record_property_handle=record_property,
         model_group=model_group,

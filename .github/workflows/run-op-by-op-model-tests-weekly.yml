@@ -54,6 +54,11 @@ jobs:
               "
           },
           {
+            runs-on: wormhole_b0, name: "gpt", tests: "
+              tests/models/gpt2/test_gpt2.py::test_gpt2
+              "
+          },
+          {
             runs-on: wormhole_b0, name: "llama", tests: "
               tests/models/llama/test_llama_3b.py::test_llama_3b
               "
@@ -86,6 +91,11 @@ jobs:
               "
           },
           {
+            runs-on: wormhole_b0, name: "clip", tests: "
+              tests/models/clip/test_clip.py::test_clip
+              "
+          },
+          {
             runs-on: wormhole_b0, name: "timm", tests: "
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[op_by_op_torch-eval-hrnet_w18.ms_aug_in1k]
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[op_by_op_torch-eval-dla34.in1k]
@@ -98,6 +108,11 @@ jobs:
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[op_by_op_torch-eval-tf_efficientnet_lite3.in1k]
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[op_by_op_torch-eval-tf_efficientnet_lite4.in1k]
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[op_by_op_torch-eval-mixer_b16_224.goog_in21k]
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "xglm", tests: "
+              tests/models/xglm/test_xglm.py::test_xglm
               "
           },
           {
@@ -165,6 +180,7 @@ jobs:
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[op_by_op_torch-eval-wide_resnet101_2]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[op_by_op_torch-eval-regnet_y_32gf]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[op_by_op_torch-eval-regnet_x_32gf]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[op_by_op_torch-eval-swin_b]
               "
           },
           {
