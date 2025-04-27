@@ -111,6 +111,7 @@ class Op:
         self.output_shapes = []
         self.output_tensors = []
         self.frontend = "tt-torch"
+        self.backend = "torch"
         self.model_group = ""
         self.global_op_idx = 0
 
@@ -213,6 +214,7 @@ class Op:
             "framework_op_name": self.framework_op_name,
             "torch_name": self.framework_op_name,  # For backward compatibility
             "frontend": self.frontend,
+            "backend": self.backend,
             "model_name": self.model_name,
             "model_group": self.model_group,
             "global_op_idx": self.global_op_idx,

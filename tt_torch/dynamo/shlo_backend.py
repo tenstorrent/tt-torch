@@ -151,6 +151,7 @@ class StablehloOp(Op):
         self.op_id = op_id
         self.compilation_status = OpCompilationStatus.CREATED_GRAPH
         self.original_shlo = original_shlo
+        self.backend = "stablehlo"
         self.op_name = self._extract_op_name()
         self.input_shapes = self._extract_input_shapes()
         self.unique_key = ""
@@ -197,6 +198,7 @@ class StablehloOp(Op):
 
         return {
             "frontend": self.frontend,
+            "backend": self.backend,
             "model_name": self.model_name,
             "model_group": self.model_group,
             "global_op_idx": self.global_op_idx,
