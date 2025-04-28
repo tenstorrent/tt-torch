@@ -226,7 +226,7 @@ jobs:
           counter=$((counter + 1))
 
           echo "====== BEGIN LOG: $test_case ======" >> pytest.log
-          pytest -svv "$test_case" --op_by_op_torch 2>&1 | tee -a pytest.log
+          pytest -svv "$test_case" --op_by_op_torch >> pytest.log 2>&1
           exit_code=$?
 
           echo "====== END LOG: $test_case ========" >> pytest.log
