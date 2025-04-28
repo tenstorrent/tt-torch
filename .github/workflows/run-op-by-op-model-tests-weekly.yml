@@ -24,43 +24,46 @@ jobs:
         build: [
           {
             runs-on: wormhole_b0, name: "qwen", tests: "
-              tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm
+              tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[op_by_op_torch-Qwen/Qwen2.5-1.5B-eval]
               "
           },
           {
             runs-on: wormhole_b0, name: "albert", tests: "
-              tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm
-              tests/models/albert/test_albert_token_classification.py::test_albert_token_classification
-              tests/models/albert/test_albert_sequence_classification.py::test_albert_sequence_classification
-              tests/models/albert/test_albert_question_answering.py::test_albert_question_answering
+              tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[op_by_op_torch-albert/albert-base-v2-eval]
+              tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[op_by_op_torch-albert/albert-large-v2-eval]
+              tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[op_by_op_torch-albert/albert-xlarge-v2-eval]
+              tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[op_by_op_torch-albert/albert-xxlarge-v2-eval]
+              tests/models/albert/test_albert_token_classification.py::test_albert_token_classification[op_by_op_torch-albert/albert-base-v2-eval]
+              tests/models/albert/test_albert_sequence_classification.py::test_albert_sequence_classification[op_by_op_torch-textattack/albert-base-v2-imdb-eval]
+              tests/models/albert/test_albert_question_answering.py::test_albert_question_answering[op_by_op_torch-twmkn9/albert-base-v2-squad2-eval]
               "
           },
           {
             runs-on: wormhole_b0, name: "autoencoder", tests: "
-              tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear
+              tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[op_by_op_torch-eval]
               "
           },
           {
             runs-on: wormhole_b0, name: "bert", tests: "
-              tests/models/distilbert/test_distilbert.py::test_distilbert
-              tests/models/bert/test_bert.py::test_bert
-              tests/models/bert/test_bert_turkish.py::test_bert_turkish
-              tests/models/squeeze_bert/test_squeeze_bert.py::test_squeeze_bert
+              tests/models/distilbert/test_distilbert.py::test_distilbert[op_by_op_torch-distilbert-base-uncased-eval]
+              tests/models/bert/test_bert.py::test_bert[op_by_op_torch-eval]
+              tests/models/bert/test_bert_turkish.py::test_bert_turkish[op_by_op_torch-eval]
+              tests/models/squeeze_bert/test_squeeze_bert.py::test_squeeze_bert[op_by_op_torch-eval]
               "
           },
           {
             runs-on: wormhole_b0, name: "bloom", tests: "
-              tests/models/bloom/test_bloom.py::test_bloom
+              tests/models/bloom/test_bloom.py::test_bloom[op_by_op_torch-eval]
               "
           },
           {
             runs-on: wormhole_b0, name: "gpt", tests: "
-              tests/models/gpt2/test_gpt2.py::test_gpt2
+              tests/models/gpt2/test_gpt2.py::test_gpt2[op_by_op_torch-eval]
               "
           },
           {
             runs-on: wormhole_b0, name: "llama", tests: "
-              tests/models/llama/test_llama_3b.py::test_llama_3b
+              tests/models/llama/test_llama_3b.py::test_llama_3b[op_by_op_torch-meta-llama/Llama-3.2-3B-eval]
               "
           },
           {
@@ -76,23 +79,23 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "openpose", tests: "
-              tests/models/openpose/test_openpose_v2.py::test_openpose_v2
+              tests/models/openpose/test_openpose_v2.py::test_openpose_v2[op_by_op_torch-eval]
               "
           },
           {
             runs-on: wormhole_b0, name: "resnet", tests: "
-              tests/models/resnet50/test_resnet50.py::test_resnet
-              tests/models/resnet/test_resnet.py::test_resnet
+              tests/models/resnet50/test_resnet50.py::test_resnet[op_by_op_torch-eval]
+              tests/models/resnet/test_resnet.py::test_resnet[op_by_op_torch-eval]
               "
           },
           {
             runs-on: wormhole_b0, name: "opt", tests: "
-              tests/models/opt/test_opt.py::test_opt
+              tests/models/opt/test_opt.py::test_opt[op_by_op_torch-eval]
               "
           },
           {
             runs-on: wormhole_b0, name: "clip", tests: "
-              tests/models/clip/test_clip.py::test_clip
+              tests/models/clip/test_clip.py::test_clip[op_by_op_torch-eval]
               "
           },
           {
@@ -112,56 +115,57 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "xglm", tests: "
-              tests/models/xglm/test_xglm.py::test_xglm
+              tests/models/xglm/test_xglm.py::test_xglm[op_by_op_torch-eval]
               "
           },
           {
             runs-on: wormhole_b0, name: "vision-misc", tests: "
-              tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io
-              tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer
-              tests/models/mnist/test_mnist.py::test_mnist_train
-              tests/models/hardnet/test_hardnet.py::test_hardnet
+              tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io[op_by_op_torch-eval]
+              tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[op_by_op_torch-eval]
+              tests/models/mnist/test_mnist.py::test_mnist_train[op_by_op_torch-eval]
+              tests/models/hardnet/test_hardnet.py::test_hardnet[op_by_op_torch-eval]
               "
           },
           {
             runs-on: wormhole_b0, name: "vision-transformers", tests: "
-              tests/models/segformer/test_segformer.py::test_segformer
-              tests/models/deit/test_deit.py::test_deit
-              tests/models/beit/test_beit_image_classification.py::test_beit_image_classification
-              tests/models/detr/test_detr.py::test_detr
+              tests/models/segformer/test_segformer.py::test_segformer[op_by_op_torch-eval]
+              tests/models/deit/test_deit.py::test_deit[op_by_op_torch-facebook/deit-base-patch16-224-eval]
+              tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[op_by_op_torch-microsoft/beit-base-patch16-224-eval]
+              tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[op_by_op_torch-microsoft/beit-large-patch16-224-eval]
+              tests/models/detr/test_detr.py::test_detr[op_by_op_torch-eval]
               "
           },
           {
             runs-on: wormhole_b0, name: "yolo", tests: "
-              tests/models/yolov3/test_yolov3.py::test_yolov3
-              tests/models/yolov4/test_yolov4.py::test_yolov4
-              tests/models/yolov5/test_yolov5.py::test_yolov5
-              tests/models/yolos/test_yolos.py::test_yolos
+              tests/models/yolov3/test_yolov3.py::test_yolov3[op_by_op_torch-eval]
+              tests/models/yolov4/test_yolov4.py::test_yolov4[op_by_op_torch-eval]
+              tests/models/yolov5/test_yolov5.py::test_yolov5[op_by_op_torch-eval]
+              tests/models/yolos/test_yolos.py::test_yolos[op_by_op_torch-eval]
               "
           },
           {
             runs-on: wormhole_b0, name: "mgp-str", tests: "
-              tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base
+              tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base[op_by_op_torch-eval]
               "
           },
           {
             runs-on: wormhole_b0, name: "musicgen_small", tests: "
-              tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small
+              tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small[op_by_op_torch-eval]
               "
           },
           {
             runs-on: wormhole_b0, name: "dpr", tests: "
-              tests/models/dpr/test_dpr.py::test_dpr
+              tests/models/dpr/test_dpr.py::test_dpr[op_by_op_torch-eval]
               "
           },
           {
             runs-on: wormhole_b0, name: "roberta", tests: "
-              tests/models/roberta/test_roberta.py::test_roberta
+              tests/models/roberta/test_roberta.py::test_roberta[op_by_op_torch-eval]
               "
           },
           {
             runs-on: wormhole_b0, name: "whisper", tests: "
-              tests/models/whisper/test_whisper.py::test_whisper
+              tests/models/whisper/test_whisper.py::test_whisper[op_by_op_torch-eval]
               "
           },
           {
@@ -196,7 +200,7 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "stable-diffusion-unet", tests: "
-              tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet
+              tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet[op_by_op_torch-eval]
               "
           },
           {
@@ -290,7 +294,7 @@ jobs:
 
           pytest_log="test_${counter}.log"
 
-          pytest -svv "$test_case" --op_by_op_torch > "$pytest_log" 2>&1
+          pytest -svv "$test_case" > "$pytest_log" 2>&1
           exit_code=$?
 
           echo "====== BEGIN LOG: $test_case ======" >> full_job_output.log

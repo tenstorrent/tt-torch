@@ -288,7 +288,7 @@ def apply_non_zero_conditional_format(worksheet, row, col, compile_status, forma
 
 
 # Create summary worksheet with per-model compilation status.
-# models_info - list of tuples containing (model_name, model_group)
+# models_info - list of tuples containing (model_name, model_group, backend)
 def create_summary_worksheet(workbook, models_info):
 
     print(f"Creating summary for {len(models_info)} models")
@@ -311,7 +311,7 @@ def create_summary_worksheet(workbook, models_info):
     worksheet.write_row(
         2,
         0,
-        ["Model / Compilation Status", "Group", 0, 1, 2, 3, 4, 5, 6, 7],
+        ["Model / Compilation Status", "Group", "Backend", 0, 1, 2, 3, 4, 5, 6, 7],
         bold_format,
     )
     worksheet.freeze_panes(3, 0)  # Freeze rows 0,1,2
@@ -330,43 +330,48 @@ def create_summary_worksheet(workbook, models_info):
 
     # Merge headers for columns that will be populated per model.
     worksheet.merge_range(
-        2, 13, 2, 14, "Compiled to TTNN (Status 6,7)", centered_format
+        2, 14, 2, 15, "Compiled to TTNN (Status 6,7)", centered_format
     )
     worksheet.merge_range(
-        2, 16, 2, 17, "Executed on Device (Status 7)", centered_format
+        2, 17, 2, 18, "Executed on Device (Status 7)", centered_format
     )
 
     row = 3
-    for model_name, model_group in models_info:
+    for model_name, model_group, backend in models_info:
 
+        # Get backend from model sheet
         worksheet.write(row, 1, model_group)
         worksheet.set_column(1, 1, 10)
 
+        worksheet.write(row, 2, backend)
+        worksheet.set_column(2, 2, 10)
+
+        col_id = "G"  # Compile Status column
         for compile_status in range(0, 8):
             # baking dynamic references
-            compile_status_formula = f'=COUNTIF(INDIRECT("\'" & "{model_name}" & "\'!F:F"), {compile_status})'
-            worksheet.write(row, 2 + compile_status, compile_status_formula)
+            compile_status_formula = f'=COUNTIF(INDIRECT("\'" & "{model_name}" & "\'!{col_id}:{col_id}"), {compile_status})'
+            worksheet.write(row, 3 + compile_status, compile_status_formula)
             apply_non_zero_conditional_format(
-                worksheet, row, 2 + compile_status, compile_status, color_formats
+                worksheet, row, 3 + compile_status, compile_status, color_formats
             )
 
-        # Calculate Total Ops for the current row by summing compilation status columns (B to I)
+        # Calculate Total Ops for the current row by summing compilation status columns (D to K)
         start_cell = xl_rowcol_to_cell(
-            row, 2
+            row, 3
         )  # first compilation status cell for current row
         end_cell = xl_rowcol_to_cell(
-            row, 10
+            row, 11
         )  # last compilation status cell for current row
         total_ops_formula = f"=SUM({start_cell}:{end_cell})"
-        worksheet.write(2, 11, "Total Ops Per Model")
-        worksheet.write(row, 11, total_ops_formula)
-        worksheet.set_column(11, 11, 15)
-        worksheet.set_column(12, 12, 2)
+        worksheet.write(2, 12, "Total Ops Per Model")
+        worksheet.write(row, 12, total_ops_formula)
+        worksheet.set_column(12, 12, 15)
+        worksheet.set_column(13, 13, 2)
 
         # Compute a summary of ops compiling to TTNN per model
-        compile_status_6_cell = xl_rowcol_to_cell(row, 8)
-        compile_status_7_cell = xl_rowcol_to_cell(row, 9)
-        total_ops_cell = xl_rowcol_to_cell(row, 11)
+        compile_status_6_cell = xl_rowcol_to_cell(row, 9)
+        compile_status_7_cell = xl_rowcol_to_cell(row, 10)
+        total_ops_cell = xl_rowcol_to_cell(row, 12)
         compiling_formula_percentage = (
             f"=SUM({compile_status_6_cell}:{compile_status_7_cell})/{total_ops_cell}"
         )
@@ -376,16 +381,16 @@ def create_summary_worksheet(workbook, models_info):
             f'TEXT(SUM({compile_status_6_cell}:{compile_status_7_cell}) - {total_ops_cell},"0") & ") "'
         )
         worksheet.write_formula(
-            row, 13, compiling_formula_percentage, percentage_format
+            row, 14, compiling_formula_percentage, percentage_format
         )
-        worksheet.set_column(13, 13, 12)
-        worksheet.write(row, 14, compiling_formula)
-        worksheet.set_column(14, 14, 15)
-        worksheet.set_column(15, 15, 2)
+        worksheet.set_column(14, 14, 12)
+        worksheet.write(row, 15, compiling_formula)
+        worksheet.set_column(15, 15, 15)
+        worksheet.set_column(16, 16, 2)
 
         # Compute a summary of ops executing on silicon per model
-        compile_status_7_cell = xl_rowcol_to_cell(row, 9)
-        total_ops_cell = xl_rowcol_to_cell(row, 11)
+        compile_status_7_cell = xl_rowcol_to_cell(row, 10)
+        total_ops_cell = xl_rowcol_to_cell(row, 12)
         executing_formula_percentage = f"={compile_status_7_cell}/{total_ops_cell}"
         executing_formula = (
             f'=TEXT({compile_status_7_cell},"0") & "/" & '
@@ -393,34 +398,34 @@ def create_summary_worksheet(workbook, models_info):
             f'TEXT({compile_status_7_cell} - {total_ops_cell},"0") & ") "'
         )
         worksheet.write_formula(
-            row, 16, executing_formula_percentage, percentage_format
+            row, 17, executing_formula_percentage, percentage_format
         )
-        worksheet.set_column(16, 16, 12)
-        worksheet.write(row, 17, executing_formula)
-        worksheet.set_column(17, 17, 15)
+        worksheet.set_column(17, 17, 12)
+        worksheet.write(row, 18, executing_formula)
+        worksheet.set_column(18, 18, 15)
 
         # Determine how many ops for model hit unknown error.
-        col_id = "N"  # Compile Error column
+        col_id = "O"  # Compile Error column
         unknown_errors_formula = f'=COUNTIF(INDIRECT("\'" & "{model_name}" & "\'!{col_id}:{col_id}"), "Error message not extracted.")'
-        worksheet.set_column(18, 18, 2)
-        worksheet.set_column(19, 19, 13)
-        worksheet.write(2, 19, "Unknown Errors")
-        worksheet.write(row, 19, unknown_errors_formula)
-        worksheet.set_column(20, 20, 2)
-        apply_non_zero_conditional_format(worksheet, row, 19, 6, color_formats)
+        worksheet.set_column(19, 19, 2)
+        worksheet.set_column(20, 20, 13)
+        worksheet.write(2, 20, "Unknown Errors")
+        worksheet.write(row, 20, unknown_errors_formula)
+        worksheet.set_column(21, 21, 2)
+        apply_non_zero_conditional_format(worksheet, row, 20, 6, color_formats)
 
         # Determine how many ops for model hit timeout error.
-        col_id = "N"  # Compile Error column
+        col_id = "O"  # Compile Error column
         timeout_errors_formula = f'=COUNTIFS(INDIRECT("\'" & "{model_name}" & "\'!{col_id}:{col_id}"), "*Timeout exceeded for op*")'
-        worksheet.set_column(21, 21, 13)
-        worksheet.write(2, 21, "Timeouts")
-        worksheet.write(row, 21, timeout_errors_formula)
-        worksheet.set_column(22, 22, 2)
-        apply_non_zero_conditional_format(worksheet, row, 21, 6, color_formats)
+        worksheet.set_column(22, 22, 13)
+        worksheet.write(2, 22, "Timeouts")
+        worksheet.write(row, 22, timeout_errors_formula)
+        worksheet.set_column(23, 23, 2)
+        apply_non_zero_conditional_format(worksheet, row, 22, 6, color_formats)
 
         # Apply conditional formatting to the percentage columns per model.
-        apply_percentage_conditional_format(worksheet, row, 13, color_formats, True)
-        apply_percentage_conditional_format(worksheet, row, 16, color_formats, True)
+        apply_percentage_conditional_format(worksheet, row, 14, color_formats, True)
+        apply_percentage_conditional_format(worksheet, row, 17, color_formats, True)
 
         # Finished the per-model row now, move to the next.
         row += 1
@@ -431,37 +436,37 @@ def create_summary_worksheet(workbook, models_info):
     row += 1
     worksheet.write(row, 0, "Total Ops per Compile Status")
     for compile_status in range(0, 8):
-        col = 2 + compile_status
+        col = 3 + compile_status
         total_formula = f"=SUM({xl_rowcol_to_cell(data_start_row, col)}:{xl_rowcol_to_cell(data_end_row, col)})"
         worksheet.write(row, col, total_formula)
 
     # Add totals for unknown errors and timeouts
-    total_formula = f"=SUM({xl_rowcol_to_cell(data_start_row, 19)}:{xl_rowcol_to_cell(data_end_row, 19)})"
-    worksheet.write(row, 19, total_formula)
-    total_formula = f"=SUM({xl_rowcol_to_cell(data_start_row, 21)}:{xl_rowcol_to_cell(data_end_row, 21)})"
-    worksheet.write(row, 21, total_formula)
+    total_formula = f"=SUM({xl_rowcol_to_cell(data_start_row, 20)}:{xl_rowcol_to_cell(data_end_row, 20)})"
+    worksheet.write(row, 20, total_formula)
+    total_formula = f"=SUM({xl_rowcol_to_cell(data_start_row, 22)}:{xl_rowcol_to_cell(data_end_row, 22)})"
+    worksheet.write(row, 22, total_formula)
 
     # Add more top-level summaries to the right of existing data
-    worksheet.set_column(23, 23, 25)
-    worksheet.write(2, 23, "Models Total:")
-    worksheet.write(2, 24, len(model_names))
-    worksheet.write(3, 23, "Models Fully Compiling to TTNN:")
+    worksheet.set_column(24, 24, 25)
+    worksheet.write(2, 24, "Models Total:")
+    worksheet.write(2, 25, len(model_names))
+    worksheet.write(3, 24, "Models Fully Compiling to TTNN:")
     worksheet.write_formula(
         3,
-        24,
-        f"=COUNTIF({xl_rowcol_to_cell(3, 13)}:{xl_rowcol_to_cell(3+len(model_names)-1, 13)}, 100%)",
+        25,
+        f"=COUNTIF({xl_rowcol_to_cell(3, 14)}:{xl_rowcol_to_cell(3+len(model_names)-1, 14)}, 100%)",
     )
-    worksheet.write(4, 23, "Models Fully Executing on Device:")
+    worksheet.write(4, 24, "Models Fully Executing on Device:")
     worksheet.write_formula(
         4,
-        24,
-        f"=COUNTIF({xl_rowcol_to_cell(3, 16)}:{xl_rowcol_to_cell(3+len(model_names)-1, 16)}, 100%)",
+        25,
+        f"=COUNTIF({xl_rowcol_to_cell(3, 17)}:{xl_rowcol_to_cell(3+len(model_names)-1, 17)}, 100%)",
     )
 
     # Print the OpCompilationStatus legend to the summary worksheet
-    worksheet.write(6, 23, "OpCompilationStatus Legend")
+    worksheet.write(6, 24, "OpCompilationStatus Legend")
     for status_code, status_name in enumerate(OP_STATUS_NAMES):
-        worksheet.write(8 + status_code, 23, f"{status_code}: {status_name}")
+        worksheet.write(8 + status_code, 24, f"{status_code}: {status_name}")
 
 
 # Generate All Ops summary worksheets (all and those not making it to execute)
@@ -472,9 +477,10 @@ def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=Fals
     # xlsxwriter fails to write anything after 'Compiled Json' field; so it is
     # being written to the last column.
     header = (
-        "Torch Name",
+        "Torch/SHLO Name",
         "Input Shapes",
         "Output Shapes",
+        "Backend",
         "NumOps",
         "Status",
         "Models",
@@ -493,11 +499,11 @@ def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=Fals
     worksheet.freeze_panes(1, 0)
 
     # Set some reasonable column widths for quick visual scanning.
-    worksheet.set_column(0, 0, 37)  # Torch Name
+    worksheet.set_column(0, 0, 37)  # Torch/SHLO Name
     worksheet.set_column(1, 1, 50)  # Input Shapes
     worksheet.set_column(2, 2, 20)  # Output Shapes
-    worksheet.set_column(5, 5, 50)  # Models
-    worksheet.set_column(13, 13, 250)  # Compile Error
+    worksheet.set_column(6, 6, 50)  # Models
+    worksheet.set_column(14, 14, 250)  # Compile Error
 
     row += 1
     torch_ops = {}
@@ -521,6 +527,7 @@ def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=Fals
                 "torch_name": value["torch_name"],
                 "input_shapes": value["input_shapes"],
                 "output_shapes": value["output_shapes"],
+                "backend": value["backend"],
                 "num_ops": value["num_ops"],
                 "status": value["compilation_status"],
                 "pcc": value["pcc"],
@@ -543,6 +550,7 @@ def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=Fals
             num_ops = op["num_ops"]
             input_shapes = extract_shape(op["input_shapes"])
             output_shapes = extract_shape(op["output_shapes"])
+            backend = op["backend"]
             status = op["status"]
             pcc = op["pcc"]
             atol = op["atol"]
@@ -567,6 +575,7 @@ def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=Fals
                 name,
                 input_shapes,
                 output_shapes,
+                backend,
                 num_ops,
                 status,
                 models_str,
@@ -694,11 +703,14 @@ def generate_op_reports_xlsx():
             model_name = test_name + f"_{id}"
             id += 1
 
+        backend = first_value.get("backend", "torch")
+        name_col = "Torch Name" if backend == "torch" else "StableHLO Name"
+
         print(
             f"Processing json ({json_idx}/{total_json_files}) {model_name}", flush=True
         )
 
-        model_list.append((model_name, model_group))
+        model_list.append((model_name, model_group, backend))
         worksheet = workbook.add_worksheet(model_name)
         keys = list(data.keys())
         keys.sort()
@@ -706,9 +718,10 @@ def generate_op_reports_xlsx():
         # xlsxwriter fails to write anything after 'Compiled Json' field; so it
         # is being written to the last column.
         header = (
-            "Torch Name",
+            name_col,
             "Input Shapes",
             "Output Shapes",
+            "Backend",
             "Global Op Idx",
             "NumOps",
             "Status",
@@ -743,6 +756,7 @@ def generate_op_reports_xlsx():
             torch_ops[value["torch_name"]].append(
                 {
                     "torch_name": value["torch_name"],
+                    "backend": value["backend"],
                     "input_shapes": value["input_shapes"],
                     "output_shapes": value["output_shapes"],
                     "num_ops": value["num_ops"],
@@ -861,6 +875,7 @@ def generate_op_reports_xlsx():
                     name,
                     input_shapes,
                     output_shapes,
+                    op["backend"],
                     global_op_idx,
                     num_ops,
                     status,

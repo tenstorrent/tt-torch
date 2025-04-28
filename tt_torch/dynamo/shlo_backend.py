@@ -43,7 +43,7 @@ def generate_random_inputs_for_shlo(module_str):
     args_str = func_match.group(1)
 
     # Match the function arguments
-    args = re.findall(r"%arg\d+:\s+tensor<([^>]+)>", args_str)
+    args = re.findall(r"%arg\d+:\s*tensor<([^>]+)>", args_str)
 
     inputs = []
     for shape_str in args:
@@ -54,7 +54,7 @@ def generate_random_inputs_for_shlo(module_str):
             # If it matches the pattern of dimensions and data type (like 1x784xf32)
             shape_str, dtype_str = shape_dtype_match.groups()
 
-            dims = [int(dim) for dim in shape_str.split("x")]
+            dims = [int(dim) for dim in shape_str.split("x") if dim]
 
             if dtype_str == "f32":
                 inputs.append(torch.randn(dims, dtype=torch.float32))
@@ -151,8 +151,10 @@ class StablehloOp(Op):
         self.op_id = op_id
         self.compilation_status = OpCompilationStatus.CREATED_GRAPH
         self.original_shlo = original_shlo
+        self.backend = "stablehlo"
         self.op_name = self._extract_op_name()
         self.input_shapes = self._extract_input_shapes()
+        self.output_shapes = self._extract_output_shapes()
         self.unique_key = ""
         self.set_unique_key()
 
@@ -162,14 +164,61 @@ class StablehloOp(Op):
         return match.group(0) if match else "unknown_op"
 
     def _extract_input_shapes(self):
-        # Extract shapes handling both f32 and i64 types
+        # Extract shapes handling all data types (f32, i64, bf16, etc.)
         shapes = []
-        # Look for tensor patterns with various types
-        shape_patterns = re.findall(r"tensor<([0-9x]+)x[fi][0-9]+>", self.original_shlo)
+
+        # First check for scalar tensors (no dimensions)
+        scalar_patterns = re.findall(r"tensor<([a-z][a-z0-9]+)>", self.original_shlo)
+        if scalar_patterns:
+            # Found scalar tensors (0D)
+            shapes.append(tuple())  # Empty tuple for scalar
+
+        # Look for tensor patterns with dimensions + any data type
+        shape_patterns = re.findall(
+            r"tensor<([0-9x]+)x[a-z][a-z0-9]+>", self.original_shlo
+        )
+
         for shape_str in shape_patterns:
             # Convert each dimension to int, handling both single and multi-dimensional cases
-            shape = tuple(int(dim) for dim in shape_str.split("x"))
+            shape = tuple(int(dim) for dim in shape_str.split("x") if dim)
             shapes.append(shape)
+        return shapes
+
+    def _extract_output_shapes(self):
+        # Extract output shapes from StableHLO operations
+        shapes = []
+
+        # First strategy: Find tensor shapes with output arrow notation
+        arrow_shapes = re.findall(
+            r"->\s*tensor<([0-9x]*)x?([a-z][a-z0-9]+)>", self.original_shlo
+        )
+        if arrow_shapes:
+            # Found shapes in arrow notation (highest priority)
+            dims_str, dtype = arrow_shapes[0]  # Take first match
+            if dims_str:
+                shape = tuple(int(dim) for dim in dims_str.split("x") if dim)
+                shapes.append(shape)
+            else:
+                # Scalar tensor (no dimensions specified)
+                shapes.append(tuple())
+            return shapes
+
+        # Second strategy: Extract tensor shape from the entire StableHLO string
+        # This will work for all cases where there's a tensor<...> specification
+        tensor_shapes = re.findall(
+            r"tensor<([0-9x]*)x?([a-z][a-z0-9]+)>", self.original_shlo
+        )
+
+        if tensor_shapes:
+            # For StableHLO operations, the last tensor is typically the output
+            dims_str, dtype = tensor_shapes[-1]
+            if dims_str:
+                shape = tuple(int(dim) for dim in dims_str.split("x") if dim)
+                shapes.append(shape)
+            else:
+                # Scalar tensor
+                shapes.append(tuple())
+
         return shapes
 
     def set_unique_key(self):
@@ -197,6 +246,7 @@ class StablehloOp(Op):
 
         return {
             "frontend": self.frontend,
+            "backend": self.backend,
             "model_name": self.model_name,
             "model_group": self.model_group,
             "global_op_idx": self.global_op_idx,
@@ -206,16 +256,17 @@ class StablehloOp(Op):
             "output_tensors": [tensor.to_dict() for tensor in self.output_tensors],
             "num_ops": self.num_ops,
             "compilation_status": self.compilation_status,
-            # "parsed_stable_hlo_ops": self.parsed_stable_hlo_ops,
-            # "torch_ir_graph": self.torch_ir_graph,
+            "parsed_stable_hlo_ops": self.parsed_stable_hlo_ops,
+            "torch_ir_graph": self.torch_ir_graph or "",
             "stable_hlo_graph": self.stable_hlo_graph,
-            # "stable_hlo_ops": self.stable_hlo_ops,
+            "stable_hlo_ops": self.stable_hlo_ops or [],
             "ttir_graph": self.ttir_graph,
             "ttnn_graph": self.ttnn_graph,
             "runtime_stack_dump": self.runtime_stack_dump,
             "pcc": pcc,
             "atol": atol,
             "compiled_json": self.json,
+            "torch_name": self.op_name,
         }
 
 

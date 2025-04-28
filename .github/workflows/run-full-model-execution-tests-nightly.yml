@@ -117,6 +117,19 @@ jobs:
             runs-on: wormhole_b0, name: "eval_8", tests: "
                   tests/models/mamba/test_mamba.py::test_mamba[full-state-spaces/mamba-790m-hf-eval]
             "
+          },
+          # Approximately 40 minutes.
+          {
+            runs-on: wormhole_b0, name: "eval_9", tests: "
+                tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b0-eval]
+                tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b1-eval]
+                tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b2-eval]
+                tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b3-eval]
+                tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b4-eval]
+                tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b5-eval]
+                tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b6-eval]
+                tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b7-eval]
+            "
           }
         ]
     runs-on:
