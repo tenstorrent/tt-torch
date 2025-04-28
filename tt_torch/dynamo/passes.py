@@ -78,6 +78,7 @@ def constant_fold(gm):
 
 
 def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
+    gm.graph.print_tabular()
     decompositions = torch.export.default_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
 
