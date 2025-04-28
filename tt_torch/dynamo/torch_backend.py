@@ -362,6 +362,7 @@ class TorchExecutor(OpByOpExecutor):
                 test_this_op = self.should_test_op()
                 # Another useful debug method:
                 # test_this_op = str(node.target) == "aten.gelu.default"
+                test_this_op = "max_pool2d" in str(node.target)
 
                 if test_this_op:
                     try:
