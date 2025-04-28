@@ -4,7 +4,8 @@
 #
 
 set(TT_MLIR_VERSION "807f0e8df976a77363247ba6034a4579e9f2c0e0")
-set(TORCH_MLIR_VERSION "a265d283357f572c5437f9217ea85fa9770d374c")
+# Torch-mlir points to temporary branch `tt_torch/main` until we get latest changes from llvm repo
+set(TORCH_MLIR_VERSION "7b4eb347954c5cd4c15a5ef945f5e15537b10c35")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
