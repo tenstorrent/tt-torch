@@ -149,6 +149,14 @@ jobs:
           {
             runs-on: wormhole_b0, name: "pixtral", tests: "
               tests/models/mistral/test_pixtral.py::test_pixtral[op_by_op_torch-eval]
+            "
+          },
+          {
+            runs-on: wormhole_b0, name: "falcon3", tests: "
+              tests/models/falcon/test_falcon3.py::test_falcon[op_by_op_torch-tiiuae/Falcon3-1B-Base-eval]
+              tests/models/falcon/test_falcon3.py::test_falcon[op_by_op_torch-tiiuae/Falcon3-3B-Base-eval]
+              tests/models/falcon/test_falcon3.py::test_falcon[op_by_op_torch-tiiuae/Falcon3-7B-Base-eval]
+              tests/models/falcon/test_falcon3.py::test_falcon[op_by_op_torch-tiiuae/Falcon3-10B-Base-eval]
               "
           },
           {
