@@ -1,0 +1,338 @@
+[
+  {
+    "name": "ttnn.constant",
+    "input_shapes": [],
+    "input_layouts": [],
+    "attributes": {
+      "value": "dense<[[1.280000e+05], [5.120000e+02], [1.000000e+00]]> : tensor<3x1xf32>"
+    },
+    "output_shapes": [
+      "tensor<[3,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          3,
+          1,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A",
+    "compilation_status": 6.0,
+    "compile_error": "Timeout exceeded for op during run after 30 seconds.",
+    "model_names": "1:gliner_v2"
+  },
+  {
+    "name": "ttnn.constant",
+    "input_shapes": [],
+    "input_layouts": [],
+    "attributes": {
+      "value": "dense<[[1.689600e+05], [7.680000e+02], [1.000000e+00]]> : tensor<3x1xf32>"
+    },
+    "output_shapes": [
+      "tensor<[3,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          3,
+          1,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A",
+    "compilation_status": 6.0,
+    "compile_error": "Timeout exceeded for op during run after 30 seconds.",
+    "model_names": "1:gliner_v2"
+  },
+  {
+    "name": "ttnn.constant",
+    "input_shapes": [],
+    "input_layouts": [],
+    "attributes": {
+      "value": "dense<[[3.360000e+04], [4.000000e+00], [1.000000e+00]]> : tensor<3x1xf32>"
+    },
+    "output_shapes": [
+      "tensor<[3,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          3,
+          1,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A",
+    "compilation_status": 6.0,
+    "compile_error": "Timeout exceeded for op during run after 30 seconds.",
+    "model_names": "1:YOLOv10"
+  },
+  {
+    "name": "ttnn.constant",
+    "input_shapes": [],
+    "input_layouts": [],
+    "attributes": {
+      "value": "dense<[[6.720000e+05], [8.000000e+01], [1.000000e+00]]> : tensor<3x1xf32>"
+    },
+    "output_shapes": [
+      "tensor<[3,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          3,
+          1,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A",
+    "compilation_status": 6.0,
+    "compile_error": "Timeout exceeded for op during run after 30 seconds.",
+    "model_names": "1:YOLOv10"
+  },
+  {
+    "name": "ttnn.constant",
+    "input_shapes": [],
+    "input_layouts": [],
+    "attributes": {
+      "value": "dense<[[1.228800e+04], [7.680000e+02], [1.280000e+02], [1.000000e+00]]> : tensor<4x1xf32>"
+    },
+    "output_shapes": [
+      "tensor<[4,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A",
+    "compilation_status": 6.0,
+    "compile_error": "Timeout exceeded for op during run after 30 seconds.",
+    "model_names": "1:deepseek_ai_DeepSeek_V3"
+  },
+  {
+    "name": "ttnn.constant",
+    "input_shapes": [],
+    "input_layouts": [],
+    "attributes": {
+      "value": "dense<[[6.144000e+03], [3.840000e+02], [6.400000e+01], [1.000000e+00]]> : tensor<4x1xf32>"
+    },
+    "output_shapes": [
+      "tensor<[4,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A",
+    "compilation_status": 6.0,
+    "compile_error": "Timeout exceeded for op during run after 30 seconds.",
+    "model_names": "1:deepseek_ai_DeepSeek_V3"
+  },
+  {
+    "name": "ttnn.constant",
+    "input_shapes": [],
+    "input_layouts": [],
+    "attributes": {
+      "value": "dense<[[1.200000e+01], [1.200000e+01], [1.200000e+01], [1.200000e+01], [4.000000e+00], [1.000000e+00]]> : tensor<6x1xf32>"
+    },
+    "output_shapes": [
+      "tensor<[6,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          6,
+          1,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A",
+    "compilation_status": 6.0,
+    "compile_error": "Timeout exceeded for op during run after 30 seconds.",
+    "model_names": "1:OFT"
+  },
+  {
+    "name": "ttnn.constant",
+    "input_shapes": [],
+    "input_layouts": [],
+    "attributes": {
+      "value": "dense<[[5.017600e+04], [1.960000e+02], [1.400000e+01], [1.000000e+00]]> : tensor<4x1xf32>"
+    },
+    "output_shapes": [
+      "tensor<[4,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A",
+    "compilation_status": 6.0,
+    "compile_error": "Error: TT_THROW @ /__w/tt-torch/tt-torch/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/tt_metal/impl/allocator/bank_manager.cpp:140: tt::exception\n\ninfo:\nOut of Memory: Not enough space to allocate 5805965312 B DRAM buffer across 12 banks, where each bank needs to store 483831808 B\n",
+    "model_names": "1:OFT"
+  },
+  {
+    "name": "ttnn.constant",
+    "input_shapes": [],
+    "input_layouts": [],
+    "attributes": {
+      "value": "dense<[[2.007040e+05], [7.840000e+02], [2.800000e+01], [1.000000e+00]]> : tensor<4x1xf32>"
+    },
+    "output_shapes": [
+      "tensor<[4,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A",
+    "compilation_status": 6.0,
+    "compile_error": "Error: TT_THROW @ /__w/tt-torch/tt-torch/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/tt_metal/impl/allocator/bank_manager.cpp:140: tt::exception\n\ninfo:\nOut of Memory: Not enough space to allocate 5805965312 B DRAM buffer across 12 banks, where each bank needs to store 483831808 B\n",
+    "model_names": "1:OFT"
+  },
+  {
+    "name": "ttnn.constant",
+    "input_shapes": [],
+    "input_layouts": [],
+    "attributes": {
+      "value": "dense<[[1.254400e+04], [4.900000e+01], [7.000000e+00], [1.000000e+00]]> : tensor<4x1xf32>"
+    },
+    "output_shapes": [
+      "tensor<[4,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A",
+    "compilation_status": 6.0,
+    "compile_error": "Error: TT_THROW @ /__w/tt-torch/tt-torch/third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/tt_metal/impl/allocator/bank_manager.cpp:140: tt::exception\n\ninfo:\nOut of Memory: Not enough space to allocate 5805965312 B DRAM buffer across 12 banks, where each bank needs to store 483831808 B\n",
+    "model_names": "1:OFT"
+  },
+  {
+    "name": "ttnn.constant",
+    "input_shapes": [],
+    "input_layouts": [],
+    "attributes": {
+      "value": "dense<[[7.078680e+05], [1.011240e+05], [4.000000e+00], [1.000000e+00]]> : tensor<4x1xf32>"
+    },
+    "output_shapes": [
+      "tensor<[4,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          4,
+          1,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A",
+    "compilation_status": 6.0,
+    "compile_error": "Timeout exceeded for op during run after 30 seconds.",
+    "model_names": "1:OFT"
+  },
+  {
+    "name": "ttnn.constant",
+    "input_shapes": [],
+    "input_layouts": [],
+    "attributes": {
+      "value": "dense<[[6.144000e+05], [7.680000e+04], [4.800000e+02], [3.000000e+00], [1.000000e+00]]> : tensor<5x1xf32>"
+    },
+    "output_shapes": [
+      "tensor<[5,1,f32]>"
+    ],
+    "output_layouts": [
+      {
+        "mapping_from": "(d0, d1)",
+        "mapping_to": "(d0, d1)",
+        "memory_config": [
+          5,
+          1,
+          "f32",
+          "system_memory"
+        ]
+      }
+    ],
+    "pcc": "N/A",
+    "atol": "N/A",
+    "compilation_status": 6.0,
+    "compile_error": "Timeout exceeded for op during run after 30 seconds.",
+    "model_names": "1:OFT"
+  }
+]

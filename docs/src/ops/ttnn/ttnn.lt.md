@@ -1,6 +1,0 @@
-# ttnn.lt
-
-| Name | Input Shapes | Input Layouts | Attributes | Output Shapes | Output Layouts | PCC | ATOL |
-|------|--------------|---------------|------------|---------------|----------------|-----|------|
-| ttnn.lt | tensor<[6,6,ui32]> <br> tensor<[6,6,ui32]> <br> tensor<[6,6,bf16]> | mapping_from: (d0, d1), mapping_to: (d0, d1), memory_config: (1, 1, 'tile<32x32, u32>', 'dram') <br> mapping_from: (d0, d1), mapping_to: (d0, d1), memory_config: (1, 1, 'tile<32x32, u32>', 'dram') <br> mapping_from: (d0, d1), mapping_to: (d0, d1), memory_config: (1, 1, 'tile<32x32, bf16>', 'dram') | operandSegmentSizes: array<i32: 2, 1> | tensor<[6,6,bf16]> | mapping_from: (d0, d1), mapping_to: (d0, d1), memory_config: (1, 1, 'tile<32x32, bf16>', 'dram') | nan | nan |
-| ttnn.lt | tensor<[8,2048,f32]> <br> tensor<[8,2048,f32]> <br> tensor<[8,2048,bf16]> | mapping_from: (d0, d1), mapping_to: (d0, d1), memory_config: (1, 64, 'tile<32x32, f32>', 'dram') <br> mapping_from: (d0, d1), mapping_to: (d0, d1), memory_config: (1, 64, 'tile<32x32, f32>', 'dram') <br> mapping_from: (d0, d1), mapping_to: (d0, d1), memory_config: (1, 64, 'tile<32x32, bf16>', 'dram') | operandSegmentSizes: array<i32: 2, 1> | tensor<[8,2048,bf16]> | mapping_from: (d0, d1), mapping_to: (d0, d1), memory_config: (1, 64, 'tile<32x32, bf16>', 'dram') | nan | nan |

@@ -1,3 +1,9 @@
+# TTNN OP Traces
+
+The following pages have traces of operations that are currently not being compiled correctly. They can be updated by running:
+```
+python tt_torch/tools/generate_md.py --excel_path <path to xlsx file> --md_dir docs/src/ops/ttnn --json_dir docs/src/ops/ttnn --failures_only
+```
 
 # How to read these files?
 
