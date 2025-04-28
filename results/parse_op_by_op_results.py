@@ -480,6 +480,7 @@ def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=Fals
         "Torch/SHLO Name",
         "Input Shapes",
         "Output Shapes",
+        "Backend",
         "NumOps",
         "Status",
         "Models",
@@ -501,8 +502,8 @@ def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=Fals
     worksheet.set_column(0, 0, 37)  # Torch/SHLO Name
     worksheet.set_column(1, 1, 50)  # Input Shapes
     worksheet.set_column(2, 2, 20)  # Output Shapes
-    worksheet.set_column(5, 5, 50)  # Models
-    worksheet.set_column(13, 13, 250)  # Compile Error
+    worksheet.set_column(6, 6, 50)  # Models
+    worksheet.set_column(14, 14, 250)  # Compile Error
 
     row += 1
     torch_ops = {}
@@ -526,6 +527,7 @@ def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=Fals
                 "torch_name": value["torch_name"],
                 "input_shapes": value["input_shapes"],
                 "output_shapes": value["output_shapes"],
+                "backend": value["backend"],
                 "num_ops": value["num_ops"],
                 "status": value["compilation_status"],
                 "pcc": value["pcc"],
@@ -548,6 +550,7 @@ def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=Fals
             num_ops = op["num_ops"]
             input_shapes = extract_shape(op["input_shapes"])
             output_shapes = extract_shape(op["output_shapes"])
+            backend = op["backend"]
             status = op["status"]
             pcc = op["pcc"]
             atol = op["atol"]
@@ -572,6 +575,7 @@ def generate_all_ops_worksheet(worksheet, bold, all_ops, not_executing_only=Fals
                 name,
                 input_shapes,
                 output_shapes,
+                backend,
                 num_ops,
                 status,
                 models_str,
