@@ -123,6 +123,11 @@ def node_to_device(node, device_map):
         or len(node.meta["nn_module_stack"]) == 0
     ):
         return None
+    
+def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
+    gm.graph.print_tabular()
+    decompositions = torch.export.default_decompositions()
+    decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
 
     # The last stack contains the most information, only relevent fields will be used
     # Contains string like: "L['self']._modules['model']._modules['layers']._modules['30'].mlp.up_proj"
