@@ -29,7 +29,7 @@ jobs:
         build: [
           {
             # Approximately 70 minutes.
-            runs-on: wormhole_b0, name: "eval_1", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "eval_1", tests: "
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg19]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg19_bn]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vgg16]
@@ -71,7 +71,7 @@ jobs:
           },
           {
             # Approximately 65 minutes.
-            runs-on: wormhole_b0, name: "eval_2", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "eval_2", tests: "
                   tests/models/bloom/test_bloom.py::test_bloom[full-eval]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-hrnet_w18.ms_aug_in1k]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-ghostnet_100.in1k]
@@ -89,32 +89,32 @@ jobs:
           },
           {
             # Approximately 45 minutes.
-            runs-on: wormhole_b0, name: "eval_3", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "eval_3", tests: "
                   tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-1.5-eval]
             "
           },
           {
             # Approximately 50 minutes.
-            runs-on: wormhole_b0, name: "eval_5", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "eval_5", tests: "
                   tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[full-Qwen/Qwen2.5-1.5B-eval]
                   tests/models/opt/test_opt.py::test_opt[full-eval]
             "
           },
           {
             # Approximately 40 minutes.
-            runs-on: wormhole_b0, name: "eval_6", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "eval_6", tests: "
                   tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet[full-eval]
             "
           },
           {
             # Approximately 5 minutes.
-            runs-on: wormhole_b0, name: "eval_7_bert_qrtn", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "eval_7_bert_qrtn", tests: "
                   tests/models/bert/test_bert.py::test_bert[full-eval]
             "
           },
           # Approximately 180 minutes.
           {
-            runs-on: wormhole_b0, name: "eval_8", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "eval_8", tests: "
                   tests/models/mamba/test_mamba.py::test_mamba[full-state-spaces/mamba-790m-hf-eval]
             "
           }

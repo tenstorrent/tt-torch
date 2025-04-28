@@ -61,7 +61,7 @@ def generate_test_matrix(test_list):
         group = full_eval_test_list[i : min(i + group_size, len(full_eval_test_list))]
         matrix.append(
             {
-                "runs-on": "wormhole_b0",
+                "runs-on": "tt-beta-ubuntu-2204-n150-large-stable",
                 "name": f"benchmark_{len(matrix) + 1}",
                 "tests": group,
             }

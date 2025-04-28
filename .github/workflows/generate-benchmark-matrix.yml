@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
 
     runs-on:
-      - wormhole_b0
+      - tt-beta-ubuntu-2204-n150-large-stable
 
     container:
       image: ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:latest

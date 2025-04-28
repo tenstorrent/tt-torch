@@ -23,12 +23,12 @@ jobs:
       matrix:
         build: [
           {
-            runs-on: wormhole_b0, name: "qwen", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "qwen", tests: "
               tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm
               "
           },
           {
-            runs-on: wormhole_b0, name: "albert", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "albert", tests: "
               tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm
               tests/models/albert/test_albert_token_classification.py::test_albert_token_classification
               tests/models/albert/test_albert_sequence_classification.py::test_albert_sequence_classification
@@ -36,12 +36,12 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "autoencoder", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "autoencoder", tests: "
               tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear
               "
           },
           {
-            runs-on: wormhole_b0, name: "bert", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "bert", tests: "
               tests/models/distilbert/test_distilbert.py::test_distilbert
               tests/models/bert/test_bert.py::test_bert
               tests/models/bert/test_bert_turkish.py::test_bert_turkish
@@ -49,54 +49,54 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "bloom", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "bloom", tests: "
               tests/models/bloom/test_bloom.py::test_bloom
               "
           },
           {
-            runs-on: wormhole_b0, name: "gpt", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "gpt", tests: "
               tests/models/gpt2/test_gpt2.py::test_gpt2
               "
           },
           {
-            runs-on: wormhole_b0, name: "llama", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "llama", tests: "
               tests/models/llama/test_llama_3b.py::test_llama_3b
               "
           },
           {
-            runs-on: wormhole_b0, name: "mamba", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "mamba", tests: "
               tests/models/mamba/test_mamba.py::test_mamba[op_by_op_torch-state-spaces/mamba-790m-hf-eval]
               "
           },
           {
-            runs-on: wormhole_b0, name: "mobilenet", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "mobilenet", tests: "
               tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd
               tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2
               "
           },
           {
-            runs-on: wormhole_b0, name: "openpose", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "openpose", tests: "
               tests/models/openpose/test_openpose_v2.py::test_openpose_v2
               "
           },
           {
-            runs-on: wormhole_b0, name: "resnet", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "resnet", tests: "
               tests/models/resnet50/test_resnet50.py::test_resnet
               tests/models/resnet/test_resnet.py::test_resnet
               "
           },
           {
-            runs-on: wormhole_b0, name: "opt", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "opt", tests: "
               tests/models/opt/test_opt.py::test_opt
               "
           },
           {
-            runs-on: wormhole_b0, name: "clip", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "clip", tests: "
               tests/models/clip/test_clip.py::test_clip
               "
           },
           {
-            runs-on: wormhole_b0, name: "timm", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "timm", tests: "
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[op_by_op_torch-eval-hrnet_w18.ms_aug_in1k]
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[op_by_op_torch-eval-dla34.in1k]
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[op_by_op_torch-eval-mobilenetv1_100.ra4_e3600_r224_in1k]
@@ -111,12 +111,12 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "xglm", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "xglm", tests: "
               tests/models/xglm/test_xglm.py::test_xglm
               "
           },
           {
-            runs-on: wormhole_b0, name: "vision-misc", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "vision-misc", tests: "
               tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io
               tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer
               tests/models/mnist/test_mnist.py::test_mnist_train
@@ -124,7 +124,7 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "vision-transformers", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "vision-transformers", tests: "
               tests/models/segformer/test_segformer.py::test_segformer
               tests/models/deit/test_deit.py::test_deit
               tests/models/beit/test_beit_image_classification.py::test_beit_image_classification
@@ -132,7 +132,7 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "yolo", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "yolo", tests: "
               tests/models/yolov3/test_yolov3.py::test_yolov3
               tests/models/yolov4/test_yolov4.py::test_yolov4
               tests/models/yolov5/test_yolov5.py::test_yolov5
@@ -140,32 +140,32 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "mgp-str", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "mgp-str", tests: "
               tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base
               "
           },
           {
-            runs-on: wormhole_b0, name: "musicgen_small", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "musicgen_small", tests: "
               tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small
               "
           },
           {
-            runs-on: wormhole_b0, name: "dpr", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "dpr", tests: "
               tests/models/dpr/test_dpr.py::test_dpr
               "
           },
           {
-            runs-on: wormhole_b0, name: "roberta", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "roberta", tests: "
               tests/models/roberta/test_roberta.py::test_roberta
               "
           },
           {
-            runs-on: wormhole_b0, name: "whisper", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "whisper", tests: "
               tests/models/whisper/test_whisper.py::test_whisper
               "
           },
           {
-            runs-on: wormhole_b0, name: "torchvision_1", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "torchvision_1", tests: "
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[op_by_op_torch-eval-mobilenet_v2]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[op_by_op_torch-eval-mobilenet_v3_large]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[op_by_op_torch-eval-resnet152]
@@ -174,7 +174,7 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "torchvision_2", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "torchvision_2", tests: "
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[op_by_op_torch-eval-vgg19]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[op_by_op_torch-eval-vgg19_bn]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[op_by_op_torch-eval-wide_resnet101_2]
@@ -184,23 +184,23 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "phi", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "phi", tests: "
               tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-1-eval]
               tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-1.5-eval]
               "
           },
           {
-            runs-on: wormhole_b0, name: "vit", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "vit", tests: "
               tests/models/vit/test_vit.py::test_vit[op_by_op_torch-eval]
               "
           },
           {
-            runs-on: wormhole_b0, name: "stable-diffusion-unet", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "stable-diffusion-unet", tests: "
               tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet
               "
           },
           {
-            runs-on: wormhole_b0, name: "EfficientNetb0", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "EfficientNetb0", tests: "
               tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[op_by_op_torch-efficientnet-b0-eval]
               "
           },

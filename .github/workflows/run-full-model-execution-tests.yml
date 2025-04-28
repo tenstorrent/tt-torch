@@ -28,7 +28,7 @@ jobs:
       matrix:
         build: [
           {
-            runs-on: wormhole_b0, name: "eval_1", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "eval_1", tests: "
                   tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval]
                   tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval]
                   tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval]
@@ -37,7 +37,7 @@ jobs:
             "
           },
           {
-            runs-on: wormhole_b0, name: "eval_2", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "eval_2", tests: "
                   tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]
                   tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval]
                   tests/models/openpose/test_openpose_v2.py::test_openpose_v2[full-eval]
@@ -51,7 +51,7 @@ jobs:
             "
           },
           {
-            runs-on: wormhole_b0, name: "eval_3", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "eval_3", tests: "
                   tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-xxlarge-v2-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-regnet_y_400mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-regnet_y_800mf]
@@ -63,7 +63,7 @@ jobs:
             "
           },
           {
-            runs-on: wormhole_b0, name: "eval_4", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "eval_4", tests: "
                   tests/models/llama/test_llama_3b.py::test_llama_3b[full-meta-llama/Llama-3.2-3B-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-regnet_x_400mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-regnet_x_800mf]
@@ -75,7 +75,7 @@ jobs:
             "
           },
           {
-            runs-on: wormhole_b0, name: "eval_5", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "eval_5", tests: "
                 tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io[full-eval]
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-mobilenet_v2]
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-mobilenet_v3_small]
@@ -94,7 +94,7 @@ jobs:
           },
           # Takes ~40 minutes
           {
-            runs-on: wormhole_b0, name: "eval_6", tests: "
+            runs-on: tt-beta-ubuntu-2204-n150-large-stable, name: "eval_6", tests: "
                 tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b0-eval]
                 tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b1-eval]
                 tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b2-eval]
