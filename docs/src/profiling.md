@@ -2,13 +2,15 @@
 
 ## Introduction
 
-tt-torch uses the tt-metal Tracy fork to manage a Tracy server. Tracy is a single process profiler, and uses a client-server model to perform performance tracing on both host calls and on-device operations. tt-torch implements a wrapper called `profile.py` with custom orchestration logic to handle the spawning of the Tracy capture server and the client workload to be profiled, as well as report generation and data postprocessing functionality.
+tt-torch uses the [tt-metal Tracy fork](https://github.com/tenstorrent-metal/tracy) to collect profiling data. Tracy is a single process profiler, and uses a client-server model to trace both host calls and on-device operation performance. tt-torch implements a wrapper called `profile.py` with custom orchestration logic to handle the spawning of the Tracy capture server and the client workload to be profiled, as well as report generation and data postprocessing functionality.
+
+The output of `profile.py` is a CSV report displaying a table of operations executed on device and rich timing, memory usage and configuration data associated with them.
+
+Note: Paths in this document are given relative to the repo root.
 
 ## Prerequisites
 
-- In the tt-torch building step ([Building](./build.md)), it is required to configure your cmake build with the additional cmake directive `TT_RUNTIME_ENABLE_PERF_TRACE=ON`.
-    - i.e. run: `cmake -G Ninja -B build -DTT_RUNTIME_ENABLE_PERF_TRACE=ON`
-- Paths in this document are given relative to the repo root.
+In the tt-torch building step ([Building](./build.md)), it is required to configure your cmake build with the additional cmake directive `TT_RUNTIME_ENABLE_PERF_TRACE=ON` (i.e. run: `cmake -G Ninja -B build -DTT_RUNTIME_ENABLE_PERF_TRACE=ON`).
 
 ## Usage
 
@@ -20,16 +22,17 @@ profile.py [-h] [-o OUTPUT_PATH] [-p PORT] "test_command"
 **Note: The `test_command` must be quoted!**
 
 
-As a minimal example, this will run and profile the MNIST test:
+As a minimal example, the following command will run and profile the MNIST test:
 ```
 python tt_torch/tools/profile.py "pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]"
 ```
 
-It generates the following report: `results/perf/device_ops_perf_trace.csv`. This report displays a table of operations executed on device and rich timing and configuration data associated with them.
+The report is created at `results/perf/device_ops_perf_trace.csv` by default, unless an output path is specified.
+
 
 ## Limitations
 
-- Tracy is a single process profiler and will not work with multiprocessed workflows. This includes tests parameterized by `op_by_op_shlo` and `op_by_op_torch`, which run individual ops in isolated processes.
+- Tracy is a single process profiler and will not work with multiprocessed workflows. This includes tests parameterized by `op_by_op_shlo` and `op_by_op_torch`, which break down a model into individual ops and run them serially in separate processes.
 - To view traces, you can use `install/tt-metal/generated/profiler/.logs/tracy_profile_log_host.tracy`.
     - This is a `.tracy` file that can be consumed by the tt-metal Tracy GUI and produce visual profiling traces of host and device activity.
     - You must use the tt-metal Tracy GUI to view this file. Refer to the [GUI section](https://docs.tenstorrent.com/tt-metal/latest/tt-metalium/tools/tracy_profiler.html#gui) in the tt-metal profiling documentation. Other sections are not applicable to tt-torch profiling.

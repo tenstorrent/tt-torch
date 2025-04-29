@@ -2,6 +2,7 @@
 - [Introduction](overview.md)
 - [Getting Started](getting_started.md)
 
+<<<<<<< HEAD
 
 # User guide
 - [Building](build.md)
@@ -12,6 +13,8 @@
 
 # Models and Operations
 - [Supported Models](models/supported_models.md)
+=======
+>>>>>>> 522331f (Add clarifying statements to docs)
 - [Operations](ops/README.md)
   - [StableHLO Operations](ops/stablehlo/README.md)
     - [Arith Constant](ops/stablehlo/arith.constant.md)
