@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-set(TT_MLIR_VERSION "807f0e8df976a77363247ba6034a4579e9f2c0e0")
+set(TT_MLIR_VERSION "fb731208afee71e067645c4f7ee08f4d96154a89")
 # torch-mlir is using branch tt_torch/main
 # see issue https://github.com/tenstorrent/tt-torch/issues/671
 set(TORCH_MLIR_VERSION "7c86f6d21de6d548c41cc56ebf0d799e1eadc626")
