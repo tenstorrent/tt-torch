@@ -3,12 +3,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // c++ standard library includes
+#include <ATen/core/TensorBody.h>
+#include <cstdint>
 #include <optional>
 
 // other library includes
 #include <pybind11/cast.h>
 #include <pybind11/pybind11.h>
 #include <torch/extension.h>
+#include <vector>
 
 // tt-mlir includes
 #if defined(TT_RUNTIME_DEBUG) && TT_RUNTIME_DEBUG == 1
@@ -221,6 +224,32 @@ preprocess_inputs(tt::runtime::Device device, std::vector<at::Tensor> &inputs,
   return rt_inputs_with_layout;
 }
 
+std::vector<tt::runtime::Tensor>
+run_async(tt::runtime::Device device, tt::runtime::Binary &binary,
+          uint32_t program_idx, std::vector<tt::runtime::Tensor> &rt_inputs) {
+  std::vector<tt::runtime::Tensor> rt_outputs =
+      tt::runtime::submit(device, binary, program_idx, rt_inputs);
+
+  return rt_outputs;
+}
+
+std::vector<at::Tensor> to_host(tt::runtime::Binary &binary,
+                                uint32_t program_idx,
+                                std::vector<tt::runtime::Tensor> &rt_outputs) {
+  std::vector<at::Tensor> outputs;
+  outputs.reserve(rt_outputs.size());
+  const auto output_descs = binary.getProgramOutputs(program_idx);
+
+  for (size_t i = 0; i < rt_outputs.size(); ++i) {
+    auto &rt_output = rt_outputs.at(i);
+    const auto &output_desc = output_descs.at(i);
+    outputs.emplace_back(create_torch_tensor(rt_output, output_desc));
+    tt::runtime::deallocateTensor(rt_output, /*force=*/true);
+  }
+
+  return outputs;
+}
+
 std::vector<at::Tensor> run(tt::runtime::Device device,
                             tt::runtime::Binary &binary, uint32_t program_idx,
                             std::vector<tt::runtime::Tensor> &rt_inputs) {
@@ -348,6 +377,10 @@ PYBIND11_MODULE(tt_mlir, m) {
         "Preprocess inputs for execution");
   m.def("run", &run,
         "Run the binary on pre-defined device and pre-processed inputs");
+  m.def("run_async", &run_async,
+        "Run the binary on pre-defined device and pre-processed inputs in "
+        "async mode");
+  m.def("to_host", &to_host, "Move tensors from device to host");
   m.def("run_end_to_end", &run_end_to_end,
         "Run binary end to end, isolating all steps such as device opening, "
         "input preprocessing, execution and device closing");
