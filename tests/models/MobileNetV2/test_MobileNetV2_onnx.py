@@ -40,7 +40,7 @@ class ThisTester(OnnxModelTester):
     "mode",
     ["eval"],
 )
-@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op_stablehlo", "full"])
 def test_MobileNetV2_onnx(record_property, mode, op_by_op):
     model_name = "MobileNetV2_onnx"
     cc = CompilerConfig()
