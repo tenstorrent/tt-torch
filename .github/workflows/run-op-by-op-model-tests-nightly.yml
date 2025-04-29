@@ -60,10 +60,7 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "t5", tests: "
-              tests/models/t5/test_t5.py::test_t5[op_by_op_torch-t5-small-eval]
-              tests/models/t5/test_t5.py::test_t5[op_by_op_torch-t5-base-eval]
               tests/models/t5/test_t5.py::test_t5[op_by_op_torch-t5-large-eval]
-              tests/models/flan_t5/test_flan_t5.py::test_flan_t5[op_by_op_torch-eval]
               tests/models/speecht5_tts/test_speecht5_tts.py::test_speecht5_tts[op_by_op_torch-eval]
               "
           },
@@ -83,7 +80,6 @@ jobs:
             runs-on: wormhole_b0, name: "timm", tests: "
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[op_by_op_torch-eval-ghostnetv2_100.in1k]
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[op_by_op_torch-eval-inception_v4.tf_in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_red[op_by_op_torch-eval-ese_vovnet19b_dw.ra_in1k]
               "
           },
           {

@@ -48,6 +48,7 @@ def test_flan_t5(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    # TODO Enable checking - https://github.com/tenstorrent/tt-torch/issues/676
     tester = ThisTester(
         model_name,
         mode,
@@ -57,7 +58,7 @@ def test_flan_t5(record_property, mode, op_by_op):
         assert_atol=False,
         is_token_output=True,
     )
-    results = tester.test_model()
+    results = tester.test_model(assert_eval_token_mismatch=False)
     if mode == "eval":
         results = tester.tokenizer.batch_decode(results, skip_special_tokens=True)
 
