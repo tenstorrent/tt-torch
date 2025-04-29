@@ -1,0 +1,17 @@
+# ttnn.constant
+This table is a trace for ttnn.constant op. Traces are generated from nightly tt-torch runs. To see nightly runs: <a href="https://github.com/tenstorrent/tt-torch/actions/workflows/nightly-tests.yml">Nightly Runs</a>
+
+| Name | Input Shapes | Input Layouts | Attributes | Output Shapes | Output Layouts | PCC | ATOL |
+|------|--------------|---------------|------------|---------------|----------------|-----|------|
+| ttnn.constant |  |  | value: dense<[[1.280000e+05], [5.120000e+02], [1.000000e+00]]> : tensor<3x1xf32> | tensor<[3,1,f32]> | mapping_from: (d0, d1), mapping_to: (d0, d1), memory_config: (3, 1, 'f32', 'system_memory') | nan | nan |
+| ttnn.constant |  |  | value: dense<[[1.689600e+05], [7.680000e+02], [1.000000e+00]]> : tensor<3x1xf32> | tensor<[3,1,f32]> | mapping_from: (d0, d1), mapping_to: (d0, d1), memory_config: (3, 1, 'f32', 'system_memory') | nan | nan |
+| ttnn.constant |  |  | value: dense<[[3.360000e+04], [4.000000e+00], [1.000000e+00]]> : tensor<3x1xf32> | tensor<[3,1,f32]> | mapping_from: (d0, d1), mapping_to: (d0, d1), memory_config: (3, 1, 'f32', 'system_memory') | nan | nan |
+| ttnn.constant |  |  | value: dense<[[6.720000e+05], [8.000000e+01], [1.000000e+00]]> : tensor<3x1xf32> | tensor<[3,1,f32]> | mapping_from: (d0, d1), mapping_to: (d0, d1), memory_config: (3, 1, 'f32', 'system_memory') | nan | nan |
+| ttnn.constant |  |  | value: dense<[[1.228800e+04], [7.680000e+02], [1.280000e+02], [1.000000e+00]]> : tensor<4x1xf32> | tensor<[4,1,f32]> | mapping_from: (d0, d1), mapping_to: (d0, d1), memory_config: (4, 1, 'f32', 'system_memory') | nan | nan |
+| ttnn.constant |  |  | value: dense<[[6.144000e+03], [3.840000e+02], [6.400000e+01], [1.000000e+00]]> : tensor<4x1xf32> | tensor<[4,1,f32]> | mapping_from: (d0, d1), mapping_to: (d0, d1), memory_config: (4, 1, 'f32', 'system_memory') | nan | nan |
+| ttnn.constant |  |  | value: dense<[[1.200000e+01], [1.200000e+01], [1.200000e+01], [1.200000e+01], [4.000000e+00], [1.000000e+00]]> : tensor<6x1xf32> | tensor<[6,1,f32]> | mapping_from: (d0, d1), mapping_to: (d0, d1), memory_config: (6, 1, 'f32', 'system_memory') | nan | nan |
+| ttnn.constant |  |  | value: dense<[[5.017600e+04], [1.960000e+02], [1.400000e+01], [1.000000e+00]]> : tensor<4x1xf32> | tensor<[4,1,f32]> | mapping_from: (d0, d1), mapping_to: (d0, d1), memory_config: (4, 1, 'f32', 'system_memory') | nan | nan |
+| ttnn.constant |  |  | value: dense<[[2.007040e+05], [7.840000e+02], [2.800000e+01], [1.000000e+00]]> : tensor<4x1xf32> | tensor<[4,1,f32]> | mapping_from: (d0, d1), mapping_to: (d0, d1), memory_config: (4, 1, 'f32', 'system_memory') | nan | nan |
+| ttnn.constant |  |  | value: dense<[[1.254400e+04], [4.900000e+01], [7.000000e+00], [1.000000e+00]]> : tensor<4x1xf32> | tensor<[4,1,f32]> | mapping_from: (d0, d1), mapping_to: (d0, d1), memory_config: (4, 1, 'f32', 'system_memory') | nan | nan |
+| ttnn.constant |  |  | value: dense<[[7.078680e+05], [1.011240e+05], [4.000000e+00], [1.000000e+00]]> : tensor<4x1xf32> | tensor<[4,1,f32]> | mapping_from: (d0, d1), mapping_to: (d0, d1), memory_config: (4, 1, 'f32', 'system_memory') | nan | nan |
+| ttnn.constant |  |  | value: dense<[[6.144000e+05], [7.680000e+04], [4.800000e+02], [3.000000e+00], [1.000000e+00]]> : tensor<5x1xf32> | tensor<[5,1,f32]> | mapping_from: (d0, d1), mapping_to: (d0, d1), memory_config: (5, 1, 'f32', 'system_memory') | nan | nan |

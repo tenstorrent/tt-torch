@@ -256,6 +256,7 @@ class AllOps:
     def create_md_files(self, output_dir):
         # Ensure the output directory exists
         os.makedirs(output_dir, exist_ok=True)
+        link = "https://github.com/tenstorrent/tt-torch/actions/workflows/nightly-tests.yml"
 
         for key, dict_list in self.ops.items():
             # Create a Markdown file for each key
@@ -268,6 +269,9 @@ class AllOps:
                     for item in dict_list:
                         if count % 600 == 0:
                             # Write the table header
+                            file.write(
+                                f"""\nThis table is a trace for {key} op. Traces are generated from nightly tt-torch runs. To see nightly runs: <a href="{link}">Nightly Runs</a>"""
+                            )
                             file.write(
                                 "\n\n| Name | Input Shapes | Input Layouts | Attributes | Output Shapes | Output Layouts | PCC | ATOL |\n"
                             )

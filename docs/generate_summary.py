@@ -10,7 +10,17 @@ def generate_summary(docs_dir):
     """
     Generate top level SUMMARY.md which includes references to all pages
     """
-    summary_lines = ["# Summary\n"]
+    summary_lines = ["# Summary"]
+    summary_lines.append("- [Introduction](overview.md)")
+    summary_lines.append("- [Getting Started](getting_started.md)")
+    summary_lines.append("\n\n# User guide")
+    summary_lines.append("- [Building](build.md)")
+    summary_lines.append("- [Testing](test.md)")
+    summary_lines.append("- [Controlling Compiler](controlling.md)")
+    summary_lines.append("- [Pre-commit](pre_commit.md)")
+    summary_lines.append("\n\n# Models and Operations")
+    summary_lines.append("- [Supported Models](models/supported_models.md)")
+
     summary_lines.append("- [Operations](ops/README.md)")
     summary_lines.append("  - [StableHLO Operations](ops/stablehlo/README.md)")
 
