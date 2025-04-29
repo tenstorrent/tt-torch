@@ -31,7 +31,7 @@ def profile(
     env_vars["TT_METAL_DEVICE_PROFILER"] = "1"
     env_vars["TT_METAL_CLEAR_L1"] = "1"
     env_vars["TT_METAL_DEVICE_PROFILER_DISPATCH"] = "0"
-    env_vars["TT_METAL_PROFILER_SYNC"] = "1"  # fix desync between host and device calls
+    # env_vars["TT_METAL_PROFILER_SYNC"] = "1"  # fix desync between host and device calls - disabled due to CI issue
 
     testProcess = subprocess.Popen(
         [test_command], shell=True, env=env_vars, preexec_fn=os.setsid
