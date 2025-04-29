@@ -85,19 +85,24 @@ jobs:
                   tests/models/gpt2/test_gpt2.py::test_gpt2[full-eval]
                   tests/models/xglm/test_xglm.py::test_xglm[full-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-swin_b]
+                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_red[full-eval-ese_vovnet19b_dw.ra_in1k]
             "
           },
           {
-            # Approximately 45 minutes.
+            # Approximately 165 minutes.
             runs-on: wormhole_b0, name: "eval_3", tests: "
                   tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-1.5-eval]
+                  tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-2-eval]
             "
           },
           {
-            # Approximately 50 minutes.
+            # Approximately 70 minutes.
             runs-on: wormhole_b0, name: "eval_5", tests: "
                   tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[full-Qwen/Qwen2.5-1.5B-eval]
                   tests/models/opt/test_opt.py::test_opt[full-eval]
+                  tests/models/t5/test_t5.py::test_t5[full-t5-small-eval]
+                  tests/models/t5/test_t5.py::test_t5[full-t5-base-eval]
+                  tests/models/flan_t5/test_flan_t5.py::test_flan_t5[full-eval]
             "
           },
           {

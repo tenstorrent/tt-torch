@@ -23,7 +23,7 @@ jobs:
       matrix:
         build: [
           {
-            # Approximately 35 minutes.
+            # Approximately 65 minutes.
             runs-on: wormhole_b0, name: "compile_2", tests: "
                   tests/models/glpn_kitti/test_glpn_kitti.py::test_glpn_kitti[full-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-regnet_y_128gf]
@@ -33,6 +33,9 @@ jobs:
                   tests/models/llama/test_llama_7b.py::test_llama_7b[full-eval]
                   tests/models/mistral/test_mistral_7b.py::test_mistral_7b[full-eval]
                   tests/models/falcon/test_falcon.py::test_falcon[full-eval]
+                  tests/models/codegen/test_codegen.py::test_codegen[full-eval]
+                  tests/models/t5/test_t5.py::test_t5[full-t5-large-eval]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-googlenet]
             "
           }
         ]
