@@ -19,6 +19,7 @@ def generate_summary(docs_dir):
     summary_lines.append("- [Controlling Compiler](controlling.md)")
     summary_lines.append("- [Pre-commit](pre_commit.md)")
     summary_lines.append("- [Profiling](profiling.md)")
+    summary_lines.append("- [Adding Models](adding_models.md)")
     summary_lines.append("\n\n# Models and Operations")
     summary_lines.append("- [Supported Models](models/supported_models.md)")
 
