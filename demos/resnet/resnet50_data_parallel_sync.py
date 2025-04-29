@@ -35,18 +35,9 @@ def main():
     cc.enable_consteval = True
     cc.consteval_parameters = True
 
-    num_devices = DeviceManager.get_num_available_devices()
-    parent, devices = DeviceManager.acquire_available_devices(enable_async_ttnn=True)
-
-    tt_models = []
-    for device in devices:
-        options = {}
-        options["compiler_config"] = cc
-        options["device"] = device
-        options["async_mode"] = True
-        tt_models.append(
-            torch.compile(model, backend=backend, dynamic=False, options=options)
-        )
+    options = {}
+    options["compiler_config"] = cc
+    tt_model = torch.compile(model, backend=backend, dynamic=False, options=options)
 
     # List of image URLs to be processed
     image_urls = [
@@ -61,38 +52,23 @@ def main():
         "https://farm6.staticflickr.com/5056/5457805814_df70ed85c3_z.jpg",  # Labrador retriever
         "https://farm8.staticflickr.com/7325/9536735356_c1e2e5a0d5_z.jpg",  # Two elephants
     ]
+
     images = [download_image(url) for url in image_urls]
-    # Evenly distribute the image URLs across all devices.
-    # This creates a list of lists of length num_devices, where the ith sublist
-    # contains the image URLs that will be processed by the ith device.
-    k, m = divmod(len(image_urls), num_devices)
-    # divided_urls = [
-    #     image_urls[i * k + min(i, m) : (i + 1) * k + min(i + 1, m)]
-    #     for i in range(num_devices)
-    # ]
-    divided_images = [
-        images[i * k + min(i, m) : (i + 1) * k + min(i + 1, m)]
-        for i in range(num_devices)
-    ]
-    runtime_tensors_list = []
-    start_time = time.time()
-    for i in range(num_devices):
-        tt_model = tt_models[i]
-        imgs = divided_images[i]
-        for img in imgs:
-            # img = download_image(url)
-            start = time.time()
-            runtime_tensors = tt_model(img)
-            end = time.time()
-            print("DEBUG - TIME FOR RUNTIME TENSOR: ", end - start)
-            runtime_tensors_list.append(runtime_tensors)
+
+    print("Starting fake inference")
+    tt_model(images[0])
+    print("Done fake inference")
 
     results = []
     headers = ["Top 5 Predictions"]
-    for i in range(len(runtime_tensors_list)):
-        runtime_tensors = runtime_tensors_list[i]
+    # start_time = time.time()
+    for i in range(len(images)):
+        img = images[i]
         url = image_urls[i]
-        torch_tensor = tt_mlir.to_host(runtime_tensors)
+        start = time.time()
+        torch_tensor = tt_model(img)
+        end = time.time()
+        print(f"[SYNC DEBUG] time taken for torch tensors: {end - start:.5f} seconds")
         top5, top5_indices = torch.topk(torch_tensor.squeeze().softmax(-1), 5)
         tt_classes = []
         for class_likelihood, class_idx in zip(top5.tolist(), top5_indices.tolist()):
@@ -102,18 +78,16 @@ def main():
         for i in range(5):
             rows.append([tt_classes[i]])
         results.append(url_string + tabulate.tabulate(rows, headers=headers))
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print()
-    print(f"Total time taken for inference: {elapsed_time:.2f} seconds")
-    print()
+    # end_time = time.time()
+    # elapsed_time = end_time - start_time
+    # print()
+    # print(f"Total time taken for inference: {elapsed_time:.2f} seconds")
+    # print()
     for result in results:
         print("*" * 40)
         print(result)
         print()
         print("*" * 40)
-
-    DeviceManager.release_parent_device(parent, cleanup_sub_devices=True)
 
 
 if __name__ == "__main__":

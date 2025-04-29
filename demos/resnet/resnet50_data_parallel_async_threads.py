@@ -18,6 +18,22 @@ model = models.resnet152(weights=weights).to(torch.bfloat16).eval()
 classes = weights.meta["categories"]
 preprocess = weights.transforms()
 
+# A custom thread class to simplify returning values from threads
+class CustomThread(Thread):
+    def __init__(
+        self, group=None, target=None, name=None, args=(), kwargs={}, verbose=None
+    ):
+        super().__init__(group, target, name, args, kwargs)
+        self._return = None
+
+    def run(self):
+        if self._target is not None:
+            self._return = self._target(*self._args, **self._kwargs)
+
+    def join(self):
+        super().join()
+        return self._return
+
 
 def download_image(url):
     """
@@ -28,6 +44,30 @@ def download_image(url):
     img = torch.unsqueeze(img, 0)
     img = img.to(torch.bfloat16)
     return img
+
+
+def get_runtime_tensors(tt_model, imgs):
+    runtime_tensors_list = []
+    for img in imgs:
+        runtime_tensors_list.append(tt_model(img))
+    return runtime_tensors_list
+
+
+def get_final_results(runtime_tensors_list):
+    results = []
+    headers = ["Top 5 Predictions"]
+    for runtime_tensors in runtime_tensors_list:
+        torch_tensor = tt_mlir.to_host(runtime_tensors)
+        top5, top5_indices = torch.topk(torch_tensor.squeeze().softmax(-1), 5)
+        tt_classes = []
+        for class_likelihood, class_idx in zip(top5.tolist(), top5_indices.tolist()):
+            tt_classes.append(f"{classes[class_idx]}: {class_likelihood}")
+        rows = []
+        url_string = f"Image URL: {url}\n"
+        for i in range(5):
+            rows.append([tt_classes[i]])
+        results.append(url_string + tabulate.tabulate(rows, headers=headers))
+    return results
 
 
 def main():
@@ -74,18 +114,27 @@ def main():
         images[i * k + min(i, m) : (i + 1) * k + min(i + 1, m)]
         for i in range(num_devices)
     ]
-    runtime_tensors_list = []
+
+    final_runtime_tensors_list = []
+
+    threads = []
+    for i in range(num_devices):
+        thread = CustomThread(
+            target=get_runtime_tensors, args=(tt_models[i], divided_images[i])
+        )
+        threads.append(thread)
+        thread.start()
+
+    for thread in threads:
+        final_runtime_tensors_list.append(thread.join())
+
     start_time = time.time()
     for i in range(num_devices):
         tt_model = tt_models[i]
         imgs = divided_images[i]
         for img in imgs:
             # img = download_image(url)
-            start = time.time()
-            runtime_tensors = tt_model(img)
-            end = time.time()
-            print("DEBUG - TIME FOR RUNTIME TENSOR: ", end - start)
-            runtime_tensors_list.append(runtime_tensors)
+            runtime_tensors_list.append(tt_model(img))
 
     results = []
     headers = ["Top 5 Predictions"]
