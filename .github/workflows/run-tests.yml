@@ -24,15 +24,17 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-          {runs-on: wormhole_b0, name: "run"},
+          {runs-on: wormhole_b0, name: "run", container-options: "--device /dev/tenstorrent/0"},
+          {runs-on: llmbox, name: "run", container-options: "--device /dev/tenstorrent/0 --device /dev/tenstorrent/1 --device /dev/tenstorrent/2 --device /dev/tenstorrent/3"},
         ]
 
+    name: tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})
     runs-on:
       - ${{ matrix.build.runs-on }}
 
     container:
       image: ${{ inputs.docker-image }}
-      options: --user root --device /dev/tenstorrent/0 --shm-size=2gb
+      options: --user root ${{ matrix.build.container-options }} --shm-size=2gb
       volumes:
         - /dev/hugepages:/dev/hugepages
         - /dev/hugepages-1G:/dev/hugepages-1G
@@ -51,7 +53,7 @@ jobs:
       id: fetch-job-id
       uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
       with:
-        job_name: "${{ github.job }} (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
+        job_name: "tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
 
     - name: Set reusable strings
       id: strings
