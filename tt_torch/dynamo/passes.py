@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import torch
+import sys
 import traceback
 from torch.fx.experimental.proxy_tensor import make_fx
 from torch.fx.experimental import const_fold
@@ -78,7 +79,9 @@ def constant_fold(gm):
 
 
 def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
+    print(f"{type(gm.graph)}", file=sys.stderr)
     gm.graph.print_tabular()
+    print("", file=sys.stderr)
     decompositions = torch.export.default_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
 
@@ -97,7 +100,7 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
 
     gm = bypass_redundant_getitem(gm)
 
-    # reduce_graph(gm) - ISSUE: https://github.com/tenstorrent/tt-torch/issues/513
+    # Proceed with exporting the graph
     program = torch.export.export(gm, tuple(example_inputs), strict=False)
     # The proper order of inputs when outlining everything is constants + parameters + buffers + example_inputs
     if not compiler_config.inline_parameters:
@@ -117,4 +120,18 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
 
     # Need to run shape_prop again to populate tensor_meta
     run_shape_prop(program.graph_module, constant_inputs + example_inputs)
+
+    # Rewrite the graph to replace in-place torch.ops.aten.copy_ operations with out-of-place equivalents
+    for node in program.graph_module.graph.nodes:
+        if node.op == "call_function" and node.target == torch.ops.aten.copy_.default:
+            # Replace with torch.ops.aten.copy.default
+            with program.graph_module.graph.inserting_after(node):
+                new_node = program.graph_module.graph.call_function(
+                    torch.ops.aten.copy.default, args=node.args, kwargs=node.kwargs
+                )
+                # Ensure the new node has the same output type as the original node
+                new_node.meta = node.meta
+                node.replace_all_uses_with(new_node)
+            program.graph_module.graph.erase_node(node)
+
     return program, constant_inputs
