@@ -240,21 +240,28 @@ std::vector<at::Tensor> run(tt::runtime::Device device,
   return outputs;
 }
 
-std::vector<at::Tensor> run_end_to_end(std::vector<at::Tensor> &inputs,
-                                       py::bytes byte_stream) {
+std::vector<at::Tensor>
+run_end_to_end(std::vector<at::Tensor> &inputs, py::bytes byte_stream,
+               std::optional<tt::runtime::Device> device) {
 
   tt::runtime::Binary binary = create_binary_from_bytestream(byte_stream);
 
-  tt::runtime::Device device = tt::runtime::openMeshDevice({1, 1});
+  bool use_temp_device = !device.has_value();
+  if (use_temp_device) {
+    device = tt::runtime::openMeshDevice({1, 1});
+  }
 
   int program_idx = 0;
 
   std::vector<tt::runtime::Tensor> rt_inputs =
-      preprocess_inputs(device, inputs, binary, program_idx, 0);
+      preprocess_inputs(device.value(), inputs, binary, program_idx, 0);
 
-  std::vector<at::Tensor> outputs = run(device, binary, program_idx, rt_inputs);
+  std::vector<at::Tensor> outputs =
+      run(device.value(), binary, program_idx, rt_inputs);
 
-  tt::runtime::closeMeshDevice(device);
+  if (use_temp_device) {
+    tt::runtime::closeMeshDevice(device.value());
+  }
 
   return outputs;
 }
@@ -347,7 +354,8 @@ PYBIND11_MODULE(tt_mlir, m) {
         "Preprocess inputs for execution");
   m.def("run", &run,
         "Run the binary on pre-defined device and pre-processed inputs");
-  m.def("run_end_to_end", &run_end_to_end,
+  m.def("run_end_to_end", &run_end_to_end, py::arg("inputs"),
+        py::arg("byte_stream"), py::arg("device") = py::none(),
         "Run binary end to end, isolating all steps such as device opening, "
         "input preprocessing, execution and device closing");
   m.def("get_num_available_devices", &tt::runtime::getNumAvailableDevices,
@@ -356,6 +364,8 @@ PYBIND11_MODULE(tt_mlir, m) {
         "Convert the bytestream to json");
   m.def("create_binary_from_bytestream", &create_binary_from_bytestream,
         "Create a binary from bytestream");
+  m.def("create_system_desc", &tt::torch::create_system_desc,
+        py::arg("device") = py::none(), "Create a system description");
 
 #if defined(TT_RUNTIME_DEBUG) && TT_RUNTIME_DEBUG == 1
   py::class_<tt::runtime::CallbackContext>(m, "CallbackContext");

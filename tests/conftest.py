@@ -13,6 +13,7 @@ import socket
 import os
 import json
 import shutil
+import tt_mlir
 
 global junitxml_path
 junitxml_path = None
@@ -35,6 +36,16 @@ def manage_dependencies(request):
     subprocess.check_call(
         [sys.executable, "-m", "pip", "uninstall", "-y"] + dependencies
     )
+
+
+@pytest.fixture(scope="session", autouse=True)
+def create_system_descriptor(request):
+    try:
+        tt_mlir.create_system_desc()
+    except Exception as e:
+        print(f"Failed to create system descriptor: {e}")
+    yield
+    os.remove(os.getenv("SYSTEM_DESC_PATH"))
 
 
 def pytest_addoption(parser):
