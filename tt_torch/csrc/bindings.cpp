@@ -119,12 +119,33 @@ std::vector<int64_t> as_vec_int64(std::vector<T> const &vec) {
   return result;
 }
 
-static torch::Tensor create_torch_tensor(const tt::runtime::Tensor &tensor,
-                                         const tt::runtime::TensorDesc &desc) {
+// static torch::Tensor create_torch_tensor(const tt::runtime::Tensor &tensor,
+//                                          const tt::runtime::TensorDesc &desc)
+//                                          {
+//   tt::runtime::Tensor untilized_tensor =
+//       tt::runtime::toHost(tensor, /*untilize=*/true)[0];
+//   const std::vector<std::int64_t> shape = as_vec_int64(desc.shape);
+//   const std::vector<std::int64_t> stride = as_vec_int64((desc.stride));
+
+//   const tt::target::DataType rt_datatype =
+//       tt::runtime::getTensorDataType(untilized_tensor);
+//   const torch::ScalarType dataType = dt_to_torch_scalar_type(rt_datatype);
+
+//   at::Tensor torch_tensor = at::empty_strided(shape, stride, dataType);
+//   tt::runtime::Tensor rt_tensor = create_tensor(torch_tensor);
+//   tt::runtime::memcpy(rt_tensor, untilized_tensor);
+
+//   return torch_tensor;
+// }
+
+static torch::Tensor create_torch_tensor(const tt::runtime::Tensor &tensor) {
+  const std::vector<std::int64_t> shape =
+      as_vec_int64(tt::runtime::getTensorShape(tensor));
+  const std::vector<std::int64_t> stride =
+      as_vec_int64(tt::runtime::getTensorStride(tensor));
+
   tt::runtime::Tensor untilized_tensor =
       tt::runtime::toHost(tensor, /*untilize=*/true)[0];
-  const std::vector<std::int64_t> shape = as_vec_int64(desc.shape);
-  const std::vector<std::int64_t> stride = as_vec_int64((desc.stride));
 
   const tt::target::DataType rt_datatype =
       tt::runtime::getTensorDataType(untilized_tensor);
@@ -233,21 +254,34 @@ run_async(tt::runtime::Device device, tt::runtime::Binary &binary,
   return rt_outputs;
 }
 
-std::vector<at::Tensor> to_host(tt::runtime::Binary &binary,
-                                uint32_t program_idx,
-                                std::vector<tt::runtime::Tensor> &rt_outputs) {
-  std::vector<at::Tensor> outputs;
-  outputs.reserve(rt_outputs.size());
-  const auto output_descs = binary.getProgramOutputs(program_idx);
+// std::vector<at::Tensor> to_host(std::vector<tt::runtime::Tensor> &rt_outputs)
+// {
+//   std::vector<at::Tensor> outputs;
+//   outputs.reserve(rt_outputs.size());
 
-  for (size_t i = 0; i < rt_outputs.size(); ++i) {
-    auto &rt_output = rt_outputs.at(i);
-    const auto &output_desc = output_descs.at(i);
-    outputs.emplace_back(create_torch_tensor(rt_output, output_desc));
-    tt::runtime::deallocateTensor(rt_output, /*force=*/true);
-  }
+//   for (size_t i = 0; i < rt_outputs.size(); ++i) {
+//     auto &rt_output = rt_outputs.at(i);
+//     outputs.emplace_back(create_torch_tensor(rt_output));
+//     tt::runtime::deallocateTensor(rt_output, /*force=*/true);
+//   }
 
-  return outputs;
+//   return outputs;
+// }
+
+at::Tensor to_host(tt::runtime::Tensor &rt_output) {
+  // std::vector<at::Tensor> outputs;
+  // outputs.reserve(rt_outputs.size());
+  at::Tensor output = create_torch_tensor(rt_output);
+  tt::runtime::deallocateTensor(rt_output, /*force=*/true);
+
+  // for (size_t i = 0; i < rt_outputs.size(); ++i) {
+  // auto &rt_output = rt_outputs.at(i);
+  // outputs.emplace_back(create_torch_tensor(rt_output));
+  // tt::runtime::deallocateTensor(rt_output, /*force=*/true);
+  // }
+
+  // return outputs;
+  return output;
 }
 
 std::vector<at::Tensor> run(tt::runtime::Device device,
@@ -259,12 +293,10 @@ std::vector<at::Tensor> run(tt::runtime::Device device,
 
   std::vector<at::Tensor> outputs;
   outputs.reserve(rt_outputs.size());
-  const auto output_descs = binary.getProgramOutputs(program_idx);
 
   for (size_t i = 0; i < rt_outputs.size(); ++i) {
     auto &rt_output = rt_outputs.at(i);
-    const auto &output_desc = output_descs.at(i);
-    outputs.emplace_back(create_torch_tensor(rt_output, output_desc));
+    outputs.emplace_back(create_torch_tensor(rt_output));
     tt::runtime::deallocateTensor(rt_output, /*force=*/true);
   }
 
@@ -306,9 +338,9 @@ get_op_output_torch_tensor(tt::runtime::OpContext opContextHandle,
     return torch::Tensor(); // Return an empty PyTorch tensor
   }
 
-  tt::runtime::TensorDesc desc = tt::runtime::getTensorDesc(tensor);
+  // tt::runtime::TensorDesc desc = tt::runtime::getTensorDesc(tensor);
 
-  return create_torch_tensor(tensor, desc);
+  return create_torch_tensor(tensor);
 }
 
 PYBIND11_MODULE(tt_mlir, m) {
