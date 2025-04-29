@@ -147,7 +147,7 @@ jobs:
 
     container:
       image: ${{ inputs.docker-image }}
-      options: --user root --device /dev/tenstorrent/0 --shm-size=4gb
+      options: --user root --device /dev/tenstorrent/0 --shm-size=4gb --pid=host
       volumes:
         - /dev/hugepages:/dev/hugepages
         - /dev/hugepages-1G:/dev/hugepages-1G
@@ -178,6 +178,12 @@ jobs:
         echo "install-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
         echo "dist-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
         echo "test-output-dir=$(pwd)/results/models/tests/" >> "$GITHUB_OUTPUT"
+
+    - name: Sample memory
+      shell: bash
+      run: |
+        echo "Memory sample at $(date)"
+        ps -aux --sort -%mem | head -n 10
 
     - name: Git safe dir
       run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
