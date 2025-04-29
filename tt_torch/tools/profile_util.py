@@ -9,13 +9,15 @@ import socket
 import signal
 import sys
 import shutil
-from tt_torch.tools.utils import FileManager
 import csv
 import json
+import re
+from tt_torch.tools.filemanager import FileManager
 
 
 class Profiler:
     DEFAULT_OUTPUT_FILENAME = "device_ops_perf_trace.csv"
+    port = 8086
 
     @staticmethod
     def get_ttmetal_home_path():
@@ -24,7 +26,9 @@ class Profiler:
             "third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal",
         )
 
-    def __init__(self, output_filename: str = DEFAULT_OUTPUT_FILENAME):
+    def __init__(
+        self, output_filename: str = DEFAULT_OUTPUT_FILENAME, port: int = 8086
+    ):
         self.tracy_capture_tool_path = (
             f"{self.get_ttmetal_home_path()}/tools/profiler/bin/capture-release"
         )
@@ -52,6 +56,8 @@ class Profiler:
 
         FileManager.remove_file(self.tracy_ops_times_file_path)
         FileManager.remove_file(self.tracy_ops_data_file_path)
+
+        self.port = port
 
     def check_install_tt_metal_tool_binaries(self):
         this_dir = os.path.dirname(__file__)
@@ -137,15 +143,27 @@ class Profiler:
         def get_available_port():
             ip = socket.gethostbyname(socket.gethostname())
 
-            for port in range(8086, 8500):
+            def try_bind(port, do_raise=False):
                 try:
-                    serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    serv.bind((ip, port))
-                    return str(port)
-                except PermissionError as e:
-                    pass
-                except OSError as e:
-                    pass
+                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as serv:
+                        serv.bind((ip, port))
+                        return str(port)
+                except (PermissionError, OSError) as e:
+                    if do_raise:
+                        raise e
+                    return None
+
+            # Check default port range if self.port not overridden
+            if self.port == 8086:
+                for port in range(8086, 8500):
+                    result = try_bind(port)
+                    if result:
+                        return result
+
+            # Try binding to the specified port
+            else:
+                return try_bind(self.port, do_raise=True)
+
             return None
 
         port = get_available_port()
@@ -153,16 +171,17 @@ class Profiler:
         if not port:
             raise Exception("No available port found")
 
-        os.environ["TT_METAL_DEVICE_PROFILER"] = "1"
-        os.environ["TT_METAL_CLEAR_L1"] = "1"
-        os.environ["TT_METAL_DEVICE_PROFILER_DISPATCH"] = "0"
-
         tracy_capture_tool_command = (
             f"{self.tracy_capture_tool_path} -o {self.tracy_file_path} -f -p {port}"
         )
+
+        print("Starting capture tool with command:", tracy_capture_tool_command)
+
         self.tracy_capture_tool_process = subprocess.Popen(
             tracy_capture_tool_command, shell=True  # ,env=os.environ.copy()
         )
+
+        return port
 
     def close_capture_tool_process(self):
         if self.tracy_capture_tool_process is None:
@@ -170,12 +189,16 @@ class Profiler:
         try:
             # block until tracy capture tool exits with T/O limit.
             # this should not take long as the client should have exited and the capture tool just needs to write out the tracedump
-            self.tracy_capture_tool_process.communicate(timeout=5)
+            tracy_exit_start_time = time.time()
+            self.tracy_capture_tool_process.communicate(timeout=60)
+            print(
+                f"Tracy capture tool has exited after {time.time() - tracy_exit_start_time} seconds."
+            )
         except subprocess.TimeoutExpired as e:
             self.tracy_capture_tool_process.terminate()
             self.tracy_capture_tool_process.communicate()
             raise Exception(
-                f"No profiling data could be captured. Please make sure you are on the correct build"
+                f"No profiling data could be captured. Please make sure you are on the correct build and specify a port that is not in use."
             )
 
     def process_csvexport(self):
@@ -220,9 +243,12 @@ class Profiler:
 
     def post_process_ops(self):
         # Add post-processing steps to insert location data into the ops_perf data file
+
+        loc_pattern = r'loc\(fused\[.*?, "([^"]+)"\]\)'
+
         with open(self.profiler_report_csv_path, "r") as perf_file:
             perf_reader = csv.DictReader(perf_file)
-            headers = list(perf_reader.fieldnames) + ["LOC"]
+            headers = ["LOC"] + list(perf_reader.fieldnames) + ["Raw LOC"]
             perf_data = list(perf_reader)
 
         with open(self.profiler_report_csv_path, "w+") as perf_file, open(
@@ -241,12 +267,18 @@ class Profiler:
                     if prev:
                         # Get the location data from the previous message and add it as new data for the perf_data (as a new col)
                         if len(perf_data) > ops_index:
-                            perf_data[ops_index]["LOC"] = prev
+                            perf_data[ops_index]["Raw LOC"] = prev
+
+                            loc_match = re.search(loc_pattern, prev)
+                            perf_data[ops_index]["LOC"] = (
+                                loc_match.group(1) if loc_match else "Unknown"
+                            )
                             ops_index += 1
                 else:
                     prev = message
             perf_writer = csv.DictWriter(perf_file, fieldnames=headers)
             perf_writer.writeheader()
+
             for row in perf_data:
                 perf_writer.writerow(row)
 
@@ -258,12 +290,11 @@ class Profiler:
         ) as report_file:
             perf_reader = csv.DictReader(perf_file)
             headers = perf_reader.fieldnames
-            headers = [headers[-1]] + headers[:-1]  # move LOC to first column
 
             ops_writer = csv.DictWriter(report_file, headers)
             ops_writer.writeheader()
             for row in perf_reader:
-                if "loc" in row["LOC"]:
+                if "loc" in row["Raw LOC"]:
                     ops_writer.writerow(row)
 
         print(f"Wrote report to {self.profile_ops_perf_report}")

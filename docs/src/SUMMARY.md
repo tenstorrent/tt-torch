@@ -8,6 +8,7 @@
 - [Testing](test.md)
 - [Controlling Compiler](controlling.md)
 - [Pre-commit](pre_commit.md)
+- [Profiling](profiling.md)
 
 
 # Models and Operations
