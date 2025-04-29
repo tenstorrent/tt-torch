@@ -74,4 +74,4 @@ Run a basic test to verify:
 pytest tests/torch/test_basic.py
 ```
 
-[^profiling_note]: For a profiling build, cmake build files should be generated with an extra directive, as `cmake -G Ninja -B build -DTT_RUNTIME_ENABLE_PERF_TRACE=ON`. Refer to [profiling docs](./profiling.md) for more information. 
+[^profiling_note]: For a profiling build, cmake build files should be generated with an extra directive, as `cmake -G Ninja -B build -DTT_RUNTIME_ENABLE_PERF_TRACE=ON`. Refer to [profiling docs](./profiling.md) for more information.
