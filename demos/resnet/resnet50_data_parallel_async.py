@@ -61,7 +61,8 @@ def main():
         "https://farm6.staticflickr.com/5056/5457805814_df70ed85c3_z.jpg",  # Labrador retriever
         "https://farm8.staticflickr.com/7325/9536735356_c1e2e5a0d5_z.jpg",  # Two elephants
     ]
-    images = [download_image(url) for url in image_urls]
+    # images = [download_image(url) for url in image_urls]
+    images = [torch.rand((1, 3, 224, 224), dtype=torch.bfloat16) for _ in image_urls]
     # Evenly distribute the image URLs across all devices.
     # This creates a list of lists of length num_devices, where the ith sublist
     # contains the image URLs that will be processed by the ith device.
