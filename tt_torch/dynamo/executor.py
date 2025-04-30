@@ -279,6 +279,14 @@ class Executor:
                 node_to_tensor[node] = tensor
 
     def __call__(self, *inputs):
+        """
+        Execute the model with the given inputs.
+
+        If self.async_mode is True, this function will return the on-device runtime
+        tensors.
+        If self.async_mode is False, this function will move the runtime tensors to host
+        and return them as Torch tensors.
+        """
         if self.compiler_config.compile_depth != CompileDepth.EXECUTE:
             assert (
                 self.program.graph_module != None
@@ -322,18 +330,11 @@ class Executor:
             self._generate_golden_intermediate_cache(self.program, inputs)
 
         if self.async_mode:
-            # Run the binary asynchronously
-            start = time.time()
-            outputs = tt_mlir.run_async(
+            outputs = tt_mlir.get_runtime_tensors(
                 device, binary, program_idx, preprocessed_inputs
             )
-            end = time.time()
-            print("EXECUTOR DEBUG - TIME FOR ASYNC EXECUTE: ", end - start)
         else:
-            start = time.time()
             outputs = tt_mlir.run(device, binary, program_idx, preprocessed_inputs)
-            end = time.time()
-            print("EXECUTOR DEBUG - TIME FOR SYNC EXECUTE: ", end - start)
 
         self._cache_constants_if_needed(preprocessed_inputs[:-activations_len])
         self._cleanup_resources(preprocessed_inputs[-activations_len:], device)

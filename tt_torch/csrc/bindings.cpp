@@ -119,25 +119,6 @@ std::vector<int64_t> as_vec_int64(std::vector<T> const &vec) {
   return result;
 }
 
-// static torch::Tensor create_torch_tensor(const tt::runtime::Tensor &tensor,
-//                                          const tt::runtime::TensorDesc &desc)
-//                                          {
-//   tt::runtime::Tensor untilized_tensor =
-//       tt::runtime::toHost(tensor, /*untilize=*/true)[0];
-//   const std::vector<std::int64_t> shape = as_vec_int64(desc.shape);
-//   const std::vector<std::int64_t> stride = as_vec_int64((desc.stride));
-
-//   const tt::target::DataType rt_datatype =
-//       tt::runtime::getTensorDataType(untilized_tensor);
-//   const torch::ScalarType dataType = dt_to_torch_scalar_type(rt_datatype);
-
-//   at::Tensor torch_tensor = at::empty_strided(shape, stride, dataType);
-//   tt::runtime::Tensor rt_tensor = create_tensor(torch_tensor);
-//   tt::runtime::memcpy(rt_tensor, untilized_tensor);
-
-//   return torch_tensor;
-// }
-
 static torch::Tensor create_torch_tensor(const tt::runtime::Tensor &tensor) {
   const std::vector<std::int64_t> shape =
       as_vec_int64(tt::runtime::getTensorShape(tensor));
@@ -246,41 +227,19 @@ preprocess_inputs(tt::runtime::Device device, std::vector<at::Tensor> &inputs,
 }
 
 std::vector<tt::runtime::Tensor>
-run_async(tt::runtime::Device device, tt::runtime::Binary &binary,
-          uint32_t program_idx, std::vector<tt::runtime::Tensor> &rt_inputs) {
+get_runtime_tensors(tt::runtime::Device device, tt::runtime::Binary &binary,
+                    uint32_t program_idx,
+                    std::vector<tt::runtime::Tensor> &rt_inputs) {
   std::vector<tt::runtime::Tensor> rt_outputs =
       tt::runtime::submit(device, binary, program_idx, rt_inputs);
 
   return rt_outputs;
 }
 
-// std::vector<at::Tensor> to_host(std::vector<tt::runtime::Tensor> &rt_outputs)
-// {
-//   std::vector<at::Tensor> outputs;
-//   outputs.reserve(rt_outputs.size());
-
-//   for (size_t i = 0; i < rt_outputs.size(); ++i) {
-//     auto &rt_output = rt_outputs.at(i);
-//     outputs.emplace_back(create_torch_tensor(rt_output));
-//     tt::runtime::deallocateTensor(rt_output, /*force=*/true);
-//   }
-
-//   return outputs;
-// }
-
 at::Tensor to_host(tt::runtime::Tensor &rt_output) {
-  // std::vector<at::Tensor> outputs;
-  // outputs.reserve(rt_outputs.size());
   at::Tensor output = create_torch_tensor(rt_output);
   tt::runtime::deallocateTensor(rt_output, /*force=*/true);
 
-  // for (size_t i = 0; i < rt_outputs.size(); ++i) {
-  // auto &rt_output = rt_outputs.at(i);
-  // outputs.emplace_back(create_torch_tensor(rt_output));
-  // tt::runtime::deallocateTensor(rt_output, /*force=*/true);
-  // }
-
-  // return outputs;
   return output;
 }
 
@@ -337,8 +296,6 @@ get_op_output_torch_tensor(tt::runtime::OpContext opContextHandle,
               << std::endl;
     return torch::Tensor(); // Return an empty PyTorch tensor
   }
-
-  // tt::runtime::TensorDesc desc = tt::runtime::getTensorDesc(tensor);
 
   return create_torch_tensor(tensor);
 }
@@ -408,11 +365,13 @@ PYBIND11_MODULE(tt_mlir, m) {
   m.def("preprocess_inputs", &preprocess_inputs,
         "Preprocess inputs for execution");
   m.def("run", &run,
-        "Run the binary on pre-defined device and pre-processed inputs");
-  m.def("run_async", &run_async,
-        "Run the binary on pre-defined device and pre-processed inputs in "
-        "async mode");
-  m.def("to_host", &to_host, "Move tensors from device to host");
+        "Run the binary on pre-defined device and pre-processed inputs, "
+        "returning the final torch tensors on host");
+  m.def("get_runtime_tensors", &get_runtime_tensors,
+        "Run the binary on pre-defined device and pre-processed inputs, "
+        "returning the runtime tensors on device");
+  m.def("to_host", &to_host,
+        "Converts the runtime tensor on device to a torch tensor on host");
   m.def("run_end_to_end", &run_end_to_end,
         "Run binary end to end, isolating all steps such as device opening, "
         "input preprocessing, execution and device closing");

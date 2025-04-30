@@ -31,8 +31,8 @@ remote control: 0.0037689208984375
 ```
 Notice that in the code there was no explicit device management:
 ```Python
-options = {}
-options["compiler_config"] = cc
+options = BackendOptions()
+options.compiler_config = cc
 # We didn't provide any explicit device while
 # compiling the model.
 tt_model = torch.compile(model, backend=backend, dynamic=False, options=options)
@@ -54,9 +54,9 @@ def main():
         # It is important that each `options` map being passed to `torch.compile`
         # is a new object.
         # Otherwise the "device" key will get overwritten for all previous devices.
-        options = {}
-        options["compiler_config"] = cc
-        options["device"] = device # Explicitly compile the model for a specific device
+        options = BackendOptions()
+        options.compiler_config = cc
+        options.device = device # Explicitly compile the model for a specific device
         tt_models.append(
             torch.compile(model, backend=backend, dynamic=False, options=options)
         )
