@@ -89,7 +89,7 @@ def print_tensor_shapes(inputs, prefix=""):
 
 
 def execute_process(receiver, sender, exec_event):
-    # device = tt_mlir.open_mesh_device([1, 1], tt_mlir.MeshDeviceOptions())
+    device = tt_mlir.open_mesh_device([1, 1], tt_mlir.MeshDeviceOptions())
     while 1:
         obj = receiver.get()
         faulthandler.disable()
@@ -122,7 +122,7 @@ def execute_process(receiver, sender, exec_event):
             # binary = tt_mlir.create_binary_from_bytestream(binary_bytes)
             # rt_inputs = tt_mlir.preprocess_inputs(device, inputs, binary, 0, 0)
             # outputs = tt_mlir.run(device, binary, 0, rt_inputs)
-            outputs = tt_mlir.run_end_to_end(binary_bytes, inputs)
+            outputs = tt_mlir.run_end_to_end(binary_bytes, inputs, device)
 
         sys.stderr = old_stderr
         sys.stdout = old_stdout
@@ -131,7 +131,7 @@ def execute_process(receiver, sender, exec_event):
         sender.put({"outputs": outputs})
         exec_event.wait()
 
-    # tt_mlir.close_mesh_device(device)
+    tt_mlir.close_mesh_device(device)
     sys.exit(0)
 
 
