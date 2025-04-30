@@ -35,6 +35,7 @@ jobs:
                   tests/models/codegen/test_codegen.py::test_codegen[full-eval]
                   tests/models/t5/test_t5.py::test_t5[full-t5-large-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-googlenet]
+                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[op_by_op_torch-eval-ghostnetv2_100.in1k]
                   tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-2-eval]
                   tests/models/mistral/test_pixtral.py::test_pixtral[full-eval]
                   tests/models/mistral/test_mistral.py::test_mistral[full-mistral7b-eval]

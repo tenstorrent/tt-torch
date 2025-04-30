@@ -70,7 +70,7 @@ jobs:
             "
           },
           {
-            # Approximately 65 minutes.
+            # Approximately 70 minutes.
             runs-on: wormhole_b0, name: "eval_2", tests: "
                   tests/models/bloom/test_bloom.py::test_bloom[full-eval]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-hrnet_w18.ms_aug_in1k]
@@ -85,6 +85,7 @@ jobs:
                   tests/models/gpt2/test_gpt2.py::test_gpt2[full-eval]
                   tests/models/xglm/test_xglm.py::test_xglm[full-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_red[full-eval-swin_b]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-densenet201]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_red[full-eval-ese_vovnet19b_dw.ra_in1k]
             "
           },
