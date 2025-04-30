@@ -234,3 +234,51 @@ def <test_name>(record_property, model_name, mode, op_by_op):
 ```
 You can find example tests under [tests/models](https://github.com/tenstorrent/tt-torch/tree/main/tests/models)
 Note: please make sure to distinguish Onnx tests by appending `_onnx` to test names. i.e. `test_EfficientNet_onnx.py`
+
+## Where to add tests on tt-torch GitHub CI?
+
+If you're a Tenstorrent internal developer and have a new model that is either running fully/correctly or still needs some work (compiler support, runtime support, etc), it should be added to CI in the same PR you add the model.  Below is guide for where to add it.
+
+Note: The op-by-op flow is typically used for brining up new models and debugging and you should start there, especially if the model is a new, untested architecture or your have reson to believe it will not work end-to-end out of the box.
+
+### Case 1: The new model test runs correctly end-to-end
+
+If you've tried it and it runs – great!
+
+- Add it to run in "nightly full model execute list" in `.github/workflows/run-full-model-execution-tests-nightly.yml` while ideally balancing existing groups of tests. Example:
+
+    ```
+    tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[full-Qwen/Qwen2.5-1.5B-eval]
+    ```
+
+- Also add it to "weekly op-by-op-flow list" in `.github/workflows/run-op-by-op-flow-tests-weekly.yml` where we less frequently run tests that have all ops passing through to `EXECUTE` depth in op-by-op flow. Example:
+
+    ```
+    tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[op_by_op_torch-Qwen/Qwen2.5-1.5B-eval]
+    ```
+
+### Case 2: The new model test runs end-to-end but encounters a PCC/ATOL/Checker error
+
+This is okay, there is still value in running the model.
+
+- Follow previous section instructions for adding it to "nightly full model execute" and "weekly op-by-op-flow list" but first open a GitHub issue (follow template and `models_pcc_issue` label like the example below) to track the PCC/ATOL/Checker error, reference it in the test body so it can be tracked/debugged, and disable PCC/ATOL/Token checking as needed. Example:
+
+    ```
+    # TODO Enable checking - https://github.com/tenstorrent/tt-torch/issues/490
+    assert_pcc=False,
+    assert_atol=False,
+    ```
+
+### Case 3: The new model test does not run correctly end-to-end
+
+No problem. If your end-to-end model hits a compiler failure (unsupported op, etc) or runtime assert of any kind, this is why the op-by-op flow exists. The op-by-op flow is designed to flag per-op compile/runtime failures (perfectly fine) but is expcted to return overall passed status.
+
+- Go ahead and run the op-by-op flow locally (or on CI) for your model, and if the pytest finishes without fatal errors, add it to the "nightly op-by-op flow list" (a new or existing group) in `.github/workflows/run-op-by-op-flow-tests-nightly.yml` where individual ops will be tracked/debugged and later promoted to "nightly full model execute list" once ready. Example:
+
+    ```
+    tests/models/t5/test_t5.py::test_t5[op_by_op_torch-t5-large-eval]
+    ```
+
+- It is helpful if you can run `python results/parse_op_by_op_results.py` (will generate `results/models_op_per_op.xlsx` for all models you've recently run in op-by-op-flow) and include the XLS file in your PR. This XLS file contains op-by-op-flow results and is also generated in Nightly regression for all work-in-progress models in `.github/workflows/run-op-by-op-flow-tests-nightly.yml`.
+
+- If your model is reported in `results/models_op_per_op.xlsx` as being able to compile all ops successfully (ie. all ops can compile to status `6: CONVERTED_TO_TTNN`, but some hit runtime `7: EXECUTE` failures) then it should also be added to "nightly e2e compile list" in `.github/workflows/run-e2e-tests.yml` which stops before executing the model.
