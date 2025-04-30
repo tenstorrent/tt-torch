@@ -209,6 +209,7 @@ def backend(gm, example_inputs, options=None):
     if options is None:
         cc = CompilerConfig()
         device = None
+        async_mode = False
     if options is not None:
         if "compiler_config" not in options or options["compiler_config"] is None:
             cc = CompilerConfig()
