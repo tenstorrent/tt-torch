@@ -142,7 +142,7 @@ def verify_against_golden(
 
     # Now that all tensors are checked, print the final message
     if assert_pcc and assert_atol:
-        if not passed_pcc and passed_atol:
+        if not passed_pcc or not passed_atol:
             assert False, err_msg
     elif not assert_pcc and assert_atol:
         print("Ignoring PCC check\n")
