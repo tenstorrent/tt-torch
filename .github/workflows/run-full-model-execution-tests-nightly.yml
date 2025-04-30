@@ -61,7 +61,7 @@ jobs:
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification_generality[full-eval-mixer_b16_224.goog_in21k]
                   tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base[full-eval]
                   tests/models/detr/test_detr.py::test_detr[full-eval]
-                  tests/models/vit/test_vit.py::test_vit[full-eval]
+                  tests/models/vit/test_vit_onnx.py::test_vit_onnx[full-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[full-eval-vit_h_14]
                   tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small[full-eval]
                   tests/models/yolos/test_yolos.py::test_yolos[full-eval]

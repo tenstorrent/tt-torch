@@ -45,7 +45,7 @@ class ThisTester(OnnxModelTester):
     "mode",
     ["train", "eval"],
 )
-@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op", "full"])
+@pytest.mark.parametrize("op_by_op", [True, False], ids=["op_by_op_stablehlo", "full"])
 def test_oft_onnx(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()

@@ -247,7 +247,7 @@ std::vector<at::Tensor> run_end_to_end(std::vector<at::Tensor> &inputs,
 
   tt::runtime::Device device = tt::runtime::openMeshDevice({1, 1});
 
-  int program_idx = 0;
+  const int program_idx = 0;
 
   std::vector<tt::runtime::Tensor> rt_inputs =
       preprocess_inputs(device, inputs, binary, program_idx, 0);
@@ -356,6 +356,8 @@ PYBIND11_MODULE(tt_mlir, m) {
         "Convert the bytestream to json");
   m.def("create_binary_from_bytestream", &create_binary_from_bytestream,
         "Create a binary from bytestream");
+  m.def("create_system_desc", &tt::torch::create_system_desc,
+        py::arg("device") = py::none(), "Create a system description");
 
 #if defined(TT_RUNTIME_DEBUG) && TT_RUNTIME_DEBUG == 1
   py::class_<tt::runtime::CallbackContext>(m, "CallbackContext");
