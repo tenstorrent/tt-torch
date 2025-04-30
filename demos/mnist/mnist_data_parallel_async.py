@@ -43,7 +43,7 @@ class MnistModel(torch.nn.Module):
         return output
 
 
-model = MnistModel().to(torch.float16).eval()
+model = MnistModel().to(torch.bfloat16).eval()
 
 
 def main():
@@ -73,7 +73,7 @@ def main():
     expected_outputs = []
     for i in range(num_devices):
         test_input, expected_output = next(iter(dataloader))
-        test_input = test_input.to(torch.float16)
+        test_input = test_input.to(torch.bfloat16)
         test_inputs.append(test_input)
         expected_outputs.append(expected_output)
 
