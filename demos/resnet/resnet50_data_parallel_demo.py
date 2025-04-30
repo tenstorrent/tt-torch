@@ -4,7 +4,7 @@
 import argparse
 import torch
 from tt_torch.tools.utils import CompilerConfig
-from tt_torch.dynamo.backend import backend
+from tt_torch.dynamo.backend import backend, BackendOptions
 from PIL import Image
 from torchvision import transforms
 import torchvision.models as models
@@ -97,9 +97,9 @@ def main(use_simplified_manager):
 
     tt_models = []
     for device in devices:
-        options = {}
-        options["compiler_config"] = cc
-        options["device"] = device
+        options = BackendOptions()
+        options.compiler_config = cc
+        options.device = device
         # Compile the model for each device
         tt_models.append(
             torch.compile(model, backend=backend, dynamic=False, options=options)

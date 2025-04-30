@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 from tt_torch.tools.utils import CompilerConfig
-from tt_torch.dynamo.backend import backend
+from tt_torch.dynamo.backend import backend, BackendOptions
 from PIL import Image
 from torchvision import transforms
 import torchvision.models as models
@@ -127,8 +127,8 @@ if __name__ == "__main__":
     cc.enable_consteval = True
     cc.consteval_parameters = True
 
-    single_options = {}
-    single_options["compiler_config"] = cc
+    single_options = BackendOptions()
+    single_options.compiler_config = cc
     single_model = torch.compile(
         model, backend=backend, dynamic=False, options=single_options
     )
@@ -151,9 +151,9 @@ if __name__ == "__main__":
     parent, devices = DeviceManager.acquire_available_devices()
     multi_models = []
     for device in devices:
-        multi_options = {}
-        multi_options["compiler_config"] = cc
-        multi_options["device"] = device
+        multi_options = BackendOptions()
+        multi_options.compiler_config = cc
+        multi_options.device = device
         multi_models.append(
             torch.compile(model, backend=backend, dynamic=False, options=multi_options)
         )

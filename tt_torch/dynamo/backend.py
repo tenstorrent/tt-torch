@@ -9,6 +9,16 @@ import tt_mlir
 import sys
 import torch_mlir
 
+from tt_torch.tools.utils import CompilerConfig
+
+
+class BackendOptions:
+    def __init__(self, compiler_config=CompilerConfig(), device=None, async_mode=False):
+        self.compiler_config = compiler_config
+        self.device = device
+        self.async_mode = async_mode
+
+
 from tt_torch.dynamo.torch_backend import (
     TorchExecutor,
     import_graph,
@@ -202,7 +212,7 @@ def _base_backend(gm, example_inputs, compiler_config, device, async_mode):
 
 
 @tt_torch_error_message
-def backend(gm, example_inputs, options=None):
+def backend(gm, example_inputs, options: BackendOptions = None):
     warnings.filterwarnings("ignore", message="Failed to fetch module*")
     assert isinstance(gm, torch.fx.GraphModule), "Backend only supports torch graphs"
 
@@ -210,13 +220,10 @@ def backend(gm, example_inputs, options=None):
         cc = CompilerConfig()
         device = None
         async_mode = False
-    if options is not None:
-        if "compiler_config" not in options or options["compiler_config"] is None:
-            cc = CompilerConfig()
-        else:
-            cc = options["compiler_config"]
-        device = options.get("device", None)
-        async_mode = options.get("async_mode", False)
+    else:
+        cc = options.compiler_config
+        device = options.device
+        async_mode = options.async_mode
 
     # Apply environment overrides at start of compilation to allow overriding what was set in the test
     cc.apply_environment_overrides()

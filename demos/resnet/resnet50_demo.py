@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 from tt_torch.tools.utils import CompilerConfig
-from tt_torch.dynamo.backend import backend
+from tt_torch.dynamo.backend import backend, BackendOptions
 from PIL import Image
 import torch
 from torchvision import transforms
@@ -23,8 +23,8 @@ def main():
     cc.enable_consteval = True
     cc.consteval_parameters = True
 
-    options = {}
-    options["compiler_config"] = cc
+    options = BackendOptions()
+    options.compiler_config = cc
     tt_model = torch.compile(model, backend=backend, dynamic=False, options=options)
 
     headers = ["Top 5 Predictions"]

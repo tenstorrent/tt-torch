@@ -12,7 +12,7 @@ from tt_torch.tools.utils import (
     prepare_inference_session,
     run_model_proto,
 )
-from tt_torch.dynamo.backend import backend
+from tt_torch.dynamo.backend import backend, BackendOptions
 from tt_torch.tools.utils import calculate_atol, calculate_pcc
 from tt_torch.tools.utils import CompileDepth
 
@@ -177,9 +177,9 @@ def _verify_torch_module(
 
     from tt_torch.dynamo.backend import backend  # avoid circular import
 
-    torch_options = {}
-    torch_options["compiler_config"] = compiler_config
-    torch_options["device"] = device
+    torch_options = BackendOptions()
+    torch_options.compiler_config = compiler_config
+    torch_options.device = device
     tt_mod = torch.compile(mod, backend=backend, options=torch_options)
     if inputs is None:
         if all([dtype.is_floating_point for dtype in input_data_types]):

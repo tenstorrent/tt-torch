@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 from tt_torch.tools.utils import CompilerConfig
-from tt_torch.dynamo.backend import backend
+from tt_torch.dynamo.backend import backend, BackendOptions
 from PIL import Image
 from torchvision import transforms
 import torchvision.models as models
@@ -40,10 +40,11 @@ def main():
 
     tt_models = []
     for device in devices:
-        options = {}
-        options["compiler_config"] = cc
-        options["device"] = device
-        options["async_mode"] = True
+        options = BackendOptions()
+        options.compiler_config = cc
+        options.device = device
+        options.async_mode = True
+
         tt_models.append(
             torch.compile(model, backend=backend, dynamic=False, options=options)
         )
@@ -61,31 +62,22 @@ def main():
         "https://farm6.staticflickr.com/5056/5457805814_df70ed85c3_z.jpg",  # Labrador retriever
         "https://farm8.staticflickr.com/7325/9536735356_c1e2e5a0d5_z.jpg",  # Two elephants
     ]
-    # images = [download_image(url) for url in image_urls]
-    images = [torch.rand((1, 3, 224, 224), dtype=torch.bfloat16) for _ in image_urls]
-    # Evenly distribute the image URLs across all devices.
+    images = [download_image(url) for url in image_urls]
+    # Evenly distribute the image s across all devices.
     # This creates a list of lists of length num_devices, where the ith sublist
-    # contains the image URLs that will be processed by the ith device.
+    # contains the image that will be processed by the ith device.
     k, m = divmod(len(image_urls), num_devices)
-    # divided_urls = [
-    #     image_urls[i * k + min(i, m) : (i + 1) * k + min(i + 1, m)]
-    #     for i in range(num_devices)
-    # ]
     divided_images = [
         images[i * k + min(i, m) : (i + 1) * k + min(i + 1, m)]
         for i in range(num_devices)
     ]
     runtime_tensors_list = []
-    start_time = time.time()
+
     for i in range(num_devices):
         tt_model = tt_models[i]
         imgs = divided_images[i]
         for img in imgs:
-            # img = download_image(url)
-            start = time.time()
             runtime_tensors = tt_model(img)
-            end = time.time()
-            print("DEBUG - TIME FOR RUNTIME TENSOR: ", end - start)
             runtime_tensors_list.append(runtime_tensors)
 
     results = []
@@ -103,11 +95,7 @@ def main():
         for i in range(5):
             rows.append([tt_classes[i]])
         results.append(url_string + tabulate.tabulate(rows, headers=headers))
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print()
-    print(f"Total time taken for inference: {elapsed_time:.2f} seconds")
-    print()
+
     for result in results:
         print("*" * 40)
         print(result)
