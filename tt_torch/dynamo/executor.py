@@ -379,6 +379,7 @@ class OpByOpExecutor(Executor):
         required_pcc=0.99,
         required_atol=1e-2,
         device=None,
+        async_mode=False,
     ):
         super().__init__(
             program=None,
@@ -387,6 +388,7 @@ class OpByOpExecutor(Executor):
             required_pcc=required_pcc,
             required_atol=required_atol,
             device=device,
+            async_mode=async_mode,
         )
 
         # Debug mode to run only specific op given global_op_idx

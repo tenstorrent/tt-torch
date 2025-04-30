@@ -283,12 +283,14 @@ class StablehloExecutor(OpByOpExecutor):
         required_pcc=0.99,
         required_atol=1e-2,
         device=None,
+        async_mode=False,
     ):
         super().__init__(
             compiler_config=compiler_config,
             required_pcc=required_pcc,
             required_atol=required_atol,
             device=device,
+            async_mode=async_mode,
         )
         self.parsed_module = None
         if module is not None:
