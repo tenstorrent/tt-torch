@@ -247,15 +247,15 @@ If you've tried it and it runs – great!
 
 - Add it to run in "nightly full model execute list" in `.github/workflows/run-full-model-execution-tests-nightly.yml` while ideally balancing existing groups of tests. Example:
 
-    ```
-    tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[full-Qwen/Qwen2.5-1.5B-eval]
-    ```
+```
+tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[full-Qwen/Qwen2.5-1.5B-eval]
+```
 
 - Also add it to "weekly op-by-op-flow list" in `.github/workflows/run-op-by-op-flow-tests-weekly.yml` where we less frequently run tests that have all ops passing through to `EXECUTE` depth in op-by-op flow. Example:
 
-    ```
-    tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[op_by_op_torch-Qwen/Qwen2.5-1.5B-eval]
-    ```
+```
+tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[op_by_op_torch-Qwen/Qwen2.5-1.5B-eval]
+```
 
 ### Case 2: The new model test runs end-to-end but encounters a PCC/ATOL/Checker error
 
@@ -263,11 +263,11 @@ This is okay, there is still value in running the model.
 
 - Follow previous section instructions for adding it to "nightly full model execute" and "weekly op-by-op-flow list" but first open a GitHub issue (follow template and `models_pcc_issue` label like the example below) to track the PCC/ATOL/Checker error, reference it in the test body so it can be tracked/debugged, and disable PCC/ATOL/Token checking as needed. Example:
 
-    ```
-    # TODO Enable checking - https://github.com/tenstorrent/tt-torch/issues/490
-    assert_pcc=False,
-    assert_atol=False,
-    ```
+```
+# TODO Enable checking - https://github.com/tenstorrent/tt-torch/issues/490
+assert_pcc=False,
+assert_atol=False,
+```
 
 ### Case 3: The new model test does not run correctly end-to-end
 
@@ -275,9 +275,9 @@ No problem. If your end-to-end model hits a compiler failure (unsupported op, et
 
 - Go ahead and run the op-by-op flow locally (or on CI) for your model, and if the pytest finishes without fatal errors, add it to the "nightly op-by-op flow list" (a new or existing group) in `.github/workflows/run-op-by-op-flow-tests-nightly.yml` where individual ops will be tracked/debugged and later promoted to "nightly full model execute list" once ready. Example:
 
-    ```
-    tests/models/t5/test_t5.py::test_t5[op_by_op_torch-t5-large-eval]
-    ```
+```
+tests/models/t5/test_t5.py::test_t5[op_by_op_torch-t5-large-eval]
+```
 
 - It is helpful if you can run `python results/parse_op_by_op_results.py` (will generate `results/models_op_per_op.xlsx` for all models you've recently run in op-by-op-flow) and include the XLS file in your PR. This XLS file contains op-by-op-flow results and is also generated in Nightly regression for all work-in-progress models in `.github/workflows/run-op-by-op-flow-tests-nightly.yml`.
 
