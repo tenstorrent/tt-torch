@@ -95,4 +95,4 @@ jobs:
       shell: bash
       run: |
         source env/activate
-        pytest --durations=0 -v tests/models/llama/test_llama_7b_pipeline_parallel.py::test_llama_7b_pipeline_parallel[huggyllama/llama-7b-eval] 2>&1
+        pytest --durations=0 -svv tests/models/llama/test_llama_7b_pipeline_parallel.py::test_llama_7b_pipeline_parallel[huggyllama/llama-7b-eval]
