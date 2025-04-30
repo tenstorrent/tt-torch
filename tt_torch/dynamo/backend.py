@@ -164,7 +164,7 @@ def shlo_to_flatbuffer(executor, module, compiler_config):
             create_verify_golden_callback(compiler_config)
         )
 
-    binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir, executor.device)
+    binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
     dump_module(module=ttnn, name="TTNN module", compiler_config=compiler_config)
 
     return binary
