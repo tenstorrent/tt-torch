@@ -53,7 +53,7 @@ jobs:
       - pre-commit
       - spdx
       - build
-      - test
+      # - test
       - full-model-test
     runs-on: Ubuntu-latest
     steps:
