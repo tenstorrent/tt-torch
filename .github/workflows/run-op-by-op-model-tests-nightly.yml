@@ -23,7 +23,7 @@ jobs:
       matrix:
         build: [
           {
-            runs-on: torch-n150-2, name: "Flux", tests: "
+            runs-on: torch-n300-5, name: "Flux", tests: "
               tests/models/flux/test_flux.py::test_flux[op_by_op_torch-flux_schnell-eval]
               tests/models/flux/test_flux.py::test_flux[op_by_op_torch-flux_dev-eval]
               "
