@@ -133,13 +133,13 @@ compileTTIRToTTNN(std::string_view code,
   }
   mlir::tt::ttnn::TTIRToTTNNBackendPipelineOptions options;
 
-  if (const char *system_desc_path = std::getenv("SYSTEM_DESC_PATH");
-      system_desc_path) {
-    std::remove(system_desc_path);
-    tt::runtime::getCurrentSystemDesc(std::nullopt, device)
-        .first.store(system_desc_path);
-    options.systemDescPath = system_desc_path;
-  }
+  // if (const char *system_desc_path = std::getenv("SYSTEM_DESC_PATH");
+  //     system_desc_path) {
+  //   std::remove(system_desc_path);
+  //   tt::runtime::getCurrentSystemDesc(std::nullopt, device)
+  //       .first.store(system_desc_path);
+  //   options.systemDescPath = system_desc_path;
+  // }
 
   mlir::tt::ttnn::createTTIRToTTNNBackendPipeline(pm, options);
 
