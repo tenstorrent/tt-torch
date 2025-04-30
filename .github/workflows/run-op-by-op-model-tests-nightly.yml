@@ -49,6 +49,11 @@ jobs:
               "
           },
           {
+            runs-on: wormhole_b0, name: "mobilenet", tests: "
+              tests/models/MobileNetV2/test_MobileNetV2_onnx.py::test_MobileNetV2_onnx[op_by_op_stablehlo-eval]
+              "
+          },
+          {
             runs-on: wormhole_b0, name: "openpose", tests: "
               tests/models/openpose/test_openpose.py::test_openpose[op_by_op_torch-eval]
               "
@@ -69,6 +74,7 @@ jobs:
               tests/models/unet/test_unet.py::test_unet[op_by_op_torch-eval]
               tests/models/unet_brain/test_unet_brain.py::test_unet_brain[op_by_op_torch-eval]
               tests/models/unet_carvana/test_unet_carvana.py::test_unet_carvana[op_by_op_torch-eval]
+              tests/models/vgg19_unet/test_vgg19_unet.py::test_vgg19_unet[op_by_op_torch-eval]
               "
           },
           {
