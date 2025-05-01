@@ -287,6 +287,7 @@ class CompilerConfig:
         self.record_property = None
         self.record_property = lambda *args, **kwargs: None  # Default to no-op
         self.runtime_intermediate_cache = None  # Do not serialize.
+        self.save_mlir_override = None
 
         self.apply_environment_overrides()
         self.post_init()
@@ -360,6 +361,20 @@ class CompilerConfig:
         if dump_intermediates:
             self.dump_debug = dump_intermediates == "DEBUG"
             self.dump_info = self.dump_debug or dump_intermediates == "INFO"
+        save_mlir_str = os.environ.get("TT_TORCH_SAVE_MLIR")
+        if save_mlir_str:
+            self.save_mlir_override = []
+            dialects = [
+                d.strip() for d in save_mlir_str.split(",")
+            ]  # Using comma as a separator
+            valid_dialects = ["STABLEHLO", "TTIR", "TTNN"]
+            for dialect in dialects:
+                if dialect in valid_dialects and dialect not in self.save_mlir_override:
+                    self.save_mlir_override.append(dialect)
+                elif dialect:
+                    print(
+                        f"Warning: Invalid SAVE_MLIR value: {dialect}. Expected one or more of {valid_dialects} separated by commas."
+                    )
 
     def post_init(self):
         if self.consteval_parameters:
