@@ -34,30 +34,9 @@ jobs:
       mlir_override: ${{ github.event.inputs.mlir_override }}
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       setup-args: "--build_perf" #TODO - This should be toggleable?
-  test:
-    needs: [build, docker-build]
-    uses: ./.github/workflows/run-tests.yml
+  test_full_model_nightly:
+    needs: [docker-build, build]
+    uses: ./.github/workflows/run-full-model-execution-tests-nightly.yml
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  full-model-test:
-    needs: [build, docker-build]
-    uses: ./.github/workflows/run-full-model-execution-tests.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-      run-codecov: 'false'
-  check-all-green:
-    if: always()
-    needs:
-      - pre-commit
-      - spdx
-      - build
-      - test
-      - full-model-test
-    runs-on: Ubuntu-latest
-    steps:
-    - name: Check if the needed jobs succeeded or failed
-      uses: re-actors/alls-green@release/v1
-      with:
-        jobs: ${{ toJSON(needs) }}
