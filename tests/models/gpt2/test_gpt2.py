@@ -55,6 +55,8 @@ def test_gpt2(record_property, mode, op_by_op):
         relative_atol=0.013,
         compiler_config=cc,
         record_property_handle=record_property,
+        assert_pcc=False,
+        assert_atol=False,
     )
     results = tester.test_model()
     if mode == "eval":

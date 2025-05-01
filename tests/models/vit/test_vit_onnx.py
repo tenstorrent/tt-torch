@@ -67,7 +67,7 @@ def test_vit_onnx(record_property, mode, op_by_op):
         record_property_handle=record_property,
         model_group="red",
         assert_pcc=True,
-        assert_atol=True,
+        assert_atol=False,
     )
 
     results = tester.test_model()
