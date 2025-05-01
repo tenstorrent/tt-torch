@@ -14,7 +14,7 @@ from tt_torch.tools.utils import (
 )
 from tt_torch.dynamo.backend import backend, BackendOptions
 from tt_torch.tools.utils import calculate_atol, calculate_pcc
-from tt_torch.tools.utils import CompileDepth
+from tt_torch.tools.utils import CompileDepth, CompilerConfig
 
 
 def verify_against_golden(
@@ -291,7 +291,7 @@ def verify_module(
     required_atol=1e-2,
     input_range=(-0.5, 0.5),
     input_range_int=(0, 1000),
-    compiler_config=None,
+    compiler_config=CompilerConfig(),
     do_assert=True,
     device=None,
 ):
