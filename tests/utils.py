@@ -97,6 +97,12 @@ class ModelTester:
 
         print("[MODEL NAME]", model_name + model_name_suffix)
 
+        self.record_tag_cache["required_pcc"] = self.required_pcc
+        self.record_tag_cache["required_atol"] = self.required_atol
+        self.record_tag_cache["relative_atol"] = self.relative_atol
+        self.record_tag_cache["is_asserting_pcc"] = self.assert_pcc
+        self.record_tag_cache["is_asserting_atol"] = self.assert_atol
+
         # configs should be set at test start, so they can be flushed immediately
         self.record_property(
             "config",
