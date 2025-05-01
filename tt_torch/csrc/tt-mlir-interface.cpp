@@ -35,6 +35,9 @@
 #include "stablehlo/dialect/StablehloOps.h"  // from @stablehlo
 #include "stablehlo/transforms/Passes.h"     // from @stablehlo
 
+#include "ttmlir/Dialect/TT/IR/TTOps.h"
+#include "ttmlir/Dialect/TT/IR/TTTraits.h"
+
 #include "ttmlir/Dialect/TTIR/Pipelines/TTIRPipelines.h"
 #include "ttmlir/Dialect/TTIR/Transforms/Passes.h"
 #include "ttmlir/Dialect/TTNN/Pipelines/TTNNPipelines.h"
@@ -46,6 +49,9 @@
 
 #include "tt_mlir_version.h"
 
+#include <llvm/ADT/SmallVector.h>
+
+#include <iostream>
 namespace tt::torch {
 
 std::string compileStableHLOToTTIR(std::string_view code) {
@@ -148,7 +154,7 @@ void create_system_desc(std::optional<tt::runtime::Device> device) {
 
 std::tuple<std::shared_ptr<void> *, std::string>
 compileTTIRToTTNN(std::string_view code,
-                  std::optional<tt::runtime::Device> device) {
+                  std::optional<tt::runtime::Device> device, size_t len_activations, size_t len_graph_constants) {
 
   mlir::MLIRContext context;
   mlir::DialectRegistry registry;
@@ -181,7 +187,27 @@ compileTTIRToTTNN(std::string_view code,
     pm.getContext()->disableMultithreading();
     pm.enableIRPrinting();
   }
+
   mlir::tt::ttnn::TTIRToTTNNBackendPipelineOptions options;
+
+  // boolean env var to override consteval
+  const char *consteval = std::getenv("TT_TORCH_CONSTEVAL");
+  if (consteval && std::string(consteval) == "1") {
+    options.enableConstEval = true;
+  }
+  if (len_activations > 0 || len_graph_constants > 0) {
+    std::cout << "Inputs: " << len_activations << ", Constants: " << len_graph_constants << std::endl;
+    llvm::SmallVector<mlir::tt::ArgumentType> argTypes;
+    for (size_t i = 0; i < len_graph_constants; ++i) {
+      argTypes.push_back(mlir::tt::ArgumentType::Constant);
+    }
+    for (size_t i = 0; i < len_activations; ++i) {
+      argTypes.push_back(mlir::tt::ArgumentType::Input);
+    }
+    llvm::StringMap<llvm::SmallVector<mlir::tt::ArgumentType>> argTypesMap;
+    argTypesMap["main"] = argTypes;
+    options.argumentTypeMap = argTypesMap;
+  }
 
   if (std::filesystem::path system_desc_path = std::getenv("SYSTEM_DESC_PATH");
       !system_desc_path.empty()) {

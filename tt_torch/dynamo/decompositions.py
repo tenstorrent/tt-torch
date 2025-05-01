@@ -326,7 +326,7 @@ def _get_default_decomposition_ops() -> DecompositionOpsList:
         aten.masked_fill.Tensor,
         aten.masked_fill.Scalar,
         aten.t,
-        aten.addmm,
+        # aten.addmm,
         # decompositions that aid us in handling nn.BatchNorm2d
         aten._native_batch_norm_legit_functional,
         aten._native_batch_norm_legit_no_training,
@@ -344,7 +344,7 @@ def _get_default_decomposition_ops() -> DecompositionOpsList:
         aten.unsafe_split.Tensor,
         aten.binary_cross_entropy,
         aten.dot,
-        aten._adaptive_avg_pool2d,
+        # aten._adaptive_avg_pool2d,
         aten._prelu_kernel,
         aten.full,
         aten._log_softmax,

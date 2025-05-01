@@ -10,6 +10,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+import time
 
 
 # adapted from https://github.com/pytorch/examples/blob/main/mnist/main.py
@@ -73,6 +74,8 @@ def test_mnist_train(record_property, mode, op_by_op):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    cc.cache_preprocessed_constants = True
+
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
@@ -86,5 +89,23 @@ def test_mnist_train(record_property, mode, op_by_op):
         compiler_config=cc,
         record_property_handle=record_property,
     )
-    tester.test_model()
+
+    model = tester.compile_model(tester.get_framework_model(), tester.compiler_config)
+
+    num_loops = 100
+    with torch.no_grad():
+        start_first = time.time()
+        results = tester.run_model(model, tester.inputs)
+        end_first = time.time()
+        print(f"First iteration took {(end_first - start_first)} seconds")
+
+        start_time = time.time()
+        for _ in range(num_loops):
+            results = tester.run_model(model, tester.inputs)
+        end_time = time.time()
+
+        print(f"Model: {model_name}")
+        print(f"{num_loops} iterations took {(end_time - start_time)} seconds")
+        print(f"Average iteration time: {(end_time - start_time) / num_loops} seconds")
+
     tester.finalize()
