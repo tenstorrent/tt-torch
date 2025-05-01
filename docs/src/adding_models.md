@@ -237,7 +237,7 @@ Note: please make sure to distinguish Onnx tests by appending `_onnx` to test na
 
 ## Test run modes
 
-- op-by-op flow: This will break down model into graphs and break down graphs into ops, compiling and executing unique (first seen occurrence) ops independently. Results are written to .json file and and optionally converted to XLS file for reporting, as post-processing step.  The op-by-op flow is typically used for bringing up new models and debugging and you should start there, especially if the model is a new, untested architecture or your have reason to believe it will not work end-to-end out of the box. Engaged with `cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP` in test, typically driven by pytest params `[op_by_op_torch-eval]`.  To enable debug logs showing each named op compling, running etc, use `TT_TORCH_DUMP_DEBUG=1` env-var.
+- op-by-op flow: This will break down model into graphs and break down graphs into ops, compiling and executing unique (first seen occurrence) ops independently. Results are written to .json file and and optionally converted to XLS file for reporting, as post-processing step.  The op-by-op flow is typically used for bringing up new models and debugging and you should start there, especially if the model is a new, untested architecture or your have reason to believe it will not work end-to-end out of the box. Engaged with `cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP` in test, typically driven by pytest params `[op_by_op_torch-eval]`.
 
 - full end-to-end flow: This is the typical compile + execute of the model that typically includes functional correctness checking. Engaged with `cc.compile_depth = CompileDepth.EXECUTE` in test, typically driven by pytest params `[full-eval]`.
 
@@ -279,7 +279,7 @@ assert_atol=False,
 
 No problem. If your end-to-end model hits a compiler failure (unsupported op, etc) or runtime assert of any kind, this is why the op-by-op flow exists. The op-by-op flow is designed to flag per-op compile/runtime failures (which are perfectly fine) but is expected to return overall passed status.
 
-- Go ahead and run the op-by-op flow locally (or on CI) for your model (with `TT_TORCH_DUMP_DEBUG=1` env-var if desired), and if the pytest finishes without fatal errors, add it to the "nightly op-by-op flow list" (a new or existing group) in `.github/workflows/run-op-by-op-flow-tests-nightly.yml` where individual ops will be tracked/debugged and later promoted to "nightly full model execute list" once ready. Example:
+- Go ahead and run the op-by-op flow locally (or on CI) for your model, and if the pytest finishes without fatal errors, add it to the "nightly op-by-op flow list" (a new or existing group) in `.github/workflows/run-op-by-op-flow-tests-nightly.yml` where individual ops will be tracked/debugged and later promoted to "nightly full model execute list" once ready. Example:
 
 ```
 tests/models/t5/test_t5.py::test_t5[op_by_op_torch-t5-large-eval]
