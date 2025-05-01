@@ -221,6 +221,11 @@ jobs:
             runs-on: wormhole_b0, name: "mistral", tests: "
               tests/models/mistral/test_mistral.py::test_mistral[op_by_op_torch-ministral3b-eval]
               "
+          },
+          {
+            runs-on: wormhole_b0, name: "falcon3", tests: "
+              tests/models/falcon/test_falcon3.py::test_falcon[op_by_op_torch-tiiuae/Falcon3-1B-Base-eval]
+              "
           }
         ]
     runs-on:

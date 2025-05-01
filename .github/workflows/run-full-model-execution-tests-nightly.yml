@@ -90,9 +90,10 @@ jobs:
             "
           },
           {
-            # Approximately 45 minutes.
+            # Approximately 65 minutes.
             runs-on: wormhole_b0, name: "eval_3", tests: "
                   tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-1.5-eval]
+                  tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-1B-Base-eval]
             "
           },
           {
