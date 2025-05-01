@@ -68,18 +68,28 @@ def bypass_redundant_getitem(gm):
                     node.replace_all_uses_with(node.args[0][idx])
     return gm
 
+
 def bypass_redundant_cast(gm):
     for node in gm.graph.nodes:
-        if node.op == "call_function" and hasattr(node.target, "name") and "prims::convert_element_type" in node.target.name():
+        if (
+            node.op == "call_function"
+            and hasattr(node.target, "name")
+            and "prims::convert_element_type" in node.target.name()
+        ):
             if node.args[1] == node.args[0].meta["tensor_meta"].dtype:
                 node.replace_all_uses_with(node.args[0])
 
     gm.graph.eliminate_dead_code()
     return gm
 
+
 def bypass_parameter_dtype_promotion(gm, compiler_config):
     for node in gm.graph.nodes:
-        if node.op == "call_function" and hasattr(node.target, "name") and "prims::convert_element_type" in node.target.name():
+        if (
+            node.op == "call_function"
+            and hasattr(node.target, "name")
+            and "prims::convert_element_type" in node.target.name()
+        ):
             if node.args[0].op == "get_attr" and node.args[1] == torch.float32:
                 node.replace_all_uses_with(node.args[0])
 
@@ -94,11 +104,13 @@ def constant_fold(gm):
     gm.graph.eliminate_dead_code()
     return gm
 
+
 def cast_to_dtype(gm, compiler_config):
     for node in gm.graph.nodes:
         if node.op == "call_function" and "cast" in node.name:
             node.replace_all_uses_with(node.args[0].to(compiler_config.data_type))
     return gm
+
 
 def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     decompositions = torch.export.default_decompositions()

@@ -154,7 +154,8 @@ void create_system_desc(std::optional<tt::runtime::Device> device) {
 
 std::tuple<std::shared_ptr<void> *, std::string>
 compileTTIRToTTNN(std::string_view code,
-                  std::optional<tt::runtime::Device> device, size_t len_activations, size_t len_graph_constants) {
+                  std::optional<tt::runtime::Device> device,
+                  size_t len_activations, size_t len_graph_constants) {
 
   mlir::MLIRContext context;
   mlir::DialectRegistry registry;
@@ -196,7 +197,8 @@ compileTTIRToTTNN(std::string_view code,
     options.enableConstEval = true;
   }
   if (len_activations > 0 || len_graph_constants > 0) {
-    std::cout << "Inputs: " << len_activations << ", Constants: " << len_graph_constants << std::endl;
+    std::cout << "Inputs: " << len_activations
+              << ", Constants: " << len_graph_constants << std::endl;
     llvm::SmallVector<mlir::tt::ArgumentType> argTypes;
     for (size_t i = 0; i < len_graph_constants; ++i) {
       argTypes.push_back(mlir::tt::ArgumentType::Constant);

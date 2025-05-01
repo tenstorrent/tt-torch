@@ -141,8 +141,10 @@ std::string compile_stable_hlo_to_ttir(std::string_view code) {
 
 std::tuple<py::bytes, std::string>
 compile_ttir_to_bytestream(std::string_view code,
-                           std::optional<tt::runtime::Device> device, size_t len_activations, size_t len_graph_constants) {
-  auto [binary_ptr, ttnn] = tt::torch::compileTTIRToTTNN(code, device, len_activations, len_graph_constants);
+                           std::optional<tt::runtime::Device> device,
+                           size_t len_activations, size_t len_graph_constants) {
+  auto [binary_ptr, ttnn] = tt::torch::compileTTIRToTTNN(
+      code, device, len_activations, len_graph_constants);
   auto size = ::flatbuffers::GetSizePrefixedBufferLength(
       static_cast<const uint8_t *>(binary_ptr->get()));
   tt::runtime::Binary binary = tt::runtime::Binary(*binary_ptr);
