@@ -69,6 +69,41 @@ def bypass_redundant_getitem(gm):
     return gm
 
 
+def bypass_redundant_cast(gm):
+    # Removes cast nodes that cast to already existing dtype
+    for node in gm.graph.nodes:
+        if (
+            node.op == "call_function"
+            and hasattr(node.target, "name")
+            and "prims::convert_element_type" in node.target.name()
+        ):
+            if node.args[1] == node.args[0].meta["tensor_meta"].dtype:
+                node.replace_all_uses_with(node.args[0])
+
+    gm.graph.eliminate_dead_code()
+    return gm
+
+
+def bypass_dtype_promotion(gm, compiler_config):
+    # Removes casting of nodes to float32 unless they were explicitly cast by the user.
+    # Pytorch insists on casting params to float32, even though the user may have specified a different dtype,
+    # and forcing certain decomposition (i.e. adaptive_avg_pool2d) to be in float32
+    for node in gm.graph.nodes:
+        if (
+            node.op == "call_function"
+            and hasattr(node.target, "name")
+            and "prims::convert_element_type" in node.target.name()
+        ):
+            if (
+                node.meta["original_aten"]._name != "aten::_to_copy"
+                and node.args[1] == torch.float32
+            ):
+                node.replace_all_uses_with(node.args[0])
+
+    gm.graph.eliminate_dead_code()
+    return gm
+
+
 def constant_fold(gm):
     gm = const_fold.split_const_subgraphs(gm)
     gm.run_folding()
@@ -88,6 +123,11 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         .run_decompositions(decompositions)
         .module()
     )
+
+    gm = bypass_dtype_promotion(gm, compiler_config)
+    # shape prop also propagates dtypes, need to run to figure out which casts are redundant
+    run_shape_prop(gm, example_inputs)
+    gm = bypass_redundant_cast(gm)
 
     if compiler_config.enable_consteval:
         gm = constant_fold(gm)

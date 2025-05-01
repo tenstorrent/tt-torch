@@ -149,7 +149,9 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     return module, program, graph_constants
 
 
-def shlo_to_flatbuffer(executor, module, compiler_config):
+def shlo_to_flatbuffer(
+    executor, module, compiler_config, len_activations, len_graph_constants
+):
 
     if compiler_config.profile_ops:
         compiler_config.set_stablehlo_mlir_module(module.operation.get_asm())
@@ -164,7 +166,9 @@ def shlo_to_flatbuffer(executor, module, compiler_config):
             create_verify_golden_callback(compiler_config)
         )
 
-    binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir, executor.device)
+    binary, ttnn = tt_mlir.compile_ttir_to_bytestream(
+        ttir, executor.device, len_activations, len_graph_constants
+    )
     dump_module(module=ttnn, name="TTNN module", compiler_config=compiler_config)
 
     return binary
@@ -179,7 +183,9 @@ def _base_backend(gm, example_inputs, compiler_config, device):
     if compiler_config.compile_depth == CompileDepth.STABLEHLO:
         return executor
 
-    binary = shlo_to_flatbuffer(executor, shlo, compiler_config)
+    binary = shlo_to_flatbuffer(
+        executor, shlo, compiler_config, len(example_inputs), len(graph_constants)
+    )
     executor.set_binary(binary)
 
     compiler_config.record_property("achieved_compile_depth", "TTNN_IR")
