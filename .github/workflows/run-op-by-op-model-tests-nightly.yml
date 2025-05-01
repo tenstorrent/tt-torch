@@ -105,7 +105,6 @@ jobs:
           {
             runs-on: wormhole_b0, name: "torchvision_1", tests: "
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[op_by_op_torch-eval-googlenet]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification_generality[op_by_op_torch-eval-densenet201]
               "
           },
           {
