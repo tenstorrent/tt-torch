@@ -25,7 +25,6 @@ jobs:
       matrix:
         build: [
           {runs-on: wormhole_b0, name: "run", container-options: "--device /dev/tenstorrent/0"},
-          {runs-on: llmbox, name: "run", container-options: "--device /dev/tenstorrent/0 --device /dev/tenstorrent/1 --device /dev/tenstorrent/2 --device /dev/tenstorrent/3"},
         ]
 
     name: tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})
