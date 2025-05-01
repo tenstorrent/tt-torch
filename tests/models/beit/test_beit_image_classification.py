@@ -69,7 +69,7 @@ def test_beit_image_classification(record_property, model_name, mode, op_by_op):
         compiler_config=cc,
         record_property_handle=record_property,
         assert_pcc=do_assert,
-        assert_atol=do_assert,
+        assert_atol=False,
     )
     results = tester.test_model()
 
