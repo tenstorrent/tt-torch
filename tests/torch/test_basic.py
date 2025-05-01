@@ -8,7 +8,7 @@ import math
 import threading
 
 import tt_torch
-from tt_torch.tools.verify import verify_module
+from tt_torch.tools.verify import verify_module, verify_against_golden
 from tt_torch.tools.utils import CompilerConfig
 from tt_torch.tools.device_manager import DeviceManager
 
@@ -611,3 +611,120 @@ def test_cosine_op():
     verify_module(
         Basic(), input_shapes=[(32, 32)], input_range=(-2 * math.pi, 2 * math.pi)
     )
+
+
+@pytest.mark.parametrize("assert_pcc", [True, False])
+@pytest.mark.parametrize("assert_atol", [True, False])
+def test_verify_against_golden_low_atol_high_pcc(assert_pcc, assert_atol):
+    # High PCC and Low ATOL. Perfect numeric match case.
+    # Under no conditions should an assertion error be raised
+
+    # True ATOL: 0
+    # True PCC: 1
+
+    golden_tensors = (torch.tensor([1.0, 2.0, 3.0]),)
+    calculated_tensors = (torch.tensor([1.0, 2.0, 3.0]),)
+    pccs, atols, passed_pcc, passed_atol = verify_against_golden(
+        golden_tensors,
+        calculated_tensors,
+        assert_pcc=assert_pcc,
+        assert_atol=assert_atol,
+        required_atol=0.1,
+    )
+    assert passed_pcc is True
+    assert passed_atol is True
+
+
+@pytest.mark.parametrize("assert_pcc", [True, False])
+@pytest.mark.parametrize("assert_atol", [True, False])
+def test_verify_against_golden_high_atol_high_pcc(assert_pcc, assert_atol):
+    # High ATOL and High PCC  (correlated, but numerically different tensors).
+    # Expected to fail ATOL if asserted, but pass if ATOL not asserted
+
+    # True ATOL: 0.5
+    # True PCC: 1
+
+    golden_tensors = (torch.tensor([1.0, 2.0, 3.0]),)
+    calculated_tensors = (torch.tensor([1.5, 2.5, 3.5]),)
+    try:
+        pccs, atols, passed_pcc, passed_atol = verify_against_golden(
+            golden_tensors,
+            calculated_tensors,
+            assert_pcc=assert_pcc,
+            assert_atol=assert_atol,
+            required_atol=0.1,
+        )
+    except AssertionError as e:
+        # Pass if an expected assertion error is raised
+        print("Expected assertion error raised", e)
+        return
+
+    if assert_atol:
+        assert (
+            False
+        ), "Expected AssertionError due to high ATOL while asserting atol but low PCC, but not raised"
+
+    assert passed_pcc is True
+
+
+@pytest.mark.parametrize("assert_pcc", [True, False])
+@pytest.mark.parametrize("assert_atol", [True, False])
+def test_verify_against_golden_low_atol_low_pcc(assert_pcc, assert_atol):
+    # Low ATOL and Low PCC  (uncorrelated, but numerically close tensors)
+    # Expected to fail PCC if asserted, but pass if PCC not asserted
+
+    # True ATOL: 0.2
+    # True PCC: 0.97 ("low")
+
+    golden_tensors = (torch.tensor([1.0, 2.0, 3.0]),)
+    calculated_tensors = (torch.tensor([1.2, 1.8, 3.2]),)
+    try:
+        pccs, atols, passed_pcc, passed_atol = verify_against_golden(
+            golden_tensors,
+            calculated_tensors,
+            assert_pcc=assert_pcc,
+            assert_atol=assert_atol,
+            required_pcc=0.99,
+            required_atol=0.25,
+        )
+    except AssertionError as e:
+        # Pass if an expected assertion error is raised
+        print("Expected assertion error raised", e)
+        return
+
+    if assert_pcc:
+        # Fail if the expected PCC assertion error is not raised with these tensors
+        assert (
+            False
+        ), "Expected AssertionError due to low PCC while asserting pcc, but not raised"
+
+    assert passed_atol is True
+
+
+@pytest.mark.parametrize("assert_pcc", [True, False])
+@pytest.mark.parametrize("assert_atol", [True, False])
+def test_verify_against_golden_high_atol_low_pcc(assert_pcc, assert_atol):
+    # High ATOL and Low PCC  (uncorrelated and numerically different = completely different tensors)
+    # True ATOL: 2997
+    # True PCC: 0.397
+
+    golden_tensors = (torch.tensor([1.0, 2.0, 3.0]),)
+    calculated_tensors = (torch.tensor([1000.0, -2000.0, 3000.0]),)
+    try:
+        pccs, atols, passed_pcc, passed_atol = verify_against_golden(
+            golden_tensors,
+            calculated_tensors,
+            assert_pcc=assert_pcc,
+            assert_atol=assert_atol,
+            required_pcc=0.99,
+            required_atol=0.1,
+        )
+    except AssertionError as e:
+        # Pass if an expected assertion error is raised
+        print("Expected assertion error raised", e)
+        return
+
+    # If we are neither asserting PCC nor ATOL, we will reach this point,
+    # and we expect the returned passing state to be false
+    assert passed_pcc is False
+    assert passed_atol is False
