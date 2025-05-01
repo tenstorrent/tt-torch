@@ -38,7 +38,7 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.parametrize(
-    "model_name", ["microsoft/phi-1", "microsoft/phi-1.5", "microsoft/phi-2"]
+    "model_name", ["microsoft/phi-1", "microsoft/phi-1.5", "microsoft/phi-2", "microsoft/Phi-3-mini-4k-instruct", "microsoft/Phi-3.5-MoE-instruct", "microsoft/Phi-3.5-vision-instruct", "microsoft/phi-4"]
 )
 @pytest.mark.parametrize(
     "op_by_op",
