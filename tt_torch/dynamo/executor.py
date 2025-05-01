@@ -330,7 +330,7 @@ class Executor:
             self._generate_golden_intermediate_cache(self.program, inputs)
 
         if self.async_mode:
-            outputs = tt_mlir.get_runtime_tensors(
+            outputs = tt_mlir.run_async(
                 device, binary, program_idx, preprocessed_inputs
             )
         else:

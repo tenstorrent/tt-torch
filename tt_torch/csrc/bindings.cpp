@@ -227,9 +227,8 @@ preprocess_inputs(tt::runtime::Device device, std::vector<at::Tensor> &inputs,
 }
 
 std::vector<tt::runtime::Tensor>
-get_runtime_tensors(tt::runtime::Device device, tt::runtime::Binary &binary,
-                    uint32_t program_idx,
-                    std::vector<tt::runtime::Tensor> &rt_inputs) {
+run_async(tt::runtime::Device device, tt::runtime::Binary &binary,
+          uint32_t program_idx, std::vector<tt::runtime::Tensor> &rt_inputs) {
   std::vector<tt::runtime::Tensor> rt_outputs =
       tt::runtime::submit(device, binary, program_idx, rt_inputs);
 
@@ -367,7 +366,7 @@ PYBIND11_MODULE(tt_mlir, m) {
   m.def("run", &run,
         "Run the binary on pre-defined device and pre-processed inputs, "
         "returning the final torch tensors on host");
-  m.def("get_runtime_tensors", &get_runtime_tensors,
+  m.def("run_async", &run_async,
         "Run the binary on pre-defined device and pre-processed inputs, "
         "returning the runtime tensors on device");
   m.def("to_host", &to_host,
