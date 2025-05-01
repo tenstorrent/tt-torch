@@ -98,8 +98,12 @@ class ModelTester:
         print("[MODEL NAME]", model_name + model_name_suffix)
 
         self.record_tag_cache["required_pcc"] = self.required_pcc
-        self.record_tag_cache["required_atol"] = self.required_atol
-        self.record_tag_cache["relative_atol"] = self.relative_atol
+        # Avoid introducing conditional logic in DB to handle separate cases
+        self.record_tag_cache["required_atol"] = (
+            self.required_atol if self.required_atol is not None else self.relative_atol
+        )
+
+        # Postgres jsonb requires lowercased booleans. Pipeline transform from Python->XML->Python->JSON eventually lowercases these
         self.record_tag_cache["is_asserting_pcc"] = self.assert_pcc
         self.record_tag_cache["is_asserting_atol"] = self.assert_atol
 
