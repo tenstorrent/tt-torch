@@ -118,7 +118,7 @@ def run_torchvision_image_classification_test(
     # TODO Enable checking (swin_b) - https://github.com/tenstorrent/tt-torch/issues/663
     model_name = model_info[0]
     assert_pcc = False if model_name in ["vit_h_14", "swin_b"] else True
-    assert_atol = False if model_name in ["vit_h_14", "swin_b"] else True
+    assert_atol = False
 
     tester = ThisTester(
         model_info,

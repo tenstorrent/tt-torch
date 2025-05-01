@@ -65,7 +65,9 @@ def test_mgp_str_base(record_property, mode, op_by_op):
         compiler_config=cc,
         record_property_handle=record_property,
         assert_pcc=False if disable_checking else True,
-        assert_atol=False if disable_checking else True,
+        assert_atol=False
+        if disable_checking
+        else True,  # ATOL checking issues - No model legitimately checks ATOL, issue #690
     )
     results = tester.test_model()
 

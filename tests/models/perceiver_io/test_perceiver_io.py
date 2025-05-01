@@ -59,7 +59,7 @@ def test_perceiver_io(record_property, mode, op_by_op):
         model_name,
         mode,
         assert_pcc=True,
-        assert_atol=True,
+        assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
     )
