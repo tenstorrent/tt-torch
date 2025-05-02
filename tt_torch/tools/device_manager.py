@@ -18,7 +18,6 @@ class DeviceManager:
     def _get_parent_mesh_options(
         device_ids=None,
         num_hw_cqs=None,
-        enable_async_ttnn=None,
         enable_program_cache=None,
         l1_small_size=None,
         dispatch_core_type=None,
@@ -28,8 +27,6 @@ class DeviceManager:
             options.device_ids = device_ids
         if num_hw_cqs is not None:
             options.num_hw_cqs = num_hw_cqs
-        if enable_async_ttnn is not None:
-            options.enable_async_ttnn = enable_async_ttnn
         if enable_program_cache is not None:
             options.enable_program_cache = enable_program_cache
         if l1_small_size is not None:
@@ -51,7 +48,6 @@ class DeviceManager:
         mesh_shape,
         device_ids=None,
         num_hw_cqs=None,
-        enable_async_ttnn=None,
         enable_program_cache=None,
         l1_small_size=None,
         dispatch_core_type=None,
@@ -69,7 +65,6 @@ class DeviceManager:
         options = cls._get_parent_mesh_options(
             device_ids,
             num_hw_cqs,
-            enable_async_ttnn,
             enable_program_cache,
             l1_small_size,
             dispatch_core_type,
@@ -190,7 +185,6 @@ class DeviceManager:
         num_devices=None,
         device_ids=None,
         num_hw_cqs=None,
-        enable_async_ttnn=None,
         enable_program_cache=None,
         l1_small_size=None,
         dispatch_core_type=None,
@@ -210,7 +204,6 @@ class DeviceManager:
             mesh_shape,
             device_ids,
             num_hw_cqs,
-            enable_async_ttnn,
             enable_program_cache,
             l1_small_size,
             dispatch_core_type,
