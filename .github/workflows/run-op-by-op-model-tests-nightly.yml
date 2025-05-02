@@ -163,6 +163,12 @@ jobs:
               tests/models/flux/test_flux.py::test_flux[op_by_op_torch-flux_schnell-eval]
               tests/models/flux/test_flux.py::test_flux[op_by_op_torch-flux_dev-eval]
               "
+          },
+          {
+            runs-on: wormhole_b0, name: "stable-diffusion-v3.5", tests: "
+              tests/models/stable_diffusion/test_stable_diffusion_transformer.py::test_stable_diffusion_transformer[op_by_op_torch-stable-diffusion-v3.5-medium-eval]
+              tests/models/stable_diffusion/test_stable_diffusion_transformer.py::test_stable_diffusion_transformer[op_by_op_torch-stable-diffusion-v3.5-large-eval]
+              "
           }
         ]
     runs-on:

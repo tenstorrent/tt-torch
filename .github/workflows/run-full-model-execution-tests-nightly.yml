@@ -110,6 +110,7 @@ jobs:
             # Approximately 40 minutes.
             runs-on: wormhole_b0, name: "eval_6", tests: "
                   tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet[full-eval]
+                  tests/models/stable_diffusion/test_stable_diffusion_transformer.py::test_stable_diffusion_transformer[full-stable-diffusion-v3.5-medium-eval]
             "
           },
           {
@@ -136,7 +137,7 @@ jobs:
                 tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b6-eval]
                 tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b7-eval]
             "
-          }
+          },
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
