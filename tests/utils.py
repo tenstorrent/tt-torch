@@ -97,6 +97,16 @@ class ModelTester:
 
         print("[MODEL NAME]", model_name + model_name_suffix)
 
+        self.record_tag_cache["required_pcc"] = self.required_pcc
+        # Avoid introducing conditional logic in DB to handle separate cases
+        self.record_tag_cache["required_atol"] = (
+            self.required_atol if self.required_atol is not None else self.relative_atol
+        )
+
+        # Postgres jsonb requires lowercased booleans. Pipeline transform from Python->XML->Python->JSON eventually lowercases these
+        self.record_tag_cache["is_asserting_pcc"] = self.assert_pcc
+        self.record_tag_cache["is_asserting_atol"] = self.assert_atol
+
         # configs should be set at test start, so they can be flushed immediately
         self.record_property(
             "config",
@@ -368,11 +378,15 @@ class ModelTester:
         if metric_list:
             metric_list = [
                 -1
-                if (isinstance(x, float) and x != x)
-                else -1  # NaN case
-                if (isinstance(x, float) and x == float("inf"))
+                if (isinstance(x, float) and x != x)  # NaN case
                 else -1
-                if (isinstance(x, float) and x == -float("inf"))
+                if (isinstance(x, float) and x == float("inf"))  # +inf
+                else -1
+                if (isinstance(x, float) and x == -float("inf"))  # -inf
+                else 2**32 * (1 if x > 0 else -1)
+                if (
+                    isinstance(x, (int, float)) and abs(x) > 2**32
+                )  # clamp to ±2**32; superset bug
                 else x
                 for x in metric_list
                 if isinstance(x, (int, float)) or isinstance(x, str)
