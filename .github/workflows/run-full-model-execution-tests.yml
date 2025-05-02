@@ -137,7 +137,6 @@ jobs:
         echo "install-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
         echo "dist-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
         echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
-        echo "test_report_dir=$(pwd)/test-reports" >> "$GITHUB_OUTPUT"
 
     - name: Use build artifacts
       uses: actions/download-artifact@v4
@@ -168,48 +167,9 @@ jobs:
       run: |
         source env/activate
 
-        mkdir -p ${{ steps.strings.outputs.test_report_dir }}
-        rm -f pytest.log
-
-        # prevent script termination on failure
-        set +e
-
-        failure=0
-
-        ec=0
-
-        # Split the test string into individual tests and run them one by one
-        while read -r test; do
-          if [[ -n "$test" ]]; then
-            echo "Running test: $test"
-            report_file="${{ steps.strings.outputs.test_report_dir }}/$(echo $test | tr '/' '_' | tr ':' '_')__${{ steps.strings.outputs.test_report_path_models }}"
-            echo "JUnitXML will be logged to $report_file"
-
-            pytest --durations=0 -v "$test" \
-              --junit-xml="$report_file" \
-              --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append \
-              2>&1 | tee -a pytest.log
-
-
-            # Check the return code of pytest
-            if [[ $? -ne 0 ]]; then
-              echo "Test failed: $test"
-              failure=1
-            fi
-          fi
-        # execute while loop with process substitution so it doesn't run in a subshell and value of $failure is preserved
-        done < <(echo "${{ matrix.build.tests }}" | tr ' ' '\n')
-
-        set -e
-
-        # Exit with the appropriate code
-        if [[ $failure -ne 0 ]]; then
-          echo "One or more tests failed."
-          exit 1
-        else
-          echo "All tests passed."
-          exit 0
-        fi
+        pytest --durations=0 -v ${{matrix.build.tests}} \
+           --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
+           --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
 
     - name: Upload Test Log
       uses: actions/upload-artifact@v4
@@ -223,7 +183,7 @@ jobs:
       if: success() || failure()
       with:
         name: test-reports-models-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
-        path: ${{ steps.strings.outputs.test_report_dir }}
+        path: ${{ steps.strings.outputs.test_report_path_models }}
 
     - name: Upload coverage reports to Codecov
       if: ${{ (success() || failure()) && inputs.run-codecov == 'true' }}
