@@ -378,11 +378,15 @@ class ModelTester:
         if metric_list:
             metric_list = [
                 -1
-                if (isinstance(x, float) and x != x)
-                else -1  # NaN case
-                if (isinstance(x, float) and x == float("inf"))
+                if (isinstance(x, float) and x != x)  # NaN case
                 else -1
-                if (isinstance(x, float) and x == -float("inf"))
+                if (isinstance(x, float) and x == float("inf"))  # +inf
+                else -1
+                if (isinstance(x, float) and x == -float("inf"))  # -inf
+                else 2**32 * (1 if x > 0 else -1)
+                if (
+                    isinstance(x, (int, float)) and abs(x) > 2**32
+                )  # clamp to ±2**32; superset bug
                 else x
                 for x in metric_list
                 if isinstance(x, (int, float)) or isinstance(x, str)
