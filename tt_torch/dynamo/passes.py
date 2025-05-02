@@ -80,7 +80,6 @@ def bypass_redundant_cast(gm):
             if node.args[1] == node.args[0].meta["tensor_meta"].dtype:
                 node.replace_all_uses_with(node.args[0])
 
-    gm.graph.eliminate_dead_code()
     return gm
 
 
@@ -100,7 +99,6 @@ def bypass_dtype_promotion(gm, compiler_config):
             ):
                 node.replace_all_uses_with(node.args[0])
 
-    gm.graph.eliminate_dead_code()
     return gm
 
 
