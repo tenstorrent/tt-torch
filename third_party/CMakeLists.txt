@@ -4,9 +4,6 @@
 #
 
 set(TT_MLIR_VERSION "fcca89ed7d98fff2c30c7a082ff928765cd45609")
-# torch-mlir is using branch tt_torch/main
-# see issue https://github.com/tenstorrent/tt-torch/issues/671
-set(TORCH_MLIR_VERSION "fe292ef77433c9da6ff539780f2b09d8fab146f4")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
@@ -81,6 +78,9 @@ else()
     install(DIRECTORY ${TTMLIR_INSTALL_PREFIX}/ DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
 
     # torch-mlir build
+    # torch-mlir is using branch tt_torch/main
+    # see issue https://github.com/tenstorrent/tt-torch/issues/671
+    set(TORCH_MLIR_VERSION "fe292ef77433c9da6ff539780f2b09d8fab146f4")
 
     set(TORCH_MLIR_PREFIX ${TTTORCH_SOURCE_DIR}/third_party/torch-mlir)
     set(TORCH_MLIR_INSTALL_PREFIX ${TORCH_MLIR_PREFIX}/install)
@@ -118,3 +118,16 @@ else()
     install(DIRECTORY ${TORCH_MLIR_INSTALL_PREFIX}/python_packages/torch_mlir/torch_mlir DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
 
 endif()
+
+# tt-forge-models - Python-only project, no need to build.
+set(TT_FORGE_MODELS_VERSION "3ef1f8ea483316cfa530eee199151971fafe237d")
+ExternalProject_Add(
+    tt_forge_models
+    SOURCE_DIR ${TTTORCH_SOURCE_DIR}/third_party/tt_forge_models
+    GIT_REPOSITORY https://github.com/tenstorrent/tt-forge-models.git
+    GIT_TAG ${TT_FORGE_MODELS_VERSION}
+    GIT_PROGRESS ON
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+)
