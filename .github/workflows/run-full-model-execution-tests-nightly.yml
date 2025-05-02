@@ -214,6 +214,7 @@ jobs:
         set +e
 
         failure=0
+        summary=""
 
         # Split the test string into individual tests and run them one by one
         while read -r test; do
@@ -223,18 +224,32 @@ jobs:
 
             echo "JUnitXML logged to $report_file"
 
+            start_time=$(date +%s)
+
             pytest --durations=0 -v "$test" \
               --junit-xml="$report_file" \
               --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append \
               2>&1 | tee -a pytest.log
+
+            end_time=$(date +%s)
+            duration=$((end_time - start_time))
+
             # Check the return code of pytest
             if [[ $? -ne 0 ]]; then
               echo "Test failed: $test"
+              summary+="$test\tFAILED\tin ${duration}s\n"
               failure=1
+            else
+              echo "Test passed: $test"
+              summary+="$test\tPASSED\tin ${duration}s\n"
             fi
           fi
         # execute while loop with process substitution so it doesn't run in a subshell and value of $failure is preserved
         done < <(echo "${{ matrix.build.tests }}" | tr ' ' '\n')
+
+        # Print the summary at the end
+        echo -e "\nTest Execution Summary:"
+        echo -e "$summary"
 
         set -e
 
