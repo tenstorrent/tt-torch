@@ -25,7 +25,7 @@ librosa
 soundfile
 matplotlib
 mlp_mixer_pytorch
-mmcv==2.2.0
+mmcv==2.1.0 # 2.2.0 is incompatible with mmdet3d 1.4.0
 mmdet==3.3.0
 mmdet3d==1.4.0
 wheel
