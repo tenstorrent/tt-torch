@@ -233,7 +233,7 @@ if __name__ == "__main__":
 
     python generate_benchmark_report.py \
     --xml-dir tests/torch/tools/depth_benchmark_data \
-    --compile-yaml .github/workflows/run-e2e-tests.yml \
+    --compile-yaml .github/workflows/run-e2e-compile-tests.yml \
     --execution-yaml .github/workflows/run-full-model-execution-tests.yml \
     --execution-nightly-yaml .github/workflows/run-full-model-execution-tests-nightly.yml \
     --output-file benchmark_report.xlsx

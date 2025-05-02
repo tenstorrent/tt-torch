@@ -72,7 +72,7 @@ jobs:
             source env/activate
             python "${{ steps.strings.outputs.work-dir }}/tt_torch/tools/generate_benchmark_report.py" \
             --xml-dir ${{ steps.strings.outputs.xml-dir}} \
-            --compile-yaml "${{ steps.strings.outputs.work-dir }}/.github/workflows/run-e2e-tests.yml" \
+            --compile-yaml "${{ steps.strings.outputs.work-dir }}/.github/workflows/run-e2e-compile-tests.yml" \
             --execution-yaml "${{ steps.strings.outputs.work-dir }}/.github/workflows/run-full-model-execution-tests.yml" \
             --execution-nightly-yaml "${{ steps.strings.outputs.work-dir }}/.github/workflows/run-full-model-execution-tests-nightly.yml" \
             --output-file "${{ steps.strings.outputs.work-dir }}/results/${{ steps.git-info.outputs.spreadsheet_name }}"

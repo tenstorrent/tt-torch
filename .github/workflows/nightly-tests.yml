@@ -30,9 +30,9 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  test_e2e:
+  test_e2e_compile:
     needs: [docker-build, build]
-    uses: ./.github/workflows/run-e2e-tests.yml
+    uses: ./.github/workflows/run-e2e-compile-tests.yml
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
