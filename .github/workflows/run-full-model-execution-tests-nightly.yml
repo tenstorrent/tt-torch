@@ -237,11 +237,11 @@ jobs:
             # Check the return code of pytest
             if [[ $? -ne 0 ]]; then
               echo "Test failed: $test"
-              summary+="$test\tFAILED\tin ${duration}s\n"
+              summary+="$test\t\033[31mFAILED\033[0m\tin ${duration}s\n" # Red for FAILED
               failure=1
             else
               echo "Test passed: $test"
-              summary+="$test\tPASSED\tin ${duration}s\n"
+              summary+="$test\t\033[32mPASSED\033[0m\tin ${duration}s\n" # Green for PASSED
             fi
           fi
         # execute while loop with process substitution so it doesn't run in a subshell and value of $failure is preserved
