@@ -58,8 +58,8 @@ jobs:
       - pre-commit
       - spdx
       - build
-      - test
-      - full-model-test
+      - test_full_model_nightly
+      - test_e2e_compile
     runs-on: Ubuntu-latest
     steps:
     - name: Check if the needed jobs succeeded or failed
