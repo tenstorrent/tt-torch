@@ -81,9 +81,7 @@ def test_distilbert_multiloop(record_property, model_name, mode, op_by_op, num_l
     cc.consteval_parameters = True
     cc.cache_preprocessed_constants = True
 
-    device = DeviceManager.create_parent_mesh_device(
-        mesh_shape=[1, 1], enable_async_ttnn=True
-    )
+    device = DeviceManager.create_parent_mesh_device(mesh_shape=[1, 1])
 
     tester = ThisTester(
         model_name,
