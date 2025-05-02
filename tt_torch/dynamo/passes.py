@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import traceback
+import gc
 from torch.fx.experimental.proxy_tensor import make_fx
 from torch.fx.experimental import const_fold
 from torch._decomp import get_decompositions
@@ -103,11 +104,13 @@ def bypass_dtype_promotion(gm, compiler_config):
 
 
 def constant_fold(gm):
-    gm = const_fold.split_const_subgraphs(gm)
-    gm.run_folding()
+    split_gm = const_fold.split_const_subgraphs(gm)
+    del gm
+    split_gm.run_folding()
 
-    gm.graph.eliminate_dead_code()
-    return gm
+    split_gm.graph.eliminate_dead_code()
+
+    return split_gm
 
 
 def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
@@ -154,4 +157,5 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
 
     # Need to run shape_prop again to populate tensor_meta
     run_shape_prop(program.graph_module, constant_inputs + example_inputs)
+    gc.collect()
     return program, constant_inputs
