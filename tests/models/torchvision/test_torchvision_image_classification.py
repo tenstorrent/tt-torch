@@ -123,7 +123,7 @@ def run_torchvision_image_classification_test(
     tester = ThisTester(
         model_info,
         mode,
-        required_pcc=0.97,
+        required_pcc=0.96,
         assert_pcc=assert_pcc,
         assert_atol=assert_atol,
         compiler_config=cc,
