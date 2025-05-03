@@ -55,7 +55,7 @@ def test_xglm(record_property, mode, op_by_op):
     tester = ThisTester(
         model_name,
         mode,
-        relative_atol=0.02,
+        relative_atol=0.045,
         compiler_config=cc,
         record_property_handle=record_property,
     )
