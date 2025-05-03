@@ -6,18 +6,15 @@ import torch
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from tests.models.vgg19_unet.src.vgg19_unet import VGG19UNet
+from third_party.tt_forge_models.vgg19_unet import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.input_shape = (3, 512, 512)
-        model = VGG19UNet(input_shape=self.input_shape, out_channels=1)
-        return model
+        return ModelLoader.load_model()
 
     def _load_inputs(self):
-        inputs = torch.rand(1, *self.input_shape)
-        return inputs
+        return ModelLoader.load_inputs()
 
 
 @pytest.mark.parametrize(
