@@ -4,23 +4,15 @@
 import pytest
 from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.oft import OFTLoader
+from third_party.tt_forge_models.oft import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.grid_res = 0.5
-        model = OFTLoader.load_model(
-            num_classes=1,
-            frontend="resnet18",
-            topdown_layers=8,
-            grid_res=self.grid_res,
-            grid_height=4.0,
-        )
-        return model
+        return ModelLoader.load_model()
 
     def _load_inputs(self):
-        return OFTLoader.load_inputs(grid_res=self.grid_res, grid_size=(80.0, 80.0))
+        return ModelLoader.load_inputs()
 
 
 @pytest.mark.parametrize(
