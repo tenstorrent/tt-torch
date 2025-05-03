@@ -4,19 +4,17 @@
 
 import pytest
 
-from third_party.tt_forge_models.yolov3 import YOLOv3Loader
+from third_party.tt_forge_models.yolov3 import ModelLoader
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model = YOLOv3Loader.load_model(dtype=torch.bfloat16)
-        return model
+        return ModelLoader.load_model()
 
     def _load_inputs(self):
-        batch_tensor = YOLOv3Loader.load_inputs(dtype=torch.bfloat16)
-        return batch_tensor
+        return ModelLoader.load_inputs()
 
 
 @pytest.mark.parametrize(

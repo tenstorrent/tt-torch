@@ -6,19 +6,12 @@ import pytest
 import os
 from tests.utils import OnnxModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.oft import OFTLoader
+from third_party.tt_forge_models.oft import ModelLoader
 
 
 class ThisTester(OnnxModelTester):
     def _load_model(self):
-        self.grid_res = 0.5
-        model = OFTLoader.load_model(
-            num_classes=1,
-            frontend="resnet18",
-            topdown_layers=8,
-            grid_res=self.grid_res,
-            grid_height=4.0,
-        )
+        model = ModelLoader.load_model()
         torch.onnx.export(model, self._load_torch_inputs(), f"{self.model_name}.onnx")
         model = onnx.load(f"{self.model_name}.onnx")
         onnx.checker.check_model(model)
@@ -26,7 +19,7 @@ class ThisTester(OnnxModelTester):
         return model
 
     def _load_torch_inputs(self):
-        return OFTLoader.load_inputs(grid_res=self.grid_res, grid_size=(80.0, 80.0))
+        return ModelLoader.load_inputs()
 
 
 @pytest.mark.parametrize(
