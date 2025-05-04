@@ -35,7 +35,9 @@ cc = CompilerConfig()
 cc.enable_consteval = True
 cc.consteval_parameters = True # This will enable constant folding on the parameters in addition to any constants
 
-model = torch.compile(model, backend=backend, options=cc)
+options = {}
+options["compiler_config"] = cc
+model = torch.compile(model, backend=backend, options=options)
 
 inputs = ...
 
