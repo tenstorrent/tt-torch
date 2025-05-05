@@ -346,6 +346,13 @@ class TorchExecutor(OpByOpExecutor):
                 except (IndexError, ValueError):
                     continue
 
+            # Print to stdout
+            print(f"Node: {node.target}")
+            print(header)
+            print("\n".join(top_processes))
+            print(f"Total Memory Usage: {total_memory:.2f}%")
+            print("=" * 50)
+
             # Write to the log file
             with open(log_file_path, "a") as f:
                 f.write(f"Node: {node.target}\n")
@@ -353,6 +360,7 @@ class TorchExecutor(OpByOpExecutor):
                 f.write("\n".join(top_processes) + "\n")
                 f.write(f"Total Memory Usage: {total_memory:.2f}%\n")
                 f.write("=" * 50 + "\n")
+
         except Exception as e:
             print(f"Failed to log memory usage for node {node.target}: {e}")
 
