@@ -320,12 +320,58 @@ class TorchExecutor(OpByOpExecutor):
         op.add_stable_hlo_graph(module.operation.get_asm())
         return module, op
 
+    def log_memory_usage(self, node, log_file_path):
+        """Logs the current node name, top 5 memory-consuming processes, and total memory usage."""
+        import subprocess
+
+        try:
+            # Get the top 5 memory-consuming processes
+            result = subprocess.run(
+                ["ps", "-aux", "--sort=-%mem"],
+                stdout=subprocess.PIPE,
+                text=True,
+                check=True,
+            )
+            lines = result.stdout.splitlines()
+            header = lines[0]  # Header row
+            top_processes = lines[1:6]  # Top 5 processes
+
+            # Calculate total memory usage
+            total_memory = 0.0
+            for line in lines[1:]:  # Skip the header
+                try:
+                    # Extract the %MEM column (assumes it's the 4th column)
+                    mem_usage = float(line.split()[3])
+                    total_memory += mem_usage
+                except (IndexError, ValueError):
+                    continue
+
+            # Write to the log file
+            with open(log_file_path, "a") as f:
+                f.write(f"Node: {node.target}\n")
+                f.write(header + "\n")
+                f.write("\n".join(top_processes) + "\n")
+                f.write(f"Total Memory Usage: {total_memory:.2f}%\n")
+                f.write("=" * 50 + "\n")
+        except Exception as e:
+            print(f"Failed to log memory usage for node {node.target}: {e}")
+
     def run_gm_op_by_op(self, *inputs):
         node_to_tensor = {}
         input_index = 0
         outputs = []
         num_nodes = len(self.program.graph_module.graph.nodes)
         out_degree = {}
+
+        # Create a unique log file for the graph module
+        sanitized_model_name = re.sub(
+            r"[^\w\-_.]", "_", self.compiler_config.model_name
+        )
+        log_file_path = f"memory_log_{sanitized_model_name}.txt"
+        with open(log_file_path, "w") as f:
+            f.write("Memory Log for Graph Module\n")
+            f.write("=" * 50 + "\n")
+        print("Writing to memory log file:", log_file_path)
 
         for idx, node in enumerate(self.program.graph_module.graph.nodes):
             self.print_marker("\nProcessing", idx, num_nodes, node.target)
@@ -340,6 +386,7 @@ class TorchExecutor(OpByOpExecutor):
                         node_to_tensor[node] = buffer[1]
                         break
             elif node.op == "call_function":
+                self.log_memory_usage(node, log_file_path)
                 args = []
                 for arg in node.args:
                     if isinstance(arg, torch.fx.node.Node):
