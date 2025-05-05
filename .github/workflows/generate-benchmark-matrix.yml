@@ -71,6 +71,21 @@ jobs:
         source env/activate
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
+    - name: Get tt-forge-models version from CMakeLists.txt
+      id: get-forge-models-version
+      shell: bash
+      run: |
+        VERSION=$(grep "^set(TT_FORGE_MODELS_VERSION" third_party/CMakeLists.txt | cut -d'"' -f2)
+        echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+        echo "Detected tt-forge-models version: $VERSION"
+
+    - name: Clone tt-forge-models
+      uses: actions/checkout@v4
+      with:
+        repository: tenstorrent/tt-forge-models
+        path: third_party/tt_forge_models
+        ref: ${{ steps.get-forge-models-version.outputs.version }}
+
     - name: Generate test matrix
       id: generate_matrix
       shell: bash
