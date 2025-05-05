@@ -48,23 +48,6 @@ class install_metal_libs(install_lib):
             os.makedirs(os.path.dirname(dest_tools_dir), exist_ok=True)
             shutil.copytree(src_tools_dir, dest_tools_dir, dirs_exist_ok=True)
 
-        # Copy entire TT Forge Models repo (python)
-        src_models_dir = os.path.abspath(
-            os.path.join(os.getcwd(), "third_party", "tt_forge_models")
-        )
-
-        dest_models_dir = os.path.join(
-            self.install_dir, "third_party", "tt_forge_models"
-        )
-        if os.path.exists(src_models_dir):
-            os.makedirs(os.path.dirname(dest_models_dir), exist_ok=True)
-            shutil.copytree(
-                src_models_dir,
-                dest_models_dir,
-                dirs_exist_ok=True,
-                ignore=shutil.ignore_patterns(".git"),
-            )
-
 
 # Compile time env vars
 os.environ["DONT_OVERRIDE_INSTALL_PATH"] = "1"
