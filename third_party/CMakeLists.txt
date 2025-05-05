@@ -7,7 +7,7 @@ set(TT_MLIR_VERSION "53236fa6f6c237c3b3feca25a9d7fa0042c4c091")
 # torch-mlir is using branch tt_torch/main
 # see issue https://github.com/tenstorrent/tt-torch/issues/671
 set(TORCH_MLIR_VERSION "7c86f6d21de6d548c41cc56ebf0d799e1eadc626")
-set(TT_FORGE_MODELS_VERSION "538fa776645116c167955a182e2efb3b459d9f97")
+set(TT_FORGE_MODELS_VERSION "3ef1f8ea483316cfa530eee199151971fafe237d")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
