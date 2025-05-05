@@ -85,7 +85,9 @@ setup(
     author_email="aknezevic@tenstorrent.com",
     license="Apache-2.0",
     homepage="https://github.com/tenstorrent/tt-torch",
-    packages=find_namespace_packages(include=["tt_torch*"])
+    packages=find_namespace_packages(
+        include=["tt_torch*", "third_party.tt_forge_models*"]
+    )
     + find_namespace_packages(
         where="third_party/torch-mlir/src/torch-mlir-build/python_packages/torch_mlir"
     ),
