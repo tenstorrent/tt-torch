@@ -80,11 +80,28 @@ def run_timm_image_classification_test(
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    assert_pcc = (
+        True
+        if model_name
+        in [
+            "dla34.in1k",
+            "ghostnet_100.in1k",
+            "hrnet_w18.ms_aug_in1k",
+            "tf_efficientnet_lite0.in1k",
+            "tf_efficientnet_lite1.in1k",
+            "tf_efficientnet_lite2.in1k",
+            "tf_efficientnet_lite3.in1k",
+            "tf_efficientnet_lite4.in1k",
+            "xception71.tf_in1k",
+        ]
+        else False
+    )
+
     tester = ThisTester(
         model_name,
         mode,
         compiler_config=cc,
-        assert_pcc=False,
+        assert_pcc=assert_pcc,
         assert_atol=False,
         record_property_handle=record_property,
         model_group=model_group,

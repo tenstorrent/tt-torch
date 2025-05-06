@@ -70,10 +70,25 @@ def test_EfficientNet(record_property, model_name, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    assert_pcc = (
+        True
+        if model_name
+        in [
+            "efficientnet-b0",
+            "efficientnet-b2",
+            "efficientnet-b3",
+            "efficientnet-b4",
+            "efficientnet-b5",
+            "efficientnet-b6",
+            "efficientnet-b7",
+        ]
+        else False
+    )
+
     tester = ThisTester(
         model_name,
         mode,
-        assert_pcc=False,
+        assert_pcc=assert_pcc,
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
