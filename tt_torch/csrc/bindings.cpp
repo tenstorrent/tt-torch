@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // c++ standard library includes
+#include "types_generated.h"
 #include <ATen/core/TensorBody.h>
 #include <cstdint>
 #include <optional>
@@ -120,21 +121,33 @@ std::vector<int64_t> as_vec_int64(std::vector<T> const &vec) {
 }
 
 static torch::Tensor create_torch_tensor(const tt::runtime::Tensor &tensor) {
+  std::cout << "[CTT] Attempting to move RT tensor to host (and untilize) "
+            << std::endl;
   tt::runtime::Tensor untilized_tensor =
       tt::runtime::toHost(tensor, /*untilize=*/true)[0];
+  std::cout << "[CTT] Successfully moved RT tensor to host" << std::endl;
 
   const std::vector<std::int64_t> shape =
       as_vec_int64(tt::runtime::getTensorShape(untilized_tensor));
+  std::cout << "[CTT] Shape: " << shape << std::endl;
   const std::vector<std::int64_t> stride =
       as_vec_int64(tt::runtime::getTensorStride(untilized_tensor));
+  std::cout << "[CTT] Stride: " << stride << std::endl;
 
   const tt::target::DataType rt_datatype =
       tt::runtime::getTensorDataType(untilized_tensor);
+  std::cout << "[CTT] RT DataType: "
+            << tt::target::EnumNameDataType(rt_datatype) << std::endl;
   const torch::ScalarType dataType = dt_to_torch_scalar_type(rt_datatype);
+  std::cout << "[CTT] Torch DataType: " << dataType << std::endl;
 
   at::Tensor torch_tensor = at::empty_strided(shape, stride, dataType);
+  std::cout << "[CTT] Created empty strided tensor" << std::endl;
   tt::runtime::Tensor rt_tensor = create_tensor(torch_tensor);
+  std::cout << "[CTT] Created RT tensor" << std::endl;
   tt::runtime::memcpy(rt_tensor, untilized_tensor);
+  std::cout << "[CTT] Copied RT tensor data to torch tensor" << std::endl;
+  std::cout << std::endl;
 
   return torch_tensor;
 }
@@ -230,37 +243,8 @@ preprocess_inputs(tt::runtime::Device device, std::vector<at::Tensor> &inputs,
 std::vector<tt::runtime::Tensor>
 run_async(tt::runtime::Device device, tt::runtime::Binary &binary,
           uint32_t program_idx, std::vector<tt::runtime::Tensor> &rt_inputs) {
-  std::cout << "[RUN ASYNC] ENTERED" << std::endl;
   std::vector<tt::runtime::Tensor> rt_outputs =
       tt::runtime::submit(device, binary, program_idx, rt_inputs);
-
-  std::cout << "[RUN ASYNC] RT OUTPUTS BEGIN" << std::endl;
-  int idx = 0;
-  for (const auto &rt_output : rt_outputs) {
-    const std::vector<std::int64_t> rt_shape =
-        as_vec_int64(tt::runtime::getTensorShape(rt_output));
-    const std::vector<std::int64_t> rt_stride =
-        as_vec_int64(tt::runtime::utils::calculateStride(rt_shape));
-    std::cout << "RT OUTPUT " << idx++ << ": " << std::endl;
-    std::cout << "  shape: " << rt_shape << std::endl;
-    std::cout << "  stride: " << rt_stride << std::endl;
-    std::cout << std::endl;
-  }
-  std::cout << "[RUN ASYNC] RT OUTPUTS END" << std::endl;
-  std::cout << std::endl << std::endl;
-  std::cout << "[RUN ASYNC] BINARY DESC BEGIN" << std::endl;
-  const auto output_descs = binary.getProgramOutputs(program_idx);
-  for (size_t i = 0; i < rt_outputs.size(); ++i) {
-    const auto &output_desc = output_descs.at(i);
-    const std::vector<std::int64_t> bin_shape = as_vec_int64(output_desc.shape);
-    const std::vector<std::int64_t> bin_stride =
-        as_vec_int64((output_desc.stride));
-    std::cout << "BINARY OUTPUT " << i << ": " << std::endl;
-    std::cout << "  shape: " << bin_shape << std::endl;
-    std::cout << "  stride: " << bin_stride << std::endl;
-    std::cout << std::endl;
-  }
-  std::cout << "[RUN ASYNC] BINARY DESC END" << std::endl;
 
   return rt_outputs;
 }
@@ -276,50 +260,9 @@ std::vector<at::Tensor> run(tt::runtime::Device device,
                             tt::runtime::Binary &binary, uint32_t program_idx,
                             std::vector<tt::runtime::Tensor> &rt_inputs) {
 
-  std::cout << "[RUN] ENTERED" << std::endl;
   std::vector<tt::runtime::Tensor> rt_outputs =
       tt::runtime::submit(device, binary, program_idx, rt_inputs);
 
-  std::cout << "[RUN] RT OUTPUTS BEGIN" << std::endl;
-  int idx = 0;
-  std::vector<std::vector<std::int64_t>> rt_strides;
-  std::vector<std::vector<std::int64_t>> rt_shapes;
-  for (const auto &rt_output : rt_outputs) {
-    const std::vector<std::int64_t> rt_shape =
-        as_vec_int64(tt::runtime::getTensorShape(rt_output));
-    const std::vector<std::int64_t> rt_stride =
-        // as_vec_int64(tt::runtime::getTensorStride(rt_output));
-        as_vec_int64(tt::runtime::utils::calculateStride(rt_shape));
-    std::cout << "RT OUTPUT " << idx++ << ": " << std::endl;
-    std::cout << "  shape: " << rt_shape << std::endl;
-    std::cout << "  stride: " << rt_stride << std::endl;
-    std::cout << std::endl;
-    rt_shapes.push_back(rt_shape);
-    rt_strides.push_back(rt_stride);
-  }
-  std::cout << "[RUN] RT OUTPUTS END" << std::endl;
-  std::cout << std::endl << std::endl;
-  std::cout << "[RUN] BINARY DESC BEGIN" << std::endl;
-  std::vector<std::vector<std::int64_t>> bin_shapes;
-  std::vector<std::vector<std::int64_t>> bin_strides;
-  const auto output_descs = binary.getProgramOutputs(program_idx);
-  for (size_t i = 0; i < rt_outputs.size(); ++i) {
-    const auto &output_desc = output_descs.at(i);
-    const std::vector<std::int64_t> bin_shape = as_vec_int64(output_desc.shape);
-    const std::vector<std::int64_t> bin_stride =
-        as_vec_int64((output_desc.stride));
-    std::cout << "BINARY OUTPUT " << i << ": " << std::endl;
-    std::cout << "  shape: " << bin_shape << std::endl;
-    std::cout << "  stride: " << bin_stride << std::endl;
-    std::cout << std::endl;
-    bin_shapes.push_back(bin_shape);
-    bin_strides.push_back(bin_stride);
-  }
-  std::cout << "[RUN] BINARY DESC END" << std::endl;
-  assert(rt_strides == bin_strides &&
-         "RT output strides do not match binary output strides");
-  assert(rt_shapes == bin_shapes &&
-         "RT output shapes do not match binary output shapes");
   std::vector<at::Tensor> outputs;
   outputs.reserve(rt_outputs.size());
 

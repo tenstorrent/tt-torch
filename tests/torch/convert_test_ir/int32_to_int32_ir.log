@@ -1,0 +1,991 @@
+[32m2025-05-06 19:57:39.395[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.32.0, IOMMU: disabled
+New chip! We now have 1 chips
+Chip initialization complete (found )
+Chip initializing complete...
+ ARC
+
+ [4/4] DRAM
+
+ [16/16] ETH
+
+ CPU
+
+New chip! We now have 2 chips
+Chip initialization complete (found )
+Chip initializing complete...
+ ARC
+
+ [4/4] DRAM
+
+ [16/16] ETH
+
+ CPU
+
+New chip! We now have 3 chips
+Chip initialization complete (found )
+Chip initializing complete...
+ ARC
+
+ [4/4] DRAM
+
+ [16/16] ETH
+
+ CPU
+
+Ok I was wrong we actually have 2 chips
+Chip detection complete (found )
+
+[32m2025-05-06 19:57:39.464[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.32.0, IOMMU: disabled
+[32m2025-05-06 19:57:39.467[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.32.0, IOMMU: disabled
+[32m2025-05-06 19:57:39.470[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Harvesting mask for chip 0 is 0x220 (physical layout: 0x101, logical: 0x220, simulated harvesting mask: 0x0).
+[32m2025-05-06 19:57:39.485[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Opened PCI device 0; KMD version: 1.32.0, IOMMU: disabled
+[32m2025-05-06 19:57:39.538[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Harvesting mask for chip 1 is 0x300 (physical layout: 0x5, logical: 0x300, simulated harvesting mask: 0x0).
+[32m2025-05-06 19:57:39.552[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Detected PCI devices: [0]
+[32m2025-05-06 19:57:39.552[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Using local chip ids: {0} and remote chip ids {1}
+[32m2025-05-06 19:57:39.555[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 0)
+[32m2025-05-06 19:57:39.555[0m | [1m[38;2;100;149;237mINFO    [0m | [36mSiliconDriver  [0m - Software version 6.0.0, Ethernet FW version 6.10.0 (Device 1)
+Read unexpected run_mailbox value: 0x40 (expected 0x80 or 0x0)
+Read unexpected run_mailbox value: 0x40 (expected 0x80 or 0x0)
+Torch FX module module
+module {
+  func.func @main(%arg0: !torch.vtensor<[4,4],si32>) -> !torch.vtensor<[4,4],si32> attributes {torch.assume_strict_symbolic_shapes} {
+    %int3 = torch.constant.int 3
+    %0 = torch.prims.convert_element_type %arg0, %int3 : !torch.vtensor<[4,4],si32>, !torch.int -> !torch.vtensor<[4,4],si32>
+    return %arg0 : !torch.vtensor<[4,4],si32>
+  }
+}
+
+// -----// IR Dump After ReduceOpVariants (torch-reduce-op-variants) //----- //
+func.func @main(%arg0: !torch.vtensor<[4,4],si32>) -> !torch.vtensor<[4,4],si32> attributes {torch.assume_strict_symbolic_shapes} {
+  %int3 = torch.constant.int 3
+  %0 = torch.prims.convert_element_type %arg0, %int3 : !torch.vtensor<[4,4],si32>, !torch.int -> !torch.vtensor<[4,4],si32>
+  return %arg0 : !torch.vtensor<[4,4],si32>
+}
+
+// -----// IR Dump After Canonicalizer (canonicalize) //----- //
+func.func @main(%arg0: !torch.vtensor<[4,4],si32>) -> !torch.vtensor<[4,4],si32> attributes {torch.assume_strict_symbolic_shapes} {
+  return %arg0 : !torch.vtensor<[4,4],si32>
+}
+
+// -----// IR Dump After DecomposeComplexOps (torch-decompose-complex-ops) //----- //
+func.func @main(%arg0: !torch.vtensor<[4,4],si32>) -> !torch.vtensor<[4,4],si32> attributes {torch.assume_strict_symbolic_shapes} {
+  return %arg0 : !torch.vtensor<[4,4],si32>
+}
+
+// -----// IR Dump After Canonicalizer (canonicalize) //----- //
+func.func @main(%arg0: !torch.vtensor<[4,4],si32>) -> !torch.vtensor<[4,4],si32> attributes {torch.assume_strict_symbolic_shapes} {
+  return %arg0 : !torch.vtensor<[4,4],si32>
+}
+
+Torch Backend module module
+module {
+  func.func @main(%arg0: !torch.vtensor<[4,4],si32>) -> !torch.vtensor<[4,4],si32> attributes {torch.assume_strict_symbolic_shapes} {
+    return %arg0 : !torch.vtensor<[4,4],si32>
+  }
+}
+
+StableHLO module module
+module {
+  func.func @main(%arg0: tensor<4x4xi32>) -> tensor<4x4xi32> {
+    return %arg0 : tensor<4x4xi32>
+  }
+}
+
+// -----// IR Dump Before ConvertArithToStableHLO (convert-arith-to-stablehlo) ('builtin.module' operation) //----- //
+module {
+  func.func @main(%arg0: tensor<4x4xi32>) -> tensor<4x4xi32> {
+    return %arg0 : tensor<4x4xi32>
+  }
+}
+
+
+// -----// IR Dump Before StablehloLegalizeCompositeToCallPass (stablehlo-legalize-composite-to-call) ('func.func' operation: @main) //----- //
+module {
+  func.func @main(%arg0: tensor<4x4xi32>) -> tensor<4x4xi32> {
+    return %arg0 : tensor<4x4xi32>
+  }
+}
+
+
+// -----// IR Dump Before Inliner (inline) ('builtin.module' operation) //----- //
+module {
+  func.func @main(%arg0: tensor<4x4xi32>) -> tensor<4x4xi32> {
+    return %arg0 : tensor<4x4xi32>
+  }
+}
+
+
+// -----// IR Dump Before Canonicalizer (canonicalize) ('func.func' operation: @main) //----- //
+module {
+  func.func @main(%arg0: tensor<4x4xi32>) -> tensor<4x4xi32> {
+    return %arg0 : tensor<4x4xi32>
+  }
+}
+
+
+// -----// IR Dump Before ConvertStableHLOToTTIR (convert-stablehlo-to-ttir) ('builtin.module' operation) //----- //
+module {
+  func.func @main(%arg0: tensor<4x4xi32>) -> tensor<4x4xi32> {
+    return %arg0 : tensor<4x4xi32>
+  }
+}
+
+
+// -----// IR Dump Before mlir::tt::TTIRTensorAnnotationCleanupPass (shardy-tensor-annotation-cleanup) ('builtin.module' operation) //----- //
+module {
+  func.func @main(%arg0: tensor<4x4xi32>) -> tensor<4x4xi32> {
+    return %arg0 : tensor<4x4xi32>
+  }
+}
+
+
+TTIR module module
+#loc1 = loc("/localdev/hshah/tt-torch/tests/torch/convert.py":28:0)
+#loc2 = loc("convert_element_type")
+#loc3 = loc(fused[#loc1, #loc2])
+module {
+  func.func @main(%arg0: tensor<4x4xi32> loc(fused[#loc1, #loc2])) -> tensor<4x4xi32> {
+    return %arg0 : tensor<4x4xi32> loc(#loc3)
+  } loc(#loc3)
+} loc(#loc)
+#loc = loc(unknown)
+
+// -----// IR Dump Before Canonicalizer (canonicalize) ('builtin.module' operation) //----- //
+module {
+  func.func @main(%arg0: tensor<4x4xi32>) -> tensor<4x4xi32> {
+    return %arg0 : tensor<4x4xi32>
+  }
+}
+
+
+// -----// IR Dump Before ElementTypeNormalization (ttir-element-type-normalization) ('builtin.module' operation) //----- //
+module {
+  func.func @main(%arg0: tensor<4x4xi32>) -> tensor<4x4xi32> {
+    return %arg0 : tensor<4x4xi32>
+  }
+}
+
+
+// -----// IR Dump After ElementTypeNormalization (ttir-element-type-normalization) ('builtin.module' operation) //----- //
+module {
+  func.func @main(%arg0: tensor<4x4xsi32>) -> tensor<4x4xsi32> {
+    return %arg0 : tensor<4x4xsi32>
+  }
+}
+
+
+// -----// IR Dump Before TTWrapDeviceModulePass (tt-wrap-device-module) ('builtin.module' operation) //----- //
+module {
+  func.func @main(%arg0: tensor<4x4xsi32>) -> tensor<4x4xsi32> {
+    return %arg0 : tensor<4x4xsi32>
+  }
+}
+
+
+// -----// IR Dump After TTWrapDeviceModulePass (tt-wrap-device-module) ('builtin.module' operation) //----- //
+module {
+  tt.device_module {
+    builtin.module {
+      func.func @main(%arg0: tensor<4x4xsi32>) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTIRHoistTransform (ttir-cpu-hoist-transform) ('builtin.module' operation) //----- //
+module {
+  tt.device_module {
+    builtin.module {
+      func.func @main(%arg0: tensor<4x4xsi32>) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTRegisterDevicePass (tt-register-device) ('builtin.module' operation) //----- //
+module {
+  tt.device_module {
+    builtin.module {
+      func.func @main(%arg0: tensor<4x4xsi32>) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump After TTRegisterDevicePass (tt-register-device) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 16x25] eth_inactive = [ 16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  17x18,  17x19,  17x20,  17x21,  17x22,  17x23,  17x24,  17x25]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [1], [0 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32>) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTPopulateArgumentTypes (tt-populate-argument-types) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 16x25] eth_inactive = [ 16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  17x18,  17x19,  17x20,  17x21,  17x22,  17x23,  17x24,  17x25]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [1], [0 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32>) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump After TTPopulateArgumentTypes (tt-populate-argument-types) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 16x25] eth_inactive = [ 16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  17x18,  17x19,  17x20,  17x21,  17x22,  17x23,  17x24,  17x25]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [1], [0 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before Canonicalizer (canonicalize) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 16x25] eth_inactive = [ 16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  17x18,  17x19,  17x20,  17x21,  17x22,  17x23,  17x24,  17x25]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [1], [0 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTIRToTTIRDecomposition (ttir-to-ttir-decomposition) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 16x25] eth_inactive = [ 16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  17x18,  17x19,  17x20,  17x21,  17x22,  17x23,  17x24,  17x25]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [1], [0 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before Canonicalizer (canonicalize) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 16x25] eth_inactive = [ 16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  17x18,  17x19,  17x20,  17x21,  17x22,  17x23,  17x24,  17x25]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [1], [0 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before Inliner (inline) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 16x25] eth_inactive = [ 16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  17x18,  17x19,  17x20,  17x21,  17x22,  17x23,  17x24,  17x25]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [1], [0 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before Canonicalizer (canonicalize) ('func.func' operation: @main) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 16x25] eth_inactive = [ 16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  17x18,  17x19,  17x20,  17x21,  17x22,  17x23,  17x24,  17x25]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [1], [0 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTIRFlattenSlidingWindow (ttir-flatten-sliding-window) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 16x25] eth_inactive = [ 16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  17x18,  17x19,  17x20,  17x21,  17x22,  17x23,  17x24,  17x25]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [1], [0 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTIREraseInverseOps (ttir-erase-inverse-ops) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 16x25] eth_inactive = [ 16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  17x18,  17x19,  17x20,  17x21,  17x22,  17x23,  17x24,  17x25]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [1], [0 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTIRImplicitBroadcastFold (ttir-implicit-broadcast-fold) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 16x25] eth_inactive = [ 16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  17x18,  17x19,  17x20,  17x21,  17x22,  17x23,  17x24,  17x25]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [1], [0 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTIRQuantDataTypeConversionPass (ttir-quant-data-type-conversion) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 16x25] eth_inactive = [ 16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  17x18,  17x19,  17x20,  17x21,  17x22,  17x23,  17x24,  17x25]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [1], [0 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTNNLayout (ttnn-layout) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 16x25] eth_inactive = [ 16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  17x18,  17x19,  17x20,  17x21,  17x22,  17x23,  17x24,  17x25]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [1], [0 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump After TTNNLayout (ttnn-layout) ('builtin.module' operation) //----- //
+#dram = #ttnn.buffer_type<dram>
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 16x25] eth_inactive = [ 16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  17x18,  17x19,  17x20,  17x21,  17x22,  17x23,  17x24,  17x25]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [1], [0 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+#ttnn_layout = #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<1x1x!tt.tile<32x32, si32>, #dram>, <interleaved>>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32, #ttnn_layout> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32, #ttnn_layout> {
+        return %arg0 : tensor<4x4xsi32, #ttnn_layout>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before ConvertTTIRToTTNN (convert-ttir-to-ttnn) ('builtin.module' operation) //----- //
+#dram = #ttnn.buffer_type<dram>
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 16x25] eth_inactive = [ 16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  17x18,  17x19,  17x20,  17x21,  17x22,  17x23,  17x24,  17x25]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [1], [0 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+#ttnn_layout = #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<1x1x!tt.tile<32x32, si32>, #dram>, <interleaved>>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32, #ttnn_layout> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32, #ttnn_layout> {
+        return %arg0 : tensor<4x4xsi32, #ttnn_layout>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTNNWorkarounds (ttnn-workaround) ('builtin.module' operation) //----- //
+#dram = #ttnn.buffer_type<dram>
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 16x25] eth_inactive = [ 16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  17x18,  17x19,  17x20,  17x21,  17x22,  17x23,  17x24,  17x25]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [1], [0 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+#ttnn_layout = #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<1x1x!tt.tile<32x32, si32>, #dram>, <interleaved>>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32, #ttnn_layout> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32, #ttnn_layout> {
+        return %arg0 : tensor<4x4xsi32, #ttnn_layout>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before Canonicalizer (canonicalize) ('builtin.module' operation) //----- //
+#dram = #ttnn.buffer_type<dram>
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 16x25] eth_inactive = [ 16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  17x18,  17x19,  17x20,  17x21,  17x22,  17x23,  17x24,  17x25]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [1], [0 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+#ttnn_layout = #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<1x1x!tt.tile<32x32, si32>, #dram>, <interleaved>>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32, #ttnn_layout> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32, #ttnn_layout> {
+        return %arg0 : tensor<4x4xsi32, #ttnn_layout>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTNNDecomposeLayouts (ttnn-decompose-layouts) ('builtin.module' operation) //----- //
+#dram = #ttnn.buffer_type<dram>
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 16x25] eth_inactive = [ 16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  17x18,  17x19,  17x20,  17x21,  17x22,  17x23,  17x24,  17x25]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [1], [0 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+#ttnn_layout = #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<1x1x!tt.tile<32x32, si32>, #dram>, <interleaved>>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32, #ttnn_layout> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32, #ttnn_layout> {
+        return %arg0 : tensor<4x4xsi32, #ttnn_layout>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTNNDeallocate (ttnn-deallocate) ('builtin.module' operation) //----- //
+#dram = #ttnn.buffer_type<dram>
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 16x25] eth_inactive = [ 16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  17x18,  17x19,  17x20,  17x21,  17x22,  17x23,  17x24,  17x25]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [1], [0 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+#ttnn_layout = #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<1x1x!tt.tile<32x32, si32>, #dram>, <interleaved>>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32, #ttnn_layout> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32, #ttnn_layout> {
+        return %arg0 : tensor<4x4xsi32, #ttnn_layout>
+      }
+    }
+  }
+}
+
+
+TTNN module module
+#dram = #ttnn.buffer_type<dram>
+#loc1 = loc("/localdev/hshah/tt-torch/tests/torch/convert.py":28:0)
+#loc2 = loc("convert_element_type")
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 16x25] eth_inactive = [ 16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  17x18,  17x19,  17x20,  17x21,  17x22,  17x23,  17x24,  17x25]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [1], [0 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+#loc3 = loc(fused[#loc1, #loc2])
+#ttnn_layout = #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<1x1x!tt.tile<32x32, si32>, #dram>, <interleaved>>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]> loc(#loc)
+      func.func @main(%arg0: tensor<4x4xsi32, #ttnn_layout> {tt.argument_type = #tt.argument_type<input>} loc(fused[#loc1, #loc2])) -> tensor<4x4xsi32, #ttnn_layout> {
+        return %arg0 : tensor<4x4xsi32, #ttnn_layout> loc(#loc3)
+      } loc(#loc3)
+    } loc(#loc)
+  } loc(#loc)
+} loc(#loc)
+#loc = loc(unknown)
+
+[PREPROCESS INPUTS] ENTERED
+Torch FX module module
+module {
+  func.func @main(%arg0: !torch.vtensor<[4,4],si32>) -> !torch.vtensor<[4,4],si32> attributes {torch.assume_strict_symbolic_shapes} {
+    %int3 = torch.constant.int 3
+    %0 = torch.prims.convert_element_type %arg0, %int3 : !torch.vtensor<[4,4],si32>, !torch.int -> !torch.vtensor<[4,4],si32>
+    return %arg0 : !torch.vtensor<[4,4],si32>
+  }
+}
+
+// -----// IR Dump After ReduceOpVariants (torch-reduce-op-variants) //----- //
+func.func @main(%arg0: !torch.vtensor<[4,4],si32>) -> !torch.vtensor<[4,4],si32> attributes {torch.assume_strict_symbolic_shapes} {
+  %int3 = torch.constant.int 3
+  %0 = torch.prims.convert_element_type %arg0, %int3 : !torch.vtensor<[4,4],si32>, !torch.int -> !torch.vtensor<[4,4],si32>
+  return %arg0 : !torch.vtensor<[4,4],si32>
+}
+
+// -----// IR Dump After Canonicalizer (canonicalize) //----- //
+func.func @main(%arg0: !torch.vtensor<[4,4],si32>) -> !torch.vtensor<[4,4],si32> attributes {torch.assume_strict_symbolic_shapes} {
+  return %arg0 : !torch.vtensor<[4,4],si32>
+}
+
+// -----// IR Dump After DecomposeComplexOps (torch-decompose-complex-ops) //----- //
+func.func @main(%arg0: !torch.vtensor<[4,4],si32>) -> !torch.vtensor<[4,4],si32> attributes {torch.assume_strict_symbolic_shapes} {
+  return %arg0 : !torch.vtensor<[4,4],si32>
+}
+
+// -----// IR Dump After Canonicalizer (canonicalize) //----- //
+func.func @main(%arg0: !torch.vtensor<[4,4],si32>) -> !torch.vtensor<[4,4],si32> attributes {torch.assume_strict_symbolic_shapes} {
+  return %arg0 : !torch.vtensor<[4,4],si32>
+}
+
+Torch Backend module module
+module {
+  func.func @main(%arg0: !torch.vtensor<[4,4],si32>) -> !torch.vtensor<[4,4],si32> attributes {torch.assume_strict_symbolic_shapes} {
+    return %arg0 : !torch.vtensor<[4,4],si32>
+  }
+}
+
+StableHLO module module
+module {
+  func.func @main(%arg0: tensor<4x4xi32>) -> tensor<4x4xi32> {
+    return %arg0 : tensor<4x4xi32>
+  }
+}
+
+// -----// IR Dump Before ConvertArithToStableHLO (convert-arith-to-stablehlo) ('builtin.module' operation) //----- //
+module {
+  func.func @main(%arg0: tensor<4x4xi32>) -> tensor<4x4xi32> {
+    return %arg0 : tensor<4x4xi32>
+  }
+}
+
+
+// -----// IR Dump Before StablehloLegalizeCompositeToCallPass (stablehlo-legalize-composite-to-call) ('func.func' operation: @main) //----- //
+module {
+  func.func @main(%arg0: tensor<4x4xi32>) -> tensor<4x4xi32> {
+    return %arg0 : tensor<4x4xi32>
+  }
+}
+
+
+// -----// IR Dump Before Inliner (inline) ('builtin.module' operation) //----- //
+module {
+  func.func @main(%arg0: tensor<4x4xi32>) -> tensor<4x4xi32> {
+    return %arg0 : tensor<4x4xi32>
+  }
+}
+
+
+// -----// IR Dump Before Canonicalizer (canonicalize) ('func.func' operation: @main) //----- //
+module {
+  func.func @main(%arg0: tensor<4x4xi32>) -> tensor<4x4xi32> {
+    return %arg0 : tensor<4x4xi32>
+  }
+}
+
+
+// -----// IR Dump Before ConvertStableHLOToTTIR (convert-stablehlo-to-ttir) ('builtin.module' operation) //----- //
+module {
+  func.func @main(%arg0: tensor<4x4xi32>) -> tensor<4x4xi32> {
+    return %arg0 : tensor<4x4xi32>
+  }
+}
+
+
+// -----// IR Dump Before mlir::tt::TTIRTensorAnnotationCleanupPass (shardy-tensor-annotation-cleanup) ('builtin.module' operation) //----- //
+module {
+  func.func @main(%arg0: tensor<4x4xi32>) -> tensor<4x4xi32> {
+    return %arg0 : tensor<4x4xi32>
+  }
+}
+
+
+TTIR module module
+#loc1 = loc("/localdev/hshah/tt-torch/tests/torch/convert.py":28:0)
+#loc2 = loc("convert_element_type")
+#loc3 = loc(fused[#loc1, #loc2])
+module {
+  func.func @main(%arg0: tensor<4x4xi32> loc(fused[#loc1, #loc2])) -> tensor<4x4xi32> {
+    return %arg0 : tensor<4x4xi32> loc(#loc3)
+  } loc(#loc3)
+} loc(#loc)
+#loc = loc(unknown)
+
+// -----// IR Dump Before Canonicalizer (canonicalize) ('builtin.module' operation) //----- //
+module {
+  func.func @main(%arg0: tensor<4x4xi32>) -> tensor<4x4xi32> {
+    return %arg0 : tensor<4x4xi32>
+  }
+}
+
+
+// -----// IR Dump Before ElementTypeNormalization (ttir-element-type-normalization) ('builtin.module' operation) //----- //
+module {
+  func.func @main(%arg0: tensor<4x4xi32>) -> tensor<4x4xi32> {
+    return %arg0 : tensor<4x4xi32>
+  }
+}
+
+
+// -----// IR Dump After ElementTypeNormalization (ttir-element-type-normalization) ('builtin.module' operation) //----- //
+module {
+  func.func @main(%arg0: tensor<4x4xsi32>) -> tensor<4x4xsi32> {
+    return %arg0 : tensor<4x4xsi32>
+  }
+}
+
+
+// -----// IR Dump Before TTWrapDeviceModulePass (tt-wrap-device-module) ('builtin.module' operation) //----- //
+module {
+  func.func @main(%arg0: tensor<4x4xsi32>) -> tensor<4x4xsi32> {
+    return %arg0 : tensor<4x4xsi32>
+  }
+}
+
+
+// -----// IR Dump After TTWrapDeviceModulePass (tt-wrap-device-module) ('builtin.module' operation) //----- //
+module {
+  tt.device_module {
+    builtin.module {
+      func.func @main(%arg0: tensor<4x4xsi32>) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTIRHoistTransform (ttir-cpu-hoist-transform) ('builtin.module' operation) //----- //
+module {
+  tt.device_module {
+    builtin.module {
+      func.func @main(%arg0: tensor<4x4xsi32>) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTRegisterDevicePass (tt-register-device) ('builtin.module' operation) //----- //
+module {
+  tt.device_module {
+    builtin.module {
+      func.func @main(%arg0: tensor<4x4xsi32>) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump After TTRegisterDevicePass (tt-register-device) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 17x25] eth_inactive = [ 16x18,  16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  16x25,  17x19,  17x20,  17x22,  17x23,  17x24]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [0], [3 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32>) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTPopulateArgumentTypes (tt-populate-argument-types) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 17x25] eth_inactive = [ 16x18,  16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  16x25,  17x19,  17x20,  17x22,  17x23,  17x24]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [0], [3 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32>) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump After TTPopulateArgumentTypes (tt-populate-argument-types) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 17x25] eth_inactive = [ 16x18,  16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  16x25,  17x19,  17x20,  17x22,  17x23,  17x24]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [0], [3 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before Canonicalizer (canonicalize) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 17x25] eth_inactive = [ 16x18,  16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  16x25,  17x19,  17x20,  17x22,  17x23,  17x24]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [0], [3 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTIRToTTIRDecomposition (ttir-to-ttir-decomposition) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 17x25] eth_inactive = [ 16x18,  16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  16x25,  17x19,  17x20,  17x22,  17x23,  17x24]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [0], [3 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before Canonicalizer (canonicalize) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 17x25] eth_inactive = [ 16x18,  16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  16x25,  17x19,  17x20,  17x22,  17x23,  17x24]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [0], [3 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before Inliner (inline) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 17x25] eth_inactive = [ 16x18,  16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  16x25,  17x19,  17x20,  17x22,  17x23,  17x24]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [0], [3 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before Canonicalizer (canonicalize) ('func.func' operation: @main) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 17x25] eth_inactive = [ 16x18,  16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  16x25,  17x19,  17x20,  17x22,  17x23,  17x24]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [0], [3 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTIRFlattenSlidingWindow (ttir-flatten-sliding-window) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 17x25] eth_inactive = [ 16x18,  16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  16x25,  17x19,  17x20,  17x22,  17x23,  17x24]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [0], [3 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTIREraseInverseOps (ttir-erase-inverse-ops) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 17x25] eth_inactive = [ 16x18,  16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  16x25,  17x19,  17x20,  17x22,  17x23,  17x24]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [0], [3 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTIRImplicitBroadcastFold (ttir-implicit-broadcast-fold) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 17x25] eth_inactive = [ 16x18,  16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  16x25,  17x19,  17x20,  17x22,  17x23,  17x24]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [0], [3 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTIRQuantDataTypeConversionPass (ttir-quant-data-type-conversion) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 17x25] eth_inactive = [ 16x18,  16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  16x25,  17x19,  17x20,  17x22,  17x23,  17x24]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [0], [3 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTNNLayout (ttnn-layout) ('builtin.module' operation) //----- //
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 17x25] eth_inactive = [ 16x18,  16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  16x25,  17x19,  17x20,  17x22,  17x23,  17x24]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [0], [3 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32> {
+        return %arg0 : tensor<4x4xsi32>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump After TTNNLayout (ttnn-layout) ('builtin.module' operation) //----- //
+#dram = #ttnn.buffer_type<dram>
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 17x25] eth_inactive = [ 16x18,  16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  16x25,  17x19,  17x20,  17x22,  17x23,  17x24]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [0], [3 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+#ttnn_layout = #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<1x1x!tt.tile<32x32, si32>, #dram>, <interleaved>>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32, #ttnn_layout> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32, #ttnn_layout> {
+        return %arg0 : tensor<4x4xsi32, #ttnn_layout>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before ConvertTTIRToTTNN (convert-ttir-to-ttnn) ('builtin.module' operation) //----- //
+#dram = #ttnn.buffer_type<dram>
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 17x25] eth_inactive = [ 16x18,  16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  16x25,  17x19,  17x20,  17x22,  17x23,  17x24]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [0], [3 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+#ttnn_layout = #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<1x1x!tt.tile<32x32, si32>, #dram>, <interleaved>>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32, #ttnn_layout> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32, #ttnn_layout> {
+        return %arg0 : tensor<4x4xsi32, #ttnn_layout>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTNNWorkarounds (ttnn-workaround) ('builtin.module' operation) //----- //
+#dram = #ttnn.buffer_type<dram>
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 17x25] eth_inactive = [ 16x18,  16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  16x25,  17x19,  17x20,  17x22,  17x23,  17x24]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [0], [3 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+#ttnn_layout = #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<1x1x!tt.tile<32x32, si32>, #dram>, <interleaved>>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32, #ttnn_layout> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32, #ttnn_layout> {
+        return %arg0 : tensor<4x4xsi32, #ttnn_layout>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before Canonicalizer (canonicalize) ('builtin.module' operation) //----- //
+#dram = #ttnn.buffer_type<dram>
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 17x25] eth_inactive = [ 16x18,  16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  16x25,  17x19,  17x20,  17x22,  17x23,  17x24]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [0], [3 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+#ttnn_layout = #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<1x1x!tt.tile<32x32, si32>, #dram>, <interleaved>>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32, #ttnn_layout> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32, #ttnn_layout> {
+        return %arg0 : tensor<4x4xsi32, #ttnn_layout>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTNNDecomposeLayouts (ttnn-decompose-layouts) ('builtin.module' operation) //----- //
+#dram = #ttnn.buffer_type<dram>
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 17x25] eth_inactive = [ 16x18,  16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  16x25,  17x19,  17x20,  17x22,  17x23,  17x24]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [0], [3 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+#ttnn_layout = #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<1x1x!tt.tile<32x32, si32>, #dram>, <interleaved>>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32, #ttnn_layout> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32, #ttnn_layout> {
+        return %arg0 : tensor<4x4xsi32, #ttnn_layout>
+      }
+    }
+  }
+}
+
+
+// -----// IR Dump Before TTNNDeallocate (ttnn-deallocate) ('builtin.module' operation) //----- //
+#dram = #ttnn.buffer_type<dram>
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 17x25] eth_inactive = [ 16x18,  16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  16x25,  17x19,  17x20,  17x22,  17x23,  17x24]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [0], [3 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+#ttnn_layout = #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<1x1x!tt.tile<32x32, si32>, #dram>, <interleaved>>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]>
+      func.func @main(%arg0: tensor<4x4xsi32, #ttnn_layout> {tt.argument_type = #tt.argument_type<input>}) -> tensor<4x4xsi32, #ttnn_layout> {
+        return %arg0 : tensor<4x4xsi32, #ttnn_layout>
+      }
+    }
+  }
+}
+
+
+TTNN module module
+#dram = #ttnn.buffer_type<dram>
+#loc1 = loc("/localdev/hshah/tt-torch/tests/torch/convert.py":28:0)
+#loc2 = loc("convert_element_type")
+#system_desc = #tt.system_desc<[{role = host, target_triple = "x86_64-pc-linux"}], [{arch = <wormhole_b0>, grid = 8x8, coord_translation_offsets = 18x18, l1_size = 1499136, num_dram_channels = 12, dram_channel_size = 1073741824, noc_l1_address_align_bytes = 16, pcie_address_align_bytes = 32, noc_dram_address_align_bytes = 32, l1_unreserved_base = 97248, erisc_l1_unreserved_base = 69632, dram_unreserved_base = 32, dram_unreserved_end = 1073206944, physical_helper_cores = {dram = [ 0x0,  0x1,  0x2,  0x3,  0x4,  0x5,  0x6,  0x7,  0x8,  0x9,  0x10,  0x11] eth = [ 17x25] eth_inactive = [ 16x18,  16x19,  16x20,  16x21,  16x22,  16x23,  16x24,  16x25,  17x19,  17x20,  17x22,  17x23,  17x24]}, supported_data_types = [<f32>, <f16>, <bf16>, <bfp_f8>, <bfp_bf8>, <bfp_f4>, <bfp_bf4>, <bfp_f2>, <bfp_bf2>, <u32>, <u16>, <u8>, <si32>], supported_tile_sizes = [ 4x16,  16x16,  32x16,  4x32,  16x32,  32x32], num_cbs = 32, num_compute_threads = 1, num_datamovement_threads = 2}], [0], [3 : i32], [ 0x0x0x0], [<[0, 8, 0], [1, 0, 0]>]>
+#loc3 = loc(fused[#loc1, #loc2])
+#ttnn_layout = #ttnn.ttnn_layout<(d0, d1) -> (d0, d1), <1x1>, memref<1x1x!tt.tile<32x32, si32>, #dram>, <interleaved>>
+module {
+  tt.device_module {
+    builtin.module attributes {tt.system_desc = #system_desc} {
+      tt.device @default_device = <workerGrid = #tt.grid<8x8, (d0, d1) -> (0, d0, d1)>, l1Map = (d0, d1, d2)[s0] -> (0, d0, d1, d2 + s0), dramMap = (d0, d1, d2)[s0, s1, s2, s3, s4, s5] -> (0, 0, (((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv s4) mod 12, ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) floordiv (s4 * 12) + ((d0 * s1) * (s2 * s3) + d1 * (s2 * s3) + d2) mod s4 + s5), meshShape = , chipIds = [0]> loc(#loc)
+      func.func @main(%arg0: tensor<4x4xsi32, #ttnn_layout> {tt.argument_type = #tt.argument_type<input>} loc(fused[#loc1, #loc2])) -> tensor<4x4xsi32, #ttnn_layout> {
+        return %arg0 : tensor<4x4xsi32, #ttnn_layout> loc(#loc3)
+      } loc(#loc3)
+    } loc(#loc)
+  } loc(#loc)
+} loc(#loc)
+#loc = loc(unknown)
+
+[PREPROCESS INPUTS] ENTERED
+[CTT] Attempting to move RT tensor to host (and untilize)
+/usr/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
