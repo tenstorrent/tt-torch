@@ -120,13 +120,13 @@ std::vector<int64_t> as_vec_int64(std::vector<T> const &vec) {
 }
 
 static torch::Tensor create_torch_tensor(const tt::runtime::Tensor &tensor) {
-  const std::vector<std::int64_t> shape =
-      as_vec_int64(tt::runtime::getTensorShape(tensor));
-  const std::vector<std::int64_t> stride =
-      as_vec_int64(tt::runtime::utils::calculateStride(shape));
-
   tt::runtime::Tensor untilized_tensor =
       tt::runtime::toHost(tensor, /*untilize=*/true)[0];
+
+  const std::vector<std::int64_t> shape =
+      as_vec_int64(tt::runtime::getTensorShape(untilized_tensor));
+  const std::vector<std::int64_t> stride =
+      as_vec_int64(tt::runtime::getTensorStride(untilized_tensor));
 
   const tt::target::DataType rt_datatype =
       tt::runtime::getTensorDataType(untilized_tensor);

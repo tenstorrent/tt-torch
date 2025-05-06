@@ -15,6 +15,35 @@ from tt_torch.tools.utils import (
 from tt_torch.dynamo.backend import backend, BackendOptions
 from tt_torch.tools.utils import calculate_atol, calculate_pcc
 from tt_torch.tools.utils import CompileDepth, CompilerConfig
+from tt_torch.tools.device_manager import DeviceManager
+
+
+def compile_model(model, compiler_config, device, async_mode):
+    torch_options = BackendOptions()
+    torch_options.compiler_config = compiler_config
+    torch_options.device = device
+    torch_options.async_mode = async_mode
+    return torch.compile(model, backend=backend, options=torch_options)
+
+
+def generate_inputs(input_shapes, input_data_types, input_range, input_range_int):
+    if all([dtype.is_floating_point for dtype in input_data_types]):
+        low, high = input_range
+        # Uniformly distribute random numbers within the input_range
+        inputs = [
+            (low - high) * torch.rand(shape, dtype=dtype) + high
+            for shape, dtype in zip(input_shapes, input_data_types)
+        ]
+    elif all([dtype == torch.bool for dtype in input_data_types]):
+        inputs = [
+            torch.randint(0, 2, shape, dtype=torch.bool) for shape in input_shapes
+        ]
+    else:
+        low, high = input_range_int
+        inputs = [
+            torch.randint(low, high, shape, dtype=torch.int32) for shape in input_shapes
+        ]
+    return inputs
 
 
 def verify_against_golden(
@@ -177,28 +206,11 @@ def _verify_torch_module(
 
     from tt_torch.dynamo.backend import backend  # avoid circular import
 
-    torch_options = BackendOptions()
-    torch_options.compiler_config = compiler_config
-    torch_options.device = device
-    tt_mod = torch.compile(mod, backend=backend, options=torch_options)
+    tt_mod = compile_model(mod, compiler_config, device, async_mode=False)
     if inputs is None:
-        if all([dtype.is_floating_point for dtype in input_data_types]):
-            low, high = input_range
-            # Uniformly distribute random numbers within the input_range
-            inputs = [
-                (low - high) * torch.rand(shape, dtype=dtype) + high
-                for shape, dtype in zip(input_shapes, input_data_types)
-            ]
-        elif all([dtype == torch.bool for dtype in input_data_types]):
-            inputs = [
-                torch.randint(0, 2, shape, dtype=torch.bool) for shape in input_shapes
-            ]
-        else:
-            low, high = input_range_int
-            inputs = [
-                torch.randint(low, high, shape, dtype=torch.int32)
-                for shape in input_shapes
-            ]
+        inputs = generate_inputs(
+            input_shapes, input_data_types, input_range, input_range_int
+        )
 
     ret = tt_mod(*inputs)
     golden = mod(*inputs)
@@ -330,3 +342,60 @@ def verify_module(
         )
     else:
         raise ValueError("Invalid module type")
+
+
+def verify_torch_module_async(
+    mod,
+    inputs=None,
+    input_shapes=None,
+    input_data_types=None,
+    required_pcc=0.99,
+    required_atol=1e-2,
+    input_range=(-0.5, 0.5),
+    input_range_int=(0, 1000),
+    compiler_config=CompilerConfig(),
+    do_assert=True,
+):
+    assert (
+        input_shapes is not None or inputs is not None
+    ), "Either input_shapes or inputs must be provided"
+    parent, devices = DeviceManager.acquire_available_devices()
+    if input_data_types is None:
+        input_data_types = [torch.float32] * (
+            len(input_shapes) if input_shapes is not None else len(inputs)
+        )
+    tt_mods = []
+    for device in devices:
+        tt_mods.append(compile_model(mod, compiler_config, device, async_mode=True))
+    if inputs is None:
+        inputs = generate_inputs(
+            input_shapes, input_data_types, input_range, input_range_int
+        )
+    golden = mod(*inputs)
+    if isinstance(golden, torch.Tensor):
+        golden = (golden,)
+    golden = tuple(golden)
+    rt_tensors = []
+    for tt_mod in tt_mods:
+        rt_tensors.append(tt_mod(*inputs))
+    rets = []
+    for rt_tensor in rt_tensors:
+        ret = tt_mlir.to_host(rt_tensor)
+        if isinstance(ret, torch.Tensor):
+            ret = (ret,)
+        ret = tuple(ret)
+        rets.append(ret)
+
+    for ret in rets:
+        try:
+            verify_against_golden(
+                golden,
+                ret,
+                do_assert,
+                do_assert,
+                required_pcc,
+                required_atol=required_atol,
+            )
+        except:
+            break
+    DeviceManager.release_parent_device(parent, cleanup_sub_devices=True)
