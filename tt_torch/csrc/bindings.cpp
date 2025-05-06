@@ -123,7 +123,7 @@ static torch::Tensor create_torch_tensor(const tt::runtime::Tensor &tensor) {
   const std::vector<std::int64_t> shape =
       as_vec_int64(tt::runtime::getTensorShape(tensor));
   const std::vector<std::int64_t> stride =
-      as_vec_int64(tt::runtime::getTensorStride(tensor));
+      as_vec_int64(tt::runtime::utils::calculateStride(shape));
 
   tt::runtime::Tensor untilized_tensor =
       tt::runtime::toHost(tensor, /*untilize=*/true)[0];
