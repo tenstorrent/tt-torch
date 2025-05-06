@@ -18,7 +18,7 @@ Instead of using the above environment variables, compiler behaviour can be conf
 
 Here is an example of enabling consteval:
 ```py
-from tt_torch.dynamo.backend import backend
+from tt_torch.dynamo.backend import backend, BackendOptions
 from tt_torch.tools.utils import CompilerConfig
 import torch
 
@@ -35,8 +35,8 @@ cc = CompilerConfig()
 cc.enable_consteval = True
 cc.consteval_parameters = True # This will enable constant folding on the parameters in addition to any constants
 
-options = {}
-options["compiler_config"] = cc
+options = BackendOptions()
+options.compiler_config = cc
 model = torch.compile(model, backend=backend, options=options)
 
 inputs = ...
