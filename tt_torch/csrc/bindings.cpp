@@ -240,7 +240,7 @@ run_async(tt::runtime::Device device, tt::runtime::Binary &binary,
     const std::vector<std::int64_t> rt_shape =
         as_vec_int64(tt::runtime::getTensorShape(rt_output));
     const std::vector<std::int64_t> rt_stride =
-        as_vec_int64((tt::runtime::utils::calculateStride(rt_shape)));
+        as_vec_int64(tt::runtime::utils::calculateStride(rt_shape));
     std::cout << "RT OUTPUT " << idx++ << ": " << std::endl;
     std::cout << "  shape: " << rt_shape << std::endl;
     std::cout << "  stride: " << rt_stride << std::endl;
@@ -282,19 +282,26 @@ std::vector<at::Tensor> run(tt::runtime::Device device,
 
   std::cout << "[RUN] RT OUTPUTS BEGIN" << std::endl;
   int idx = 0;
+  std::vector<std::vector<std::int64_t>> rt_strides;
+  std::vector<std::vector<std::int64_t>> rt_shapes;
   for (const auto &rt_output : rt_outputs) {
     const std::vector<std::int64_t> rt_shape =
         as_vec_int64(tt::runtime::getTensorShape(rt_output));
     const std::vector<std::int64_t> rt_stride =
-        as_vec_int64((tt::runtime::utils::calculateStride(rt_shape)));
+        // as_vec_int64(tt::runtime::getTensorStride(rt_output));
+        as_vec_int64(tt::runtime::utils::calculateStride(rt_shape));
     std::cout << "RT OUTPUT " << idx++ << ": " << std::endl;
     std::cout << "  shape: " << rt_shape << std::endl;
     std::cout << "  stride: " << rt_stride << std::endl;
     std::cout << std::endl;
+    rt_shapes.push_back(rt_shape);
+    rt_strides.push_back(rt_stride);
   }
   std::cout << "[RUN] RT OUTPUTS END" << std::endl;
   std::cout << std::endl << std::endl;
   std::cout << "[RUN] BINARY DESC BEGIN" << std::endl;
+  std::vector<std::vector<std::int64_t>> bin_shapes;
+  std::vector<std::vector<std::int64_t>> bin_strides;
   const auto output_descs = binary.getProgramOutputs(program_idx);
   for (size_t i = 0; i < rt_outputs.size(); ++i) {
     const auto &output_desc = output_descs.at(i);
@@ -305,9 +312,14 @@ std::vector<at::Tensor> run(tt::runtime::Device device,
     std::cout << "  shape: " << bin_shape << std::endl;
     std::cout << "  stride: " << bin_stride << std::endl;
     std::cout << std::endl;
+    bin_shapes.push_back(bin_shape);
+    bin_strides.push_back(bin_stride);
   }
   std::cout << "[RUN] BINARY DESC END" << std::endl;
-
+  assert(rt_strides == bin_strides &&
+         "RT output strides do not match binary output strides");
+  assert(rt_shapes == bin_shapes &&
+         "RT output shapes do not match binary output shapes");
   std::vector<at::Tensor> outputs;
   outputs.reserve(rt_outputs.size());
 
