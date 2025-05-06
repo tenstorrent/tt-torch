@@ -240,7 +240,7 @@ run_async(tt::runtime::Device device, tt::runtime::Binary &binary,
     const std::vector<std::int64_t> rt_shape =
         as_vec_int64(tt::runtime::getTensorShape(rt_output));
     const std::vector<std::int64_t> rt_stride =
-        as_vec_int64(tt::runtime::getTensorStride(rt_output));
+        as_vec_int64((tt::runtime::utils::calculateStride(rt_shape)));
     std::cout << "RT OUTPUT " << idx++ << ": " << std::endl;
     std::cout << "  shape: " << rt_shape << std::endl;
     std::cout << "  stride: " << rt_stride << std::endl;
@@ -286,7 +286,7 @@ std::vector<at::Tensor> run(tt::runtime::Device device,
     const std::vector<std::int64_t> rt_shape =
         as_vec_int64(tt::runtime::getTensorShape(rt_output));
     const std::vector<std::int64_t> rt_stride =
-        as_vec_int64(tt::runtime::getTensorStride(rt_output));
+        as_vec_int64((tt::runtime::utils::calculateStride(rt_shape)));
     std::cout << "RT OUTPUT " << idx++ << ": " << std::endl;
     std::cout << "  shape: " << rt_shape << std::endl;
     std::cout << "  stride: " << rt_stride << std::endl;
