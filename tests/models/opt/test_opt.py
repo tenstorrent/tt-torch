@@ -42,14 +42,13 @@ def test_opt(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    # TODO Enable checking - https://github.com/tenstorrent/tt-torch/issues/592
     tester = ThisTester(
         model_name,
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
         relative_atol=0.015,
-        assert_pcc=False,
+        assert_pcc=True,
         assert_atol=False,
     )
     tester.test_model(assert_eval_token_mismatch=False)

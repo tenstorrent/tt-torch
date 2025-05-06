@@ -61,7 +61,7 @@ def test_beit_image_classification(record_property, model_name, mode, op_by_op):
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     required_atol = 0.032 if model_name == "microsoft/beit-base-patch16-224" else 0.065
-    do_assert = True if model_name == "microsoft/beit-base-patch16-224" else False
+    do_assert = True
     tester = ThisTester(
         model_name,
         mode,

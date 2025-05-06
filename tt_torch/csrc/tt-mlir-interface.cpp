@@ -195,6 +195,8 @@ compileTTIRToTTNN(std::string_view code,
   if (consteval && std::string(consteval) == "1") {
     options.enableConstEval = true;
   }
+  options.enableFusing = true;
+
   if (len_activations > 0 || len_graph_constants > 0) {
     llvm::SmallVector<mlir::tt::ArgumentType> argTypes;
     for (size_t i = 0; i < len_graph_constants; ++i) {
