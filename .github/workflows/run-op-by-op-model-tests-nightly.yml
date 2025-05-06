@@ -251,16 +251,20 @@ jobs:
         failures=0
         counter=0
         rm -f pytest.log
+        rm -f full_job_output.log
 
         for test_case in $tests_list; do
           counter=$((counter + 1))
 
-          echo "====== BEGIN LOG: $test_case ======" >> pytest.log
-          pytest -svv "$test_case" >> pytest.log 2>&1
+          echo "====== BEGIN LOG: $test_case ======" >> full_job_output.log
+          pytest -svv -rf "$test_case" > test.log 2>&1
+          cat test.log >> full_job_output.log
+          sed -n '/=========================== short test summary info ============================/,$p' test.log >>pytest.log
+
           exit_code=$?
 
-          echo "====== END LOG: $test_case ========" >> pytest.log
-          echo >> pytest.log
+          echo "====== END LOG: $test_case ========" >> full_job_output.log
+          echo >> full_job_output.log
 
           if [ $exit_code -eq 0 ]; then
             echo "[ $counter / $total_tests ] $test_case PASSED"
@@ -269,8 +273,6 @@ jobs:
             failures=$((failures + 1))
           fi
         done
-
-        cp pytest.log full_job_output.log
 
         # If any test failed, exit nonzero to mark the job as failed
         if [ $failures -ne 0 ]; then
