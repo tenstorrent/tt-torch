@@ -196,6 +196,7 @@ std::vector<tt::runtime::Tensor>
 preprocess_inputs(tt::runtime::Device device, std::vector<at::Tensor> &inputs,
                   tt::runtime::Binary binary, uint32_t program_idx,
                   size_t tensor_start_idx) {
+  std::cout << "[PREPROCESS INPUTS] ENTERED" << std::endl;
   for (int idx = 0; idx < inputs.size(); idx++) {
     if (!inputs[idx].is_contiguous()) {
       std::cout << "WARNING: Input " << idx
@@ -229,8 +230,37 @@ preprocess_inputs(tt::runtime::Device device, std::vector<at::Tensor> &inputs,
 std::vector<tt::runtime::Tensor>
 run_async(tt::runtime::Device device, tt::runtime::Binary &binary,
           uint32_t program_idx, std::vector<tt::runtime::Tensor> &rt_inputs) {
+  std::cout << "[RUN ASYNC] ENTERED" << std::endl;
   std::vector<tt::runtime::Tensor> rt_outputs =
       tt::runtime::submit(device, binary, program_idx, rt_inputs);
+
+  std::cout << "[RUN ASYNC] RT OUTPUTS BEGIN" << std::endl;
+  int idx = 0;
+  for (const auto &rt_output : rt_outputs) {
+    const std::vector<std::int64_t> rt_shape =
+        as_vec_int64(tt::runtime::getTensorShape(rt_output));
+    const std::vector<std::int64_t> rt_stride =
+        as_vec_int64(tt::runtime::getTensorStride(rt_output));
+    std::cout << "RT OUTPUT " << idx++ << ": " << std::endl;
+    std::cout << "  shape: " << rt_shape << std::endl;
+    std::cout << "  stride: " << rt_stride << std::endl;
+    std::cout << std::endl;
+  }
+  std::cout << "[RUN ASYNC] RT OUTPUTS END" << std::endl;
+  std::cout << std::endl << std::endl;
+  std::cout << "[RUN ASYNC] BINARY DESC BEGIN" << std::endl;
+  const auto output_descs = binary.getProgramOutputs(program_idx);
+  for (size_t i = 0; i < rt_outputs.size(); ++i) {
+    const auto &output_desc = output_descs.at(i);
+    const std::vector<std::int64_t> bin_shape = as_vec_int64(output_desc.shape);
+    const std::vector<std::int64_t> bin_stride =
+        as_vec_int64((output_desc.stride));
+    std::cout << "BINARY OUTPUT " << i << ": " << std::endl;
+    std::cout << "  shape: " << bin_shape << std::endl;
+    std::cout << "  stride: " << bin_stride << std::endl;
+    std::cout << std::endl;
+  }
+  std::cout << "[RUN ASYNC] BINARY DESC END" << std::endl;
 
   return rt_outputs;
 }
@@ -246,8 +276,37 @@ std::vector<at::Tensor> run(tt::runtime::Device device,
                             tt::runtime::Binary &binary, uint32_t program_idx,
                             std::vector<tt::runtime::Tensor> &rt_inputs) {
 
+  std::cout << "[RUN] ENTERED" << std::endl;
   std::vector<tt::runtime::Tensor> rt_outputs =
       tt::runtime::submit(device, binary, program_idx, rt_inputs);
+
+  std::cout << "[RUN] RT OUTPUTS BEGIN" << std::endl;
+  int idx = 0;
+  for (const auto &rt_output : rt_outputs) {
+    const std::vector<std::int64_t> rt_shape =
+        as_vec_int64(tt::runtime::getTensorShape(rt_output));
+    const std::vector<std::int64_t> rt_stride =
+        as_vec_int64(tt::runtime::getTensorStride(rt_output));
+    std::cout << "RT OUTPUT " << idx++ << ": " << std::endl;
+    std::cout << "  shape: " << rt_shape << std::endl;
+    std::cout << "  stride: " << rt_stride << std::endl;
+    std::cout << std::endl;
+  }
+  std::cout << "[RUN] RT OUTPUTS END" << std::endl;
+  std::cout << std::endl << std::endl;
+  std::cout << "[RUN] BINARY DESC BEGIN" << std::endl;
+  const auto output_descs = binary.getProgramOutputs(program_idx);
+  for (size_t i = 0; i < rt_outputs.size(); ++i) {
+    const auto &output_desc = output_descs.at(i);
+    const std::vector<std::int64_t> bin_shape = as_vec_int64(output_desc.shape);
+    const std::vector<std::int64_t> bin_stride =
+        as_vec_int64((output_desc.stride));
+    std::cout << "BINARY OUTPUT " << i << ": " << std::endl;
+    std::cout << "  shape: " << bin_shape << std::endl;
+    std::cout << "  stride: " << bin_stride << std::endl;
+    std::cout << std::endl;
+  }
+  std::cout << "[RUN] BINARY DESC END" << std::endl;
 
   std::vector<at::Tensor> outputs;
   outputs.reserve(rt_outputs.size());
