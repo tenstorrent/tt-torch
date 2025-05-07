@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 
 import torch.nn as nn
 import torch.nn.functional as F
-from tests.utils import ModelTester
+from tests.utils import ModelTester, skip_frontend_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 

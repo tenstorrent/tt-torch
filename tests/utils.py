@@ -29,6 +29,43 @@ import csv
 import os
 
 
+def skip_full_eval_test(
+    record_property,
+    model_name,
+    op_by_op,
+    bringup_status,
+    reason,
+    model_group="generality",
+):
+    """
+    Helper function to skip a test when frontend has issues and record properties.
+    Only skips the test if op_by_op is None (full frontend).
+
+    Args:
+        record_property: The record_property handle from pytest
+        model_name: The name of the model being tested
+        op_by_op: The op_by_op backend type (None, TORCH, or STABLEHLO)
+        bringup_status: The bringup status of the test (FAILED_FE, etc.)
+        reason: The reason for skipping the test
+        model_group: The model group (default: "generality")
+
+    Returns:
+        bool: True if test was skipped, False otherwise
+    """
+    if op_by_op is None:
+        record_property(
+            "tags",
+            {
+                "bringup_status": bringup_status,
+                "model_name": model_name,
+                "model_group": model_group,
+            },
+        )
+        pytest.skip(reason=reason)
+        return True
+    return False
+
+
 class ModelTester:
     def __init__(
         self,

@@ -5,7 +5,7 @@ import torch
 import pytest
 
 from bi_lstm_crf import BiRnnCrf
-from tests.utils import ModelTester
+from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
@@ -63,6 +63,16 @@ class ThisTester(ModelTester):
 )
 def test_bi_lstm_crf(record_property, rnn_type, mode, op_by_op):
     model_name = f"BiRnnCrf-{rnn_type.upper()}"
+    model_group = "red"
+
+    skip_full_eval_test(
+        record_property,
+        model_name,
+        op_by_op,
+        bringup_status="FAILED_FE",
+        reason="Frontend Issue - need 'aten::sort' torch-mlir -> stablehlo + mlir support: failed to legalize operation 'torch.constant.bool' https://github.com/tenstorrent/tt-torch/issues/724",
+        model_group=model_group,
+    )
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -80,7 +90,7 @@ def test_bi_lstm_crf(record_property, rnn_type, mode, op_by_op):
         relative_atol=0.01,
         compiler_config=cc,
         record_property_handle=record_property,
-        model_group="red",
+        model_group=model_group,
     )
 
     results = tester.test_model()

@@ -136,7 +136,14 @@ jobs:
                 tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b6-eval]
                 tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b7-eval]
             "
-          }
+          },
+          {
+            # These Models are Work-In-Progress and marked pytest.skip with reasons, run here for reporting.
+            runs-on: wormhole_b0, name: "skip_tests_models_wip", tests: "
+                tests/models/bi_lstm_crf/test_bi_lstm_crf.py::test_bi_lstm_crf[full-eval-lstm]
+                tests/models/bi_lstm_crf/test_bi_lstm_crf.py::test_bi_lstm_crf[full-eval-gru]
+            "
+          },
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
