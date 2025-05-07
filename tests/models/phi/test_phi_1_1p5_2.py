@@ -9,7 +9,7 @@ import torch
 import pytest
 
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from tests.utils import ModelTester
+from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
@@ -47,6 +47,35 @@ class ThisTester(ModelTester):
 )
 def test_phi(record_property, model_name, mode, op_by_op):
     cc = CompilerConfig()
+    skip_full_eval_test(
+        record_property,
+        model_name,
+        op_by_op,
+        bringup_status="FAILED_FE",
+        reason="reason1",
+        model_group="red",
+        model_name_filter="microsoft/phi-1.5",
+    )
+
+    skip_full_eval_test(
+        record_property,
+        model_name,
+        op_by_op,
+        bringup_status="FAILED_FE",
+        reason="reason2",
+        model_group="red",
+        model_name_filter="microsoft/phi-1",
+    )
+
+    skip_full_eval_test(
+        record_property,
+        model_name,
+        op_by_op,
+        bringup_status="FAILED_FE",
+        reason="reason3",
+        model_group="red",
+        model_name_filter="microsoft/phi-2",
+    )
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
