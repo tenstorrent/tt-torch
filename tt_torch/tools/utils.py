@@ -77,6 +77,33 @@ class OpByOpBackend(Enum):
     STABLEHLO = 2
 
 
+class IOType(Enum):
+    INTER_DEVICE = 1
+    USER = 2
+
+
+class MultiChipOutput:
+    def __init__(self, originating_device, io_type, index):
+        self.originating_device = originating_device
+        self.io_type = io_type
+        self.index = index
+
+
+class MultiChipInput:
+    def __init__(self, originating_device, io_type, index):
+        self.originating_device = originating_device
+        self.io_type = io_type
+        self.index = index
+
+
+class MultiChipGraph:
+    def __init__(self, devices):
+        self.devices = devices
+        self.device_graphs = {device: torch.fx.Graph() for device in devices}
+        self.graph_outputs = {device: [] for device in devices}
+        self.graph_inputs = {device: [] for device in devices}
+
+
 class Tensor:
     def __init__(self, shape):
         constrained_shape = []
@@ -287,7 +314,7 @@ class CompilerConfig:
         self.record_property = None
         self.record_property = lambda *args, **kwargs: None  # Default to no-op
         self.runtime_intermediate_cache = None  # Do not serialize.
-
+        self.device_map = {}
         self.apply_environment_overrides()
         self.post_init()
 

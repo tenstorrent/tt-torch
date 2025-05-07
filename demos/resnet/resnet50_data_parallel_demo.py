@@ -99,7 +99,7 @@ def main(use_simplified_manager):
     for device in devices:
         options = BackendOptions()
         options.compiler_config = cc
-        options.device = device
+        options.devices = [device]
         # Compile the model for each device
         tt_models.append(
             torch.compile(model, backend=backend, dynamic=False, options=options)

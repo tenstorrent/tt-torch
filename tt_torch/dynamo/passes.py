@@ -2,13 +2,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import torch
-import traceback
-from torch.fx.experimental.proxy_tensor import make_fx
 from torch.fx.experimental import const_fold
-from torch._decomp import get_decompositions
-from torch.func import functionalize
 from typing import List, Optional, Union
 from torch.export.graph_signature import InputKind
+
+from tt_torch.tools.utils import MultiChipInput, MultiChipOutput, IOType, MultiChipGraph
 
 from .decompositions import (
     CUSTOM_DECOMPOSITION_TABLE,
@@ -110,6 +108,160 @@ def constant_fold(gm):
     return gm
 
 
+def node_to_device(node, device_map):
+    assert hasattr(node, "meta") and "nn_module_stack" in node.meta
+
+    # The last stack contains the most information, only relevent fields will be used
+    # Contains string like: "L['self']._modules['model']._modules['layers']._modules['30'].mlp.up_proj"
+    # or like "L['self'].model.embed_tokens"
+    module_stack = list(node.meta["nn_module_stack"].values())[-1][0]
+
+    vals = module_stack.rsplit(".")[1:]
+    parsed_vals = []
+    for val in vals:
+        if val.startswith("_modules['"):
+            parsed_vals.append(val[10:-2])
+        else:
+            parsed_vals.append(val)
+
+    # append layers to each other until we find something in the device map. This needs to be done because
+    # the model can be split at model.layers.1 or model.layers.1.mlp
+    for i in range(1, len(parsed_vals) + 1):
+        layer = ".".join(parsed_vals[:i])
+        if layer in device_map:
+            return device_map[layer]
+
+    assert False
+
+
+# The following function splits the graph onto the devices specified in the device_map
+# We create empty subgraphs for each device and then add the nodes to the appropriate subgraph
+def split_onto_devices(gm, compiler_config):
+    devices = set(compiler_config.device_map.values())
+    mcg = MultiChipGraph(devices)
+    if len(devices) <= 1:
+        mcg.device_graphs = {0: gm.graph}
+        return mcg
+
+    node_to_new_node = {}
+    input_indices = [0] * len(devices)
+    output_indices = [0] * len(devices)
+    outputs = [[] for _ in devices]
+
+    for node in gm.graph.nodes:
+        if node.op == "get_attr" or node.op == "placeholder":
+            devices = set(
+                [
+                    node_to_device(user, compiler_config.device_map)
+                    for user in node.users
+                ]
+            )
+            for device_idx in devices:
+                inp_node = (
+                    mcg.device_graphs[device_idx].get_attr(node.target)
+                    if node.op == "get_attr"
+                    else mcg.device_graphs[device_idx].placeholder(node.target)
+                )
+                inp_node.meta = node.meta
+                node_to_new_node[node] = (device_idx, inp_node)
+                mci = MultiChipInput(device_idx, IOType.USER, input_indices[device_idx])
+                mcg.graph_inputs[device_idx].append(mci)
+                input_indices[device_idx] += 1
+            # TODO Assert on graphs that feed each other
+
+        elif node.op == "call_function" or node.op == "call_module":
+            device_idx = node_to_device(node, compiler_config.device_map)
+            graph = mcg.device_graphs[device_idx]
+            node_args = []
+            for arg in node.args:
+                if isinstance(arg, torch.fx.node.Node):
+                    if arg in node_to_new_node:
+                        new_arg = node_to_new_node[arg][1]
+                        if node_to_new_node[arg][0] == device_idx:
+                            node_args.append(new_arg)
+                        else:
+                            feeding_device = node_to_new_node[arg][0]
+                            outputs[feeding_device].append(new_arg)
+                            mco = MultiChipOutput(
+                                feeding_device,
+                                IOType.INTER_DEVICE,
+                                output_indices[feeding_device],
+                            )
+                            mcg.graph_outputs[feeding_device].append(mco)
+                            output_indices[feeding_device] += 1
+                            # TODO Assert on graphs that feed each other
+                            placeholder = graph.placeholder(new_arg.name)
+                            placeholder.meta = new_arg.meta
+                            node_args.append(placeholder)
+                            mci = MultiChipInput(
+                                feeding_device,
+                                IOType.INTER_DEVICE,
+                                input_indices[device_idx],
+                            )
+                            mcg.graph_inputs[device_idx].append(mci)
+                            input_indices[device_idx] += 1
+                else:
+                    node_args.append(arg)
+
+            if len(node_args) != len(node.args):
+                # are any of the args duplicates? If so, we need to duplicate the placeholders
+                for idx, arg in enumerate(node.args):
+                    if arg in node.args[idx + 1 :]:
+                        node_args.append(node_args[idx])
+
+            new_node = graph.call_function(node.target, tuple(node_args), node.kwargs)
+            new_node.meta = node.meta
+            new_node.name = node.name
+            node_to_new_node[node] = (device_idx, new_node)
+
+        elif node.op == "output":
+            # Final output
+            device_idx = node_to_device(node.args[0][0], compiler_config.device_map)
+            outputs[device_idx].append(node_to_new_node[node.args[0][0]][1])
+            mco = MultiChipOutput(device_idx, IOType.USER, output_indices[device_idx])
+            mcg.graph_outputs[device_idx].append(mco)
+            output_indices[device_idx] += 1
+
+    for idx, output in enumerate(outputs):
+        graph = mcg.device_graphs[idx]
+        if len(output) == 1:
+            output = output[0]
+        else:
+            output = tuple(output)
+        output_node = graph.output(output)
+
+    for graph in mcg.device_graphs.values():
+        graph.lint()
+
+    return mcg
+
+
+def prune_inputs(program, constant_inputs):
+    placeholder_index = 0
+    indices_to_remove = []
+    for node in program.graph_module.graph.nodes:
+        if node.op == "placeholder":
+            if len(node.users) == 0:
+                indices_to_remove.append(placeholder_index)
+                program.graph_module.graph.erase_node(node)
+            placeholder_index += 1
+            if placeholder_index == len(constant_inputs):
+                break
+
+    program.graph_module.graph.eliminate_dead_code()
+    constant_inputs = [
+        constant_inputs[i]
+        for i in range(len(constant_inputs))
+        if i not in indices_to_remove
+    ]
+    program._graph_signature.input_specs = [
+        input_spec
+        for i, input_spec in enumerate(program._graph_signature.input_specs)
+        if i not in indices_to_remove
+    ]
+    return constant_inputs
+
+
 def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     decompositions = torch.export.default_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
@@ -122,36 +274,57 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         .module()
     )
 
-    gm = bypass_dtype_promotion(gm, compiler_config)
-    # shape prop also propagates dtypes, need to run to figure out which casts are redundant
-    run_shape_prop(gm, example_inputs)
-    gm = bypass_redundant_cast(gm)
+    mcg = split_onto_devices(gm, compiler_config)
+    programs = []
+    constant_inputs_list = []
+    example_inputs_list = []
+    for idx, graph in mcg.device_graphs.items():
+        sub_example_inputs = [
+            torch.randn(node.meta["tensor_meta"].shape)
+            for node in graph.nodes
+            if node.op == "placeholder"
+        ]
+        gm_device = torch.fx.GraphModule(gm, graph, f"_device_{idx}")
+        gm_device.graph = graph
+        gm_device = bypass_dtype_promotion(gm_device, compiler_config)
+        # shape prop also propagates dtypes, need to run to figure out which casts are redundant
+        run_shape_prop(gm_device, sub_example_inputs)
+        gm_device = bypass_redundant_cast(gm_device)
 
-    if compiler_config.enable_consteval:
-        gm = constant_fold(gm)
-    elif compiler_config.consteval_parameters:
-        raise Exception("consteval_parameters is enabled but enable_consteval is not")
+        if compiler_config.enable_consteval:
+            gm_device = constant_fold(gm_device)
+        elif compiler_config.consteval_parameters:
+            raise Exception(
+                "consteval_parameters is enabled but enable_consteval is not"
+            )
 
-    gm = bypass_redundant_getitem(gm)
+        gm_device = bypass_redundant_getitem(gm_device)
 
-    # reduce_graph(gm) - ISSUE: https://github.com/tenstorrent/tt-torch/issues/513
-    program = torch.export.export(gm, tuple(example_inputs), strict=False)
-    # The proper order of inputs when outlining everything is constants + parameters + buffers + example_inputs
-    if not compiler_config.inline_parameters:
-        constant_inputs = (
-            list(program.tensor_constants.values())
-            + [
-                param.contiguous() if not param.is_contiguous() else param
-                for param in program.parameters()
-            ]
-            + list(program.buffers())
+        # reduce_graph(gm) - ISSUE: https://github.com/tenstorrent/tt-torch/issues/513
+        program = torch.export.export(
+            gm_device, tuple(sub_example_inputs), strict=False
         )
-        for i in range(len(program._graph_signature.input_specs)):
-            if program._graph_signature.input_specs[i].kind != InputKind.USER_INPUT:
-                program._graph_signature.input_specs[i].kind = InputKind.USER_INPUT
-    else:
-        constant_inputs = []
+        program.mcg = mcg
+        # The proper order of inputs when outlining everything is constants + parameters + buffers + sub_example_inputs
+        if not compiler_config.inline_parameters:
+            constant_inputs = (
+                list(program.tensor_constants.values())
+                + [
+                    param.contiguous() if not param.is_contiguous() else param
+                    for param in program.parameters()
+                ]
+                + list(program.buffers())
+            )
+            for i in range(len(program._graph_signature.input_specs)):
+                if program._graph_signature.input_specs[i].kind != InputKind.USER_INPUT:
+                    program._graph_signature.input_specs[i].kind = InputKind.USER_INPUT
+        else:
+            constant_inputs = []
 
-    # Need to run shape_prop again to populate tensor_meta
-    run_shape_prop(program.graph_module, constant_inputs + example_inputs)
-    return program, constant_inputs
+        constant_inputs = prune_inputs(program, constant_inputs)
+        run_shape_prop(program.graph_module, constant_inputs + sub_example_inputs)
+        programs.append(program)
+        constant_inputs_list.append(constant_inputs)
+        example_inputs_list.append(sub_example_inputs)
+
+    return programs, constant_inputs_list, example_inputs_list

@@ -107,13 +107,13 @@ def _shlo_backend(
     compiler_config,
     program=None,
     graph_constants=None,
-    device=None,
+    devices=None,
     async_mode=False,
 ):
     executor = StablehloExecutor(
         module=shlo,
         compiler_config=compiler_config,
-        device=device,
+        devices=devices,
         async_mode=async_mode,
     )
     if program is not None:
@@ -123,15 +123,17 @@ def _shlo_backend(
 
 
 def _torch_backend(
-    gm: torch.fx.GraphModule, example_inputs, compiler_config, device, async_mode
+    gm: torch.fx.GraphModule, example_inputs, compiler_config, devices, async_mode
 ):
     with torch.no_grad():
-        program, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
+        programs, graph_constants, _ = pass_pipeline(
+            gm, example_inputs, compiler_config
+        )
     executor = TorchExecutor(
         program=program,
         graph_constants=graph_constants,
         compiler_config=compiler_config,
-        device=device,
+        devices=devices,
         async_mode=async_mode,
     )
     return executor
@@ -139,35 +141,45 @@ def _torch_backend(
 
 def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     with torch.no_grad():
-        program, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
+        programs, graph_constants, example_inputs = pass_pipeline(
+            gm, example_inputs, compiler_config
+        )
 
-    module = import_program(program)
-    verify_ir(module)
+    modules = []
+    for program in programs:
+        module = import_program(program)
+        verify_ir(module)
 
-    dump_module(module=module, name="Torch FX module", compiler_config=compiler_config)
+        dump_module(
+            module=module, name="Torch FX module", compiler_config=compiler_config
+        )
 
-    if compiler_config.profile_ops:
-        compiler_config.set_torch_mlir_module(module.operation.get_asm())
+        if compiler_config.profile_ops:
+            compiler_config.set_torch_mlir_module(module.operation.get_asm())
 
-    run_pipeline_with_repro_report(
-        module,
-        f"builtin.module(torchdynamo-export-to-torch-backend-pipeline)",
-        "Lowering TorchFX IR -> Torch Backend IR",
-        compiler_config.dump_debug,
-    )
-    dump_module(
-        module=module, name="Torch Backend module", compiler_config=compiler_config
-    )
+        run_pipeline_with_repro_report(
+            module,
+            f"builtin.module(torchdynamo-export-to-torch-backend-pipeline)",
+            "Lowering TorchFX IR -> Torch Backend IR",
+            compiler_config.dump_debug,
+        )
+        dump_module(
+            module=module, name="Torch Backend module", compiler_config=compiler_config
+        )
 
-    lower_mlir_module(False, OutputType.STABLEHLO, module)
+        lower_mlir_module(False, OutputType.STABLEHLO, module)
 
-    dump_module(module=module, name="StableHLO module", compiler_config=compiler_config)
+        dump_module(
+            module=module, name="StableHLO module", compiler_config=compiler_config
+        )
 
-    return module, program, graph_constants
+        modules.append(module)
+
+    return modules, programs, graph_constants, example_inputs
 
 
 def shlo_to_flatbuffer(
-    executor, module, compiler_config, len_activations, len_graph_constants
+    executor, device, module, compiler_config, len_activations, len_graph_constants
 ):
 
     if compiler_config.profile_ops:
@@ -184,17 +196,17 @@ def shlo_to_flatbuffer(
         )
 
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(
-        ttir, executor.device, len_activations, len_graph_constants
+        ttir, device, len_activations, len_graph_constants
     )
     dump_module(module=ttnn, name="TTNN module", compiler_config=compiler_config)
 
     return binary
 
 
-def _base_backend(gm, example_inputs, compiler_config, device, async_mode):
+def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
     shlo, program, graph_constants = torch_to_shlo(gm, example_inputs, compiler_config)
     executor = Executor(
-        program, graph_constants, compiler_config, device=device, async_mode=async_mode
+        program, graph_constants, compiler_config, devices=devices, async_mode=async_mode
     )
 
     compiler_config.record_property("achieved_compile_depth", "STABLEHLO")
@@ -202,10 +214,16 @@ def _base_backend(gm, example_inputs, compiler_config, device, async_mode):
     if compiler_config.compile_depth == CompileDepth.STABLEHLO:
         return executor
 
-    binary = shlo_to_flatbuffer(
-        executor, shlo, compiler_config, len(example_inputs), len(graph_constants)
-    )
-    executor.set_binary(binary)
+    for i, shlo in enumerate(shlo_modules):
+        binary = shlo_to_flatbuffer(
+            executor,
+            devices[i],
+            shlo,
+            compiler_config,
+            len(example_inputs[i]),
+            len(graph_constants[i]),
+        )
+        executor.set_binary(binary, i)
 
     compiler_config.record_property("achieved_compile_depth", "TTNN_IR")
     return executor
@@ -218,11 +236,11 @@ def backend(gm, example_inputs, options: BackendOptions = None):
 
     if options is None:
         cc = CompilerConfig()
-        device = None
+        devices = None
         async_mode = False
     else:
         cc = options.compiler_config
-        device = options.device
+        devices = options.devices
         async_mode = options.async_mode
 
     # Apply environment overrides at start of compilation to allow overriding what was set in the test
@@ -238,7 +256,7 @@ def backend(gm, example_inputs, options: BackendOptions = None):
                 gm,
                 example_inputs,
                 compiler_config=cc,
-                device=device,
+                devices=devices,
                 async_mode=async_mode,
             )
         else:
@@ -253,9 +271,9 @@ def backend(gm, example_inputs, options: BackendOptions = None):
                 compiler_config=cc,
                 program=program,
                 graph_constants=graph_constants,
-                device=device,
+                devices=devices,
                 async_mode=async_mode,
             )
     return _base_backend(
-        gm, example_inputs, compiler_config=cc, device=device, async_mode=async_mode
+        gm, example_inputs, compiler_config=cc, devices=devices, async_mode=async_mode
     )

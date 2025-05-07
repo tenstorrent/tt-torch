@@ -16,6 +16,7 @@ from transformers.modeling_outputs import (
 from transformers.modeling_flash_attention_utils import FlashAttentionKwargs
 from transformers.cache_utils import Cache, DynamicCache
 from transformers.processing_utils import Unpack
+from accelerate import infer_auto_device_map
 
 
 def get_model_and_tokenizer(model_name):
@@ -311,7 +312,7 @@ class LlamaSecondHalf(nn.Module):
 @pytest.mark.parametrize("model_name", ["huggyllama/llama-7b"])
 def test_llama_7b_pipeline_parallel(record_property, model_name, mode):
     prompt = "I enjoy walking in the"
-    original_model, tokenizer = get_model_and_tokenizer(model_name)
+    model, tokenizer = get_model_and_tokenizer(model_name)
     test_input = get_sample_input(tokenizer, prompt)
     parent_device = DeviceManager.create_parent_mesh_device([1, 2])
 
@@ -319,38 +320,51 @@ def test_llama_7b_pipeline_parallel(record_property, model_name, mode):
     device1 = DeviceManager.create_sub_mesh_device(parent_device, (0, 0))
     device2 = DeviceManager.create_sub_mesh_device(parent_device, (0, 1))
 
-    # Compile the first half, targeting device1
-    options1 = BackendOptions()
-    cc1 = CompilerConfig()
-    options1.compiler_config = cc1
-    options1.device = device1
-    first_half = LlamaFirstHalf(original_model)
-    tt_first_half = torch.compile(
-        first_half, backend=backend, dynamic=False, options=options1
+    dont_split = (
+        model._no_split_modules if hasattr(model, "_no_split_modules") else None
+    )
+    device_map = infer_auto_device_map(
+        model, max_memory={0: "8GiB", 1: "8GiB"}, no_split_module_classes=dont_split
     )
 
-    # Compile the second half, targeting device2
-    options2 = BackendOptions()
-    cc2 = CompilerConfig()
-    options2.compiler_config = cc2
-    options2.device = device2
-    second_half = LlamaSecondHalf(original_model)
-    tt_second_half = torch.compile(
-        second_half, backend=backend, dynamic=False, options=options2
+    options = BackendOptions()
+    cc = CompilerConfig()
+    options.compiler_config = cc
+    cc.device_map = device_map
+    options.devices = [device1, device2]
+    compile_model = torch.compile(
+        model, backend=backend, dynamic=False, options=options
     )
+    compile_model(**test_input)
+    breakpoint()
+    # # Compile the first half, targeting device1
+    # first_half = LlamaFirstHalf(original_model)
+    # tt_first_half = torch.compile(
+    #     first_half, backend=backend, dynamic=False, options=options1
+    # )
 
-    # Run first and second half back to back
-    hidden_states = tt_first_half(**test_input)
-    results = tt_second_half(**test_input, hidden_states=hidden_states)
+    # # Compile the second half, targeting device2
+    # options2 = {}
+    # cc2 = CompilerConfig()
+    # options2["compiler_config"] = cc2
+    # options2["device"] = device2
+    # second_half = LlamaSecondHalf(original_model)
+    # tt_second_half = torch.compile(
+    #     second_half, backend=backend, dynamic=False, options=options2
+    # )
 
-    decoded_output = decode_output(results, tokenizer)
-    DeviceManager.release_sub_mesh_device(device1)
-    DeviceManager.release_sub_mesh_device(device2)
-    DeviceManager.release_parent_device(parent_device)
-    print(
-        f"""
-      model_name: {model_name}
-      input: {prompt}
-      output: {decoded_output}
-      """
-    )
+    # # Run first and second half back to back
+    # hidden_states = tt_first_half(**test_input)
+    # results = tt_second_half(**test_input, hidden_states=hidden_states)
+
+    # decoded_output = decode_output(results, tokenizer)
+    # DeviceManager.release_sub_mesh_device(device1)
+    # DeviceManager.release_sub_mesh_device(device2)
+    # DeviceManager.release_parent_device(parent_device)
+    # print(
+    #     f"""
+    #   model_name: {model_name}
+    #   input: {prompt}
+    #   output: {decoded_output}
+    #   """
+    # )

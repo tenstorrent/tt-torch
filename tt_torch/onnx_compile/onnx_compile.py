@@ -106,6 +106,6 @@ def compile_onnx(model_proto: onnx.ModelProto, compiler_config: CompilerConfig =
         if compiler_config.compile_depth == CompileDepth.STABLEHLO:
             return executor
         # TODO: Add consteval support for onnx https://github.com/tenstorrent/tt-torch/issues/703
-        binary = shlo_to_flatbuffer(executor, module, compiler_config, 0, 0)
+        binary = shlo_to_flatbuffer(executor, None, module, compiler_config, 0, 0)
         executor.set_binary(binary)
         return executor

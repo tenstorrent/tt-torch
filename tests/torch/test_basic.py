@@ -89,7 +89,7 @@ def test_add_multidevice():
                 "mod": mod,
                 "input_shapes": input_shapes,
                 "compiler_config": cc,
-                "device": device,
+                "devices": [device],
             },
         )
         threads.append(thread)
@@ -778,3 +778,37 @@ def test_verify_against_golden_high_atol_low_pcc(assert_pcc, assert_atol):
 
         assert passed_pcc is False
         assert passed_atol is False
+
+
+from tt_torch.dynamo.backend import backend
+
+
+def test_pipeline_parallel():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.l1 = nn.Linear(32, 64)
+            self.l2 = nn.Linear(64, 32)
+
+        def forward(self, x):
+            x = self.l1(x)
+            x = self.l2(x)
+            return x
+
+    cc = CompilerConfig()
+    cc.enable_consteval = True
+    cc.consteval_parameters = True
+    cc.device_map = {"l1": 0, "l2": 1}
+    parent_device = DeviceManager.create_parent_mesh_device([1, 2])
+    device1 = DeviceManager.create_sub_mesh_device(parent_device, (0, 0))
+    device2 = DeviceManager.create_sub_mesh_device(parent_device, (0, 1))
+    options = {}
+    options["compiler_config"] = cc
+    options["devices"] = [device1, device2]
+
+    host_model = Basic()
+    model = torch.compile(host_model, backend=backend, options=options)
+    x = torch.rand(32, 32)
+    calculated = model(x)
+    golden = host_model(x)
+    verify_against_golden((golden,), (calculated,), True, True, required_atol=0.1)
