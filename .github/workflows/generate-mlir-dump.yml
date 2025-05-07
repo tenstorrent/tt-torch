@@ -1,0 +1,25 @@
+name: Generate MLIR Dump for Models Compiling and Executing E2E
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: [Build]
+    types: [completed]
+  workflow_call:
+
+jobs:
+  merge_mlir_artifacts:
+    runs-on: ubuntu-latest
+    name: Merge MLIR Artifacts
+    steps:
+      - name: Download MLIR Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: model-mlir-*
+          path: downloaded-mlir
+      - name: Merge Artifacts
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: model-mlir
+          pattern: downloaded-mlir/*/model-mlir-*
+          delete-merged: true

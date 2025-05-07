@@ -50,12 +50,6 @@ jobs:
           #   "
           # },
           {
-            # Approximately 50 minutes.
-            runs-on: wormhole_b0, name: "compile_1", tests: "
-              tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-3B-Base-eval]
-            "
-          },
-          {
             # Approximately 180 minutes.
             runs-on: wormhole_b0, name: "compile_2", tests: "
                   tests/models/glpn_kitti/test_glpn_kitti.py::test_glpn_kitti[full-eval]
@@ -159,15 +153,3 @@ jobs:
       with:
         name: model-mlir-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: ${{ steps.strings.outputs.mlir_dir }}
-
-  merge_mlir_artifacts:
-    needs: [tests]
-    runs-on: ubuntu-latest
-    name: Merge MLIR Artifacts
-    steps:
-      - name: Merge Artifacts
-        uses: actions/upload-artifact/merge@v4
-        with:
-          name: model-mlir-compile
-          pattern: model-mlir-*
-          delete-merged: true
