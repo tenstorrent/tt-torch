@@ -36,6 +36,7 @@ def skip_full_eval_test(
     bringup_status,
     reason,
     model_group="generality",
+    model_name_filter=None,
 ):
     """
     Helper function to skip a test when frontend has issues and record properties.
@@ -48,10 +49,25 @@ def skip_full_eval_test(
         bringup_status: The bringup status of the test (FAILED_FE, etc.)
         reason: The reason for skipping the test
         model_group: The model group (default: "generality")
-
+        model_name_filter: A single string that is used to apply this skip on a single model_name match
     Returns:
         bool: True if test was skipped, False otherwise
     """
+
+    if model_name_filter is not None:
+        # If there is a model name filter applied, and the model name passed herein does not match,
+        #   then run the test as normal. Useful for parameterized tests.
+        print(
+            "Discarded case for model_name_filter:",
+            model_name_filter,
+            "and model_name:",
+            model_name,
+            " and op_by_op:",
+            op_by_op,
+        )
+        if model_name_filter != model_name:
+            return False
+
     if op_by_op is None:
         record_property(
             "tags",
