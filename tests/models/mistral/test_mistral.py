@@ -4,7 +4,7 @@
 import torch
 import pytest
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from tests.utils import ModelTester
+from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
@@ -48,12 +48,26 @@ model_info_list = [
 )
 def test_mistral(record_property, model_info, mode, op_by_op):
     _, model_name = model_info
+    model_group = "red"
 
     cc = CompilerConfig()
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+
+    skip_full_eval_test(
+        record_property,
+        cc,
+        model_name,
+        bringup_status="FAILED_RUNTIME",
+        reason="Model is too large to fit on single device during execution.",
+        model_group=model_group,
+        model_name_filter=[
+            "mistralai/Mistral-7B-v0.1",
+            "mistralai/Ministral-8B-Instruct-2410",
+        ],
+    )
 
     # TODO Enable PCC/ATOL/Checking - https://github.com/tenstorrent/tt-torch/issues/689
     tester = ThisTester(
@@ -63,7 +77,7 @@ def test_mistral(record_property, model_info, mode, op_by_op):
         record_property_handle=record_property,
         assert_atol=False,
         assert_pcc=False,
-        model_group="red",
+        model_group=model_group,
     )
     results = tester.test_model()
     tester.finalize()

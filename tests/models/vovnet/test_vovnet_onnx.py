@@ -8,7 +8,7 @@ from PIL import Image
 import os
 
 import pytest
-from tests.utils import OnnxModelTester
+from tests.utils import OnnxModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 dependencies = ["timm==1.0.9"]
@@ -57,6 +57,7 @@ class ThisTester(OnnxModelTester):
 )
 def test_vovnet_onnx(record_property, mode, op_by_op):
     model_name = "vovnet"
+    model_group = "red"
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
@@ -65,6 +66,16 @@ def test_vovnet_onnx(record_property, mode, op_by_op):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         cc.op_by_op_backend = op_by_op
 
+    skip_full_eval_test(
+        record_property,
+        cc,
+        model_name,
+        bringup_status="FAILED_TTMLIR_COMPILATION",
+        # In op-by-op flow this shows up as "stablehlo.reduce_window crash in StableHLOToTTIRReduceWindowOpConversionPattern() "
+        reason="loc(/head/global_pool/pool/GlobalAveragePool): error: failed to legalize operation 'stablehlo.reduce_window' - https://github.com/tenstorrent/tt-torch/issues/736",
+        model_group=model_group,
+    )
+
     tester = ThisTester(
         model_name,
         mode,
@@ -72,7 +83,7 @@ def test_vovnet_onnx(record_property, mode, op_by_op):
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
-        model_group="red",
+        model_group=model_group,
     )
     results = tester.test_model()
     if mode == "eval":

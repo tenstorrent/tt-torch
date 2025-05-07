@@ -4,7 +4,7 @@
 import torch
 import pytest
 from transformers import AutoProcessor, LlavaForConditionalGeneration
-from tests.utils import ModelTester
+from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
@@ -53,18 +53,28 @@ class ThisTester(ModelTester):
 )
 def test_pixtral(record_property, mode, op_by_op):
     model_name = "mistral-community/pixtral-12b"
+    model_group = "red"
     cc = CompilerConfig()
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    skip_full_eval_test(
+        record_property,
+        cc,
+        model_name,
+        bringup_status="FAILED_RUNTIME",
+        reason="Model is too large to fit on single device during execution.",
+        model_group=model_group,
+    )
+
     tester = ThisTester(
         model_name,
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
-        model_group="red",
+        model_group=model_group,
         assert_pcc=False,
         assert_atol=False,
     )

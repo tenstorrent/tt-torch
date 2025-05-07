@@ -4,7 +4,7 @@
 import torch
 import pytest
 from gliner import GLiNER
-from tests.utils import ModelTester
+from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
@@ -33,6 +33,7 @@ class ThisTester(ModelTester):
 )
 def test_gliner(record_property, mode, op_by_op):
     model_name = "gliner-v2"
+    model_group = "red"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -49,8 +50,18 @@ def test_gliner(record_property, mode, op_by_op):
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
-        model_group="red",
+        model_group=model_group,
     )
+
+    skip_full_eval_test(
+        record_property,
+        cc,
+        model_name,
+        bringup_status="FAILED_TTMLIR_COMPILATION",
+        reason="moreh_softmax_device_operation.cpp Inputs must be of bfloat16 or bfloat8_b type - https://github.com/tenstorrent/tt-torch/issues/732",
+        model_group=model_group,
+    )
+
     entities = tester.test_model()
     if mode == "eval":
         for entity in entities:

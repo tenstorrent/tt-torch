@@ -5,7 +5,7 @@
 from diffusers import FluxPipeline
 from transformers import T5TokenizerFast, T5EncoderModel, CLIPTextModel, CLIPTokenizer
 import pytest
-from tests.utils import ModelTester
+from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 import torch
 
@@ -116,6 +116,7 @@ model_info_list = [
 )
 def test_flux(record_property, model_info, mode, op_by_op):
     _, model_name = model_info
+    model_group = "red"
 
     cc = CompilerConfig()
     cc.enable_consteval = False
@@ -124,6 +125,16 @@ def test_flux(record_property, model_info, mode, op_by_op):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+
+    skip_full_eval_test(
+        record_property,
+        cc,
+        model_name,
+        bringup_status="FAILED_RUNTIME",
+        reason="aten::cat hits slice_op.cpp:80: input_tensor_a.get_padded_shape().rank() == this->slice_start.rank() && this->slice_start.rank() == this->slice_end.rank() - https://github.com/tenstorrent/tt-torch/issues/731",
+        model_group=model_group,
+    )
+
     tester = ThisTester(
         model_name,
         mode,
@@ -131,7 +142,7 @@ def test_flux(record_property, model_info, mode, op_by_op):
         record_property_handle=record_property,
         assert_atol=False,
         assert_pcc=False,
-        model_group="red",
+        model_group=model_group,
     )
     results = tester.test_model()
     if mode == "eval":

@@ -52,9 +52,7 @@ def test_oft_onnx(record_property, mode, op_by_op):
     model_name = "OFT"
 
     cc = CompilerConfig()
-    cc.compile_depth = CompileDepth.STABLEHLO
-    if op_by_op:
-        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
+
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
