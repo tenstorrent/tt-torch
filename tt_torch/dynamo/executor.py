@@ -15,9 +15,8 @@ import os
 import multiprocessing as mp
 from tt_torch.tools.utils import (
     CompileDepth,
-    OpByOpBackend,
+    IOType,
     CompilerConfig,
-    Op,
     OpCompilationStatus,
     RuntimeIntermediate,
 )
@@ -25,6 +24,7 @@ from tt_torch.tools.utils import (
     run_model_proto,
     onnx_output_to_torch,
     torch_input_to_onnx,
+    MultiChipGraph,
 )
 from typing import Union
 
@@ -133,24 +133,14 @@ def execute_process(receiver, sender, exec_event):
 class Executor:
     def __init__(
         self,
-        program: Union[torch.export.ExportedProgram, None] = None,
-        graph_constants=None,
+        mcg: MultiChipGraph,
         compiler_config=None,
         required_pcc=0.99,
         required_atol=1e-2,
-        device=None,
+        devices=[None],
         async_mode=False,
     ):
-        self.program = program
-        self.binary = None
-        if graph_constants is not None:
-            self.graph_constants = (
-                (graph_constants,)
-                if isinstance(graph_constants, (int, float))
-                else tuple(graph_constants)
-            )
-        else:
-            self.graph_constants = None
+        self.mcg = mcg
         if compiler_config is None:
             compiler_config = CompilerConfig()
         self.compiler_config = compiler_config
@@ -165,9 +155,10 @@ class Executor:
             torch.float64: torch.float32,
         }
 
-        self.binary = None
-        self.preprocessed_graph_constants = None
-        self.device = device
+        self.binary = {}
+        self.preprocessed_graph_constants = {}
+        self.devices = devices
+        self.owned_devices = set()
         self.async_mode = async_mode
         self._validate_executor()
 
@@ -207,30 +198,34 @@ class Executor:
             new_inputs = new_inputs + ((input),)
         return new_inputs
 
-    def set_binary(self, binary):
-        self.binary = binary
-
-    def _get_device(self):
-        if self.device is not None:
-            return self.device
+    def _get_device(self, device_idx=0):
+        assert (
+            len(self.devices) > device_idx
+        ), f"Not enough devices provided: {len(self.devices)} < {device_idx}"
+        if self.devices[device_idx] is not None:
+            return self.devices[device_idx]
         # Return a default parent mesh
         device = tt_mlir.open_mesh_device([1, 1], tt_mlir.MeshDeviceOptions())
+        self.devices[device_idx] = device
+        self.owned_devices.add(device)
         return device
 
-    def _cache_constants_if_needed(self, preprocessed_constants):
+    def _cache_constants_if_needed(self, preprocessed_constants, device_idx=0):
         if (
             self.compiler_config.cache_preprocessed_constants
             and self.graph_constants is not None
-            and self.preprocessed_graph_constants is None
+            and self.preprocessed_graph_constants[device_idx] is None
         ):
-            self.preprocessed_graph_constants = preprocessed_constants
+            self.preprocessed_graph_constants[device_idx] = preprocessed_constants
 
     def _cleanup_resources(self, preprocessed_activations, device):
         for t in preprocessed_activations:
             tt_mlir.deallocate_tensor(t, force=True)
 
-        if self.device is None:
+        # if the user didn't provide a device, we opened one, so we need to close it
+        if device in self.owned_devices:
             tt_mlir.close_mesh_device(device)
+            self.owned_devices.remove(device)
 
     def _generate_golden_intermediate_cache(self, gm, inputs):
         print("Generating golden intermediate cache")
@@ -287,6 +282,58 @@ class Executor:
                 tensor = node.target(*args, **node.kwargs)
                 node_to_tensor[node] = tensor
 
+    def get_inputs(self, *inputs, binary, program_idx, device_idx=0):
+        def get_torch_tensors(tensors):
+            torch_tensors = []
+            indices = []
+            for idx, tensor in enumerate(tensors):
+                if isinstance(tensor, torch.Tensor):
+                    torch_tensors.append(tensor)
+                    indices.append(idx)
+            return torch_tensors, indices
+
+        def recreate_runtime_tensors(tensors, runtime_tensors, indices):
+            tensors = list(tensors)
+            for index in indices:
+                tensors[index] = runtime_tensors.pop(0)
+            return tuple(tensors)
+
+        input_len = len(inputs)
+        tensor_start_idx = 0
+        if device_idx in self.preprocessed_graph_constants:
+            preprocessed_weights = self.preprocessed_graph_constants[device_idx]
+            weights_and_activations = preprocessed_weights + inputs
+            tensor_start_idx = len(preprocessed_weights)
+        elif self.mcg.constant_inputs[device_idx] is not None:
+            weights_and_activations = (
+                tuple(self.mcg.constant_inputs[device_idx]) + inputs
+            )
+        else:
+            weights_and_activations = inputs
+
+        torch_weights_and_activations, torch_indices = get_torch_tensors(
+            weights_and_activations
+        )
+
+        if self.compiler_config.typecast_inputs:
+            torch_weights_and_activations = self.typecast_inputs(torch_weights_and_activations)
+
+        runtime_activations_and_weights = tt_mlir.preprocess_inputs(
+            self._get_device(device_idx=device_idx),
+            torch_weights_and_activations,
+            binary,
+            program_idx,
+            tensor_start_idx,
+        )
+        runtime_activations_and_weights = recreate_runtime_tensors(
+            weights_and_activations, runtime_activations_and_weights, torch_indices
+        )
+        runtime_weights = runtime_activations_and_weights[:-input_len]
+        self.preprocessed_graph_constants[device_idx] = tuple(runtime_weights)
+        runtime_activations = runtime_activations_and_weights[-input_len:]
+
+        return runtime_weights, runtime_activations
+
     def __call__(self, *inputs):
         """
         Execute the model with the given inputs.
@@ -304,52 +351,75 @@ class Executor:
                 *(self.graph_constants + tuple(self.program.buffers()) + inputs)
             )
 
-        assert self.binary is not None
+        assert len(self.mcg.binaries) > 0
+        intermediate_results = []
+        num_outputs = 0
+        graph_inputs = {}
+        for device_idx in self.mcg.binaries.keys():
+            for output in self.mcg.graph_outputs[device_idx]:
+                if output.io_type == IOType.USER:
+                    num_outputs += 1
+            graph_inputs[device_idx] = [None] * len(self.mcg.graph_inputs[device_idx])
+            for input in self.mcg.graph_inputs[device_idx]:
+                if input.io_type == IOType.USER:
+                    graph_inputs[device_idx][input.consumer_index] = inputs[
+                        input.producer_index
+                    ]
 
-        activations_len = len(inputs)
-        if (
-            self.graph_constants is not None
-            and self.preprocessed_graph_constants is None
-        ):
-            inputs = self.graph_constants + inputs
+        final_outputs = [None] * num_outputs
+        for device_idx, binary in self.mcg.binaries.items():
+            device_inputs = graph_inputs[device_idx]
 
-        if self.compiler_config.typecast_inputs:
-            inputs = self.typecast_inputs(inputs)
-
-        inputs = list(inputs)
-        device = self._get_device()
-
-        binary = tt_mlir.create_binary_from_bytestream(self.binary)
-        program_idx = 0
-
-        tensor_start_idx = 0
-        if self.preprocessed_graph_constants is not None:
-            tensor_start_idx = len(self.preprocessed_graph_constants)
-
-        preprocessed_inputs = tt_mlir.preprocess_inputs(
-            device, inputs, binary, program_idx, tensor_start_idx
-        )
-
-        if self.preprocessed_graph_constants is not None:
-            preprocessed_inputs = (
-                self.preprocessed_graph_constants + preprocessed_inputs
+            binary = tt_mlir.create_binary_from_bytestream(binary)
+            program_idx = 0
+            preprocessed_weights, preprocessed_activations = self.get_inputs(
+                *device_inputs,
+                binary=binary,
+                device_idx=device_idx,
+                program_idx=program_idx,
             )
 
-        if self.compiler_config._enable_intermediate_verification:
-            # put this as close to the binding as possible to ensure the GM is not mutated past this point
-            self._generate_golden_intermediate_cache(self.program, inputs)
+            device_inputs = list(device_inputs)
+            device = self._get_device(device_idx)
 
-        if self.async_mode:
-            outputs = tt_mlir.run_async(
-                device, binary, program_idx, preprocessed_inputs
-            )
-        else:
-            outputs = tt_mlir.run(device, binary, program_idx, preprocessed_inputs)
+            # if any output is intermediate we can run in async, since tt-mlir runtime will eventually block on final outputs
+            # TODO: Enable this when device to device movement is supported. In the mean time we fall back to host: #748
+            # intermediate_output = any([o.io_type == IOType.INTER_DEVICE for o in self.mcg.graph_outputs[device_idx]])
+            intermediate_output = False
+            if self.async_mode or intermediate_output:
+                outputs = tt_mlir.run_async(
+                    device,
+                    binary,
+                    program_idx,
+                    preprocessed_weights + preprocessed_activations,
+                )
+            else:
+                outputs = tt_mlir.run(
+                    device,
+                    binary,
+                    program_idx,
+                    (preprocessed_weights + preprocessed_activations),
+                )
 
-        self._cache_constants_if_needed(preprocessed_inputs[:-activations_len])
-        self._cleanup_resources(preprocessed_inputs[-activations_len:], device)
+            for i, output in enumerate(outputs):
+                graph_output = self.mcg.graph_outputs[device_idx][i]
+                if graph_output.io_type == IOType.INTER_DEVICE:
+                    mci = graph_output.linked_input
+                    graph_inputs[mci.originating_device][mci.consumer_index] = output
+                    intermediate_results.append(output)
+                else:
+                    final_outputs[graph_output.index] = output
 
-        return outputs
+        self._cleanup_resources(preprocessed_activations, device)
+        assert all([o is not None for o in final_outputs])
+        return final_outputs
+
+    def __del__(self):
+        for _, device_weights in self.preprocessed_graph_constants.items():
+            for weight in device_weights:
+                tt_mlir.deallocate_tensor(weight, force=True)
+        for device in self.owned_devices:
+            tt_mlir.close_mesh_device(device)
 
 
 class OnnxExecutor(Executor):

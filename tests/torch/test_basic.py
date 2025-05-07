@@ -89,7 +89,7 @@ def test_add_multidevice():
                 "mod": mod,
                 "input_shapes": input_shapes,
                 "compiler_config": cc,
-                "device": device,
+                "devices": [device],
             },
         )
         threads.append(thread)

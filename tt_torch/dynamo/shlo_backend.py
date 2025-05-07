@@ -16,6 +16,7 @@ from tt_torch.tools.utils import (
     run_model_proto,
     onnx_output_to_torch,
     torch_input_to_onnx,
+    MultiChipGraph,
 )
 
 from tt_torch.tools.utils import (
@@ -282,14 +283,14 @@ class StablehloExecutor(OpByOpExecutor):
         compiler_config=None,
         required_pcc=0.99,
         required_atol=1e-2,
-        device=None,
+        devices=None,
         async_mode=False,
     ):
         super().__init__(
             compiler_config=compiler_config,
             required_pcc=required_pcc,
             required_atol=required_atol,
-            device=device,
+            devices=devices,
             async_mode=async_mode,
         )
         self.parsed_module = None
