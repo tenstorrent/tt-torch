@@ -167,9 +167,9 @@ jobs:
       run: |
         source env/activate
 
-        pytest --durations=0 -v ${{matrix.build.tests}} \
+        pytest --durations=0 -v -rf ${{matrix.build.tests}} \
            --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
-           --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
+           --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append | tee pytest.log
 
     - name: Upload Test Log
       uses: actions/upload-artifact@v4

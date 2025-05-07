@@ -122,7 +122,7 @@ jobs:
       run: |
         source env/activate
 
-        TT_TORCH_COMPILE_DEPTH=TTNN_IR pytest --durations=50 -v ${{matrix.build.tests}} \
+        TT_TORCH_COMPILE_DEPTH=TTNN_IR pytest --durations=50 -v -rf ${{matrix.build.tests}} \
           --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
           2>&1 | tee pytest.log
 
