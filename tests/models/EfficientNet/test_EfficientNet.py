@@ -37,29 +37,7 @@ class ThisTester(ModelTester):
         return tfms(img).unsqueeze(0)
 
 
-@pytest.mark.parametrize(
-    "mode",
-    ["train", "eval"],
-)
-@pytest.mark.parametrize(
-    "model_name",
-    [
-        "efficientnet-b0",
-        "efficientnet-b1",
-        "efficientnet-b2",
-        "efficientnet-b3",
-        "efficientnet-b4",
-        "efficientnet-b5",
-        "efficientnet-b6",
-        "efficientnet-b7",
-    ],
-)
-@pytest.mark.parametrize(
-    "op_by_op",
-    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
-    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
-)
-def test_EfficientNet(record_property, model_name, mode, op_by_op):
+def run_EfficientNet_base(record_property, model_name, mode, op_by_op, _model_group):
     if mode == "train":
         pytest.skip()
     cc = CompilerConfig()
@@ -77,7 +55,7 @@ def test_EfficientNet(record_property, model_name, mode, op_by_op):
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
-        model_group="red",
+        model_group=_model_group,
     )
 
     results = tester.test_model()
@@ -94,3 +72,47 @@ def test_EfficientNet(record_property, model_name, mode, op_by_op):
             prob = torch.softmax(results, dim=1)[0, idx].item()
             print("{label:<75} ({p:.2f}%)".format(label=labels_map[idx], p=prob * 100))
     tester.finalize()
+
+
+@pytest.mark.parametrize(
+    "mode",
+    ["train", "eval"],
+)
+@pytest.mark.parametrize(
+    "model_name",
+    [
+        "efficientnet-b0",
+    ],
+)
+@pytest.mark.parametrize(
+    "op_by_op",
+    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
+    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+)
+def test_EfficientNet_red(record_property, model_name, mode, op_by_op):
+    run_EfficientNet_base(record_property, model_name, mode, op_by_op, "red")
+
+
+@pytest.mark.parametrize(
+    "mode",
+    ["train", "eval"],
+)
+@pytest.mark.parametrize(
+    "model_name",
+    [
+        "efficientnet-b1",
+        "efficientnet-b2",
+        "efficientnet-b3",
+        "efficientnet-b4",
+        "efficientnet-b5",
+        "efficientnet-b6",
+        "efficientnet-b7",
+    ],
+)
+@pytest.mark.parametrize(
+    "op_by_op",
+    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
+    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+)
+def test_EfficientNet_generality(record_property, model_name, mode, op_by_op):
+    run_EfficientNet_base(record_property, model_name, mode, op_by_op, "generality")
