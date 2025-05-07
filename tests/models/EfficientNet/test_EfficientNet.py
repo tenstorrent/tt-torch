@@ -62,6 +62,9 @@ class ThisTester(ModelTester):
 def test_EfficientNet(record_property, model_name, mode, op_by_op):
     if mode == "train":
         pytest.skip()
+
+    model_group = "red" if model_name == "efficientnet-b0" else "generality"
+
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
@@ -77,7 +80,7 @@ def test_EfficientNet(record_property, model_name, mode, op_by_op):
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
-        model_group="red",
+        model_group=model_group,
     )
 
     results = tester.test_model()

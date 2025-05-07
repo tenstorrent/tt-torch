@@ -72,6 +72,8 @@ def test_EfficientNet_onnx(record_property, model_name, mode, op_by_op):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    model_group = "red" if model_name == "efficientnet-b0" else "generality"
+
     tester = ThisTester(
         model_name,
         mode,
@@ -79,7 +81,7 @@ def test_EfficientNet_onnx(record_property, model_name, mode, op_by_op):
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
-        model_group="red",
+        model_group=model_group,
     )
 
     results = tester.test_model()
