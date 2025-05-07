@@ -21,7 +21,7 @@ from tt_torch.tools.device_manager import DeviceManager
 def compile_model(model, compiler_config, device, async_mode):
     torch_options = BackendOptions()
     torch_options.compiler_config = compiler_config
-    torch_options.device = device
+    torch_options.devices = [device]
     torch_options.async_mode = async_mode
     return torch.compile(model, backend=backend, options=torch_options)
 
