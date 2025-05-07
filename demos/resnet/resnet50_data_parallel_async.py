@@ -36,7 +36,7 @@ def main():
     cc.consteval_parameters = True
 
     num_devices = DeviceManager.get_num_available_devices()
-    parent, devices = DeviceManager.acquire_available_devices(enable_async_ttnn=True)
+    parent, devices = DeviceManager.acquire_available_devices()
 
     tt_models = []
     for device in devices:
@@ -82,19 +82,23 @@ def main():
 
     results = []
     headers = ["Top 5 Predictions"]
+
     for i in range(len(runtime_tensors_list)):
         runtime_tensors = runtime_tensors_list[i]
         url = image_urls[i]
-        torch_tensor = tt_mlir.to_host(runtime_tensors)
-        top5, top5_indices = torch.topk(torch_tensor.squeeze().softmax(-1), 5)
-        tt_classes = []
-        for class_likelihood, class_idx in zip(top5.tolist(), top5_indices.tolist()):
-            tt_classes.append(f"{classes[class_idx]}: {class_likelihood}")
-        rows = []
-        url_string = f"Image URL: {url}\n"
-        for i in range(5):
-            rows.append([tt_classes[i]])
-        results.append(url_string + tabulate.tabulate(rows, headers=headers))
+        torch_tensors = tt_mlir.to_host(runtime_tensors)
+        for ten in torch_tensors:
+            top5, top5_indices = torch.topk(ten.squeeze().softmax(-1), 5)
+            tt_classes = []
+            for class_likelihood, class_idx in zip(
+                top5.tolist(), top5_indices.tolist()
+            ):
+                tt_classes.append(f"{classes[class_idx]}: {class_likelihood}")
+            rows = []
+            url_string = f"Image URL: {url}\n"
+            for i in range(5):
+                rows.append([tt_classes[i]])
+            results.append(url_string + tabulate.tabulate(rows, headers=headers))
 
     for result in results:
         print("*" * 40)

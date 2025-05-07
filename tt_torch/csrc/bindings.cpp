@@ -4,12 +4,14 @@
 
 // c++ standard library includes
 #include <ATen/core/TensorBody.h>
+#include <algorithm>
 #include <cstdint>
 #include <optional>
 
 // other library includes
 #include <pybind11/cast.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/pytypes.h>
 #include <torch/extension.h>
 #include <vector>
 
@@ -25,6 +27,8 @@
 #include "tt-mlir-interface.hpp"
 
 namespace py = pybind11;
+
+py::object TORCH_TENSOR_PYCLASS = py::module::import("torch").attr("Tensor");
 
 static tt::target::DataType torch_scalar_type_to_dt(torch::ScalarType st) {
   switch (st) {
@@ -232,45 +236,55 @@ run_async(tt::runtime::Device device, tt::runtime::Binary &binary,
   std::vector<tt::runtime::Tensor> rt_outputs =
       tt::runtime::submit(device, binary, program_idx, rt_inputs);
 
-  bool is_nop_graph = false;
-  if (rt_inputs.size() == rt_outputs.size()) {
-    is_nop_graph = true;
-    for (size_t i = 0; i < rt_inputs.size(); ++i) {
-      if (rt_inputs[i].handle != rt_outputs[i].handle) {
-        is_nop_graph = false;
-        break;
-      }
-    }
-  }
-  if (is_nop_graph) {
-    // If the graph is a no-op, the runtime tensors returned by submit() are the
-    // same as the input tensors. In this case, we need to copy the tensors to
-    // host to prevent PyTorch from automatically deallocating them.
-    std::vector<tt::runtime::Tensor> rt_outputs_copy;
-    rt_outputs_copy.reserve(rt_outputs.size());
-    for (size_t i = 0; i < rt_outputs.size(); ++i) {
-      tt::runtime::Tensor rt_output = rt_outputs.at(i);
-
+  for (auto &rt_output : rt_outputs) {
+    auto it = std::find_if(rt_inputs.begin(), rt_inputs.end(),
+                           [&rt_output](const tt::runtime::Tensor &input) {
+                             return input.handle == rt_output.handle;
+                           });
+    if (it != rt_inputs.end()) {
+      // Output tensor is the same as an existing input tensor.
       rt_output = tt::runtime::toHost(rt_output, /*untilize=*/true)[0];
-
-      tt::runtime::TensorDesc tensor_desc =
-          tt::runtime::getTensorDesc(rt_output);
+      tt::runtime::TensorDesc desc = tt::runtime::getTensorDesc(rt_output);
       tt::runtime::Tensor copied_tensor =
-          tt::runtime::createOwnedHostTensor(nullptr, tensor_desc);
-
+          tt::runtime::createOwnedHostTensor(nullptr, desc);
       tt::runtime::memcpy(copied_tensor, rt_output);
-      rt_outputs_copy.push_back(copied_tensor);
+      rt_output = copied_tensor;
     }
-    return rt_outputs_copy;
   }
   return rt_outputs;
 }
 
-at::Tensor to_host(tt::runtime::Tensor &rt_output) {
+at::Tensor to_host_single_rt_tensor(tt::runtime::Tensor &rt_output) {
   at::Tensor output = create_torch_tensor(rt_output);
   tt::runtime::deallocateTensor(rt_output, /*force=*/true);
 
   return output;
+}
+
+std::vector<at::Tensor> to_host(py::args args) {
+  std::vector<at::Tensor> outputs;
+  for (auto &arg : args) {
+    if (py::isinstance<py::tuple>(arg)) {
+      for (auto &item : arg) {
+        if (py::isinstance<tt::runtime::Tensor>(item)) {
+          tt::runtime::Tensor rt_tensor = item.cast<tt::runtime::Tensor>();
+          outputs.emplace_back(to_host_single_rt_tensor(rt_tensor));
+        }
+        // Hack to get around the fact that pybind11 does not
+        // recognize the torch.Tensor pyclass as the same as
+        // the at::Tensor C++ class when inside a py::tuple.
+        else if (py::isinstance(item, TORCH_TENSOR_PYCLASS)) {
+          outputs.emplace_back(item.cast<at::Tensor>());
+        }
+      }
+    } else if (py::isinstance<tt::runtime::Tensor>(arg)) {
+      tt::runtime::Tensor rt_tensor = arg.cast<tt::runtime::Tensor>();
+      outputs.emplace_back(to_host_single_rt_tensor(rt_tensor));
+    } else if (py::isinstance<at::Tensor>(arg)) {
+      outputs.emplace_back(arg.cast<at::Tensor>());
+    }
+  }
+  return outputs;
 }
 
 std::vector<at::Tensor> run(tt::runtime::Device device,

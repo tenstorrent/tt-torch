@@ -13,6 +13,33 @@ from tt_torch.tools.utils import CompilerConfig
 from tt_torch.tools.device_manager import DeviceManager
 
 
+def test_return_same_tensors():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x, y):
+            return x, y
+
+    verify_module(Basic(), input_shapes=[(256, 256), (256, 256)])
+
+
+def test_return_rt_tensor_and_torch_tensors():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x, y, z):
+            output1 = y
+            output2 = torch.abs(x)
+            return output1, output2, z
+
+    verify_module(
+        Basic(),
+        input_shapes=[(5, 10), (5, 10), (5, 10)],
+    )
+
+
 def test_abs():
     class Basic(nn.Module):
         def __init__(self):
