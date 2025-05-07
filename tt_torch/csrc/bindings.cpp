@@ -232,6 +232,37 @@ run_async(tt::runtime::Device device, tt::runtime::Binary &binary,
   std::vector<tt::runtime::Tensor> rt_outputs =
       tt::runtime::submit(device, binary, program_idx, rt_inputs);
 
+  bool is_nop_graph = false;
+  if (rt_inputs.size() == rt_outputs.size()) {
+    is_nop_graph = true;
+    for (size_t i = 0; i < rt_inputs.size(); ++i) {
+      if (rt_inputs[i].handle != rt_outputs[i].handle) {
+        is_nop_graph = false;
+        break;
+      }
+    }
+  }
+  if (is_nop_graph) {
+    // If the graph is a no-op, the runtime tensors returned by submit() are the
+    // same as the input tensors. In this case, we need to copy the tensors to
+    // host to prevent PyTorch from automatically deallocating them.
+    std::vector<tt::runtime::Tensor> rt_outputs_copy;
+    rt_outputs_copy.reserve(rt_outputs.size());
+    for (size_t i = 0; i < rt_outputs.size(); ++i) {
+      tt::runtime::Tensor rt_output = rt_outputs.at(i);
+
+      rt_output = tt::runtime::toHost(rt_output, /*untilize=*/true)[0];
+
+      tt::runtime::TensorDesc tensor_desc =
+          tt::runtime::getTensorDesc(rt_output);
+      tt::runtime::Tensor copied_tensor =
+          tt::runtime::createOwnedHostTensor(nullptr, tensor_desc);
+
+      tt::runtime::memcpy(copied_tensor, rt_output);
+      rt_outputs_copy.push_back(copied_tensor);
+    }
+    return rt_outputs_copy;
+  }
   return rt_outputs;
 }
 

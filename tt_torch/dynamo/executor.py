@@ -9,7 +9,6 @@ import time
 import pickle
 import faulthandler
 import sys
-import time
 import re
 import tempfile
 import os
@@ -170,6 +169,16 @@ class Executor:
         self.preprocessed_graph_constants = None
         self.device = device
         self.async_mode = async_mode
+        self._validate_executor()
+
+    def _validate_executor(self):
+        if self.compiler_config.compile_depth in (
+            CompileDepth.EXECUTE_OP_BY_OP,
+            CompileDepth.COMPILE_OP_BY_OP,
+        ):
+            assert (
+                self.async_mode is False
+            ), "Op-by-op execution does not support async mode."
 
     def register_intermediate_callback(self, callback):
         if not tt_mlir.is_runtime_debug_enabled():
