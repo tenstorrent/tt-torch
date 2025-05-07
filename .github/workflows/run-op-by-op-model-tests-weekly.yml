@@ -214,7 +214,7 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "EfficientNetb0", tests: "
-              tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[op_by_op_torch-efficientnet-b0-eval]
+              tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet_red[op_by_op_torch-efficientnet-b0-eval]
               "
           },
           {
