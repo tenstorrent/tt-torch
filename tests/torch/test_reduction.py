@@ -233,3 +233,28 @@ def test_mean_full(input_shape):
             return torch.reshape(torch.mean(x), (1,))
 
     verify_module(Basic(), input_shapes=input_shape)
+
+
+@pytest.mark.parametrize(
+    ("input_shape", "dim_arg", "keep_dim"),
+    [
+        ([(8, 8)], 0, True),
+        ([(8, 8)], 1, False),
+        ([(4, 32, 64)], -2, False),
+        ([(4, 2, 32, 32)], 0, False),
+        ([(4, 2, 32, 32)], -1, True),
+    ],
+)
+def test_reduce_prod(input_shape, dim_arg, keep_dim):
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.prod(x, dim=dim_arg, keepdim=keep_dim)
+
+    verify_module(
+        Basic(),
+        input_shapes=input_shape,
+        input_data_types=[torch.bfloat16],
+    )
