@@ -71,9 +71,10 @@ def skip_full_eval_test(
             {
                 "bringup_status": bringup_status,
                 "model_name": model_name,
-                "model_group": model_group,
             },
         )
+        record_property("group", model_group)
+
         pytest.skip(reason=reason)
         return True
     return False
@@ -160,7 +161,7 @@ class ModelTester:
         # configs should be set at test start, so they can be flushed immediately
         self.record_property(
             "config",
-            {"model_group": model_group, "compiler_config": compiler_config.to_dict()},
+            {"compiler_config": compiler_config.to_dict()},
         )
 
     def _load_model(self):
