@@ -130,14 +130,3 @@ jobs:
       with:
         name: ${{ steps.git-info.outputs.markdown_name }}
         path: "${{ steps.strings.outputs.work-dir }}/results/${{ steps.git-info.outputs.markdown_name }}"
-
-  merge_mlir_artifacts:
-    runs-on: ubuntu-latest
-    name: Merge MLIR Artifacts
-    steps:
-      - name: Merge Artifacts
-        uses: actions/upload-artifact/merge@v4
-        with:
-          name: model-mlir-execute-nightly
-          pattern: model-mlir-*
-          delete-merged: true
