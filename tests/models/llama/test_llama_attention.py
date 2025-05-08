@@ -38,7 +38,7 @@ class LlamaTester(ModelTester):
             past_key_values = StaticCache(
                 config=self.framework_model.config,
                 max_batch_size=1,
-                max_cache_len=32,
+                max_cache_len=64,
                 dtype=self.framework_model.dtype,
             )
             args["past_key_values"] = past_key_values
@@ -82,6 +82,8 @@ class AttnTester(ModelTester):
             "past_key_value": past_key_values,
             "use_cache": True,
         }
+        args["cache_position"] = torch.arange(32, dtype=torch.long)
+        
         return args
 
     def set_model_eval(self, model):

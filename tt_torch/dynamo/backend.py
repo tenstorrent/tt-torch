@@ -124,6 +124,9 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     with torch.no_grad():
         program, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
 
+    print("Exported program before being verifying IR", file=sys.stderr)
+    print(program, file=sys.stderr)
+    
     module = import_program(program)
     verify_ir(module)
 

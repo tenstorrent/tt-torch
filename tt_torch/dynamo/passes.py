@@ -79,9 +79,9 @@ def constant_fold(gm):
 
 
 def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
-    print(f"{type(gm.graph)}", file=sys.stderr)
+    print(f"GM Graph at start of pass pipeline{type(gm.graph)}", file=sys.stderr)
     gm.graph.print_tabular()
-    print("", file=sys.stderr)
+    # print("", file=sys.stderr)
     decompositions = torch.export.default_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
 
@@ -122,16 +122,16 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     run_shape_prop(program.graph_module, constant_inputs + example_inputs)
 
     # Rewrite the graph to replace in-place torch.ops.aten.copy_ operations with out-of-place equivalents
-    for node in program.graph_module.graph.nodes:
-        if node.op == "call_function" and node.target == torch.ops.aten.copy_.default:
-            # Replace with torch.ops.aten.copy.default
-            with program.graph_module.graph.inserting_after(node):
-                new_node = program.graph_module.graph.call_function(
-                    torch.ops.aten.copy.default, args=node.args, kwargs=node.kwargs
-                )
-                # Ensure the new node has the same output type as the original node
-                new_node.meta = node.meta
-                node.replace_all_uses_with(new_node)
-            program.graph_module.graph.erase_node(node)
+    # for node in program.graph_module.graph.nodes:
+    #     if node.op == "call_function" and node.target == torch.ops.aten.copy_.default:
+    #         # Replace with torch.ops.aten.copy.default
+    #         with program.graph_module.graph.inserting_after(node):
+    #             new_node = program.graph_module.graph.call_function(
+    #                 torch.ops.aten.copy.default, args=node.args, kwargs=node.kwargs
+    #             )
+    #             # Ensure the new node has the same output type as the original node
+    #             new_node.meta = node.meta
+    #             node.replace_all_uses_with(new_node)
+    #         program.graph_module.graph.erase_node(node)
 
     return program, constant_inputs
