@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import pytest
-from tests.utils import ModelTester
+from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from tests.models.oft.src.oftnet import OftNet  # OftNet imports OFT
 
@@ -48,6 +48,7 @@ def test_oft(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
     model_name = "OFT"
+    model_group = "red"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -57,13 +58,22 @@ def test_oft(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    skip_full_eval_test(
+        record_property,
+        cc,
+        model_name,
+        bringup_status="FAILED_RUNTIME",
+        reason="Out of Memory: Not enough space to allocate 2902982656 B DRAM buffer across 12 banks - https://github.com/tenstorrent/tt-torch/issues/727",
+        model_group=model_group,
+    )
+
     tester = ThisTester(
         model_name,
         mode,
         compiler_config=cc,
         assert_atol=False,
         record_property_handle=record_property,
-        model_group="red",
+        model_group=model_group,
     )
 
     results = tester.test_model()

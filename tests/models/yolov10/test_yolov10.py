@@ -8,7 +8,7 @@ import pytest
 import os
 from pathlib import Path
 import requests
-from tests.utils import ModelTester
+from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from ultralytics import YOLO
 
@@ -73,6 +73,7 @@ class ThisTester(ModelTester):
 )
 def test_yolov10(record_property, mode, op_by_op):
     model_name = "YOLOv10"
+    model_group = "red"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -81,6 +82,16 @@ def test_yolov10(record_property, mode, op_by_op):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+
+    skip_full_eval_test(
+        record_property,
+        cc,
+        model_name,
+        bringup_status="FAILED_RUNTIME",
+        reason="moreh_softmax_device_operation.cpp Inputs must be of bfloat16 or bfloat8_b type - https://github.com/tenstorrent/tt-torch/issues/730",
+        model_group=model_group,
+    )
+
     tester = ThisTester(
         model_name,
         mode,
@@ -88,7 +99,7 @@ def test_yolov10(record_property, mode, op_by_op):
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
-        model_group="red",
+        model_group=model_group,
     )
     results = tester.test_model()
     tester.finalize()

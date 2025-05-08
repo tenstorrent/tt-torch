@@ -5,7 +5,7 @@ import torch
 import pytest
 
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from tests.utils import ModelTester
+from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
@@ -50,6 +50,7 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_falcon(record_property, model_name, mode, op_by_op):
+    model_group = "red"
     cc = CompilerConfig()
     cc.enable_consteval = True
     # consteval_parameters is disabled because it results in a memory related crash
@@ -58,6 +59,23 @@ def test_falcon(record_property, model_name, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    skip_full_eval_test(
+        record_property,
+        cc,
+        model_name,
+        bringup_status="FAILED_RUNTIME",
+        reason="Model is too large to fit on single device during execution.",
+        model_group=model_group,
+        model_name_filter=[
+            "tiiuae/Falcon3-3B-Base",
+            "tiiuae/Falcon3-7B-Base",
+            "tiiuae/Falcon3-10B-Base",
+            "tiiuae/Falcon3-3B-Instruct",
+            "tiiuae/Falcon3-7B-Instruct",
+            "tiiuae/Falcon3-10B-Instruct",
+        ],
+    )
+
     tester = ThisTester(
         model_name,
         mode,
@@ -65,7 +83,7 @@ def test_falcon(record_property, model_name, mode, op_by_op):
         record_property_handle=record_property,
         assert_pcc=False,
         assert_atol=False,
-        model_group="red",
+        model_group=model_group,
     )
     results = tester.test_model()
 
