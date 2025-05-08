@@ -245,6 +245,19 @@ def test_exp():
     verify_torch_module_async(Basic(), input_shapes=[(2, 2)], required_atol=3e-2)
 
 
+def test_floor():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.floor(x)
+
+    verify_torch_module_async(
+        Basic(), input_shapes=[(32, 32)], input_data_types=[torch.float32]
+    )
+
+
 def test_linear():
     class Basic(nn.Module):
         def __init__(self):
