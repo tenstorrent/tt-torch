@@ -1,5 +1,5 @@
 torch@https://download.pytorch.org/whl/cpu-cxx11-abi/torch-2.7.0%2Bcpu.cxx11.abi-cp310-cp310-linux_x86_64.whl
-torchvision==0.22.0 # pinned for compatibility with torch 2.7.0
+torchvision@https://download.pytorch.org/whl/cpu/torchvision-0.22.0%2Bcpu-cp310-cp310-manylinux_2_28_x86_64.whl
 black
 bi-lstm-crf
 mdutils
