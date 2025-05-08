@@ -61,6 +61,25 @@ def test_add():
     verify_torch_module_async(Basic(), input_shapes=[(256, 256)] * 2)
 
 
+@pytest.mark.parametrize(
+    ("input"),
+    [
+        (torch.tensor([3.0], dtype=torch.bfloat16)),
+        (torch.tensor([6], dtype=torch.int32)),
+        (torch.tensor([[1], [2]], dtype=torch.float32)),
+    ],
+)
+def test_broadcast(input):
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return x.expand(2, 8)
+
+    verify_torch_module_async(Basic(), inputs=[input])
+
+
 def test_concat_dim0():
     class Basic(nn.Module):
         def __init__(self):
