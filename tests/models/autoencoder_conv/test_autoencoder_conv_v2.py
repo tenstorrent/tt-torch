@@ -81,7 +81,7 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_autoencoder_conv_v2(record_property, mode, op_by_op):
-    model_name = f"Autoencoder (conv)"
+    model_name = f"Autoencoder_conv_v2"
 
     cc = CompilerConfig()
     cc.enable_consteval = True

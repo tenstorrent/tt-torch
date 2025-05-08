@@ -56,7 +56,7 @@ AutoencoderTiny(
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_autoencoder_conv(record_property, mode, op_by_op):
-    model_name = "Autoencoder (convolutional)"
+    model_name = "Autoencoder_conv"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
