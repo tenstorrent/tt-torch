@@ -50,6 +50,7 @@ def test_codegen(record_property, mode, op_by_op):
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
+        run_generate=True,  # run model.generate(**inputs)
         is_token_output=True,
         run_generate=True,  # run model.generate(**inputs)
     )

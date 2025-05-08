@@ -56,6 +56,7 @@ def test_flan_t5(record_property, mode, op_by_op):
         record_property_handle=record_property,
         assert_pcc=False,
         assert_atol=False,
+        run_generate=True,  # run model.generate(**inputs)
         is_token_output=True,
         run_generate=True,  # run model.generate(**inputs)
     )

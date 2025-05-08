@@ -6,6 +6,7 @@ import torch
 import pytest
 import requests
 import onnx
+from transformers.cache_utils import DynamicCache, _flatten_dynamic_cache
 from onnx.tools import update_model_dims
 import gc
 from transformers.cache_utils import DynamicCache
@@ -117,6 +118,7 @@ class ModelTester:
     ):
         """
         Initializes the ModelTester.
+
         Args:
             model_name (str): Name of the model.
             mode (str): "train" or "eval" mode.
@@ -270,7 +272,7 @@ class ModelTester:
                     # `DynamicCache` is most usually returned for generative models, regardless of whether `model(**inputs)` or `model.generate(**inputs)` is called.
                     # `_flatten_dynamic_cache` returns a tuple where the first element is a list of tensors and the second element is a list of `['key_cache', 'value_cache']`
                     # The first element is enough, so we only use that. It is a list so we need to `flatten` it.
-                    assert False, "Encountered dynamic cache"
+                    return flatten(_flatten_dynamic_cache(t)[0])
                 elif not isinstance(t, (tuple, list)):
                     return (t,)
                 else:
@@ -468,6 +470,7 @@ class ModelTester:
             if hasattr(self.framework_model, "eval")
             else self.framework_model
         )
+
         if hasattr(model, "can_generate") and model.can_generate():
             if not self.run_generate:
                 print(
@@ -765,7 +768,6 @@ class OnnxModelTester(ModelTester):
         devices=None,
         data_parallel_mode=False,
     ):
-
         super().__init__(
             model_name,
             mode,
@@ -784,6 +786,7 @@ class OnnxModelTester(ModelTester):
             data_parallel_mode,
         )
         # Hold an onnxruntime session for golden / non-full compile execution
+
         self.sess = prepare_inference_session(model_proto=self.framework_model)
         self.torch_inputs = self._load_torch_inputs()
         self.numpy_inputs = self._load_numpy_inputs()
