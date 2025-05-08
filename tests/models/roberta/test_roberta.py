@@ -49,8 +49,7 @@ def test_roberta(record_property, mode, op_by_op):
         relative_atol=0.012,
         compiler_config=cc,
         record_property_handle=record_property,
-        # TODO Enable checking - https://github.com/tenstorrent/tt-torch/issues/487
-        assert_pcc=False,
+        assert_pcc=True,
         assert_atol=False,
     )
     results = tester.test_model()

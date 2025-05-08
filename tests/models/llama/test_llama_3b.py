@@ -56,7 +56,7 @@ def test_llama_3b(record_property, model_name, mode, op_by_op):
         mode,
         compiler_config=cc,
         assert_atol=False,
-        assert_pcc=False,
+        assert_pcc=True,
         record_property_handle=record_property,
     )
     results = tester.test_model()
