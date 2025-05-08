@@ -6,6 +6,7 @@ import torch
 import pytest
 import requests
 import onnx
+from transformers.cache_utils import DynamicCache, _flatten_dynamic_cache
 from onnx.tools import update_model_dims
 import onnxruntime
 import numpy as np
@@ -93,12 +94,33 @@ class ModelTester:
         compiler_config=None,
         assert_pcc=True,
         assert_atol=True,
+        run_generate=False,
         record_property_handle=None,
         model_group="generality",
         is_token_output=False,
         model_name_suffix="",
         device=None,
     ):
+        """
+        Initializes the ModelTester.
+
+        Args:
+            model_name (str): Name of the model.
+            mode (str): "train" or "eval" mode.
+            required_pcc (float, optional): Required Pearson Correlation Coefficient for verification. Defaults to 0.99.
+            required_atol (float, optional): Required absolute tolerance for verification. Defaults to None.
+            relative_atol (float, optional): Required relative absolute tolerance for verification. Defaults to None.
+            compiler_config (CompilerConfig, optional): Configuration for the compiler. Defaults to None.
+            assert_pcc (bool, optional): Whether to assert PCC during verification. Defaults to True.
+            assert_atol (bool, optional): Whether to assert ATOL during verification. Defaults to True.
+            run_generate (bool, optional): If True, the model's `generate` method will be called for inference.
+                                         This is typically used for generative models. Defaults to False.
+            record_property_handle (pytest.fixture, optional): Pytest fixture to record properties. Defaults to None.
+            model_group (str, optional): Group the model belongs to. Defaults to "generality".
+            is_token_output (bool, optional): Flag indicating if the model output is in token form, requiring decoding. Defaults to False.
+            model_name_suffix (str, optional): Suffix to append to the model name for recording. Defaults to "".
+            device (torch.device, optional): The torch device to use. Defaults to None.
+        """
         if mode not in ["train", "eval"]:
             raise ValueError(f"Current mode is not supported: {mode}")
         self.model_name = model_name
@@ -128,6 +150,7 @@ class ModelTester:
 
         self.required_atol = required_atol
         self.relative_atol = relative_atol
+        self.run_generate = run_generate  # a model can be generative or discriminative, if `run_generate=True` you invoke `model.generate(**inputs)`
         self.golden_outputs = None
         if compiler_config is None:
             compiler_config = CompilerConfig()
@@ -210,16 +233,24 @@ class ModelTester:
         elif hasattr(output_object, "to_tuple"):
 
             def flatten(t):
-                return tuple(
-                    [t]
-                    if not isinstance(t, (tuple, list))
-                    else [item for sublist in t for item in flatten(sublist)]
-                )
+                if isinstance(t, DynamicCache):
+                    # `DynamicCache` is most usually returned for generative models, regardless of whether `model(**inputs)` or `model.generate(**inputs)` is called.
+                    # `_flatten_dynamic_cache` returns a tuple where the first element is a list of tensors and the second element is a list of `['key_cache', 'value_cache']`
+                    # The first element is enough, so we only use that. It is a list so we need to `flatten` it.
+                    return flatten(_flatten_dynamic_cache(t)[0])
+                elif not isinstance(t, (tuple, list)):
+                    return (t,)
+                else:
+                    # Flatten nested lists/tuples
+                    flattened = []
+                    for item in t:
+                        flattened.extend(flatten(item))
+                    return tuple(flattened)
 
             return flatten(output_object.to_tuple())
 
         raise NotImplementedError(
-            f"Output object type: ({type(output_object)}) is not a torch.Tensor, tuple[torch.Tensor], or list[torch.Tensor], nor does it implement `to_tuple`. Please implement _extract_outputs in the derived class."
+            f"Output object type: ({type(output_object)}) is not a torch.Tensor, tuple[torch.Tensor], or list[torch.Tensor], nor does it implement to_tuple. Please implement _extract_outputs in the derived class."
         )
 
     def get_golden_outputs(self, model, inputs):
@@ -234,17 +265,27 @@ class ModelTester:
         options = BackendOptions()
         options.compiler_config = compiler_config
         options.devices = [self.device]
-        model = torch.compile(model, backend=backend, dynamic=False, options=options)
+        # compile forward pass for generative models, the model itself for discriminative
+        if self.run_generate:
+            model.forward = torch.compile(
+                model.forward, backend=backend, dynamic=False, options=options
+            )
+        else:
+            model = torch.compile(
+                model, backend=backend, dynamic=False, options=options
+            )
         self.compiled_model = model
         return self.compiled_model
 
     def run_model(self, model, inputs):
+        # call function is determined based on generative vs discriminative
+        call_fn = model.generate if self.run_generate else model
         if isinstance(inputs, collections.abc.Mapping):
-            return model(**inputs)
+            return call_fn(**inputs)
         elif isinstance(inputs, collections.abc.Sequence):
-            return model(*inputs)
+            return call_fn(*inputs)
         else:
-            return model(inputs)
+            return call_fn(inputs)
 
     def append_fake_loss_function(self, outputs):
         # Using `torch.mean` as the loss function for testing purposes.
@@ -373,6 +414,17 @@ class ModelTester:
             if hasattr(self.framework_model, "eval")
             else self.framework_model
         )
+
+        if hasattr(model, "can_generate") and model.can_generate():
+            if not self.run_generate:
+                print(
+                    "Warning: Model is generative but `run_generate=False`. This will run `model(**inputs)` instead of `model.generate(**inputs)`"
+                )
+        else:
+            assert (
+                not self.run_generate
+            ), "Model is not generative but `run_generate=True` Please disable `run_generate`"
+
         return model
 
     def test_model_eval(self, on_device=True, assert_eval_token_mismatch=True):
@@ -601,23 +653,31 @@ class OnnxModelTester(ModelTester):
         compiler_config=None,
         assert_pcc=True,
         assert_atol=True,
+        run_generate=False,
         record_property_handle=None,
         model_group="generality",
+        is_token_output=False,
+        model_name_suffix="",
+        device=None,
     ):
-
         super().__init__(
-            model_name,
-            mode,
-            required_pcc,
-            required_atol,
-            relative_atol,
-            compiler_config,
-            assert_pcc,
-            assert_atol,
-            record_property_handle,
-            model_group,
+            model_name=model_name,
+            mode=mode,
+            required_pcc=required_pcc,
+            required_atol=required_atol,
+            relative_atol=relative_atol,
+            compiler_config=compiler_config,
+            assert_pcc=assert_pcc,
+            assert_atol=assert_atol,
+            run_generate=run_generate,
+            record_property_handle=record_property_handle,
+            model_group=model_group,
+            is_token_output=is_token_output,
+            model_name_suffix=model_name_suffix,
+            device=device,
         )
         # Hold an onnxruntime session for golden / non-full compile execution
+
         self.sess = prepare_inference_session(model_proto=self.framework_model)
         self.torch_inputs = self._load_torch_inputs()
         self.numpy_inputs = self._load_numpy_inputs()

@@ -17,7 +17,7 @@ class ThisTester(ModelTester):
         model = AutoModelForCausalLM.from_pretrained(
             self.model_name, torch_dtype=torch.bfloat16
         )
-        return model.generate
+        return model
 
     def _load_inputs(self):
         self.prompt = "Hey, are you conscious? Can you talk to me?"
@@ -83,6 +83,7 @@ def test_falcon(record_property, model_name, mode, op_by_op):
         record_property_handle=record_property,
         assert_pcc=False,
         assert_atol=False,
+        run_generate=True,  # run model.generate(**inputs)
         model_group=model_group,
     )
     results = tester.test_model()

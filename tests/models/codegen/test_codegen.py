@@ -17,7 +17,7 @@ class ThisTester(ModelTester):
             checkpoint, torch_dtype=torch.bfloat16
         )
         self.tokenizer = AutoTokenizer.from_pretrained(checkpoint)
-        return model.generate
+        return model
 
     def _load_inputs(self):
         text = "def hello_world():"
@@ -50,6 +50,7 @@ def test_codegen(record_property, mode, op_by_op):
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
+        run_generate=True,  # run model.generate(**inputs)
         is_token_output=True,
     )
     results = tester.test_model()
