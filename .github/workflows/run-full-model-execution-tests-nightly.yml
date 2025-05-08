@@ -13,6 +13,11 @@ on:
         required: false
         type: string # properly a boolean but autocast to string when passed in using 'with' inputs
         default: 'true'
+      run-dump-mlir:
+        description: 'Dump MLIR files'
+        required: false
+        type: string
+        default: 'true'
   workflow_run:
     workflows: [Build] # backref to run-build as dependency
     types: [completed]
@@ -256,9 +261,9 @@ jobs:
 
     - name: Upload MLIR files
       uses: actions/upload-artifact@v4
-      if: success() || failure()
+      if: ${{ (success() || failure()) && inputs.run-dump-mlir == 'true' }}
       with:
-        name: model-mlir-execute-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        name: model-mlir-execute-nightly-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: ${{ steps.strings.outputs.mlir_dir }}
 
   merge_mlir_artifacts:
@@ -269,6 +274,6 @@ jobs:
       - name: Merge Artifacts
         uses: actions/upload-artifact/merge@v4
         with:
-          name: model-mlir-execute
-          pattern: model-mlir-execute-*
+          name: model-mlir-execute-nightly
+          pattern: model-mlir-execute-nightly-*
           delete-merged: true

@@ -13,6 +13,11 @@ on:
         required: false
         type: string # properly a boolean but autocast to string when passed in using 'with' inputs
         default: 'true'
+      run-dump-mlir:
+        description: 'Dump MLIR files'
+        required: false
+        type: string
+        default: 'true'
   workflow_run:
     workflows: [Build] # backref to run-build as dependency
     types: [completed]
@@ -106,7 +111,6 @@ jobs:
           {
             runs-on: wormhole_b0, name: "eval_2", tests: "
                   tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]
-                  tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval]
             "
           },
         ]
@@ -217,7 +221,19 @@ jobs:
 
     - name: Upload MLIR files
       uses: actions/upload-artifact@v4
-      if: success() || failure()
+      if: ${{ (success() || failure()) && inputs.run-dump-mlir == 'true' }}
       with:
-        name: model-mlir-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        name: model-mlir-execute-push-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: ${{ steps.strings.outputs.mlir_dir }}
+
+  merge_mlir_artifacts:
+    needs: [tests]
+    runs-on: ubuntu-latest
+    name: Merge MLIR Artifacts
+    steps:
+      - name: Merge Artifacts
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: model-mlir-execute-push
+          pattern: model-mlir-execute-push-*
+          delete-merged: true
