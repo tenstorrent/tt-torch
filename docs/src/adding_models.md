@@ -288,3 +288,66 @@ tests/models/t5/test_t5.py::test_t5[op_by_op_torch-t5-large-eval]
 - It is helpful if you can run `python results/parse_op_by_op_results.py` (will generate `results/models_op_per_op.xlsx` for all models you've recently run in op-by-op-flow) and include the XLS file in your PR. This XLS file contains op-by-op-flow results and is also generated in Nightly regression for all work-in-progress models in `.github/workflows/run-op-by-op-flow-tests-nightly.yml`.
 
 - If your model is reported in `results/models_op_per_op.xlsx` as being able to compile all ops successfully (ie. all ops can compile to status `6: CONVERTED_TO_TTNN`, but some hit runtime `7: EXECUTE` failures) then it should also be added to "nightly e2e compile list" in `.github/workflows/run-e2e-compile-tests.yml` which stops before executing the model via `TT_TORCH_COMPILE_DEPTH=TTNN_IR pytest ...`
+
+## How to load test files into/from S3 bucket
+
+We have set up access to a AWS S3 bucket to be able to load and access model related files for testing. We can load files into our S3 bucket and access them from the tester scripts. You will need access to S3 bucket portal to add/load files. **If you don't have an AWS account or access to the S3 bucket please reach out to the tt-torch community leader.**
+
+### Load files into S3 bucket
+
+Access S3 bucket portal and load file from local dir. Please add files following this structure:
+
+```
+test_files
+├── torch
+|   ├── huggingface
+|   |   ├── meta-llama
+│   |   |   ├── Llama-3.1-70B
+│   |   |   |   └── <hugginface files>
+│   |   |   ├── Llama-2-7b-hf
+│   |   |   |   └── <hugginface files>
+│   |   |   └── ...
+│   |   └── ...
+│   ├── yolov10
+│   |   └── yolov10.pt
+│   └── ...
+└── onnx
+    ├── ViT
+    |   └── ViT.onnx
+    └── ...
+```
+
+### Load files from S3 bucket
+
+Once files is loaded into S3 bucket we can access the file using a helper function:
+```
+@staticmethod
+def get_file(s3_path):
+```
+
+```
+from tests.utils import ModelTester, get_file, skip_full_eval_test
+
+...
+class ThisTester(ModelTester):
+    def _load_model(self):
+        file = get_file("test_files/pytorch/yoloyv10/yolov_10n.pt")
+
+...
+
+```
+
+The `s3_path` arg should be the path of the file in the S3 bucket. The `get_file()` helper will handle files differently if we are loading them from CI or locally.
+
+#### Loading files locally
+
+Locally `get_file()` will pull files directly from S3 bucket, so we will need to set up our environment to have access to it.
+
+1. Set `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_DEFAULT_REGION` environment variables to enable authorization access to S3 bucket. The values can be found under your AWS account. **If you don't have one please reach out to tt-torch community leader.** Authorization will be temporary (8 hours from first access), and you will have to renew values after it expires.
+2. Set up `S3_BUCKET` env variable with the name of the S3 bucket.
+
+The file/s will be downloaded into a local cache so next time we want to access the same file we won't have to access S3 bucket. The default location for the cache is `~/.cache/`. If you want to redirect files to a custom cache path set the `TT_TORCH_CACHE` env variable to the desired path.
+
+#### Loading files from CI
+
+Once a file has been loaded into ther S3 bucket the CI's shared `DOCKER_CACHE_DIR` has been set up to sync up with the contents of the S3 bucket every hour. `get_file()` will fetch the file from the `DOCKER_CACHE_DIR`.

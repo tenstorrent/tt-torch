@@ -675,14 +675,10 @@ class OnnxModelTester(ModelTester):
 
 @staticmethod
 def get_file(s3_path):
+    """
+    Please refer to documentation /tt-torch/docs/src/adding_models.md for details on how to add models to S3 bucket and how to use this function to load models locally or from CI.
+    """
     rel_dir, file_name = os.path.split(s3_path)
-
-    """
-    Get Cache directory based on environment variables in the following order:
-    1. DOCKER_CACHE_ROOT: meant for CI tests
-    2. TT_TORCH_CACHE: if user wants to set up a custom cache directory in their local machine
-    3. ~/.cache/tt-torch-test-models: default cache directory
-    """
     if (
         "DOCKER_CACHE_ROOT" in os.environ
         and Path(os.environ["DOCKER_CACHE_ROOT"]).exists()
@@ -693,11 +689,9 @@ def get_file(s3_path):
             / rel_dir
         )
     elif "TT_TORCH_CACHE" in os.environ and Path(os.environ["TT_TORCH_CACHE"]).exists():
-        cache_dir = (
-            Path(os.environ["TT_TORCH_CACHE"]) / "models/tt-ci-models-private" / rel_dir
-        )
+        cache_dir = Path(os.environ["TT_TORCH_CACHE"]) / "S3" / rel_dir
     else:
-        cache_dir = Path.home() / ".cache/models/tt-ci-models-private" / rel_dir
+        cache_dir = Path.home() / ".cache/S3" / rel_dir
     cache_dir.mkdir(parents=True, exist_ok=True)
 
     # Check if file already exists in cache, dowload into cache if not
@@ -708,11 +702,6 @@ def get_file(s3_path):
                 f"File {file_path} is not available, check S3 path. If path is correct, DOCKER_CACHE_ROOT syncs automatically with S3 bucket every hour so please wait for the next sync."
             )
         else:
-            """
-            If we are running tests locally we can access S3 bucket content via boto3.
-            In order to do so user has to set up AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
-            and AWS_DEFAULT_REGION environment variables.
-            """
             if "S3_BUCKET" not in os.environ:
                 raise ValueError(
                     "S3_BUCKET environment variable is not set. Please set it to the name of the S3 bucket."
