@@ -139,6 +139,7 @@ class Executor:
         required_pcc=0.99,
         required_atol=1e-2,
         device=None,
+        async_mode=False,
     ):
         self.program = program
         self.binary = None
@@ -167,6 +168,17 @@ class Executor:
         self.binary = None
         self.preprocessed_graph_constants = None
         self.device = device
+        self.async_mode = async_mode
+        self._validate_executor()
+
+    def _validate_executor(self):
+        if self.compiler_config.compile_depth in (
+            CompileDepth.EXECUTE_OP_BY_OP,
+            CompileDepth.COMPILE_OP_BY_OP,
+        ):
+            assert (
+                self.async_mode is False
+            ), "Op-by-op execution does not support async mode."
 
     def register_intermediate_callback(self, callback):
         if not tt_mlir.is_runtime_debug_enabled():
@@ -276,6 +288,14 @@ class Executor:
                 node_to_tensor[node] = tensor
 
     def __call__(self, *inputs):
+        """
+        Execute the model with the given inputs.
+
+        If self.async_mode is True, this function will return the on-device runtime
+        tensors.
+        If self.async_mode is False, this function will move the runtime tensors to host
+        and return them as Torch tensors.
+        """
         if self.compiler_config.compile_depth != CompileDepth.EXECUTE:
             assert (
                 self.program.graph_module != None
@@ -318,7 +338,12 @@ class Executor:
             # put this as close to the binding as possible to ensure the GM is not mutated past this point
             self._generate_golden_intermediate_cache(self.program, inputs)
 
-        outputs = tt_mlir.run(device, binary, program_idx, preprocessed_inputs)
+        if self.async_mode:
+            outputs = tt_mlir.run_async(
+                device, binary, program_idx, preprocessed_inputs
+            )
+        else:
+            outputs = tt_mlir.run(device, binary, program_idx, preprocessed_inputs)
 
         self._cache_constants_if_needed(preprocessed_inputs[:-activations_len])
         self._cleanup_resources(preprocessed_inputs[-activations_len:], device)
@@ -364,6 +389,7 @@ class OpByOpExecutor(Executor):
         required_pcc=0.99,
         required_atol=1e-2,
         device=None,
+        async_mode=False,
     ):
         super().__init__(
             program=None,
@@ -372,6 +398,7 @@ class OpByOpExecutor(Executor):
             required_pcc=required_pcc,
             required_atol=required_atol,
             device=device,
+            async_mode=async_mode,
         )
 
         # Debug mode to run only specific op given global_op_idx

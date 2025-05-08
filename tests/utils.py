@@ -10,7 +10,7 @@ import numpy as np
 import collections
 import re
 from typing import List, Dict, Tuple
-from tt_torch.dynamo.backend import backend
+from tt_torch.dynamo.backend import backend, BackendOptions
 from tt_torch.onnx_compile import compile_onnx
 from tt_torch.tools.utils import (
     CompilerConfig,
@@ -27,6 +27,56 @@ from tt_torch.tools.utils import RuntimeIntermediate, OpByOpBackend
 import io
 import csv
 import os
+
+
+def skip_full_eval_test(
+    record_property,
+    compiler_config,
+    model_name,
+    bringup_status,
+    reason,
+    model_group="generality",
+    model_name_filter=None,
+):
+    """
+    Helper function to skip a test when frontend has issues and record properties.
+    Only skips the test if compile depth is EXECUTE.
+
+    Args:
+        record_property: The record_property handle from pytest
+        compiler_config: Compiler config to check the compile depth
+        model_name: The name of the model being tested
+        bringup_status: The bringup status of the test (FAILED_FE_COMPILATION, FAILED_TTMLIR_COMPILATION, FAILED_RUNTIME, INCORRECT_RESULT, PASSED)
+        reason: The reason for skipping the test
+        model_group: The model group (default: "generality")
+        model_name_filter: Either a string or a list of strings. If provided, the test will only be skipped if model_name matches exactly (string) or is in the list (list of strings)
+    Returns:
+        bool: True if test was skipped, False otherwise
+    """
+
+    # If there is a model name filter applied, and the model name passed herein does not match,
+    #   then run the test as normal. Useful for parameterized tests.
+    if model_name_filter is not None:
+        if isinstance(model_name_filter, list):
+            # If it's a list, only skip if the model_name is in the list
+            if model_name not in model_name_filter:
+                return False
+        elif model_name_filter != model_name:
+            # If it's a string, only skip if the model_name matches exactly
+            return False
+
+    if compiler_config.compile_depth == CompileDepth.EXECUTE:
+        record_property(
+            "tags",
+            {
+                "bringup_status": bringup_status,
+                "model_name": model_name,
+                "model_group": model_group,
+            },
+        )
+        pytest.skip(reason=reason)
+        return True
+    return False
 
 
 class ModelTester:
@@ -178,9 +228,9 @@ class ModelTester:
 
     def compile_model(self, model, compiler_config):
         # Compile model
-        options = {}
-        options["compiler_config"] = compiler_config
-        options["device"] = self.device
+        options = BackendOptions()
+        options.compiler_config = compiler_config
+        options.device = self.device
         model = torch.compile(model, backend=backend, dynamic=False, options=options)
         self.compiled_model = model
         return self.compiled_model

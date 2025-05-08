@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 from tt_torch.tools.device_manager import DeviceManager
 from tt_torch.tools.utils import CompilerConfig
-from tt_torch.dynamo.backend import backend
+from tt_torch.dynamo.backend import backend, BackendOptions
 from typing import Optional, Union
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers.modeling_outputs import (
@@ -320,20 +320,20 @@ def test_llama_7b_pipeline_parallel(record_property, model_name, mode):
     device2 = DeviceManager.create_sub_mesh_device(parent_device, (0, 1))
 
     # Compile the first half, targeting device1
-    options1 = {}
+    options1 = BackendOptions()
     cc1 = CompilerConfig()
-    options1["compiler_config"] = cc1
-    options1["device"] = device1
+    options1.compiler_config = cc1
+    options1.device = device1
     first_half = LlamaFirstHalf(original_model)
     tt_first_half = torch.compile(
         first_half, backend=backend, dynamic=False, options=options1
     )
 
     # Compile the second half, targeting device2
-    options2 = {}
+    options2 = BackendOptions()
     cc2 = CompilerConfig()
-    options2["compiler_config"] = cc2
-    options2["device"] = device2
+    options2.compiler_config = cc2
+    options2.device = device2
     second_half = LlamaSecondHalf(original_model)
     tt_second_half = torch.compile(
         second_half, backend=backend, dynamic=False, options=options2

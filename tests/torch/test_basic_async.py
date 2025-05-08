@@ -1,14 +1,13 @@
-# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+# SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
 import torch
 from torch import nn
 import pytest
 import math
-import threading
 
 import tt_torch
-from tt_torch.tools.verify import verify_module, verify_against_golden
+from tt_torch.tools.verify import verify_torch_module_async
 from tt_torch.tools.utils import CompilerConfig
 from tt_torch.tools.device_manager import DeviceManager
 
@@ -21,7 +20,7 @@ def test_return_same_tensors():
         def forward(self, x, y):
             return x, y
 
-    verify_module(Basic(), input_shapes=[(256, 256), (256, 256)])
+    verify_torch_module_async(Basic(), input_shapes=[(256, 256), (256, 256)])
 
 
 def test_return_rt_tensor_and_torch_tensors():
@@ -34,7 +33,7 @@ def test_return_rt_tensor_and_torch_tensors():
             output2 = torch.abs(x)
             return output1, output2, z
 
-    verify_module(
+    verify_torch_module_async(
         Basic(),
         input_shapes=[(5, 10), (5, 10), (5, 10)],
     )
@@ -48,7 +47,7 @@ def test_abs():
         def forward(self, x):
             return torch.abs(x)
 
-    verify_module(Basic(), input_shapes=[(256, 256)])
+    verify_torch_module_async(Basic(), input_shapes=[(256, 256)])
 
 
 def test_add():
@@ -59,50 +58,7 @@ def test_add():
         def forward(self, x, y):
             return torch.add(x, y)
 
-    verify_module(Basic(), input_shapes=[(256, 256)] * 2)
-
-
-# Runs the AddOp on all detected chips in parallel
-def test_add_multidevice():
-    class AddOp(nn.Module):
-        def __init__(self):
-            super().__init__()
-
-        def forward(self, x, y):
-            return torch.add(x, y)
-
-    num_devices = DeviceManager.get_num_available_devices()
-    parent, device_list = DeviceManager.acquire_available_devices()
-    assert (
-        len(device_list) == num_devices
-    ), "Number of devices is not equal to expected."
-    threads = []
-    compiler_configs = [CompilerConfig() for _ in range(num_devices)]
-    for i in range(num_devices):
-        cc = compiler_configs[i]
-        device = device_list[i]
-        mod = AddOp()
-        input_shapes = [(256, 256)] * 2
-        thread = threading.Thread(
-            target=verify_module,
-            kwargs={
-                "mod": mod,
-                "input_shapes": input_shapes,
-                "compiler_config": cc,
-                "device": device,
-            },
-        )
-        threads.append(thread)
-
-    for thread in threads:
-        thread.start()
-    for thread in threads:
-        thread.join()
-
-    DeviceManager.release_parent_device(parent, cleanup_sub_devices=True)
-    assert (
-        len(DeviceManager.get_parent_devices()) == 0
-    ), "Some devices are not released."
+    verify_torch_module_async(Basic(), input_shapes=[(256, 256)] * 2)
 
 
 def test_concat_dim0():
@@ -113,7 +69,7 @@ def test_concat_dim0():
         def forward(self, x, y):
             return torch.cat((x, y), dim=0)
 
-    verify_module(Basic(), input_shapes=[(32, 32), (64, 32)])
+    verify_torch_module_async(Basic(), input_shapes=[(32, 32), (64, 32)])
 
 
 def test_concat_dim1():
@@ -124,7 +80,7 @@ def test_concat_dim1():
         def forward(self, x, y):
             return torch.cat((x, y), dim=1)
 
-    verify_module(Basic(), input_shapes=[(32, 32), (32, 64)])
+    verify_torch_module_async(Basic(), input_shapes=[(32, 32), (32, 64)])
 
 
 def test_concat_dim2():
@@ -135,7 +91,7 @@ def test_concat_dim2():
         def forward(self, x, y):
             return torch.cat((x, y), dim=2)
 
-    verify_module(Basic(), input_shapes=[(32, 32, 32), (32, 32, 64)])
+    verify_torch_module_async(Basic(), input_shapes=[(32, 32, 32), (32, 32, 64)])
 
 
 def test_concat_dim3():
@@ -146,7 +102,9 @@ def test_concat_dim3():
         def forward(self, x, y):
             return torch.cat((x, y), dim=3)
 
-    verify_module(Basic(), input_shapes=[(32, 32, 32, 32), (32, 32, 32, 64)])
+    verify_torch_module_async(
+        Basic(), input_shapes=[(32, 32, 32, 32), (32, 32, 32, 64)]
+    )
 
 
 @pytest.mark.skip(
@@ -160,7 +118,7 @@ def test_constant_ones():
         def forward(self, x):
             return torch.tensor([1.0, 1.0, 1.0, 1.0])
 
-    verify_module(Basic(), input_shapes=[(1, 1)])
+    verify_torch_module_async(Basic(), input_shapes=[(1, 1)])
 
 
 def test_convert():
@@ -178,14 +136,16 @@ def test_convert():
         def forward(self, x):
             return x.to(torch.int32)
 
-    verify_module(
+    verify_torch_module_async(
         Basic_toFloat(), input_shapes=[(4, 4)], input_data_types=[torch.int32]
     )
-    verify_module(
+    verify_torch_module_async(
         Basic_toFloat(), input_shapes=[(4, 4)], input_data_types=[torch.float32]
     )
-    verify_module(Basic_toInt(), input_shapes=[(4, 4)], input_data_types=[torch.int32])
-    verify_module(
+    verify_torch_module_async(
+        Basic_toInt(), input_shapes=[(4, 4)], input_data_types=[torch.int32]
+    )
+    verify_torch_module_async(
         Basic_toInt(),
         input_shapes=[(4, 4)],
         input_data_types=[torch.float32],
@@ -209,7 +169,7 @@ def test_div(input_range, input_shapes, input_type):
         def forward(self, x, y):
             return x / y
 
-    verify_module(
+    verify_torch_module_async(
         Basic(),
         input_shapes=input_shapes,
         input_data_types=input_type,
@@ -228,7 +188,7 @@ def test_div_zero():
 
     input1 = torch.tensor([1, -2, 3, -4, 5, 6, -7, 18], dtype=torch.float32)
     input2 = torch.tensor([1, 0, 3, 0, -9, 10, -7, 12], dtype=torch.float32)
-    verify_module(Basic(), inputs=[input1, input2])
+    verify_torch_module_async(Basic(), inputs=[input1, input2])
 
 
 def test_exp():
@@ -239,7 +199,7 @@ def test_exp():
         def forward(self, x):
             return torch.exp(x)
 
-    verify_module(Basic(), input_shapes=[(2, 2)], required_atol=3e-2)
+    verify_torch_module_async(Basic(), input_shapes=[(2, 2)], required_atol=3e-2)
 
 
 def test_linear():
@@ -254,7 +214,7 @@ def test_linear():
             x = self.linear_b(x)
             return x
 
-    verify_module(Basic(), input_shapes=[(32, 32)])
+    verify_torch_module_async(Basic(), input_shapes=[(32, 32)])
 
 
 def test_linear_with_bias():
@@ -267,7 +227,7 @@ def test_linear_with_bias():
             x = self.linear_a(x)
             return x
 
-    verify_module(Basic(), input_shapes=[(32, 32)])
+    verify_torch_module_async(Basic(), input_shapes=[(32, 32)])
 
 
 @pytest.mark.parametrize(
@@ -286,7 +246,9 @@ def test_constant_add(input_type):
         def forward(self, x):
             return x + 1.0
 
-    verify_module(Basic(), input_shapes=[(1, 768)], input_data_types=input_type)
+    verify_torch_module_async(
+        Basic(), input_shapes=[(1, 768)], input_data_types=input_type
+    )
 
 
 @pytest.mark.parametrize(
@@ -305,7 +267,9 @@ def test_constant_multiply(input_type):
         def forward(self, x):
             return x * 3.0
 
-    verify_module(Basic(), input_shapes=[(1, 768)], input_data_types=input_type)
+    verify_torch_module_async(
+        Basic(), input_shapes=[(1, 768)], input_data_types=input_type
+    )
 
 
 def test_maximum():
@@ -316,7 +280,9 @@ def test_maximum():
         def forward(self, x, y):
             return torch.maximum(x, y)
 
-    verify_module(Basic(), input_shapes=[(32, 32), (32, 32)], input_range=(-6, 6))
+    verify_torch_module_async(
+        Basic(), input_shapes=[(32, 32), (32, 32)], input_range=(-6, 6)
+    )
 
 
 def test_multiply():
@@ -327,7 +293,7 @@ def test_multiply():
         def forward(self, x, y):
             return x * y
 
-    verify_module(Basic(), input_shapes=[(32, 32), (32, 32)])
+    verify_torch_module_async(Basic(), input_shapes=[(32, 32), (32, 32)])
 
 
 def test_negate():
@@ -338,7 +304,7 @@ def test_negate():
         def forward(self, x):
             return -x
 
-    verify_module(Basic(), input_shapes=[(32, 32)], input_range=(-6, 6))
+    verify_torch_module_async(Basic(), input_shapes=[(32, 32)], input_range=(-6, 6))
 
 
 @pytest.mark.skip("keepdim=False is not supported")
@@ -350,7 +316,7 @@ def test_reduce_max():
         def forward(self, x):
             return torch.max(x)
 
-    verify_module(Basic(), input_shapes=[(32, 32)], input_range=(-6, 6))
+    verify_torch_module_async(Basic(), input_shapes=[(32, 32)], input_range=(-6, 6))
 
 
 @pytest.mark.skip("keepdim=False is not supported")
@@ -362,7 +328,7 @@ def test_reduce_sum():
         def forward(self, x):
             return torch.sum(x)
 
-    verify_module(Basic(), input_shapes=[(32, 32)], input_range=(-6, 6))
+    verify_torch_module_async(Basic(), input_shapes=[(32, 32)], input_range=(-6, 6))
 
 
 def test_relu():
@@ -375,7 +341,7 @@ def test_relu():
         def forward(self, x):
             return torch.relu(x)
 
-    verify_module(Basic(), input_shapes=[(32, 32)])
+    verify_torch_module_async(Basic(), input_shapes=[(32, 32)])
 
 
 def test_rsqrt():
@@ -386,7 +352,7 @@ def test_rsqrt():
         def forward(self, x):
             return torch.rsqrt(x)
 
-    verify_module(
+    verify_torch_module_async(
         Basic(), input_shapes=[(32, 32)], required_atol=3e-2, input_range=(0.1, 1)
     )
 
@@ -399,7 +365,7 @@ def test_sqrt():
         def forward(self, x):
             return torch.sqrt(x)
 
-    verify_module(
+    verify_torch_module_async(
         Basic(), input_shapes=[(32, 32)], required_atol=3e-2, input_range=(0.1, 1)
     )
 
@@ -445,7 +411,7 @@ def test_slice(begin, end, dim):
 
     shape = [10, 10, 10, 10]
     shape[dim] = 128
-    verify_module(Basic(), input_shapes=[shape])
+    verify_torch_module_async(Basic(), input_shapes=[shape])
 
 
 def test_subtract():
@@ -456,7 +422,9 @@ def test_subtract():
         def forward(self, x, y):
             return x - y
 
-    verify_module(Basic(), input_shapes=[(32, 32), (32, 32)], input_range=(-6, 6))
+    verify_torch_module_async(
+        Basic(), input_shapes=[(32, 32), (32, 32)], input_range=(-6, 6)
+    )
 
 
 def test_transpose_2d():
@@ -467,7 +435,7 @@ def test_transpose_2d():
         def forward(self, x):
             return torch.transpose(x, 0, 1)
 
-    verify_module(Basic(), input_shapes=[(4, 8)], input_range=(-6, 6))
+    verify_torch_module_async(Basic(), input_shapes=[(4, 8)], input_range=(-6, 6))
 
 
 @pytest.mark.skip("TTNN does not support transpose for higher ranks/dimensions.")
@@ -479,9 +447,10 @@ def test_transpose_3d():
         def forward(self, x):
             return torch.transpose(x, 0, 1)
 
-    verify_module(Basic(), input_shapes=[(4, 8, 4)], input_range=(-6, 6))
+    verify_torch_module_async(Basic(), input_shapes=[(4, 8, 4)], input_range=(-6, 6))
 
 
+@pytest.mark.skip(reason="Op-by-op execution is not supported with async mode.")
 def test_multiple_ops():
     class Basic(nn.Module):
         def __init__(self):
@@ -495,11 +464,12 @@ def test_multiple_ops():
 
     cc = CompilerConfig()
     cc.compile_depth = tt_torch.tools.utils.CompileDepth.EXECUTE_OP_BY_OP
-    verify_module(
+    verify_torch_module_async(
         Basic(), input_shapes=[(256, 256)], compiler_config=cc, do_assert=False
     )
 
 
+@pytest.mark.skip(reason="Op-by-op execution is not supported with async mode.")
 def test_unused_output():
     class Basic_var_only(nn.Module):
         def __init__(self):
@@ -520,9 +490,12 @@ def test_unused_output():
     for module in [Basic_var_only, Basic_mean_only]:
         cc = CompilerConfig()
         cc.compile_depth = tt_torch.tools.utils.CompileDepth.COMPILE_OP_BY_OP
-        verify_module(module(), input_shapes=[(256, 256)], compiler_config=cc)
+        verify_torch_module_async(
+            module(), input_shapes=[(256, 256)], compiler_config=cc
+        )
 
 
+@pytest.mark.skip(reason="Op-by-op execution is not supported with async mode.")
 def test_multiple_users():
     class Basic(nn.Module):
         def __init__(self):
@@ -537,7 +510,7 @@ def test_multiple_users():
 
     cc = CompilerConfig()
     cc.compile_depth = tt_torch.tools.utils.CompileDepth.EXECUTE_OP_BY_OP
-    verify_module(
+    verify_torch_module_async(
         Basic(), input_shapes=[(256, 256)], compiler_config=cc, do_assert=False
     )
 
@@ -563,7 +536,7 @@ def test_remainder_op(input_range, input_shapes, input_type):
         def forward(self, x, y):
             return torch.remainder(x, y)
 
-    verify_module(
+    verify_torch_module_async(
         Basic(),
         input_shapes=input_shapes,
         input_data_types=input_type,
@@ -585,7 +558,7 @@ def test_remainder_op_zero():
 
     input1 = torch.tensor([1, -2, 3, -4, 5, 6, -7, 18], dtype=torch.float32)
     input2 = torch.tensor([1, 0, 3, 0, -9, 10, -7, 12], dtype=torch.float32)
-    verify_module(Basic(), inputs=[input1, input2])
+    verify_torch_module_async(Basic(), inputs=[input1, input2])
 
 
 def test_log_op():
@@ -596,7 +569,7 @@ def test_log_op():
         def forward(self, x):
             return torch.log(x)
 
-    verify_module(
+    verify_torch_module_async(
         Basic(), input_shapes=[(32, 32)], input_range=(0.1, 60), required_atol=0.02
     )
 
@@ -609,7 +582,7 @@ def test_ceil_op():
         def forward(self, x):
             return torch.ceil(x)
 
-    verify_module(
+    verify_torch_module_async(
         Basic(), input_shapes=[(32, 32)], input_range=(-6, 6), required_atol=0.02
     )
 
@@ -622,7 +595,7 @@ def test_sine_op():
         def forward(self, x):
             return torch.sin(x)
 
-    verify_module(
+    verify_torch_module_async(
         Basic(), input_shapes=[(32, 32)], input_range=(-2 * math.pi, 2 * math.pi)
     )
 
@@ -635,146 +608,6 @@ def test_cosine_op():
         def forward(self, x):
             return torch.cos(x)
 
-    verify_module(
+    verify_torch_module_async(
         Basic(), input_shapes=[(32, 32)], input_range=(-2 * math.pi, 2 * math.pi)
     )
-
-
-@pytest.mark.parametrize("assert_pcc", [True, False])
-@pytest.mark.parametrize("assert_atol", [True, False])
-def test_verify_against_golden_low_atol_high_pcc(assert_pcc, assert_atol):
-    # High PCC and Low ATOL. Perfect numeric match case.
-    # Under no conditions should an assertion error be raised
-
-    # True ATOL: 0
-    # True PCC: 1
-
-    golden_tensors = (torch.tensor([1.0, 2.0, 3.0]),)
-    calculated_tensors = (torch.tensor([1.0, 2.0, 3.0]),)
-    pccs, atols, passed_pcc, passed_atol = verify_against_golden(
-        golden_tensors,
-        calculated_tensors,
-        assert_pcc=assert_pcc,
-        assert_atol=assert_atol,
-        required_atol=0.1,
-    )
-    assert passed_pcc is True
-    assert passed_atol is True
-
-
-@pytest.mark.parametrize("assert_pcc", [True, False])
-@pytest.mark.parametrize("assert_atol", [True, False])
-def test_verify_against_golden_high_atol_high_pcc(assert_pcc, assert_atol):
-    # High ATOL and High PCC  (correlated, but numerically different tensors).
-    # Expected to raise ATOL asssertion if asserting atol, but not raise if ATOL not asserted
-
-    # True ATOL: 0.5
-    # True PCC: 1
-
-    golden_tensors = (torch.tensor([1.0, 2.0, 3.0]),)
-    calculated_tensors = (torch.tensor([1.5, 2.5, 3.5]),)
-
-    if assert_atol:
-        # Assert that an AssertionError is raised if we are asserting ATOL
-        # when comparing tensors with a true high ATOL
-        with pytest.raises(AssertionError) as e:
-            pccs, atols, passed_pcc, passed_atol = verify_against_golden(
-                golden_tensors,
-                calculated_tensors,
-                assert_pcc=assert_pcc,
-                assert_atol=assert_atol,
-                required_atol=0.1,
-            )
-    else:
-        pccs, atols, passed_pcc, passed_atol = verify_against_golden(
-            golden_tensors,
-            calculated_tensors,
-            assert_pcc=assert_pcc,
-            assert_atol=assert_atol,
-            required_atol=0.1,
-        )
-
-        # If ATOL is bad and PCC is good, and we don't assert on ATOL,
-        # we expect no AssertionError to be raised by verify_against_golden
-
-        # An implicit check here is that the above call to verify_against_golden
-        # does not raise an AssertionError. If it does, the pytest will fail.
-
-        assert passed_pcc is True
-        assert passed_atol is False
-
-
-@pytest.mark.parametrize("assert_pcc", [True, False])
-@pytest.mark.parametrize("assert_atol", [True, False])
-def test_verify_against_golden_low_atol_low_pcc(assert_pcc, assert_atol):
-    # Low ATOL and Low PCC  (uncorrelated, but numerically close tensors)
-    # Expected to raise PCC assert if asserting PCC, but not raise if PCC not asserted
-
-    # True ATOL: 0.2
-    # True PCC: 0.97 (Considered for this test as "LOW" PCC)
-
-    golden_tensors = (torch.tensor([1.0, 2.0, 3.0]),)
-    calculated_tensors = (torch.tensor([1.2, 1.8, 3.2]),)
-
-    if assert_pcc:
-        # Assert that an AssertionError is raised if we are asserting PCC
-        # when comparing tensors with a true low PCC
-        with pytest.raises(AssertionError) as e:
-            pccs, atols, passed_pcc, passed_atol = verify_against_golden(
-                golden_tensors,
-                calculated_tensors,
-                assert_pcc=assert_pcc,
-                assert_atol=assert_atol,
-                required_pcc=0.99,
-                required_atol=0.25,
-            )
-    else:
-        pccs, atols, passed_pcc, passed_atol = verify_against_golden(
-            golden_tensors,
-            calculated_tensors,
-            assert_pcc=assert_pcc,
-            assert_atol=assert_atol,
-            required_pcc=0.99,
-            required_atol=0.25,
-        )
-        assert passed_pcc is False
-        assert passed_atol is True
-
-
-@pytest.mark.parametrize("assert_pcc", [True, False])
-@pytest.mark.parametrize("assert_atol", [True, False])
-def test_verify_against_golden_high_atol_low_pcc(assert_pcc, assert_atol):
-    # High ATOL and Low PCC  (uncorrelated and numerically different = completely different tensors)
-    # Expected to fail if either PCC or ATOL is asserted
-
-    # True ATOL: 2997
-    # True PCC: 0.397
-
-    golden_tensors = (torch.tensor([1.0, 2.0, 3.0]),)
-    calculated_tensors = (torch.tensor([1000.0, -2000.0, 3000.0]),)
-
-    if assert_pcc or assert_atol:
-        # Assert that an AssertionError is raised if we are asserting either PCC or ATOL
-        # In this case, both ATOL and PCC are truly bad, so asserting on either
-        # should cause an AssertionError to be raised
-        with pytest.raises(AssertionError) as e:
-            pccs, atols, passed_pcc, passed_atol = verify_against_golden(
-                golden_tensors,
-                calculated_tensors,
-                assert_pcc=assert_pcc,
-                assert_atol=assert_atol,
-                required_pcc=0.99,
-                required_atol=0.1,
-            )
-    else:
-        pccs, atols, passed_pcc, passed_atol = verify_against_golden(
-            golden_tensors,
-            calculated_tensors,
-            assert_pcc=assert_pcc,
-            assert_atol=assert_atol,
-            required_pcc=0.99,
-            required_atol=0.1,
-        )
-
-        assert passed_pcc is False
-        assert passed_atol is False
