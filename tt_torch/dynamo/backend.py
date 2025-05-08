@@ -95,9 +95,8 @@ def dump_module(module, name, compiler_config):
         # Replace any character that is not a letter, digit, underscore, or hyphen with '_'
         return re.sub(r"[^\w\-]", "_", name)
 
-    if (
-        compiler_config.save_mlir_override
-        and name in compiler_config.save_mlir_override
+    if compiler_config.save_mlir_override and name.lower() in (
+        n.lower() for n in compiler_config.save_mlir_override
     ):
         output_dir = "model_mlir"
         os.makedirs(output_dir, exist_ok=True)
