@@ -39,23 +39,18 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  test_full_model:
-    needs: [docker-build, build]
-    uses: ./.github/workflows/run-full-model-execution-tests.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
+  # test_full_model:
+  #   needs: [docker-build, build]
+  #   uses: ./.github/workflows/run-full-model-execution-tests.yml
+  #   secrets: inherit
+  #   with:
+  #     docker-image: ${{ needs.docker-build.outputs.docker-image }}
   test_full_model_nightly:
     needs: [docker-build, build]
     uses: ./.github/workflows/run-full-model-execution-tests-nightly.yml
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  generate_mlir_dump:
-    if: success() || failure()
-    needs: [test_e2e_compile, test_full_model, test_full_model_nightly]
-    uses: ./.github/workflows/generate-mlir-dump.yml
-    secrets: inherit
   # download-report:
   #   if: success() || failure()
   #   needs: test_op_by_op
