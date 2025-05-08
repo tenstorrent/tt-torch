@@ -230,21 +230,24 @@ class ModelTester:
         return self.golden_outputs
 
     def compile_model(self, model, compiler_config):
+        torch._dynamo.config.capture_scalar_outputs = True
         # Compile model
         options = BackendOptions()
         options.compiler_config = compiler_config
         options.device = self.device
-        model = torch.compile(model, backend=backend, dynamic=False, options=options)
+        model.forward = torch.compile(
+            model.forward, backend=backend, dynamic=False, options=options
+        )
         self.compiled_model = model
         return self.compiled_model
 
     def run_model(self, model, inputs):
         if isinstance(inputs, collections.abc.Mapping):
-            return model(**inputs)
+            return model.generate(**inputs)
         elif isinstance(inputs, collections.abc.Sequence):
-            return model(*inputs)
+            return model.generate(*inputs)
         else:
-            return model(inputs)
+            return model.generate(inputs)
 
     def append_fake_loss_function(self, outputs):
         # Using `torch.mean` as the loss function for testing purposes.

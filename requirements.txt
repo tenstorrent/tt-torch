@@ -1,4 +1,6 @@
-torch@https://download.pytorch.org/whl/cpu-cxx11-abi/torch-2.6.0%2Bcpu.cxx11.abi-cp310-cp310-linux_x86_64.whl
+torch@https://download.pytorch.org/whl/cpu-cxx11-abi/torch-2.7.0%2Bcpu.cxx11.abi-cp310-cp310-linux_x86_64.whl
+torchvision@https://download.pytorch.org/whl/cpu/torchvision-0.22.0%2Bcpu-cp310-cp310-manylinux_2_28_x86_64.whl
+torchaudio
 black
 bi-lstm-crf
 mdutils
@@ -8,11 +10,11 @@ pybind11
 pytest
 pytest-cov
 tabulate
-transformers==4.47.1
+transformers
 protobuf
 tiktoken
 sentencepiece
-setuptools==59.6.0 #  pinned torchvision wheel build in env/activate requires lower setuptools pinned version. tt-torch #589
+setuptools
 pytorchcv
 diffusers
 scipy
