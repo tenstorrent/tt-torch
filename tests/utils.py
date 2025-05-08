@@ -318,6 +318,12 @@ class ModelTester:
         return results
 
     def verify_outputs(self, golden, outputs):
+
+        # Only do golden check if running EXECUTE. Limited value comparing in other situations.
+        if self.compiler_config.compile_depth != CompileDepth.EXECUTE:
+            print(f"Skipping golden check for {self.compiler_config.compile_depth}")
+            return
+
         assert type(outputs) == type(
             golden
         ), "Expecting the type of both calculated and golden to be identical. Whether that be a tensor, list, dictonary, etc."
