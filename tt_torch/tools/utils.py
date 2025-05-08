@@ -423,7 +423,6 @@ class CompilerConfig:
             "unique_ops": self.unique_ops,
             "stable_hlo_ops": self.stable_hlo_ops,
             "model_name": self.model_name,
-            "model_group": self.model_group,
             "results_path": self.results_path,
             "single_op_timeout": self.single_op_timeout,
             "enable_consteval": self.enable_consteval,
