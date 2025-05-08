@@ -124,6 +124,30 @@ def test_broadcast(input):
     verify_module(Basic(), inputs=[input])
 
 
+def test_clamp():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.clamp(x, min=-1, max=1)
+
+    verify_module(Basic(), input_shapes=[(32, 32)], input_range=(-5, 5))
+
+
+def test_clamp_tensor():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x, min, max):
+            return torch.clamp(x, min=min, max=max)
+
+    verify_module(
+        Basic(), input_shapes=[(32, 32), (32, 32), (32, 32)], input_range=(-5, 5)
+    )
+
+
 def test_concat_dim0():
     class Basic(nn.Module):
         def __init__(self):
