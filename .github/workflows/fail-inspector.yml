@@ -226,7 +226,7 @@ jobs:
             echo "    with open(sys.argv[1], \"r\") as fd:" >>runtest.py
             echo "        test_list = fd.readlines()" >>runtest.py
             echo "    sys.exit(pytest.main(test_list))" >>runtest.py
-            python runtest.py tests-${{matrix.build.runs-on}}.log 2>&1 | tee pytest.log
+            TT_TORCH_COMPILE_DEPTH=TTNN_IR python runtest.py tests-${{matrix.build.runs-on}}.log 2>&1 | tee pytest.log
 
         - name: Upload Test Log
           uses: actions/upload-artifact@v4
