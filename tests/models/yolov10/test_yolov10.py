@@ -16,7 +16,7 @@ from ultralytics import YOLO
 class ThisTester(ModelTester):
     def _load_model(self):
         # Reference: https://github.com/THU-MIG/yolov10
-        file = get_file("test_files/pytorch/yolov10/yolov10n.pt")
+        file = get_file("test_files/pytorch/yolov10/yolov_10n.pt")
         model = YOLO(file)
         return model.model
 

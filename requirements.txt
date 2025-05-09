@@ -39,4 +39,3 @@ seaborn
 gliner
 ultralytics
 efficientnet_pytorch
-boto3

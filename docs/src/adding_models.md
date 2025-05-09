@@ -289,17 +289,17 @@ tests/models/t5/test_t5.py::test_t5[op_by_op_torch-t5-large-eval]
 
 - If your model is reported in `results/models_op_per_op.xlsx` as being able to compile all ops successfully (ie. all ops can compile to status `6: CONVERTED_TO_TTNN`, but some hit runtime `7: EXECUTE` failures) then it should also be added to "nightly e2e compile list" in `.github/workflows/run-e2e-compile-tests.yml` which stops before executing the model via `TT_TORCH_COMPILE_DEPTH=TTNN_IR pytest ...`
 
-## How to load test files into/from S3 bucket
+## How to load test files into/from Large File System (LFS)
 
-We have set up access to a AWS S3 bucket to be able to load and access model related files for testing. We can load files into our S3 bucket and access them from the tester scripts. You will need access to S3 bucket portal to add/load files. **If you don't have an AWS account or access to the S3 bucket please reach out to the tt-torch community leader.**
+We have set up access to a AWS S3 bucket to be able to load and access model related files for testing. We can load files into our S3 bucket and access them from the tester scripts. You will need access to S3 bucket portal to add files. **If you don't have an AWS account or access to the S3 bucket please reach out to the tt-torch community leader.** Then, depending on if the test is running on CI or locally we will be able to load the files from the CI/IRD LFS caches that automatically sync up with contents in S3 bucket.
 
 ### Load files into S3 bucket
 
-Access S3 bucket portal and load file from local dir. Please add files following this structure:
+Access S3 bucket portal, **if you don't have access to the S3 bucket please reach out to the tt-torch community leader**, and load file from local dir. Please add files following this structure:
 
 ```
 test_files
-├── torch
+├── pytorch
 |   ├── huggingface
 |   |   ├── meta-llama
 │   |   |   ├── Llama-3.1-70B
@@ -337,16 +337,13 @@ class ThisTester(ModelTester):
 
 ```
 
-The `s3_path` arg should be the path of the file in the S3 bucket. The `get_file()` helper will handle files differently if we are loading them from CI or locally.
+The `s3_path` arg should be the full path of the file in the S3 bucket.
 
 #### Loading files locally
 
-Locally `get_file()` will pull files directly from S3 bucket, so we will need to set up our environment to have access to it.
+Locally `get_file()` will pull files directly from an IRD LFS cache. The IRD LFS cache is set up to sync up with S3 bucket every 5-10 minutes. You will need to set the `IRD_LF_CACHE` environment variable to the appropriate address. **Contact tt-torch community leader for IRD LF cache address.**
 
-1. Set `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_DEFAULT_REGION` environment variables to enable authorization access to S3 bucket. The values can be found under your AWS account. **If you don't have one please reach out to tt-torch community leader.** Authorization will be temporary (8 hours from first access), and you will have to renew values after it expires.
-2. Set up `S3_BUCKET` env variable with the name of the S3 bucket.
-
-The file/s will be downloaded into a local cache so next time we want to access the same file we won't have to access S3 bucket. The default location for the cache is `~/.cache/`. If you want to redirect files to a custom cache path set the `TT_TORCH_CACHE` env variable to the desired path.
+The file/s will be downloaded into a local cache so next time you want to access the same file we won't have to access the IRD cache. The default location for the local cache is `~/.cache/`. If you want to redirect files to a custom cache path set the `LOCAL_LF_CACHE` env variable to the desired path.
 
 #### Loading files from CI
 
