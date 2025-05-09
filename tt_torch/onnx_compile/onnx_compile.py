@@ -25,6 +25,7 @@ from tt_torch.tools.utils import (
     OpByOpBackend,
     CompilerConfig,
     CompileDepth,
+    MultiChipGraph,
 )
 
 from tt_torch.dynamo.shlo_backend import StablehloExecutor

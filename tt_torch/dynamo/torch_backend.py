@@ -185,8 +185,7 @@ def cast_ios_and_run(node, args, kwargs):
 class TorchExecutor(OpByOpExecutor):
     def __init__(
         self,
-        program,
-        graph_constants,
+        mcg,
         compiler_config=None,
         required_pcc=0.99,
         required_atol=1e-2,
@@ -200,11 +199,12 @@ class TorchExecutor(OpByOpExecutor):
             devices=devices,
             async_mode=async_mode,
         )
-        self.program = program
+        assert len(mcg.programs) == 1
+        self.program = mcg.programs[0]
         self.graph_constants = (
-            (graph_constants,)
-            if isinstance(graph_constants, (int, float))
-            else tuple(graph_constants)
+            (mcg.constant_inputs[0],)
+            if isinstance(mcg.constant_inputs[0], (int, float))
+            else tuple(mcg.constant_inputs[0])
         )
         if self.compiler_config is None:
             compiler_config = CompilerConfig()

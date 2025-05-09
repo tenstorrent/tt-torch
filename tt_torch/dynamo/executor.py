@@ -24,6 +24,7 @@ from tt_torch.tools.utils import (
     run_model_proto,
     onnx_output_to_torch,
     torch_input_to_onnx,
+    MultiChipGraph,
 )
 from typing import Union
 
@@ -132,22 +133,14 @@ def execute_process(receiver, sender, exec_event):
 class Executor:
     def __init__(
         self,
-        program: Union[torch.export.ExportedProgram, None] = None,
-        graph_constants=None,
+        mcg: MultiChipGraph,
         compiler_config=None,
         required_pcc=0.99,
         required_atol=1e-2,
         devices=[None],
         async_mode=False,
     ):
-        self.program = program
-        self.binary = None
-        self.graph_constants = []
-        if graph_constants is not None:
-            for gc in graph_constants:
-                self.graph_constants.append(
-                    (gc,) if isinstance(gc, (int, float)) else tuple(gc)
-                )
+        self.mcg = mcg
         if compiler_config is None:
             compiler_config = CompilerConfig()
         self.compiler_config = compiler_config
@@ -203,15 +196,6 @@ class Executor:
             # No conversion required.
             new_inputs = new_inputs + ((input),)
         return new_inputs
-
-    def set_binary(self, binary, device_idx=0):
-        self.binary[device_idx] = binary
-        self.preprocessed_graph_constants[device_idx] = None
-
-    def _get_binary(self, device_idx=0):
-        if self.binary is not None:
-            return self.binary[device_idx]
-        return None
 
     def _get_device(self, device_idx=0):
         assert (
@@ -311,10 +295,10 @@ class Executor:
                 *(self.graph_constants + tuple(self.program.buffers()) + inputs)
             )
 
-        assert len(self.binary) > 0
+        assert len(self.mcg.binaries) > 0
         intermediate_results = []
         final_outputs = []
-        for device_idx in range(len(self.binary)):
+        for device_idx, binary in self.mcg.binaries.items():
             device_inputs = inputs + tuple(intermediate_results)
             inputs = ()
             intermediate_results = []
@@ -323,26 +307,28 @@ class Executor:
 
             activations_len = len(device_inputs)
             if (
-                self.graph_constants is not None
-                and self.preprocessed_graph_constants[device_idx] is None
+                self.mcg.constant_inputs[device_idx] is not None
+                and device_idx not in self.preprocessed_graph_constants
             ):
-                device_inputs = self.graph_constants[device_idx] + device_inputs
+                device_inputs = tuple(self.mcg.constant_inputs[device_idx]) + tuple(
+                    device_inputs
+                )
 
             device_inputs = list(device_inputs)
             device = self._get_device(device_idx)
 
-            binary = tt_mlir.create_binary_from_bytestream(self._get_binary(device_idx))
+            binary = tt_mlir.create_binary_from_bytestream(binary)
             program_idx = 0
 
             tensor_start_idx = 0
-            if self.preprocessed_graph_constants[device_idx] is not None:
+            if device_idx in self.preprocessed_graph_constants:
                 tensor_start_idx = len(self.preprocessed_graph_constants[device_idx])
 
             preprocessed_inputs = tt_mlir.preprocess_inputs(
                 device, device_inputs, binary, program_idx, tensor_start_idx
             )
 
-            if self.preprocessed_graph_constants[device_idx] is not None:
+            if device_idx in self.preprocessed_graph_constants:
                 preprocessed_inputs = (
                     self.preprocessed_graph_constants[device_idx] + preprocessed_inputs
                 )
@@ -355,10 +341,7 @@ class Executor:
                 outputs = tt_mlir.run(device, binary, program_idx, preprocessed_inputs)
 
             for i, output in enumerate(outputs):
-                if (
-                    self.program[device_idx].mcg.graph_outputs[device_idx][i].io_type
-                    == IOType.INTER_DEVICE
-                ):
+                if self.mcg.graph_outputs[device_idx][i].io_type == IOType.INTER_DEVICE:
                     intermediate_results.append(output)
                 else:
                     final_outputs.append(output)

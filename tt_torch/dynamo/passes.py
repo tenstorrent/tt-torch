@@ -275,9 +275,6 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     )
 
     mcg = split_onto_devices(gm, compiler_config)
-    programs = []
-    constant_inputs_list = []
-    example_inputs_list = []
     for idx, graph in mcg.device_graphs.items():
         sub_example_inputs = [
             torch.randn(node.meta["tensor_meta"].shape)
@@ -304,7 +301,6 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         program = torch.export.export(
             gm_device, tuple(sub_example_inputs), strict=False
         )
-        program.mcg = mcg
         # The proper order of inputs when outlining everything is constants + parameters + buffers + sub_example_inputs
         if not compiler_config.inline_parameters:
             constant_inputs = (
@@ -323,8 +319,8 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
 
         constant_inputs = prune_inputs(program, constant_inputs)
         run_shape_prop(program.graph_module, constant_inputs + sub_example_inputs)
-        programs.append(program)
-        constant_inputs_list.append(constant_inputs)
-        example_inputs_list.append(sub_example_inputs)
+        mcg.programs[idx] = program
+        mcg.constant_inputs[idx] = constant_inputs
+        mcg.example_inputs[idx] = sub_example_inputs
 
-    return programs, constant_inputs_list, example_inputs_list
+    return mcg

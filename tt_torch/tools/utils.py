@@ -102,6 +102,11 @@ class MultiChipGraph:
         self.device_graphs = {device: torch.fx.Graph() for device in devices}
         self.graph_outputs = {device: [] for device in devices}
         self.graph_inputs = {device: [] for device in devices}
+        self.programs = {}
+        self.binaries = {}
+        self.constant_inputs = {}
+        self.example_inputs = {}
+        self.shlo_modules = {}
 
 
 class Tensor:

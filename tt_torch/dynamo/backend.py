@@ -126,12 +126,10 @@ def _torch_backend(
     gm: torch.fx.GraphModule, example_inputs, compiler_config, devices, async_mode
 ):
     with torch.no_grad():
-        programs, graph_constants, _ = pass_pipeline(
-            gm, example_inputs, compiler_config
-        )
+        mcg = pass_pipeline(gm, example_inputs, compiler_config)
+
     executor = TorchExecutor(
-        program=program,
-        graph_constants=graph_constants,
+        mcg=mcg,
         compiler_config=compiler_config,
         devices=devices,
         async_mode=async_mode,
@@ -141,12 +139,9 @@ def _torch_backend(
 
 def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     with torch.no_grad():
-        programs, graph_constants, example_inputs = pass_pipeline(
-            gm, example_inputs, compiler_config
-        )
+        mcg = pass_pipeline(gm, example_inputs, compiler_config)
 
-    modules = []
-    for program in programs:
+    for device_idx, program in mcg.programs.items():
         module = import_program(program)
         verify_ir(module)
 
@@ -173,9 +168,9 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
             module=module, name="StableHLO module", compiler_config=compiler_config
         )
 
-        modules.append(module)
+        mcg.shlo_modules[device_idx] = module
 
-    return modules, programs, graph_constants, example_inputs
+    return mcg
 
 
 def shlo_to_flatbuffer(
@@ -204,12 +199,9 @@ def shlo_to_flatbuffer(
 
 
 def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
-    shlo_modules, program, graph_constants, example_inputs = torch_to_shlo(
-        gm, example_inputs, compiler_config
-    )
+    mcg = torch_to_shlo(gm, example_inputs, compiler_config)
     executor = Executor(
-        program,
-        graph_constants,
+        mcg,
         compiler_config,
         devices=devices,
         async_mode=async_mode,
@@ -220,16 +212,16 @@ def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
     if compiler_config.compile_depth == CompileDepth.STABLEHLO:
         return executor
 
-    for i, shlo in enumerate(shlo_modules):
+    for i, shlo in mcg.shlo_modules.items():
         binary = shlo_to_flatbuffer(
             executor,
             devices[i],
             shlo,
             compiler_config,
-            len(example_inputs[i]),
-            len(graph_constants[i]),
+            len(mcg.example_inputs[i]),
+            len(mcg.constant_inputs[i]),
         )
-        executor.set_binary(binary, i)
+        mcg.binaries[i] = binary
 
     compiler_config.record_property("achieved_compile_depth", "TTNN_IR")
     return executor

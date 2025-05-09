@@ -16,6 +16,7 @@ from tt_torch.tools.utils import (
     run_model_proto,
     onnx_output_to_torch,
     torch_input_to_onnx,
+    MultiChipGraph,
 )
 
 from tt_torch.tools.utils import (
