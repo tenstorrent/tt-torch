@@ -305,8 +305,6 @@ class Executor:
             )
 
         assert self.binary is not None
-        if self.compiler_config.typecast_inputs:
-            inputs = self.typecast_inputs(inputs)
 
         activations_len = len(inputs)
         if (
@@ -314,6 +312,9 @@ class Executor:
             and self.preprocessed_graph_constants is None
         ):
             inputs = self.graph_constants + inputs
+
+        if self.compiler_config.typecast_inputs:
+            inputs = self.typecast_inputs(inputs)
 
         inputs = list(inputs)
         device = self._get_device()
