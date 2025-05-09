@@ -86,12 +86,11 @@ jobs:
             while read -r machine; do
                 for dir in log-a/test-log-"$machine"-*/; do
                   sed -n '/=========================== short test summary info ============================/,$p' "$dir/pytest.log" >temp.log
-
-                  grep '^FAILED ' "temp.log" | sed 's/^FAILED //; s/ - .*//; s/.*\(\].*\)/\1/' >>a-"$machine".log
+                  grep '^FAILED ' "temp.log" | sed 's/^FAILED //; s/^\(.*\) - .*/\1/; s/^\(.*\]\).*/\1/' >>a-"$machine".log
                 done
                 for dir in log-b/test-log-"$machine"-*/; do
                   sed -n '/=========================== short test summary info ============================/,$p' "$dir/pytest.log" >temp.log
-                  grep '^FAILED ' "temp.log" | sed 's/^FAILED //; s/ - .*//; s/.*\(\].*\)/\1/' >>b-"$machine".log
+                  grep '^FAILED ' "temp.log" | sed 's/^FAILED //; s/^\(.*\) - .*/\1/; s/^\(.*\]\).*/\1/' >>b-"$machine".log
                 done
                 # get only the lines that are in b.log but not in a.log
                 if [ ! -s a-"$machine".log ]; then
