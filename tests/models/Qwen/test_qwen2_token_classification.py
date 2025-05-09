@@ -43,7 +43,7 @@ class ThisTester(ModelTester):
 def test_qwen2_token_classification(record_property, model_name, mode, op_by_op):
     if mode == "train":
         pytest.skip()
-
+    assert False, "TEST"
     cc = CompilerConfig()
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
