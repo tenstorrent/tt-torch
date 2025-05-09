@@ -187,6 +187,7 @@ jobs:
             fetch-depth: 0
             ref: ${{ matrix.build.commit }}
 
+
         - name: Download wheels
           uses: dawidd6/action-download-artifact@v9
           with:
@@ -220,6 +221,7 @@ jobs:
           shell: bash
           run: |
             source env/activate
+            ls -lR tests
             rt="tests/run_specific_tests.py"
             echo "import pytest" >$rt
             echo "import sys" >>$rt
