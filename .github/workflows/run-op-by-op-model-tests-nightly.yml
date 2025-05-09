@@ -258,10 +258,10 @@ jobs:
 
           echo "====== BEGIN LOG: $test_case ======" >> full_job_output.log
           pytest -svv -rf "$test_case" > test.log 2>&1
+          exit_code=$?
           cat test.log >> full_job_output.log
           sed -n '/=========================== short test summary info ============================/,$p' test.log >>pytest.log
 
-          exit_code=$?
 
           echo "====== END LOG: $test_case ========" >> full_job_output.log
           echo >> full_job_output.log
