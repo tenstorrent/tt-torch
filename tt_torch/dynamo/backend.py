@@ -4,6 +4,7 @@
 import torch
 import os
 import warnings
+import re
 
 import tt_mlir
 import sys
@@ -100,6 +101,25 @@ def dump_module(module, name, compiler_config):
         print(f"{name} module", file=sys.stderr)
         print(module, file=sys.stderr)
 
+    def sanitize_filename(name):
+        # Replace any character that is not a letter, digit, underscore, or hyphen with '_'
+        return re.sub(r"[^\w\-]", "_", name)
+
+    if compiler_config.save_mlir_override and name.lower() in (
+        n.lower() for n in compiler_config.save_mlir_override
+    ):
+        output_dir = "model_mlir"
+        os.makedirs(output_dir, exist_ok=True)
+        sanitized_model_name = sanitize_filename(compiler_config.model_name)
+        filepath = os.path.join(
+            output_dir, f"{sanitized_model_name}_{name.lower()}.mlir"
+        )
+        with open(filepath, "w") as f:
+            if isinstance(module, str):
+                f.write(module)
+            else:
+                f.write(module.operation.get_asm())
+
 
 def _shlo_backend(
     shlo,
@@ -144,7 +164,7 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     module = import_program(program)
     verify_ir(module)
 
-    dump_module(module=module, name="Torch FX module", compiler_config=compiler_config)
+    dump_module(module=module, name="Torch FX", compiler_config=compiler_config)
 
     if compiler_config.profile_ops:
         compiler_config.set_torch_mlir_module(module.operation.get_asm())
@@ -155,13 +175,11 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         "Lowering TorchFX IR -> Torch Backend IR",
         compiler_config.dump_debug,
     )
-    dump_module(
-        module=module, name="Torch Backend module", compiler_config=compiler_config
-    )
+    dump_module(module=module, name="Torch Backend", compiler_config=compiler_config)
 
     lower_mlir_module(False, OutputType.STABLEHLO, module)
 
-    dump_module(module=module, name="StableHLO module", compiler_config=compiler_config)
+    dump_module(module=module, name="StableHLO", compiler_config=compiler_config)
 
     return module, program, graph_constants
 
@@ -176,7 +194,7 @@ def shlo_to_flatbuffer(
     ttir = tt_mlir.compile_stable_hlo_to_ttir(
         module.operation.get_asm(enable_debug_info=True)
     )
-    dump_module(module=ttir, name="TTIR module", compiler_config=compiler_config)
+    dump_module(module=ttir, name="TTIR", compiler_config=compiler_config)
 
     if compiler_config.enable_intermediate_verification:
         executor.register_intermediate_callback(
@@ -186,7 +204,7 @@ def shlo_to_flatbuffer(
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(
         ttir, executor.device, len_activations, len_graph_constants
     )
-    dump_module(module=ttnn, name="TTNN module", compiler_config=compiler_config)
+    dump_module(module=ttnn, name="TTNN", compiler_config=compiler_config)
 
     return binary
 

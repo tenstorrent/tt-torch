@@ -13,6 +13,11 @@ on:
         required: false
         type: string # properly a boolean but autocast to string when passed in using 'with' inputs
         default: 'true'
+      run-dump-mlir:
+        description: 'Dump MLIR files'
+        required: false
+        type: string
+        default: 'true'
   workflow_run:
     workflows: [Build] # backref to run-build as dependency
     types: [completed]
@@ -137,6 +142,7 @@ jobs:
         echo "install-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
         echo "dist-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
         echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+        echo "mlir_dir=$(pwd)/model_mlir" >> "$GITHUB_OUTPUT" # Define the model_mlir directory
 
     - name: Use build artifacts
       uses: actions/download-artifact@v4
@@ -167,7 +173,7 @@ jobs:
       run: |
         source env/activate
 
-        pytest --durations=0 -v -rf ${{matrix.build.tests}} \
+        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN pytest --durations=0 -v -rf ${{matrix.build.tests}} \
            --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
            --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append | tee pytest.log
 
@@ -202,3 +208,23 @@ jobs:
         files: ${{ steps.strings.outputs.test_report_path_models }}
         disable_search: true
         token: ${{ secrets.CODECOV_TOKEN }}
+
+    - name: Upload MLIR files
+      uses: actions/upload-artifact@v4
+      if: ${{ (success() || failure()) && inputs.run-dump-mlir == 'true' }}
+      with:
+        name: model-mlir-execute-push-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        path: ${{ steps.strings.outputs.mlir_dir }}
+
+  merge_mlir_artifacts:
+    needs: [tests]
+    if: ${{ inputs.run-dump-mlir == 'true' }}
+    runs-on: ubuntu-latest
+    name: Merge MLIR Artifacts
+    steps:
+      - name: Merge Artifacts
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: model-mlir-execute-push
+          pattern: model-mlir-execute-push-*
+          delete-merged: true

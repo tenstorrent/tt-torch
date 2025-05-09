@@ -41,3 +41,4 @@ jobs:
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       run-codecov: 'false'
+      run-dump-mlir: 'false'
