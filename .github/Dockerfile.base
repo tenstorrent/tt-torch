@@ -34,7 +34,8 @@ RUN apt-get update && apt-get install -y \
     curl \
     lcov \
     libgl1 \
-    libglx-mesa0
+    libglx-mesa0 \
+    unzip
 
 # Install python3.11 packages
 RUN python3.10 -m pip install \
