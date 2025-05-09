@@ -120,6 +120,7 @@ jobs:
 
     - name: Run ONNX Unit tests
       shell: bash
+      if: success() || failure()
       run: |
         source env/activate
         pytest -v tests/onnx \
@@ -135,6 +136,7 @@ jobs:
 
     - name: Check All Ops Execute
       shell: bash
+      if: success() || failure()
       run: |
         source env/activate
         TT_TORCH_CHECK_ALL_OPS_EXECUTE=1 pytest -svv tests/models/MobileNetV2/test_MobileNetV2.py tests/models/mnist/test_mnist.py --op_by_op_torch \
