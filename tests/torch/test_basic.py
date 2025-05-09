@@ -780,7 +780,7 @@ def test_verify_against_golden_high_atol_low_pcc(assert_pcc, assert_atol):
         assert passed_atol is False
 
 
-from tt_torch.dynamo.backend import backend
+from tt_torch.dynamo.backend import backend, BackendOptions
 
 
 def test_pipeline_parallel():
@@ -795,16 +795,16 @@ def test_pipeline_parallel():
             x = self.l2(x)
             return x
 
+    options = BackendOptions()
     cc = CompilerConfig()
+    options.compiler_config = cc
     cc.enable_consteval = True
     cc.consteval_parameters = True
     cc.device_map = {"l1": 0, "l2": 1}
     parent_device = DeviceManager.create_parent_mesh_device([1, 2])
     device1 = DeviceManager.create_sub_mesh_device(parent_device, (0, 0))
     device2 = DeviceManager.create_sub_mesh_device(parent_device, (0, 1))
-    options = {}
-    options["compiler_config"] = cc
-    options["devices"] = [device1, device2]
+    options.devices = [device1, device2]
 
     host_model = Basic()
     model = torch.compile(host_model, backend=backend, options=options)

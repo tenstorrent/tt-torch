@@ -204,9 +204,15 @@ def shlo_to_flatbuffer(
 
 
 def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
-    shlo, program, graph_constants = torch_to_shlo(gm, example_inputs, compiler_config)
+    shlo_modules, program, graph_constants, example_inputs = torch_to_shlo(
+        gm, example_inputs, compiler_config
+    )
     executor = Executor(
-        program, graph_constants, compiler_config, devices=devices, async_mode=async_mode
+        program,
+        graph_constants,
+        compiler_config,
+        devices=devices,
+        async_mode=async_mode,
     )
 
     compiler_config.record_property("achieved_compile_depth", "STABLEHLO")
