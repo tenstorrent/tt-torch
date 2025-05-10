@@ -288,3 +288,63 @@ tests/models/t5/test_t5.py::test_t5[op_by_op_torch-t5-large-eval]
 - It is helpful if you can run `python results/parse_op_by_op_results.py` (will generate `results/models_op_per_op.xlsx` for all models you've recently run in op-by-op-flow) and include the XLS file in your PR. This XLS file contains op-by-op-flow results and is also generated in Nightly regression for all work-in-progress models in `.github/workflows/run-op-by-op-flow-tests-nightly.yml`.
 
 - If your model is reported in `results/models_op_per_op.xlsx` as being able to compile all ops successfully (ie. all ops can compile to status `6: CONVERTED_TO_TTNN`, but some hit runtime `7: EXECUTE` failures) then it should also be added to "nightly e2e compile list" in `.github/workflows/run-e2e-compile-tests.yml` which stops before executing the model via `TT_TORCH_COMPILE_DEPTH=TTNN_IR pytest ...`
+
+## How to load test files into/from Large File System (LFS)
+
+We have set up access to a AWS S3 bucket to be able to load and access model related files for testing. We can load files into our S3 bucket and access them from the tester scripts. You will need access to S3 bucket portal to add files. **If you don't have an AWS account or access to the S3 bucket please reach out to the tt-torch community leader.** Then, depending on if the test is running on CI or locally we will be able to load the files from the CI/IRD LFS caches that automatically sync up with contents in S3 bucket.
+
+### Load files into S3 bucket
+
+Access S3 bucket portal, **if you don't have access to the S3 bucket please reach out to the tt-torch community leader**, and load file from local dir. Please add files following this structure:
+
+```
+test_files
+├── pytorch
+|   ├── huggingface
+|   |   ├── meta-llama
+│   |   |   ├── Llama-3.1-70B
+│   |   |   |   └── <hugginface files>
+│   |   |   ├── Llama-2-7b-hf
+│   |   |   |   └── <hugginface files>
+│   |   |   └── ...
+│   |   └── ...
+│   ├── yolov10
+│   |   └── yolov10.pt
+│   └── ...
+└── onnx
+    ├── ViT
+    |   └── ViT.onnx
+    └── ...
+```
+
+### Load files from S3 bucket
+
+Once files is loaded into S3 bucket we can access the file using a helper function:
+```
+@staticmethod
+def get_file(s3_path):
+```
+
+```
+from tests.utils import ModelTester, get_file, skip_full_eval_test
+
+...
+class ThisTester(ModelTester):
+    def _load_model(self):
+        file = get_file("test_files/pytorch/yoloyv10/yolov_10n.pt")
+
+...
+
+```
+
+The `s3_path` arg should be the full path of the file in the S3 bucket.
+
+#### Loading files locally
+
+Locally `get_file()` will pull files directly from an IRD LFS cache. The IRD LFS cache is set up to sync up with S3 bucket every 5-10 minutes. You will need to set the `IRD_LF_CACHE` environment variable to the appropriate address. **Contact tt-torch community leader for IRD LF cache address.**
+
+The file/s will be downloaded into a local cache so next time you want to access the same file we won't have to access the IRD cache. The default location for the local cache is `~/.cache/`. If you want to redirect files to a custom cache path set the `LOCAL_LF_CACHE` env variable to the desired path.
+
+#### Loading files from CI
+
+Once a file has been loaded into ther S3 bucket the CI's shared `DOCKER_CACHE_DIR` has been set up to sync up with the contents of the S3 bucket every hour. `get_file()` will fetch the file from the `DOCKER_CACHE_DIR`.
