@@ -39,3 +39,4 @@ seaborn
 gliner
 ultralytics
 efficientnet_pytorch
+surya-ocr
