@@ -83,6 +83,26 @@ class ThisTester(ModelTester):
             
             print("Finished loading of recognition model", flush=True)
 
+            # CRITICAL FIX #2: Add missing attributes to cross-attention modules
+            print("Checking for cross-attention modules that need patching...", flush=True)
+            cross_attn_patched = 0
+            
+            import types
+            for name, module in model.named_modules():
+                if module.__class__.__name__ == "SuryaADETRDecoderSdpaCrossAttention":
+                    # Add missing key_states and value_states attributes
+                    if not hasattr(module, "key_states"):
+                        print(f"Adding missing key_states attribute to {name}", flush=True)
+                        module.key_states = None
+                        cross_attn_patched += 1
+                    
+                    if not hasattr(module, "value_states"):
+                        print(f"Adding missing value_states attribute to {name}", flush=True)
+                        module.value_states = None
+                        cross_attn_patched += 1
+                        
+            print(f"Patched {cross_attn_patched} missing attributes in cross-attention modules", flush=True)
+
             # Add a simple input wrapper for convenience
             # This will handle adding the decoder_input_ids automatically
             def preprocess_inputs(inputs):
