@@ -4,15 +4,18 @@
 import pytest
 import torch
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from surya.settings import settings
 
 from surya.recognition import RecognitionPredictor
 from surya.detection import DetectionPredictor
 from surya.layout import LayoutPredictor
 from surya.table_rec import TableRecPredictor
 
+import random
+import os
 
 class ThisTester(ModelTester):
     def __init__(self, *args, model_type="recognition", **kwargs):
@@ -22,35 +25,74 @@ class ThisTester(ModelTester):
         # Call parent constructor
         super(ThisTester, self).__init__(*args, **kwargs)
 
+    # KCM FIXME - Figure out how to clean this up, only list what is actually used.
     def _extract_outputs(self, output_object):
         # Handle outputs based on model type
         if self.model_type == "recognition":
             # For encoder-decoder models, logits are the token predictions
             if hasattr(output_object, 'logits'):
-                return output_object.logits
+                return (output_object.logits,)  # Return as tuple for verification
             # Some models return a tuple with logits as first element
             elif isinstance(output_object, tuple) and len(output_object) > 0:
-                return output_object[0]
+                return output_object
             # Handle case where model returns something else
             else:
                 print(f"Unexpected output type: {type(output_object)}")
                 print(f"Output attributes: {dir(output_object) if hasattr(output_object, '__dict__') else None}")
+                return (output_object,)  # Return as tuple for verification
+        
+        elif self.model_type == "detection":
+            # Detection model returns a SemanticSegmenterOutput object
+            if hasattr(output_object, 'logits'):
+                print(f"Detection output is a SemanticSegmenterOutput object")
+                # Just return the logits for comparison - that's the most important part
+                return (output_object.logits,)
+            # Detection model returns dict with pred_logits and pred_boxes
+            elif isinstance(output_object, dict):
+                if 'pred_logits' in output_object and 'pred_boxes' in output_object:
+                    return (output_object['pred_logits'], output_object['pred_boxes'])
+                elif 'logits' in output_object:
+                    return (output_object['logits'],)
+                else:
+                    print(f"Detection output keys: {list(output_object.keys())}")
+                    # Just return the first value as a tuple
+                    return (next(iter(output_object.values())),)
+            elif isinstance(output_object, tuple):
                 return output_object
+            
+            # Default fallback - wrap in tuple
+            return (output_object,)
+            
+        elif self.model_type in ["layout", "table_recognition"]:
+            # Similar output structure as detection
+            if isinstance(output_object, dict):
+                # Extract the most important outputs as tuples
+                outputs = tuple(output_object.values())
+                return outputs
+            elif isinstance(output_object, tuple):
+                return output_object
+                
+            # Default fallback - wrap in tuple
+            return (output_object,)
+        
+        else:
+            # For any other models, ensure we return a tuple
+            if isinstance(output_object, tuple):
+                return output_object
+            else:
+                return (output_object,)
 
     def _load_model(self):
         # Create appropriate model based on model_type
         if self.model_type == "recognition":
             # FLush prints:
             print("Loading recognition model...", flush=True)
-            import os
-            # Don't enable compilation yet - let's get basic inference working first
+
+            # KCM - As far as I can tell, this didn't change anything, but model said env-vars needed to enable compile
             os.environ["COMPILE_RECOGNITION"] = "true"  
 
             # Create predictor directly without custom parameters
-            from surya.recognition import RecognitionPredictor
             predictor = RecognitionPredictor()
-            
-            # Keep the model in its original dtype for now
             model = predictor.model
 
             print("Loaded recognition model", flush=True)
@@ -124,7 +166,7 @@ class ThisTester(ModelTester):
             model.preprocess_inputs = preprocess_inputs
             
             return model
-        elif self.model_type == "detection":        # This works!
+        elif self.model_type == "detection":
             model = DetectionPredictor()
             model.model.eval()
             return model.model
@@ -143,53 +185,25 @@ class ThisTester(ModelTester):
         """Load appropriate inputs based on model type"""
         import torch
         import numpy as np
-        
-        if self.model_type == "recognition":
-            # For recognition model - create a test image
-            from PIL import Image, ImageDraw
-            import random
-            import os
-            from surya.settings import settings
-            
-            # Use the recommended image size from settings
-            if hasattr(settings, 'RECOGNITION_IMAGE_SIZE'):
-                rec_size = settings.RECOGNITION_IMAGE_SIZE
-                height = rec_size.get('height', 256)  # Default height
-                width = rec_size.get('width', 896)    # Default width 
-                print(f"Using recommended image size: {width}x{height}")
-            else:
-                # Fallback to default values
-                height = 256
-                width = 896
-                print(f"Using default image size: {width}x{height}")
-            
-            # Create a test image with text-like content
-            img = Image.new('RGB', (width, height), color='white')
-            draw = ImageDraw.Draw(img)
-            
-            # Draw some black rectangles to simulate text (left-to-right)
-            for i in range(5):
-                x1 = 20 + i * (width // 6)
-                y1 = random.randint(height // 3, 2 * height // 3)
-                x2 = x1 + random.randint(50, width // 8)
-                y2 = y1 + random.randint(20, 40)
-                draw.rectangle([(x1, y1), (x2, y2)], fill='black')
-            
-            # Save test image for inspection
-            test_img_dir = os.path.dirname(os.path.abspath(__file__))
-            test_img_path = os.path.join(test_img_dir, "test_recognition_image.png")
-            img.save(test_img_path)
-            print(f"Saved test recognition image to: {test_img_path}")
-            
-            # Convert PIL Image to tensor with correct normalization
-            img_tensor = torch.from_numpy(np.array(img)).permute(2, 0, 1).float() / 255.0
-            
-            # Create input dictionary 
-            inputs = {
-                'pixel_values': img_tensor.unsqueeze(0)  # Add batch dimension
-            }
-            
-            print(f"Input shape: {inputs['pixel_values'].shape}")
+
+        if self.model_type == "detection":
+            # For detection model - standard dimensions (not in settings)
+            batch_size = 1
+            channels = 3
+            height = 512
+            width = 512
+            return torch.rand(batch_size, channels, height, width)
+
+        elif self.model_type == "recognition":
+            # For recognition model - use dimensions from settings
+            batch_size = 1
+            channels = 3
+            height = settings.RECOGNITION_IMAGE_SIZE['height']  # 256
+            width = settings.RECOGNITION_IMAGE_SIZE['width']    # 896
+
+            # Create a random tensor directly and input dict
+            pixel_values = torch.rand(batch_size, channels, height, width)
+            inputs = {'pixel_values': pixel_values}
             
             # Apply the model's preprocessor if available
             if hasattr(self.framework_model, 'preprocess_inputs'):
@@ -197,33 +211,12 @@ class ThisTester(ModelTester):
                 
             return inputs
 
-        elif self.model_type == "detection":
-            # For detection model - expects full document image
-            # Model takes (batch_size, channels, height, width)
+        elif self.model_type == "layout" or self.model_type == "table_recognition":
+            # For layout model - use dimensions from settings
             batch_size = 1
             channels = 3
-            height = 512
-            width = 512
-
-            return torch.rand(batch_size, channels, height, width)
-
-        elif self.model_type == "layout":
-            # For layout model - expects full document image
-            # Similar to detection
-            batch_size = 1
-            channels = 3
-            height = 512
-            width = 512
-
-            return torch.rand(batch_size, channels, height, width)
-
-        elif self.model_type == "table_recognition":
-            # For table recognition model - expects cropped table image
-            batch_size = 1
-            channels = 3
-            height = 384
-            width = 384
-
+            height = settings.LAYOUT_IMAGE_SIZE['height']  # 768
+            width = settings.LAYOUT_IMAGE_SIZE['width']    # 768
             return torch.rand(batch_size, channels, height, width)
 
         else:
@@ -231,9 +224,14 @@ class ThisTester(ModelTester):
 
 
 
+# Detection :   Passes op-by-op flow and full-eval (4 outputs)
+# Recognition : Passes op-by-op flow, full eval hits error : ValueError: Unsupported input type <class 'torch.SymInt'>
+# Layout :      op-by-op error (NoneType) on assert decoder_input_boxes[0][0][0] == self.config.decoder_start_token_id
+# Table :       op-by-op error: boxes = boxes.to(torch.long).clamp(0, self.config.vocab_size)
+
 @pytest.mark.parametrize(
     "model_type",
-    ["recognition", "detection", "layout", "table_recognition"],
+    ["detection", "recognition", "layout", "table_recognition"],
 )
 @pytest.mark.parametrize(
     "mode",
@@ -255,17 +253,13 @@ def test_surya(record_property, model_type, mode, op_by_op):
     # Set other compiler options for better compatibility
     cc.dynamic_shape = False
     
-    # Import torch._dynamo and set config to suppress errors
-    import torch._dynamo
-    torch._dynamo.config.suppress_errors = True
-    
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     # Higher tolerance for surya models
-    required_atol = 0.1  # Increase tolerance slightly
+    required_atol = 0.05
 
     tester = ThisTester(
         model_name,
@@ -275,10 +269,6 @@ def test_surya(record_property, model_type, mode, op_by_op):
         compiler_config=cc,
         record_property_handle=record_property,
         model_group="red",
-        # ModelTester doesn't accept assert_correctness
-        # Setting standard params with higher tolerance for this complex model
-        assert_pcc=False,   # Don't assert on Pearson correlation
-        assert_atol=False   # Use the required_atol value instead of exact check
     )
 
     results = tester.test_model()
