@@ -84,7 +84,22 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     # print("", file=sys.stderr)
     decompositions = torch.export.default_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
-
+    
+    
+    print("[James] Exported Program on clean gm", file=sys.stderr)
+    print(torch.export.export(gm, tuple(example_inputs), strict=False), file=sys.stderr)    
+    
+    gm_clean = (
+        torch.export.export_for_training(gm, tuple(example_inputs), strict=False)
+        .module()
+    )
+    print(f"[James] GM Graph from a clean export {type(gm.graph)}", file=sys.stderr)
+    gm_clean.graph.print_tabular()
+    print("[James] Entire graph module", file=sys.stderr)
+    print(gm_clean, file=sys.stderr)    
+    
+    
+    
     # we use the export API to run the decompositions, as this maintains the
     # soruce locations in stack_trace
     gm = (
@@ -92,6 +107,9 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         .run_decompositions(decompositions)
         .module()
     )
+    
+    print(f"GM Graph after first export {type(gm.graph)}", file=sys.stderr)
+    gm.graph.print_tabular()
 
     if compiler_config.enable_consteval:
         gm = constant_fold(gm)
@@ -133,5 +151,7 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     #             new_node.meta = node.meta
     #             node.replace_all_uses_with(new_node)
     #         program.graph_module.graph.erase_node(node)
+
+    print(f"GM Graph after second export {type(gm.graph)}", file=sys.stderr)
 
     return program, constant_inputs

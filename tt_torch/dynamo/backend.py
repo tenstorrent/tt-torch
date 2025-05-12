@@ -128,6 +128,9 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     print(program, file=sys.stderr)
     
     module = import_program(program)
+    print("Torchfx module before verification", file=sys.stderr)
+    print(module, file=sys.stderr)    
+    
     verify_ir(module)
 
     dump_module(module=module, name="Torch FX module", compiler_config=compiler_config)
