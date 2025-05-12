@@ -229,7 +229,7 @@ jobs:
             echo "    with open(sys.argv[1], \"r\") as fd:" >>$rt
             echo "        test_list = fd.readlines()" >>$rt
             echo "    sys.exit(pytest.main(test_list))" >>$rt
-            TT_TORCH_COMPILE_DEPTH=TTNN_IR python $rt tests-${{matrix.build.runs-on}}.log 2>&1 | tee pytest.log
+            python $rt tests-${{matrix.build.runs-on}}.log 2>&1 | tee pytest.log
 
         - name: Upload Test Log
           uses: actions/upload-artifact@v4
