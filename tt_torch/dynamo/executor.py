@@ -61,7 +61,7 @@ def compile_process(receiver, sender, ttir_event, ttnn_event, json_event):
     obj = receiver.get()
     faulthandler.disable()
     asm = obj["asm"]
-    ttir = tt_mlir.compile_stable_hlo_to_ttir(asm)
+    ttir = tt_mlir.compile_stable_hlo_to_ttir(asm, 0, 0)
     sender.put({"ttir": ttir})
     ttir_event.wait()
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
@@ -214,7 +214,7 @@ class Executor:
         if self.device is not None:
             return self.device
         # Return a default parent mesh
-        device = tt_mlir.open_mesh_device([1, 1], tt_mlir.MeshDeviceOptions())
+        device = tt_mlir.open_mesh_device([1, 8], tt_mlir.MeshDeviceOptions())
         return device
 
     def _cache_constants_if_needed(self, preprocessed_constants):

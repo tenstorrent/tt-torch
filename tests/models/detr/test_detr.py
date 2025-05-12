@@ -34,7 +34,7 @@ class ThisTester(ModelTester):
             ]
         )
         input_tensor = preprocess(input_image)
-        input_batch = input_tensor.unsqueeze(0).to(torch.bfloat16)
+        input_batch = input_tensor.unsqueeze(0).repeat(32, 1, 1, 1).to(torch.bfloat16)
         return input_batch
 
     def _extract_outputs(self, output_object):

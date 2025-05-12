@@ -62,21 +62,22 @@ class ThisTester(ModelTester):
         return model
 
     def _load_inputs(self):
-        # Define transform to normalize data
-        transform = transforms.Compose(
-            [
-                transforms.Resize((1, 784)),
-                transforms.ToTensor(),
-                transforms.Normalize((0.1307,), (0.3081,)),
-            ]
-        )
+        # Define transform: convert to tensor, normalize, flatten to (1, 1, 784)
+        transform = transforms.Compose([
+            transforms.ToTensor(),  # (1, 28, 28)
+            transforms.Normalize((0.1307,), (0.3081,)),
+            transforms.Lambda(lambda x: x.view(1, 1, -1))  # Flatten to (1, 1, 784)
+        ])
 
-        # Load sample from MNIST dataset
-        dataset = load_dataset("mnist")
-        sample = dataset["train"][0]["image"]
-        sample_tensor = [transform(sample).squeeze(0)]
-        batch_tensor = torch.cat(sample_tensor, dim=0)
+        # Load dataset and take first 32 samples
+        dataset = load_dataset("mnist")["train"]
+        samples = [dataset[i]["image"] for i in range(32)]
+        sample_tensors = [transform(img) for img in samples]  # Each is (1, 1, 784)
+
+        # Stack into 4D tensor: (32, 1, 1, 784)
+        batch_tensor = torch.stack(sample_tensors, dim=0)
         batch_tensor = batch_tensor.to(torch.bfloat16)
+
         return batch_tensor
 
 
@@ -97,6 +98,7 @@ def test_autoencoder_linear(record_property, mode, op_by_op):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    cc.dump_info = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:

@@ -23,9 +23,21 @@ class ThisTester(ModelTester):
         return m
 
     def _load_inputs(self):
-        # Set up sample input
-        self.test_input = "This is a sample text from "
-        inputs = self.tokenizer(self.test_input, return_tensors="pt")
+        # Define the prompt
+        self.test_input = "The capital of France is"
+
+        # Create a batch of 32 identical prompts
+        batch_texts = [self.test_input] * 32
+
+        # Tokenize the batch
+        inputs = self.tokenizer(
+            batch_texts,
+            return_tensors="pt",
+            max_length=32,
+            padding="max_length",
+            truncation=True,
+        )
+
         return inputs
 
 
@@ -44,6 +56,7 @@ def test_gpt2(record_property, mode, op_by_op):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    cc.dump_info = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:

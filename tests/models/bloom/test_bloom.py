@@ -23,14 +23,21 @@ class ThisTester(ModelTester):
     def _load_inputs(self):
         # Set up sample input
         self.test_input = "This is a sample text from "
-        inputs = self.tokenizer.encode_plus(
-            self.test_input,
+        batch_texts = [self.test_input] * 32  # Batch of 32 identical inputs
+
+        # Tokenize the batch
+        inputs = self.tokenizer(
+            batch_texts,
             return_tensors="pt",
             max_length=32,
             padding="max_length",
-            add_special_tokens=True,
             truncation=True,
         )
+
+        # Reshape each tensor in inputs to rank-4: (32, 1, 1, seq_len)
+        for key in inputs:
+            inputs[key] = inputs[key].view(32, 1, 1, -1)
+
         return inputs
 
 

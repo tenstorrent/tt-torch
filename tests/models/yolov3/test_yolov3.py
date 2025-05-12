@@ -55,7 +55,7 @@ class ThisTester(ModelTester):
         transform = transforms.Compose(
             [transforms.Resize((512, 512)), transforms.ToTensor()]
         )
-        img_tensor = [transform(image).unsqueeze(0)]
+        img_tensor = [transform(image).unsqueeze(0)] * 32
         batch_tensor = torch.cat(img_tensor, dim=0).to(torch.bfloat16)
         return batch_tensor
 
@@ -75,6 +75,7 @@ def test_yolov3(record_property, mode, op_by_op):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    cc.dump_info = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:

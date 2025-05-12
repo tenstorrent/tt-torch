@@ -23,12 +23,19 @@ class ThisTester(ModelTester):
         return m
 
     def _load_inputs(self):
-        # Set up sample input
-        self.context = 'Johann Joachim Winckelmann was a German art historian and archaeologist. He was a pioneering Hellenist who first articulated the difference between Greek, Greco-Roman and Roman art. "The prophet and founding hero of modern archaeology", Winckelmann was one of the founders of scientific archaeology and first applied the categories of style on a large, systematic basis to the history of art. '
-        self.question = "What discipline did Winkelmann create?"
-        inputs = self.tokenizer.encode_plus(
-            self.question,
-            self.context,
+        # Set up batch input
+        batch_size = 32
+        context = 'Johann Joachim Winckelmann was a German art historian and archaeologist. He was a pioneering Hellenist who first articulated the difference between Greek, Greco-Roman and Roman art. "The prophet and founding hero of modern archaeology", Winckelmann was one of the founders of scientific archaeology and first applied the categories of style on a large, systematic basis to the history of art.'
+        question = "What discipline did Winkelmann create?"
+
+        # Repeat the context and question for batch processing
+        contexts = [context] * batch_size
+        questions = [question] * batch_size
+
+        # Tokenize as a batch
+        inputs = self.tokenizer(
+            questions,
+            contexts,
             add_special_tokens=True,
             return_tensors="pt",
             max_length=256,
@@ -53,6 +60,7 @@ def test_bert(record_property, mode, op_by_op):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    cc.dump_info = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:

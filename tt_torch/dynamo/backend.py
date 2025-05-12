@@ -192,7 +192,7 @@ def shlo_to_flatbuffer(
         compiler_config.set_stablehlo_mlir_module(module.operation.get_asm())
 
     ttir = tt_mlir.compile_stable_hlo_to_ttir(
-        module.operation.get_asm(enable_debug_info=True)
+        module.operation.get_asm(enable_debug_info=True), len_activations, len_graph_constants
     )
     dump_module(module=ttir, name="TTIR", compiler_config=compiler_config)
 

@@ -50,7 +50,7 @@ class ThisTester(ModelTester):
         test_dataset = datasets.MNIST(
             root="./data", train=False, transform=transform, download=True
         )
-        dataloader = DataLoader(test_dataset, batch_size=1)
+        dataloader = DataLoader(test_dataset, batch_size=32)
         test_input, _ = next(iter(dataloader))
         test_input = test_input.to(torch.bfloat16)
         return test_input
@@ -73,6 +73,7 @@ def test_mnist_train(record_property, mode, op_by_op):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    cc.dump_info = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:

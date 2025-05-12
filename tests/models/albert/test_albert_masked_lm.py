@@ -18,10 +18,45 @@ class ThisTester(ModelTester):
 
     def _load_inputs(self):
         self.tokenizer = AutoTokenizer.from_pretrained(
-            self.model_name, torch_dtype=torch.bfloat16
+        self.model_name, torch_dtype=torch.bfloat16
         )
-        self.text = "The capital of [MASK] is Paris."
-        self.inputs = self.tokenizer(self.text, return_tensors="pt")
+
+        questions = [
+            "The capital of France is [MASK].",
+            "[MASK] is the largest country in the world by area.",
+            "The Great Wall of [MASK] is a famous landmark.",
+            "Mount [MASK] is the highest mountain in the world.",
+            "Water freezes at 0 degrees [MASK].",
+            "The Earth orbits around the [MASK].",
+            "[MASK] is the process by which plants make food from sunlight.",
+            "The chemical symbol for oxygen is [MASK].",
+            "[MASK] was the first President of the United States.",
+            "The [MASK] Empire was known for its gladiators and coliseums.",
+            "The Declaration of Independence was signed in [MASK].",
+            "[MASK] was the leader of Nazi Germany during World War II.",
+            "[MASK] is the founder of Microsoft.",
+            "The [MASK] is a device used to input text into a computer.",
+            "A smartphone typically has a [MASK] screen.",
+            "The [MASK] is used to browse websites.",
+            "A triangle has [MASK] sides.",
+            "People usually wear [MASK] on their feet.",
+            "You eat soup with a [MASK].",
+            "A dog is a type of [MASK].",
+            "Pizza is typically topped with cheese and [MASK].",
+            "You use a [MASK] to drink a milkshake.",
+            "[MASK] is a popular fruit that's yellow and curved.",
+            "A sandwich usually contains bread and [MASK].",
+            "[MASK] is known for playing Iron Man in the Marvel movies.",
+            "The wizarding school in Harry Potter is called [MASK].",
+            "[MASK] is the superhero alter ego of Bruce Wayne.",
+            "The television show about a group of friends in New York is called [MASK].",
+            "If it’s raining, you should bring an [MASK].",
+            "You sleep on a [MASK] at night.",
+            "You brush your teeth with a [MASK].",
+            "The opposite of hot is [MASK]."
+        ]
+
+        self.inputs = self.tokenizer(questions, return_tensors="pt", padding=True, truncation=True)
         return self.inputs
 
     def set_inputs_train(self, inputs):
@@ -58,6 +93,7 @@ def test_albert_masked_lm(record_property, model_name, mode, op_by_op):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    cc.dump_info = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:

@@ -38,12 +38,17 @@ class ThisTester(ModelTester):
         return model
 
     def _load_inputs(self):
-        # Generate random token ids within vocabulary range
-        batch_size = 4
+        batch_size = 32
         seq_length = 16
+
+        # Generate random token IDs: shape (32, 16)
         input_ids = torch.randint(
             0, self.model_config["vocab_size"], (batch_size, seq_length)
         )
+
+        # Reshape to rank-4: (32, 1, 1, 16)
+        input_ids = input_ids.view(batch_size, 1, 1, seq_length)
+
         return input_ids
 
 

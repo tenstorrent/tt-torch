@@ -28,7 +28,7 @@ class ThisTester(ModelTester):
         url = "http://images.cocodataset.org/val2017/000000039769.jpg"
         image = Image.open(requests.get(url, stream=True).raw)
         img_t = preprocess(image)
-        batch_t = torch.unsqueeze(img_t, 0)
+        batch_t = torch.stack([img_t] * 128)
         batch_t = batch_t.to(torch.bfloat16)
         return batch_t
 
@@ -50,6 +50,7 @@ def test_resnet(record_property, mode, op_by_op):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    cc.dump_info = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:

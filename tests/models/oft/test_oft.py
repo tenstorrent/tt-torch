@@ -23,7 +23,7 @@ class ThisTester(ModelTester):
 
     def _load_inputs(self):
         # Create dummy inputs for the model
-        batch_size = 1
+        batch_size = 32
         dummy_image = torch.randn(batch_size, 3, 224, 224)
         dummy_calib = torch.randn(batch_size, 3, 4)
         grid_size = (80.0, 80.0)  # width, depth
@@ -53,19 +53,20 @@ def test_oft(record_property, mode, op_by_op):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    cc.dump_info = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    skip_full_eval_test(
-        record_property,
-        cc,
-        model_name,
-        bringup_status="FAILED_RUNTIME",
-        reason="Out of Memory: Not enough space to allocate 2902982656 B DRAM buffer across 12 banks - https://github.com/tenstorrent/tt-torch/issues/727",
-        model_group=model_group,
-    )
+    #skip_full_eval_test(
+    #    record_property,
+    #    cc,
+    #    model_name,
+    #    bringup_status="FAILED_RUNTIME",
+    #    reason="Out of Memory: Not enough space to allocate 2902982656 B DRAM buffer across 12 banks - https://github.com/tenstorrent/tt-torch/issues/727",
+    #    model_group=model_group,
+    #)
 
     tester = ThisTester(
         model_name,

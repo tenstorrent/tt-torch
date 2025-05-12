@@ -143,8 +143,8 @@ static torch::Tensor create_torch_tensor(const tt::runtime::Tensor &tensor) {
   return torch_tensor;
 }
 
-std::string compile_stable_hlo_to_ttir(std::string_view code) {
-  auto ret = tt::torch::compileStableHLOToTTIR(code);
+std::string compile_stable_hlo_to_ttir(std::string_view code, size_t len_activations, size_t len_graph_constants) {
+  auto ret = tt::torch::compileStableHLOToTTIR(code, len_activations, len_graph_constants);
   return ret;
 }
 

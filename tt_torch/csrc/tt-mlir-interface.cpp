@@ -44,6 +44,7 @@
 #include "ttmlir/Dialect/TTNN/Transforms/Passes.h"
 #include "ttmlir/RegisterAll.h"
 #include "ttmlir/Target/TTNN/TTNNToFlatbuffer.h"
+#include "ttmlir/Dialect/StableHLO/Pipelines/StableHLOPipelines.h"
 
 #include "tt/runtime/runtime.h"
 
@@ -53,7 +54,7 @@
 
 namespace tt::torch {
 
-std::string compileStableHLOToTTIR(std::string_view code) {
+std::string compileStableHLOToTTIR(std::string_view code, size_t len_activations, size_t len_graph_constants) {
   mlir::MLIRContext context;
   mlir::DialectRegistry registry;
 
@@ -79,15 +80,46 @@ std::string compileStableHLOToTTIR(std::string_view code) {
   mlir::tt::ttir::registerPasses();
   mlir::tt::ttnn::registerPasses();
 
+  mlir::PassManager automatic_sharding_pipeline_pm(mlir_module.get()->getName(),
+                            mlir::PassManager::Nesting::Implicit);
+  const char *enable_printing = std::getenv("TT_TORCH_IR_LOG_LEVEL");
+  if (enable_printing && std::string(enable_printing) == "DEBUG") {
+    automatic_sharding_pipeline_pm.getContext()->disableMultithreading();
+    automatic_sharding_pipeline_pm.enableIRPrinting();
+  }
+
+  mlir::tt::stablehlo::AutomaticShardingPipelineOptions automatic_sharding_pipeline_options;
+  automatic_sharding_pipeline_options.meshShape = {1, 8};
+
+  if (len_activations > 0 || len_graph_constants > 0) {
+    llvm::SmallVector<mlir::tt::ArgumentType> argTypes;
+    for (size_t i = 0; i < len_graph_constants; ++i) {
+      argTypes.push_back(mlir::tt::ArgumentType::Constant);
+    }
+    for (size_t i = 0; i < len_activations; ++i) {
+      argTypes.push_back(mlir::tt::ArgumentType::Input);
+    }
+    llvm::StringMap<llvm::SmallVector<mlir::tt::ArgumentType>> argTypesMap;
+    argTypesMap["main"] = argTypes;
+    automatic_sharding_pipeline_options.argumentTypeMap = argTypesMap;
+  }
+
+  mlir::tt::stablehlo::createAutomaticShardingPipeline(automatic_sharding_pipeline_pm, automatic_sharding_pipeline_options);
+  // Run the pass manager.
+  if (mlir::failed(automatic_sharding_pipeline_pm.run(mlir_module.get()))) {
+    throw std::runtime_error(
+        "Failed to run automatic sharding pipeline.");
+  }
+
   // Implicit nesting required to call the stablehlo.composite --> func.call
   // conversion.
   mlir::PassManager shlo_pm(mlir_module.get()->getName(),
                             mlir::PassManager::Nesting::Implicit);
-  const char *enable_printing = std::getenv("TT_TORCH_IR_LOG_LEVEL");
   if (enable_printing && std::string(enable_printing) == "DEBUG") {
     shlo_pm.getContext()->disableMultithreading();
     shlo_pm.enableIRPrinting();
   }
+
   mlir::tt::ttir::StableHLOToTTIRPipelineOptions shlo_options;
   shlo_options.arithDialectConversionsEnabled = true;
   shlo_options.legalizeCompositeToCallEnabled = true;
@@ -128,17 +160,9 @@ void create_system_desc(std::optional<tt::runtime::Device> device) {
         "Please set a path or call `source env/activate`.");
   }
 
-  if (!device.has_value() && std::filesystem::exists(system_desc_path) &&
-      is_system_desc_fresh(system_desc_path)) {
-    return;
-  }
-
   std::remove(system_desc_path);
 
-  bool creating_temp_device = !device.has_value();
-  if (creating_temp_device) {
-    device = tt::runtime::openMeshDevice({1, 1});
-  }
+  device = tt::runtime::openMeshDevice({1, 8});
   tt::runtime::getCurrentSystemDesc(std::nullopt, device)
       .first.store(system_desc_path);
 
@@ -146,9 +170,7 @@ void create_system_desc(std::optional<tt::runtime::Device> device) {
   version_file << TT_MLIR_GIT_COMMIT << std::endl;
   version_file.close();
 
-  if (creating_temp_device) {
-    tt::runtime::closeMeshDevice(*device);
-  }
+  tt::runtime::closeMeshDevice(*device);
 }
 
 std::tuple<std::shared_ptr<void> *, std::string>
@@ -210,6 +232,8 @@ compileTTIRToTTNN(std::string_view code,
     options.argumentTypeMap = argTypesMap;
   }
 
+  std::cout << "taps0" << std::endl;
+
   if (std::filesystem::path system_desc_path = std::getenv("SYSTEM_DESC_PATH");
       !system_desc_path.empty()) {
     if (device.has_value()) {
@@ -230,7 +254,13 @@ compileTTIRToTTNN(std::string_view code,
     }
   }
 
+  std::cout << "taps1" << std::endl;
+
+  options.meshShape = {1, 8};
+
   mlir::tt::ttnn::createTTIRToTTNNBackendPipeline(pm, options);
+
+  std::cout << "taps2" << std::endl;
 
   // Run the pass manager.
   if (mlir::failed(pm.run(mlir_module.get()))) {
@@ -238,8 +268,12 @@ compileTTIRToTTNN(std::string_view code,
         "Failed to run TTIR TO TTNN compiler pass pipeline.");
   }
 
+  std::cout << "taps3" << std::endl;
+
   std::shared_ptr<void> *binary = new std::shared_ptr<void>();
   *binary = mlir::tt::ttnn::ttnnToFlatbuffer(mlir_module.get());
+
+  std::cout << "taps4" << std::endl;
 
   if (binary == nullptr) {
     throw std::runtime_error("Failed to generate flatbuffer binary.");
