@@ -47,20 +47,6 @@ jobs:
           name: ${{ inputs.spreadsheet_name }}
           path: ${{ steps.strings.outputs.work-dir }}/results
 
-      - name: Use build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: install-artifacts
-          path: ${{ steps.strings.outputs.install-dir }}
-
-      - name: 'Untar install directory'
-        shell: bash
-        working-directory: ${{ steps.strings.outputs.install-dir }}
-        run: |
-          tar xvf artifact.tar
-          mkdir -p ${{ steps.strings.outputs.dist-dir }}
-          mv wheels/* ${{ steps.strings.outputs.dist-dir }}
-
       - name: Generate TTNN MD Files
         shell: bash
         run: |
