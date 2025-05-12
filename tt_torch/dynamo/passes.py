@@ -77,6 +77,24 @@ def constant_fold(gm):
     gm.graph.eliminate_dead_code()
     return gm
 
+def outplace_index_copy_(gm):
+    # Rewrite the graph to replace in-place torch.ops.aten.copy_ operations with out-of-place equivalents
+    output_cache = []
+    for node in gm.graph.nodes:
+        print(node.target, file=sys.stderr)
+        if node.op == "call_function" and node.target == torch.ops.aten.copy_.default:
+            source_node = node.args[1]
+            output_cache.append(source_node)
+            print(f"[DEBUG] Erased inplace copy_ node {node.name}", file=sys.stderr)
+            gm.graph.erase_node(node)
+            
+    output_node = [node for node in gm.graph.nodes if node.op=='output'][0]
+    current_output = output_node.args[0] # one node reference
+    
+    new_args = current_output + tuple(output_cache)
+    new_args = (new_args,)
+    output_node.args = new_args
+    return gm
 
 def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     print(f"GM Graph at start of pass pipeline{type(gm.graph)}", file=sys.stderr)
@@ -85,20 +103,7 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     decompositions = torch.export.default_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
     
-    
-    print("[James] Exported Program on clean gm", file=sys.stderr)
-    print(torch.export.export(gm, tuple(example_inputs), strict=False), file=sys.stderr)    
-    
-    gm_clean = (
-        torch.export.export_for_training(gm, tuple(example_inputs), strict=False)
-        .module()
-    )
-    print(f"[James] GM Graph from a clean export {type(gm.graph)}", file=sys.stderr)
-    gm_clean.graph.print_tabular()
-    print("[James] Entire graph module", file=sys.stderr)
-    print(gm_clean, file=sys.stderr)    
-    
-    
+    # gm = outplace_index_copy_(gm)
     
     # we use the export API to run the decompositions, as this maintains the
     # soruce locations in stack_trace
@@ -117,6 +122,7 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         raise Exception("consteval_parameters is enabled but enable_consteval is not")
 
     gm = bypass_redundant_getitem(gm)
+    gm = outplace_index_copy_(gm)
 
     # Proceed with exporting the graph
     program = torch.export.export(gm, tuple(example_inputs), strict=False)
@@ -139,19 +145,26 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     # Need to run shape_prop again to populate tensor_meta
     run_shape_prop(program.graph_module, constant_inputs + example_inputs)
 
-    # Rewrite the graph to replace in-place torch.ops.aten.copy_ operations with out-of-place equivalents
+    # # Rewrite the graph to replace in-place torch.ops.aten.copy_ operations with out-of-place equivalents
+    # output_cache = []
+    #     # Ideally also check that the args[1] comes from an index_put which comes from a getattr buffers
     # for node in program.graph_module.graph.nodes:
     #     if node.op == "call_function" and node.target == torch.ops.aten.copy_.default:
-    #         # Replace with torch.ops.aten.copy.default
-    #         with program.graph_module.graph.inserting_after(node):
-    #             new_node = program.graph_module.graph.call_function(
-    #                 torch.ops.aten.copy.default, args=node.args, kwargs=node.kwargs
-    #             )
-    #             # Ensure the new node has the same output type as the original node
-    #             new_node.meta = node.meta
-    #             node.replace_all_uses_with(new_node)
+    #         source_node = node.args[1]
+    #         output_cache.append(source_node)
     #         program.graph_module.graph.erase_node(node)
-
+            
+    # output_node = [node for node in program.graph_module.graph.nodes if node.op=='output'][0]
+    # current_output = output_node.args[0] # one node reference
+    
+    # new_args = current_output + tuple(output_cache)
+    # new_args = (new_args,)
+    
+    # output_node.args = new_args
+    # print(f"[JAMES] Trying to add {new_args} to graph output", file=sys.stderr)
+    # program.graph_module.recompile() # is this necessary?
+    
     print(f"GM Graph after second export {type(gm.graph)}", file=sys.stderr)
+    program.graph_module.graph.print_tabular()
 
     return program, constant_inputs
