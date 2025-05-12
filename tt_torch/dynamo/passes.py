@@ -136,6 +136,7 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     # print("", file=sys.stderr)
     decompositions = torch.export.default_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
+<<<<<<< HEAD
 
     # The last stack contains the most information, only relevent fields will be used
     # Contains string like: "L['self']._modules['model']._modules['layers']._modules['30'].mlp.up_proj"
@@ -470,6 +471,24 @@ def run_pass_for_graph(
     idx,
 ):
     gm_device = torch.fx.GraphModule(gm, graph, f"_device_{idx}")
+=======
+    
+    
+    print("[James] Exported Program on clean gm", file=sys.stderr)
+    print(torch.export.export(gm, tuple(example_inputs), strict=False), file=sys.stderr)    
+    
+    gm_clean = (
+        torch.export.export_for_training(gm, tuple(example_inputs), strict=False)
+        .module()
+    )
+    print(f"[James] GM Graph from a clean export {type(gm.graph)}", file=sys.stderr)
+    gm_clean.graph.print_tabular()
+    print("[James] Entire graph module", file=sys.stderr)
+    print(gm_clean, file=sys.stderr)    
+    
+    
+    
+>>>>>>> ec29f52 (Add more verbose logging to stderr, enable consteval to avoid placeholder-ing of caches)
     # we use the export API to run the decompositions, as this maintains the
     # source locations in stack_trace
     gm_device = (
@@ -477,10 +496,16 @@ def run_pass_for_graph(
         .run_decompositions(decompositions)
         .module()
     )
+<<<<<<< HEAD
     gm_device = bypass_dtype_promotion(gm_device, compiler_config)
     # shape prop also propagates dtypes, need to run to figure out which casts are redundant
     run_shape_prop(gm_device, example_inputs)
     gm_device = bypass_redundant_cast(gm_device)
+=======
+    
+    print(f"GM Graph after first export {type(gm.graph)}", file=sys.stderr)
+    gm.graph.print_tabular()
+>>>>>>> ec29f52 (Add more verbose logging to stderr, enable consteval to avoid placeholder-ing of caches)
 
     if compiler_config.enable_consteval:
         gm_device = constant_fold(gm_device)
@@ -532,7 +557,12 @@ def run_pass_for_graph(
     #             node.replace_all_uses_with(new_node)
     #         program.graph_module.graph.erase_node(node)
 
+<<<<<<< HEAD
 >>>>>>> 962c68a (workaround to generate SHLO model from LlamaAttention with StaticCache())
+=======
+    print(f"GM Graph after second export {type(gm.graph)}", file=sys.stderr)
+
+>>>>>>> ec29f52 (Add more verbose logging to stderr, enable consteval to avoid placeholder-ing of caches)
     return program, constant_inputs
 
 

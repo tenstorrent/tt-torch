@@ -172,6 +172,9 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     print(program, file=sys.stderr)
     
     module = import_program(program)
+    print("Torchfx module before verification", file=sys.stderr)
+    print(module, file=sys.stderr)    
+    
     verify_ir(module)
 >>>>>>> dfaeb07 (Add logging and force inplace on graphmodule post export)
 
