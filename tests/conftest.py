@@ -38,21 +38,6 @@ def manage_dependencies(request):
     )
 
 
-@pytest.fixture(scope="session", autouse=True)
-def create_system_descriptor(request):
-    try:
-        tt_mlir.create_system_desc()
-    except Exception as e:
-        print(f"Failed to create system descriptor: {e}")
-
-    yield
-
-    try:
-        os.remove(os.getenv("SYSTEM_DESC_PATH"))
-    except OSError:
-        pass
-
-
 def pytest_addoption(parser):
     parser.addoption(
         "--op_by_op_stablehlo",
