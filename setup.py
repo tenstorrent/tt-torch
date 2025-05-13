@@ -39,7 +39,8 @@ class install_metal_libs(install_lib):
                 "third_party",
                 "tt-metal",
                 "src",
-                "tt-metal-build",
+                "tt-metal",
+                "build",
                 "tools",
             )
         )
