@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
+import argparse
 import torch
 import requests
 import torchvision.models as models
@@ -82,4 +83,28 @@ def empty_record_property(a, b):
 
 # Run pytorch implementation
 if __name__ == "__main__":
-    test_resnet(empty_record_property)
+    parser = argparse.ArgumentParser(description="Run resnet50")
+
+    parser.add_argument(
+        "--mode",
+        required=True,
+        choices=["train", "eval"],
+        help="Mode of operation: 'train' or 'eval'",
+    )
+
+    parser.add_argument(
+        "--op_by_op",
+        choices=["stablehlo", "torch"],
+        default=None,
+        help="Op-by-op backend: 'stablehlo', 'torch'",
+    )
+
+    args = parser.parse_args()
+    if args.op_by_op == "stablehlo":
+        args.op_by_op = OpByOpBackend.STABLEHLO
+    elif args.op_by_op == "torch":
+        args.op_by_op = OpByOpBackend.TORCH
+    else:
+        args.op_by_op = None
+
+    test_resnet(empty_record_property, args.mode, args.op_by_op)

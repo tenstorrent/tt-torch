@@ -288,6 +288,8 @@ class CompilerConfig:
         self.record_property = lambda *args, **kwargs: None  # Default to no-op
         self.runtime_intermediate_cache = None  # Do not serialize.
         self.save_mlir_override = None
+        self.automatic_parallelization = False
+        self.mesh_shape = [1, 1]
 
         self.apply_environment_overrides()
         self.post_init()

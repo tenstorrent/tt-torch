@@ -143,6 +143,14 @@ static torch::Tensor create_torch_tensor(const tt::runtime::Tensor &tensor) {
   return torch_tensor;
 }
 
+std::string stable_hlo_automatic_parallelization(
+    std::string_view code, std::vector<int64_t> mesh_shape,
+    size_t len_activations, size_t len_graph_constants) {
+  auto ret = tt::torch::stableHLOAutomaticParallelization(
+      code, mesh_shape, len_activations, len_graph_constants);
+  return ret;
+}
+
 std::string compile_stable_hlo_to_ttir(std::string_view code) {
   auto ret = tt::torch::compileStableHLOToTTIR(code);
   return ret;
@@ -346,6 +354,9 @@ get_op_output_torch_tensor(tt::runtime::OpContext opContextHandle,
 
 PYBIND11_MODULE(tt_mlir, m) {
   m.doc() = "tt_mlir";
+  py::enum_<::tt::runtime::DispatchCoreType>(m, "DispatchCoreType")
+      .value("WORKER", ::tt::runtime::DispatchCoreType::WORKER)
+      .value("ETH", ::tt::runtime::DispatchCoreType::ETH);
   py::class_<tt::runtime::Binary>(m, "Binary")
       .def("getProgramInputs", &tt::runtime::Binary::getProgramInputs)
       .def("getProgramOutputs", &tt::runtime::Binary::getProgramOutputs)
@@ -390,6 +401,9 @@ PYBIND11_MODULE(tt_mlir, m) {
         py::arg("ttir"), py::arg("device") = py::none(),
         py::arg("len_activations") = 0, py::arg("len_graph_constants") = 0,
         "A function that compiles TTIR to a bytestream");
+  m.def("stable_hlo_automatic_parallelization",
+        &stable_hlo_automatic_parallelization,
+        "Run shardy automatic data parallelization pass on stableHLO");
   m.def("compile_stable_hlo_to_ttir", &compile_stable_hlo_to_ttir,
         "A function that compiles stableHLO to TTIR");
   m.def("open_mesh_device", &tt::runtime::openMeshDevice, py::arg("mesh_shape"),

@@ -214,7 +214,10 @@ class Executor:
         if self.device is not None:
             return self.device
         # Return a default parent mesh
-        device = tt_mlir.open_mesh_device([1, 1], tt_mlir.MeshDeviceOptions())
+        mesh_options = tt_mlir.MeshDeviceOptions()
+        if len(self.compiler_config.mesh_shape) == 32:
+            mesh_options.dispatch_core_type = tt_mlir.DispatchCoreType.WORKER
+        device = tt_mlir.open_mesh_device(self.compiler_config.mesh_shape, mesh_options)
         return device
 
     def _cache_constants_if_needed(self, preprocessed_constants):
