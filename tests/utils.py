@@ -213,7 +213,26 @@ class ModelTester:
                     else [item for sublist in t for item in flatten(sublist)]
                 )
 
-            return flatten(output_object.to_tuple())
+            # The output of some transformers models is CausalLMOutputWithPast,
+            # which when converted to_tuple and flattened which may contain DynamicCache objects
+            # since transformers 4.51
+
+            # We expect a tuple of only tensors at the end of this function.
+
+            flattened_outputs = flatten(output_object.to_tuple())
+            non_tensor_objects = [
+                t for t in flattened_outputs if not isinstance(t, torch.Tensor)
+            ]
+
+            # Warn about discarded non-tensor objects
+            if non_tensor_objects:
+                discarded_types = {type(obj).__name__ for obj in non_tensor_objects}
+                print(
+                    f"Discarding non-tensor objects of types: {', '.join(discarded_types)}"
+                )
+
+            # Filter and return only tensor objects
+            return tuple(t for t in flattened_outputs if isinstance(t, torch.Tensor))
 
         raise NotImplementedError(
             f"Output object type: ({type(output_object)}) is not a torch.Tensor, tuple[torch.Tensor], or list[torch.Tensor], nor does it implement `to_tuple`. Please implement _extract_outputs in the derived class."
