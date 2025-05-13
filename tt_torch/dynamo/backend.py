@@ -190,7 +190,12 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
 
 
 def shlo_to_flatbuffer(
-    executor, device, module, compiler_config, len_activations, len_graph_constants
+    executor,
+    system_desc_path,
+    module,
+    compiler_config,
+    len_activations,
+    len_graph_constants,
 ):
 
     if compiler_config.profile_ops:
@@ -207,7 +212,7 @@ def shlo_to_flatbuffer(
         )
 
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(
-        ttir, device, len_activations, len_graph_constants
+        ttir, system_desc_path, len_activations, len_graph_constants
     )
     dump_module(module=ttnn, name="TTNN", compiler_config=compiler_config)
 
@@ -231,7 +236,7 @@ def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
     for i, shlo in mcg.shlo_modules.items():
         binary = shlo_to_flatbuffer(
             executor,
-            devices[i],
+            executor.system_desc_paths[i],
             shlo,
             compiler_config,
             len(mcg.example_inputs[i]),

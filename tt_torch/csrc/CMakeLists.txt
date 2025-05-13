@@ -3,20 +3,6 @@ list(APPEND CMAKE_PREFIX_PATH ${TTTORCH_SOURCE_DIR}/env/venv/lib/python3.10/site
 find_package(Python 3.10 REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
 
-# Get git commit hash for tt-mlir currently built
-execute_process(
-    COMMAND git rev-parse HEAD
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/third_party/tt-mlir
-    OUTPUT_VARIABLE TT_MLIR_GIT_COMMIT
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/tt_mlir_version.h.in
-    ${CMAKE_CURRENT_BINARY_DIR}/tt_mlir_version.h
-)
-
-
 add_library(TT_TORCH_MLIR "tt-mlir-interface.cpp")
 
 add_dependencies(TT_TORCH_MLIR

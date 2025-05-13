@@ -47,8 +47,6 @@
 
 #include "tt/runtime/runtime.h"
 
-#include "tt_mlir_version.h"
-
 #include <llvm/ADT/SmallVector.h>
 
 namespace tt::torch {
@@ -105,55 +103,16 @@ std::string compileStableHLOToTTIR(std::string_view code) {
   return buffer;
 }
 
-std::string get_system_desc_version_path(std::string_view system_desc_path) {
-  return std::string(system_desc_path) + ".ttmlir_version";
-}
-
-bool is_system_desc_fresh(std::string_view system_desc_path) {
-  std::string system_desc_version;
-
-  std::ifstream version_file(get_system_desc_version_path(system_desc_path));
-  std::getline(version_file, system_desc_version);
-  version_file.close();
-
-  return TT_MLIR_GIT_COMMIT == system_desc_version;
-}
-
-void create_system_desc(std::optional<tt::runtime::Device> device) {
-  const char *system_desc_path = std::getenv("SYSTEM_DESC_PATH");
-
-  if (!system_desc_path) {
-    throw std::runtime_error(
-        "SYSTEM_DESC_PATH environment variable not set.\n"
-        "Please set a path or call `source env/activate`.");
-  }
-
-  if (!device.has_value() && std::filesystem::exists(system_desc_path) &&
-      is_system_desc_fresh(system_desc_path)) {
-    return;
-  }
-
-  std::remove(system_desc_path);
-
-  bool creating_temp_device = !device.has_value();
-  if (creating_temp_device) {
-    device = tt::runtime::openMeshDevice({1, 1});
-  }
+void create_system_desc(tt::runtime::Device device,
+                        std::string_view descriptor_path) {
+  const std::string desc_path_str(descriptor_path);
+  std::remove(desc_path_str.c_str());
   tt::runtime::getCurrentSystemDesc(std::nullopt, device)
-      .first.store(system_desc_path);
-
-  std::ofstream version_file(get_system_desc_version_path(system_desc_path));
-  version_file << TT_MLIR_GIT_COMMIT << std::endl;
-  version_file.close();
-
-  if (creating_temp_device) {
-    tt::runtime::closeMeshDevice(*device);
-  }
+      .first.store(desc_path_str.c_str());
 }
 
 std::tuple<std::shared_ptr<void> *, std::string>
-compileTTIRToTTNN(std::string_view code,
-                  std::optional<tt::runtime::Device> device,
+compileTTIRToTTNN(std::string_view code, std::string_view system_desc_path,
                   size_t len_activations, size_t len_graph_constants) {
 
   mlir::MLIRContext context;
@@ -210,24 +169,18 @@ compileTTIRToTTNN(std::string_view code,
     options.argumentTypeMap = argTypesMap;
   }
 
-  if (std::filesystem::path system_desc_path = std::getenv("SYSTEM_DESC_PATH");
-      !system_desc_path.empty()) {
-    if (device.has_value()) {
-      create_system_desc(device);
-    }
+  std::filesystem::path system_desc_temp_path;
+  if (std::filesystem::path system_desc_fspath = system_desc_path;
+      std::filesystem::exists(system_desc_fspath)) {
+    system_desc_temp_path = std::filesystem::temp_directory_path() /
+                            (system_desc_fspath.stem().string() + "_tmp" +
+                             system_desc_fspath.extension().string());
 
-    if (std::filesystem::exists(system_desc_path)) {
-      std::filesystem::path system_desc_temp_path =
-          std::filesystem::temp_directory_path() /
-          (system_desc_path.stem().string() + "_tmp" +
-           system_desc_path.extension().string());
+    std::filesystem::copy_file(
+        system_desc_fspath, system_desc_temp_path,
+        std::filesystem::copy_options::overwrite_existing);
 
-      std::filesystem::copy_file(
-          system_desc_path, system_desc_temp_path,
-          std::filesystem::copy_options::overwrite_existing);
-
-      options.systemDescPath = system_desc_temp_path;
-    }
+    options.systemDescPath = system_desc_temp_path;
   }
 
   mlir::tt::ttnn::createTTIRToTTNNBackendPipeline(pm, options);
@@ -236,6 +189,10 @@ compileTTIRToTTNN(std::string_view code,
   if (mlir::failed(pm.run(mlir_module.get()))) {
     throw std::runtime_error(
         "Failed to run TTIR TO TTNN compiler pass pipeline.");
+  }
+
+  if (!system_desc_temp_path.empty()) {
+    std::filesystem::remove(system_desc_temp_path);
   }
 
   std::shared_ptr<void> *binary = new std::shared_ptr<void>();
@@ -251,11 +208,6 @@ compileTTIRToTTNN(std::string_view code,
   os.flush();
 
   return std::make_tuple(binary, buffer);
-}
-
-std::shared_ptr<void> *Compile(std::string_view code) {
-  std::string ttir = compileStableHLOToTTIR(code);
-  return std::get<0>(compileTTIRToTTNN(ttir));
 }
 
 } // namespace tt::torch
