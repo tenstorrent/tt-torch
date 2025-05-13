@@ -41,6 +41,6 @@ jobs:
         if: ${{ steps.do-deduct.outputs.send_msg }}
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          payload: fromJSON(${{ steps.do-deduct.outputs.send_msg }})
+          payload: ${{ steps.do-deduct.outputs.send_msg }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NIGHTLY_INSPECT }}
