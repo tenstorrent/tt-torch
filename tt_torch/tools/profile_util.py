@@ -65,7 +65,7 @@ class Profiler:
             this_dir,
             "..",
             "..",
-            "third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal-build",
+            "third_party/tt-mlir/src/tt-mlir/third_party/tt-metal/src/tt-metal/build",
         )
 
         if FileManager.check_file_exists(
