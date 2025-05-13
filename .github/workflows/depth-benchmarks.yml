@@ -24,11 +24,11 @@ jobs:
           commitimg=$(echo "$html" | grep -oP '(?<=<meta name="twitter:image" content=")[^"]*')
 
           echo "* $no_failed_tests test(s) failed in $commit." >>short_report.txt
-          echo "  <https://github.com/$repo/commit/$commit|$commit>" >>short_report.txt
+          echo "  <https://github.com/$repo/commit/$commit>" >>short_report.txt
           echo "* $no_failed_tests test(s) failed in $commit." >>short_report.txt
-          echo "  <https://github.com/$repo/commit/$commit|$commit>" >>short_report.txt
+          echo "  <https://github.com/$repo/commit/$commit>" >>short_report.txt
           # ![commit image]($commitimg)
-          echo "- In [$commit](<https://github.com/$repo/commit/$commit>) $no_failed_tests test(s) failed: <img src=\"$commitimg\" width=\"25%\" align=\"right\"/>" >>report.txt
+          echo "- In commit [$commit](<https://github.com/$repo/commit/$commit>) $no_failed_tests test(s) failed: <img src=\"$commitimg\" width=\"25%\" align=\"right\"/>" >>report.txt
           echo "> forge/test/models_ops/test_cast.py::test_module[Cast0-[((1, 11), torch.bool)]]" >>report.txt
           echo "> forge/test/models_ops/test_cast.py::test_module[Cast1-[((1, 4), torch.int64)]]" >>report.txt
           if [ ! -s report.txt ]; then
