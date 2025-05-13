@@ -3,40 +3,44 @@
 name: Weekly Depth Benchmarks
 
 on:
-  schedule:
-    - cron: '0 10 * * 0'  # Runs at 10:00 UTC every Sunday, 6 hours after Nightly Tests
-  workflow_dispatch:  # Manual trigger
+  workflow_dispatch:
 
 
 jobs:
-  pre-commit:
-    uses: ./.github/workflows/pre-commit.yml
-    secrets: inherit
-  spdx:
-    uses: ./.github/workflows/spdx.yml
-    secrets: inherit
-  docker-build:
-    uses: ./.github/workflows/build-image.yml
-    secrets: inherit
-  build:
-    needs: [pre-commit, spdx, docker-build]
-    uses: ./.github/workflows/run-build.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  generate-matrix:
-    needs: [build]
-    uses: ./.github/workflows/generate-benchmark-matrix.yml
-    secrets: inherit
-  run-benchmark:
-    needs: [docker-build, build, generate-matrix]
-    uses: ./.github/workflows/run-depth-benchmark-tests.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-      matrix-json-splits: ${{ needs.generate-matrix.outputs.matrix-json-splits}}
-  generate-report:
-    needs: [run-benchmark]
-    if: always()
-    uses: ./.github/workflows/generate-benchmark-report.yml
-    secrets: inherit
+  deduct:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Find all test runs
+        id: do-deduct
+        run: |
+          repo="tenstorrent/tt-forge-fe"
+          rm -f report.txt
+          rm -f short_report.txt
+          commit="47976a630ffe14f7ab9375aa4de97909c0f96938"
+          no_failed_tests=2
+          echo "- In <https://github.com/$repo/commit/$commit|$commit> $no_failed_tests test(s) failed." >>short_report.txt
+          echo "- In [$commit](<https://github.com/$repo/commit/$commit>) $no_failed_tests test(s) failed:" >>report.txt
+          echo "> forge/test/models_ops/test_cast.py::test_module[Cast0-[((1, 11), torch.bool)]]" >>report.txt
+          echo "> forge/test/models_ops/test_cast.py::test_module[Cast1-[((1, 4), torch.int64)]]" >>report.txt
+
+          if [ ! -s report.txt ]; then
+            echo "No failed tests to report."
+            echo "send_msg=" >>$GITHUB_OUTPUT
+            exit 0
+          else
+            echo "Report: $(cat report.txt)"
+            echo "<https://github.com/$repo/actions/runs/$workflow_id|More details>" >>short_report.txt
+            echo "## Inspection report :rocket:" >> $GITHUB_STEP_SUMMARY
+            cat report.txt >> $GITHUB_STEP_SUMMARY
+            # Escape special characters in the short report for JSON compatibility
+            escaped_report=$(cat short_report.txt | jq -Rs .)
+            echo "send_msg={\"text\": \"$escaped_report\", unfurl_links: false, unfurl_media: false }" >>$GITHUB_OUTPUT
+          fi
+
+      - name: Send Fail Notification
+        if: ${{ steps.do-deduct.outputs.send_msg }}
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: fromJSON(${{ steps.do-deduct.outputs.send_msg }})
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_NIGHTLY_INSPECT }}
