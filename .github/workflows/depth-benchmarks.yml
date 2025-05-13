@@ -23,7 +23,9 @@ jobs:
           html=$(curl -s "https://github.com/$repo/commit/$commit")
           commitimg=$(echo "$html" | grep -oP '(?<=<meta name="twitter:image" content=")[^"]*')
 
-          echo "* __$no_failed_tests__ test(s) failed in $commit." >>short_report.txt
+          echo "* $no_failed_tests test(s) failed in $commit." >>short_report.txt
+          echo "  <https://github.com/$repo/commit/$commit|$commit>" >>short_report.txt
+          echo "* $no_failed_tests test(s) failed in $commit." >>short_report.txt
           echo "  <https://github.com/$repo/commit/$commit|$commit>" >>short_report.txt
           # ![commit image]($commitimg)
           echo "- In [$commit](<https://github.com/$repo/commit/$commit>) $no_failed_tests test(s) failed: <img src=\"$commitimg\" width=\"25%\" align=\"right\"/>" >>report.txt
