@@ -24,7 +24,7 @@ matplotlib
 mlp_mixer_pytorch
 wheel
 xlsxwriter
-onnx
+onnx==1.17.0 # 1.18.0 fails with "Unsupported model IR version: 11, max supported IR version: 10"
 onnxruntime
 openpyxl
 pillow
