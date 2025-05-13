@@ -11,7 +11,7 @@ pybind11
 pytest
 pytest-cov
 tabulate
-transformers==4.47.1
+transformers
 protobuf
 tiktoken
 sentencepiece
