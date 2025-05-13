@@ -18,11 +18,14 @@ jobs:
           rm -f short_report.txt
           commit="47976a630ffe14f7ab9375aa4de97909c0f96938"
           no_failed_tests=2
+
+          html=$(curl -s "https://github.com/$repo/commit/$commit")
+          commitimg=$(echo "$html" | grep -oP '(?<=<meta name="twitter:image" content=")[^"]*')
+
           echo "- In <https://github.com/$repo/commit/$commit|$commit> $no_failed_tests test(s) failed." >>short_report.txt
-          echo "- In [$commit](<https://github.com/$repo/commit/$commit>) $no_failed_tests test(s) failed:" >>report.txt
+          echo "- In [$commit](<https://github.com/$repo/commit/$commit>) $no_failed_tests test(s) failed: ![commit image]($commitimg)" >>report.txt
           echo "> forge/test/models_ops/test_cast.py::test_module[Cast0-[((1, 11), torch.bool)]]" >>report.txt
           echo "> forge/test/models_ops/test_cast.py::test_module[Cast1-[((1, 4), torch.int64)]]" >>report.txt
-
           if [ ! -s report.txt ]; then
             echo "No failed tests to report."
             echo "send_msg=" >>$GITHUB_OUTPUT
