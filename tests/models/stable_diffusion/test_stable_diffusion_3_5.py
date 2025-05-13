@@ -16,12 +16,12 @@ class ThisTester(ModelTester):
             model_info,
             text_encoder_3=None,
             tokenizer_3=None,
-            torch_dtype=torch.float16,
+            torch_dtype=torch.bfloat16,
             low_cpu_mem_usage=True,
         )
         # memory optimization recommended by: https://huggingface.co/docs/diffusers/en/api/pipelines/stable_diffusion/stable_diffusion_3#tiny-autoencoder-for-stable-diffusion-3
         pipe.vae = AutoencoderTiny.from_pretrained(
-            "madebyollin/taesd3", torch_dtype=torch.float16, low_cpu_mem_usage=True
+            "madebyollin/taesd3", torch_dtype=torch.bfloat16, low_cpu_mem_usage=True
         )
         pipe.enable_attention_slicing()
         return pipe
@@ -77,25 +77,25 @@ def test_stable_diffusion_3_5(record_property, model_info, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    skip_full_eval_test(
-        record_property,
-        cc,
-        model_name,
-        bringup_status="FAILED_RUNTIME",
-        reason="Model encounters 'Fatal Python error: Aborted' due to running out of memory during compilation.",
-        model_group=model_group,
-        model_name_filter="stabilityai/stable-diffusion-3.5-medium",
-    )
+    # skip_full_eval_test(
+    #     record_property,
+    #     cc,
+    #     model_name,
+    #     bringup_status="FAILED_RUNTIME",
+    #     reason="Model encounters 'Fatal Python error: Aborted' due to running out of memory during compilation.",
+    #     model_group=model_group,
+    #     model_name_filter="stabilityai/stable-diffusion-3.5-medium",
+    # )
 
-    skip_full_eval_test(
-        record_property,
-        cc,
-        model_name,
-        bringup_status="FAILED_RUNTIME",
-        reason="Model encounters 'Fatal Python error: Aborted' due to running out of memory during compilation.",
-        model_group=model_group,
-        model_name_filter="stabilityai/stable-diffusion-3.5-large",
-    )
+    # skip_full_eval_test(
+    #     record_property,
+    #     cc,
+    #     model_name,
+    #     bringup_status="FAILED_RUNTIME",
+    #     reason="Model encounters 'Fatal Python error: Aborted' due to running out of memory during compilation.",
+    #     model_group=model_group,
+    #     model_name_filter="stabilityai/stable-diffusion-3.5-large",
+    # )
 
     tester = ThisTester(
         model_name,

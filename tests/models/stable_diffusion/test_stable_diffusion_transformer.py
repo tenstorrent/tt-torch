@@ -103,15 +103,15 @@ def test_stable_diffusion_transformer(record_property, model_info, mode, op_by_o
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    skip_full_eval_test(
-        record_property,
-        cc,
-        model_name,
-        bringup_status="FAILED_RUNTIME",
-        reason="Model is too large to fit on single device during execution.",
-        model_group=model_group,
-        model_name_filter="stabilityai/stable-diffusion-3.5-large",
-    )
+    # skip_full_eval_test(
+    #     record_property,
+    #     cc,
+    #     model_name,
+    #     bringup_status="FAILED_RUNTIME",
+    #     reason="Model is too large to fit on single device during execution.",
+    #     model_group=model_group,
+    #     model_name_filter="stabilityai/stable-diffusion-3.5-large",
+    # )
 
     tester = ThisTester(
         model_name,
