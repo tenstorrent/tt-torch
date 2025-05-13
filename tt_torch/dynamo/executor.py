@@ -170,6 +170,20 @@ class Executor:
         self.device = device
         self.async_mode = async_mode
         self._validate_executor()
+        self._create_system_descriptor()
+
+    def _remove_system_desc(self):
+        try:
+            os.remove(os.getenv("SYSTEM_DESC_PATH"))
+        except OSError:
+            pass
+
+    def _create_system_descriptor(self):
+        self._remove_system_desc()
+        device = self.device if self.device is not None else self._get_device()
+        tt_mlir.create_system_desc(device)
+        if self.device is None:
+            self._cleanup_resources([], device)
 
     def _validate_executor(self):
         if self.compiler_config.compile_depth in (
@@ -360,6 +374,7 @@ class OnnxExecutor(Executor):
         self.binary = None
         self.sess = None
         self.device = None
+        self._create_system_descriptor()
 
     def typecast_inputs(self, inputs):
         raise NotImplementedError("This should not be called on an OnnxExecutor.")
