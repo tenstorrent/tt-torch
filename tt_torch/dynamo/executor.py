@@ -160,6 +160,20 @@ class Executor:
         self.owned_device_indices = []
         self.async_mode = async_mode
         self._validate_executor()
+        self._create_system_descriptor()
+
+    def _remove_system_desc(self):
+        try:
+            os.remove(os.getenv("SYSTEM_DESC_PATH"))
+        except OSError:
+            pass
+
+    def _create_system_descriptor(self):
+        self._remove_system_desc()
+        device = self.device if self.device is not None else self._get_device()
+        tt_mlir.create_system_desc(device)
+        if self.device is None:
+            self._cleanup_resources([], device)
 
     def _validate_executor(self):
         if self.compiler_config.compile_depth in (
@@ -204,7 +218,10 @@ class Executor:
         if self.devices[device_idx] is not None:
             return self.devices[device_idx]
         # Return a default parent mesh
-        device = tt_mlir.open_mesh_device([1, 1], tt_mlir.MeshDeviceOptions())
+        mesh_options = tt_mlir.MeshDeviceOptions()
+        if len(self.compiler_config.mesh_shape) == 32:
+            mesh_options.dispatch_core_type = tt_mlir.DispatchCoreType.WORKER
+        device = tt_mlir.open_mesh_device(self.compiler_config.mesh_shape, mesh_options)
         self.devices[device_idx] = device
         self.owned_device_indices.append(device_idx)
         return device
@@ -374,10 +391,12 @@ class Executor:
 
 class OnnxExecutor(Executor):
     def __init__(self, model_proto: onnx.ModelProto):
+        super().__init__()
         self.model_proto = model_proto
         self.binary = None
         self.sess = None
         self.device = None
+        self._create_system_descriptor()
 
     def typecast_inputs(self, inputs):
         raise NotImplementedError("This should not be called on an OnnxExecutor.")
