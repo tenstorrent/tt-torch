@@ -69,35 +69,38 @@ class ThisTester(ModelTester):
         model_type = self.model_name.split('-')[-1]
 
         if model_type == "recognition":
-            model = RecognitionPredictor().model
+            predictor = RecognitionPredictor()
+            model = predictor.model
             model = self._apply_encoder_decoder_projection_fix(model)
             model = self._apply_cross_attention_fix(model)
             return model
         elif model_type == "detection":
-            model = DetectionPredictor()
-            return model.model
+            predictor = DetectionPredictor()
+            return predictor.model
         elif model_type == "layout":
-            model = LayoutPredictor()
-            return model.model
+            predictor = LayoutPredictor()
+            model = predictor.model
+            model = self._apply_cross_attention_fix(model)
+            return model
         elif model_type == "table_recognition":
-            model = TableRecPredictor()
-            return model.model
+            predictor = TableRecPredictor()
+            return predictor.model
         else:
             raise ValueError(f"Unsupported model type: {model_type}")
 
     def _load_inputs(self):
         model_type = self.model_name.split('-')[-1]
 
+        batch_size = 1
+        channels = 3
+
         if model_type == "detection":
-            batch_size = 1
-            channels = 3
             height = 512
             width = 512
-            return torch.rand(batch_size, channels, height, width)
+            pixel_values = torch.rand(batch_size, channels, height, width)
+            return pixel_values
 
         elif model_type == "recognition":
-            batch_size = 1
-            channels = 3
             height = settings.RECOGNITION_IMAGE_SIZE['height']  # 256
             width = settings.RECOGNITION_IMAGE_SIZE['width']    # 896
 
@@ -110,12 +113,35 @@ class ThisTester(ModelTester):
                 'decoder_input_ids': decoder_input_ids
             }
 
-        elif model_type == "layout" or model_type == "table_recognition":
-            batch_size = 1
-            channels = 3
-            height = settings.LAYOUT_IMAGE_SIZE['height']  # 768
-            width = settings.LAYOUT_IMAGE_SIZE['width']    # 768
-            return torch.rand(batch_size, channels, height, width)
+        elif model_type == "layout":
+            height = settings.LAYOUT_IMAGE_SIZE['height']
+            width = settings.LAYOUT_IMAGE_SIZE['width']
+            pixel_values = torch.rand(batch_size, channels, height, width)
+
+            # Get model-specific configuration values
+            decoder_start_token_id = self.framework_model.config.decoder_start_token_id
+            
+            # Create box inputs - Shape: (batch_size, num_boxes, 7)
+            # First dimension must contain decoder_start_token_id
+            num_boxes = 3  # Small number for testing
+            safe_coord_value = 5  # Small value to avoid embedding index errors
+            decoder_input_boxes = torch.ones(batch_size, num_boxes, 7, dtype=torch.long) * safe_coord_value
+            decoder_input_boxes[0, 0, 0] = decoder_start_token_id
+            
+            # Box counts tensor required by model
+            decoder_input_boxes_counts = torch.tensor([num_boxes], dtype=torch.long)
+            
+            return {
+                'pixel_values': pixel_values,
+                'decoder_input_boxes': decoder_input_boxes,
+                'decoder_input_boxes_counts': decoder_input_boxes_counts
+            }
+
+        elif model_type == "table_recognition":
+            height = settings.TABLE_REC_IMAGE_SIZE['height']  # 768
+            width = settings.TABLE_REC_IMAGE_SIZE['width']    # 768
+            pixel_values = torch.rand(batch_size, channels, height, width)
+            return pixel_values
 
         else:
             raise ValueError(f"Unsupported model type: {model_type}")
