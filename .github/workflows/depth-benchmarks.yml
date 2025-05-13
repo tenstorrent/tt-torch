@@ -34,7 +34,7 @@ jobs:
             cat report.txt >> $GITHUB_STEP_SUMMARY
             # Escape special characters in the short report for JSON compatibility
             escaped_report=$(cat short_report.txt | jq -Rs .)
-            echo "send_msg={\"text\": \"$escaped_report\", unfurl_links: false, unfurl_media: false }" >>$GITHUB_OUTPUT
+            echo "send_msg={\"text\": $escaped_report, unfurl_links: false, unfurl_media: false }" >>$GITHUB_OUTPUT
           fi
 
       - name: Send Fail Notification
