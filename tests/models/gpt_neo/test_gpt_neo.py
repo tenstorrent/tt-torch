@@ -16,7 +16,7 @@ class ThisTester(ModelTester):
             "EleutherAI/gpt-neo-125M", torch_dtype=torch.bfloat16
         )
         self.tokenizer = GPT2Tokenizer.from_pretrained("EleutherAI/gpt-neo-125M")
-        return model.generate
+        return model
 
     def _load_inputs(self):
         prompt = (

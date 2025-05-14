@@ -51,8 +51,6 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_seamless_m4t(record_property, mode, op_by_op):
-    TORCHDYNAMO_VERBOSE = 1
-    torch._dynamo.config.capture_scalar_outputs = True
     model_name = "SeamlessM4T"
     cc = CompilerConfig()
     cc.enable_consteval = True

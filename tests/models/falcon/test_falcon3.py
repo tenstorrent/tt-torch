@@ -17,7 +17,7 @@ class ThisTester(ModelTester):
         model = AutoModelForCausalLM.from_pretrained(
             self.model_name, torch_dtype=torch.bfloat16
         )
-        return model.generate
+        return model
 
     def _load_inputs(self):
         self.prompt = "Hey, are you conscious? Can you talk to me?"

@@ -17,7 +17,7 @@ class ThisTester(ModelTester):
             checkpoint, torch_dtype=torch.bfloat16
         )
         self.tokenizer = AutoTokenizer.from_pretrained(checkpoint)
-        return model.generate
+        return model
 
     def _load_inputs(self):
         text = "def hello_world():"
