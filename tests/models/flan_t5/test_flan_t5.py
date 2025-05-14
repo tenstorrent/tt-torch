@@ -16,7 +16,7 @@ class ThisTester(ModelTester):
         model = AutoModelForSeq2SeqLM.from_pretrained(
             "google/flan-t5-small", torch_dtype=torch.bfloat16
         )
-        return model.generate
+        return model
 
     def _load_inputs(self):
         inputs = self.tokenizer(

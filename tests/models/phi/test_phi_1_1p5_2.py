@@ -19,7 +19,7 @@ class ThisTester(ModelTester):
             self.model_name, torch_dtype=torch.bfloat16
         )
         model = AutoModelForCausalLM.from_pretrained(self.model_name)
-        return model.generate
+        return model
 
     def _load_inputs(self):
         input_str = '''def print_prime(n):

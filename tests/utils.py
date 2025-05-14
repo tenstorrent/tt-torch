@@ -132,6 +132,8 @@ class ModelTester:
         self.compiler_config.model_name = model_name
         self.compiler_config.model_group = model_group
 
+        self.is_generative = False  # a model can be generative or discriminative
+
         self.record_property = record_property_handle
         self.compiler_config.record_property = record_property_handle
 
@@ -250,17 +252,27 @@ class ModelTester:
         options = BackendOptions()
         options.compiler_config = compiler_config
         options.device = self.device
-        model = torch.compile(model, backend=backend, dynamic=False, options=options)
+        # compile forward pass for generative models, the model itself for discriminative
+        if self.is_generative:
+            model.forward = torch.compile(
+                model.forward, backend=backend, dynamic=False, options=options
+            )
+        else:
+            model = torch.compile(
+                model, backend=backend, dynamic=False, options=options
+            )
         self.compiled_model = model
         return self.compiled_model
 
     def run_model(self, model, inputs):
+        # call function is determined based on generative vs discriminative
+        call_fn = model.generate if self.is_generative else model
         if isinstance(inputs, collections.abc.Mapping):
-            return model(**inputs)
+            return call_fn(**inputs)
         elif isinstance(inputs, collections.abc.Sequence):
-            return model(*inputs)
+            return call_fn(*inputs)
         else:
-            return model(inputs)
+            return call_fn(inputs)
 
     def append_fake_loss_function(self, outputs):
         # Using `torch.mean` as the loss function for testing purposes.
@@ -383,6 +395,8 @@ class ModelTester:
             if hasattr(self.framework_model, "eval")
             else self.framework_model
         )
+        if hasattr(model, "can_generate") and model.can_generate():
+            self.is_generative = True
         return model
 
     def test_model_eval(self, on_device=True, assert_eval_token_mismatch=True):

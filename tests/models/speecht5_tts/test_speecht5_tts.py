@@ -20,7 +20,8 @@ class ThisTester(ModelTester):
         self.vocoder = SpeechT5HifiGan.from_pretrained(
             "microsoft/speecht5_hifigan", torch_dtype=torch.bfloat16
         )
-        return model.generate_speech
+        self.tokenizer = self.processor.tokenizer
+        return model
 
     def _load_inputs(self):
         inputs = self.processor(text="Hello, my dog is cute.", return_tensors="pt")
@@ -54,7 +55,7 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_speecht5_tts(record_property, mode, op_by_op):
-    pytest.skip()  # crashes in lowering to stable hlo
+    pytest.skip()  # needs some debugging
     model_name = "speecht5-tts"
 
     cc = CompilerConfig()
@@ -73,9 +74,10 @@ def test_speecht5_tts(record_property, mode, op_by_op):
         is_token_output=True,
     )
     tester.test_model()
-    # if mode == "eval":
-    #     # Uncomment below if you really want to hear the result.
-    #     # import soundfile as sf
-    #     sf.write("speech.wav", speech.numpy(), samplerate=16000)
+    if mode == "eval":
+        # Uncomment below if you really want to hear the result.
+        import soundfile as sf
+
+        sf.write("speech.wav", speech.numpy(), samplerate=16000)
 
     tester.finalize()
