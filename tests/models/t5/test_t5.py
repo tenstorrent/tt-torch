@@ -54,6 +54,7 @@ def test_t5(record_property, model_name, mode, op_by_op):
         assert_pcc=False,
         assert_atol=False,
         is_token_output=True,
+        run_generate=True,  # run model.generate(**inputs)
     )
     results = tester.test_model(assert_eval_token_mismatch=False)
     if mode == "eval":
