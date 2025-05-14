@@ -105,6 +105,49 @@ def test_add_multidevice():
     ), "Some devices are not released."
 
 
+@pytest.mark.parametrize(
+    ("input"),
+    [
+        (torch.tensor([3.0], dtype=torch.bfloat16)),
+        (torch.tensor([6], dtype=torch.int32)),
+        (torch.tensor([[1], [2]], dtype=torch.float32)),
+    ],
+)
+def test_broadcast(input):
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return x.expand(2, 8)
+
+    verify_module(Basic(), inputs=[input])
+
+
+def test_clamp():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.clamp(x, min=-1, max=1)
+
+    verify_module(Basic(), input_shapes=[(32, 32)], input_range=(-5, 5))
+
+
+def test_clamp_tensor():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x, min, max):
+            return torch.clamp(x, min=min, max=max)
+
+    verify_module(
+        Basic(), input_shapes=[(32, 32), (32, 32), (32, 32)], input_range=(-5, 5)
+    )
+
+
 def test_concat_dim0():
     class Basic(nn.Module):
         def __init__(self):
@@ -240,6 +283,17 @@ def test_exp():
             return torch.exp(x)
 
     verify_module(Basic(), input_shapes=[(2, 2)], required_atol=3e-2)
+
+
+def test_floor():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.floor(x)
+
+    verify_module(Basic(), input_shapes=[(32, 32)], input_data_types=[torch.float32])
 
 
 def test_linear():

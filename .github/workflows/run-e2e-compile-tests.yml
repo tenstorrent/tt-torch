@@ -8,6 +8,11 @@ on:
         description: 'Docker image to use for build'
         required: true
         type: string
+      run-dump-mlir:
+        description: 'Dump MLIR files'
+        required: false
+        type: string
+        default: 'true'
   workflow_run:
     workflows: [Build]
     types: [completed]
@@ -89,6 +94,7 @@ jobs:
         echo "test_report_path_torch=report_torch_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
         echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
         echo "test_report_path_onnx=report_onnx_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+        echo "mlir_dir=$(pwd)/model_mlir" >> "$GITHUB_OUTPUT" # Define the model_mlir directory
 
     - name: Git safe dir
       run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
@@ -122,7 +128,7 @@ jobs:
       run: |
         source env/activate
 
-        TT_TORCH_COMPILE_DEPTH=TTNN_IR pytest --durations=50 -v -rf ${{matrix.build.tests}} \
+        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN TT_TORCH_COMPILE_DEPTH=TTNN_IR pytest --durations=50 -v -rf ${{matrix.build.tests}} \
           --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
           2>&1 | tee pytest.log
 
@@ -139,3 +145,23 @@ jobs:
       with:
         name: test-reports-models-${{ matrix.build.runs-on }}-${{ matrix.build.name }}
         path: ${{ steps.strings.outputs.test_report_path_models }}
+
+    - name: Upload MLIR files
+      uses: actions/upload-artifact@v4
+      if: ${{ (success() || failure()) && inputs.run-dump-mlir == 'true' }}
+      with:
+        name: model-mlir-compile-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        path: ${{ steps.strings.outputs.mlir_dir }}
+
+  merge_mlir_artifacts:
+    needs: [tests]
+    if: ${{ inputs.run-dump-mlir == 'true' }}
+    runs-on: ubuntu-latest
+    name: Merge MLIR Artifacts
+    steps:
+      - name: Merge Artifacts
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: model-mlir-compile
+          pattern: model-mlir-compile-*
+          delete-merged: true
