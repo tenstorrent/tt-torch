@@ -73,6 +73,7 @@ def test_mamba(record_property, model_name, mode, op_by_op):
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
+        run_generate=True,  # run model.generate(**inputs)
         is_token_output=True,
     )
 

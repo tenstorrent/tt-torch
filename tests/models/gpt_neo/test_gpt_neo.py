@@ -63,6 +63,7 @@ def test_gpt_neo(record_property, mode, op_by_op):
         record_property_handle=record_property,
         assert_pcc=False,
         assert_atol=False,
+        run_generate=True,  # run model.generate(**inputs)
         is_token_output=True,
     )
     results = tester.test_model(assert_eval_token_mismatch=False)

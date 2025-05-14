@@ -90,12 +90,33 @@ class ModelTester:
         compiler_config=None,
         assert_pcc=True,
         assert_atol=True,
+        run_generate=False,
         record_property_handle=None,
         model_group="generality",
         is_token_output=False,
         model_name_suffix="",
         device=None,
     ):
+        """
+        Initializes the ModelTester.
+
+        Args:
+            model_name (str): Name of the model.
+            mode (str): "train" or "eval" mode.
+            required_pcc (float, optional): Required Pearson Correlation Coefficient for verification. Defaults to 0.99.
+            required_atol (float, optional): Required absolute tolerance for verification. Defaults to None.
+            relative_atol (float, optional): Required relative absolute tolerance for verification. Defaults to None.
+            compiler_config (CompilerConfig, optional): Configuration for the compiler. Defaults to None.
+            assert_pcc (bool, optional): Whether to assert PCC during verification. Defaults to True.
+            assert_atol (bool, optional): Whether to assert ATOL during verification. Defaults to True.
+            run_generate (bool, optional): If True, the model's `generate` method will be called for inference.
+                                         This is typically used for generative models. Defaults to False.
+            record_property_handle (pytest.fixture, optional): Pytest fixture to record properties. Defaults to None.
+            model_group (str, optional): Group the model belongs to. Defaults to "generality".
+            is_token_output (bool, optional): Flag indicating if the model output is in token form, requiring decoding. Defaults to False.
+            model_name_suffix (str, optional): Suffix to append to the model name for recording. Defaults to "".
+            device (torch.device, optional): The torch device to use. Defaults to None.
+        """
         if mode not in ["train", "eval"]:
             raise ValueError(f"Current mode is not supported: {mode}")
         self.model_name = model_name
@@ -125,14 +146,13 @@ class ModelTester:
 
         self.required_atol = required_atol
         self.relative_atol = relative_atol
+        self.run_generate = run_generate  # a model can be generative or discriminative, if true it is generative (i.e. you invoke model.generate(**inputs))
         self.golden_outputs = None
         if compiler_config is None:
             compiler_config = CompilerConfig()
         self.compiler_config = compiler_config
         self.compiler_config.model_name = model_name
         self.compiler_config.model_group = model_group
-
-        self.is_generative = False  # a model can be generative or discriminative
 
         self.record_property = record_property_handle
         self.compiler_config.record_property = record_property_handle
@@ -253,7 +273,7 @@ class ModelTester:
         options.compiler_config = compiler_config
         options.device = self.device
         # compile forward pass for generative models, the model itself for discriminative
-        if self.is_generative:
+        if self.run_generate:
             model.forward = torch.compile(
                 model.forward, backend=backend, dynamic=False, options=options
             )
@@ -266,7 +286,7 @@ class ModelTester:
 
     def run_model(self, model, inputs):
         # call function is determined based on generative vs discriminative
-        call_fn = model.generate if self.is_generative else model
+        call_fn = model.generate if self.run_generate else model
         if isinstance(inputs, collections.abc.Mapping):
             return call_fn(**inputs)
         elif isinstance(inputs, collections.abc.Sequence):
@@ -395,8 +415,15 @@ class ModelTester:
             if hasattr(self.framework_model, "eval")
             else self.framework_model
         )
+
         if hasattr(model, "can_generate") and model.can_generate():
-            self.is_generative = True
+            if not self.run_generate:
+                print("Warning: Model is generative but run_generate is False.")
+        else:
+            assert (
+                not self.run_generate
+            ), "Model is not generative but run_generate is True."
+
         return model
 
     def test_model_eval(self, on_device=True, assert_eval_token_mismatch=True):

@@ -66,6 +66,7 @@ def test_seamless_m4t(record_property, mode, op_by_op):
         compiler_config=cc,
         record_property_handle=record_property,
         required_atol=0.1,
+        run_generate=True,  # run model.generate(**inputs)
     )
     results = tester.test_model()
     if mode == "eval":
