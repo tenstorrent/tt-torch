@@ -114,6 +114,7 @@ class Op:
         self.frontend = "tt-torch"
         self.backend = "torch"
         self.model_group = ""
+        self.model_short_name = ""
         self.global_op_idx = 0
 
         self.torch_ir_graph = ""
@@ -218,6 +219,7 @@ class Op:
             "backend": self.backend,
             "model_name": self.model_name,
             "model_group": self.model_group,
+            "model_short_name": self.model_short_name,
             "global_op_idx": self.global_op_idx,
             "input_shapes": self.print_shapes(self.input_shapes),
             "input_tensors": [tensor.to_dict() for tensor in self.input_tensors],
@@ -270,6 +272,7 @@ class CompilerConfig:
         self.unique_ops = {}
         self.stable_hlo_ops = []
         self.model_name = ""
+        self.model_short_name = ""
         self.model_group = ""
         self.results_path = "results/models/"
         self.single_op_timeout = 30

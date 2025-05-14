@@ -239,6 +239,7 @@ class TorchExecutor(OpByOpExecutor):
         if op.unique_key() not in self.compiler_config.unique_ops:
             op.global_op_idx = OpByOpExecutor.global_op_idx
             op.model_group = self.compiler_config.model_group
+            op.model_short_name = self.compiler_config.model_short_name
             self.compiler_config.unique_ops[op.unique_key()] = op
         else:
             self.compiler_config.unique_ops[op.unique_key()].num_ops += 1

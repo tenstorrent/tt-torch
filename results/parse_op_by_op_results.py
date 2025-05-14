@@ -676,7 +676,14 @@ def generate_op_reports_xlsx():
             data = json.load(f)
 
         first_value = next(iter(data.values()))
-        if "model_name" in first_value and len(first_value["model_name"]) > 0:
+
+        # Use short name if exists, otherwise model_name, otherwise from filename
+        if (
+            "model_short_name" in first_value
+            and len(first_value["model_short_name"]) > 0
+        ):
+            model_name = first_value["model_short_name"]
+        elif "model_name" in first_value and len(first_value["model_name"]) > 0:
             model_name = first_value["model_name"]
         else:
             model_name = (

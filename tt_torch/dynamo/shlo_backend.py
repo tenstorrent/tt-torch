@@ -248,6 +248,7 @@ class StablehloOp(Op):
             "frontend": self.frontend,
             "backend": self.backend,
             "model_name": self.model_name,
+            "model_short_name": self.model_short_name,
             "model_group": self.model_group,
             "global_op_idx": self.global_op_idx,
             "input_shapes": self.print_shapes(self.input_shapes),
@@ -411,6 +412,7 @@ class StablehloExecutor(OpByOpExecutor):
 
             op.global_op_idx = OpByOpExecutor.global_op_idx
             op.model_group = self.compiler_config.model_group
+            op.model_short_name = self.compiler_config.model_short_name
 
             test_this_op = self.should_test_op()
             if test_this_op:

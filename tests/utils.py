@@ -99,6 +99,7 @@ class ModelTester:
         model_name_suffix="",
         device=None,
         is_op_by_op=False,
+        model_short_name="",
     ):
         if mode not in ["train", "eval"]:
             raise ValueError(f"Current mode is not supported: {mode}")
@@ -136,6 +137,7 @@ class ModelTester:
         self.compiler_config = compiler_config
         self.compiler_config.model_name = model_name
         self.compiler_config.model_group = model_group
+        self.compiler_config.model_short_name = model_short_name
 
         self.record_property = record_property_handle
         self.compiler_config.record_property = record_property_handle
@@ -606,6 +608,7 @@ class OnnxModelTester(ModelTester):
         record_property_handle=None,
         model_group="generality",
         is_op_by_op=False,
+        model_short_name="",
     ):
 
         # Set here to make available to methods called during init
@@ -626,6 +629,7 @@ class OnnxModelTester(ModelTester):
             model_name_suffix="",
             device=None,
             is_op_by_op=is_op_by_op,
+            model_short_name=model_short_name,
         )
         # Hold an onnxruntime session for golden / non-full compile execution
         self.sess = prepare_inference_session(model_proto=self.framework_model)
