@@ -44,7 +44,7 @@ class ThisTester(ModelTester):
         )
 
         # Set number of diffusion steps
-        num_inference_steps = 1
+        num_inference_steps = 2 if self.is_op_by_op else 50
         self.scheduler.set_timesteps(num_inference_steps)
 
         # Scale the latent noise to match the model's expected input
@@ -87,6 +87,7 @@ def test_stable_diffusion_unet(record_property, mode, op_by_op):
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
+        is_op_by_op=op_by_op,
     )
     results = tester.test_model()
     if mode == "eval":

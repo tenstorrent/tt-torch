@@ -83,11 +83,15 @@ class ThisTester(ModelTester):
         _, seq_len, _ = prompt_embeds.shape
         prompt_embeds = prompt_embeds.repeat(1, 1, 1)
         prompt_embeds = prompt_embeds.view(1, seq_len, -1)
+
+        # Fewer loops in op-by-op to save time.
+        num_inference_steps = 2 if self.is_op_by_op else 4
+
         arguments = {
             "prompt_embeds": prompt_embeds,
             "pooled_prompt_embeds": pooled_prompt_embeds,
             "guidance_scale": 0.0,
-            "num_inference_steps": 2,
+            "num_inference_steps": num_inference_steps,
             "max_sequence_length": max_sequence_length,
             "output_type": "latent",
         }
@@ -143,6 +147,7 @@ def test_flux(record_property, model_info, mode, op_by_op):
         assert_atol=False,
         assert_pcc=False,
         model_group=model_group,
+        is_op_by_op=op_by_op,
     )
     results = tester.test_model()
     if mode == "eval":

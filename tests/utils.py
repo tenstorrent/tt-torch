@@ -98,6 +98,7 @@ class ModelTester:
         is_token_output=False,
         model_name_suffix="",
         device=None,
+        is_op_by_op=False,
     ):
         if mode not in ["train", "eval"]:
             raise ValueError(f"Current mode is not supported: {mode}")
@@ -111,6 +112,7 @@ class ModelTester:
             )
         self.compiled_model = None
         self.device = device
+        self.is_op_by_op = is_op_by_op
         self.inputs = self._load_inputs()
         self.required_pcc = required_pcc
         self.assert_pcc = assert_pcc
@@ -603,7 +605,11 @@ class OnnxModelTester(ModelTester):
         assert_atol=True,
         record_property_handle=None,
         model_group="generality",
+        is_op_by_op=False,
     ):
+
+        # Set here to make available to methods called during init
+        self.is_op_by_op = is_op_by_op
 
         super().__init__(
             model_name,
@@ -616,6 +622,10 @@ class OnnxModelTester(ModelTester):
             assert_atol,
             record_property_handle,
             model_group,
+            is_token_output=False,
+            model_name_suffix="",
+            device=None,
+            is_op_by_op=is_op_by_op,
         )
         # Hold an onnxruntime session for golden / non-full compile execution
         self.sess = prepare_inference_session(model_proto=self.framework_model)

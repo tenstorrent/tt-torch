@@ -21,7 +21,9 @@ class ThisTester(ModelTester):
         prompt = [
             "a photo of an astronaut riding a horse on mars",
         ]
-        return prompt
+
+        num_inference_steps = 2 if self.is_op_by_op else 50
+        return {"prompt": prompt, "num_inference_steps": num_inference_steps}
 
 
 @pytest.mark.parametrize(
@@ -44,10 +46,15 @@ def test_stable_diffusion(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
     tester = ThisTester(
-        model_name, mode, compiler_config=cc, record_property_handle=record_property
+        model_name,
+        mode,
+        compiler_config=cc,
+        record_property_handle=record_property,
+        is_op_by_op=op_by_op,
     )
     results = tester.test_model()
     if mode == "eval":
         image = results.images[0]
+        image.save("generated_image.png")
 
     tester.finalize()
