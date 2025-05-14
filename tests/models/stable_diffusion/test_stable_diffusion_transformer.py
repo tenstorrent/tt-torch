@@ -58,7 +58,9 @@ class ThisTester(ModelTester):
             generator=None,
         )
 
-        self.scheduler.set_timesteps(28)
+        # Fewer loops in op-by-op to save time.
+        num_inference_steps = 2 if self.is_op_by_op else 28
+        self.scheduler.set_timesteps(num_inference_steps)
         timestep = self.scheduler.timesteps[0].expand(latents.shape[0])
         arguments = {
             "hidden_states": latents,
@@ -121,6 +123,7 @@ def test_stable_diffusion_transformer(record_property, model_info, mode, op_by_o
         assert_atol=False,
         assert_pcc=False,
         model_group=model_group,
+        is_op_by_op=op_by_op,
     )
     results = tester.test_model()
 

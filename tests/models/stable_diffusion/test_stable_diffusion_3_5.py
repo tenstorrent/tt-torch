@@ -35,12 +35,15 @@ class ThisTester(ModelTester):
         height = 512
         width = 512
         guidance_scale = 7.0
+        # Fewer loops in op-by-op to save time.
+        num_inference_steps = 2 if self.is_op_by_op else 28
         arguments = {
             "prompt": prompt,
             "negative_prompt": negative_prompt,
             "height": height,
             "width": width,
             "guidance_scale": guidance_scale,
+            "num_inference_steps": num_inference_steps,
         }
 
         return arguments
@@ -105,6 +108,7 @@ def test_stable_diffusion_3_5(record_property, model_info, mode, op_by_op):
         assert_atol=False,
         assert_pcc=False,
         model_group="red",
+        is_op_by_op=op_by_op,
     )
     results = tester.test_model()
     if mode == "eval":
