@@ -47,7 +47,6 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_speecht5_tts(record_property, mode, op_by_op):
-    # pytest.skip()  # needs some debugging
     model_name = "speecht5-tts"
 
     cc = CompilerConfig()
@@ -68,10 +67,10 @@ def test_speecht5_tts(record_property, mode, op_by_op):
         # is_token_output=True,
     )
     speech = tester.test_model()
-    if mode == "eval":
-        # Uncomment below if you really want to hear the result.
-        import soundfile as sf
+    # if mode == "eval":
+    #     # Uncomment below if you really want to hear the result.
+    #     import soundfile as sf
 
-        sf.write("speech.wav", speech.to(torch.float32).numpy(), samplerate=16000)
+    #     sf.write("speech.wav", speech.to(torch.float32).numpy(), samplerate=16000)
 
     tester.finalize()
