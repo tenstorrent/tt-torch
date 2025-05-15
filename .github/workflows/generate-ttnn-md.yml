@@ -47,6 +47,21 @@ jobs:
           name: ${{ inputs.spreadsheet_name }}
           path: ${{ steps.strings.outputs.work-dir }}/results
 
+      - name: Use build artifacts
+        uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
+        with:
+          name: install-artifacts
+          path: install
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: install tt-torch
+        shell: bash
+        run: |
+          source env/activate
+          mkdir -p ${{ steps.strings.outputs.dist-dir }}
+          mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
+          pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
+
       - name: Generate TTNN MD Files
         shell: bash
         run: |
