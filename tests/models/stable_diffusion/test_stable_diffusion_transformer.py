@@ -15,17 +15,21 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model_info = self.model_name
+        pretrained_model_name = (
+            "stabilityai/stable-diffusion-3.5-medium"
+            if "medium" in self.model_name
+            else "stabilityai/stable-diffusion-3.5-large"
+        )
         self.pipe = StableDiffusion3Pipeline.from_pretrained(
-            model_info,
+            pretrained_model_name,
             torch_dtype=torch.bfloat16,
             low_cpu_mem_usage=True,
         )
         self.scheduler = FlowMatchEulerDiscreteScheduler.from_pretrained(
-            model_info, subfolder="scheduler"
+            pretrained_model_name, subfolder="scheduler"
         )
         self.transformer = SD3Transformer2DModel.from_pretrained(
-            model_info, subfolder="transformer", torch_dtype=torch.bfloat16
+            pretrained_model_name, subfolder="transformer", torch_dtype=torch.bfloat16
         )
         return self.transformer
 
@@ -73,29 +77,24 @@ class ThisTester(ModelTester):
         return arguments
 
 
-model_info_list = [
-    ("SD3.5-medium-transformer", "stabilityai/stable-diffusion-3.5-medium"),
-    ("SD3.5-large-transformer", "stabilityai/stable-diffusion-3.5-large"),
-]
-
-
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
 @pytest.mark.parametrize(
-    "model_info",
-    model_info_list,
-    ids=[model_info[0] for model_info in model_info_list],
+    "model_name",
+    [
+        "SD3.5-medium-transformer",
+        "SD3.5-large-transformer",
+    ],
 )
 @pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_stable_diffusion_transformer(record_property, model_info, mode, op_by_op):
+def test_stable_diffusion_transformer(record_property, model_name, mode, op_by_op):
     model_group = "red"
-    _, model_name = model_info
 
     cc = CompilerConfig()
     cc.enable_consteval = True
