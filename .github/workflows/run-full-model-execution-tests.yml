@@ -77,6 +77,7 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_8gf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_16gf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_32gf]
+                  tests/models/mistral/test_mistral.py::test_mistral[full-ministral3b-eval]
             "
           },
           {
@@ -97,10 +98,11 @@ jobs:
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-wide_resnet101_2]
             "
           },
+          # This test group needs to be moved. This will be done once multichip tests are refactored: #780
           {
             runs-on: n300, name: "eval_6", tests: "
                 tests/models/llama/test_llama_7b_pipeline_parallel.py::test_llama_7b_pipeline_parallel[huggyllama/llama-7b-eval]
-                tests/models/mistral/test_mistral.py::test_mistral[full-ministral3b-eval]
+                tests/torch/test_basic_async.py
                 tests/torch/test_basic_multichip.py
             "
           },

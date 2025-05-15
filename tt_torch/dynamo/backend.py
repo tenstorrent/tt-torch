@@ -165,22 +165,24 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         module = import_program(program)
         verify_ir(module)
 
-    dump_module(module=module, name="Torch FX", compiler_config=compiler_config)
+        dump_module(module=module, name="Torch FX", compiler_config=compiler_config)
 
         if compiler_config.profile_ops:
             compiler_config.set_torch_mlir_module(module.operation.get_asm())
 
-    run_pipeline_with_repro_report(
-        module,
-        f"builtin.module(torchdynamo-export-to-torch-backend-pipeline)",
-        "Lowering TorchFX IR -> Torch Backend IR",
-        compiler_config.dump_debug,
-    )
-    dump_module(module=module, name="Torch Backend", compiler_config=compiler_config)
+        run_pipeline_with_repro_report(
+            module,
+            f"builtin.module(torchdynamo-export-to-torch-backend-pipeline)",
+            "Lowering TorchFX IR -> Torch Backend IR",
+            compiler_config.dump_debug,
+        )
+        dump_module(
+            module=module, name="Torch Backend", compiler_config=compiler_config
+        )
 
         lower_mlir_module(False, OutputType.STABLEHLO, module)
 
-    dump_module(module=module, name="StableHLO", compiler_config=compiler_config)
+        dump_module(module=module, name="StableHLO", compiler_config=compiler_config)
 
         mcg.shlo_modules[device_idx] = module
 

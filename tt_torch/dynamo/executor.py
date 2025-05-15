@@ -137,7 +137,7 @@ class Executor:
         compiler_config=None,
         required_pcc=0.99,
         required_atol=1e-2,
-        devices=[None],
+        devices=None,
         async_mode=False,
     ):
         self.mcg = mcg
@@ -157,8 +157,8 @@ class Executor:
 
         self.binary = {}
         self.preprocessed_graph_constants = {}
-        self.devices = devices
-        self.owned_devices = set()
+        self.devices = devices if devices is not None else [None]
+        self.owned_device_indices = []
         self.async_mode = async_mode
         self._validate_executor()
 
@@ -207,7 +207,7 @@ class Executor:
         # Return a default parent mesh
         device = tt_mlir.open_mesh_device([1, 1], tt_mlir.MeshDeviceOptions())
         self.devices[device_idx] = device
-        self.owned_devices.add(device)
+        self.owned_device_indices.append(device_idx)
         return device
 
     def _cache_constants_if_needed(self, preprocessed_constants, device_idx=0):
@@ -218,69 +218,15 @@ class Executor:
         ):
             self.preprocessed_graph_constants[device_idx] = preprocessed_constants
 
-    def _cleanup_resources(self, preprocessed_activations, device):
+    def _cleanup_resources(self, preprocessed_activations, device_idx):
         for t in preprocessed_activations:
             tt_mlir.deallocate_tensor(t, force=True)
 
-        # if the user didn't provide a device, we opened one, so we need to close it
-        if device in self.owned_devices:
-            tt_mlir.close_mesh_device(device)
-            self.owned_devices.remove(device)
-
-    def _generate_golden_intermediate_cache(self, gm, inputs):
-        print("Generating golden intermediate cache")
-        node_to_tensor = {}
-        input_index = 0
-        outputs = []
-        num_nodes = len(gm.graph.nodes)
-        out_degree = {}
-        for idx, node in enumerate(gm.graph.nodes):
-            print(f"Compiling {idx}/{num_nodes}: <{node.op}>{node.name}\t{node.target}")
-            out_degree[node] = len(node.users)
-            if node.op == "placeholder":
-                node_to_tensor[node] = inputs[input_index]
-                input_index += 1
-            elif node.op == "get_attr":
-                for buffer in gm.named_buffers():
-                    if buffer[0] == node.target:
-                        node_to_tensor[node] = buffer[1]
-                        break
-            elif node.op == "call_function":
-                args = []
-                for arg in node.args:
-                    if isinstance(arg, torch.fx.node.Node):
-                        args.append(node_to_tensor[arg])
-                    elif isinstance(arg, list):
-                        args.append(
-                            [
-                                node_to_tensor[a]
-                                if isinstance(a, torch.fx.node.Node)
-                                else a
-                                for a in arg
-                            ]
-                        )
-                    else:
-                        args.append(arg)
-
-                golden = node.target(*args, **node.kwargs)
-
-                # some ops return scalar (0D tensor) as output (e.g. aten.select.int)
-                if isinstance(golden, torch.Tensor) and golden.dim() == 0:
-                    print(f"Unsqueezing golden {golden} to {golden.unsqueeze(0)}")
-                    golden = golden.unsqueeze(0)
-
-                # some ops return a tuple of tensors as output (e.g. max_pool_2d_with_indices)
-                # we expect to only use the first, though this may be changed in the future
-                elif isinstance(golden, (tuple, list)) and len(golden) > 1:
-                    golden = golden[0]
-                    print(
-                        f"\033[33m[WARNING] {node.name} has {len(golden)} outputs, but we can only get one from runtime.\033[0m"
-                    )
-                cache_entry = RuntimeIntermediate(node, golden)
-                self.compiler_config.runtime_intermediate_cache[node.name] = cache_entry
-                print(f"Caching runtime intermediate for {node.name}")
-                tensor = node.target(*args, **node.kwargs)
-                node_to_tensor[node] = tensor
+        # if we opened the device, close it.
+        if device_idx in self.owned_device_indices:
+            tt_mlir.close_mesh_device(self.devices[device_idx])
+            self.owned_device_indices.remove(device_idx)
+            self.devices[device_idx] = None
 
     def get_inputs(self, *inputs, binary, program_idx, device_idx=0):
         def get_torch_tensors(tensors):
@@ -316,7 +262,9 @@ class Executor:
         )
 
         if self.compiler_config.typecast_inputs:
-            torch_weights_and_activations = self.typecast_inputs(torch_weights_and_activations)
+            torch_weights_and_activations = self.typecast_inputs(
+                torch_weights_and_activations
+            )
 
         runtime_activations_and_weights = tt_mlir.preprocess_inputs(
             self._get_device(device_idx=device_idx),
@@ -345,10 +293,13 @@ class Executor:
         """
         if self.compiler_config.compile_depth != CompileDepth.EXECUTE:
             assert (
-                self.program.graph_module != None
+                len(self.mcg.programs) == 1
+                and self.mcg.programs[0].graph_module != None
             ), "Cannot run base executor without torch graph"
-            return self.program.graph_module(
-                *(self.graph_constants + tuple(self.program.buffers()) + inputs)
+            return self.mcg.programs[0].graph_module(
+                *tuple(self.mcg.constant_inputs[0])
+                + tuple(self.mcg.programs[0].buffers())
+                + inputs
             )
 
         assert len(self.mcg.binaries) > 0
@@ -410,7 +361,7 @@ class Executor:
                 else:
                     final_outputs[graph_output.index] = output
 
-        self._cleanup_resources(preprocessed_activations, device)
+        self._cleanup_resources(preprocessed_activations, device_idx)
         assert all([o is not None for o in final_outputs])
         return final_outputs
 
@@ -418,7 +369,7 @@ class Executor:
         for _, device_weights in self.preprocessed_graph_constants.items():
             for weight in device_weights:
                 tt_mlir.deallocate_tensor(weight, force=True)
-        for device in self.owned_devices:
+        for device in self.owned_device_indices:
             tt_mlir.close_mesh_device(device)
 
 
@@ -456,19 +407,20 @@ class OpByOpExecutor(Executor):
 
     def __init__(
         self,
+        mcg,
         compiler_config=None,
         required_pcc=0.99,
         required_atol=1e-2,
-        device=None,
+        devices=None,
         async_mode=False,
     ):
+        assert len(mcg.programs) == 1
         super().__init__(
-            program=None,
-            graph_constants=None,
+            mcg=mcg,
             compiler_config=compiler_config,
             required_pcc=required_pcc,
             required_atol=required_atol,
-            device=device,
+            devices=devices,
             async_mode=async_mode,
         )
 

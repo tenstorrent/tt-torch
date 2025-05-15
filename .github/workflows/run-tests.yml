@@ -98,6 +98,7 @@ jobs:
       run: |
         source env/activate
         pytest -v tests/torch \
+           --ignore=tests/torch/test_basic_multichip.py \
            --junit-xml=${{ steps.strings.outputs.test_report_path_torch }} \
            --cov=tt_torch --cov-report term --cov-report xml:coverage.xml
 

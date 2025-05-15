@@ -182,50 +182,136 @@ def dump_graph(graph, file_name):
         f.write(str(graph))
 
 
+def _generate_golden_intermediate_cache(gm, inputs, compiler_config):
+    print("Generating golden intermediate cache")
+    node_to_tensor = {}
+    input_index = 0
+    outputs = []
+    num_nodes = len(gm.graph.nodes)
+    out_degree = {}
+    for idx, node in enumerate(gm.graph.nodes):
+        print(f"Compiling {idx}/{num_nodes}: <{node.op}>{node.name}\t{node.target}")
+        out_degree[node] = len(node.users)
+        if node.op == "placeholder":
+            node_to_tensor[node] = inputs[input_index]
+            input_index += 1
+        elif node.op == "get_attr":
+            for buffer in gm.named_buffers():
+                if buffer[0] == node.target:
+                    node_to_tensor[node] = buffer[1]
+                    break
+        elif node.op == "call_function":
+            args = []
+            for arg in node.args:
+                if isinstance(arg, torch.fx.node.Node):
+                    args.append(node_to_tensor[arg])
+                elif isinstance(arg, list):
+                    args.append(
+                        [
+                            node_to_tensor[a]
+                            if isinstance(a, torch.fx.node.Node)
+                            else a
+                            for a in arg
+                        ]
+                    )
+                else:
+                    args.append(arg)
+
+            golden = node.target(*args, **node.kwargs)
+
+            # some ops return scalar (0D tensor) as output (e.g. aten.select.int)
+            if isinstance(golden, torch.Tensor) and golden.dim() == 0:
+                print(f"Unsqueezing golden {golden} to {golden.unsqueeze(0)}")
+                golden = golden.unsqueeze(0)
+
+            # some ops return a tuple of tensors as output (e.g. max_pool_2d_with_indices)
+            # we expect to only use the first, though this may be changed in the future
+            elif isinstance(golden, (tuple, list)) and len(golden) > 1:
+                golden = golden[0]
+                print(
+                    f"\033[33m[WARNING] {node.name} has {len(golden)} outputs, but we can only get one from runtime.\033[0m"
+                )
+            cache_entry = RuntimeIntermediate(node, golden)
+            compiler_config.runtime_intermediate_cache[node.name] = cache_entry
+            print(f"Caching runtime intermediate for {node.name}")
+            tensor = node.target(*args, **node.kwargs)
+            node_to_tensor[node] = tensor
+
+
 # The following function splits the graph onto the devices specified in the device_map
 # We create empty subgraphs for each device and then add the nodes to the appropriate subgraph
 def split_onto_devices(gm, compiler_config):
-    devices = set(compiler_config.device_map.values())
-    mcg = MultiChipGraph(devices)
-    mcg.gm = gm
-    if len(devices) <= 1:
+    device_indices = set(compiler_config.device_map.values())
+    if len(device_indices) == 0:
+        device_indices = [0]
+    mcg = MultiChipGraph(device_indices)
+    if len(device_indices) == 1:
         mcg.device_graphs = {0: gm.graph}
+        input_index = 0
+        output_index = 0
+        for node in gm.graph.nodes:
+            if node.op == "placeholder":
+                mci = MultiChipInput(
+                    0,
+                    IOType.USER,
+                    input_index,
+                    input_index,
+                )
+                mcg.graph_inputs[0].append(mci)
+                input_index += 1
+            elif node.op == "output":
+                for _ in node.args[0]:
+                    mco = MultiChipOutput(0, IOType.USER, output_index)
+                    mcg.graph_outputs[0].append(mco)
+                    output_index += 1
         return mcg
 
     node_to_new_nodes = {}
     user_input_index = 0
-    consumer_input_indices = [0] * len(devices)
-    output_indices = [0] * len(devices)
-    outputs = [[] for _ in devices]
+    consumer_input_indices = [0] * len(device_indices)
+    output_indices = [0] * len(device_indices)
+    outputs = [[] for _ in device_indices]
     prev_device_idx = None
+
+    def update_device_index(node):
+        nonlocal prev_device_idx
+        device_idx = node_to_device(node, compiler_config.device_map)
+        if device_idx is None:
+            assert prev_device_idx is not None
+            device_idx = prev_device_idx
+        prev_device_idx = device_idx
+        return device_idx
 
     for node in gm.graph.nodes:
         if node.op == "get_attr" or node.op == "placeholder":
+            is_placeholder = node.op == "placeholder"
             user_devices = [
                 node_to_device(user, compiler_config.device_map) for user in node.users
             ]
             user_devices = [d for d in user_devices if d is not None]
             devices = list(set(user_devices))
             if len(devices) == 0:
+                assert prev_device_idx is not None
                 devices = [prev_device_idx]
             for device_idx in devices:
                 prev_device_idx = device_idx
                 inp_node = (
-                    mcg.device_graphs[device_idx].get_attr(node.target)
-                    if node.op == "get_attr"
-                    else mcg.device_graphs[device_idx].placeholder(node.target)
+                    mcg.device_graphs[device_idx].placeholder(node.target)
+                    if is_placeholder
+                    else mcg.device_graphs[device_idx].get_attr(node.target)
                 )
                 inp_node.meta = node.meta
                 node_to_new_nodes[node] = {device_idx: inp_node}
-                mci = MultiChipInput(
-                    device_idx,
-                    IOType.USER,
-                    user_input_index,
-                    consumer_input_indices[device_idx],
-                )
-                mcg.graph_inputs[device_idx].append(mci)
-                consumer_input_indices[device_idx] += 1
-                user_input_index += 1
+                if is_placeholder:
+                    mci = MultiChipInput(
+                        device_idx,
+                        IOType.USER,
+                        user_input_index,
+                        consumer_input_indices[device_idx],
+                    )
+                    mcg.graph_inputs[device_idx].append(mci)
+                    consumer_input_indices[device_idx] += 1
+                    user_input_index += 1
             # TODO Assert on graphs that feed each other
 
         elif (
@@ -233,10 +319,7 @@ def split_onto_devices(gm, compiler_config):
             or node.op == "call_method"
             or node.op == "call_module"
         ):
-            device_idx = node_to_device(node, compiler_config.device_map)
-            if device_idx is None:
-                device_idx = prev_device_idx
-            prev_device_idx = device_idx
+            device_idx = update_device_index(node)
             graph = mcg.device_graphs[device_idx]
             node_args = []
             node_kw_args = []
@@ -310,10 +393,7 @@ def split_onto_devices(gm, compiler_config):
             # Final outputs
             final_outputs = node.args[0]
             for index, output in enumerate(final_outputs):
-                device_idx = node_to_device(output, compiler_config.device_map)
-                if device_idx is None:
-                    device_idx = prev_device_idx
-                prev_device_idx = device_idx
+                device_idx = update_device_index(output)
                 outputs[device_idx].append(node_to_new_nodes[output][device_idx])
                 mco = MultiChipOutput(device_idx, IOType.USER, index)
                 mcg.graph_outputs[device_idx].append(mco)
@@ -326,7 +406,7 @@ def split_onto_devices(gm, compiler_config):
             output = output[0]
         else:
             output = tuple(output)
-        output_node = graph.output(output)
+        graph.output(output)
 
     for graph in mcg.device_graphs.values():
         graph.lint()
@@ -363,9 +443,6 @@ def prune_inputs(program, constant_inputs):
 def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     decompositions = torch.export.default_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
-
-    # we use the export API to run the decompositions, as this maintains the
-    # soruce locations in stack_trace
     mcg = split_onto_devices(gm, compiler_config)
 
     for idx, graph in mcg.device_graphs.items():
@@ -387,6 +464,8 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
                     )
 
         gm_device = torch.fx.GraphModule(gm, graph, f"_device_{idx}")
+        # we use the export API to run the decompositions, as this maintains the
+        # source locations in stack_trace
         gm_device = (
             torch.export.export_for_training(
                 gm_device, tuple(sub_example_inputs), strict=False
@@ -394,8 +473,6 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
             .run_decompositions(decompositions)
             .module()
         )
-        run_shape_prop(gm_device, sub_example_inputs)
-
         gm_device = bypass_dtype_promotion(gm_device, compiler_config)
         # shape prop also propagates dtypes, need to run to figure out which casts are redundant
         run_shape_prop(gm_device, sub_example_inputs)
@@ -435,5 +512,14 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         mcg.programs[idx] = program
         mcg.constant_inputs[idx] = constant_inputs
         mcg.example_inputs[idx] = sub_example_inputs
+
+    if compiler_config._enable_intermediate_verification:
+        if len(mcg.programs) > 1:
+            assert (
+                False
+            ), "Intermediate verification is not supported for multi-chip models"
+
+        # Once a program is generated, it should not be mutated, so we can safely generate the golden intermediate cache here
+        _generate_golden_intermediate_cache(mcg.programs[0], sub_example_inputs)
 
     return mcg
