@@ -231,6 +231,9 @@ def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
         async_mode=async_mode,
     )
 
+    if compiler_config.compile_depth == CompileDepth.TORCH_FX:
+        return executor
+
     compiler_config.record_property("achieved_compile_depth", "STABLEHLO")
 
     if compiler_config.compile_depth == CompileDepth.STABLEHLO:
