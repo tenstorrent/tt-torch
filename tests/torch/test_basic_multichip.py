@@ -35,29 +35,10 @@ def test_pipeline_parallel():
     options.devices = [device1, device2]
 
     host_model = Basic()
-    import numpy as np
 
     model = torch.compile(host_model, backend=backend, options=options)
     x = torch.rand(32, 32)
     y = torch.rand(32, 64)
-    start = time.time()
     calculated = model(x, y)
-    end = time.time()
-    print(f"Time taken first iter: {end - start}")
-    start = time.time()
-    times = []
-    for _ in range(100):
-        start = time.time()
-        calculated = model(x, y)
-        end = time.time()
-        times.append(end - start)
-    min_time = min(times)
-    max_time = max(times)
-    mean_time = sum(times) / len(times)
-    std_time = np.std(times)
-    print(f"Min time taken: {min_time}")
-    print(f"Max time taken: {max_time}")
-    print(f"Mean time taken: {mean_time}")
-    print(f"Standard deviation time taken: {std_time}")
     golden = host_model(x, y)
     verify_against_golden((golden,), (calculated,), True, True, required_atol=0.1)

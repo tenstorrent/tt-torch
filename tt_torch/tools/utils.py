@@ -113,8 +113,6 @@ class MultiChipGraph:
         self.example_inputs = {}
         self.shlo_modules = {}
 
-        self.gm = None
-
 
 class Tensor:
     def __init__(self, shape):

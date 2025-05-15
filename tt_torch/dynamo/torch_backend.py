@@ -193,6 +193,7 @@ class TorchExecutor(OpByOpExecutor):
         async_mode=False,
     ):
         super().__init__(
+            mcg=mcg,
             compiler_config=compiler_config,
             required_pcc=required_pcc,
             required_atol=required_atol,
