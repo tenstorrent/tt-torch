@@ -332,7 +332,6 @@ class Executor:
             inputs = self.graph_constants + inputs
         inputs = tuple(input.to(device) for input in inputs)
         gm = self.program.graph_module
-        gm = gm.to(device)
         outputs = gm(*inputs)
         outputs = tuple(output.to("cpu") for output in outputs)
         return outputs

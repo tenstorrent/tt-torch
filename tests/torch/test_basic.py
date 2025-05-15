@@ -336,3 +336,23 @@ def test_erf():
 
     input_data = torch.randn(32, 32)
     output = model(input_data)
+
+
+def test_gelu():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            x = torch.nn.functional.gelu(x)
+            return x
+
+    host_model = Basic()
+    options = BackendOptions(
+        compiler_config=CompilerConfig(),
+    )
+    options.compiler_config.compile_depth = tt_torch.tools.utils.CompileDepth.TORCH_FX
+    model = torch.compile(host_model, backend=backend, options=options)
+
+    input_data = torch.randn(32, 32)
+    output = model(input_data)

@@ -15,6 +15,7 @@ DecompositionTable = Dict[torch._ops.OperatorBase, Callable]
 DecompositionOpsList = Sequence[
     Union[torch._ops.OperatorBase, torch._ops.OpOverloadPacket]
 ]
+import math
 
 # Manages "scopes" for decompositions used. Each unique scope is an attribute on
 # the _decomp_local. If the attribute is missing, then the default
@@ -309,12 +310,41 @@ def clamp(
     return out
 
 
+def erf(x):
+    # Constants for the approximation
+    a1 = 0.254829592
+    a2 = -0.284496736
+    a3 = 1.421413741
+    a4 = -1.453152027
+    a5 = 1.061405429
+    p = 0.3275911
+
+    # Take the absolute value
+    sign = torch.sign(x)
+    x = torch.abs(x)
+
+    # Formula: 1 - (1/(1 + p*x + p*x^2 + p*x^3 + p*x^4 + p*x^5))^16
+    t = 1.0 / (1.0 + p * x)
+    y = 1.0 - (
+        a1 * t + a2 * t**2 + a3 * t**3 + a4 * t**4 + a5 * t**5
+    ) * torch.exp(-x * x)
+
+    return sign * y
+
+
+def gelu(x):
+    """
+    GELU activation using the error function
+    Formula: 0.5 * x * (1 + erf(x / sqrt(2)))
+    """
+    return 0.5 * x * (1.0 + torch.erf(x / math.sqrt(2.0)))
+
+
 # TODO: DO we ever need this?
 def _get_default_decomposition_ops() -> DecompositionOpsList:
     aten = torch.ops.aten
     # default decompositions pulled from SHARK / torch._decomp
     return [
-        aten.erf,
         aten.embedding_dense_backward,
         aten.native_layer_norm_backward,
         aten.slice_backward,
@@ -375,6 +405,8 @@ def _get_custom_decopositions() -> DecompositionTable:
         aten.avg_pool2d.default: avg_pool2d,
         aten.split_with_sizes.default: split_with_sizes,
         aten.clamp.default: clamp,
+        aten.erf.default: erf,
+        aten.gelu.default: gelu,
     }
 
 
