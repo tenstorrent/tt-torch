@@ -119,7 +119,7 @@ else()
 endif()
 
 # tt-forge-models - Python-only project, no need to build.
-set(TT_FORGE_MODELS_VERSION "3ef1f8ea483316cfa530eee199151971fafe237d")
+set(TT_FORGE_MODELS_VERSION "60e7e3116f3035fc34ea75d1ca8c40b0090242b4")
 ExternalProject_Add(
     tt_forge_models
     SOURCE_DIR ${TTTORCH_SOURCE_DIR}/third_party/tt_forge_models

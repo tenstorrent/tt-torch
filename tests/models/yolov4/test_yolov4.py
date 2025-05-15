@@ -5,17 +5,17 @@
 import torch
 import pytest
 
-from third_party.tt_forge_models.yolov4 import ModelLoader
+from third_party.tt_forge_models.yolov4.pytorch import ModelLoader
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        return ModelLoader.load_model()
+        return ModelLoader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        return ModelLoader.load_inputs()
+        return ModelLoader.load_inputs(dtype_override=torch.bfloat16)
 
 
 @pytest.mark.parametrize(

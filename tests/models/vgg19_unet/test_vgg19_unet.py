@@ -6,15 +6,15 @@ import torch
 import pytest
 from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.vgg19_unet import ModelLoader
+from third_party.tt_forge_models.vgg19_unet.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        return ModelLoader.load_model()
+        return ModelLoader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        return ModelLoader.load_inputs()
+        return ModelLoader.load_inputs(dtype_override=torch.bfloat16)
 
 
 @pytest.mark.parametrize(
