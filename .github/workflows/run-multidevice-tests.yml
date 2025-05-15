@@ -86,6 +86,12 @@ jobs:
         mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
+    - name: Run PyTorch Async Unit tests
+      shell: bash
+      run: |
+        source env/activate
+        pytest -v tests/torch/test_basic_async.py
+
     - name: Run Llama-7B tests
       shell: bash
       run: |
