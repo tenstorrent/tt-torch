@@ -38,47 +38,47 @@ else()
     message(STATUS "TT_RUNTIME_ENABLE_PERF_TRACE is set to: ${TT_RUNTIME_ENABLE_PERF_TRACE}")
 
     include(ExternalProject)
-    set(TTMLIR_PREFIX ${TTTORCH_SOURCE_DIR}/third_party/tt-mlir)
-    set(TTMLIR_INSTALL_PREFIX ${TTMLIR_PREFIX}/install)
-    set(TT_MLIR_COMPILER_LIBRARY_PATH ${TTMLIR_INSTALL_PREFIX}/lib/libTTMLIRCompiler.so)
-    set(TT_MLIR_RUNTIME_LIBRARY_PATH ${TTMLIR_INSTALL_PREFIX}/lib/libTTMLIRRuntime.so)
+    # set(TTMLIR_PREFIX ${TTTORCH_SOURCE_DIR}/third_party/tt-mlir)
+    # set(TTMLIR_INSTALL_PREFIX ${TTMLIR_PREFIX}/install)
+    # set(TT_MLIR_COMPILER_LIBRARY_PATH ${TTMLIR_INSTALL_PREFIX}/lib/libTTMLIRCompiler.so)
+    # set(TT_MLIR_RUNTIME_LIBRARY_PATH ${TTMLIR_INSTALL_PREFIX}/lib/libTTMLIRRuntime.so)
 
-    set(TTMLIR_BUILD_DIR ${TTMLIR_PREFIX}/src/tt-mlir-build)
+    # set(TTMLIR_BUILD_DIR ${TTMLIR_PREFIX}/src/tt-mlir-build)
 
-    ExternalProject_Add(
-        tt-mlir
-        PREFIX ${TTMLIR_PREFIX}
-        INSTALL_COMMAND ${CMAKE_COMMAND} --install ${TTMLIR_BUILD_DIR} --component SharedLib
-        CMAKE_GENERATOR Ninja
-        CMAKE_ARGS
-          -DCMAKE_BUILD_TYPE=Release
-          -DCMAKE_C_COMPILER=clang-17
-          -DCMAKE_CXX_COMPILER=clang++-17
-          -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-          -DTT_RUNTIME_ENABLE_TTNN=ON
-          -DTT_RUNTIME_ENABLE_PERF_TRACE=${TT_RUNTIME_ENABLE_PERF_TRACE}
-          -DTT_RUNTIME_ENABLE_TTMETAL=OFF
-          -DTTMLIR_ENABLE_STABLEHLO=ON
-          -DTTMLIR_ENABLE_RUNTIME=ON
-          -DTTMLIR_ENABLE_BINDINGS_PYTHON=OFF
-          -DTT_RUNTIME_DEBUG=${TT_RUNTIME_DEBUG}
-          -DCMAKE_INSTALL_PREFIX=${TTMLIR_INSTALL_PREFIX}
-        GIT_REPOSITORY https://github.com/tenstorrent/tt-mlir.git
-        GIT_TAG ${TT_MLIR_VERSION}
-        GIT_PROGRESS ON
-        BUILD_BYPRODUCTS
-            ${TT_MLIR_COMPILER_LIBRARY_PATH}
-            ${TT_MLIR_RUNTIME_LIBRARY_PATH}
-    )
+    # ExternalProject_Add(
+    #     tt-mlir
+    #     PREFIX ${TTMLIR_PREFIX}
+    #     INSTALL_COMMAND ${CMAKE_COMMAND} --install ${TTMLIR_BUILD_DIR} --component SharedLib
+    #     CMAKE_GENERATOR Ninja
+    #     CMAKE_ARGS
+    #       -DCMAKE_BUILD_TYPE=Release
+    #       -DCMAKE_C_COMPILER=clang-17
+    #       -DCMAKE_CXX_COMPILER=clang++-17
+    #       -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+    #       -DTT_RUNTIME_ENABLE_TTNN=ON
+    #       -DTT_RUNTIME_ENABLE_PERF_TRACE=${TT_RUNTIME_ENABLE_PERF_TRACE}
+    #       -DTT_RUNTIME_ENABLE_TTMETAL=OFF
+    #       -DTTMLIR_ENABLE_STABLEHLO=ON
+    #       -DTTMLIR_ENABLE_RUNTIME=ON
+    #       -DTTMLIR_ENABLE_BINDINGS_PYTHON=OFF
+    #       -DTT_RUNTIME_DEBUG=${TT_RUNTIME_DEBUG}
+    #       -DCMAKE_INSTALL_PREFIX=${TTMLIR_INSTALL_PREFIX}
+    #     GIT_REPOSITORY https://github.com/tenstorrent/tt-mlir.git
+    #     GIT_TAG ${TT_MLIR_VERSION}
+    #     GIT_PROGRESS ON
+    #     BUILD_BYPRODUCTS
+    #         ${TT_MLIR_COMPILER_LIBRARY_PATH}
+    #         ${TT_MLIR_RUNTIME_LIBRARY_PATH}
+    # )
 
-    add_library(TTMLIRCompiler SHARED IMPORTED GLOBAL)
-    set_target_properties(TTMLIRCompiler PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_COMPILER_LIBRARY_PATH})
-    add_dependencies(TTMLIRCompiler tt-mlir)
-    add_library(TTMLIRRuntime SHARED IMPORTED GLOBAL)
-    set_target_properties(TTMLIRRuntime PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_RUNTIME_LIBRARY_PATH})
-    add_dependencies(TTMLIRRuntime tt-mlir)
+    # add_library(TTMLIRCompiler SHARED IMPORTED GLOBAL)
+    # set_target_properties(TTMLIRCompiler PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_COMPILER_LIBRARY_PATH})
+    # add_dependencies(TTMLIRCompiler tt-mlir)
+    # add_library(TTMLIRRuntime SHARED IMPORTED GLOBAL)
+    # set_target_properties(TTMLIRRuntime PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_RUNTIME_LIBRARY_PATH})
+    # add_dependencies(TTMLIRRuntime tt-mlir)
 
-    install(DIRECTORY ${TTMLIR_INSTALL_PREFIX}/ DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
+    # install(DIRECTORY ${TTMLIR_INSTALL_PREFIX}/ DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
 
     # torch-mlir build
 

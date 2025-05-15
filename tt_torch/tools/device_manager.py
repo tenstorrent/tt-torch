@@ -8,11 +8,11 @@ from typing import KeysView
 class DeviceManager:
     # Dictionary to keep track of each parent mesh and
     # associated sub_meshes
-    _devices: dict[tt_mlir.Device, set[tt_mlir.Device]] = {}
+    _devices = {}  # : dict[tt_mlir.Device, set[tt_mlir.Device]] = {}
 
     # Dictionaries to keep track of the mesh shape for each device
-    _parent_shapes: dict[tt_mlir.Device, tuple[int, int]] = {}
-    _submesh_shapes: dict[tt_mlir.Device, tuple[int, int]] = {}
+    _parent_shapes = {}  # : dict[tt_mlir.Device, tuple[int, int]] = {}
+    _submesh_shapes = {}  # : dict[tt_mlir.Device, tuple[int, int]] = {}
 
     @staticmethod
     def _get_parent_mesh_options(
@@ -21,7 +21,7 @@ class DeviceManager:
         enable_program_cache=None,
         l1_small_size=None,
         dispatch_core_type=None,
-    ) -> tt_mlir.MeshDeviceOptions:
+    ):
         options = tt_mlir.MeshDeviceOptions()
         if device_ids is not None:
             options.device_ids = device_ids
@@ -51,7 +51,7 @@ class DeviceManager:
         enable_program_cache=None,
         l1_small_size=None,
         dispatch_core_type=None,
-    ) -> tt_mlir.Device:
+    ):
         """
         Acquires a new tt_mlir.Device object representing a parent mesh device and returns it.
         The returned parent device can either be used directly for model execution, or can be used
@@ -75,16 +75,14 @@ class DeviceManager:
         return parent_mesh
 
     @classmethod
-    def get_parent_devices(cls) -> KeysView[tt_mlir.Device]:
+    def get_parent_devices(cls):
         """
         Returns a list of all currently acquired parent mesh devices.
         """
         return cls._devices.keys()
 
     @classmethod
-    def release_parent_device(
-        cls, parent_device: tt_mlir.Device, cleanup_sub_devices: bool = False
-    ):
+    def release_parent_device(cls, parent_device, cleanup_sub_devices: bool = False):
         """
         Releases the specified parent mesh device, if there are no open sub-devices
         associated with the given parent.
@@ -107,10 +105,10 @@ class DeviceManager:
     @classmethod
     def create_sub_mesh_device(
         cls,
-        parent_mesh: tt_mlir.Device,
+        parent_mesh,
         mesh_offset: tuple[int, int],
         mesh_shape: tuple[int, int] = (1, 1),
-    ) -> tt_mlir.Device:
+    ):
         """
         Creates a sub mesh device under the given parent mesh device and returns it.
         """
@@ -136,7 +134,7 @@ class DeviceManager:
         return sub_device
 
     @classmethod
-    def get_sub_mesh_devices(cls, parent_mesh: tt_mlir.Device) -> set[tt_mlir.Device]:
+    def get_sub_mesh_devices(cls, parent_mesh):
         """
         Returns all acquired sub mesh devices under a given parent mesh device.
         """
@@ -146,9 +144,9 @@ class DeviceManager:
     @classmethod
     def release_sub_mesh_device(
         cls,
-        sub_device: tt_mlir.Device,
+        sub_device,
         cleanup_parent: bool = False,
-        parent: tt_mlir.Device = None,
+        parent=None,
     ):
         """
         Closes the specified sub_mesh device.
@@ -188,7 +186,7 @@ class DeviceManager:
         enable_program_cache=None,
         l1_small_size=None,
         dispatch_core_type=None,
-    ) -> tuple[tt_mlir.Device, list[tt_mlir.Device]]:
+    ):
         """
         Opens a parent mesh and makes `num_device` 1x1 sub mesh devices available for use in a 1D mesh.
         If `num_device` is None, all available devices will be acquired.

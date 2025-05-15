@@ -314,6 +314,7 @@ def _get_default_decomposition_ops() -> DecompositionOpsList:
     aten = torch.ops.aten
     # default decompositions pulled from SHARK / torch._decomp
     return [
+        aten.erf,
         aten.embedding_dense_backward,
         aten.native_layer_norm_backward,
         aten.slice_backward,

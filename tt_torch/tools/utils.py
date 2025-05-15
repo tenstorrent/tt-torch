@@ -17,14 +17,15 @@ import sys
 import shutil
 import onnx
 from onnxruntime import SessionOptions, InferenceSession
-from tt_mlir import (
-    open_mesh_device,
-    close_mesh_device,
-    create_sub_mesh_device,
-    release_sub_mesh_device,
-    MeshDeviceOptions,
-    is_runtime_debug_enabled,
-)
+
+# from tt_mlir import (
+#     open_mesh_device,
+#     close_mesh_device,
+#     create_sub_mesh_device,
+#     release_sub_mesh_device,
+#     MeshDeviceOptions,
+#     is_runtime_debug_enabled,
+# )
 
 
 """

@@ -323,7 +323,10 @@ class ModelTester:
     def verify_outputs(self, golden, outputs):
 
         # Only do golden check if running EXECUTE. Limited value comparing in other situations.
-        if self.compiler_config.compile_depth != CompileDepth.EXECUTE:
+        if (
+            self.compiler_config.compile_depth != CompileDepth.EXECUTE
+            and self.compiler_config.compile_depth != CompileDepth.TORCH_FX
+        ):
             print(f"Skipping golden check for {self.compiler_config.compile_depth}")
             return
 

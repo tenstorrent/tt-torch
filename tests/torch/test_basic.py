@@ -10,7 +10,6 @@ import threading
 
 import tt_torch
 from tt_torch.tools.utils import CompilerConfig
-from tt_torch.tools.device_manager import DeviceManager
 
 
 def test_linear():
@@ -34,4 +33,23 @@ def test_linear():
 
     input_data = torch.randn(32, 32)
     output = model(input_data)
-    
+
+
+def test_erf():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            x = torch.erf(x)
+            return x
+
+    host_model = Basic()
+    options = BackendOptions(
+        compiler_config=CompilerConfig(),
+    )
+    options.compiler_config.compile_depth = tt_torch.tools.utils.CompileDepth.TORCH_FX
+    model = torch.compile(host_model, backend=backend, options=options)
+
+    input_data = torch.randn(32, 32)
+    output = model(input_data)

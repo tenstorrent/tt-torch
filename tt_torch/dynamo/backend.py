@@ -161,6 +161,9 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     with torch.no_grad():
         program, graph_constants = pass_pipeline(gm, example_inputs, compiler_config)
 
+    if compiler_config.compile_depth == CompileDepth.TORCH_FX:
+        return None, program, graph_constants
+
     module = import_program(program)
     verify_ir(module)
 
@@ -214,6 +217,9 @@ def _base_backend(gm, example_inputs, compiler_config, device, async_mode):
     executor = Executor(
         program, graph_constants, compiler_config, device=device, async_mode=async_mode
     )
+
+    if compiler_config.compile_depth == CompileDepth.TORCH_FX:
+        return executor
 
     compiler_config.record_property("achieved_compile_depth", "STABLEHLO")
 
