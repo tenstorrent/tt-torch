@@ -141,7 +141,21 @@ class ThisTester(ModelTester):
             height = settings.TABLE_REC_IMAGE_SIZE['height']  # 768
             width = settings.TABLE_REC_IMAGE_SIZE['width']    # 768
             pixel_values = torch.rand(batch_size, channels, height, width)
-            return pixel_values
+
+            # Create proper box input tensor
+            seq_len = 3  # Start with a small sequence
+            box_features = 7  # Based on LabelEmbedding forward method parameters
+            safe_value = 5  # A safe value that won't cause index errors
+            
+            # Create decoder input IDs with correct shape
+            decoder_input_ids = torch.ones(batch_size, seq_len, box_features, dtype=torch.long) * safe_value
+            print("KCM Inside here")
+            
+            return {
+                'pixel_values': pixel_values,
+                'decoder_input_ids': decoder_input_ids,
+                # 'decoder_input_labels': decoder_input_ids,  # This will become input_labels in kwargs_decoder
+            }
 
         else:
             raise ValueError(f"Unsupported model type: {model_type}")
