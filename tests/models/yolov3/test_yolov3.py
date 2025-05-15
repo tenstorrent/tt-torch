@@ -3,18 +3,18 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import pytest
-
-from third_party.tt_forge_models.yolov3 import ModelLoader
+import torch
+from third_party.tt_forge_models.yolov3.pytorch import ModelLoader
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        return ModelLoader.load_model()
+        return ModelLoader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        return ModelLoader.load_inputs()
+        return ModelLoader.load_inputs(dtype_override=torch.bfloat16)
 
 
 @pytest.mark.parametrize(
