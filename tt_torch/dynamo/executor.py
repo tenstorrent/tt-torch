@@ -4,7 +4,7 @@
 import torch
 import onnx
 import onnxruntime as ort
-import tt_mlir
+#import tt_mlir
 import time
 import pickle
 import faulthandler
@@ -28,6 +28,15 @@ from tt_torch.tools.utils import (
 )
 from typing import Union
 
+from torch_xla.experimental import plugins
+class TTPjrtPlugin(plugins.DevicePlugin):
+
+  def library_path(self):
+    return os.path.join(os.path.dirname(__file__), "../../../tt-xla/install/lib/pjrt_plugin_tt.so")
+
+plugins.register_plugin("TT", TTPjrtPlugin())
+
+import torch_xla.core.xla_model as xm
 
 def gb_to_bytes(gb):
     return gb * 1024 * 1024 * 1024
@@ -296,6 +305,14 @@ class Executor:
         If self.async_mode is False, this function will move the runtime tensors to host
         and return them as Torch tensors.
         """
+        device = xm.xla_device()
+        inputs = tuple(input.to(device) for input in inputs)
+        gm = self.program.graph_module
+        gm = gm.to(device)
+        outputs = gm(*inputs)
+        outputs = tuple(output.to("cpu") for output in outputs)
+        return outputs
+
         if self.compiler_config.compile_depth != CompileDepth.EXECUTE:
             assert (
                 self.program.graph_module != None
