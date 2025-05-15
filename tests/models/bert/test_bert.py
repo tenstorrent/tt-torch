@@ -20,6 +20,7 @@ class ThisTester(ModelTester):
         m = AutoModelForQuestionAnswering.from_pretrained(
             model_name, torch_dtype=torch.bfloat16
         )
+        m.config.hidden_act = "relu"
         return m
 
     def _load_inputs(self):

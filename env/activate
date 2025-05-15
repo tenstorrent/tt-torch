@@ -65,3 +65,5 @@ export PYTHONPATH="$(pwd):$(pwd)/env/venv:$(pwd)/env/venv/lib:$(pwd)/install/lib
 export ARCH_NAME="${ARCH_NAME:-wormhole_b0}"
 export TT_METAL_LOGGER_LEVEL="ERROR"
 export SYSTEM_DESC_PATH="/tmp/system_desc.ttsys"
+export PJRT_DEVICE="TT"
+export XLA_STABLEHLO_COMPILE="1"
