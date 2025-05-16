@@ -70,10 +70,10 @@ jobs:
     - name: Git safe dir
       run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
 
-    - name: Use build artifacts
+    - name: Use debug build artifacts with build artifact key
       uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
       with:
-        name: install-artifacts
+        name: install-artifacts${{ inputs.build-artifact-key }}
         path: install
         github_token: ${{ secrets.GITHUB_TOKEN }}
 

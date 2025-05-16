@@ -27,6 +27,11 @@ jobs:
         submodules: recursive
         lfs: true
 
+    - name: Install unzip package (Temporary, tt-torch issue 787)
+      shell: bash
+      run: |
+        apt-get update && apt-get install -y unzip
+
     - name: Set reusable strings
       id: strings
       shell: bash
