@@ -53,7 +53,7 @@ jobs:
                   tests/models/mistral/test_mistral.py::test_mistral[full-mistral7b-eval]
                   tests/models/mistral/test_mistral.py::test_mistral[full-ministral8b-eval]
             "
-          }
+          },
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}

@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import traceback
+import gc
 from torch.fx.experimental.proxy_tensor import make_fx
 from torch.fx.experimental import const_fold
 from torch._decomp import get_decompositions
@@ -104,9 +105,10 @@ def bypass_dtype_promotion(gm, compiler_config):
 
 def constant_fold(gm):
     gm = const_fold.split_const_subgraphs(gm)
+    gc.collect()
     gm.run_folding()
-
     gm.graph.eliminate_dead_code()
+
     return gm
 
 
