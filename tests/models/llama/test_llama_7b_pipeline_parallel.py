@@ -95,4 +95,6 @@ def test_llama_7b_pipeline_parallel(record_property, model_name, mode):
         tuple([golden.logits]), tuple([out.logits]), True, False, required_atol=0.1
     )
 
-    DeviceManager.release_parent_device(parent, cleanup_sub_devices=True)
+    DeviceManager.release_sub_mesh_device(device1)
+    DeviceManager.release_sub_mesh_device(device2)
+    DeviceManager.release_parent_device(parent_device)

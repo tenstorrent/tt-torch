@@ -18,7 +18,6 @@ from tt_torch.tools.utils import (
     IOType,
     CompilerConfig,
     OpCompilationStatus,
-    RuntimeIntermediate,
 )
 from tt_torch.tools.utils import (
     run_model_proto,

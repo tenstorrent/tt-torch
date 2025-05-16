@@ -5,6 +5,7 @@ import torch
 from torch.fx.experimental import const_fold
 from typing import List, Optional, Union
 from torch.export.graph_signature import InputKind
+from tt_torch.tools.utils import RuntimeIntermediate
 
 from tt_torch.tools.utils import MultiChipInput, MultiChipOutput, IOType, MultiChipGraph
 
@@ -520,6 +521,10 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
             ), "Intermediate verification is not supported for multi-chip models"
 
         # Once a program is generated, it should not be mutated, so we can safely generate the golden intermediate cache here
-        _generate_golden_intermediate_cache(mcg.programs[0], sub_example_inputs)
+        _generate_golden_intermediate_cache(
+            mcg.programs[0],
+            mcg.constant_inputs[0] + mcg.example_inputs[0],
+            compiler_config,
+        )
 
     return mcg
