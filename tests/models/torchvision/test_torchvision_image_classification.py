@@ -114,9 +114,8 @@ def test_torchvision_image_classification(record_property, model_info, mode, op_
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     # TODO Enable checking (vit_h_14) - https://github.com/tenstorrent/tt-torch/issues/491
-    # TODO Enable checking (swin_b) - https://github.com/tenstorrent/tt-torch/issues/663
     model_name = model_info[0]
-    assert_pcc = False if model_name in ["vit_h_14", "swin_b"] else True
+    assert_pcc = False if model_name in ["vit_h_14"] else True
     assert_atol = False
 
     model_group = "red" if model_name == "swin_v2_s" else "generality"
