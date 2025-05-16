@@ -26,7 +26,7 @@ from tt_torch.tools.utils import (
     torch_input_to_onnx,
     MultiChipGraph,
 )
-from typing import Union
+from typing import Union, Optional
 
 
 def gb_to_bytes(gb):
@@ -133,8 +133,8 @@ def execute_process(receiver, sender, exec_event):
 class Executor:
     def __init__(
         self,
-        mcg: MultiChipGraph,
-        compiler_config=None,
+        mcg: Optional[MultiChipGraph] = None,
+        compiler_config: Optional[CompilerConfig] = None,
         required_pcc=0.99,
         required_atol=1e-2,
         devices=None,
@@ -383,6 +383,10 @@ class OnnxExecutor(Executor):
     def typecast_inputs(self, inputs):
         raise NotImplementedError("This should not be called on an OnnxExecutor.")
 
+    # Todo: refactor onnx executor to use mcg as well
+    def set_binary(self, binary):
+        self.binary = binary
+
     def __call__(self, *inputs):
         if self.binary is None:
             # Only want to load the model proto into one inference session
@@ -407,14 +411,16 @@ class OpByOpExecutor(Executor):
 
     def __init__(
         self,
-        mcg,
+        mcg=None,
         compiler_config=None,
         required_pcc=0.99,
         required_atol=1e-2,
         devices=None,
         async_mode=False,
     ):
-        assert len(mcg.programs) == 1
+        if mcg is not None:
+            assert len(mcg.programs) == 1
+
         super().__init__(
             mcg=mcg,
             compiler_config=compiler_config,
