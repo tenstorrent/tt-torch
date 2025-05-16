@@ -37,7 +37,15 @@ jobs:
       with:
         submodules: recursive
         lfs: true
-
+    
+    - name: Show apt installed packages
+      shell: bash
+      run: |
+        apt-get update && apt-get install -y unzip
+        echo "Installed packages:"
+        apt list --installed
+        dpkg -l | grep '^ii' | awk '{print $2, $3}'
+        
     - name: Set reusable strings
       id: strings
       shell: bash
