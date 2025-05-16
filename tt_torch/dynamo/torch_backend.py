@@ -291,15 +291,17 @@ class TorchExecutor(OpByOpExecutor):
             graph_node.meta["val"] = node.meta["val"]
 
             # if the output of the getitem node is not used, we don't append it to the graph
-            unused_output = [len(user.users) == 0 for user in node.users]
-            for idx, tensor_meta in enumerate(node.meta["tensor_meta"]):
-                if unused_output[idx]:
+            for user in node.users:
+                assert user.target == operator.getitem
+                if len(user.users) == 0:
                     continue
 
+                idx = user.args[1]
                 getitem_node = graph.call_function(
                     operator.getitem, args=(graph_node, idx)
                 )
                 getitem_nodes.append(getitem_node)
+                tensor_meta = node.meta["tensor_meta"][idx]
                 getitem_node.meta["tensor_meta"] = tensor_meta
             out = graph.output(tuple(getitem_nodes))
         else:
