@@ -18,7 +18,7 @@ class ThisTester(ModelTester):
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_name, torch_dtype=torch.bfloat16
         )
-        return model.generate
+        return model
 
     def _load_inputs(self):
 
@@ -70,6 +70,7 @@ def test_qwen2_casual_lm(record_property, model_name, mode, op_by_op):
     if mode == "eval":
         gen_text = tester.tokenizer.batch_decode(
             results,
+            run_generate=True,  # run model.generate(**inputs)
             skip_special_tokens=True,
             clean_up_tokenization_spaces=False,
         )[0]
