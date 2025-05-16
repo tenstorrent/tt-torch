@@ -11,7 +11,7 @@ from tests.models.bevdepth.src.base_bev_depth import BaseBEVDepth
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
-dependencies = ["mmdet==3.3.0", "mmcv==2.2.0", "mmdet3d==1.4.0"]
+dependencies = ["mmdet==3.3.0", "mmcv==2.1.0", "mmdet3d==1.4.0"]
 
 
 class ThisTester(ModelTester):
