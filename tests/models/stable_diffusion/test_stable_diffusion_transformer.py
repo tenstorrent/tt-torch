@@ -15,17 +15,21 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model_info = self.model_name
+        model_dict = {
+            "SD3.5-medium-transformer": "stabilityai/stable-diffusion-3.5-medium",
+            "SD3.5-large-transformer": "stabilityai/stable-diffusion-3.5-large",
+        }
+        model_path = model_dict[self.model_name]
         self.pipe = StableDiffusion3Pipeline.from_pretrained(
-            model_info,
+            model_path,
             torch_dtype=torch.bfloat16,
             low_cpu_mem_usage=True,
         )
         self.scheduler = FlowMatchEulerDiscreteScheduler.from_pretrained(
-            model_info, subfolder="scheduler"
+            model_path, subfolder="scheduler"
         )
         self.transformer = SD3Transformer2DModel.from_pretrained(
-            model_info, subfolder="transformer", torch_dtype=torch.bfloat16
+            model_path, subfolder="transformer", torch_dtype=torch.bfloat16
         )
         return self.transformer
 
@@ -93,7 +97,7 @@ model_info_list = [
 )
 def test_stable_diffusion_transformer(record_property, model_info, mode, op_by_op):
     model_group = "red"
-    _, model_name = model_info
+    model_name, model_path = model_info
 
     cc = CompilerConfig()
     cc.enable_consteval = True

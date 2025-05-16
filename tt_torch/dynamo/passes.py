@@ -104,13 +104,12 @@ def bypass_dtype_promotion(gm, compiler_config):
 
 
 def constant_fold(gm):
-    split_gm = const_fold.split_const_subgraphs(gm)
-    del gm
-    split_gm.run_folding()
+    gm = const_fold.split_const_subgraphs(gm)
+    gc.collect()
+    gm.run_folding()
+    gm.graph.eliminate_dead_code()
 
-    split_gm.graph.eliminate_dead_code()
-
-    return split_gm
+    return gm
 
 
 def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
@@ -157,5 +156,4 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
 
     # Need to run shape_prop again to populate tensor_meta
     run_shape_prop(program.graph_module, constant_inputs + example_inputs)
-    gc.collect()
     return program, constant_inputs
