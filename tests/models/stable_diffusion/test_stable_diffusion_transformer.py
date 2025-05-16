@@ -15,10 +15,7 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model_dict = {
-            "SD3.5-medium-transformer": "stabilityai/stable-diffusion-3.5-medium",
-            "SD3.5-large-transformer": "stabilityai/stable-diffusion-3.5-large",
-        }
+        model_dict = dict(model_info_list)
         model_path = model_dict[self.model_name]
         self.pipe = StableDiffusion3Pipeline.from_pretrained(
             model_path,
@@ -114,7 +111,7 @@ def test_stable_diffusion_transformer(record_property, model_info, mode, op_by_o
         bringup_status="FAILED_RUNTIME",
         reason="Model compilation exceeds CI timeout limit (240 minutes), compiles e2e locally. Model execution fails with `Not enough space to allocate 47316992 B DRAM buffer across 12 banks.`",
         model_group=model_group,
-        model_name_filter="stabilityai/stable-diffusion-3.5-large",
+        model_name_filter="SD3.5-large-transformer",
     )
 
     tester = ThisTester(
