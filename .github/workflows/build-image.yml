@@ -18,6 +18,9 @@ on:
       docker-image:
         description: "Built docker image name"
         value: ${{ jobs.build-image.outputs.docker-image }}
+      docker-image-harbor:
+        description: "Built docker image name"
+        value: ${{ jobs.build-image.outputs.docker-image-harbor }}
 
 jobs:
 
@@ -25,6 +28,7 @@ jobs:
     runs-on: builder
     outputs:
       docker-image: ${{ steps.build.outputs.docker-image }}
+      docker-image-harbor: ${{ steps.build.outputs.docker-image-harbor }}
     steps:
       - name: Fix permissions
         shell: bash
@@ -69,3 +73,4 @@ jobs:
           DOCKER_CI_IMAGE=$(tail -n 1 docker.log)
           echo "DOCKER_CI_IMAGE $DOCKER_CI_IMAGE"
           echo "docker-image=$DOCKER_CI_IMAGE" >> "$GITHUB_OUTPUT"
+          echo "docker-image-harbor=harbor.ci.tenstorrent.net/$DOCKER_CI_IMAGE" >> "$GITHUB_OUTPUT"
