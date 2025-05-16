@@ -25,16 +25,6 @@ WORKDIR $BUILD_DIR/$PROJECT_NAME
 RUN cd third_party && \
     cmake -B toolchain -DBUILD_TOOLCHAIN=ON
 
-# Build torchvision wheel and copy it to /dist
-RUN git clone https://github.com/pytorch/vision.git && \
-    cd vision && \
-    git checkout v0.21.0 && \
-    TORCHVISION_USE_VIDEO_CODEC=0 TORCHVISION_USE_FFMPEG=0 CC=clang \
-    CXX=clang++ _GLIBCXX_USE_CXX11_ABI=1 USE_CUDA=OFF python3.10 setup.py bdist_wheel && \
-    cp dist/*.whl $TTTORCH_DIST_DIR && \
-    cd .. && \
-    rm -rf vision
-
 # Final stage
 FROM ghcr.io/tenstorrent/tt-torch/tt-torch-base-ubuntu-22-04:${FROM_TAG} AS ci
 
