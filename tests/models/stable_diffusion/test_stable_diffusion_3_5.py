@@ -11,10 +11,7 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model_dict = {
-            "SD3.5-medium": "stabilityai/stable-diffusion-3.5-medium",
-            "SD3.5-large": "stabilityai/stable-diffusion-3.5-large",
-        }
+        model_dict = dict(model_info_list)
         model_path = model_dict[self.model_name]
         pipe = StableDiffusion3Pipeline.from_pretrained(
             model_path,
@@ -87,7 +84,7 @@ def test_stable_diffusion_3_5(record_property, model_info, mode, op_by_op):
         cc,
         model_name,
         bringup_status="FAILED_RUNTIME",
-        reason="Cannot lower StableHLO --> TTIR",
+        reason="Cannot lower StableHLO --> TTIR : results/mlir_tests/stable_hlo/aten::round.decimals_0.mlir:3:10: error: failed to legalize operation 'stablehlo.round_nearest_even' - https://github.com/tenstorrent/tt-torch/issues/769",
         model_group=model_group,
     )
 
