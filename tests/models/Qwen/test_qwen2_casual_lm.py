@@ -62,6 +62,7 @@ def test_qwen2_casual_lm(record_property, model_name, mode, op_by_op):
         compiler_config=cc,
         record_property_handle=record_property,
         is_token_output=True,
+        run_generate=True,  # run model.generate(**inputs)
     )
 
     # TODO - Enable checking - https://github.com/tenstorrent/tt-torch/issues/526
@@ -70,7 +71,6 @@ def test_qwen2_casual_lm(record_property, model_name, mode, op_by_op):
     if mode == "eval":
         gen_text = tester.tokenizer.batch_decode(
             results,
-            run_generate=True,  # run model.generate(**inputs)
             skip_special_tokens=True,
             clean_up_tokenization_spaces=False,
         )[0]
