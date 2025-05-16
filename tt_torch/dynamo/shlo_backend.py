@@ -301,6 +301,7 @@ class StablehloExecutor(OpByOpExecutor):
         self.gm = None
         self.graph_constants = None
         self.model_proto = None
+        self.program = None
         self.sess = None
 
     def set_module(
