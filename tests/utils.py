@@ -233,7 +233,7 @@ class ModelTester:
         # Compile model
         options = BackendOptions()
         options.compiler_config = compiler_config
-        options.device = self.device
+        options.devices = [self.device]
         model = torch.compile(model, backend=backend, dynamic=False, options=options)
         self.compiled_model = model
         return self.compiled_model

@@ -185,26 +185,27 @@ def cast_ios_and_run(node, args, kwargs):
 class TorchExecutor(OpByOpExecutor):
     def __init__(
         self,
-        program,
-        graph_constants,
+        mcg,
         compiler_config=None,
         required_pcc=0.99,
         required_atol=1e-2,
-        device=None,
+        devices=None,
         async_mode=False,
     ):
         super().__init__(
+            mcg=mcg,
             compiler_config=compiler_config,
             required_pcc=required_pcc,
             required_atol=required_atol,
-            device=device,
+            devices=devices,
             async_mode=async_mode,
         )
-        self.program = program
+        assert len(mcg.programs) == 1
+        self.program = mcg.programs[0]
         self.graph_constants = (
-            (graph_constants,)
-            if isinstance(graph_constants, (int, float))
-            else tuple(graph_constants)
+            (mcg.constant_inputs[0],)
+            if isinstance(mcg.constant_inputs[0], (int, float))
+            else tuple(mcg.constant_inputs[0])
         )
         if self.compiler_config is None:
             compiler_config = CompilerConfig()
@@ -290,15 +291,17 @@ class TorchExecutor(OpByOpExecutor):
             graph_node.meta["val"] = node.meta["val"]
 
             # if the output of the getitem node is not used, we don't append it to the graph
-            unused_output = [len(user.users) == 0 for user in node.users]
-            for idx, tensor_meta in enumerate(node.meta["tensor_meta"]):
-                if unused_output[idx]:
+            for user in node.users:
+                assert user.target == operator.getitem
+                if len(user.users) == 0:
                     continue
 
+                idx = user.args[1]
                 getitem_node = graph.call_function(
                     operator.getitem, args=(graph_node, idx)
                 )
                 getitem_nodes.append(getitem_node)
+                tensor_meta = node.meta["tensor_meta"][idx]
                 getitem_node.meta["tensor_meta"] = tensor_meta
             out = graph.output(tuple(getitem_nodes))
         else:

@@ -153,7 +153,7 @@ if __name__ == "__main__":
     for device in devices:
         multi_options = BackendOptions()
         multi_options.compiler_config = cc
-        multi_options.device = device
+        multi_options.devices = [device]
         multi_models.append(
             torch.compile(model, backend=backend, dynamic=False, options=multi_options)
         )
