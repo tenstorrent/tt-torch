@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import torch
+import gc
 from torch.fx.experimental import const_fold
 from typing import List, Optional, Union
 from torch.export.graph_signature import InputKind
@@ -103,6 +104,7 @@ def bypass_dtype_promotion(gm, compiler_config):
 
 def constant_fold(gm):
     gm = const_fold.split_const_subgraphs(gm)
+    gc.collect()
     gm.run_folding()
 
     gm.graph.eliminate_dead_code()
