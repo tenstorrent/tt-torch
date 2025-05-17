@@ -1,63 +1,20 @@
 # SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-# Reference: https://github.com/tenstorrent/tt-buda-demos/blob/main/model_demos/cv_demos/yolo_v3/pytorch_yolov3_holli.py
 
-import torch
-from PIL import Image
-from torchvision import transforms
-import requests
-import os
-from pathlib import Path
 import pytest
-
-from tests.models.yolov3.holli_src.yolov3 import *
+import torch
+from third_party.tt_forge_models.yolov3.pytorch import ModelLoader
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        # Download model weights
-        url = "https://www.ollihuotari.com/data/yolov3_pytorch/yolov3_coco_01.h5"
-
-        if (
-            "DOCKER_CACHE_ROOT" in os.environ
-            and Path(os.environ["DOCKER_CACHE_ROOT"]).exists()
-        ):
-            download_dir = Path(os.environ["DOCKER_CACHE_ROOT"]) / "custom_weights"
-        else:
-            download_dir = Path.home() / ".cache/custom_weights"
-        download_dir.mkdir(parents=True, exist_ok=True)
-
-        load_path = download_dir / url.split("/")[-1]
-        if not load_path.exists():
-            response = requests.get(url, stream=True)
-            with open(str(load_path), "wb") as f:
-                f.write(response.content)
-
-        # Load model
-        model = Yolov3(num_classes=80)
-        model.load_state_dict(
-            torch.load(
-                str(load_path),
-                map_location=torch.device("cpu"),
-            )
-        )
-        return model.to(torch.bfloat16)
+        return ModelLoader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        # Image preprocessing
-        image_url = (
-            "https://raw.githubusercontent.com/pytorch/hub/master/images/dog.jpg"
-        )
-        image = Image.open(requests.get(image_url, stream=True).raw)
-        transform = transforms.Compose(
-            [transforms.Resize((512, 512)), transforms.ToTensor()]
-        )
-        img_tensor = [transform(image).unsqueeze(0)]
-        batch_tensor = torch.cat(img_tensor, dim=0).to(torch.bfloat16)
-        return batch_tensor
+        return ModelLoader.load_inputs(dtype_override=torch.bfloat16)
 
 
 @pytest.mark.parametrize(
