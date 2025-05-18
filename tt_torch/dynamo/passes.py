@@ -6,9 +6,14 @@ import gc
 from torch.fx.experimental import const_fold
 from typing import List, Optional, Union
 from torch.export.graph_signature import InputKind
-from tt_torch.tools.utils import RuntimeIntermediate
-
-from tt_torch.tools.utils import MultiChipInput, MultiChipOutput, IOType, MultiChipGraph
+from tt_torch.tools.utils import (
+    MultiChipInput,
+    MultiChipOutput,
+    IOType,
+    MultiChipGraph,
+    RuntimeIntermediate,
+    CompileDepth,
+)
 
 from .decompositions import (
     CUSTOM_DECOMPOSITION_TABLE,
@@ -510,7 +515,8 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         else:
             constant_inputs = []
 
-        constant_inputs = prune_inputs(program, constant_inputs)
+        if compiler_config.compile_depth == CompileDepth.EXECUTE:
+            constant_inputs = prune_inputs(program, constant_inputs)
         run_shape_prop(program.graph_module, constant_inputs + sub_example_inputs)
         mcg.programs[idx] = program
         mcg.constant_inputs[idx] = constant_inputs
