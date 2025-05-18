@@ -39,13 +39,14 @@ else()
     set(TTMLIR_INSTALL_PREFIX ${TTMLIR_PREFIX}/install)
     set(TT_MLIR_COMPILER_LIBRARY_PATH ${TTMLIR_INSTALL_PREFIX}/lib/libTTMLIRCompiler.so)
     set(TT_MLIR_RUNTIME_LIBRARY_PATH ${TTMLIR_INSTALL_PREFIX}/lib/libTTMLIRRuntime.so)
+    set(TT_MLIR_TTNNCOMPILESO_LIBRARY_PATH ${TTMLIR_INSTALL_PREFIX}/lib/libTTNNCompileSo.so)
 
     set(TTMLIR_BUILD_DIR ${TTMLIR_PREFIX}/src/tt-mlir-build)
 
     ExternalProject_Add(
         tt-mlir
         PREFIX ${TTMLIR_PREFIX}
-        INSTALL_COMMAND ${CMAKE_COMMAND} --install ${TTMLIR_BUILD_DIR} --component SharedLib
+        INSTALL_COMMAND ${CMAKE_COMMAND} --install ${TTMLIR_BUILD_DIR} --component SharedLib && ${CMAKE_COMMAND} --install ${TTMLIR_BUILD_DIR} --component TTNNStandalone
         CMAKE_GENERATOR Ninja
         CMAKE_ARGS
           -DCMAKE_BUILD_TYPE=Release
@@ -66,6 +67,7 @@ else()
         BUILD_BYPRODUCTS
             ${TT_MLIR_COMPILER_LIBRARY_PATH}
             ${TT_MLIR_RUNTIME_LIBRARY_PATH}
+            ${TT_MLIR_TTNNCOMPILESO_LIBRARY_PATH}
     )
 
     add_library(TTMLIRCompiler SHARED IMPORTED GLOBAL)
@@ -74,6 +76,9 @@ else()
     add_library(TTMLIRRuntime SHARED IMPORTED GLOBAL)
     set_target_properties(TTMLIRRuntime PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_RUNTIME_LIBRARY_PATH})
     add_dependencies(TTMLIRRuntime tt-mlir)
+    add_library(TTNNCompileSo SHARED IMPORTED GLOBAL)
+    set_target_properties(TTNNCompileSo PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_TTNNCOMPILESO_LIBRARY_PATH})
+    add_dependencies(TTNNCompileSo tt-mlir)
 
     install(DIRECTORY ${TTMLIR_INSTALL_PREFIX}/ DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
 

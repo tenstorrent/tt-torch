@@ -23,6 +23,7 @@
 #include "mlir/IR/MLIRContext.h"       // from @llvm-project
 #include "mlir/IR/OwningOpRef.h"       // from @llvm-project
 #include "mlir/IR/Visitors.h"          // from @llvm-project
+#include "mlir/Target/Cpp/CppEmitter.h"
 #include "mlir/InitAllPasses.h"
 #include "mlir/Parser/Parser.h"              // from @llvm-project
 #include "mlir/Pass/PassManager.h"           // from @llvm-project
@@ -45,9 +46,12 @@
 #include "ttmlir/RegisterAll.h"
 #include "ttmlir/Target/TTNN/TTNNToFlatbuffer.h"
 
+#include "ttmlir/tools/ttnn-standalone/compile_so.hpp"
+
 #include "tt/runtime/runtime.h"
 
 #include <llvm/ADT/SmallVector.h>
+#include <memory>
 
 namespace tt::torch {
 
@@ -208,6 +212,119 @@ compileTTIRToTTNN(std::string_view code, std::string_view system_desc_path,
   os.flush();
 
   return std::make_tuple(binary, buffer);
+}
+
+std::tuple<std::string, std::string>
+compileTTIRToSharedObject(std::string_view code,
+                std::optional<tt::runtime::Device> device,
+                size_t len_activations, size_t len_graph_constants) {
+
+  mlir::MLIRContext context;
+  mlir::DialectRegistry registry;
+
+  registry.insert<mlir::arith::ArithDialect>();
+  registry.insert<mlir::func::FuncDialect>();
+  registry.insert<mlir::ml_program::MLProgramDialect>();
+  registry.insert<mlir::shape::ShapeDialect>();
+
+  mlir::tt::registerAllDialects(registry);
+  mlir::stablehlo::registerAllDialects(registry);
+  mlir::func::registerAllExtensions(registry);
+  mlir::tt::registerAllExtensions(registry);
+
+  context.appendDialectRegistry(registry);
+
+  mlir::OwningOpRef<mlir::ModuleOp> mlir_module =
+      mlir::parseSourceString<mlir::ModuleOp>(
+          llvm::StringRef(code.data(), code.size()),
+          // IR may be invalid because some fields may be using DenseElements
+          // instead of DenseArray. We rectify that below and verify after.
+          mlir::ParserConfig{&context, /*verifyAfterParse=*/true});
+
+  mlir::tt::ttir::registerPasses();
+  mlir::tt::ttnn::registerPasses();
+
+  mlir::PassManager pm(mlir_module.get()->getName());
+  const char *enable_printing = std::getenv("TT_TORCH_IR_LOG_LEVEL");
+  if (enable_printing && std::string(enable_printing) == "DEBUG") {
+    pm.getContext()->disableMultithreading();
+    pm.enableIRPrinting();
+  }
+
+  mlir::tt::ttnn::TTIRToEmitCSOPipelineOptions options;
+
+  // boolean env var to override consteval
+  const char *consteval = std::getenv("TT_TORCH_CONSTEVAL");
+  if (consteval && std::string(consteval) == "1") {
+    options.enableConstEval = true;
+  }
+  options.enableFusing = true;
+
+  if (len_activations > 0 || len_graph_constants > 0) {
+    llvm::SmallVector<mlir::tt::ArgumentType> argTypes;
+    for (size_t i = 0; i < len_graph_constants; ++i) {
+      argTypes.push_back(mlir::tt::ArgumentType::Constant);
+    }
+    for (size_t i = 0; i < len_activations; ++i) {
+      argTypes.push_back(mlir::tt::ArgumentType::Input);
+    }
+    llvm::StringMap<llvm::SmallVector<mlir::tt::ArgumentType>> argTypesMap;
+    argTypesMap["main"] = argTypes;
+    options.argumentTypeMap = argTypesMap;
+  }
+
+  if (std::filesystem::path system_desc_path = std::getenv("SYSTEM_DESC_PATH");
+      !system_desc_path.empty()) {
+    if (device.has_value()) {
+      create_system_desc(device);
+    }
+
+    if (std::filesystem::exists(system_desc_path)) {
+      std::filesystem::path system_desc_temp_path =
+          std::filesystem::temp_directory_path() /
+          (system_desc_path.stem().string() + "_tmp" +
+            system_desc_path.extension().string());
+
+      std::filesystem::copy_file(
+          system_desc_path, system_desc_temp_path,
+          std::filesystem::copy_options::overwrite_existing);
+
+      options.systemDescPath = system_desc_temp_path;
+    }
+  }
+
+  mlir::tt::ttnn::createTTIRToEmitCSOPipeline(pm, options);
+
+  // Run the pass manager.
+  if (mlir::failed(pm.run(mlir_module.get()))) {
+    throw std::runtime_error(
+        "Failed to run TTIR to EmitC SO compiler pass pipeline.");
+  }
+
+  std::string buffer;
+  llvm::raw_string_ostream os(buffer);
+  if (mlir::failed(mlir::emitc::translateToCpp(mlir_module.get(), os))) {
+    throw std::runtime_error("Failed to generate C++ code.");
+  }
+
+  const char *TT_METAL_HOME = std::getenv("TT_METAL_HOME");
+  if (!TT_METAL_HOME) {
+    throw std::runtime_error("TT_METAL_HOME environment variable not set.");
+  }
+  const char *TT_TORCH_HOME = std::getenv("TT_TORCH_HOME");
+  if (!TT_TORCH_HOME) {
+    throw std::runtime_error("TT_TORCH_HOME environment variable not set.");
+  }
+  std::filesystem::path TT_METAL_LIB_DIR = std::filesystem::path(TT_TORCH_HOME) / "install/lib";
+  std::filesystem::path TTNN_STANDALONE_DIR = std::filesystem::path(TT_TORCH_HOME) / "install/tools/ttnn-standalone";
+  auto soFilePath = compileCppToSo(buffer, "/tmp", TT_METAL_HOME, TT_METAL_LIB_DIR.string(), TTNN_STANDALONE_DIR.string());
+  std::cout << "SO FILE PATH: " << soFilePath << std::endl;
+  return std::make_tuple(soFilePath, buffer);
+}
+
+std::shared_ptr<void> *Compile(std::string_view code) {
+  std::string ttir = compileStableHLOToTTIR(code);
+  return std::get<0>(compileTTIRToTTNN(ttir));
 }
 
 } // namespace tt::torch

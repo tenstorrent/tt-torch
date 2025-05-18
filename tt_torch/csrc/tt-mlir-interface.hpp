@@ -14,6 +14,10 @@ std::string compileStableHLOToTTIR(std::string_view code);
 std::tuple<std::shared_ptr<void> *, std::string>
 compileTTIRToTTNN(std::string_view code, std::string_view system_desc_path,
                   size_t len_activations = 0, size_t len_graph_constants = 0);
-void create_system_desc(tt::runtime::Device device,
-                        std::string_view descriptor_path);
+std::tuple<std::string, std::string>
+compileTTIRToSharedObject(std::string_view code,
+                std::optional<tt::runtime::Device> device = std::nullopt,
+                size_t len_activations = 0, size_t len_graph_constants = 0);
+void create_system_desc(
+    std::optional<tt::runtime::Device> device = std::nullopt);
 } // namespace tt::torch

@@ -52,6 +52,7 @@ class CompileDepth(Enum):
     COMPILE_OP_BY_OP = 4
     EXECUTE_OP_BY_OP = 5
     EXECUTE = 6
+    EXECUTE_CPP = 7
 
 
 class OpCompilationStatus(IntEnum):
@@ -102,6 +103,7 @@ class MultiChipGraph:
         self.graph_inputs = {device: [] for device in devices}
         self.programs = {}
         self.binaries = {}
+        self.so_paths = {}
         self.constant_inputs = {}
         self.example_inputs = {}
         self.shlo_modules = {}

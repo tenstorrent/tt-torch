@@ -216,6 +216,22 @@ def shlo_to_flatbuffer(
     return binary
 
 
+def shlo_to_cpp(
+        executor, module, compiler_config, len_activations, len_graph_constants
+):
+    ttir = tt_mlir.compile_stable_hlo_to_ttir(
+        module.operation.get_asm(enable_debug_info=True)
+    )
+    dump_module(module=ttir, name="TTIR module", compiler_config=compiler_config)
+
+    so_path, cpp = tt_mlir.compile_ttir_to_so(
+        ttir, executor.devices[0], len_activations, len_graph_constants
+    )
+    dump_module(module=cpp, name="CPP module", compiler_config=compiler_config)
+
+    return so_path
+
+
 def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
     mcg = torch_to_shlo(gm, example_inputs, compiler_config)
     executor = Executor(
@@ -239,11 +255,16 @@ def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
             len(mcg.example_inputs[i]),
             len(mcg.constant_inputs[i]),
         )
+        if compiler_config.compile_depth == CompileDepth.EXECUTE_CPP:
+            so_path = shlo_to_cpp(
+                executor, shlo, compiler_config, len(mcg.example_inputs[i]), len(mcg.constant_inputs[i])
+            )
+            mcg.so_paths[i] = so_path
         mcg.binaries[i] = binary
 
     compiler_config.record_property("achieved_compile_depth", "TTNN_IR")
     return executor
-
+    
 
 @tt_torch_error_message
 def backend(gm, example_inputs, options: BackendOptions = None):
@@ -256,7 +277,8 @@ def backend(gm, example_inputs, options: BackendOptions = None):
         async_mode = False
     else:
         cc = options.compiler_config
-        devices = options.devices
+        devices = None
+        # devices = options.devices
         async_mode = options.async_mode
 
     # Apply environment overrides at start of compilation to allow overriding what was set in the test
