@@ -120,7 +120,7 @@ def test_stable_diffusion_transformer(record_property, model_info, mode, op_by_o
         compiler_config=cc,
         record_property_handle=record_property,
         assert_atol=False,
-        assert_pcc=False,
+        assert_pcc=True,
         model_group=model_group,
     )
     results = tester.test_model()
