@@ -112,10 +112,13 @@ jobs:
             "
           },
           {
-            # Approximately 40 minutes.
+            # Approximately 50 minutes.
             runs-on: wormhole_b0, name: "eval_6", tests: "
                   tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet[full-eval]
                   tests/models/stable_diffusion/test_stable_diffusion_transformer.py::test_stable_diffusion_transformer[full-SD3.5-medium-transformer-eval]
+                  tests/models/unet/test_unet.py::test_unet[full-eval]
+                  tests/models/unet_brain/test_unet_brain.py::test_unet_brain[full-eval]
+                  tests/models/unet_carvana/test_unet_carvana.py::test_unet_carvana[full-eval]
             "
           },
           {

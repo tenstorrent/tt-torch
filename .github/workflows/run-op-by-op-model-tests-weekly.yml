@@ -231,7 +231,15 @@ jobs:
             runs-on: wormhole_b0, name: "stable-diffusion-3.5", tests: "
               tests/models/stable_diffusion/test_stable_diffusion_transformer.py::test_stable_diffusion_transformer[op_by_op_torch-SD3.5-medium-transformer-eval]
               "
-          }
+          },
+          {
+            runs-on: wormhole_b0, name: "unet", tests: "
+              tests/models/unet/test_unet.py::test_unet[op_by_op_torch-eval]
+              tests/models/unet_brain/test_unet_brain.py::test_unet_brain[op_by_op_torch-eval]
+              tests/models/unet_carvana/test_unet_carvana.py::test_unet_carvana[op_by_op_torch-eval]
+              "
+          },
+
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}

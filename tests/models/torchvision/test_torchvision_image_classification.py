@@ -101,7 +101,9 @@ model_info_list = [
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_torchvision_image_classification(record_property, model_info, mode, op_by_op):
+def test_torchvision_image_classification(
+    request, record_property, model_info, mode, op_by_op
+):
     if mode == "train":
         pytest.skip()
 
@@ -119,6 +121,15 @@ def test_torchvision_image_classification(record_property, model_info, mode, op_
     assert_atol = False
 
     model_group = "red" if model_name == "swin_v2_s" else "generality"
+
+    # Out of Memory: Not enough space to allocate 336691200 B DRAM buffer across 12 banks, where each bank needs to store 28057600 B
+    if model_name == "vit_h_14" and cc.compile_depth == CompileDepth.EXECUTE:
+        request.node.add_marker(
+            pytest.mark.xfail(
+                reason="Out of Memory: Not enough space to allocate in DRAM error - https://github.com/tenstorrent/tt-torch/issues/793",
+                strict=True,
+            )
+        )
 
     tester = ThisTester(
         model_info,
