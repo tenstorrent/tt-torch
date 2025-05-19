@@ -37,14 +37,10 @@ jobs:
             runs-on: wormhole_b0, name: "eval_1", tests: "
                   tests/models/vit/test_vit_onnx.py::test_vit_onnx[full-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vit_h_14]
+                  tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small[full-eval]
                   tests/models/yolos/test_yolos.py::test_yolos[full-eval]
                   tests/models/whisper/test_whisper.py::test_whisper[full-eval]
                   tests/models/bert/test_bert_turkish.py::test_bert_turkish[full-eval]
-            "
-          },
-          {
-            runs-on: wormhole_b0, name: "eval_1_qrtn", tests: "
-                  tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small[full-eval]
             "
           },
           {
