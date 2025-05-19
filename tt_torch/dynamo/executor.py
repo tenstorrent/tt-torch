@@ -368,8 +368,8 @@ class Executor:
         for _, device_weights in self.preprocessed_graph_constants.items():
             for weight in device_weights:
                 tt_mlir.deallocate_tensor(weight, force=True)
-        for device in self.owned_device_indices:
-            tt_mlir.close_mesh_device(device)
+        for device_idx in self.owned_device_indices:
+            tt_mlir.close_mesh_device(self.devices[device_idx])
 
 
 class OnnxExecutor(Executor):
