@@ -98,21 +98,24 @@ class ModelTester:
         model_group="generality",
         is_token_output=False,
         model_name_suffix="",
-        device=None,
+        devices=None,
+        data_parallel_mode=False,
     ):
         if mode not in ["train", "eval"]:
             raise ValueError(f"Current mode is not supported: {mode}")
         self.model_name = model_name
         self.mode = mode
+        self.data_parallel_mode = data_parallel_mode
         self.framework_model = self._load_model()
         self.is_token_output = is_token_output
         if is_token_output and not hasattr(self, "tokenizer"):
             raise ValueError(
                 "is_token_output is set to True. Please set `self.tokenizer` inside _load_model method."
             )
-        self.compiled_model = None
-        self.device = device
+        self.compiled_models = []
+        self.devices = devices
         self.inputs = self._load_inputs()
+
         self.required_pcc = required_pcc
         self.assert_pcc = assert_pcc
         self.assert_atol = assert_atol
@@ -138,6 +141,15 @@ class ModelTester:
 
         self.record_property = record_property_handle
         self.compiler_config.record_property = record_property_handle
+
+        if self.data_parallel_mode:
+            assert self.devices is not None and isinstance(
+                self.devices, list
+            ), "Please provide a list of devices when running in data parallel mode."
+            assert self.compiler_config.compile_depth not in (
+                CompileDepth.COMPILE_OP_BY_OP,
+                CompileDepth.EXECUTE_OP_BY_OP,
+            ), "Data parallel mode does not support op-by-op compilation or execution."
 
         self.record_tag_cache = {}  # Holds for tags to be written out at finalize()
 
@@ -230,14 +242,33 @@ class ModelTester:
         self.golden_outputs = self.run_model(model, inputs)
         return self.golden_outputs
 
-    def compile_model(self, model, compiler_config):
-        # Compile model
+    def compile_models_for_data_parallel(self, model, compiler_config):
+        compiled_models = []
+        for device in self.devices:
+            compiled_models.append(
+                self.compile_model(model, compiler_config, True, device)
+            )
+        self.compiled_models = compiled_models
+        return compiled_models
+
+    def compile_model(
+        self, model, compiler_config, data_parallel_mode=False, device_override=None
+    ):
+        device = None
+        if self.devices is not None:
+            assert (
+                isinstance(self.devices, list) and len(self.devices) == 1
+            ), "Only a single device may be provided when data_parallel_mode = False"
+            device = self.devices[0]
+        if device_override:
+            device = device_override
         options = BackendOptions()
         options.compiler_config = compiler_config
-        options.devices = [self.device]
+        options.devices = [device]
+        options.async_mode = data_parallel_mode
         model = torch.compile(model, backend=backend, dynamic=False, options=options)
-        self.compiled_model = model
-        return self.compiled_model
+        self.compiled_models.append(model)
+        return model
 
     def run_model(self, model, inputs):
         if isinstance(inputs, collections.abc.Mapping):
@@ -382,7 +413,23 @@ class ModelTester:
             or self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
         ):
             return self._test_model_eval_op_by_op(on_device)
+        if self.data_parallel_mode:
+            return self._test_model_eval_data_parallel(assert_eval_token_mismatch)
         return self._test_model_eval_base(on_device, assert_eval_token_mismatch)
+
+    @torch.inference_mode()
+    def _test_model_eval_data_parallel(self, assert_eval_token_mismatch):
+        model = self.get_framework_model()
+        golden = self.get_golden_outputs(model, self.inputs)
+
+        compiled_models = self.compile_models_for_data_parallel(
+            model, self.compiler_config
+        )
+
+        rt_tensors = []
+        for compiled in compiled_models:
+            rt_tensors.append(self.run_model(compiled, self.inputs))
+            # TODO: Finish this implementation
 
     @torch.inference_mode()
     def _test_model_eval_base(self, on_device, assert_eval_token_mismatch):
@@ -638,8 +685,8 @@ class OnnxModelTester(ModelTester):
 
     def compile_model(self, model, compiler_config):
         model = compile_onnx(model, compiler_config)
-        self.compiled_model = model
-        return self.compiled_model
+        self.compiled_models.append(model)
+        return model
 
     def run_model(self, model, inputs):
         if isinstance(model, onnx.ModelProto):
