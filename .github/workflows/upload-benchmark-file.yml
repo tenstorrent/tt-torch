@@ -16,10 +16,6 @@ jobs:
         steps:
 
         - uses: actions/checkout@v4
-          with:
-            submodules: recursive
-            lfs: true
-
         - uses: actions/upload-artifact@v4
           with:
             name: ${{ inputs.benchmark_report_path }}

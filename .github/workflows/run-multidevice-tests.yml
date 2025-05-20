@@ -43,10 +43,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-      with:
-        submodules: recursive
-        lfs: true
-
     - name: Fetch job id
       id: fetch-job-id
       uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
