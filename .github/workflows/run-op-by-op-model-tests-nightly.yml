@@ -8,6 +8,10 @@ on:
         description: 'Docker image to use for build'
         required: true
         type: string
+      docker-image-harbor:
+        description: 'Shared infra Docker image to use for build'
+        required: true
+        type: string
   workflow_run:
     workflows: [Build]
     types: [completed]
@@ -39,9 +43,9 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "gpt", tests: "
+            runs-on: n300, name: "gpt", tests: "
               tests/models/gpt_neo/test_gpt_neo.py::test_gpt_neo[op_by_op_torch-eval]
-              "
+              ", sh-run: true
           },
           {
             runs-on: wormhole_b0, name: "llama", tests: "
@@ -156,10 +160,10 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "Flux", tests: "
+            runs-on: n300-llmbox, name: "Flux", tests: "
               tests/models/flux/test_flux.py::test_flux[op_by_op_torch-flux_schnell-eval]
               tests/models/flux/test_flux.py::test_flux[op_by_op_torch-flux_dev-eval]
-              "
+              ", sh-run: true
           },
           {
             runs-on: wormhole_b0, name: "stable-diffusion-v3.5", tests: "
@@ -170,13 +174,13 @@ jobs:
           }
         ]
     runs-on:
-      - ${{ matrix.build.runs-on }}
+      - ${{ matrix.build.sh-run && format('tt-beta-ubuntu-2204-{0}-large-stable', matrix.build.runs-on) ||  matrix.build.runs-on }}
 
     name: "tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
 
     container:
-      image: ${{ inputs.docker-image }}
-      options: --user root --device /dev/tenstorrent/0 --shm-size=4gb --pid=host
+      image: ${{ matrix.build.sh-run && inputs.docker-image-harbor || inputs.docker-image }}
+      options: --user root --device /dev/tenstorrent --shm-size=4gb --pid=host
       volumes:
         - /dev/hugepages:/dev/hugepages
         - /dev/hugepages-1G:/dev/hugepages-1G

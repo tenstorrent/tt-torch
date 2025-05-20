@@ -18,6 +18,9 @@ on:
       docker-image:
         description: "Built docker image name"
         value: ${{ jobs.build-image.outputs.docker-image }}
+      docker-image-harbor:
+        description: "Built docker image name"
+        value: ${{ jobs.build-image.outputs.docker-image-harbor }}
 
 jobs:
 
@@ -25,6 +28,7 @@ jobs:
     runs-on: builder
     outputs:
       docker-image: ${{ steps.build.outputs.docker-image }}
+      docker-image-harbor: ${{ steps.build.outputs.docker-image-harbor }}
     steps:
       - name: Fix permissions
         shell: bash
@@ -81,3 +85,4 @@ jobs:
           IMAGE_NAME=$(echo $DOCKER_CI_IMAGE | sed 's/:.*//')
           echo "Setting latest tag on the image $IMAGE_NAME:$DOCKER_TAG"
           skopeo copy "docker://$IMAGE_NAME:$DOCKER_TAG" "docker://$IMAGE_NAME:latest"
+          echo "docker-image-harbor=harbor.ci.tenstorrent.net/$DOCKER_CI_IMAGE" >> "$GITHUB_OUTPUT"
