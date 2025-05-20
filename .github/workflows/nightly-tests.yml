@@ -24,6 +24,7 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      setup-args: "--include-models"
   test_op_by_op:
     needs: [docker-build, build]
     uses: ./.github/workflows/run-op-by-op-model-tests-nightly.yml
@@ -68,7 +69,7 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-      setup-args: "--build_runtime_debug"
+      setup-args: "--build_runtime_debug --include-models"
       artifact-key: "-debug" # avoid name collision for generated artifact
   test-tools:
     needs: [docker-build, build-debug]

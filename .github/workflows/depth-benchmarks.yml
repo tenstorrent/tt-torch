@@ -24,6 +24,7 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      setup-args: "--include-models"
   generate-matrix:
     needs: [build]
     uses: ./.github/workflows/generate-benchmark-matrix.yml

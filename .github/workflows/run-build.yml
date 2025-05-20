@@ -78,7 +78,7 @@ jobs:
       shell: bash
       run: |
         source env/activate
-        python setup.py bdist_wheel --code_coverage --include-models ${{ inputs.setup-args }}
+        python setup.py bdist_wheel --code_coverage ${{ inputs.setup-args }}
 
     - name: Verify tt-mlir SHA override
       if: ${{ inputs.mlir_override }}
