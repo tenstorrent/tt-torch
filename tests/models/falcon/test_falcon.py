@@ -37,53 +37,22 @@ class ThisTester(ModelTester):
 #    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 #)
 @pytest.mark.parametrize(
-<<<<<<< HEAD
-    "compile_mode",
-    ["STABLEHLO", "TTNN_IR", "COMPILE_OP_BY_OP_TORCH",
-        "COMPILE_OP_BY_OP_SHLO", "EXECUTE_OP_BY_OP_TORCH", "EXECUTE_OP_BY_OP_SHLO", "EXECUTE"],
-    ids=["stablehlo", "ttnn_ir", "compile_op_by_op_torch", 
-        "compile_op_by_op_shlo", "execute_op_by_op_torch", "execute_op_by_op_shlo", "full"],
-=======
-     "compile_mode",
-     [CompileMode.TORCH_FX, CompileMode.STABLEHLO, CompileMode.TTNN_IR, CompileMode.COMPILE_OP_BY_OP_TORCH, 
-       CompileMode.EXECUTE_OP_BY_OP_TORCH, CompileMode.COMPILE_OP_BY_OP_SHLO, CompileMode.EXECUTE_OP_BY_OP_SHLO,  None],
-     ids=["torch_fx", "stablehlo", "ttnn_ir", "compile_op_by_op_torch", 
-          "execute_op_by_op_torch", "compile_op_by_op_shlo", "execute_op_by_op_shlo", "full"],
->>>>>>> df56077 (made new enum class that aggragates CompileDepth and OpByOpBackend and uses that are the parameter for testing. Also added a decomposing method under that enum to decompose CompileMode into CompileDepth and OpByOpBackend. Currently still only on falcon tests.)
+     "compile_depth",
+     [CompileDepth.TORCH_FX, CompileDepth.STABLEHLO, CompileDepth.TTNN_IR, CompileDepth.COMPILE_OP_BY_OP, 
+       CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
+     ids=["torch_fx", "stablehlo", "ttnn_ir", "compile_op_by_op", 
+          "execute_op_by_op", "full"],
 )
 
-def test_falcon(record_property, mode, compile_mode):
+def test_falcon(record_property, mode, compile_depth):
     model_name = "Falcon"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    
-<<<<<<< HEAD
-    if compile_mode in ("STABLEHLO", "TTNN_IR", "COMPILE_OP_BY_OP_TORCH", "EXECUTE_OP_BY_OP_TORCH"):
-        # cc.op_by_op_backend = OpByOpBackend.TORCH # Default case
-        if compile_mode == "STABLEHLO":
-            cc.compile_depth = CompileDepth.STABLEHLO
-        elif compile_mode == "TTNN_IR":
-            cc.compile_depth = CompileDepth.TTNN_IR
-        elif compile_mode == "EXECUTE":
-            cc.compile_depth = CompileDepth.EXECUTE
-        elif compile_mode == "COMPILE_OP_BY_OP_TORCH":
-            cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
-        elif compile_mode == "EXECUTE_OP_BY_OP_TORCH":
-            cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-    elif compile_mode in ("COMPILE_OP_BY_OP_SHLO", "EXECUTE_OP_BY_OP_SHLO"):
-        cc.op_by_op_backend = OpByOpBackend.STABLEHLO
-        if compile_mode == "COMPILE_OP_BY_OP_SHLO":
-            cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
-        elif compile_mode == "EXECUTE_OP_BY_OP_SHLO":
-            cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-=======
-    compile_depth, op_by_op_backend = compile_mode.decompose_CompileMode()
 
+    # run default OpByOpBackend and only adjust the CompileDepth as only one test uses OpByOpBackend.STABLEHLO
     cc.compile_depth = compile_depth
-    cc.op_by_op_backend = op_by_op_backend
->>>>>>> df56077 (made new enum class that aggragates CompileDepth and OpByOpBackend and uses that are the parameter for testing. Also added a decomposing method under that enum to decompose CompileMode into CompileDepth and OpByOpBackend. Currently still only on falcon tests.)
 
     tester = ThisTester(
         model_name,
