@@ -64,25 +64,16 @@ class CompileMode(Enum):
     EXECUTE = 8
 
     def decompose_CompileMode(self):
-        if self in (CompileMode.STABLEHLO, CompileMode.TTNN_IR, CompileMode.COMPILE_OP_BY_OP_TORCH, CompileMode.EXECUTE_OP_BY_OP_TORCH):
-            # Backend by default is Torch
-            if self == CompileMode.STABLEHLO:
-                return CompileDepth.STABLEHLO, OpByOpBackend.TORCH
-            elif self == CompileMode.TTNN_IR:
-                return CompileDepth.TTNN_IR, OpByOpBackend.TORCH
-            elif self == CompileMode.EXECUTE:
-                return CompileDepth.EXECUTE, OpByOpBackend.TORCH
-            elif self == CompileMode.COMPILE_OP_BY_OP_TORCH:
-                return CompileDepth.COMPILE_OP_BY_OP, OpByOpBackend.TORCH
-            elif self == CompileMode.EXECUTE_OP_BY_OP_TORCH:
-                return CompileDepth.EXECUTE_OP_BY_OP, OpByOpBackend.TORCH
-        elif self in (CompileMode.COMPILE_OP_BY_OP_SHLO, CompileMode.EXECUTE_OP_BY_OP_SHLO):
-            if self == CompileMode.COMPILE_OP_BY_OP_SHLO:
-                return CompileDepth.COMPILE_OP_BY_OP, OpByOpBackend.STABLEHLO
-            elif self == CompileMode.EXECUTE_OP_BY_OP_SHLO:
-                return CompileDepth.EXECUTE_OP_BY_OP, OpByOpBackend.STABLEHLO
-        # default
-        return CompileDepth.EXECUTE, OpByOpBackend.TORCH
+        mapping = {
+            CompileMode.STABLEHLO: (CompileDepth.STABLEHLO, OpByOpBackend.TORCH),
+            CompileMode.TTNN_IR: (CompileDepth.TTNN_IR, OpByOpBackend.TORCH),
+            CompileMode.EXECUTE: (CompileDepth.EXECUTE, OpByOpBackend.TORCH),
+            CompileMode.COMPILE_OP_BY_OP_TORCH: (CompileDepth.COMPILE_OP_BY_OP, OpByOpBackend.TORCH),
+            CompileMode.EXECUTE_OP_BY_OP_TORCH: (CompileDepth.EXECUTE_OP_BY_OP, OpByOpBackend.TORCH),
+            CompileMode.COMPILE_OP_BY_OP_SHLO: (CompileDepth.COMPILE_OP_BY_OP, OpByOpBackend.STABLEHLO),
+            CompileMode.EXECUTE_OP_BY_OP_SHLO: (CompileDepth.EXECUTE_OP_BY_OP, OpByOpBackend.STABLEHLO),
+        }
+        return mapping.get(self)
     
 
 class OpCompilationStatus(IntEnum):
