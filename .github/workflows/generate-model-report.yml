@@ -12,6 +12,10 @@ on:
     types: [completed]
 
 jobs:
+  docker-build:
+    uses: ./.github/workflows/build-image.yml
+    secrets: inherit
+
   report-tests:
     outputs:
       spreadsheet_name: ${{ steps.git-info.outputs.spreadsheet_name }}
@@ -23,7 +27,7 @@ jobs:
       - wormhole_b0
 
     container:
-      image: ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:latest
+      image: ${{ needs.docker-build.outputs.docker-image }}
       options: --user root --device /dev/tenstorrent/0
       volumes:
         - /dev/hugepages:/dev/hugepages
