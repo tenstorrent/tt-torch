@@ -31,21 +31,44 @@ class ThisTester(ModelTester):
     "mode",
     ["eval"],
 )
+#@pytest.mark.parametrize(
+#    "op_by_op",
+#    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
+#    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+#)
 @pytest.mark.parametrize(
-    "op_by_op",
-    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
-    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+    "compile_mode",
+    ["STABLEHLO", "TTNN_IR", "COMPILE_OP_BY_OP_TORCH",
+        "COMPILE_OP_BY_OP_SHLO", "EXECUTE_OP_BY_OP_TORCH", "EXECUTE_OP_BY_OP_SHLO", "EXECUTE"],
+    ids=["stablehlo", "ttnn_ir", "compile_op_by_op_torch", 
+        "compile_op_by_op_shlo", "execute_op_by_op_torch", "execute_op_by_op_shlo", "full"],
 )
-def test_falcon(record_property, mode, op_by_op):
+
+def test_falcon(record_property, mode, compile_mode):
     model_name = "Falcon"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if op_by_op:
-        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-        if op_by_op == OpByOpBackend.STABLEHLO:
-            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+    
+    if compile_mode in ("STABLEHLO", "TTNN_IR", "COMPILE_OP_BY_OP_TORCH", "EXECUTE_OP_BY_OP_TORCH"):
+        # cc.op_by_op_backend = OpByOpBackend.TORCH # Default case
+        if compile_mode == "STABLEHLO":
+            cc.compile_depth = CompileDepth.STABLEHLO
+        elif compile_mode == "TTNN_IR":
+            cc.compile_depth = CompileDepth.TTNN_IR
+        elif compile_mode == "EXECUTE":
+            cc.compile_depth = CompileDepth.EXECUTE
+        elif compile_mode == "COMPILE_OP_BY_OP_TORCH":
+            cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
+        elif compile_mode == "EXECUTE_OP_BY_OP_TORCH":
+            cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
+    elif compile_mode in ("COMPILE_OP_BY_OP_SHLO", "EXECUTE_OP_BY_OP_SHLO"):
+        cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+        if compile_mode == "COMPILE_OP_BY_OP_SHLO":
+            cc.compile_depth = CompileDepth.COMPILE_OP_BY_OP
+        elif compile_mode == "EXECUTE_OP_BY_OP_SHLO":
+            cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
     tester = ThisTester(
         model_name,
