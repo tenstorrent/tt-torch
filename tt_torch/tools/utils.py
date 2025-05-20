@@ -53,6 +53,37 @@ class CompileDepth(Enum):
     EXECUTE_OP_BY_OP = 5
     EXECUTE = 6
 
+class CompileMode(Enum):
+    TORCH_FX = 1
+    STABLEHLO = 2
+    TTNN_IR = 3
+    COMPILE_OP_BY_OP_TORCH = 4
+    EXECUTE_OP_BY_OP_TORCH = 5
+    COMPILE_OP_BY_OP_SHLO = 6
+    EXECUTE_OP_BY_OP_SHLO = 7
+    EXECUTE = 8
+
+    def decompose_CompileMode(self):
+        if self in (CompileMode.STABLEHLO, CompileMode.TTNN_IR, CompileMode.COMPILE_OP_BY_OP_TORCH, CompileMode.EXECUTE_OP_BY_OP_TORCH):
+            # Backend by default is Torch
+            if self == CompileMode.STABLEHLO:
+                return CompileDepth.STABLEHLO, OpByOpBackend.TORCH
+            elif self == CompileMode.TTNN_IR:
+                return CompileDepth.TTNN_IR, OpByOpBackend.TORCH
+            elif self == CompileMode.EXECUTE:
+                return CompileDepth.EXECUTE, OpByOpBackend.TORCH
+            elif self == CompileMode.COMPILE_OP_BY_OP_TORCH:
+                return CompileDepth.COMPILE_OP_BY_OP, OpByOpBackend.TORCH
+            elif self == CompileMode.EXECUTE_OP_BY_OP_TORCH:
+                return CompileDepth.EXECUTE_OP_BY_OP, OpByOpBackend.TORCH
+        elif self in (CompileMode.COMPILE_OP_BY_OP_SHLO, CompileMode.EXECUTE_OP_BY_OP_SHLO):
+            if self == CompileMode.COMPILE_OP_BY_OP_SHLO:
+                return CompileDepth.COMPILE_OP_BY_OP, OpByOpBackend.STABLEHLO
+            elif self == CompileMode.EXECUTE_OP_BY_OP_SHLO:
+                return CompileDepth.EXECUTE_OP_BY_OP, OpByOpBackend.STABLEHLO
+        # default
+        return CompileDepth.EXECUTE, OpByOpBackend.TORCH
+    
 
 class OpCompilationStatus(IntEnum):
     NOT_STARTED = 0
