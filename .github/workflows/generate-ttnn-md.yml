@@ -19,20 +19,19 @@ on:
         type: string
 
 jobs:
+  docker-build:
+    uses: ./.github/workflows/build-image.yml
+    secrets: inherit
   generate_md:
+    needs: docker-build
     timeout-minutes: 120
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:latest
+      image: ${{ needs.docker-build.outputs.docker-image }}
       options: --user root
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install unzip package (Temporary, tt-torch issue 787)
-        shell: bash
-        run: |
-          apt-get update && apt-get install -y unzip
 
       - name: Set reusable strings
         id: strings
