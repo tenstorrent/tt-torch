@@ -117,3 +117,16 @@ else()
     install(DIRECTORY ${TORCH_MLIR_INSTALL_PREFIX}/python_packages/torch_mlir/torch_mlir DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
 
 endif()
+
+# tt-forge-models - Python-only project, no need to build.
+set(TT_FORGE_MODELS_VERSION "d4c282fed846e021b7601eda9513495d8ddf31e3")
+ExternalProject_Add(
+    tt_forge_models
+    SOURCE_DIR ${TTTORCH_SOURCE_DIR}/third_party/tt_forge_models
+    GIT_REPOSITORY https://github.com/tenstorrent/tt-forge-models.git
+    GIT_TAG ${TT_FORGE_MODELS_VERSION}
+    GIT_PROGRESS ON
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+)
