@@ -17,6 +17,7 @@ jobs:
     secrets: inherit
 
   report-tests:
+    needs: docker-build
     outputs:
       spreadsheet_name: ${{ steps.git-info.outputs.spreadsheet_name }}
     timeout-minutes: 120

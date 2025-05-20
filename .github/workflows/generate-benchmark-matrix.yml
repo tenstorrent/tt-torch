@@ -18,6 +18,7 @@ jobs:
     secrets: inherit
 
   tests:
+    needs: docker-build
     outputs:
        matrix-json-splits: ${{ steps.generate_matrix.outputs.matrix-json-splits }}
 
