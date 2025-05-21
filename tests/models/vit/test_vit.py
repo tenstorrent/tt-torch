@@ -27,7 +27,7 @@ class ThisTester(ModelTester):
         url = "http://images.cocodataset.org/val2017/000000039769.jpg"
         image = Image.open(requests.get(url, stream=True).raw)
         # Prepare input
-        input = self.processor(images=image, return_tensors="pt")
+        input = self.processor(images=([image] * 16), return_tensors="pt")
         input["pixel_values"] = input["pixel_values"].to(torch.bfloat16)
         return input
 
@@ -47,6 +47,9 @@ def test_vit(record_property, mode, op_by_op):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    cc.automatic_parallelization = True
+    cc.mesh_shape = [1,2]
+    cc.dump_info = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:

@@ -32,8 +32,10 @@ class ThisTester(ModelTester):
         img = cv2.resize(img, (640, 480))  # Resize to model input size
         img = img / 255.0  # Normalize to [0,1]
         img = np.transpose(img, (2, 0, 1))  # HWC to CHW format
-        img = [torch.from_numpy(img).float().unsqueeze(0)]  # Add batch dimension
-        batch_tensor = torch.cat(img, dim=0).to(torch.bfloat16)
+        #img = [torch.from_numpy(img).float().unsqueeze(0)]  # Add batch dimension
+        #batch_tensor = torch.cat(img, dim=0).to(torch.bfloat16)
+        batch_img = torch.stack([torch.from_numpy(img).float()] * 16)
+        batch_tensor = batch_img.to(torch.bfloat16)
         return batch_tensor
 
 
@@ -52,6 +54,9 @@ def test_yolov4(record_property, mode, op_by_op):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    cc.automatic_parallelization = True
+    cc.mesh_shape = [1,2]
+    cc.dump_info = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:

@@ -34,7 +34,7 @@ class ThisTester(ModelTester):
                 transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
             ]
         )
-        return tfms(img).unsqueeze(0)
+        return torch.stack([tfms(img)] * 4)
 
 
 @pytest.mark.parametrize(
@@ -68,6 +68,9 @@ def test_EfficientNet(record_property, model_name, mode, op_by_op):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    cc.automatic_parallelization = True
+    cc.mesh_shape = [1,2]
+    cc.dump_info = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
