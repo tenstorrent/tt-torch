@@ -42,7 +42,7 @@ def main():
     for device in devices:
         options = BackendOptions()
         options.compiler_config = cc
-        options.device = device
+        options.devices = [device]
         options.async_mode = True
 
         tt_models.append(
@@ -86,19 +86,17 @@ def main():
     for i in range(len(runtime_tensors_list)):
         runtime_tensors = runtime_tensors_list[i]
         url = image_urls[i]
-        torch_tensors = tt_mlir.to_host(runtime_tensors)
-        for ten in torch_tensors:
-            top5, top5_indices = torch.topk(ten.squeeze().softmax(-1), 5)
-            tt_classes = []
-            for class_likelihood, class_idx in zip(
-                top5.tolist(), top5_indices.tolist()
-            ):
-                tt_classes.append(f"{classes[class_idx]}: {class_likelihood}")
-            rows = []
-            url_string = f"Image URL: {url}\n"
-            for i in range(5):
-                rows.append([tt_classes[i]])
-            results.append(url_string + tabulate.tabulate(rows, headers=headers))
+        torch_tensor = tt_mlir.to_host(runtime_tensors)[0]
+
+        top5, top5_indices = torch.topk(torch_tensor.squeeze().softmax(-1), 5)
+        tt_classes = []
+        for class_likelihood, class_idx in zip(top5.tolist(), top5_indices.tolist()):
+            tt_classes.append(f"{classes[class_idx]}: {class_likelihood}")
+        rows = []
+        url_string = f"Image URL: {url}\n"
+        for i in range(5):
+            rows.append([tt_classes[i]])
+        results.append(url_string + tabulate.tabulate(rows, headers=headers))
 
     for result in results:
         print("*" * 40)
