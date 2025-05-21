@@ -74,8 +74,7 @@ class ThisTester(ModelTester):
         # Load sample from MNIST dataset
         dataset = load_dataset("mnist")
         sample = dataset["train"][0]["image"]
-        sample_tensor = [transform(sample).squeeze(0)]
-        batch_tensor = torch.cat(sample_tensor, dim=0)
+        batch_tensor = torch.stack([transform(sample)] * 32)
         batch_tensor = batch_tensor.to(torch.bfloat16)
         return batch_tensor
 
@@ -97,6 +96,9 @@ def test_autoencoder_linear(record_property, mode, op_by_op):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    cc.automatic_parallelization = True
+    cc.mesh_shape = [1,2]
+    cc.dump_info = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
