@@ -20,7 +20,14 @@ class ThisTester(ModelTester):
         return model.generate
 
     def _load_inputs(self):
-        self.prompt = "Hey, are you conscious? Can you talk to me?"
+        self.prompt = ["Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?",
+                       "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?",
+                       "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?",
+                       "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?",
+                       "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?",
+                       "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?",
+                       "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?",
+                       "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?", "Hey, are you conscious? Can you talk to me?"]
         inputs = self.tokenizer(
             self.prompt, return_tensors="pt", return_token_type_ids=False
         )
@@ -53,6 +60,9 @@ def test_falcon(record_property, model_name, mode, op_by_op):
     model_group = "red"
     cc = CompilerConfig()
     cc.enable_consteval = True
+    cc.automatic_parallelization = True
+    cc.mesh_shape = [1,2]
+    cc.dump_info = True
     # consteval_parameters is disabled because it results in a memory related crash
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP

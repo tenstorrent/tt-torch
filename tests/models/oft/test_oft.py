@@ -23,7 +23,7 @@ class ThisTester(ModelTester):
 
     def _load_inputs(self):
         # Create dummy inputs for the model
-        batch_size = 1
+        batch_size = 32
         dummy_image = torch.randn(batch_size, 3, 224, 224)
         dummy_calib = torch.randn(batch_size, 3, 4)
         grid_size = (80.0, 80.0)  # width, depth
@@ -53,6 +53,8 @@ def test_oft(record_property, mode, op_by_op):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    cc.automatic_parallelization = True
+    cc.mesh_shape = [1,2]
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:

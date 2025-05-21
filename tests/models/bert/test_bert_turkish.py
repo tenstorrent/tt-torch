@@ -19,7 +19,7 @@ class ThisTester(ModelTester):
         return model
 
     def _load_inputs(self):
-        sentences = ["Bu örnek bir cümle", "Her cümle vektöre çevriliyor"]
+        sentences = ["Bu örnek bir cümle", "Her cümle vektöre çevriliyor", "Bu örnek bir cümle", "Her cümle vektöre çevriliyor", "Bu örnek bir cümle", "Her cümle vektöre çevriliyor", "Bu örnek bir cümle", "Her cümle vektöre çevriliyor"]
         self.input = self.tokenizer(
             sentences, padding=True, truncation=True, return_tensors="pt"
         )
@@ -41,6 +41,9 @@ def test_bert_turkish(record_property, mode, op_by_op):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    cc.automatic_parallelization = True
+    cc.mesh_shape = [1, 2]
+    cc.dump_info = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:

@@ -22,10 +22,14 @@ class ThisTester(ModelTester):
         return model.generate
 
     def _load_inputs(self):
-        input_str = '''def print_prime(n):
+        input_str = ['''def print_prime(n):
                         """
                         Print all primes between 1 and n
-                        """'''
+                        """''',
+                    '''def print_prime(n):
+                        """
+                        Print all primes between 1 and n
+                        """''']
         self.test_input = input_str
         inputs = self.tokenizer(
             input_str, return_tensors="pt", return_attention_mask=False
@@ -48,6 +52,9 @@ class ThisTester(ModelTester):
 def test_phi(record_property, model_name, mode, op_by_op):
     model_group = "red"
     cc = CompilerConfig()
+    cc.automatic_parallelization = True
+    cc.mesh_shape = [1,2]
+    cc.dump_info = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
