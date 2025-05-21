@@ -150,10 +150,10 @@ std::string compile_stable_hlo_to_ttir(std::string_view code) {
 
 std::tuple<py::bytes, std::string>
 compile_ttir_to_bytestream(std::string_view code,
-                           std::optional<tt::runtime::Device> device,
+                           std::string_view sys_desc_path,
                            size_t len_activations, size_t len_graph_constants) {
   auto [binary_ptr, ttnn] = tt::torch::compileTTIRToTTNN(
-      code, device, len_activations, len_graph_constants);
+      code, sys_desc_path, len_activations, len_graph_constants);
   auto size = ::flatbuffers::GetSizePrefixedBufferLength(
       static_cast<const uint8_t *>(binary_ptr->get()));
   tt::runtime::Binary binary = tt::runtime::Binary(*binary_ptr);
@@ -162,16 +162,6 @@ compile_ttir_to_bytestream(std::string_view code,
   delete binary_ptr;
 
   return std::make_tuple(py::bytes(data_str), ttnn);
-}
-
-py::bytes compile_stablehlo_to_bytestream(std::string_view code) {
-  auto binary = tt::torch::Compile(code);
-  auto size = ::flatbuffers::GetSizePrefixedBufferLength(
-      static_cast<const uint8_t *>(binary->get()));
-
-  std::string data_str(static_cast<const char *>(binary->get()), size);
-  delete binary;
-  return py::bytes(data_str);
 }
 
 std::string bytestream_to_json(py::bytes byte_stream) {
@@ -384,10 +374,8 @@ PYBIND11_MODULE(tt_mlir, m) {
           });
   py::class_<tt::runtime::Device>(m, "Device");
   py::class_<tt::runtime::Tensor>(m, "Tensor");
-  m.def("compile", &compile_stablehlo_to_bytestream,
-        "A function that compiles stableHLO to a bytestream");
   m.def("compile_ttir_to_bytestream", &compile_ttir_to_bytestream,
-        py::arg("ttir"), py::arg("device") = py::none(),
+        py::arg("ttir"), py::arg("system_desc_path"),
         py::arg("len_activations") = 0, py::arg("len_graph_constants") = 0,
         "A function that compiles TTIR to a bytestream");
   m.def("compile_stable_hlo_to_ttir", &compile_stable_hlo_to_ttir,
@@ -425,8 +413,8 @@ PYBIND11_MODULE(tt_mlir, m) {
         "Convert the bytestream to json");
   m.def("create_binary_from_bytestream", &create_binary_from_bytestream,
         "Create a binary from bytestream");
-  m.def("create_system_desc", &tt::torch::create_system_desc,
-        py::arg("device") = py::none(), "Create a system description");
+  m.def("create_system_desc", &tt::torch::create_system_desc, py::arg("device"),
+        py::arg("descriptor_path"), "Create a system description");
 
 #if defined(TT_RUNTIME_DEBUG) && TT_RUNTIME_DEBUG == 1
   py::class_<tt::runtime::CallbackContext>(m, "CallbackContext");

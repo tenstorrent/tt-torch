@@ -60,7 +60,6 @@ def test_interp():
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    cc.compile_depth = CompileDepth.TORCH_FX
     verify_module(Basic(), inputs=[small], compiler_config=cc)
 
 

@@ -60,10 +60,11 @@ def compile_process(receiver, sender, ttir_event, ttnn_event, json_event):
     obj = receiver.get()
     faulthandler.disable()
     asm = obj["asm"]
+    system_desc_path = obj["system_desc_path"]
     ttir = tt_mlir.compile_stable_hlo_to_ttir(asm)
     sender.put({"ttir": ttir})
     ttir_event.wait()
-    binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir)
+    binary, ttnn = tt_mlir.compile_ttir_to_bytestream(ttir, system_desc_path)
     sender.put({"binary": binary, "ttnn": ttnn})
     ttnn_event.wait()
     sender.put({"json": tt_mlir.bytestream_to_json(binary)})
@@ -160,6 +161,29 @@ class Executor:
         self.owned_device_indices = []
         self.async_mode = async_mode
         self._validate_executor()
+        self.system_desc_paths = self._create_system_descriptors()
+
+    def _create_system_descriptors(self):
+        if self.compiler_config.compile_depth in [
+            CompileDepth.TORCH_FX,
+            CompileDepth.STABLEHLO,
+        ]:
+            return []
+
+        system_desc_paths = []
+        for device_idx, device_from_user in enumerate(self.devices):
+            descriptor_path = tempfile.NamedTemporaryFile(
+                delete=False, suffix=".ttsys"
+            ).name
+            descriptor_device = self._get_device(device_idx)
+
+            tt_mlir.create_system_desc(descriptor_device, descriptor_path)
+
+            if device_from_user is None:
+                self._cleanup_resources([], device_idx)
+
+            system_desc_paths.append(descriptor_path)
+        return system_desc_paths
 
     def _validate_executor(self):
         if self.compiler_config.compile_depth in (
@@ -199,8 +223,8 @@ class Executor:
 
     def _get_device(self, device_idx=0):
         assert (
-            len(self.devices) > device_idx
-        ), f"Not enough devices provided: {len(self.devices)} < {device_idx}"
+            len(self.devices) >= device_idx
+        ), f"Not enough devices provided: {len(self.devices)} <= {device_idx}"
         if self.devices[device_idx] is not None:
             return self.devices[device_idx]
         # Return a default parent mesh
@@ -370,6 +394,11 @@ class Executor:
                 tt_mlir.deallocate_tensor(weight, force=True)
         for device_idx in self.owned_device_indices:
             tt_mlir.close_mesh_device(self.devices[device_idx])
+        for path in self.system_desc_paths:
+            try:
+                os.remove(path)
+            except OSError:
+                pass
 
 
 class OnnxExecutor(Executor):
@@ -377,7 +406,11 @@ class OnnxExecutor(Executor):
         self.model_proto = model_proto
         self.binary = None
         self.sess = None
-        self.device = None
+        self.devices = [None]
+        self.compiler_config = CompilerConfig()
+        self.preprocessed_graph_constants = {}
+        self.owned_device_indices = []
+        self.system_desc_paths = self._create_system_descriptors()
 
     def typecast_inputs(self, inputs):
         raise NotImplementedError("This should not be called on an OnnxExecutor.")
@@ -539,7 +572,10 @@ class OpByOpExecutor(Executor):
         ttir_event = mp.Event()
         ttnn_event = mp.Event()
         json_event = mp.Event()
-        obj = {"asm": module.operation.get_asm()}
+        obj = {
+            "asm": module.operation.get_asm(),
+            "system_desc_path": self.system_desc_paths[0],
+        }
         process = mp.Process(
             target=compile_process,
             args=(sender, receiver, ttir_event, ttnn_event, json_event),
