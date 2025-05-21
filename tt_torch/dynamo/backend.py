@@ -14,9 +14,11 @@ from tt_torch.tools.utils import CompilerConfig
 
 
 class BackendOptions:
-    def __init__(self, compiler_config=CompilerConfig(), device=None, async_mode=False):
+    def __init__(
+        self, compiler_config=CompilerConfig(), devices=[None], async_mode=False
+    ):
         self.compiler_config = compiler_config
-        self.device = device
+        self.devices = devices
         self.async_mode = async_mode
 
 

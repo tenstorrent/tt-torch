@@ -136,6 +136,11 @@ jobs:
         name: test-reports-check-all-ops-execute-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: ${{ steps.strings.outputs.test_report_path_check_all_ops_execute }}
 
+    - name: Run Resnet demo
+      shell: bash
+      run: |
+        source env/activate
+        python demos/resnet/resnet50_demo.py --run_default_img
 
     - name: Show Test Report
       continue-on-error: true
