@@ -407,6 +407,9 @@ class OnnxExecutor(Executor):
         self.binary = None
         self.sess = None
         self.devices = [None]
+        self.compiler_config = CompilerConfig()
+        self.preprocessed_graph_constants = {}
+        self.owned_device_indices = []
         self.system_desc_paths = self._create_system_descriptors()
 
     def typecast_inputs(self, inputs):
