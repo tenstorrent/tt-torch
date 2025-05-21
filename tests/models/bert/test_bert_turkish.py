@@ -19,7 +19,10 @@ class ThisTester(ModelTester):
         return model
 
     def _load_inputs(self):
-        sentences = ["Bu örnek bir cümle", "Her cümle vektöre çevriliyor", "Bu örnek bir cümle", "Her cümle vektöre çevriliyor", "Bu örnek bir cümle", "Her cümle vektöre çevriliyor", "Bu örnek bir cümle", "Her cümle vektöre çevriliyor"]
+        sentences = ["Bu örnek bir cümle", "Her cümle vektöre çevriliyor", "Bu örnek bir cümle", "Her cümle vektöre çevriliyor", "Bu örnek bir cümle", "Her cümle vektöre çevriliyor", "Bu örnek bir cümle", "Her cümle vektöre çevriliyor",
+                     "Bu örnek bir cümle", "Her cümle vektöre çevriliyor", "Bu örnek bir cümle", "Her cümle vektöre çevriliyor", "Bu örnek bir cümle", "Her cümle vektöre çevriliyor", "Bu örnek bir cümle", "Her cümle vektöre çevriliyor",
+                     "Bu örnek bir cümle", "Her cümle vektöre çevriliyor", "Bu örnek bir cümle", "Her cümle vektöre çevriliyor", "Bu örnek bir cümle", "Her cümle vektöre çevriliyor", "Bu örnek bir cümle", "Her cümle vektöre çevriliyor",
+                     "Bu örnek bir cümle", "Her cümle vektöre çevriliyor", "Bu örnek bir cümle", "Her cümle vektöre çevriliyor", "Bu örnek bir cümle", "Her cümle vektöre çevriliyor", "Bu örnek bir cümle", "Her cümle vektöre çevriliyor"]
         self.input = self.tokenizer(
             sentences, padding=True, truncation=True, return_tensors="pt"
         )
