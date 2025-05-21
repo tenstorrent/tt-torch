@@ -34,7 +34,7 @@ class ThisTester(ModelTester):
         img = np.transpose(img, (2, 0, 1))  # HWC to CHW format
         #img = [torch.from_numpy(img).float().unsqueeze(0)]  # Add batch dimension
         #batch_tensor = torch.cat(img, dim=0).to(torch.bfloat16)
-        batch_img = torch.stack([torch.from_numpy(img).float()] * 16)
+        batch_img = torch.stack([torch.from_numpy(img).float()] * 32)
         batch_tensor = batch_img.to(torch.bfloat16)
         return batch_tensor
 

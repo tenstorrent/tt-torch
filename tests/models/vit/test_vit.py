@@ -27,7 +27,7 @@ class ThisTester(ModelTester):
         url = "http://images.cocodataset.org/val2017/000000039769.jpg"
         image = Image.open(requests.get(url, stream=True).raw)
         # Prepare input
-        input = self.processor(images=([image] * 16), return_tensors="pt")
+        input = self.processor(images=([image] * 32), return_tensors="pt")
         input["pixel_values"] = input["pixel_values"].to(torch.bfloat16)
         return input
 
