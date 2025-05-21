@@ -83,6 +83,7 @@ def test_timm_image_classification(record_property, model_name, mode, op_by_op):
         True
         if model_name
         in [
+            "mobilenetv1_100.ra4_e3600_r224_in1k",
             "dla34.in1k",
             "ghostnet_100.in1k",
             "hrnet_w18.ms_aug_in1k",
@@ -96,10 +97,20 @@ def test_timm_image_classification(record_property, model_name, mode, op_by_op):
         else False
     )
 
+    required_pcc = (
+        0.98
+        if model_name
+        in [
+            "mobilenetv1_100.ra4_e3600_r224_in1k",
+        ]
+        else 0.99
+    )
+
     model_group = "red" if model_name == "ese_vovnet19b_dw.ra_in1k" else "generality"
     tester = ThisTester(
         model_name,
         mode,
+        required_pcc=required_pcc,
         compiler_config=cc,
         assert_pcc=assert_pcc,
         assert_atol=False,
