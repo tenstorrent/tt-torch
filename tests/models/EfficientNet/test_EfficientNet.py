@@ -34,7 +34,8 @@ class ThisTester(ModelTester):
                 transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
             ]
         )
-        return torch.stack([tfms(img)] * 8)
+        batch_size = 8 # Runs out of space for batch_size > 10
+        return torch.stack([tfms(img)] * batch_size)
 
 
 @pytest.mark.parametrize(
@@ -70,7 +71,6 @@ def test_EfficientNet(record_property, model_name, mode, op_by_op):
     cc.consteval_parameters = True
     cc.automatic_parallelization = True
     cc.mesh_shape = [1,2]
-    cc.dump_info = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
@@ -111,7 +111,10 @@ def test_EfficientNet(record_property, model_name, mode, op_by_op):
 
         print("-----")
         print(f"Model: {model_name}")
-        for idx in torch.topk(results, k=5).indices.squeeze(0).tolist():
-            prob = torch.softmax(results, dim=1)[0, idx].item()
-            print("{label:<75} ({p:.2f}%)".format(label=labels_map[idx], p=prob * 100))
+        for i in range(results.shape[0]):
+            result_i = results[i]
+            print(f"Output {i+1}:")
+            for idx in torch.topk(result_i, k=5).indices.squeeze(0).tolist():
+                prob = torch.softmax(result_i, dim=0)[idx].item()
+                print("{label:<75} ({p:.2f}%)".format(label=labels_map[idx], p=prob * 100))
     tester.finalize()

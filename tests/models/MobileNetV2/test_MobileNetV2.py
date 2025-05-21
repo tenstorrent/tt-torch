@@ -27,7 +27,6 @@ class ThisTester(ModelTester):
         url = "http://images.cocodataset.org/val2017/000000039769.jpg"
         image = Image.open(requests.get(url, stream=True).raw)
         img_t = preprocess(image)
-        #batch_t = torch.unsqueeze(img_t, 0)
         batch_t = torch.stack([img_t] * 32)
         return batch_t.to(torch.bfloat16)
 
@@ -48,7 +47,6 @@ def test_MobileNetV2(record_property, mode, op_by_op):
     cc.consteval_parameters = True
     cc.automatic_parallelization = True
     cc.mesh_shape = [1,2]
-    cc.dump_info = True
     
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
