@@ -326,6 +326,9 @@ class CompilerConfig:
         self.runtime_intermediate_cache = None  # Do not serialize.
         self.save_mlir_override = None
         self.device_map = {}
+        self.automatic_parallelization = False
+        self.mesh_shape = [1, 1]
+
         self.apply_environment_overrides()
         self.post_init()
 

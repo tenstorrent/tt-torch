@@ -198,9 +198,18 @@ def shlo_to_flatbuffer(
     if compiler_config.profile_ops:
         compiler_config.set_stablehlo_mlir_module(module.operation.get_asm())
 
-    ttir = tt_mlir.compile_stable_hlo_to_ttir(
-        module.operation.get_asm(enable_debug_info=True)
-    )
+    shlo = module.operation.get_asm(enable_debug_info=True)
+    if compiler_config.automatic_parallelization:
+        shlo = tt_mlir.stable_hlo_automatic_parallelization(
+            shlo, compiler_config.mesh_shape, len_activations, len_graph_constants
+        )
+        dump_module(
+            module=shlo,
+            name="STABLEHLO_AUTOMATIC_PARALLELIZATION",
+            compiler_config=compiler_config,
+        )
+
+    ttir = tt_mlir.compile_stable_hlo_to_ttir(shlo)
     dump_module(module=ttir, name="TTIR", compiler_config=compiler_config)
 
     if compiler_config.enable_intermediate_verification:
