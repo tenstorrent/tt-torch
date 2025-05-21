@@ -53,11 +53,6 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "mobilenet", tests: "
-              tests/models/MobileNetV2/test_MobileNetV2_onnx.py::test_MobileNetV2_onnx[op_by_op_stablehlo-eval]
-              "
-          },
-          {
             runs-on: wormhole_b0, name: "openpose", tests: "
               tests/models/openpose/test_openpose.py::test_openpose[op_by_op_torch-eval]
               "
@@ -86,8 +81,6 @@ jobs:
           {
             runs-on: wormhole_b0, name: "timm", tests: "
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-ghostnetv2_100.in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-inception_v4.tf_in1k]
-              tests/models/vovnet/test_vovnet_onnx.py::test_vovnet_onnx[op_by_op_stablehlo-eval]
               "
           },
           {

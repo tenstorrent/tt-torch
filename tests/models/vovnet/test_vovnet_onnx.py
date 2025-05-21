@@ -66,16 +66,6 @@ def test_vovnet_onnx(record_property, mode, op_by_op):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         cc.op_by_op_backend = op_by_op
 
-    skip_full_eval_test(
-        record_property,
-        cc,
-        model_name,
-        bringup_status="FAILED_TTMLIR_COMPILATION",
-        # In op-by-op flow this shows up as "stablehlo.reduce_window crash in StableHLOToTTIRReduceWindowOpConversionPattern() "
-        reason="loc(/head/global_pool/pool/GlobalAveragePool): error: failed to legalize operation 'stablehlo.reduce_window' - https://github.com/tenstorrent/tt-torch/issues/736",
-        model_group=model_group,
-    )
-
     tester = ThisTester(
         model_name,
         mode,
