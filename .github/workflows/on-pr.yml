@@ -37,17 +37,44 @@ jobs:
       skip: ${{ steps.check.outputs.skip }}
     steps:
       - uses: actions/checkout@v4
-      - name: Check if ignored files are modified
+        with:
+          fetch-depth: 0  # fetch full history
+      - name: Check if ignored files are modified or "#skip-onpr-tests" in commit description
         id: check
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # Fetch the PR head commit so it's available locally
+          git fetch origin ${{ github.event.pull_request.head.sha }}
+          # Now check that commit message for flag to skip build
+          COMMIT_MSG=$(git log -1 --pretty=%B ${{ github.event.pull_request.head.sha }})
+          if [[ "$COMMIT_MSG" == *"#skip-onpr-tests"* ]]; then
+            echo "User requested skip via commit message."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
           all_match=true
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             CHANGED_FILES=$(gh pr diff ${{ github.event.pull_request.number }} --name-only --repo ${{ github.repository }})
+
+            # Define patterns for files that should skip the build
+            SKIP_PATTERNS=(
+              '^.*\.md$'
+              '^.*\.gitignore$'
+              '^.*LICENSE.*$'
+              '^\.github/workflows/.*nightly.*\.yml$'
+              '^\.github/workflows/.*weekly.*\.yml$'
+              '^\.github/workflows/.*depth.*bench.*\.yml$'
+              '^\.github/workflows/fail_inspector.yml$'
+              '^results/parse_op_by_op_results\.py$'
+            )
+            COMBINED_PATTERN=$(IFS='|'; echo "${SKIP_PATTERNS[*]}")
+
+            # Determine if all files changed in PR can skip CI
             for file in $CHANGED_FILES;
             do
-              if [[ ! $file =~ ^.*\.(md|gitignore)$ && $file != *"LICENSE"* ]]; then
+              if [[ ! $file =~ $COMBINED_PATTERN ]]; then
                 all_match=false
                 break
               fi
