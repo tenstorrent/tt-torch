@@ -448,10 +448,76 @@ def prune_inputs(program, constant_inputs):
     return constant_inputs
 
 
+def run_pass_for_graph(
+    gm: torch.fx.GraphModule,
+    graph: torch.fx.Graph,
+    compiler_config,
+    decompositions,
+    example_inputs,
+    idx,
+):
+    gm_device = torch.fx.GraphModule(gm, graph, f"_device_{idx}")
+    # we use the export API to run the decompositions, as this maintains the
+    # source locations in stack_trace
+    gm_device = (
+        torch.export.export_for_training(gm_device, tuple(example_inputs), strict=False)
+        .run_decompositions(decompositions)
+        .module()
+    )
+    gm_device = bypass_dtype_promotion(gm_device, compiler_config)
+    # shape prop also propagates dtypes, need to run to figure out which casts are redundant
+    run_shape_prop(gm_device, example_inputs)
+    gm_device = bypass_redundant_cast(gm_device)
+
+    if compiler_config.enable_consteval:
+        gm_device = constant_fold(gm_device)
+    elif compiler_config.consteval_parameters:
+        raise Exception("consteval_parameters is enabled but enable_consteval is not")
+
+    gm_device = bypass_redundant_getitem(gm_device)
+
+    # reduce_graph(gm) - ISSUE: https://github.com/tenstorrent/tt-torch/issues/513
+    program = torch.export.export(gm_device, tuple(example_inputs), strict=False)
+    # The proper order of inputs when outlining everything is constants + parameters + buffers + sub_example_inputs
+    if not compiler_config.inline_parameters:
+        constant_inputs = (
+            list(program.tensor_constants.values())
+            + [
+                param.contiguous() if not param.is_contiguous() else param
+                for param in program.parameters()
+            ]
+            + list(program.buffers())
+        )
+        for i in range(len(program._graph_signature.input_specs)):
+            if program._graph_signature.input_specs[i].kind != InputKind.USER_INPUT:
+                program._graph_signature.input_specs[i].kind = InputKind.USER_INPUT
+    else:
+        constant_inputs = []
+
+    if compiler_config.compile_depth == CompileDepth.EXECUTE:
+        constant_inputs = prune_inputs(program, constant_inputs)
+    run_shape_prop(program.graph_module, constant_inputs + example_inputs)
+
+    return program, constant_inputs
+
+
 def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     decompositions = torch.export.default_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
+
     mcg = split_onto_devices(gm, compiler_config)
+
+    # golden should be generated before graph is splitted
+    if compiler_config._enable_intermediate_verification:
+        assert (
+            len(mcg.device_graphs) == 1
+        ), "Intermediate verification is not supported for multi-chip models"
+        program, constants = run_pass_for_graph(
+            gm, gm.graph, compiler_config, decompositions, example_inputs, 0
+        )
+        _generate_golden_intermediate_cache(
+            program, constants + example_inputs, compiler_config
+        )
 
     for idx, graph in mcg.device_graphs.items():
         sub_example_inputs = []
@@ -470,69 +536,11 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
                             dtype=node.meta["example_value"].dtype
                         )
                     )
-
-        gm_device = torch.fx.GraphModule(gm, graph, f"_device_{idx}")
-        # we use the export API to run the decompositions, as this maintains the
-        # source locations in stack_trace
-        gm_device = (
-            torch.export.export_for_training(
-                gm_device, tuple(sub_example_inputs), strict=False
-            )
-            .run_decompositions(decompositions)
-            .module()
+        program, constant_inputs = run_pass_for_graph(
+            gm, graph, compiler_config, decompositions, sub_example_inputs, idx
         )
-        gm_device = bypass_dtype_promotion(gm_device, compiler_config)
-        # shape prop also propagates dtypes, need to run to figure out which casts are redundant
-        run_shape_prop(gm_device, sub_example_inputs)
-        gm_device = bypass_redundant_cast(gm_device)
-
-        if compiler_config.enable_consteval:
-            gm_device = constant_fold(gm_device)
-        elif compiler_config.consteval_parameters:
-            raise Exception(
-                "consteval_parameters is enabled but enable_consteval is not"
-            )
-
-        gm_device = bypass_redundant_getitem(gm_device)
-
-        # reduce_graph(gm) - ISSUE: https://github.com/tenstorrent/tt-torch/issues/513
-        program = torch.export.export(
-            gm_device, tuple(sub_example_inputs), strict=False
-        )
-        # The proper order of inputs when outlining everything is constants + parameters + buffers + sub_example_inputs
-        if not compiler_config.inline_parameters:
-            constant_inputs = (
-                list(program.tensor_constants.values())
-                + [
-                    param.contiguous() if not param.is_contiguous() else param
-                    for param in program.parameters()
-                ]
-                + list(program.buffers())
-            )
-            for i in range(len(program._graph_signature.input_specs)):
-                if program._graph_signature.input_specs[i].kind != InputKind.USER_INPUT:
-                    program._graph_signature.input_specs[i].kind = InputKind.USER_INPUT
-        else:
-            constant_inputs = []
-
-        if compiler_config.compile_depth == CompileDepth.EXECUTE:
-            constant_inputs = prune_inputs(program, constant_inputs)
-        run_shape_prop(program.graph_module, constant_inputs + sub_example_inputs)
         mcg.programs[idx] = program
         mcg.constant_inputs[idx] = constant_inputs
         mcg.example_inputs[idx] = sub_example_inputs
-
-    if compiler_config._enable_intermediate_verification:
-        if len(mcg.programs) > 1:
-            assert (
-                False
-            ), "Intermediate verification is not supported for multi-chip models"
-
-        # Once a program is generated, it should not be mutated, so we can safely generate the golden intermediate cache here
-        _generate_golden_intermediate_cache(
-            mcg.programs[0],
-            mcg.constant_inputs[0] + mcg.example_inputs[0],
-            compiler_config,
-        )
 
     return mcg
