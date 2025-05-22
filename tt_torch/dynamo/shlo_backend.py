@@ -479,16 +479,15 @@ class StablehloExecutor(OpByOpExecutor):
 
         if self.binary is not None:
             try:
-                print("Executing binary")
                 output = tt_mlir.run_end_to_end(
                     self.typecast_inputs(inputs), self.binary
                 )
+                return output
             except Exception as e:
                 print(f"Failed to execute binary: {e}")
 
         if self.program is not None:
             try:
-                print("Executing program")
                 return self.program.graph_module(
                     *(self.graph_constants + tuple(self.program.buffers()) + inputs)
                 )
@@ -497,7 +496,6 @@ class StablehloExecutor(OpByOpExecutor):
 
         if self.model_proto is not None:
             try:
-                print("Executing model proto")
                 output = run_model_proto(
                     sess=self.sess, model_proto=self.model_proto, inputs=inputs
                 )
