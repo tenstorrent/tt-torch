@@ -39,10 +39,9 @@ RUN apt-get update && apt-get install -y \
 
 # Install python3.10 packages
 RUN python3.10 -m pip install \
-    --index-url https://download.pytorch.org/whl/cpu \
-    torch==2.7.0+cpu \
     setuptools==59.6.0 \
-    wheel
+    wheel \
+    torch@https://download.pytorch.org/whl/cpu-cxx11-abi/torch-2.7.0%2Bcpu.cxx11.abi-cp310-cp310-linux_x86_64.whl
 
 # Install clang 17
 RUN wget https://apt.llvm.org/llvm.sh && \

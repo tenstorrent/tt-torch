@@ -147,7 +147,7 @@ jobs:
 
   merge_mlir_artifacts:
     needs: [tests]
-    if: ${{ inputs.run-dump-mlir == 'true' }}
+    if: ${{ always() && inputs.run-dump-mlir == 'true' }}  # Runs always if MLIR dump is enabled
     runs-on: ubuntu-latest
     name: Merge MLIR Artifacts
     steps:

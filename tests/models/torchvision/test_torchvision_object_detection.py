@@ -70,7 +70,7 @@ def test_torchvision_object_detection(record_property, model_info, mode, op_by_o
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     # TODO - Enable checking - https://github.com/tenstorrent/tt-torch/issues/525
-    if model_name in ["ssdlite320_mobilenet_v3_large", "ssd300_vgg16"]:
+    if model_name == "ssd300_vgg16" or model_name == "ssdlite320_mobilenet_v3_large":
         assert_pcc = False
     else:
         assert_pcc = True
