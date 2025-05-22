@@ -124,23 +124,19 @@ def dump_module(module, name, compiler_config):
 
 
 def _shlo_backend(
-    shlo,
+    mcg,
     example_inputs,
     compiler_config,
-    program=None,
-    graph_constants=None,
     devices=None,
     async_mode=False,
 ):
     executor = StablehloExecutor(
-        module=shlo,
+        module=mcg.shlo_modules[0],
         compiler_config=compiler_config,
         devices=devices,
         async_mode=async_mode,
     )
-    if program is not None:
-        # original input is a torch graph
-        executor.add_program(program, graph_constants)
+    executor.add_program(mcg)
     return executor
 
 
@@ -187,7 +183,6 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         dump_module(module=module, name="StableHLO", compiler_config=compiler_config)
 
         mcg.shlo_modules[device_idx] = module
-
     return mcg
 
 
@@ -283,15 +278,11 @@ def backend(gm, example_inputs, options: BackendOptions = None):
         else:
             # op_by_op_backend == OpByOpBackend.STABLEHLO
             # convert torch to stablehlo, then run stablehlo op-by-op
-            module, program, graph_constants = torch_to_shlo(
-                gm, example_inputs, compiler_config=cc
-            )
+            mcg = torch_to_shlo(gm, example_inputs, compiler_config=cc)
             return _shlo_backend(
-                shlo=module,
+                mcg=mcg,
                 example_inputs=example_inputs,
                 compiler_config=cc,
-                program=program,
-                graph_constants=graph_constants,
                 devices=devices,
                 async_mode=async_mode,
             )
