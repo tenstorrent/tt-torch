@@ -58,6 +58,9 @@ class ThisTester(ModelTester):
 
 
 @pytest.mark.parametrize(
+    "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
+)
+@pytest.mark.parametrize(
     "mode",
     ["train", "eval"],
 )
@@ -66,8 +69,8 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-@pytest.mark.parametrize("data_parallel_mode", [False, True])
-def test_mnist_train(record_property, mode, op_by_op, data_parallel_mode):
+def test_mnist_train(record_property, data_parallel_mode, mode, op_by_op):
+    print(f"Running with data_parallel_mode={data_parallel_mode}")
     if mode == "train":
         pytest.skip()
     model_name = "Mnist"
