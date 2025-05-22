@@ -60,9 +60,7 @@ def test_resnet(record_property, data_parallel_mode, mode, op_by_op):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
-    devices = None
-    if data_parallel_mode:
-        parent, devices = DeviceManager.acquire_available_devices()
+
     tester = ThisTester(
         model_name,
         mode,
@@ -73,23 +71,22 @@ def test_resnet(record_property, data_parallel_mode, mode, op_by_op):
         assert_atol=False,
         record_property_handle=record_property,
         data_parallel_mode=data_parallel_mode,
-        devices=devices,
     )
 
     results = tester.test_model()
-    if data_parallel_mode:
-        DeviceManager.release_parent_device(parent, cleanup_sub_devices=True)
-        if mode == "eval":
+    if mode == "eval":
+        if data_parallel_mode:
+            # `results` is a list of result tensors, one for each device
             for i in range(len(results)):
                 result = results[i]
                 # Print the top 5 predictions for each device
                 _, indices = torch.topk(result, 5)
                 print(f"Top 5 predictions for device {i}: {indices[0].tolist()}")
-    else:
-        if mode == "eval":
-            # Print the top 5 predictions
-            _, indices = torch.topk(results, 5)
-            print(f"Top 5 predictions: {indices[0].tolist()}")
+        else:
+            if mode == "eval":
+                # `results` is a single result tensor
+                _, indices = torch.topk(results, 5)
+                print(f"Top 5 predictions: {indices[0].tolist()}")
 
     tester.finalize()
 
