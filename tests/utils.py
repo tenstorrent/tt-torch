@@ -22,6 +22,7 @@ from tt_torch.tools.utils import (
     torch_input_to_onnx,
     with_torch_dynamo_cleanup,
 )
+import warnings
 import json
 from onnx import version_converter
 from pathlib import Path
@@ -436,6 +437,15 @@ class ModelTester:
         final_outputs = []
         for rt_tensor in rt_tensors:
             outputs = tt_mlir.to_host(rt_tensor)[0]
+            final_outputs.append(outputs)
+
+        self.record_property("achieved_compile_depth", "EXECUTE")
+        if self.compiler_config._enable_intermediate_verification:
+            warnings.warn(
+                "Runtime intermediate verification is not supported in data parallel mode. Ignoring this."
+            )
+
+        for outputs in final_outputs:
             if self.is_token_output:
                 decoded_outputs = self.tokenizer.batch_decode(
                     outputs, skip_special_tokens=True
@@ -449,7 +459,6 @@ class ModelTester:
                     ), f'Output mismatch: calculated: "{decoded_outputs} vs golden: "{decoded_golden}"'
             else:
                 self.verify_outputs(golden, outputs)
-            final_outputs.append(outputs)
         return final_outputs
 
     @torch.inference_mode()
