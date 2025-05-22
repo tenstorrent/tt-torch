@@ -10,6 +10,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from tt_torch.tools.device_manager import DeviceManager
 
 
 # adapted from https://github.com/pytorch/examples/blob/main/mnist/main.py
@@ -65,7 +66,8 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_mnist_train(record_property, mode, op_by_op):
+@pytest.mark.parametrize("data_parallel_mode", [False, True])
+def test_mnist_train(record_property, mode, op_by_op, data_parallel_mode):
     if mode == "train":
         pytest.skip()
     model_name = "Mnist"
@@ -74,10 +76,14 @@ def test_mnist_train(record_property, mode, op_by_op):
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if op_by_op:
+        if data_parallel_mode:
+            pytest.skip("Op-by-op not supported in data parallel mode")
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
-
+    devices = None
+    if data_parallel_mode:
+        parent, devices = DeviceManager.acquire_available_devices()
     tester = ThisTester(
         model_name,
         mode,
@@ -85,6 +91,10 @@ def test_mnist_train(record_property, mode, op_by_op):
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
+        data_parallel_mode=data_parallel_mode,
+        devices=devices,
     )
     tester.test_model()
+    if data_parallel_mode:
+        DeviceManager.release_parent_device(parent, cleanup_sub_devices=True)
     tester.finalize()
