@@ -13,8 +13,9 @@ class ThisTester(ModelTester):
         
         # note - use_cache in llamaconfig is set to default to true
         model = AutoModelForCausalLM.from_pretrained(
-            self.model_name, torch_dtype=torch.bfloat16, use_cache=True,
+            self.model_name, torch_dtype=torch.bfloat16, use_cache=True
         )
+        model.config.num_hidden_layers = 2 # otherwise it's too big to fit on device
                 
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_name, torch_dtype=torch.bfloat16
@@ -26,7 +27,7 @@ class ThisTester(ModelTester):
     def _load_inputs(self):
         self.test_input = "This is a sample text from "
         
-        input_length = 32
+        input_length = 15
         inputs = self.tokenizer.encode_plus(
             self.test_input,
             return_tensors="pt",
@@ -34,6 +35,7 @@ class ThisTester(ModelTester):
             padding="max_length",
             truncation=True,
         )
+        
         # setup static cache
         batch_size = 1
         max_cache_len = 64

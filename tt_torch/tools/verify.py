@@ -68,7 +68,13 @@ def verify_against_golden(
     assert len(golden_tensors) == len(
         calculated_tensors
     ), f"Expecting the number of golden tensors (ct: {len(golden_tensors)}) and calculated tensors (ct: {len(calculated_tensors)}) to be the same."
-
+    
+    # print the golden and calculated tensors, as well as their shapes
+    for i, (golden, calculated) in enumerate(zip(golden_tensors, calculated_tensors)):
+        print(f"Golden tensor {i}: {golden}, shape: {golden.shape}")
+        print(f"Calculated tensor {i}: {calculated}, shape: {calculated.shape}")
+    
+    
     pccs, pcc_passeds = [], []
     atols, atol_thresholds, atols_passeds = [], [], []
 

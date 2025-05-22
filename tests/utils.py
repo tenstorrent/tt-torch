@@ -387,6 +387,8 @@ class ModelTester:
     def _test_model_eval_base(self, on_device, assert_eval_token_mismatch):
         model = self.get_framework_model()
         golden = self.get_golden_outputs(model, self.inputs)
+        
+        torch.save(golden, "golden.pt")
 
         if on_device == True:
             model = self.compile_model(model, self.compiler_config)

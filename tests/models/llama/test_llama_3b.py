@@ -13,6 +13,8 @@ class ThisTester(ModelTester):
         model = AutoModelForCausalLM.from_pretrained(
             self.model_name, torch_dtype=torch.bfloat16
         )
+        model.config.num_hidden_layers = 2 # otherwise it's too big to fit on device
+        
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_name, torch_dtype=torch.bfloat16
         )
