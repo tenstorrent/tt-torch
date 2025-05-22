@@ -330,6 +330,8 @@ class Executor:
         device = xm.xla_device()
         if self.graph_constants is not None:
             inputs = self.graph_constants + inputs
+
+        inputs = self.typecast_inputs(inputs)
         inputs = tuple(input.to(device) for input in inputs)
         gm = self.program.graph_module
         outputs = gm(*inputs)
