@@ -2,13 +2,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import torch
-<<<<<<< HEAD
 import gc
-=======
 import sys
 import traceback
 from torch.fx.experimental.proxy_tensor import make_fx
->>>>>>> 962c68a (workaround to generate SHLO model from LlamaAttention with StaticCache())
 from torch.fx.experimental import const_fold
 from typing import List, Optional, Union
 from torch.export.graph_signature import InputKind
@@ -499,6 +496,7 @@ def run_pass_for_graph(
     # shape prop also propagates dtypes, need to run to figure out which casts are redundant
     run_shape_prop(gm_device, example_inputs)
     gm_device = bypass_redundant_cast(gm_device)
+    gm_device = outplace_index_copy_(gm_device)
 
     if compiler_config.enable_consteval:
         gm_device = constant_fold(gm_device)
@@ -529,26 +527,6 @@ def run_pass_for_graph(
         constant_inputs = prune_inputs(program, constant_inputs)
     run_shape_prop(program.graph_module, constant_inputs + example_inputs)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-    # Rewrite the graph to replace in-place torch.ops.aten.copy_ operations with out-of-place equivalents
-=======
-    # # Rewrite the graph to replace in-place torch.ops.aten.copy_ operations with out-of-place equivalents
-    # output_cache = []
-    #     # Ideally also check that the args[1] comes from an index_put which comes from a getattr buffers
->>>>>>> 8450721 (Rewire inplace index copies to graph outputs)
-    # for node in program.graph_module.graph.nodes:
-    #     if node.op == "call_function" and node.target == torch.ops.aten.copy_.default:
-    #         source_node = node.args[1]
-    #         output_cache.append(source_node)
-    #         program.graph_module.graph.erase_node(node)
-<<<<<<< HEAD
-
-<<<<<<< HEAD
->>>>>>> 962c68a (workaround to generate SHLO model from LlamaAttention with StaticCache())
-=======
-=======
             
     # output_node = [node for node in program.graph_module.graph.nodes if node.op=='output'][0]
     # current_output = output_node.args[0] # one node reference
@@ -560,11 +538,7 @@ def run_pass_for_graph(
     # print(f"[JAMES] Trying to add {new_args} to graph output", file=sys.stderr)
     # program.graph_module.recompile() # is this necessary?
     
->>>>>>> 8450721 (Rewire inplace index copies to graph outputs)
-    print(f"GM Graph after second export {type(gm.graph)}", file=sys.stderr)
-    program.graph_module.graph.print_tabular()
 
->>>>>>> ec29f52 (Add more verbose logging to stderr, enable consteval to avoid placeholder-ing of caches)
     return program, constant_inputs
 
 

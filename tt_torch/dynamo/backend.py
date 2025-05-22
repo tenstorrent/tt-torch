@@ -163,20 +163,9 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     with torch.no_grad():
         mcg = pass_pipeline(gm, example_inputs, compiler_config)
 
-<<<<<<< HEAD
     for device_idx, program in mcg.programs.items():
         module = import_program(program)
         verify_ir(module)
-=======
-    print("Exported program before being verifying IR", file=sys.stderr)
-    print(program, file=sys.stderr)
-    
-    module = import_program(program)
-    print("Torchfx module before verification", file=sys.stderr)
-    print(module, file=sys.stderr)    
-    
-    verify_ir(module)
->>>>>>> dfaeb07 (Add logging and force inplace on graphmodule post export)
 
         dump_module(module=module, name="Torch FX", compiler_config=compiler_config)
 
