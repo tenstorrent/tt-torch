@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-set(TT_MLIR_VERSION "64f726087d51429957706a1f3ea8c0193d4787cc")
+set(TT_MLIR_VERSION "3eef5ac5f8fd74989d8b114bd3af4a503f55b2a4")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
@@ -80,7 +80,7 @@ else()
     # torch-mlir build
     # torch-mlir is using branch tt_torch/main
     # see issue https://github.com/tenstorrent/tt-torch/issues/671
-    set(TORCH_MLIR_VERSION "fe292ef77433c9da6ff539780f2b09d8fab146f4")
+    set(TORCH_MLIR_VERSION "be21b75d7fc2a45d5cccf5ac5d8d9448106735bd")
     set(TORCH_MLIR_PREFIX ${TTTORCH_SOURCE_DIR}/third_party/torch-mlir)
     set(TORCH_MLIR_INSTALL_PREFIX ${TORCH_MLIR_PREFIX}/install)
 
