@@ -108,7 +108,7 @@ void create_system_desc(tt::runtime::Device device,
   const std::string desc_path_str(descriptor_path);
   std::remove(desc_path_str.c_str());
   tt::runtime::getCurrentSystemDesc(std::nullopt, device)
-      .first.store(desc_path_str.c_str());
+      .store(desc_path_str.c_str());
 }
 
 std::tuple<std::shared_ptr<void> *, std::string>
