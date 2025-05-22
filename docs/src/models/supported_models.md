@@ -14,17 +14,17 @@ The following models can be currently run through tt-torch as of Feb 3rd, 2025. 
 | DistilBert | base uncased | tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval] |
 | Llama | 3B | tests/models/llama/test_llama_3b.py::test_llama_3b[full-meta-llama/Llama-3.2-3B-eval] |
 | MLPMixer || tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval] |
-| MNist || pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval] |
+| MNist || pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval-single_device] |
 | MobileNet V2 || tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval] |
 || TorchVision | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-mobilenet_v2] |
 | MobileNet V3 | Small TorchVision | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-mobilenet_v3_small] |
 || Large TorchVision | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-mobilenet_v3_large] |
 | OpenPose || tests/models/openpose/test_openpose_v2.py::test_openpose_v2[full-eval] |
 | Preciever_IO || tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io[full-eval] |
-| ResNet | 18 | tests/models/resnet/test_resnet.py::test_resnet[full-eval] |
+| ResNet | 18 | tests/models/resnet/test_resnet.py::test_resnet[full-eval-single_device] |
 || 18 TorchVision | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-resnet18] |
 || 34 TorchVision | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-resnet34] |
-||  50 | tests/models/resnet50/test_resnet50.py::test_resnet[full-eval] |
+||  50 | tests/models/resnet50/test_resnet50.py::test_resnet[full-eval-single_device] |
 || 50 TorchVision | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-resnet50] |
 || 101 TorchVision | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-resnet101] |
 || 152 TorchVision | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-resnet152] |

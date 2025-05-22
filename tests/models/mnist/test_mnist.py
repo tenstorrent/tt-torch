@@ -70,7 +70,6 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_mnist_train(record_property, data_parallel_mode, mode, op_by_op):
-    print(f"Running with data_parallel_mode={data_parallel_mode}")
     if mode == "train":
         pytest.skip()
     model_name = "Mnist"
