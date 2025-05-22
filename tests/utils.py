@@ -28,6 +28,7 @@ from onnx import version_converter
 from pathlib import Path
 from tt_torch.tools.verify import verify_against_golden
 from tt_torch.tools.utils import RuntimeIntermediate, OpByOpBackend
+from tt_torch.tools.device_manager import DeviceManager
 import io
 import csv
 import os
@@ -143,15 +144,18 @@ class ModelTester:
 
         self.record_property = record_property_handle
         self.compiler_config.record_property = record_property_handle
-
+        self.parent_device = None
         if self.data_parallel_mode:
-            assert self.devices is not None and isinstance(
-                self.devices, list
-            ), "Please provide a list of devices when running in data parallel mode."
             assert self.compiler_config.compile_depth not in (
                 CompileDepth.COMPILE_OP_BY_OP,
                 CompileDepth.EXECUTE_OP_BY_OP,
             ), "Data parallel mode does not support op-by-op compilation or execution."
+            if self.devices is None:
+                # If user doesn't provide any devices, acquire all devices on board
+                (
+                    self.parent_device,
+                    self.devices,
+                ) = DeviceManager.acquire_available_devices()
 
         self.record_tag_cache = {}  # Holds for tags to be written out at finalize()
 
@@ -444,21 +448,27 @@ class ModelTester:
             warnings.warn(
                 "Runtime intermediate verification is not supported in data parallel mode. Ignoring this."
             )
-
-        for outputs in final_outputs:
-            if self.is_token_output:
-                decoded_outputs = self.tokenizer.batch_decode(
-                    outputs, skip_special_tokens=True
+        try:
+            for outputs in final_outputs:
+                if self.is_token_output:
+                    decoded_outputs = self.tokenizer.batch_decode(
+                        outputs, skip_special_tokens=True
+                    )
+                    decoded_golden = self.tokenizer.batch_decode(
+                        golden, skip_special_tokens=True
+                    )
+                    if assert_eval_token_mismatch:
+                        assert (
+                            decoded_outputs == decoded_golden
+                        ), f'Output mismatch: calculated: "{decoded_outputs} vs golden: "{decoded_golden}"'
+                else:
+                    self.verify_outputs(golden, outputs)
+        finally:
+            if self.parent_device is not None:
+                # The model tester object is managing the devices, release all devices.
+                DeviceManager.release_parent_device(
+                    self.parent_device, cleanup_sub_devices=True
                 )
-                decoded_golden = self.tokenizer.batch_decode(
-                    golden, skip_special_tokens=True
-                )
-                if assert_eval_token_mismatch:
-                    assert (
-                        decoded_outputs == decoded_golden
-                    ), f'Output mismatch: calculated: "{decoded_outputs} vs golden: "{decoded_golden}"'
-            else:
-                self.verify_outputs(golden, outputs)
         return final_outputs
 
     @torch.inference_mode()

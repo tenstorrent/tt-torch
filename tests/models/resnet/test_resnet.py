@@ -47,9 +47,7 @@ def test_resnet(record_property, data_parallel_mode, mode, op_by_op):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
-    devices = None
-    if data_parallel_mode:
-        parent, devices = DeviceManager.acquire_available_devices()
+
     tester = ThisTester(
         model_name,
         mode,
@@ -58,9 +56,7 @@ def test_resnet(record_property, data_parallel_mode, mode, op_by_op):
         compiler_config=cc,
         record_property_handle=record_property,
         data_parallel_mode=data_parallel_mode,
-        devices=devices,
     )
     results = tester.test_model()
-    if data_parallel_mode:
-        DeviceManager.release_parent_device(parent, cleanup_sub_devices=True)
+
     tester.finalize()
