@@ -1,40 +1,68 @@
 # Getting Started
 
-## System Dependencies
+This document walks you through how to set up to run models using tt-torch. The following topics are covered: 
 
-`tt-torch` requires the python 3.10 dev package, as well as the venv package. If not already installed, please run the following:
+* Configuring Hardware
+* Setting up the Docker Container
+* Installing Dependencies
+* Creating a Virtual Environment
+* Installing a Wheel
+* Running a Model
+
+## Configuring Hardware 
+
+Configure your hardware with tt-installer: 
 
 ```bash
-sudo apt-get install python3.10-dev python3.10-venv
+TT_SKIP_INSTALL_PODMAN=0 TT_SKIP_INSTALL_METALIUM_CONTAINER=0 /bin/bash -c "$(curl -fsSL https://github.com/tenstorrent/tt-installer/releases/latest/download/install.sh)"
 ```
 
-## Creating a Virtual Environment (skip if you already have one)
+## Setting up the Docker Container 
 
-Create a virtual environment if you do not already have one in your project:
+The simplest way to run models is to use the Docker image. You should have 50G free for the container.
+
+Docker Image: This image includes all the necessary dependencies **ghcr.io/tenstorrent/tt-forge-fe/tt-forge-fe-base-ird-ubuntu-22-04**.
+
+1. Install Docker if you do not already have it: 
+
 ```bash
-python3.10 -m venv myvenv
+sudo apt update
+sudo apt install docker.io -y
+sudo systemctl start docker
+sudo systemctl enable docker
 ```
-This will create a virtual environemnt in the folder `myvenv` in the current directory.
 
-Activate the environemnt:
+2. Test that Docker is installed: 
+
 ```bash
-source myvenv/bin/activate
+docker --version
+```
+
+3. Add your user to the Docker group: 
+
+```bash
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+## Creating a Virtual Environment
+
+It is recommended that you install a virtual environment for the wheel you want to work with. Wheels from different repos may have conflicting dependencies.
+
+Create a virtual environment (the environment name in the command is an example for the command, it's not required to use the same name listed):
+
+```bash
+python3 -m venv torch-venv
+source torch-venv/bin/activate
 ```
 
 ## Installing tt-torch
 
-### Installation Notes
-- `tt-torch` requires a pytorch installation that ships with their ABI.
-    - The `tt-torch` wheel lists the following version of torch as an installation requirement:
-      `torch@https://download.pytorch.org/whl/cpu-cxx11-abi/torch-2.5.0%2Bcpu.cxx11.abi-cp310-cp310-linux_x86_64.whl`
-    - This will be installed by pip upon installing the `tt-torch` wheel
-- The `tt-torch` wheel contains a fork of `torch-mlir`. Please ensure that `torch-mlir` has not been installed in your venv before installing the `tt-torch` wheel.
-
-### Torchvision Install (Required if you need to install torchvision)
+### Torchvision Install (Required if You Need to Install Torchvision)
 
 **If you intend to use torchvision in your project then this step must be done before installing the tt-torch wheel**
 
-You will need to build the torchvision wheel yourself with certain build flags. This is because torchvision does not publish a wheel which uses the PyTorch CXX11 ABI.
+You must build the torchvision wheel yourself with certain build flags. This is because torchvision does not publish a wheel which uses the PyTorch CXX11 ABI.
 
 To install torchvision:
 ```bash
@@ -54,13 +82,25 @@ cd ..
 rm -rf vision
 ```
 
-### Installing the tt-torch wheel
+### Installation Notes
+- `tt-torch` requires a pytorch installation that ships with their ABI.
+    - The `tt-torch` wheel lists the following version of torch as an installation requirement:
+      `torch@https://download.pytorch.org/whl/cpu-cxx11-abi/torch-2.5.0%2Bcpu.cxx11.abi-cp310-cp310-linux_x86_64.whl`
+    - This will be installed by pip upon installing the `tt-torch` wheel
+- The `tt-torch` wheel contains a fork of `torch-mlir`. Please ensure that `torch-mlir` has not been installed in your venv before installing the `tt-torch` wheel.
 
-Download a `tt-torch` wheel from [here](https://github.com/tenstorrent/tt-forge/releases)
 
-Install the wheel:
+
+### Installing the tt-torch Wheel
+
+To install the tt-torch wheel do the following: 
+
+
+1. Choose a `tt-torch` wheel from [here](https://github.com/tenstorrent/tt-forge/releases)
+
+2. Install the wheel (this is an example that shows the link structure):
 ```bash
-pip install <PATH_TO_TT_TORCH_WHEEL>.whl
+pip install https://github.com/tenstorrent/tt-forge/releases/download/nightly-0.1.0.dev20250519060217/tt_torch-0.1.0.dev20250519060217-cp310-cp310-linux_x86_64.whl
 ```
 
 ### Updating `PYTHONPATH`
