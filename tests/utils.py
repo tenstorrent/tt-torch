@@ -30,6 +30,7 @@ from tt_torch.tools.utils import RuntimeIntermediate, OpByOpBackend
 import io
 import csv
 import os
+import tt_mlir
 
 
 def skip_full_eval_test(
@@ -255,7 +256,7 @@ class ModelTester:
         self, model, compiler_config, data_parallel_mode=False, device_override=None
     ):
         device = None
-        if self.devices is not None:
+        if self.devices is not None and not data_parallel_mode:
             assert (
                 isinstance(self.devices, list) and len(self.devices) == 1
             ), "Only a single device may be provided when data_parallel_mode = False"
@@ -414,7 +415,9 @@ class ModelTester:
         ):
             return self._test_model_eval_op_by_op(on_device)
         if self.data_parallel_mode:
-            return self._test_model_eval_data_parallel(assert_eval_token_mismatch)
+            outputs = self._test_model_eval_data_parallel(assert_eval_token_mismatch)
+            assert len(outputs) == len(self.devices), "Num outputs != num devices"
+            return outputs
         return self._test_model_eval_base(on_device, assert_eval_token_mismatch)
 
     @torch.inference_mode()
@@ -429,7 +432,25 @@ class ModelTester:
         rt_tensors = []
         for compiled in compiled_models:
             rt_tensors.append(self.run_model(compiled, self.inputs))
-            # TODO: Finish this implementation
+
+        final_outputs = []
+        for rt_tensor in rt_tensors:
+            outputs = tt_mlir.to_host(rt_tensor)[0]
+            if self.is_token_output:
+                decoded_outputs = self.tokenizer.batch_decode(
+                    outputs, skip_special_tokens=True
+                )
+                decoded_golden = self.tokenizer.batch_decode(
+                    golden, skip_special_tokens=True
+                )
+                if assert_eval_token_mismatch:
+                    assert (
+                        decoded_outputs == decoded_golden
+                    ), f'Output mismatch: calculated: "{decoded_outputs} vs golden: "{decoded_golden}"'
+            else:
+                self.verify_outputs(golden, outputs)
+            final_outputs.append(outputs)
+        return final_outputs
 
     @torch.inference_mode()
     def _test_model_eval_base(self, on_device, assert_eval_token_mismatch):
