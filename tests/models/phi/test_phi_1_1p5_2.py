@@ -72,7 +72,7 @@ def test_phi(record_property, model_name, mode, op_by_op):
         model_group=model_group,
     )
 
-    # TODO - Enable checking - https://github.com/tenstorrent/tt-torch/issues/528
+
     results = tester.test_model(assert_eval_token_mismatch=False)
 
     if mode == "eval":

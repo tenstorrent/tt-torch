@@ -16,7 +16,7 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 class ThisTester(ModelTester):
     def _load_model(self):
         self.tokenizer = AutoTokenizer.from_pretrained(
-            self.model_name, torch_dtype=torch.auto
+            self.model_name, torch_dtype=torch.bfloat16       
         )
         model = AutoModelForCausalLM.from_pretrained(self.model_name)
         return model.generate
@@ -28,13 +28,13 @@ class ThisTester(ModelTester):
             {"role": "assistant", "content": "Sure! Here are some ways to eat bananas and dragonfruits together: 1. Banana and dragonfruit smoothie: Blend bananas and dragonfruits together with some milk and honey. 2. Banana and dragonfruit salad: Mix sliced bananas and dragonfruits together with some lemon juice and honey."}, 
             {"role": "user", "content": "What about solving an 2x + 3 = 7 equation?"}, 
         ] 
-        self.test_input_messages = messages
+        self.test_input = messages
         inputs = self.tokenizer.apply_chat_template(
             messages,
             tokenize=True,
             add_generation_prompt=True, 
             return_tensors="pt",
-            # return_attention_mask=False
+            return_attention_mask=True
         )
         return inputs
 
@@ -69,7 +69,6 @@ def test_phi(record_property, model_name, mode, op_by_op):
         model_group=model_group,
     )
 
-    # TODO - Enable checking - https://github.com/tenstorrent/tt-torch/issues/528
     results = tester.test_model(assert_eval_token_mismatch=False)
 
     if mode == "eval":
