@@ -118,7 +118,6 @@ class ModelTester:
     ):
         """
         Initializes the ModelTester.
-
         Args:
             model_name (str): Name of the model.
             mode (str): "train" or "eval" mode.
@@ -470,7 +469,6 @@ class ModelTester:
             if hasattr(self.framework_model, "eval")
             else self.framework_model
         )
-
         if hasattr(model, "can_generate") and model.can_generate():
             if not self.run_generate:
                 print(
@@ -768,6 +766,7 @@ class OnnxModelTester(ModelTester):
         devices=None,
         data_parallel_mode=False,
     ):
+
         super().__init__(
             model_name,
             mode,
@@ -786,7 +785,6 @@ class OnnxModelTester(ModelTester):
             data_parallel_mode,
         )
         # Hold an onnxruntime session for golden / non-full compile execution
-
         self.sess = prepare_inference_session(model_proto=self.framework_model)
         self.torch_inputs = self._load_torch_inputs()
         self.numpy_inputs = self._load_numpy_inputs()

@@ -59,7 +59,6 @@ def test_phi(record_property, model_name, mode, op_by_op):
         compiler_config=cc,
         record_property_handle=record_property,
         is_token_output=True,
-        run_generate=True,  # run model.generate(**inputs)
         model_group=model_group,
         run_generate=True,  # run model.generate(**inputs)
     )
