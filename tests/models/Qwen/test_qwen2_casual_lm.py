@@ -18,7 +18,7 @@ class ThisTester(ModelTester):
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_name, torch_dtype=torch.bfloat16
         )
-        return model.generate
+        return model
 
     def _load_inputs(self):
 
@@ -62,6 +62,7 @@ def test_qwen2_casual_lm(record_property, model_name, mode, op_by_op):
         compiler_config=cc,
         record_property_handle=record_property,
         is_token_output=True,
+        run_generate=True,  # run model.generate(**inputs)
     )
 
     # TODO - Enable checking - https://github.com/tenstorrent/tt-torch/issues/526
