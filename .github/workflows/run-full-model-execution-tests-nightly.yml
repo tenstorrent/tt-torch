@@ -161,6 +161,7 @@ jobs:
                 tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-7B-Base-eval]
                 tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-10B-Base-eval]
                 tests/models/vovnet/test_vovnet_onnx.py::test_vovnet_onnx[full-eval]
+                tests/models/detr/test_detr_onnx.py::test_detr_onnx[full-eval]
             "
           },
         ]

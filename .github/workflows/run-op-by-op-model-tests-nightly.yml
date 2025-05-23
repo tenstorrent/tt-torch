@@ -163,6 +163,11 @@ jobs:
               tests/models/flux/test_flux.py::test_flux[op_by_op_torch-flux_schnell-eval]
               tests/models/flux/test_flux.py::test_flux[op_by_op_torch-flux_dev-eval]
               "
+          },
+          {
+            runs-on: wormhole_b0, name: "detr", tests: "
+              tests/models/detr/test_detr_onnx.py:test_detr_onnx[op_by_op_torch-eval]
+              "
           }
         ]
     runs-on:
