@@ -871,3 +871,15 @@ class RuntimeIntermediate:
             self.flattened_pcc = "ERROR"
             self.flattened_atol = "ERROR"
             self.flattened_error_message = str(e)
+
+
+# When running back to back pytest invocations, torch._dynamo.reset() needs to be called
+# or the results fx graphs are incorrect
+def with_torch_dynamo_cleanup(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        finally:
+            torch._dynamo.reset()
+
+    return wrapper
