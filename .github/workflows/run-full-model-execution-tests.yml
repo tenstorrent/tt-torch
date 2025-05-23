@@ -27,7 +27,7 @@ env:
 
 jobs:
   tests:
-    timeout-minutes: 63 # current onPR time runs ~62-63m
+    timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix:
