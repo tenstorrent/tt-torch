@@ -42,3 +42,4 @@ def test_pipeline_parallel():
     calculated = model(x, y)
     golden = host_model(x, y)
     verify_against_golden((golden,), (calculated,), True, True, required_atol=0.1)
+    DeviceManager.release_parent_device(parent_device, True)
