@@ -1,35 +1,26 @@
 # SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-# Phi-3-mini: https://huggingface.co/microsoft/phi-3-mini
-# Phi-3.5-MoE: https://huggingface.co/microsoft/phi-3.5-MoE
-# Phi-3.5-vision: https://huggingface.co/microsoft/phi-3.5-vision
+# Phi-3.5-vision: https://huggingface.co/microsoft/Phi-3.5-vision-instruct
 
 import torch
 import pytest
 
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from tests.utils import ModelTester, skip_full_eval_test
+from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
         self.tokenizer = AutoTokenizer.from_pretrained(
-            self.model_name, torch_dtype=torch.bfloat16
+            self.model_name, torch_dtype=torch.bfloat16       
         )
         model = AutoModelForCausalLM.from_pretrained(self.model_name)
         return model.generate
 
     def _load_inputs(self):
-        input_str = '''def print_prime(n):
-                        """
-                        Print all primes between 1 and n
-                        """'''
-        self.test_input = input_str
-        inputs = self.tokenizer(
-            input_str, return_tensors="pt", return_attention_mask=False
-        )
+        inputs = self.tokenizer()
         return inputs
 
 
@@ -38,7 +29,7 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.parametrize(
-    "model_name", ["microsoft/phi-3-mini", "microsoft/phi-3.5-MoE", "microsoft/phi-3.5-vision"]
+    "model_name", ["microsoft/Phi-3-mini-128k-instruct", "microsoft/Phi-3-mini-4k-instruct", "microsoft/Phi-3.5-MoE"]
 )
 @pytest.mark.parametrize(
     "op_by_op",
@@ -53,16 +44,6 @@ def test_phi(record_property, model_name, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    skip_full_eval_test(
-        record_property,
-        cc,
-        model_name,
-        bringup_status="FAILED_RUNTIME",
-        reason="Cannot get the device from a tensor without an allocated buffer - https://github.com/tenstorrent/tt-torch/issues/733",
-        model_group=model_group,
-        model_name_filter="microsoft/phi-2",
-    )
-
     tester = ThisTester(
         model_name,
         mode,
@@ -72,7 +53,6 @@ def test_phi(record_property, model_name, mode, op_by_op):
         model_group=model_group,
     )
 
-    # TODO - Enable checking - https://github.com/tenstorrent/tt-torch/issues/528
     results = tester.test_model(assert_eval_token_mismatch=False)
 
     if mode == "eval":
@@ -80,7 +60,7 @@ def test_phi(record_property, model_name, mode, op_by_op):
         print(
             f"""
         model_name: {model_name}
-        input: {tester.test_input}
+        input: {tester.test_input_messages}
         output: {decoded_output}
         """
         )
