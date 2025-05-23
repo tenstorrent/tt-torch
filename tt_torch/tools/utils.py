@@ -17,14 +17,7 @@ import sys
 import shutil
 import onnx
 from onnxruntime import SessionOptions, InferenceSession
-from tt_mlir import (
-    open_mesh_device,
-    close_mesh_device,
-    create_sub_mesh_device,
-    release_sub_mesh_device,
-    MeshDeviceOptions,
-    is_runtime_debug_enabled,
-)
+import tt_mlir
 
 
 """
@@ -354,7 +347,7 @@ class CompilerConfig:
             value, bool
         ), "enable_intermediate_verification must be a boolean"
 
-        if value and not is_runtime_debug_enabled():
+        if value and not tt_mlir.is_runtime_debug_enabled():
             raise RuntimeError(
                 "attempting to set enable_intermediate_verification to True but tt_mlir was not built with runtime debug enabled. Rebuild this project with -DTT_RUNTIME_DEBUG=ON if you wish to verify intermediate results."
             )

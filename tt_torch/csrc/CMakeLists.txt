@@ -78,6 +78,7 @@ set_target_properties(${TARGET_NAME}
     PROPERTIES
     PREFIX ""  # Disable "lib" prefix.
     LIBRARY_OUTPUT_NAME ${TARGET_NAME}
-    INSTALL_RPATH "$ORIGIN"
+    INSTALL_RPATH "$ORIGIN:$ORIGIN/python3.10/site-packages/torch/lib"
+    BUILD_WITH_INSTALL_RPATH TRUE
 )
 install (TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
