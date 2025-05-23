@@ -54,7 +54,7 @@ def download_artifact(artifact, folder_name, headers, args, session):
     Unzipping is deferred.
     """
     artifact_name = artifact["name"]
-    if artifact_name in ["install-artifacts"]:
+    if artifact_name in ["install-artifacts"] and not args.include_install_artifacts:
         return None
     if args.filter and args.filter not in artifact_name:
         return None
@@ -248,8 +248,7 @@ def list_artifacts(artifacts, args):
     """
     for artifact in artifacts:
         artifact_name = artifact["name"]
-        if artifact_name in ["install-artifacts"]:
-            continue
+
         if args.filter and args.filter not in artifact_name:
             continue
         artifact_id = artifact["id"]
@@ -301,6 +300,11 @@ def main():
         dest="unzip",
         action="store_false",
         help="Do not unzip downloaded .zip files (default is to unzip, including nested ZIPs. Removes original ZIP and applies special renaming if needed.)",
+    )
+    parser.add_argument(
+        "--include-install-artifacts",
+        action="store_true",
+        help="Include 'install-artifacts' in the download (default: False)",
     )
     parser.set_defaults(unzip=True)
     parser.add_argument(
