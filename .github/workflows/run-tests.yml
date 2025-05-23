@@ -119,13 +119,14 @@ jobs:
       shell: bash
       run: |
         source env/activate
-        TT_TORCH_CHECK_ALL_OPS_EXECUTE=1 pytest -svv tests/models/MobileNetV2/test_MobileNetV2.py tests/models/mnist/test_mnist.py --op_by_op_torch
+        TT_TORCH_CHECK_ALL_OPS_EXECUTE=1 pytest -svv tests/models/MobileNetV2/test_MobileNetV2.py --op_by_op_torch
+        TT_TORCH_CHECK_ALL_OPS_EXECUTE=1 pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[op_by_op_torch-eval-single_device]
 
     - name: Stablehlo Op-By-Op Test
       shell: bash
       run: |
         source env/activate
-        pytest -svv tests/models/mnist/test_mnist.py --op_by_op_stablehlo
+        pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[op_by_op_stablehlo-eval-single_device]
 
     - name: Run Resnet demo
       shell: bash
