@@ -164,6 +164,11 @@ jobs:
               tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[op_by_op_torch-SD3.5-large-eval]
               tests/models/stable_diffusion/test_stable_diffusion_transformer.py::test_stable_diffusion_transformer[op_by_op_torch-SD3.5-large-transformer-eval]
               "
+          },
+          {
+            runs-on: wormhole_b0, name: "detr", tests: "
+              tests/models/detr/test_detr_onnx.py:test_detr_onnx[op_by_op_torch-eval]
+              "
           }
         ]
     runs-on:

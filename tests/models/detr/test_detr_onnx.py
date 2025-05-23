@@ -73,9 +73,8 @@ def test_detr_onnx(record_property, mode, op_by_op):
         record_property,
         cc,
         model_name,
-        bringup_status="FAILED_TTMLIR_COMPILATION",
-        # In op-by-op flow this shows up as "stablehlo.reduce_window crash in StableHLOToTTIRReduceWindowOpConversionPattern() "
-        reason="loc(/transformer/Expand): error: failed to legalize operation 'torch.operator'",
+        bringup_status="FAILED_RUNTIME",
+        reason="Out of Memory: Not enough space to allocate 59244544 B L1 buffer across 64 banks, where each bank needs to store 925696 B - https://github.com/tenstorrent/tt-torch/issues/729",
         model_group=model_group,
     )
 
