@@ -23,12 +23,12 @@
 #include "mlir/IR/MLIRContext.h"       // from @llvm-project
 #include "mlir/IR/OwningOpRef.h"       // from @llvm-project
 #include "mlir/IR/Visitors.h"          // from @llvm-project
-#include "mlir/Target/Cpp/CppEmitter.h"
 #include "mlir/InitAllPasses.h"
-#include "mlir/Parser/Parser.h"              // from @llvm-project
-#include "mlir/Pass/PassManager.h"           // from @llvm-project
-#include "mlir/Support/LLVM.h"               // from @llvm-project
-#include "mlir/Support/LogicalResult.h"      // from @llvm-project
+#include "mlir/Parser/Parser.h"         // from @llvm-project
+#include "mlir/Pass/PassManager.h"      // from @llvm-project
+#include "mlir/Support/LLVM.h"          // from @llvm-project
+#include "mlir/Support/LogicalResult.h" // from @llvm-project
+#include "mlir/Target/Cpp/CppEmitter.h"
 #include "mlir/Transforms/Passes.h"          // from @llvm-project
 #include "stablehlo/dialect/ChloOps.h"       // from @stablehlo
 #include "stablehlo/dialect/Register.h"      // from @stablehlo
@@ -54,8 +54,9 @@
 
 namespace tt::torch {
 namespace {
-mlir::OwningOpRef<mlir::ModuleOp> compileTTIRToTTNNIR(std::string_view code, std::string_view system_desc_path,
-    size_t len_activations, size_t len_graph_constants) {
+mlir::OwningOpRef<mlir::ModuleOp>
+compileTTIRToTTNNIR(std::string_view code, std::string_view system_desc_path,
+                    size_t len_activations, size_t len_graph_constants) {
   mlir::MLIRContext context;
   mlir::DialectRegistry registry;
 
@@ -91,9 +92,10 @@ mlir::OwningOpRef<mlir::ModuleOp> compileTTIRToTTNNIR(std::string_view code, std
   mlir::tt::ttnn::TTIRToTTNNBackendPipelineOptions options;
 
   // boolean env var to override consteval
-  const char *consteval = std::getenv("TT_TORCH_CONSTEVAL");
-  if (consteval && std::string(consteval) == "1") {
-    options.enableConstEval = true;
+  // consteval is enabled by default, set to 0 to disable
+  const char *should_consteval = std::getenv("TT_TORCH_CONSTEVAL");
+  if (should_consteval && std::string(should_consteval) == "0") {
+    options.enableConstEval = false;
   }
   options.enableFusing = true;
 
@@ -115,7 +117,7 @@ mlir::OwningOpRef<mlir::ModuleOp> compileTTIRToTTNNIR(std::string_view code, std
       std::filesystem::exists(system_desc_fspath)) {
     system_desc_temp_path = std::filesystem::temp_directory_path() /
                             (system_desc_fspath.stem().string() + "_tmp" +
-                              system_desc_fspath.extension().string());
+                             system_desc_fspath.extension().string());
 
     std::filesystem::copy_file(
         system_desc_fspath, system_desc_temp_path,
@@ -280,9 +282,8 @@ void create_system_desc(tt::runtime::Device device,
 std::tuple<std::shared_ptr<void> *, std::string>
 compileTTIRToTTNN(std::string_view code, std::string_view system_desc_path,
                   size_t len_activations, size_t len_graph_constants) {
-  mlir::OwningOpRef<mlir::ModuleOp> mlir_module =
-      compileTTIRToTTNNIR(code, system_desc_path, len_activations,
-                         len_graph_constants);
+  mlir::OwningOpRef<mlir::ModuleOp> mlir_module = compileTTIRToTTNNIR(
+      code, system_desc_path, len_activations, len_graph_constants);
 
   std::shared_ptr<void> *binary = new std::shared_ptr<void>();
   *binary = mlir::tt::ttnn::ttnnToFlatbuffer(mlir_module.get());
@@ -300,12 +301,12 @@ compileTTIRToTTNN(std::string_view code, std::string_view system_desc_path,
 }
 
 std::tuple<std::string, std::string>
-compileTTIRToSharedObject(std::string_view code, std::string_view system_desc_path,
-                size_t len_activations, size_t len_graph_constants) {
-  mlir::OwningOpRef<mlir::ModuleOp> mlir_module =
-  compileTTIRToTTNNIR(code, system_desc_path, len_activations,
-                      len_graph_constants);
-            
+compileTTIRToSharedObject(std::string_view code,
+                          std::string_view system_desc_path,
+                          size_t len_activations, size_t len_graph_constants) {
+  mlir::OwningOpRef<mlir::ModuleOp> mlir_module = compileTTIRToTTNNIR(
+      code, system_desc_path, len_activations, len_graph_constants);
+
   std::string buffer;
   llvm::raw_string_ostream os(buffer);
   if (mlir::failed(mlir::emitc::translateToCpp(mlir_module.get(), os))) {
@@ -320,11 +321,16 @@ compileTTIRToSharedObject(std::string_view code, std::string_view system_desc_pa
   if (!TT_TORCH_HOME) {
     throw std::runtime_error("TT_TORCH_HOME environment variable not set.");
   }
-  std::filesystem::path TT_METAL_LIB_DIR = std::filesystem::path(TT_TORCH_HOME) / "install/lib";
-  std::filesystem::path TTNN_STANDALONE_DIR = std::filesystem::path(TT_TORCH_HOME) / "install/tools/ttnn-standalone";
-  std::string soFilePath = compileCppToSo(buffer, std::filesystem::temp_directory_path().string(), TT_METAL_HOME, TT_METAL_LIB_DIR.string(), TTNN_STANDALONE_DIR.string());
-  std::cerr << "compileTTIRToSharedObject (soFilePath): " << soFilePath << std::endl;
-  
+  std::filesystem::path TT_METAL_LIB_DIR =
+      std::filesystem::path(TT_TORCH_HOME) / "install/lib";
+  std::filesystem::path TTNN_STANDALONE_DIR =
+      std::filesystem::path(TT_TORCH_HOME) / "install/tools/ttnn-standalone";
+  std::string soFilePath = compileCppToSo(
+      buffer, std::filesystem::temp_directory_path().string(), TT_METAL_HOME,
+      TT_METAL_LIB_DIR.string(), TTNN_STANDALONE_DIR.string());
+  std::cerr << "compileTTIRToSharedObject (soFilePath): " << soFilePath
+            << std::endl;
+
   return std::make_tuple(soFilePath, buffer);
 }
 
