@@ -20,6 +20,7 @@
 #include "tt/runtime/detail/debug.h"
 #endif
 #include "tt/runtime/runtime.h"
+#include "tt/runtime/test/ttnn/dylib.h"
 #include "tt/runtime/types.h"
 #include "tt/runtime/utils.h"
 
@@ -170,6 +171,58 @@ compile_ttir_to_bytestream(std::string_view code,
   delete binary_ptr;
 
   return std::make_tuple(py::bytes(data_str), ttnn);
+}
+
+std::tuple<std::string, std::string>
+compile_ttir_to_so(std::string_view code, std::string_view sys_desc_path,
+                   size_t len_activations, size_t len_graph_constants) {
+  return tt::torch::compileTTIRToSharedObject(
+      code, sys_desc_path, len_activations, len_graph_constants);
+}
+
+// TODO (azecevic): Move this to tt-mlir?
+namespace detail {
+std::vector<tt::runtime::Tensor>
+to_host(const std::vector<tt::runtime::Tensor> &device_tensors) {
+  std::vector<tt::runtime::Tensor> host_tensors;
+  std::transform(device_tensors.begin(), device_tensors.end(),
+                 std::back_inserter(host_tensors), [&](auto &&tensor) {
+                   auto host_tensor = tt::runtime::toHost(tensor);
+                   assert(host_tensor.size() == 1);
+                   return host_tensor[0];
+                 });
+  return host_tensors;
+}
+} // namespace detail
+
+bool verify_cpp_ttnn(const std::string &so_path, const std::string &func_name,
+                     const std::vector<tt::runtime::Tensor> &input,
+                     const std::vector<tt::runtime::Tensor> &golden_output,
+                     tt::runtime::Device device) {
+  auto *so_handle = tt::runtime::test::ttnn::openSo(so_path);
+  assert(so_handle);
+
+  auto cpp_output = tt::runtime::test::ttnn::runSoProgram(so_handle, func_name,
+                                                          input, device);
+  std::vector<tt::runtime::Tensor> host_cpp_output(detail::to_host(cpp_output));
+
+  std::vector<tt::runtime::Tensor> host_golden_output(
+      detail::to_host(golden_output));
+
+  // tt::runtime::test::ttnn::closeSo(so_handle);
+
+  return tt::runtime::test::ttnn::compareOuts(host_cpp_output,
+                                              host_golden_output);
+}
+
+py::bytes compile_stablehlo_to_bytestream(std::string_view code) {
+  auto binary = tt::torch::Compile(code);
+  auto size = ::flatbuffers::GetSizePrefixedBufferLength(
+      static_cast<const uint8_t *>(binary->get()));
+
+  std::string data_str(static_cast<const char *>(binary->get()), size);
+  delete binary;
+  return py::bytes(data_str);
 }
 
 std::string bytestream_to_json(py::bytes byte_stream) {
@@ -392,6 +445,13 @@ PYBIND11_MODULE(tt_mlir, m) {
   m.def("stable_hlo_automatic_parallelization",
         &stable_hlo_automatic_parallelization,
         "Run shardy automatic data parallelization pass on stableHLO");
+  m.def("compile_ttir_to_so", &compile_ttir_to_so, py::arg("ttir"),
+        py::arg("sys_desc_path"), py::arg("len_activations") = 0,
+        py::arg("len_graph_constants") = 0,
+        "A function that compiles TTIR to a shared object");
+  m.def("verify_cpp_ttnn", &verify_cpp_ttnn, py::arg("so_path"),
+        py::arg("func_name"), py::arg("input"), py::arg("golden_output"),
+        py::arg("device"), "A function that verifies the C++ TTNN");
   m.def("compile_stable_hlo_to_ttir", &compile_stable_hlo_to_ttir,
         "A function that compiles stableHLO to TTIR");
   m.def("open_mesh_device", &tt::runtime::openMeshDevice, py::arg("mesh_shape"),
