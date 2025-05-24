@@ -215,16 +215,6 @@ bool verify_cpp_ttnn(const std::string &so_path, const std::string &func_name,
                                               host_golden_output);
 }
 
-py::bytes compile_stablehlo_to_bytestream(std::string_view code) {
-  auto binary = tt::torch::Compile(code);
-  auto size = ::flatbuffers::GetSizePrefixedBufferLength(
-      static_cast<const uint8_t *>(binary->get()));
-
-  std::string data_str(static_cast<const char *>(binary->get()), size);
-  delete binary;
-  return py::bytes(data_str);
-}
-
 std::string bytestream_to_json(py::bytes byte_stream) {
   std::string data_str = byte_stream;
   auto binary_ptr = std::shared_ptr<void>(
