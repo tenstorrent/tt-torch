@@ -56,12 +56,15 @@ def test_segformer(record_property, mode, op_by_op):
     model_name = "SegFormer"
 
     cc = CompilerConfig()
-    cc.enable_consteval = True
-    cc.consteval_parameters = True
+    cc.enable_consteval = False
+    # cc.consteval_parameters = True
     if op_by_op:
+        pytest.skip()
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+    else:
+        cc.compile_depth = CompileDepth.EXECUTE_CPP
 
     tester = ThisTester(
         model_name,

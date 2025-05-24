@@ -194,7 +194,7 @@ bool verify_cpp_ttnn(const std::string &so_path, const std::string &func_name, c
 
   std::vector<tt::runtime::Tensor> host_golden_output(detail::to_host(golden_output));
 
-  tt::runtime::test::ttnn::closeSo(so_handle);
+  // tt::runtime::test::ttnn::closeSo(so_handle);
 
   return tt::runtime::test::ttnn::compareOuts(host_cpp_output, host_golden_output);
 }

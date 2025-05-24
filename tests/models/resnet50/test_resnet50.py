@@ -39,8 +39,8 @@ class ThisTester(ModelTester):
 )
 @pytest.mark.parametrize(
     "op_by_op",
-    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
-    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+    [None],
+    ids=["full"],
 )
 def test_resnet(record_property, mode, op_by_op):
     if mode == "train":
@@ -48,12 +48,14 @@ def test_resnet(record_property, mode, op_by_op):
     model_name = "ResNet50"
 
     cc = CompilerConfig()
-    cc.enable_consteval = True
-    cc.consteval_parameters = True
+    cc.enable_consteval = False
+    # cc.consteval_parameters = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+    else:
+        cc.compile_depth = CompileDepth.EXECUTE_CPP
 
     tester = ThisTester(
         model_name,

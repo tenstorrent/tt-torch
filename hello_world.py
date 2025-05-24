@@ -13,25 +13,18 @@ cc = CompilerConfig()
 cc.compile_depth = CompileDepth.EXECUTE_CPP
 cc.dump_info = True
 
-options = BackendOptions()
-options.compiler_config = cc
-
 num_devices = DeviceManager.get_num_available_devices()
 print("Num devices available:", num_devices)
 _, devices = DeviceManager.acquire_available_devices()
+assert len(devices) == 1, "Only one device is supported for this example"
 
-# tt_models = []
-# for device in devices:
-#     options = BackendOptions()
-#     options.compiler_config = cc
-#     options.devices = [device]
-#     # Compile the model for each device
-#     tt_models.append(
-#         torch.compile(model, backend=backend, dynamic=False, options=options)
-#     )
+device = devices[0]
+options = BackendOptions()
+options.compiler_config = cc
+options.async_mode = True
+options.devices = [device]
+tt_model = torch.compile(model, backend=backend, dynamic=False, options=options)
 
-# model = torch.compile(model, backend=backend, options=options)
-
-# x = torch.ones(32, 32)
-# y = torch.ones(32, 32)
-# _ = model(x, y)
+x = torch.ones(32, 32)
+y = torch.ones(32, 32)
+print(tt_model(x, y))

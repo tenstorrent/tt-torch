@@ -277,8 +277,7 @@ def backend(gm, example_inputs, options: BackendOptions = None):
         async_mode = False
     else:
         cc = options.compiler_config
-        devices = None
-        # devices = options.devices
+        devices = options.devices
         async_mode = options.async_mode
 
     # Apply environment overrides at start of compilation to allow overriding what was set in the test

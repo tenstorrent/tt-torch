@@ -158,6 +158,7 @@ compileTTIRToTTNN(std::string_view code, std::string_view system_desc_path,
   if (consteval && std::string(consteval) == "1") {
     options.enableConstEval = true;
   }
+  options.enableConstEval = false;
   options.enableFusing = true;
 
   if (len_activations > 0 || len_graph_constants > 0) {
@@ -258,6 +259,7 @@ compileTTIRToSharedObject(std::string_view code,
   if (consteval && std::string(consteval) == "1") {
     options.enableConstEval = true;
   }
+  options.enableConstEval = false;
   options.enableFusing = true;
 
   if (len_activations > 0 || len_graph_constants > 0) {
