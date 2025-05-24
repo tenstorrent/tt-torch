@@ -19,11 +19,15 @@ on:
         type: string
 
 jobs:
+  docker-build:
+    uses: ./.github/workflows/build-image.yml
+    secrets: inherit
   generate_md:
+    needs: docker-build
     timeout-minutes: 120
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:latest
+      image: ${{ needs.docker-build.outputs.docker-image }}
       options: --user root
 
     steps:
@@ -48,18 +52,19 @@ jobs:
           path: ${{ steps.strings.outputs.work-dir }}/results
 
       - name: Use build artifacts
-        uses: actions/download-artifact@v4
+        uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
         with:
           name: install-artifacts
-          path: ${{ steps.strings.outputs.install-dir }}
+          path: install
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 'Untar install directory'
+      - name: install tt-torch
         shell: bash
-        working-directory: ${{ steps.strings.outputs.install-dir }}
         run: |
-          tar xvf artifact.tar
+          source env/activate
           mkdir -p ${{ steps.strings.outputs.dist-dir }}
-          mv wheels/* ${{ steps.strings.outputs.dist-dir }}
+          mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
+          pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
       - name: Generate TTNN MD Files
         shell: bash

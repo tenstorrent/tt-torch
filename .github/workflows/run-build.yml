@@ -46,9 +46,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-      with:
-        submodules: recursive
-        lfs: true
 
     - name: Override tt-mlir SHA mlir_override is set
       if: ${{ inputs.mlir_override }}

@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
+import argparse
 import torch
 from tt_torch.tools.utils import CompilerConfig
 from tt_torch.dynamo.backend import backend, BackendOptions
 from PIL import Image
-import torch
 from torchvision import transforms
 import torchvision.models as models
 import tabulate
@@ -13,7 +13,7 @@ import requests
 from tt_torch.tools.device_manager import DeviceManager
 
 
-def main():
+def main(run_default_img):
     weights = models.ResNet152_Weights.IMAGENET1K_V2
     model = models.resnet152(weights=weights).to(torch.bfloat16).eval()
     classes = weights.meta["categories"]
@@ -29,11 +29,12 @@ def main():
 
     headers = ["Top 5 Predictions"]
     topk = 5
-    prompt = 'Enter the path of the image (type "stop" to exit or hit enter to use a default image): '
-    img_path = input(prompt)
-    while img_path != "stop":
+
+    DEFAULT_URL = "http://images.cocodataset.org/val2017/000000039769.jpg"
+
+    def process_image(img_path):
         if img_path == "":
-            url = "http://images.cocodataset.org/val2017/000000039769.jpg"
+            url = DEFAULT_URL
             img = Image.open(requests.get(url, stream=True).raw)
         elif img_path.startswith("http"):
             img = Image.open(requests.get(img_path, stream=True).raw)
@@ -55,8 +56,23 @@ def main():
         print(tabulate.tabulate(rows, headers=headers))
         print()
 
+    if run_default_img:
+        print("Running with default image URL: ", DEFAULT_URL)
+        process_image("")
+    else:
+        prompt = 'Enter the path of the image (type "stop" to exit or hit enter to use a default image): '
         img_path = input(prompt)
+        while img_path != "stop":
+            process_image(img_path)
+            img_path = input(prompt)
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--run_default_img",
+        action="store_true",
+        help="Run the demo once with the default image.",
+    )
+    args = parser.parse_args()
+    main(args.run_default_img)

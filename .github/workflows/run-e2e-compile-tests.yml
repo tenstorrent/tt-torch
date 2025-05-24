@@ -53,7 +53,7 @@ jobs:
                   tests/models/mistral/test_mistral.py::test_mistral[full-mistral7b-eval]
                   tests/models/mistral/test_mistral.py::test_mistral[full-ministral8b-eval]
             "
-          }
+          },
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
@@ -73,9 +73,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-      with:
-        submodules: recursive
-        lfs: true
 
     - name: Fetch job id
       id: fetch-job-id
@@ -100,23 +97,18 @@ jobs:
       run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
 
     - name: Use build artifacts
-      uses: actions/download-artifact@v4
+      uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
       with:
         name: install-artifacts
-        path: ${{ steps.strings.outputs.install-dir }}
-
-    - name: 'Untar install directory'
-      shell: bash
-      working-directory: ${{ steps.strings.outputs.install-dir }}
-      run: |
-        tar xvf artifact.tar
-        mkdir -p ${{ steps.strings.outputs.dist-dir }}
-        mv wheels/* ${{ steps.strings.outputs.dist-dir }}
+        path: install
+        github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: install tt-torch
       shell: bash
       run: |
         source env/activate
+        mkdir -p ${{ steps.strings.outputs.dist-dir }}
+        mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
     - name: Compile Supported Models

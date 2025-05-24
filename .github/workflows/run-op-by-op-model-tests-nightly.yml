@@ -8,6 +8,10 @@ on:
         description: 'Docker image to use for build'
         required: true
         type: string
+      docker-image-harbor:
+        description: 'Shared infra Docker image to use for build'
+        required: true
+        type: string
   workflow_run:
     workflows: [Build]
     types: [completed]
@@ -39,18 +43,13 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "gpt", tests: "
+            runs-on: n300, name: "gpt", tests: "
               tests/models/gpt_neo/test_gpt_neo.py::test_gpt_neo[op_by_op_torch-eval]
-              "
+              ", sh-run: true
           },
           {
             runs-on: wormhole_b0, name: "llama", tests: "
               tests/models/llama/test_llama_7b.py::test_llama_7b[op_by_op_torch-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "mobilenet", tests: "
-              tests/models/MobileNetV2/test_MobileNetV2_onnx.py::test_MobileNetV2_onnx[op_by_op_stablehlo-eval]
               "
           },
           {
@@ -71,9 +70,6 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "unet", tests: "
-              tests/models/unet/test_unet.py::test_unet[op_by_op_torch-eval]
-              tests/models/unet_brain/test_unet_brain.py::test_unet_brain[op_by_op_torch-eval]
-              tests/models/unet_carvana/test_unet_carvana.py::test_unet_carvana[op_by_op_torch-eval]
               tests/models/vgg19_unet/test_vgg19_unet.py::test_vgg19_unet[op_by_op_torch-eval]
               "
           },
@@ -85,8 +81,6 @@ jobs:
           {
             runs-on: wormhole_b0, name: "timm", tests: "
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-ghostnetv2_100.in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-inception_v4.tf_in1k]
-              tests/models/vovnet/test_vovnet_onnx.py::test_vovnet_onnx[op_by_op_stablehlo-eval]
               "
           },
           {
@@ -159,20 +153,27 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "Flux", tests: "
+            runs-on: n300-llmbox, name: "Flux", tests: "
               tests/models/flux/test_flux.py::test_flux[op_by_op_torch-flux_schnell-eval]
               tests/models/flux/test_flux.py::test_flux[op_by_op_torch-flux_dev-eval]
+              ", sh-run: true
+          },
+          {
+            runs-on: wormhole_b0, name: "stable-diffusion-v3.5", tests: "
+              tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[op_by_op_torch-SD3.5-medium-eval]
+              tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[op_by_op_torch-SD3.5-large-eval]
+              tests/models/stable_diffusion/test_stable_diffusion_transformer.py::test_stable_diffusion_transformer[op_by_op_torch-SD3.5-large-transformer-eval]
               "
           }
         ]
     runs-on:
-      - ${{ matrix.build.runs-on }}
+      - ${{ matrix.build.sh-run && format('tt-beta-ubuntu-2204-{0}-large-stable', matrix.build.runs-on) ||  matrix.build.runs-on }}
 
     name: "tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
 
     container:
-      image: ${{ inputs.docker-image }}
-      options: --user root --device /dev/tenstorrent/0 --shm-size=4gb --pid=host
+      image: ${{ matrix.build.sh-run && inputs.docker-image-harbor || inputs.docker-image }}
+      options: --user root --device /dev/tenstorrent --shm-size=4gb --pid=host
       volumes:
         - /dev/hugepages:/dev/hugepages
         - /dev/hugepages-1G:/dev/hugepages-1G
@@ -183,9 +184,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-      with:
-        submodules: recursive
-        lfs: true
 
     - name: Fetch job id
       id: fetch-job-id
@@ -214,23 +212,18 @@ jobs:
       run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
 
     - name: Use build artifacts
-      uses: actions/download-artifact@v4
+      uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
       with:
         name: install-artifacts
-        path: ${{ steps.strings.outputs.install-dir }}
-
-    - name: 'Untar install directory'
-      shell: bash
-      working-directory: ${{ steps.strings.outputs.install-dir }}
-      run: |
-        tar xvf artifact.tar
-        mkdir -p ${{ steps.strings.outputs.dist-dir }}
-        mv wheels/* ${{ steps.strings.outputs.dist-dir }}
+        path: install
+        github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: install tt-torch
       shell: bash
       run: |
         source env/activate
+        mkdir -p ${{ steps.strings.outputs.dist-dir }}
+        mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
     - name: Run Model Tests

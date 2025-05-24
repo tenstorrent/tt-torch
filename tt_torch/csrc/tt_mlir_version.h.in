@@ -1,2 +1,0 @@
-#pragma once
-#define TT_MLIR_GIT_COMMIT "@TT_MLIR_GIT_COMMIT@"

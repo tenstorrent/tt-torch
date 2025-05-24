@@ -119,6 +119,7 @@ jobs:
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-tf_efficientnet_lite4.in1k]
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-mixer_b16_224.goog_in21k]
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-ese_vovnet19b_dw.ra_in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-inception_v4.tf_in1k]
               "
           },
           {
@@ -226,7 +227,20 @@ jobs:
             runs-on: wormhole_b0, name: "falcon3", tests: "
               tests/models/falcon/test_falcon3.py::test_falcon[op_by_op_torch-tiiuae/Falcon3-1B-Base-eval]
               "
-          }
+          },
+          {
+            runs-on: wormhole_b0, name: "stable-diffusion-3.5", tests: "
+              tests/models/stable_diffusion/test_stable_diffusion_transformer.py::test_stable_diffusion_transformer[op_by_op_torch-SD3.5-medium-transformer-eval]
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "unet", tests: "
+              tests/models/unet/test_unet.py::test_unet[op_by_op_torch-eval]
+              tests/models/unet_brain/test_unet_brain.py::test_unet_brain[op_by_op_torch-eval]
+              tests/models/unet_carvana/test_unet_carvana.py::test_unet_carvana[op_by_op_torch-eval]
+              "
+          },
+
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
@@ -246,10 +260,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-      with:
-        submodules: recursive
-        lfs: true
-
     - name: Fetch job id
       id: fetch-job-id
       uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
@@ -271,23 +281,18 @@ jobs:
       run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
 
     - name: Use build artifacts
-      uses: actions/download-artifact@v4
+      uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
       with:
         name: install-artifacts
-        path: ${{ steps.strings.outputs.install-dir }}
-
-    - name: 'Untar install directory'
-      shell: bash
-      working-directory: ${{ steps.strings.outputs.install-dir }}
-      run: |
-        tar xvf artifact.tar
-        mkdir -p ${{ steps.strings.outputs.dist-dir }}
-        mv wheels/* ${{ steps.strings.outputs.dist-dir }}
+        path: install
+        github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: install tt-torch
       shell: bash
       run: |
         source env/activate
+        mkdir -p ${{ steps.strings.outputs.dist-dir }}
+        mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
     - name: Run Model Tests

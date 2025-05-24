@@ -75,7 +75,7 @@ jobs:
             "
           },
           {
-            # Approximately 70 minutes.
+            # Approximately 95 minutes.
             runs-on: wormhole_b0, name: "eval_2", tests: "
                   tests/models/bloom/test_bloom.py::test_bloom[full-eval]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-hrnet_w18.ms_aug_in1k]
@@ -92,6 +92,14 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-swin_b]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-densenet201]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-ese_vovnet19b_dw.ra_in1k]
+                  tests/models/torchvision/test_torchvision_object_detection.py::test_torchvision_object_detection[full-ssd300_vgg16-eval]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-swin_s]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-densenet161]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-swin_v2_t]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-swin_v2_b]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-swin_v2_s]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-densenet121]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-densenet169]
             "
           },
           {
@@ -112,9 +120,16 @@ jobs:
             "
           },
           {
-            # Approximately 40 minutes.
+            # Approximately 55 minutes.
             runs-on: wormhole_b0, name: "eval_6", tests: "
                   tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet[full-eval]
+                  tests/models/stable_diffusion/test_stable_diffusion_transformer.py::test_stable_diffusion_transformer[full-SD3.5-medium-transformer-eval]
+                  tests/models/unet/test_unet.py::test_unet[full-eval]
+                  tests/models/unet_brain/test_unet_brain.py::test_unet_brain[full-eval]
+                  tests/models/unet_carvana/test_unet_carvana.py::test_unet_carvana[full-eval]
+                  tests/models/MobileNetV2/test_MobileNetV2_onnx.py::test_MobileNetV2_onnx[full-eval]
+                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-inception_v4.tf_in1k]
+                  tests/models/vovnet/test_vovnet_onnx.py::test_vovnet_onnx[full-eval]
             "
           },
           {
@@ -160,7 +175,9 @@ jobs:
                 tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-3B-Base-eval]
                 tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-7B-Base-eval]
                 tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-10B-Base-eval]
-                tests/models/vovnet/test_vovnet_onnx.py::test_vovnet_onnx[full-eval]
+                tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[full-SD3.5-medium-eval]
+                tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[full-SD3.5-large-eval]
+                tests/models/stable_diffusion/test_stable_diffusion_transformer.py::test_stable_diffusion_transformer[full-SD3.5-large-transformer-eval]
             "
           },
         ]
@@ -181,9 +198,6 @@ jobs:
         - /mnt/dockercache:/mnt/dockercache
     steps:
     - uses: actions/checkout@v4
-      with:
-        submodules: recursive
-        lfs: true
 
     - name: Fetch job id
       id: fetch-job-id
@@ -205,23 +219,18 @@ jobs:
         echo "mlir_dir=$(pwd)/model_mlir" >> "$GITHUB_OUTPUT" # Define the model_mlir directory
 
     - name: Use build artifacts
-      uses: actions/download-artifact@v4
+      uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
       with:
         name: install-artifacts
-        path: ${{ steps.strings.outputs.install-dir }}
-
-    - name: 'Untar install directory'
-      shell: bash
-      working-directory: ${{ steps.strings.outputs.install-dir }}
-      run: |
-        tar xvf artifact.tar
-        mkdir -p ${{ steps.strings.outputs.dist-dir }}
-        mv wheels/* ${{ steps.strings.outputs.dist-dir }}
+        path: install
+        github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: install tt-torch
       shell: bash
       run: |
         source env/activate
+        mkdir -p ${{ steps.strings.outputs.dist-dir }}
+        mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
     - name: Run Full Model Execution Tests

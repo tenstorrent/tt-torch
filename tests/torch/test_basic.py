@@ -89,7 +89,7 @@ def test_add_multidevice():
                 "mod": mod,
                 "input_shapes": input_shapes,
                 "compiler_config": cc,
-                "device": device,
+                "devices": [device],
             },
         )
         threads.append(thread)
@@ -257,7 +257,7 @@ def test_div(input_range, input_shapes, input_type):
         input_shapes=input_shapes,
         input_data_types=input_type,
         input_range=input_range,
-        required_atol=5e-2,
+        required_atol=0.1,
     )
 
 

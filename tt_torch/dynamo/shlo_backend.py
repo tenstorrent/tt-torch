@@ -16,6 +16,7 @@ from tt_torch.tools.utils import (
     run_model_proto,
     onnx_output_to_torch,
     torch_input_to_onnx,
+    MultiChipGraph,
 )
 
 from tt_torch.tools.utils import (
@@ -279,17 +280,18 @@ class StablehloExecutor(OpByOpExecutor):
     def __init__(
         self,
         module: Union[str, "torch_mlir._mlir_libs._mlir.ir.Module", None] = None,
+        mcg: MultiChipGraph = None,
         compiler_config=None,
         required_pcc=0.99,
         required_atol=1e-2,
-        device=None,
+        devices=None,
         async_mode=False,
     ):
         super().__init__(
             compiler_config=compiler_config,
             required_pcc=required_pcc,
             required_atol=required_atol,
-            device=device,
+            devices=devices,
             async_mode=async_mode,
         )
         self.parsed_module = None
@@ -300,6 +302,7 @@ class StablehloExecutor(OpByOpExecutor):
         self.gm = None
         self.graph_constants = None
         self.model_proto = None
+        self.program = None
         self.sess = None
 
     def set_module(
@@ -312,18 +315,18 @@ class StablehloExecutor(OpByOpExecutor):
         else:
             raise ValueError(f"Invalid module type: {type(module)}")
 
-    def add_program(self, program: torch.export.ExportedProgram, graph_constants):
+    def add_program(self, mcg: MultiChipGraph):
         assert (
             self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP
             or self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
         ) and self.compiler_config.op_by_op_backend == OpByOpBackend.STABLEHLO, (
             "program can only be added in op by op mode"
         )
-        self.program = program
+        self.program = mcg.programs[0]
         self.graph_constants = (
-            (graph_constants,)
-            if isinstance(graph_constants, (int, float))
-            else tuple(graph_constants)
+            (mcg.constant_inputs[0],)
+            if isinstance(mcg.constant_inputs[0], (int, float))
+            else tuple(mcg.constant_inputs[0])
         )
 
     def add_onnx_model_proto(self, model_proto: onnx.ModelProto):
@@ -369,7 +372,6 @@ class StablehloExecutor(OpByOpExecutor):
                 for op in block.operations:
                     if op.name.startswith(("func.", "return")):
                         continue
-
                     inputs = {
                         operand.get_name(): str(operand.type) for operand in op.operands
                     }
@@ -480,6 +482,7 @@ class StablehloExecutor(OpByOpExecutor):
                 output = tt_mlir.run_end_to_end(
                     self.typecast_inputs(inputs), self.binary
                 )
+                return output
             except Exception as e:
                 print(f"Failed to execute binary: {e}")
 

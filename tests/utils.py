@@ -20,6 +20,7 @@ from tt_torch.tools.utils import (
     prepare_inference_session,
     onnx_output_to_torch,
     torch_input_to_onnx,
+    with_torch_dynamo_cleanup,
 )
 import json
 from onnx import version_converter
@@ -233,7 +234,7 @@ class ModelTester:
         # Compile model
         options = BackendOptions()
         options.compiler_config = compiler_config
-        options.device = self.device
+        options.devices = [self.device]
         model = torch.compile(model, backend=backend, dynamic=False, options=options)
         self.compiled_model = model
         return self.compiled_model
@@ -424,6 +425,7 @@ class ModelTester:
 
         return outputs
 
+    @with_torch_dynamo_cleanup
     def test_model(self, on_device=True, assert_eval_token_mismatch=True):
         if self.mode == "train":
             return self.test_model_train(on_device)

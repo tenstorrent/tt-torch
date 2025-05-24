@@ -16,12 +16,13 @@ MAXIMUM_JOB_TIMEOUT_MINUTES = 500  # 500 minutes maximum per-job timeout
 DEFAULT_JOB_TIMEOUT_MINUTES = 120
 
 
-def enumerate_all_tests(filter_full_eval=True):
-    test_dir = "tests/models"
+def enumerate_all_tests(filter_full_eval=True, test_dir="tests/models", dry_run=False):
+    print(f"Running pytest collect command: pytest {test_dir} --collect-only -q")
     try:
         # Run pytest with --collect-only and capture the output
         # sudo apt install -y libgl1 libglx-mesa0 # (may be needed locally)
-        print(f"Running pytest collect command: pytest {test_dir} --collect-only -q")
+        if dry_run:
+            return []
         result = subprocess.run(
             ["pytest", test_dir, "--collect-only", "-q"],
             stdout=subprocess.PIPE,

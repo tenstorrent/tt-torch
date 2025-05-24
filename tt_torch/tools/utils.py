@@ -17,14 +17,7 @@ import sys
 import shutil
 import onnx
 from onnxruntime import SessionOptions, InferenceSession
-from tt_mlir import (
-    open_mesh_device,
-    close_mesh_device,
-    create_sub_mesh_device,
-    release_sub_mesh_device,
-    MeshDeviceOptions,
-    is_runtime_debug_enabled,
-)
+import tt_mlir
 
 
 """
@@ -75,6 +68,43 @@ class OpCompilationStatus(IntEnum):
 class OpByOpBackend(Enum):
     TORCH = 1
     STABLEHLO = 2
+
+
+class IOType(Enum):
+    INTER_DEVICE = 1
+    USER = 2
+
+
+class MultiChipOutput:
+    def __init__(self, originating_device, io_type, index):
+        self.originating_device = originating_device
+        self.io_type = io_type
+        self.index = index
+        self.linked_input = None
+
+    def link_input(self, input):
+        self.linked_input = input
+
+
+class MultiChipInput:
+    def __init__(self, originating_device, io_type, producer_index, consumer_index):
+        self.originating_device = originating_device
+        self.io_type = io_type
+        self.producer_index = producer_index
+        self.consumer_index = consumer_index
+
+
+class MultiChipGraph:
+    def __init__(self, devices):
+        self.devices = devices
+        self.device_graphs = {device: torch.fx.Graph() for device in devices}
+        self.graph_outputs = {device: [] for device in devices}
+        self.graph_inputs = {device: [] for device in devices}
+        self.programs = {}
+        self.binaries = {}
+        self.constant_inputs = {}
+        self.example_inputs = {}
+        self.shlo_modules = {}
 
 
 class Tensor:
@@ -288,7 +318,7 @@ class CompilerConfig:
         self.record_property = lambda *args, **kwargs: None  # Default to no-op
         self.runtime_intermediate_cache = None  # Do not serialize.
         self.save_mlir_override = None
-
+        self.device_map = {}
         self.apply_environment_overrides()
         self.post_init()
 
@@ -317,7 +347,7 @@ class CompilerConfig:
             value, bool
         ), "enable_intermediate_verification must be a boolean"
 
-        if value and not is_runtime_debug_enabled():
+        if value and not tt_mlir.is_runtime_debug_enabled():
             raise RuntimeError(
                 "attempting to set enable_intermediate_verification to True but tt_mlir was not built with runtime debug enabled. Rebuild this project with -DTT_RUNTIME_DEBUG=ON if you wish to verify intermediate results."
             )
@@ -841,3 +871,15 @@ class RuntimeIntermediate:
             self.flattened_pcc = "ERROR"
             self.flattened_atol = "ERROR"
             self.flattened_error_message = str(e)
+
+
+# When running back to back pytest invocations, torch._dynamo.reset() needs to be called
+# or the results fx graphs are incorrect
+def with_torch_dynamo_cleanup(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        finally:
+            torch._dynamo.reset()
+
+    return wrapper

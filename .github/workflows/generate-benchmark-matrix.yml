@@ -12,7 +12,13 @@ on:
     types: [completed]
 
 jobs:
+
+  docker-build:
+    uses: ./.github/workflows/build-image.yml
+    secrets: inherit
+
   tests:
+    needs: docker-build
     outputs:
        matrix-json-splits: ${{ steps.generate_matrix.outputs.matrix-json-splits }}
 
@@ -24,7 +30,7 @@ jobs:
       - wormhole_b0
 
     container:
-      image: ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:latest
+      image: ${{ needs.docker-build.outputs.docker-image }}
       options: --user root --device /dev/tenstorrent/0
       volumes:
         - /dev/hugepages:/dev/hugepages
@@ -35,9 +41,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-      with:
-        submodules: recursive
-        lfs: true
 
     - name: Set reusable strings
       id: strings
@@ -52,23 +55,18 @@ jobs:
       run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
 
     - name: Use build artifacts
-      uses: actions/download-artifact@v4
+      uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
       with:
         name: install-artifacts
-        path: ${{ steps.strings.outputs.install-dir }}
-
-    - name: 'Untar install directory'
-      shell: bash
-      working-directory: ${{ steps.strings.outputs.install-dir }}
-      run: |
-        tar xvf artifact.tar
-        mkdir -p ${{ steps.strings.outputs.dist-dir }}
-        mv wheels/* ${{ steps.strings.outputs.dist-dir }}
+        path: install
+        github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: install tt-torch
       shell: bash
       run: |
         source env/activate
+        mkdir -p ${{ steps.strings.outputs.dist-dir }}
+        mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
     - name: Generate test matrix

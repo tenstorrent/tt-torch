@@ -1,6 +1,6 @@
 tt-torch uses pytest for all unit and model tests.
 
-Tests are organized into unit tests for pytorch (tests/torch), unit tests for onnx (test/onns) and models (tests/models).
+Tests are organized into unit tests for pytorch (tests/torch), unit tests for onnx (test/onnx) and models (tests/models).
 They can be run locally by running:
 
 ```bash

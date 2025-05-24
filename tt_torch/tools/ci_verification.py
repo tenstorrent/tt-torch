@@ -24,12 +24,12 @@ def scan_workflow_test_matrices():
 
     # iterate through all pytest files in tests/models and find all tests/parameterizations
     # sudo apt install -y libgl1 libglx-mesa0 (may be needed locally to parse yolov4 test)
-    all_tests = set(enumerate_all_tests(filter_full_eval=False))
+    all_tests = set(enumerate_all_tests(filter_full_eval=False, test_dir="tests"))
     all_tests.update(
         [test.split("[")[0] for test in all_tests]
     )  # strip off parameterization to allow unparameterized tests in ymls
 
-    print(f"Found a total of {len(all_tests)} tests in tests/models.")
+    print(f"Found a total of {len(all_tests)} tests in tests.")
     pp = pprint.PrettyPrinter(indent=2)
     workflows_are_valid = True
 
@@ -65,6 +65,35 @@ def scan_workflow_test_matrices():
                         workflows_are_valid = False
                     # Assert all tests are a subset of the known tests
                     unknown_tests = [test for test in tests if test not in all_tests]
+
+                    # We may decide to specify a group of tests by file, directory, test module or something other than full parameterization
+                    # In these cases, reuse pytest collect-only on the test string literal and see if it resolves to any tests
+                    unknown_tests_to_remove = []
+                    for unparameterized_test in unknown_tests:
+                        print(
+                            f'Searching for child tests for non-fully parameterized test "{unparameterized_test}":'
+                        )
+
+                        child_tests = enumerate_all_tests(
+                            filter_full_eval=False,
+                            test_dir=unparameterized_test,
+                            dry_run=False,
+                        )
+
+                        if child_tests:
+                            print(
+                                f'Resolved {len(child_tests)} subtests for "{unparameterized_test}". This is a real test.'
+                            )
+                            unknown_tests_to_remove.append(unparameterized_test)
+                        else:
+                            print(
+                                f'Could not find any child tests for "{unparameterized_test}". This is likely an invalid test.'
+                            )
+
+                    # Remove the unparameterized tests that resolved to real tests
+                    for unparameterized_test in unknown_tests_to_remove:
+                        unknown_tests.remove(unparameterized_test)
+
                     if unknown_tests:
                         print(f"{len(unknown_tests)} nonexistent tests in {filename}:")
                         for i, unk in enumerate(unknown_tests):

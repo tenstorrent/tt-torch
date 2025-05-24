@@ -1,38 +1,18 @@
 # SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-import torch
 import pytest
 from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from tests.models.oft.src.oftnet import OftNet  # OftNet imports OFT
+from third_party.tt_forge_models.oft.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        # Load the OftNet model
-        self.grid_res = 0.5
-        model = OftNet(
-            num_classes=1,
-            frontend="resnet18",
-            topdown_layers=8,
-            grid_res=self.grid_res,
-            grid_height=4.0,
-        )
-        return model
+        return ModelLoader.load_model()
 
     def _load_inputs(self):
-        # Create dummy inputs for the model
-        batch_size = 1
-        dummy_image = torch.randn(batch_size, 3, 224, 224)
-        dummy_calib = torch.randn(batch_size, 3, 4)
-        grid_size = (80.0, 80.0)  # width, depth
-        grid_depth = 8
-        grid_depth = int(grid_size[1] / self.grid_res)
-        grid_width = int(grid_size[0] / self.grid_res)
-        dummy_grid = torch.randn(batch_size, grid_depth, grid_width, 3)
-        input = (dummy_image, dummy_calib, dummy_grid)
-        return input
+        return ModelLoader.load_inputs()
 
 
 @pytest.mark.parametrize(

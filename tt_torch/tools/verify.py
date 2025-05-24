@@ -13,15 +13,20 @@ from tt_torch.tools.utils import (
     run_model_proto,
 )
 from tt_torch.dynamo.backend import backend, BackendOptions
-from tt_torch.tools.utils import calculate_atol, calculate_pcc
-from tt_torch.tools.utils import CompileDepth, CompilerConfig
+from tt_torch.tools.utils import (
+    calculate_atol,
+    calculate_pcc,
+    with_torch_dynamo_cleanup,
+    CompileDepth,
+    CompilerConfig,
+)
 from tt_torch.tools.device_manager import DeviceManager
 
 
 def compile_model(model, compiler_config, device, async_mode):
     torch_options = BackendOptions()
     torch_options.compiler_config = compiler_config
-    torch_options.device = device
+    torch_options.devices = [device]
     torch_options.async_mode = async_mode
     return torch.compile(model, backend=backend, options=torch_options)
 
@@ -294,6 +299,7 @@ def _verify_onnx_module(
     )
 
 
+@with_torch_dynamo_cleanup
 def verify_module(
     mod,
     inputs=None,
@@ -344,6 +350,7 @@ def verify_module(
         raise ValueError("Invalid module type")
 
 
+@with_torch_dynamo_cleanup
 def verify_torch_module_async(
     mod,
     inputs=None,
