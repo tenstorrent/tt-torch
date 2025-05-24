@@ -24,7 +24,7 @@ profile.py [-h] [-o OUTPUT_PATH] [-p PORT] "test_command"
 
 As a minimal example, the following command will run and profile the MNIST test:
 ```
-python tt_torch/tools/profile.py "pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]"
+python tt_torch/tools/profile.py "pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval-single_device]"
 ```
 
 The report is created at `results/perf/device_ops_perf_trace.csv` by default, unless an output path is specified.

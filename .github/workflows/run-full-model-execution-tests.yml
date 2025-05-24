@@ -27,7 +27,7 @@ env:
 
 jobs:
   tests:
-    timeout-minutes: 60 # current onPR time runs ~60m
+    timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix:
@@ -43,11 +43,11 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "eval_2", tests: "
-                  tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]
+                  tests/models/mnist/test_mnist.py::test_mnist_train[full-eval-single_device]
                   tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval]
                   tests/models/openpose/test_openpose_v2.py::test_openpose_v2[full-eval]
-                  tests/models/resnet/test_resnet.py::test_resnet[full-eval]
-                  tests/models/resnet50/test_resnet50.py::test_resnet[full-eval]
+                  tests/models/resnet/test_resnet.py::test_resnet[full-eval-single_device]
+                  tests/models/resnet50/test_resnet50.py::test_resnet[full-eval-single_device]
                   tests/models/distilbert/test_distilbert.py::test_distilbert_multiloop[full-distilbert-base-uncased-eval-64]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vit_l_16]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vit_b_16]
@@ -104,6 +104,9 @@ jobs:
                 tests/models/llama/test_llama_7b_pipeline_parallel.py::test_llama_7b_pipeline_parallel[huggyllama/llama-7b-eval]
                 tests/torch/test_basic_async.py
                 tests/torch/test_basic_multichip.py
+                tests/models/mnist/test_mnist.py::test_mnist_train[full-eval-data_parallel]
+                tests/models/resnet50/test_resnet50.py::test_resnet[full-eval-data_parallel]
+                tests/models/resnet/test_resnet.py::test_resnet[full-eval-data_parallel]
             "
           },
         ]

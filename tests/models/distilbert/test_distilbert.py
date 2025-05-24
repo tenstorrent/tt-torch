@@ -91,7 +91,7 @@ def test_distilbert_multiloop(record_property, model_name, mode, op_by_op, num_l
         compiler_config=cc,
         record_property_handle=record_property,
         model_name_suffix="-multiloop",
-        device=device,
+        devices=[device],
     )
     model = tester.compile_model(tester.get_framework_model(), tester.compiler_config)
 

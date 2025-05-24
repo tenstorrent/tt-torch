@@ -64,7 +64,7 @@ if __name__ == "__main__":
         python profile.py test_command -o output_name
 
     Examples:
-        python tt_torch/tools/profile.py "pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]"
+        python tt_torch/tools/profile.py "pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval-single_device]"
 
     Notes:
         Providing an output name is optional and defaults to 'device_ops_perf_trace.csv'."""

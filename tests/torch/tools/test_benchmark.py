@@ -44,7 +44,7 @@ def test_crashsafe_utils():
 
     test_name = "tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval]"
     sigkilled_test_name = (
-        "tests/models/mnist/test_mnist.py::test_mnist_train[full-eval]"
+        "tests/models/mnist/test_mnist.py::test_mnist_train[full-eval-single_device]"
     )
 
     report_dir = "results/__tmp__crashsafe_test/"
