@@ -40,6 +40,8 @@
 #include "ttmlir/Dialect/TT/IR/TTTraits.h"
 
 #include "ttmlir/Dialect/StableHLO/Pipelines/StableHLOPipelines.h"
+#include "ttmlir/Conversion/TTNNToEmitC/TTNNToEmitC.h"
+#include "ttmlir/Dialect/TT/Transforms/Passes.h"
 #include "ttmlir/Dialect/TTIR/Pipelines/TTIRPipelines.h"
 #include "ttmlir/Dialect/TTIR/Transforms/Passes.h"
 #include "ttmlir/Dialect/TTNN/Pipelines/TTNNPipelines.h"
@@ -57,7 +59,7 @@ namespace {
 mlir::OwningOpRef<mlir::ModuleOp>
 compileTTIRToTTNNIR(std::string_view code, std::string_view system_desc_path,
                     size_t len_activations, size_t len_graph_constants) {
-  mlir::MLIRContext context;
+  static mlir::MLIRContext context;
   mlir::DialectRegistry registry;
 
   registry.insert<mlir::arith::ArithDialect>();
@@ -306,6 +308,16 @@ compileTTIRToSharedObject(std::string_view code,
                           size_t len_activations, size_t len_graph_constants) {
   mlir::OwningOpRef<mlir::ModuleOp> mlir_module = compileTTIRToTTNNIR(
       code, system_desc_path, len_activations, len_graph_constants);
+
+  mlir::PassManager pm(mlir_module.get()->getName());
+  pm.addPass(mlir::tt::createTTUnwrapDeviceModulePass());
+  pm.addPass(mlir::tt::ttnn::createTTNNModifySignaturesForDylib());
+  pm.addPass(mlir::tt::createConvertTTNNToEmitCPass());
+
+  // Run the pass manager.
+  if (mlir::failed(pm.run(mlir_module.get()))) {
+    throw std::runtime_error("Failed to run TTNN to EmitC pass pipeline.");
+  }
 
   std::string buffer;
   llvm::raw_string_ostream os(buffer);
