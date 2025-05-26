@@ -8,6 +8,7 @@ import numpy as np
 from enum import Enum, IntEnum
 from collections.abc import Iterable
 import datetime
+import sys
 
 from pathlib import Path
 import os
@@ -415,6 +416,36 @@ class CompilerConfig:
     def reset_unique_ops(self):
         self.unique_ops = {}
 
+    # Truncate a string if it exceeds max_chars. Returns the original string if it is
+    # shorter than max_chars or if dump_info mode is enabled.
+    def truncate_str(self, value, max_chars):
+
+        # If not a string, or no truncation needed return orig str
+        if not isinstance(value, str) or len(value) <= max_chars:
+            return value
+
+        return value[:max_chars] + f"... [truncated from {len(value)} chars]"
+
+    # Optionally truncate known potentially very large op-dict fields in place to prevent
+    # massive unique ops JSON files from being written out and saved as artifacts.
+    def truncate_op_dict_fields(self, op_dict):
+
+        # Disable truncation in debug/info mode, or if op didn't pass execute since graph
+        # is used during XLSX generation for re-running compiler to extract err msg.
+        if self.dump_info or op_dict.get("compilation_status", 0) != 7:
+            return
+
+        # Arbitrarily use Excel character limit for truncation.
+        EXCEL_CELL_CHAR_LIMIT = 32767
+        truncate_length = EXCEL_CELL_CHAR_LIMIT - 100
+
+        # Field name patterns to target
+        patterns = ["graph", "json"]
+
+        for field, value in op_dict.items():
+            if any(pattern in field for pattern in patterns) and value:
+                op_dict[field] = self.truncate_str(value, truncate_length)
+
     def save_unique_ops(self):
         unique_op_dict = {}
         pytest_test = os.environ.get("PYTEST_CURRENT_TEST")
@@ -428,6 +459,8 @@ class CompilerConfig:
 
         for key, op in self.unique_ops.items():
             unique_op_dict[key] = op.to_dict()
+            self.truncate_op_dict_fields(unique_op_dict[key])
+
         output_file = Path(f"{self.results_path}{pytest_test}_unique_ops.json")
         date_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         print(f"#####  Saving unique ops to {output_file} at {date_str} #####")
