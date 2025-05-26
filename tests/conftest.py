@@ -7,6 +7,7 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 from tt_torch.tools.utils import OpByOpBackend
+from tt_torch.tools.device_manager import DeviceManager
 from tt_torch.tools.crashsafe_utils import crashsafe_suffix
 import xml.etree.ElementTree as ET
 import socket
@@ -24,6 +25,7 @@ def run_around_tests():
     torch.manual_seed(0)
     yield
     torch._dynamo.reset()
+    DeviceManager.release_all_devices()
 
 
 @pytest.fixture(scope="module")

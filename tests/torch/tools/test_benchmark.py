@@ -98,7 +98,7 @@ def test_crashsafe_utils():
         subprocess.run(merge_command, shell=True, check=True)
         assert os.path.exists(
             merged_report_name
-        ), f"Fusedf report not generated, expected at {merged_report_name}"
+        ), f"Fused report not generated, expected at {merged_report_name}"
 
         # check for 1+n_dupes models in the merged report
         bm_results = parse_benchmark_xml(merged_report_dir)
