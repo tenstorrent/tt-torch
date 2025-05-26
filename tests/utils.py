@@ -425,6 +425,28 @@ class ModelTester:
             return outputs
         return self._test_model_eval_base(on_device, assert_eval_token_mismatch)
 
+    def _verify_full_execution_output(
+        self, device_output, golden_output, assert_eval_token_mismatch
+    ):
+        """
+        This function verifies a single device's output tensors against the golden tensors
+        (found by running the model on the CPU). This should only be used during full
+        model execution, and not in op-by-op mode.
+        """
+        if self.is_token_output:
+            decoded_outputs = self.tokenizer.batch_decode(
+                device_output, skip_special_tokens=True
+            )
+            decoded_golden = self.tokenizer.batch_decode(
+                golden_output, skip_special_tokens=True
+            )
+            if assert_eval_token_mismatch:
+                assert (
+                    decoded_outputs == decoded_golden
+                ), f'Output mismatch: calculated: "{decoded_outputs} vs golden: "{decoded_golden}"'
+        else:
+            self.verify_outputs(golden_output, device_output)
+
     @torch.inference_mode()
     def _test_model_eval_data_parallel(self, assert_eval_token_mismatch):
         model = self.get_framework_model()
@@ -450,19 +472,9 @@ class ModelTester:
             )
         try:
             for outputs in final_outputs:
-                if self.is_token_output:
-                    decoded_outputs = self.tokenizer.batch_decode(
-                        outputs, skip_special_tokens=True
-                    )
-                    decoded_golden = self.tokenizer.batch_decode(
-                        golden, skip_special_tokens=True
-                    )
-                    if assert_eval_token_mismatch:
-                        assert (
-                            decoded_outputs == decoded_golden
-                        ), f'Output mismatch: calculated: "{decoded_outputs} vs golden: "{decoded_golden}"'
-                else:
-                    self.verify_outputs(golden, outputs)
+                self._verify_full_execution_output(
+                    outputs, golden, assert_eval_token_mismatch
+                )
         finally:
             if self.parent_device is not None:
                 # The model tester object is managing the devices, release all devices.
@@ -485,19 +497,7 @@ class ModelTester:
         if self.compiler_config._enable_intermediate_verification:
             self.verify_intermediates_after_execution()
 
-        if self.is_token_output:
-            decoded_outputs = self.tokenizer.batch_decode(
-                outputs, skip_special_tokens=True
-            )
-            decoded_golden = self.tokenizer.batch_decode(
-                golden, skip_special_tokens=True
-            )
-            if assert_eval_token_mismatch:
-                assert (
-                    decoded_outputs == decoded_golden
-                ), f'Output mismatch: calculated: "{decoded_outputs} vs golden: "{decoded_golden}"'
-        else:
-            self.verify_outputs(golden, outputs)
+        self._verify_full_execution_output(outputs, golden, assert_eval_token_mismatch)
         return outputs
 
     @torch.inference_mode()
