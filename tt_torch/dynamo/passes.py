@@ -107,6 +107,32 @@ def bypass_dtype_promotion(gm, compiler_config):
     return gm
 
 
+def rectify_buffer_inplace_copy(gm):
+    # Rewrite the graph to remove in-place torch.ops.aten.copy_ into buffer operations
+    #   and reroute them to graph outputs, as these arrive from inplace
+    #   buffer updates, which should be canonically represented as
+    #   an outplace manipulation and graph output
+
+    output_cache = []
+    for node in gm.graph.nodes:
+        if node.op == "call_function" and node.target == torch.ops.aten.copy_.default:
+            # Detect inplace copy with buffer destination
+            destination_node = node.args[0]
+            if destination_node.op != "get_attr":
+                continue
+            source_node = node.args[1]
+            output_cache.append(source_node)
+            gm.graph.erase_node(node)
+
+    output_node = [node for node in gm.graph.nodes if node.op == "output"][0]
+    current_output = output_node.args[0]  # one node reference
+
+    new_args = current_output + tuple(output_cache)
+    new_args = (new_args,)
+    output_node.args = new_args
+    return gm
+
+
 def constant_fold(gm):
     gm = const_fold.split_const_subgraphs(gm)
     gc.collect()
@@ -478,6 +504,7 @@ def run_pass_pipeline_for_single_gm(
         raise Exception("consteval_parameters is enabled but enable_consteval is not")
 
     gm_device = bypass_redundant_getitem(gm_device)
+    gm_device = rectify_buffer_inplace_copy(gm_device)
 
     # reduce_graph(gm) - ISSUE: https://github.com/tenstorrent/tt-torch/issues/513
     program = torch.export.export(gm_device, tuple(example_inputs), strict=False)
@@ -554,5 +581,8 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         mcg.programs[idx] = program
         mcg.constant_inputs[idx] = constant_inputs
         mcg.example_inputs[idx] = sub_example_inputs
+
+    mcg.reify_extra_outputs_post_decomposition()
+    mcg.lint()
 
     return mcg
