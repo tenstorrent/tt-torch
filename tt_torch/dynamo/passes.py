@@ -519,6 +519,12 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
             program, constants + example_inputs, compiler_config
         )
 
+        # we don't need to run_pass_for_graph again because there is only one device_graph
+        mcg.programs[0] = program
+        mcg.constant_inputs[0] = constants
+        mcg.example_inputs[0] = example_inputs
+        return mcg
+
     for idx, graph in mcg.device_graphs.items():
         sub_example_inputs = []
         for node in graph.nodes:
