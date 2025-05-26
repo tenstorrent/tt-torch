@@ -167,7 +167,7 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "detr", tests: "
-              tests/models/detr/test_detr_onnx.py:test_detr_onnx[op_by_op_stablehlo-eval]
+              tests/models/detr/test_detr_onnx.py::test_detr_onnx[op_by_op_stablehlo-eval]
               "
           }
         ]
