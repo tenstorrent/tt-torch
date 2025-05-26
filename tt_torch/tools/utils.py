@@ -111,6 +111,79 @@ class MultiChipGraph:
         self.example_inputs = {}
         self.shlo_modules = {}
 
+    def lint(self):
+        output_user_nodes = self.get_nodes_of_iotype(
+            iotype=IOType.USER, include_mc_inputs=False, include_mc_outputs=True
+        )
+        output_interdevice_nodes = self.get_nodes_of_iotype(
+            iotype=IOType.INTER_DEVICE, include_mc_inputs=False, include_mc_outputs=True
+        )
+        true_output_nodes = []
+
+        for device_idx, program in enumerate(self.programs.values()):
+            graph_output_node = next(
+                node for node in program.graph_module.graph.nodes if node.op == "output"
+            )
+            graph_outputs = graph_output_node.args[0]
+            true_output_nodes.extend(graph_outputs)
+
+        assert len(output_user_nodes) + len(output_interdevice_nodes) == len(
+            true_output_nodes
+        ), f"Mismatch in number of output nodes. In MCG: {len(output_user_nodes)} user outputs, { len(output_interdevice_nodes) } interdevice, in graphmodule output args: {len(true_output_nodes)}"
+
+    def get_nodes_of_iotype(
+        self, iotype, include_mc_inputs=False, include_mc_outputs=False
+    ):
+        # Given an MCG, return all MultiChipInputs or MultiChipOutputs of a given IOType.
+
+        if not include_mc_inputs and not include_mc_outputs:
+            assert (
+                False
+            ), "Must specify at least one of MultiChipInputs or MultiChipOutputs to count nodes of IOType"
+
+        nodes = []
+
+        if include_mc_outputs:
+            all_outputs = [
+                mco
+                for device_outputs_list in self.graph_outputs.values()
+                for mco in device_outputs_list
+            ]
+            nodes.extend([mco for mco in all_outputs if mco.io_type == iotype])
+
+        if include_mc_inputs:
+            all_inputs = [
+                mci
+                for device_inputs_list in self.graph_inputs.values()
+                for mci in device_inputs_list
+            ]
+            nodes.extend([mci for mci in all_inputs if mci.io_type == iotype])
+
+        return nodes
+
+    def reify_extra_outputs_post_decomposition(self):
+        # Outputs are baked into the multichip graph during split_onto_devices. If a decomp appends to outputs,
+        #   a runtime error will result. Check for extra outputs and append to mcg expected outputs to reflect
+        #   post-decomposition graph.
+        for idx, program in enumerate(self.programs.values()):
+            all_user_outputs = self.get_nodes_of_iotype(
+                IOType.USER, include_mc_outputs=True
+            )
+            next_output_idx = max(all_user_outputs, key=lambda x: x.index).index + 1
+            graph_output_node = next(
+                node for node in program.graph_module.graph.nodes if node.op == "output"
+            )
+            true_graph_outputs = graph_output_node.args[0]
+            expected_graph_outputs = self.graph_outputs[idx]
+            if len(true_graph_outputs) > len(expected_graph_outputs):
+                print(
+                    "Found more graph outputs than expected, adding them to mcg.graph_outputs"
+                )
+                for i in range(len(expected_graph_outputs), len(true_graph_outputs)):
+                    mco = MultiChipOutput(idx, IOType.USER, next_output_idx)
+                    self.graph_outputs[idx].append(mco)
+                    next_output_idx += 1
+
 
 class Tensor:
     def __init__(self, shape):
