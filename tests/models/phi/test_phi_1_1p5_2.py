@@ -19,7 +19,7 @@ class ThisTester(ModelTester):
             self.model_name, torch_dtype=torch.bfloat16
         )
         model = AutoModelForCausalLM.from_pretrained(self.model_name)
-        return model.generate
+        return model
 
     def _load_inputs(self):
         input_str = '''def print_prime(n):
@@ -70,6 +70,7 @@ def test_phi(record_property, model_name, mode, op_by_op):
         record_property_handle=record_property,
         is_token_output=True,
         model_group=model_group,
+        run_generate=True,  # run model.generate(**inputs)
     )
 
     # TODO - Enable checking - https://github.com/tenstorrent/tt-torch/issues/528
