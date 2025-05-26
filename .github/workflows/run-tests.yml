@@ -12,11 +12,6 @@ on:
     workflows: [Build]
     types: [completed]
 
-permissions:
-  packages: write
-  checks: write
-  # pull-requests: write # only required if `comment: true` was enabled
-
 jobs:
   tests:
     timeout-minutes: 120
@@ -143,6 +138,7 @@ jobs:
       uses: mikepenz/action-junit-report@v5
       if: success() || failure()
       with:
+        token: ${{ secrets.GH_TOKEN }}
         report_paths: ${{ steps.strings.outputs.test_report_path_torch }}
         check_name: TT-Torch Tests
         comment: true
