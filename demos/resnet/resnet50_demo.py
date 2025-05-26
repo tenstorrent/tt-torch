@@ -14,10 +14,12 @@ from tt_torch.tools.device_manager import DeviceManager
 
 
 def main(run_default_img):
-    weights = models.ResNet152_Weights.IMAGENET1K_V2
-    model = models.resnet152(weights=weights).to(torch.bfloat16).eval()
+    weights = models.ResNet50_Weights.IMAGENET1K_V2
+    model = models.resnet50(weights=weights).to(torch.bfloat16).eval()
     classes = weights.meta["categories"]
     preprocess = weights.transforms()
+
+    device = DeviceManager.create_parent_mesh_device([1, 1])
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -25,6 +27,7 @@ def main(run_default_img):
 
     options = BackendOptions()
     options.compiler_config = cc
+    options.devices = [device]
     tt_model = torch.compile(model, backend=backend, dynamic=False, options=options)
 
     headers = ["Top 5 Predictions"]
@@ -65,6 +68,8 @@ def main(run_default_img):
         while img_path != "stop":
             process_image(img_path)
             img_path = input(prompt)
+
+    DeviceManager.release_parent_device(device)
 
 
 if __name__ == "__main__":

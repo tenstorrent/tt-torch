@@ -313,6 +313,9 @@ def verify_module(
     do_assert=True,
     device=None,
 ):
+    provided_device = device is not None
+    if not provided_device:
+        device = DeviceManager.create_parent_mesh_device([1, 1])
 
     if isinstance(mod, torch.nn.Module):
         assert (
@@ -347,7 +350,12 @@ def verify_module(
             do_assert,
         )
     else:
-        raise ValueError("Invalid module type")
+        if not provided_device:
+            DeviceManager.release_parent_device(device)
+        raise ValueError(f"Invalid module type {type(mod)}")
+
+    if not provided_device:
+        DeviceManager.release_parent_device(device)
 
 
 @with_torch_dynamo_cleanup

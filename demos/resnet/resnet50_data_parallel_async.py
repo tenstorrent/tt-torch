@@ -13,8 +13,8 @@ import time
 import tt_mlir
 from tt_torch.tools.device_manager import DeviceManager
 
-weights = models.ResNet152_Weights.IMAGENET1K_V2
-model = models.resnet152(weights=weights).to(torch.bfloat16).eval()
+weights = models.ResNet50_Weights.IMAGENET1K_V2
+model = models.resnet50(weights=weights).to(torch.bfloat16).eval()
 classes = weights.meta["categories"]
 preprocess = weights.transforms()
 

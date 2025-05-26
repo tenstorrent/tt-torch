@@ -116,7 +116,18 @@ class ModelTester:
                 "is_token_output is set to True. Please set `self.tokenizer` inside _load_model method."
             )
         self.compiled_models = []
-        self.devices = devices
+        if devices is not None:
+            self.devices = devices
+        else:
+            if data_parallel_mode:
+                # If user doesn't provide any devices, acquire all devices on board
+                (
+                    self.parent_device,
+                    self.devices,
+                ) = DeviceManager.acquire_available_devices()
+            else:
+                self.devices = [DeviceManager.create_parent_mesh_device((1, 1))]
+
         self.inputs = self._load_inputs()
 
         self.required_pcc = required_pcc
@@ -150,12 +161,6 @@ class ModelTester:
                 CompileDepth.COMPILE_OP_BY_OP,
                 CompileDepth.EXECUTE_OP_BY_OP,
             ), "Data parallel mode does not support op-by-op compilation or execution."
-            if self.devices is None:
-                # If user doesn't provide any devices, acquire all devices on board
-                (
-                    self.parent_device,
-                    self.devices,
-                ) = DeviceManager.acquire_available_devices()
 
         self.record_tag_cache = {}  # Holds for tags to be written out at finalize()
 
@@ -498,6 +503,8 @@ class ModelTester:
             self.verify_intermediates_after_execution()
 
         self._verify_full_execution_output(outputs, golden, assert_eval_token_mismatch)
+        for device in self.devices:
+            DeviceManager.release_parent_device(device)
         return outputs
 
     @torch.inference_mode()

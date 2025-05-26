@@ -227,14 +227,6 @@ class Executor:
         ), f"Not enough devices provided: {len(self.devices)} <= {device_idx}"
         if self.devices[device_idx] is not None:
             return self.devices[device_idx]
-        # Return a default parent mesh
-        mesh_options = tt_mlir.MeshDeviceOptions()
-        if len(self.compiler_config.mesh_shape) == 32:
-            mesh_options.dispatch_core_type = tt_mlir.DispatchCoreType.WORKER
-        device = tt_mlir.open_mesh_device(self.compiler_config.mesh_shape, mesh_options)
-        self.devices[device_idx] = device
-        self.owned_device_indices.append(device_idx)
-        return device
 
     def _cache_constants_if_needed(self, preprocessed_constants, device_idx=0):
         if (
@@ -247,12 +239,6 @@ class Executor:
     def _cleanup_resources(self, preprocessed_activations, device_idx):
         for t in preprocessed_activations:
             tt_mlir.deallocate_tensor(t, force=True)
-
-        # if we opened the device, close it.
-        if device_idx in self.owned_device_indices:
-            tt_mlir.close_mesh_device(self.devices[device_idx])
-            self.owned_device_indices.remove(device_idx)
-            self.devices[device_idx] = None
 
     def get_inputs(self, *inputs, binary, program_idx, device_idx=0):
         def get_torch_tensors(tensors):
@@ -395,8 +381,6 @@ class Executor:
         for _, device_weights in self.preprocessed_graph_constants.items():
             for weight in device_weights:
                 tt_mlir.deallocate_tensor(weight, force=True)
-        for device_idx in self.owned_device_indices:
-            tt_mlir.close_mesh_device(self.devices[device_idx])
         for path in self.system_desc_paths:
             try:
                 os.remove(path)
