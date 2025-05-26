@@ -56,7 +56,7 @@ export TTMLIR_TOOLCHAIN_DIR=/opt/ttmlir-toolchain/
 cmake -B toolchain -DBUILD_TOOLCHAIN=ON
 cd -
 ```
-For more information see [tt-mlir build steps](https://docs.tenstorrent.com/tt-mlir/build.html).
+For more information see [tt-mlir getting started](https://docs.tenstorrent.com/tt-mlir/getting-started.html).
 
 ## Compile Steps:
 
