@@ -68,7 +68,7 @@ jobs:
         - name: Download wheels
           uses: dawidd6/action-download-artifact@v9
           with:
-            github_token: ${{secrets.GH_TOKEN}}
+            GH_TOKEN: ${{secrets.GH_TOKEN}}
             commit: ${{ matrix.build.commit }}
             workflow_conclusion: completed
             workflow: on-push.yml
