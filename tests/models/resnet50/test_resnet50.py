@@ -34,6 +34,9 @@ class ThisTester(ModelTester):
 
 
 @pytest.mark.parametrize(
+    "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
+)
+@pytest.mark.parametrize(
     "mode",
     ["train", "eval"],
 )
@@ -42,7 +45,7 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_resnet(record_property, mode, op_by_op):
+def test_resnet(record_property, data_parallel_mode, mode, op_by_op):
     if mode == "train":
         pytest.skip()
     model_name = "ResNet50"
@@ -51,6 +54,8 @@ def test_resnet(record_property, mode, op_by_op):
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if op_by_op:
+        if data_parallel_mode:
+            pytest.skip("Op-by-op not supported in data parallel mode")
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
@@ -64,13 +69,23 @@ def test_resnet(record_property, mode, op_by_op):
         assert_pcc=True,
         assert_atol=False,
         record_property_handle=record_property,
+        data_parallel_mode=data_parallel_mode,
     )
 
     results = tester.test_model()
     if mode == "eval":
-        # Print the top 5 predictions
-        _, indices = torch.topk(results, 5)
-        print(f"Top 5 predictions: {indices[0].tolist()}")
+        if data_parallel_mode:
+            # `results` is a list of result tensors, one for each device
+            for i in range(len(results)):
+                result = results[i]
+                # Print the top 5 predictions for each device
+                _, indices = torch.topk(result, 5)
+                print(f"Top 5 predictions for device {i}: {indices[0].tolist()}")
+        else:
+            if mode == "eval":
+                # `results` is a single result tensor
+                _, indices = torch.topk(results, 5)
+                print(f"Top 5 predictions: {indices[0].tolist()}")
 
     tester.finalize()
 
