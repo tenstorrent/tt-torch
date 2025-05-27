@@ -86,6 +86,8 @@ class MyModel(torch.nn.Module):
     def foward(self, ...):
         ...
 
+device = DeviceManager.create_parent_mesh_device([1, 1])
+
 options = BackendOptions()
 options.devices = [device]
 
