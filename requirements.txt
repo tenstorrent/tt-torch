@@ -40,3 +40,5 @@ gliner
 ultralytics
 efficientnet_pytorch
 stablehlo@https://github.com/openxla/stablehlo/releases/download/v1.0.0/stablehlo-1.0.0.1715728102%2B6051bcdf-cp310-cp310-linux_x86_64.whl
+ruff
+mypy
