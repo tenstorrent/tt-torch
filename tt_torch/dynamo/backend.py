@@ -15,13 +15,35 @@ from tt_torch.tools.utils import CompilerConfig
 
 class BackendOptions:
     _devices: [tt_mlir.Device]
+    _compiler_config: CompilerConfig
+    _async_mode: bool
 
     def __init__(
         self, compiler_config=CompilerConfig(), devices=None, async_mode=False
     ):
+        assert isinstance(
+            compiler_config, CompilerConfig
+        ), "compiler_config must be a CompilerConfig object"
         self.compiler_config = compiler_config
+        # devices may be none as that is the default value and will be checked later
+        assert devices == None or (
+            isinstance(devices, list)
+            and all(isinstance(device, tt_mlir.Device) for device in devices)
+        ), "devices must be a list of tt_mlir.Device objects"
         self._devices = devices
+        assert isinstance(async_mode, bool), "async_mode must be a boolean"
         self.async_mode = async_mode
+
+    @property
+    def compiler_config(self):
+        return self._compiler_config
+
+    @compiler_config.setter
+    def compiler_config(self, value):
+        assert isinstance(
+            value, CompilerConfig
+        ), "compiler_config must be a CompilerConfig"
+        self._compiler_config = value
 
     @property
     def devices(self):
@@ -37,6 +59,15 @@ class BackendOptions:
         ), f"Devices must be a list of open Devices, received: {[type(obj) for obj in value]}. You can create and open a device with DeviceManager.create_parent_mesh_device()."
 
         self._devices = value
+
+    @property
+    def async_mode(self):
+        return self._async_mode
+
+    @async_mode.setter
+    def async_mode(self, value):
+        assert isinstance(value, bool), "async_mode must be a boolean"
+        self._async_mode = value
 
 
 from tt_torch.dynamo.torch_backend import (
@@ -276,9 +307,12 @@ def backend(gm, example_inputs, options: BackendOptions):
     warnings.filterwarnings("ignore", message="Failed to fetch module*")
     assert isinstance(gm, torch.fx.GraphModule), "Backend only supports torch graphs"
 
+    assert isinstance(
+        options, BackendOptions
+    ), f"options must be a BackendOptions, recieved: {options}"
     cc = options.compiler_config
     devices = options.devices
-    assert devices is not None, "Devices must be set to compile program."
+    assert devices is not None, "Devices not set in options"
     async_mode = options.async_mode
 
     # Apply environment overrides at start of compilation to allow overriding what was set in the test

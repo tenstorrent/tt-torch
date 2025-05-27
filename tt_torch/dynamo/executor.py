@@ -225,8 +225,10 @@ class Executor:
         assert (
             len(self.devices) >= device_idx
         ), f"Not enough devices provided: {len(self.devices)} <= {device_idx}"
-        if self.devices[device_idx] is not None:
-            return self.devices[device_idx]
+        assert isinstance(
+            self.devices[device_idx], tt_mlir.Device
+        ), "Expecting a tt_mlir.Device"
+        return self.devices[device_idx]
 
     def _cache_constants_if_needed(self, preprocessed_constants, device_idx=0):
         if (

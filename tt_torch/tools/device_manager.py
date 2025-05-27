@@ -215,5 +215,5 @@ class DeviceManager:
 
     @classmethod
     def release_all_devices(cls):
-        for parent in cls._devices:
+        for parent in cls._devices.copy():
             cls.release_parent_device(parent, cleanup_sub_devices=True)
