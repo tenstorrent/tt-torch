@@ -32,13 +32,18 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_roberta(record_property, mode, op_by_op):
+@pytest.mark.parametrize(
+    "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
+)
+def test_roberta(record_property, mode, op_by_op, data_parallel_mode):
     model_name = "RoBERTa"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if op_by_op:
+        if data_parallel_mode:
+            pytest.skip("Op-by-op not supported in data parallel mode")
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
@@ -51,16 +56,29 @@ def test_roberta(record_property, mode, op_by_op):
         record_property_handle=record_property,
         assert_pcc=True,
         assert_atol=False,
+        data_parallel_mode=data_parallel_mode,
     )
     results = tester.test_model()
     if mode == "eval":
-        logits = results.logits
-        # retrieve index of <mask>
-        mask_token_index = (tester.inputs.input_ids == tester.tokenizer.mask_token_id)[
-            0
-        ].nonzero(as_tuple=True)[0]
+        if data_parallel_mode:
+            for i in range(len(results)):
+                logits = results[i].logits
+                # retrieve index of <mask>
+                mask_token_index = (
+                    tester.inputs.input_ids == tester.tokenizer.mask_token_id
+                )[0].nonzero(as_tuple=True)[0]
+                predicted_token_id = logits[0, mask_token_index].argmax(axis=-1)
+                output = tester.tokenizer.decode(predicted_token_id)
+                print(f"Device: {i} | Output {i}: {output}")
+        else:
+            logits = results.logits
+            # retrieve index of <mask>
+            mask_token_index = (
+                tester.inputs.input_ids == tester.tokenizer.mask_token_id
+            )[0].nonzero(as_tuple=True)[0]
 
-        predicted_token_id = logits[0, mask_token_index].argmax(axis=-1)
-        output = tester.tokenizer.decode(predicted_token_id)
+            predicted_token_id = logits[0, mask_token_index].argmax(axis=-1)
+            output = tester.tokenizer.decode(predicted_token_id)
+            print(f"Output: {output}")
 
     tester.finalize()

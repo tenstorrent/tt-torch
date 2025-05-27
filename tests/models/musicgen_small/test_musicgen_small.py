@@ -54,12 +54,17 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_musicgen_small(record_property, mode, op_by_op):
+@pytest.mark.parametrize(
+    "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
+)
+def test_musicgen_small(record_property, mode, op_by_op, data_parallel_mode):
     model_name = "musicgen_small"
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if op_by_op:
+        if data_parallel_mode:
+            pytest.skip("Op-by-op not supported in data parallel mode")
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
@@ -71,6 +76,7 @@ def test_musicgen_small(record_property, mode, op_by_op):
         assert_atol=False,
         assert_pcc=False,
         record_property_handle=record_property,
+        data_parallel_mode=data_parallel_mode,
     )
     results = tester.test_model()
     tester.finalize()
