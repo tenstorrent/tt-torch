@@ -80,7 +80,7 @@ else()
     # torch-mlir build
     # torch-mlir is using branch tt_torch/main
     # see issue https://github.com/tenstorrent/tt-torch/issues/671
-    set(TORCH_MLIR_VERSION "be21b75d7fc2a45d5cccf5ac5d8d9448106735bd")
+    set(TORCH_MLIR_VERSION "6f0d0420936022096bdbf52538051cf6cd6c62ef")
     set(TORCH_MLIR_PREFIX ${TTTORCH_SOURCE_DIR}/third_party/torch-mlir)
     set(TORCH_MLIR_INSTALL_PREFIX ${TORCH_MLIR_PREFIX}/install)
 
