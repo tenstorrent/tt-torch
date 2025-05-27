@@ -304,12 +304,11 @@ std::vector<at::Tensor> run(tt::runtime::Device device,
   return outputs;
 }
 
-std::vector<at::Tensor> run_end_to_end(std::vector<at::Tensor> &inputs,
+std::vector<at::Tensor> run_end_to_end(tt::runtime::Device device,
+                                       std::vector<at::Tensor> &inputs,
                                        py::bytes byte_stream) {
 
   tt::runtime::Binary binary = create_binary_from_bytestream(byte_stream);
-
-  tt::runtime::Device device = tt::runtime::openMeshDevice({1, 1});
 
   const int program_idx = 0;
 
@@ -317,8 +316,6 @@ std::vector<at::Tensor> run_end_to_end(std::vector<at::Tensor> &inputs,
       preprocess_inputs(device, inputs, binary, program_idx, 0);
 
   std::vector<at::Tensor> outputs = run(device, binary, program_idx, rt_inputs);
-
-  tt::runtime::closeMeshDevice(device);
 
   return outputs;
 }

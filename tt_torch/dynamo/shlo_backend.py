@@ -468,7 +468,6 @@ class StablehloExecutor(OpByOpExecutor):
             self.print_op(op)
 
     def __call__(self, *inputs):
-
         if self.compiler_config.compile_depth in (
             CompileDepth.EXECUTE_OP_BY_OP,
             CompileDepth.COMPILE_OP_BY_OP,
@@ -480,7 +479,7 @@ class StablehloExecutor(OpByOpExecutor):
         if self.binary is not None:
             try:
                 output = tt_mlir.run_end_to_end(
-                    self.typecast_inputs(inputs), self.binary
+                    self.devices[0], self.typecast_inputs(inputs), self.binary
                 )
                 return output
             except Exception as e:

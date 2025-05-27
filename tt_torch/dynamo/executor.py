@@ -157,7 +157,13 @@ class Executor:
 
         self.binary = {}
         self.preprocessed_graph_constants = {}
-        self.devices = devices if devices is not None else [None]
+        assert isinstance(
+            devices, list
+        ), f"Expecting a list of devices, received: {type(devices)}"
+        assert all(
+            isinstance(device, tt_mlir.Device) for device in devices
+        ), f"Devices must be a list of open Devices, received: {[type(obj) for obj in devices]}. You can create and open a device with DeviceManager.create_parent_mesh_device()."
+        self.devices = devices
         self.owned_device_indices = []
         self.async_mode = async_mode
         self._validate_executor()
@@ -227,7 +233,7 @@ class Executor:
         ), f"Not enough devices provided: {len(self.devices)} <= {device_idx}"
         assert isinstance(
             self.devices[device_idx], tt_mlir.Device
-        ), "Expecting a tt_mlir.Device"
+        ), f"Expecting a tt_mlir.Device, received: {type(self.devices[device_idx])}"
         return self.devices[device_idx]
 
     def _cache_constants_if_needed(self, preprocessed_constants, device_idx=0):
@@ -391,12 +397,11 @@ class Executor:
 
 
 class OnnxExecutor(Executor):
-    def __init__(self, model_proto: onnx.ModelProto):
-        super().__init__()
+    def __init__(self, model_proto: onnx.ModelProto, devices):
+        super().__init__(devices=devices)
         self.model_proto = model_proto
         self.binary = None
         self.sess = None
-        self.devices = [None]
         self.compiler_config = CompilerConfig()
         self.preprocessed_graph_constants = {}
         self.owned_device_indices = []
@@ -424,7 +429,8 @@ class OnnxExecutor(Executor):
                 sess=self.sess, model_proto=self.model_proto, inputs=inputs
             )
             return onnx_output_to_torch(output)
-        return tt_mlir.run_end_to_end(inputs, self.binary)
+
+        return tt_mlir.run_end_to_end(self.devices[0], inputs, self.binary)
 
 
 class OpByOpExecutor(Executor):
