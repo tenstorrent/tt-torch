@@ -54,28 +54,27 @@ class CompileDepth(Enum):
     EXECUTE_OP_BY_OP = 5
     EXECUTE = 6
 
-class CompileMode(Enum):
-    TORCH_FX = 1
-    STABLEHLO = 2
-    TTNN_IR = 3
-    COMPILE_OP_BY_OP_TORCH = 4
-    EXECUTE_OP_BY_OP_TORCH = 5
-    COMPILE_OP_BY_OP_SHLO = 6
-    EXECUTE_OP_BY_OP_SHLO = 7
-    EXECUTE = 8
+class ExecuteMode(Enum):
+    EXECUTE = 1
+    OP_BY_OP = 2
 
-    def decompose_CompileMode(self):
+    def decompose_ExecuteMode(self):
         mapping = {
-            CompileMode.STABLEHLO: (CompileDepth.STABLEHLO, OpByOpBackend.TORCH),
-            CompileMode.TTNN_IR: (CompileDepth.TTNN_IR, OpByOpBackend.TORCH),
-            CompileMode.EXECUTE: (CompileDepth.EXECUTE, OpByOpBackend.TORCH),
-            CompileMode.COMPILE_OP_BY_OP_TORCH: (CompileDepth.COMPILE_OP_BY_OP, OpByOpBackend.TORCH),
-            CompileMode.EXECUTE_OP_BY_OP_TORCH: (CompileDepth.EXECUTE_OP_BY_OP, OpByOpBackend.TORCH),
-            CompileMode.COMPILE_OP_BY_OP_SHLO: (CompileDepth.COMPILE_OP_BY_OP, OpByOpBackend.STABLEHLO),
-            CompileMode.EXECUTE_OP_BY_OP_SHLO: (CompileDepth.EXECUTE_OP_BY_OP, OpByOpBackend.STABLEHLO),
+            ExecuteMode.EXECUTE: (CompileDepth.EXECUTE, OpByOpBackend.TORCH),
+            ExecuteMode.OP_BY_OP: (CompileDepth.EXECUTE_OP_BY_OP, OpByOpBackend.TORCH),
         }
         return mapping.get(self)
     
+class ModelMetadata():
+    def __init__(self, 
+                 model_name = None, 
+                 compile_depth = None, 
+                 op_by_op_backend = None
+                 ):
+        
+        self.model_name = model_name
+        self.compile_depth = compile_depth
+        self.op_by_op_backend = op_by_op_backend
 
 class OpCompilationStatus(IntEnum):
     NOT_STARTED = 0
