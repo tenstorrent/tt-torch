@@ -7,7 +7,7 @@ import pytest
 # Load model directly
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend, CompileMode
+from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend, ExecuteMode, ModelMetadata
 
 
 class ThisTester(ModelTester):
@@ -27,32 +27,48 @@ class ThisTester(ModelTester):
         return inputs
 
 
+
+@pytest.fixture
+def model_metadata_fixture(request):
+    """ Finds the 'model_metadata' mark on a test and returns the 
+    ModelMetadata object that was passed to it."""
+    marker = request.node.get_closest_marker("model_metadata")
+    if not marker:
+        return None
+    
+    return marker.kwargs.get("model_metadata")
+
+@pytest.mark.model_metadata(
+    model_metadata=ModelMetadata(
+        model_name="falcon",
+    )
+)
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
-#@pytest.mark.parametrize(
-#    "op_by_op",
-#    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
-#    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
-#)
 @pytest.mark.parametrize(
-     "compile_depth",
-     [CompileDepth.TORCH_FX, CompileDepth.STABLEHLO, CompileDepth.TTNN_IR, CompileDepth.COMPILE_OP_BY_OP, 
-       CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
-     ids=["torch_fx", "stablehlo", "ttnn_ir", "compile_op_by_op", 
-          "execute_op_by_op", "full"],
+     "execute_mode",
+     [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
+     ids=["op_by_op","full"],
 )
-
-def test_falcon(record_property, mode, compile_depth):
+def test_falcon(record_property, mode, execute_mode, model_metadata_fixture):
     model_name = "Falcon"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
 
-    # run default OpByOpBackend and only adjust the CompileDepth as only one test uses OpByOpBackend.STABLEHLO
-    cc.compile_depth = compile_depth
+    if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
+        cc.compile_depth = execute_mode
+
+    # applying overrides from model_metadata_fixture
+    if model_metadata_fixture:
+        if model_metadata_fixture.compile_depth is not None:
+            cc.compile_depth = model_metadata_fixture.compile_depth
+        if model_metadata_fixture.op_by_op_backend is not None:
+            cc.op_by_op_backend = model_metadata_fixture.op_by_op_backend
+        
 
     tester = ThisTester(
         model_name,
