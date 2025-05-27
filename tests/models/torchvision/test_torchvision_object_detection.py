@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-from torchvision import models, transforms
+from torchvision import models
 from PIL import Image
 import torch
 import requests
@@ -58,13 +58,20 @@ model_info_list = [
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_torchvision_object_detection(record_property, model_info, mode, op_by_op):
+@pytest.mark.parametrize(
+    "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
+)
+def test_torchvision_object_detection(
+    record_property, model_info, mode, op_by_op, data_parallel_mode
+):
     model_name, _ = model_info
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if op_by_op:
+        if data_parallel_mode:
+            pytest.skip("Op-by-op not supported in data parallel mode")
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
@@ -82,9 +89,14 @@ def test_torchvision_object_detection(record_property, model_info, mode, op_by_o
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
+        data_parallel_mode=data_parallel_mode,
     )
     results = tester.test_model()
     if mode == "eval":
+        if data_parallel_mode:
+            for i in range(len(results)):
+                result = results[i]
+                print(f"Device: {i} | Model: {model_name} | Output: {result}")
         print(f"Model: {model_name} | Output: {results}")
 
     tester.finalize()
