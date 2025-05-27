@@ -10,6 +10,10 @@
 
 namespace tt::torch {
 std::shared_ptr<void> *Compile(std::string_view code);
+std::string stableHLOAutomaticParallelization(std::string_view code,
+                                              std::vector<int64_t> mesh_shape,
+                                              size_t len_activations = 0,
+                                              size_t len_graph_constants = 0);
 std::string compileStableHLOToTTIR(std::string_view code);
 std::tuple<std::shared_ptr<void> *, std::string>
 compileTTIRToTTNN(std::string_view code, std::string_view system_desc_path,

@@ -322,6 +322,8 @@ class CompilerConfig:
         self.device_map = {}
         self.apply_environment_overrides()
         self.post_init()
+        self.automatic_parallelization = False
+        self.mesh_shape = [1, 1]
 
     @property
     def verify_op_by_op(self):
