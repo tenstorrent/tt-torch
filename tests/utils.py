@@ -503,8 +503,10 @@ class ModelTester:
             self.verify_intermediates_after_execution()
 
         self._verify_full_execution_output(outputs, golden, assert_eval_token_mismatch)
-        for device in self.devices:
-            DeviceManager.release_parent_device(device)
+
+        assert len(self.devices) == 1
+        DeviceManager.release_parent_device(self.devices[0])
+
         return outputs
 
     @torch.inference_mode()
