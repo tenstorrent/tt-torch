@@ -39,6 +39,22 @@ def test_return_rt_tensor_and_torch_tensors():
     )
 
 
+def test_return_multiple_rt_tensors_and_torch_tensors():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x, y, z):
+            output1 = torch.abs(y)
+            output2 = torch.abs(x)
+            return output1, output2, z
+
+    verify_torch_module_async(
+        Basic(),
+        input_shapes=[(5, 10), (5, 10), (5, 10)],
+    )
+
+
 def test_abs():
     class Basic(nn.Module):
         def __init__(self):

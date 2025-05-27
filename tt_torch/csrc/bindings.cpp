@@ -262,6 +262,8 @@ at::Tensor to_host_single_rt_tensor(tt::runtime::Tensor &rt_output) {
 std::vector<at::Tensor> to_host(py::args args) {
   std::vector<at::Tensor> outputs;
   for (auto &arg : args) {
+    std::cout << "[HET DEBUG C++] arg: " << arg << std::endl;
+    std::cout << "[HET DEBUG C++] arg type: " << arg.get_type() << std::endl;
     if (py::isinstance<py::tuple>(arg)) {
       for (auto &item : arg) {
         if (py::isinstance<tt::runtime::Tensor>(item)) {

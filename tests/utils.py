@@ -526,11 +526,20 @@ class ModelTester:
 
         rt_tensors = []
         for compiled in compiled_models:
-            rt_tensors.append(self.run_model(compiled, self.inputs))
+            rt_tensor = self.run_model(compiled, self.inputs)
+            print(f"RT tensor (after running): {rt_tensor}")
+            rt_tensors.append(rt_tensor)
+            # if isinstance(rt_tensor, tuple):
+            #     rt_tensors.extend(rt_tensor)
+            # else:
+            #     rt_tensors.append(rt_tensor)
 
         final_outputs = []
         for rt_tensor in rt_tensors:
-            outputs = tt_mlir.to_host(rt_tensor)[0]
+            print(f"RT tensor (before to_host): {rt_tensor}")
+            torch_tensors = tt_mlir.to_host(rt_tensor)
+            print(f"Torch tensors (after to_host): {torch_tensors}")
+            outputs = torch_tensors[0]
             final_outputs.append(outputs)
 
         self.record_property("achieved_compile_depth", "EXECUTE")
@@ -560,6 +569,7 @@ class ModelTester:
             model = self.compile_model(model, self.compiler_config)
 
         outputs = self.run_model(model, self.inputs)
+        print(f"Outputs (after running): {outputs}")
         self.record_property("achieved_compile_depth", "EXECUTE")
 
         if self.compiler_config._enable_intermediate_verification:
