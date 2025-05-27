@@ -383,15 +383,15 @@ class Executor:
                 )
 
             if self.compiler_config.compile_depth == CompileDepth.EXECUTE_CPP:
-                # TODO (azecevic): This shouldn't be hard constraint.
-                # Current implementation assumes that output tensors are on-device runtime tensors.
-                assert (
-                    self.async_mode
-                ), "C++ verification is currently only supported in async mode"
                 so_path = self.mcg.so_paths[device_idx]
                 # TODO (azecevic): function name is currently hardcoded
                 func_name = "main"
-                is_successfull = tt_mlir.verify_cpp_ttnn(
+                cpp_verifier = (
+                    tt_mlir.verify_cpp_ttnn
+                    if self.async_mode
+                    else tt_mlir.verify_cpp_ttnn_torch
+                )
+                is_successfull = cpp_verifier(
                     so_path, func_name, inputs, outputs, device
                 )
                 if not is_successfull:

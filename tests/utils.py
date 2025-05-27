@@ -46,7 +46,7 @@ def skip_full_eval_test(
 ):
     """
     Helper function to skip a test when frontend has issues and record properties.
-    Only skips the test if compile depth is EXECUTE.
+    Only skips the test if compile depth is EXECUTE or EXECUTE_CPP.
 
     Args:
         record_property: The record_property handle from pytest
@@ -71,7 +71,10 @@ def skip_full_eval_test(
             # If it's a string, only skip if the model_name matches exactly
             return False
 
-    if compiler_config.compile_depth == CompileDepth.EXECUTE:
+    if compiler_config.compile_depth in (
+        CompileDepth.EXECUTE,
+        CompileDepth.EXECUTE_CPP,
+    ):
         record_property(
             "tags",
             {
@@ -572,9 +575,10 @@ class ModelTester:
             CompileDepth.COMPILE_OP_BY_OP: "INCORRECT_RESULT",
             CompileDepth.EXECUTE_OP_BY_OP: "INCORRECT_RESULT",
             CompileDepth.EXECUTE: "INCORRECT_RESULT",  # ambiguous between incorrect / passed
+            CompileDepth.EXECUTE_CPP: "INCORRECT_RESULT",  # ambiguous between incorrect / passed
         }
 
-        if compile_depth is not CompileDepth.EXECUTE:
+        if compile_depth not in (CompileDepth.EXECUTE, CompileDepth.EXECUTE_CPP):
             return compile_depth_translation_table[compile_depth]
 
         return "PASSED" if min_pcc >= self.required_pcc else "INCORRECT_RESULT"
