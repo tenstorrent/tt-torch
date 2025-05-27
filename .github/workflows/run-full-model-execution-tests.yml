@@ -25,6 +25,10 @@ on:
 env:
   DOCKER_CACHE_ROOT: /mnt/dockercache
 
+permissions:
+  packages: write
+  checks: write
+
 jobs:
   tests:
     timeout-minutes: 90
@@ -152,7 +156,6 @@ jobs:
       with:
         name: install-artifacts
         path: install
-        github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: install tt-torch
       shell: bash

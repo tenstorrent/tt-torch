@@ -7,6 +7,10 @@ on:
     - cron: '0 4 * * *'  # Runs at 04:00 UTC every day
   workflow_dispatch:  # Manual trigger
 
+permissions:
+  packages: write
+  checks: write
+
 
 jobs:
   pre-commit:
