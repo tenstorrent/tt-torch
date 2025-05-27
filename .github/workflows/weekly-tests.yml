@@ -7,6 +7,10 @@ on:
     - cron: '0 10 * * 6' # Runs at 10:00 UTC every Saturday, 6 hours after Nightly Tests
   workflow_dispatch:  # Manual trigger
 
+permissions:
+  packages: write
+  checks: write
+
 jobs:
   pre-commit:
     uses: ./.github/workflows/pre-commit.yml

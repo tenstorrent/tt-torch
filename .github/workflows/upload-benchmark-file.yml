@@ -8,6 +8,10 @@ on:
                 required: false
                 default: 'benchmark_report.xlsx'
 
+permissions:
+  packages: write
+  checks: write
+
 jobs:
     upload-benchmark-file:
         runs-on: ubuntu-latest
