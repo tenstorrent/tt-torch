@@ -42,13 +42,18 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_yolos(record_property, mode, op_by_op):
+@pytest.mark.parametrize(
+    "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
+)
+def test_yolos(record_property, mode, op_by_op, data_parallel_mode):
     model_name = "YOLOS"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if op_by_op:
+        if data_parallel_mode:
+            pytest.skip("Op-by-op not supported in data parallel mode")
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
@@ -61,6 +66,7 @@ def test_yolos(record_property, mode, op_by_op):
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
+        data_parallel_mode=data_parallel_mode,
     )
     results = tester.test_model()
     if mode == "eval":
@@ -71,8 +77,6 @@ def test_yolos(record_property, mode, op_by_op):
                 outputs, threshold=0.9, target_sizes=target_sizes
             )[0]
             return results
-
-        decoded_output = decode_output(results)
 
         def interpret_results(decoded_output):
             for score, label, box in zip(
@@ -87,12 +91,19 @@ def test_yolos(record_property, mode, op_by_op):
                 )
                 return string
 
-        print(
-            f"""
-        model_name: {model_name}
-        input_url: {tester.test_input}
-        answer before: {interpret_results(decoded_output)}
-        """
-        )
+        if data_parallel_mode:
+            for i in range(len(results)):
+                result = results[i]
+                decoded_output = decode_output(result)
+                print(f"Device: {i} | Result: {interpret_results(decoded_output)}")
+        else:
+            decoded_output = decode_output(results)
+            print(
+                f"""
+            model_name: {model_name}
+            input_url: {tester.test_input}
+            answer before: {interpret_results(decoded_output)}
+            """
+            )
 
     tester.finalize()

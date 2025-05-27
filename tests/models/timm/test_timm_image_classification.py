@@ -67,7 +67,14 @@ model_list = [
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_timm_image_classification(record_property, model_name, mode, op_by_op):
+@pytest.mark.parametrize(
+    "data_parallel_mode",
+    [False, True],
+    ids=["single_device", "data_parallel"],
+)
+def test_timm_image_classification(
+    record_property, model_name, mode, op_by_op, data_parallel_mode
+):
     if mode == "train":
         pytest.skip()
 
@@ -75,6 +82,8 @@ def test_timm_image_classification(record_property, model_name, mode, op_by_op):
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if op_by_op:
+        if data_parallel_mode:
+            pytest.skip("Op-by-op not supported in data parallel mode")
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
@@ -127,15 +136,26 @@ def test_timm_image_classification(record_property, model_name, mode, op_by_op):
         assert_atol=False,
         record_property_handle=record_property,
         model_group=model_group,
+        data_parallel_mode=data_parallel_mode,
     )
     results = tester.test_model()
 
     if mode == "eval":
-        top5_probabilities, top5_class_indices = torch.topk(
-            results.softmax(dim=1) * 100, k=5
-        )
-        print(
-            f"Model: {model_name} | Predicted class ID: {top5_class_indices[0]} | Probability: {top5_probabilities[0]}"
-        )
+        if data_parallel_mode:
+            for i in range(len(results)):
+                result = results[i]
+                top5_probabilities, top5_class_indices = torch.topk(
+                    result.softmax(dim=1) * 100, k=5
+                )
+                print(
+                    f"Device: {i} | Model: {model_name} | Predicted class ID: {top5_class_indices[0]} | Probability: {top5_probabilities[0]}"
+                )
+        else:
+            top5_probabilities, top5_class_indices = torch.topk(
+                results.softmax(dim=1) * 100, k=5
+            )
+            print(
+                f"Model: {model_name} | Predicted class ID: {top5_class_indices[0]} | Probability: {top5_probabilities[0]}"
+            )
 
     tester.finalize()
