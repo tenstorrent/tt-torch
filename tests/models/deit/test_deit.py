@@ -52,7 +52,10 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_deit(record_property, model_name, mode, op_by_op):
+@pytest.mark.parametrize(
+    "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
+)
+def test_deit(record_property, model_name, mode, op_by_op, data_parallel_mode):
     if mode == "train":
         pytest.skip()
 
@@ -60,6 +63,8 @@ def test_deit(record_property, model_name, mode, op_by_op):
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if op_by_op:
+        if data_parallel_mode:
+            pytest.skip("Op-by-op not supported in data parallel mode")
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
@@ -73,16 +78,27 @@ def test_deit(record_property, model_name, mode, op_by_op):
         record_property_handle=record_property,
         assert_pcc=True,
         assert_atol=False,
+        data_parallel_mode=data_parallel_mode,
     )
     results = tester.test_model()
 
     if mode == "eval":
-        logits = results.logits
-        # model predicts one of the 1000 ImageNet classes
-        predicted_class_idx = logits.argmax(-1).item()
-        print(
-            "Predicted class:",
-            tester.framework_model.config.id2label[predicted_class_idx],
-        )
+        if data_parallel_mode:
+            for i in range(len(results)):
+                result = results[i]
+                logits = result.logits
+                predicted_class_idx = logits.argmax(-1).item()
+                print(
+                    f"Device: {i} | Predicted class:",
+                    tester.framework_model.config.id2label[predicted_class_idx],
+                )
+        else:
+            logits = results.logits
+            # model predicts one of the 1000 ImageNet classes
+            predicted_class_idx = logits.argmax(-1).item()
+            print(
+                "Predicted class:",
+                tester.framework_model.config.id2label[predicted_class_idx],
+            )
 
     tester.finalize()
