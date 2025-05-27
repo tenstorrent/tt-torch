@@ -235,7 +235,6 @@ def <test_name>(record_property, model_name, mode, op_by_op):
 You can find example tests under [tests/models](https://github.com/tenstorrent/tt-torch/tree/main/tests/models)
 Note: please make sure to distinguish Onnx tests by appending `_onnx` to test names. i.e. `test_EfficientNet_onnx.py`
 
-
 ## Test run modes
 
 - op-by-op flow: This will break down model into graphs and break down graphs into ops, compiling and executing unique (first seen occurrence) ops independently. Results are written to .json file and and optionally converted to XLS file for reporting, as post-processing step.  The op-by-op flow is typically used for bringing up new models and debugging and you should start there, especially if the model is a new, untested architecture or your have reason to believe it will not work end-to-end out of the box. Engaged with `cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP` in test, typically driven by pytest params `[op_by_op_torch-eval]`.
