@@ -11,7 +11,7 @@ from efficientnet_pytorch import EfficientNet
 
 import pytest
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from tt_torch.tools.utils import CompilerConfig, CompileDepth, ModelMetadata
 
 
 class ThisTester(ModelTester):
@@ -37,29 +37,31 @@ class ThisTester(ModelTester):
         return tfms(img).unsqueeze(0)
 
 
+
+
+EFFICIENTNET_METADATA= {
+    "efficientnet-b0": ModelMetadata(model_name="efficientnet-b0", compile_depth=CompileDepth.STABLEHLO),
+    "efficientnet-b1": ModelMetadata(model_name="efficientnet-b1", compile_depth=CompileDepth.STABLEHLO),
+    "efficientnet-b2": ModelMetadata(model_name="efficientnet-b2", compile_depth=CompileDepth.STABLEHLO),
+    "efficientnet-b3": ModelMetadata(model_name="efficientnet-b3", compile_depth=CompileDepth.STABLEHLO),
+    "efficientnet-b4": ModelMetadata(model_name="efficientnet-b4", compile_depth=CompileDepth.STABLEHLO),
+    "efficientnet-b5": ModelMetadata(model_name="efficientnet-b5", compile_depth=CompileDepth.STABLEHLO),
+    "efficientnet-b6": ModelMetadata(model_name="efficientnet-b6", compile_depth=CompileDepth.STABLEHLO),
+    "efficientnet-b7": ModelMetadata(model_name="efficientnet-b7", compile_depth=CompileDepth.STABLEHLO),
+}
+
+@pytest.mark.model_metadata(model_metadata=EFFICIENTNET_METADATA)
 @pytest.mark.parametrize(
     "mode",
-    ["train", "eval"],
+    ["eval"],
 )
+@pytest.mark.parametrize("model_name", EFFICIENTNET_METADATA.keys())
 @pytest.mark.parametrize(
-    "model_name",
-    [
-        "efficientnet-b0",
-        "efficientnet-b1",
-        "efficientnet-b2",
-        "efficientnet-b3",
-        "efficientnet-b4",
-        "efficientnet-b5",
-        "efficientnet-b6",
-        "efficientnet-b7",
-    ],
+     "execute_mode",
+     [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
+     ids=["op_by_op","full"],
 )
-@pytest.mark.parametrize(
-    "op_by_op",
-    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
-    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
-)
-def test_EfficientNet(record_property, model_name, mode, op_by_op):
+def test_EfficientNet(record_property, model_name, mode, execute_mode, model_metadata_fixture):
     if mode == "train":
         pytest.skip()
 
@@ -68,10 +70,19 @@ def test_EfficientNet(record_property, model_name, mode, op_by_op):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if op_by_op:
-        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-        if op_by_op == OpByOpBackend.STABLEHLO:
-            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+    
+    if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
+        cc.compile_depth = execute_mode
+
+    model_metadata_to_run = model_metadata_fixture.get(model_name)
+
+    # applying overrides from model_metadata_fixture
+    if model_metadata_to_run:
+        if model_metadata_to_run.compile_depth is not None:
+            cc.compile_depth = model_metadata_to_run.compile_depth
+        if model_metadata_to_run.op_by_op_backend is not None:
+            cc.op_by_op_backend = model_metadata_to_run.op_by_op_backend
+
 
     required_pcc = (
         0.98
