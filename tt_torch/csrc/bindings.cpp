@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <optional>
+#include <variant>
 
 // other library includes
 #include <pybind11/cast.h>
@@ -29,6 +30,8 @@
 namespace py = pybind11;
 
 py::object TORCH_TENSOR_PYCLASS = py::module::import("torch").attr("Tensor");
+
+using HostReturnType = std::variant<std::vector<at::Tensor>, py::object>;
 
 static tt::target::DataType torch_scalar_type_to_dt(torch::ScalarType st) {
   switch (st) {
@@ -259,11 +262,10 @@ at::Tensor to_host_single_rt_tensor(tt::runtime::Tensor &rt_output) {
   return output;
 }
 
-std::vector<at::Tensor> to_host(py::args args) {
+HostReturnType to_host(py::args args) {
   std::vector<at::Tensor> outputs;
+
   for (auto &arg : args) {
-    std::cout << "[HET DEBUG C++] arg: " << arg << std::endl;
-    std::cout << "[HET DEBUG C++] arg type: " << arg.get_type() << std::endl;
     if (py::isinstance<py::tuple>(arg)) {
       for (auto &item : arg) {
         if (py::isinstance<tt::runtime::Tensor>(item)) {
@@ -282,8 +284,35 @@ std::vector<at::Tensor> to_host(py::args args) {
       outputs.emplace_back(to_host_single_rt_tensor(rt_tensor));
     } else if (py::isinstance<at::Tensor>(arg)) {
       outputs.emplace_back(arg.cast<at::Tensor>());
+    } else {
+      // If we get here, we have a non-tensor type
+
+      // Handle objects that may contain tt::runtime::Tensor fields
+      py::object obj = py::reinterpret_borrow<py::object>(arg);
+      assert(py::hasattr(obj, "__dict__") &&
+             "Non-tensor type doesn't have __dict__ attribute");
+      // Get the object's dictionary of attributes
+      py::dict attrs = obj.attr("__dict__");
+
+      // Iterate through attributes and update tensors in-place
+      for (auto item : attrs) {
+        std::string key = py::str(item.first);
+        py::handle value = item.second;
+
+        if (py::isinstance<tt::runtime::Tensor>(value)) {
+          // Convert tt::runtime::Tensor to at::Tensor
+          tt::runtime::Tensor rt_tensor = value.cast<tt::runtime::Tensor>();
+          at::Tensor host_tensor = to_host_single_rt_tensor(rt_tensor);
+          // Update the attribute in-place
+          obj.attr(key.c_str()) = host_tensor;
+        }
+      }
+      // Return the modified object if we encounter any non-tensor type
+      return obj;
     }
   }
+
+  // If all args were tensor types, return the vector of tensors
   return outputs;
 }
 
@@ -424,8 +453,18 @@ PYBIND11_MODULE(tt_mlir, m) {
   m.def("run_async", &run_async,
         "Run the binary on pre-defined device and pre-processed inputs, "
         "returning the runtime tensors on device");
-  m.def("to_host", &to_host,
-        "Converts the runtime tensor on device to a torch tensor on host");
+  m.def(
+      "to_host",
+      [](py::args args) {
+        auto result = to_host(args);
+        if (std::holds_alternative<std::vector<at::Tensor>>(result)) {
+          return py::cast(std::get<std::vector<at::Tensor>>(result));
+        } else {
+          return std::get<py::object>(result);
+        }
+      },
+      "Moves runtim tensors to host, either returning a list of torch tensors "
+      "or a modified object containing torch tensors");
   m.def("run_end_to_end", &run_end_to_end,
         "Run binary end to end, isolating all steps such as device opening, "
         "input preprocessing, execution and device closing");
