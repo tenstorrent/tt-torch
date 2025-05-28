@@ -42,7 +42,7 @@ class ThisTester(ModelTester):
 
 
 model_info_list = [
-    ("SD3.5-medium-transformer", "stabilityai/stable-diffusion-3.5-medium"),
+    ("SD3.5-medium-transformer-block", "stabilityai/stable-diffusion-3.5-medium"),
 ]
 
 
