@@ -79,7 +79,7 @@ def pytest_collection_modifyitems(config, items):
         for item in selected:
             if hasattr(item, "callspec"):
                 model_info = item.callspec.params.get("model_info")
-                if model_info and model_info.compile_depth == target_depth:
+                if model_info and model_info.expected_compile_depth == target_depth:
                     compile_depth_selected.append(item)
         
         selected = compile_depth_selected
@@ -92,7 +92,7 @@ def pytest_collection_modifyitems(config, items):
         for item in selected:
             if hasattr(item, "callspec"):
                 model_info = item.callspec.params.get("model_info")
-                if model_info and model_info.op_by_op_backend == target_backend:
+                if model_info and model_info.expected_op_by_op_backend == target_backend:
                     backend_selected.append(item)
         
         selected = backend_selected
