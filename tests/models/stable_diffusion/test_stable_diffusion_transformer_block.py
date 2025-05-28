@@ -3,10 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import pytest
-from tests.utils import ModelTester, skip_full_eval_test
+from tests.utils import ModelTester
 from diffusers import (
-    StableDiffusion3Pipeline,
-    FlowMatchEulerDiscreteScheduler,
     SD3Transformer2DModel,
 )
 
@@ -55,7 +53,7 @@ model_info_list = [
     model_info_list,
     ids=[model_info[0] for model_info in model_info_list],
 )
-def test_stable_diffusion_transformer(record_property, model_info, mode):
+def test_stable_diffusion_transformer_block(record_property, model_info, mode):
     model_group = "red"
     model_name, model_path = model_info
 
