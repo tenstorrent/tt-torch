@@ -26,7 +26,11 @@ from tt_torch.tools.device_manager import DeviceManager
 def compile_model(model, compiler_config, device, async_mode):
     torch_options = BackendOptions()
     torch_options.compiler_config = compiler_config
-    torch_options.devices = [device]
+    if compiler_config.compile_depth not in [
+        CompileDepth.COMPILE_OP_BY_OP,
+        CompileDepth.EXECUTE_OP_BY_OP,
+    ]:
+        torch_options.devices = [device]
     torch_options.async_mode = async_mode
     return torch.compile(model, backend=backend, options=torch_options)
 
@@ -314,8 +318,11 @@ def verify_module(
     do_assert=True,
     device=None,
 ):
-    provided_device = device is not None
-    if not provided_device:
+    create_device = device is None and compiler_config.compile_depth not in [
+        CompileDepth.COMPILE_OP_BY_OP,
+        CompileDepth.EXECUTE_OP_BY_OP,
+    ]
+    if create_device:
         device = DeviceManager.create_parent_mesh_device([1, 1])
 
     if isinstance(mod, torch.nn.Module):
@@ -352,11 +359,11 @@ def verify_module(
             device,
         )
     else:
-        if not provided_device:
+        if create_device:
             DeviceManager.release_parent_device(device)
         raise ValueError(f"Invalid module type {type(mod)}")
 
-    if not provided_device:
+    if create_device:
         DeviceManager.release_parent_device(device)
 
 
