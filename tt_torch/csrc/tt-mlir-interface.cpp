@@ -233,6 +233,8 @@ compileTTIRToTTNN(std::string_view code, std::string_view system_desc_path,
     options.enableConstEval = true;
   }
   options.enableFusing = true;
+  options.optimizerPassEnabled = true;
+  options.memoryLayoutAnalysisEnabled = true;
 
   if (len_activations > 0 || len_graph_constants > 0) {
     llvm::SmallVector<mlir::tt::ArgumentType> argTypes;
