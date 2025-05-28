@@ -308,8 +308,6 @@ HostReturnType to_host(py::args args) {
     return to_host_single_object(args[0]);
   }
   for (auto &arg : args) {
-    std::cout << "[HET DEBUG C++] arg: " << arg << std::endl;
-    std::cout << "[HET DEBUG C++] arg type: " << arg.get_type() << std::endl;
     if (py::isinstance<py::tuple>(arg)) {
       for (auto &item : arg) {
         if (py::isinstance<tt::runtime::Tensor>(item)) {
