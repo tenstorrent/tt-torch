@@ -248,7 +248,7 @@ def _verify_onnx_module(
     input_range_int,
     compiler_config,
     do_assert,
-    device,
+    devices=None,
 ):
     sess = prepare_inference_session(model_proto=model_proto)
     input_shapes = [nodearg.shape for nodearg in sess.get_inputs()]
@@ -278,7 +278,7 @@ def _verify_onnx_module(
         input_data_types=input_data_types,
     )
     golden = onnx_output_to_torch(golden)
-    compiled_mod = compile_onnx(model_proto, compiler_config, [device])
+    compiled_mod = compile_onnx(model_proto, compiler_config, devices)
     ret = compiled_mod(*inputs)
     if compiler_config.compile_depth not in [
         CompileDepth.EXECUTE,
@@ -356,7 +356,7 @@ def verify_module(
             input_range_int,
             compiler_config,
             do_assert,
-            device,
+            None if device is None else [device],
         )
     else:
         if create_device:

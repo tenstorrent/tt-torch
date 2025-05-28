@@ -267,6 +267,7 @@ class Executor:
 
         input_len = len(inputs)
         tensor_start_idx = 0
+        breakpoint()
         if device_idx in self.preprocessed_graph_constants:
             preprocessed_weights = self.preprocessed_graph_constants[device_idx]
             weights_and_activations = preprocessed_weights + inputs
