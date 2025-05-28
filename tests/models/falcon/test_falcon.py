@@ -7,7 +7,7 @@ import pytest
 # Load model directly
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend, ExecuteMode, ModelMetadata
+from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend, ModelMetadata
 
 
 class ThisTester(ModelTester):
@@ -29,7 +29,8 @@ class ThisTester(ModelTester):
 
 # metadata for Falcon model
 FALCON_VARIANT = [
-    ModelMetadata(model_name="falcon-7b-instruct", compile_depth=CompileDepth.TTNN_IR, op_by_op_backend=OpByOpBackend.STABLEHLO,)
+    ModelMetadata(model_name="falcon-7b-instruct", expected_compile_depth=CompileDepth.TTNN_IR, 
+                  expected_op_by_op_backend=OpByOpBackend.STABLEHLO,)
 ]
 
 @pytest.mark.parametrize("model_info", FALCON_VARIANT, ids=lambda x: x.model_name)

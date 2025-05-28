@@ -11,7 +11,7 @@ from efficientnet_pytorch import EfficientNet
 
 import pytest
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, ModelMetadata
+from tt_torch.tools.utils import CompilerConfig, CompileDepth, ModelMetadata, OpByOpBackend
 
 
 class ThisTester(ModelTester):
@@ -39,13 +39,15 @@ class ThisTester(ModelTester):
 # Metadata for EfficientNet models
 EFFICIENTNET_VARIANTS = [
     ModelMetadata(model_name="efficientnet-b0", model_group="red"),
-    ModelMetadata(model_name="efficientnet-b1", compile_depth=CompileDepth.STABLEHLO, assert_pcc=False),
+    ModelMetadata(model_name="efficientnet-b1", expected_compile_depth=CompileDepth.STABLEHLO, 
+                  assert_pcc=False),
     ModelMetadata(model_name="efficientnet-b2"),
-    ModelMetadata(model_name="efficientnet-b3", compile_depth=CompileDepth.TTNN_IR),
+    ModelMetadata(model_name="efficientnet-b3", expected_compile_depth=CompileDepth.TTNN_IR, 
+                  expected_op_by_op_backend=OpByOpBackend.STABLEHLO),
     ModelMetadata(model_name="efficientnet-b4"),
     ModelMetadata(model_name="efficientnet-b5"),
     ModelMetadata(model_name="efficientnet-b6"),
-    ModelMetadata(model_name="efficientnet-b7", compile_depth=CompileDepth.STABLEHLO),
+    ModelMetadata(model_name="efficientnet-b7", expected_compile_depth=CompileDepth.STABLEHLO),
 ]
 
 @pytest.mark.parametrize(
