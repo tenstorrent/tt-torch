@@ -51,6 +51,10 @@ class BackendOptions:
 
     @devices.setter
     def devices(self, value):
+        assert self.compiler_config.compile_depth not in [
+            CompileDepth.COMPILE_OP_BY_OP,
+            CompileDepth.EXECUTE_OP_BY_OP,
+        ], "Devices must not be set by the user when compiling/executing in op-by-op mode. Devices will be managed automatically."
         assert isinstance(
             value, list
         ), f"Devices must be a list of Devices, received: {value}. You can create and open a device with DeviceManager.create_parent_mesh_device()."
@@ -312,7 +316,11 @@ def backend(gm, example_inputs, options: BackendOptions):
     ), f"options must be a BackendOptions, recieved: {options}"
     cc = options.compiler_config
     devices = options.devices
-    assert devices is not None, "Devices not set in options"
+    if cc.compile_depth not in [
+        CompileDepth.COMPILE_OP_BY_OP,
+        CompileDepth.EXECUTE_OP_BY_OP,
+    ]:
+        assert devices is not None, "Devices not set in options"
     async_mode = options.async_mode
 
     # Apply environment overrides at start of compilation to allow overriding what was set in the test

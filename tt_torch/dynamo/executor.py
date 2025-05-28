@@ -118,7 +118,7 @@ def execute_process(receiver, sender, exec_event):
 
         outputs = None
         if inputs is not None:
-            outputs = tt_mlir.run_end_to_end(inputs, binary)
+            outputs = tt_mlir.run_on_default_device(inputs, binary)
 
         sys.stderr = old_stderr
         sys.stdout = old_stdout
@@ -157,13 +157,7 @@ class Executor:
 
         self.binary = {}
         self.preprocessed_graph_constants = {}
-        assert isinstance(
-            devices, list
-        ), f"Expecting a list of devices, received: {type(devices)}"
-        assert all(
-            isinstance(device, tt_mlir.Device) for device in devices
-        ), f"Devices must be a list of open Devices, received: {[type(obj) for obj in devices]}. You can create and open a device with DeviceManager.create_parent_mesh_device()."
-        self.devices = devices
+        self.devices = devices if devices is not None else []
         self.owned_device_indices = []
         self.async_mode = async_mode
         self._validate_executor()
@@ -175,6 +169,13 @@ class Executor:
             CompileDepth.STABLEHLO,
         ]:
             return []
+
+        if not self.devices:
+            descriptor_path = tempfile.NamedTemporaryFile(
+                delete=False, suffix=".ttsys"
+            ).name
+            tt_mlir.create_default_system_desc(descriptor_path)
+            return [descriptor_path]
 
         system_desc_paths = []
         for device_idx, device_from_user in enumerate(self.devices):

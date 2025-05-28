@@ -126,7 +126,13 @@ class ModelTester:
                     self.devices,
                 ) = DeviceManager.acquire_available_devices()
             else:
-                self.devices = [DeviceManager.create_parent_mesh_device((1, 1))]
+                if compiler_config is not None and compiler_config.compile_depth in [
+                    CompileDepth.COMPILE_OP_BY_OP,
+                    CompileDepth.EXECUTE_OP_BY_OP,
+                ]:
+                    self.devices = None
+                else:
+                    self.devices = [DeviceManager.create_parent_mesh_device((1, 1))]
 
         self.inputs = self._load_inputs()
 
@@ -275,7 +281,11 @@ class ModelTester:
             device = device_override
         options = BackendOptions()
         options.compiler_config = compiler_config
-        options.devices = [device]
+        if compiler_config.compile_depth not in [
+            CompileDepth.COMPILE_OP_BY_OP,
+            CompileDepth.EXECUTE_OP_BY_OP,
+        ]:
+            options.devices = [device]
         options.async_mode = data_parallel_mode
         model = torch.compile(model, backend=backend, dynamic=False, options=options)
         self.compiled_models.append(model)
