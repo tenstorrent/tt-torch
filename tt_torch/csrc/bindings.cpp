@@ -285,34 +285,30 @@ HostReturnType to_host(py::args args) {
     } else if (py::isinstance<at::Tensor>(arg)) {
       outputs.emplace_back(arg.cast<at::Tensor>());
     } else {
-      // If we get here, we have a non-tensor type
-
-      // Handle objects that may contain tt::runtime::Tensor fields
+      // If we get here, we have a non-tensor type pyobject
       py::object obj = py::reinterpret_borrow<py::object>(arg);
       assert(py::hasattr(obj, "__dict__") &&
              "Non-tensor type doesn't have __dict__ attribute");
       // Get the object's dictionary of attributes
       py::dict attrs = obj.attr("__dict__");
 
-      // Iterate through attributes and update tensors in-place
+      // Iterate through attributes and move any RT tensors to host in-place
       for (auto item : attrs) {
         std::string key = py::str(item.first);
         py::handle value = item.second;
 
         if (py::isinstance<tt::runtime::Tensor>(value)) {
-          // Convert tt::runtime::Tensor to at::Tensor
           tt::runtime::Tensor rt_tensor = value.cast<tt::runtime::Tensor>();
           at::Tensor host_tensor = to_host_single_rt_tensor(rt_tensor);
-          // Update the attribute in-place
           obj.attr(key.c_str()) = host_tensor;
         }
       }
-      // Return the modified object if we encounter any non-tensor type
+      // Return the modified object
       return obj;
     }
   }
 
-  // If all args were tensor types, return the vector of tensors
+  // If all args were tensor types, return the vector of host tensors
   return outputs;
 }
 
