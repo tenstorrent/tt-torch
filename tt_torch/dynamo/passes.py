@@ -264,7 +264,7 @@ def split_onto_devices(gm, compiler_config):
                     IOType.USER,
                     input_index,
                     input_index,
-                    node,
+                    node.meta,
                 )
                 mcg.graph_inputs[0].append(mci)
                 input_index += 1
@@ -317,7 +317,7 @@ def split_onto_devices(gm, compiler_config):
                         IOType.USER,
                         user_input_index,
                         consumer_input_indices[device_idx],
-                        inp_node,
+                        inp_node.meta,
                     )
                     mcg.graph_inputs[device_idx].append(mci)
                     consumer_input_indices[device_idx] += 1
@@ -362,7 +362,7 @@ def split_onto_devices(gm, compiler_config):
                                 IOType.INTER_DEVICE,
                                 output_indices[feeding_device],
                                 consumer_input_indices[device_idx],
-                                placeholder,
+                                placeholder.meta,
                             )
                             mco.link_input(mci)
                             mcg.graph_inputs[device_idx].append(mci)
@@ -534,21 +534,20 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
             if inp.io_type == IOType.USER:
                 sub_example_inputs.append(example_inputs[inp.producer_index])
             else:
-                node = inp.node
-                if node.op == "placeholder":
-                    if "tensor_meta" in node.meta:
-                        sub_example_inputs.append(
-                            torch.randn(node.meta["tensor_meta"].shape).to(
-                                dtype=node.meta["tensor_meta"].dtype
-                            )
+                meta = inp.meta
+                if "tensor_meta" in meta:
+                    sub_example_inputs.append(
+                        torch.randn(meta["tensor_meta"].shape).to(
+                            dtype=meta["tensor_meta"].dtype
                         )
-                    else:
-                        assert "example_value" in node.meta
-                        sub_example_inputs.append(
-                            torch.randn(node.meta["example_value"].shape).to(
-                                dtype=node.meta["example_value"].dtype
-                            )
+                    )
+                else:
+                    assert "example_value" in meta
+                    sub_example_inputs.append(
+                        torch.randn(meta["example_value"].shape).to(
+                            dtype=meta["example_value"].dtype
                         )
+                    )
         program, constant_inputs = run_pass_pipeline_for_single_gm(
             gm, graph, compiler_config, decompositions, sub_example_inputs, idx
         )
