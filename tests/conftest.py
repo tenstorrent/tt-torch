@@ -192,3 +192,14 @@ def pytest_configure(config):
         root = ET.Element("testsuites")
         tree = ET.ElementTree(root)
         tree.write(property_file)
+
+@pytest.fixture
+def model_metadata_fixture(request):
+    """ Finds the 'model_metadata' mark on a test and returns the model's metadata 
+    (either a ModelMetadata object or a dict of ModelMetadata objects if there are multiple models) 
+    that was passed to it."""
+    marker = request.node.get_closest_marker("model_metadata")
+    if not marker:
+        return None
+    
+    return marker.kwargs.get("model_metadata")
