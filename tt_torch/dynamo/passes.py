@@ -264,6 +264,7 @@ def split_onto_devices(gm, compiler_config):
                     IOType.USER,
                     input_index,
                     input_index,
+                    node,
                 )
                 mcg.graph_inputs[0].append(mci)
                 input_index += 1
@@ -316,6 +317,7 @@ def split_onto_devices(gm, compiler_config):
                         IOType.USER,
                         user_input_index,
                         consumer_input_indices[device_idx],
+                        inp_node,
                     )
                     mcg.graph_inputs[device_idx].append(mci)
                     consumer_input_indices[device_idx] += 1
@@ -360,6 +362,7 @@ def split_onto_devices(gm, compiler_config):
                                 IOType.INTER_DEVICE,
                                 output_indices[feeding_device],
                                 consumer_input_indices[device_idx],
+                                placeholder,
                             )
                             mco.link_input(mci)
                             mcg.graph_inputs[device_idx].append(mci)
@@ -448,7 +451,7 @@ def prune_inputs(program, constant_inputs):
     return constant_inputs
 
 
-def run_pass_for_graph(
+def run_pass_pipeline_for_single_gm(
     gm: torch.fx.GraphModule,
     graph: torch.fx.Graph,
     compiler_config,
@@ -512,14 +515,14 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         assert (
             len(mcg.device_graphs) == 1
         ), "Intermediate verification is not supported for multi-chip models"
-        program, constants = run_pass_for_graph(
+        program, constants = run_pass_pipeline_for_single_gm(
             gm, gm.graph, compiler_config, decompositions, example_inputs, 0
         )
         _generate_golden_intermediate_cache(
             program, constants + example_inputs, compiler_config
         )
 
-        # we don't need to run_pass_for_graph again because there is only one device_graph
+        # we don't need to run_pass_pipeline_for_single_gm again because there is only one device_graph
         mcg.programs[0] = program
         mcg.constant_inputs[0] = constants
         mcg.example_inputs[0] = example_inputs
@@ -527,22 +530,26 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
 
     for idx, graph in mcg.device_graphs.items():
         sub_example_inputs = []
-        for node in graph.nodes:
-            if node.op == "placeholder":
-                if "tensor_meta" in node.meta:
-                    sub_example_inputs.append(
-                        torch.randn(node.meta["tensor_meta"].shape).to(
-                            dtype=node.meta["tensor_meta"].dtype
+        for inp in mcg.graph_inputs[idx]:
+            if inp.io_type == IOType.USER:
+                sub_example_inputs.append(example_inputs[inp.producer_index])
+            else:
+                node = inp.node
+                if node.op == "placeholder":
+                    if "tensor_meta" in node.meta:
+                        sub_example_inputs.append(
+                            torch.randn(node.meta["tensor_meta"].shape).to(
+                                dtype=node.meta["tensor_meta"].dtype
+                            )
                         )
-                    )
-                else:
-                    assert "example_value" in node.meta
-                    sub_example_inputs.append(
-                        torch.randn(node.meta["example_value"].shape).to(
-                            dtype=node.meta["example_value"].dtype
+                    else:
+                        assert "example_value" in node.meta
+                        sub_example_inputs.append(
+                            torch.randn(node.meta["example_value"].shape).to(
+                                dtype=node.meta["example_value"].dtype
+                            )
                         )
-                    )
-        program, constant_inputs = run_pass_for_graph(
+        program, constant_inputs = run_pass_pipeline_for_single_gm(
             gm, graph, compiler_config, decompositions, sub_example_inputs, idx
         )
         mcg.programs[idx] = program
