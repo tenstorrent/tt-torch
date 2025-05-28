@@ -88,11 +88,14 @@ class MultiChipOutput:
 
 
 class MultiChipInput:
-    def __init__(self, originating_device, io_type, producer_index, consumer_index):
+    def __init__(
+        self, originating_device, io_type, producer_index, consumer_index, node
+    ):
         self.originating_device = originating_device
         self.io_type = io_type
         self.producer_index = producer_index
         self.consumer_index = consumer_index
+        self.node = node
 
 
 class MultiChipGraph:
