@@ -74,7 +74,7 @@ class ExecuteMode(Enum):
 class ModelMetadata():
     def __init__(self, 
                  model_name = None, 
-                 compile_depth = None, 
+                 compile_depth = CompileDepth.EXECUTE, 
                  op_by_op_backend = None
                  ):
         

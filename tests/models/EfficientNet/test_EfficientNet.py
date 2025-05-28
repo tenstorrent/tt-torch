@@ -37,55 +37,48 @@ class ThisTester(ModelTester):
         return tfms(img).unsqueeze(0)
 
 # Metadata for EfficientNet models
-EFFICIENTNET_METADATA= {
-    "efficientnet-b0": ModelMetadata(model_name="efficientnet-b0", compile_depth=CompileDepth.STABLEHLO),
-    "efficientnet-b1": ModelMetadata(model_name="efficientnet-b1", compile_depth=CompileDepth.STABLEHLO),
-    "efficientnet-b2": ModelMetadata(model_name="efficientnet-b2", compile_depth=CompileDepth.STABLEHLO),
-    "efficientnet-b3": ModelMetadata(model_name="efficientnet-b3", compile_depth=CompileDepth.STABLEHLO),
-    "efficientnet-b4": ModelMetadata(model_name="efficientnet-b4", compile_depth=CompileDepth.STABLEHLO),
-    "efficientnet-b5": ModelMetadata(model_name="efficientnet-b5", compile_depth=CompileDepth.STABLEHLO),
-    "efficientnet-b6": ModelMetadata(model_name="efficientnet-b6", compile_depth=CompileDepth.STABLEHLO),
-    "efficientnet-b7": ModelMetadata(model_name="efficientnet-b7", compile_depth=CompileDepth.STABLEHLO),
-}
+EFFICIENTNET_VARIANTS = [
+    ModelMetadata(model_name="efficientnet-b0", compile_depth=CompileDepth.STABLEHLO),
+    ModelMetadata(model_name="efficientnet-b1", compile_depth=CompileDepth.STABLEHLO),
+    ModelMetadata(model_name="efficientnet-b2", compile_depth=CompileDepth.STABLEHLO),
+    ModelMetadata(model_name="efficientnet-b3", compile_depth=CompileDepth.STABLEHLO),
+    ModelMetadata(model_name="efficientnet-b4", compile_depth=CompileDepth.STABLEHLO),
+    ModelMetadata(model_name="efficientnet-b5", compile_depth=CompileDepth.STABLEHLO),
+    ModelMetadata(model_name="efficientnet-b6", compile_depth=CompileDepth.STABLEHLO),
+    ModelMetadata(model_name="efficientnet-b7", compile_depth=CompileDepth.STABLEHLO),
+]
 
-@pytest.mark.model_metadata(model_metadata=EFFICIENTNET_METADATA)
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
-@pytest.mark.parametrize("model_name", EFFICIENTNET_METADATA.keys())
+@pytest.mark.parametrize("model_info", EFFICIENTNET_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
      "execute_mode",
      [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
      ids=["op_by_op","full"],
 )
-def test_EfficientNet(record_property, model_name, mode, execute_mode, model_metadata_fixture):
+def test_EfficientNet(record_property, model_info, mode, execute_mode):
     if mode == "train":
         pytest.skip()
 
-    model_group = "red" if model_name == "efficientnet-b0" else "generality"
+    model_group = "red" if model_info.model_name == "efficientnet-b0" else "generality"
 
     cc = CompilerConfig
     cc.enable_consteval = True
     cc.consteval_parameters = True
 
-    # Line below is used different in test_falcon.py
-    model_metadata = model_metadata_fixture.get(model_name, None)
 
     # set default compiler config
     if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
         cc.compile_depth = execute_mode
 
-    # applying overrides from model_metadata if it exists
-    if model_metadata:
-        if model_metadata.compile_depth is not None:
-            cc.compile_depth = model_metadata.compile_depth
-        if model_metadata.op_by_op_backend is not None:
-            cc.op_by_op_backend = model_metadata.op_by_op_backend
+    cc.compile_depth = model_info.compile_depth
+    cc.op_by_op_backend = model_info.op_by_op_backend
 
     assert_pcc = (
         True
-        if model_name
+        if model_info.model_name
         in [
             "efficientnet-b0",
             "efficientnet-b2",
@@ -99,7 +92,7 @@ def test_EfficientNet(record_property, model_name, mode, execute_mode, model_met
     )
 
     tester = ThisTester(
-        model_name,
+        model_info.model_name,
         mode,
         assert_pcc=assert_pcc,
         assert_atol=False,
@@ -117,7 +110,7 @@ def test_EfficientNet(record_property, model_name, mode, execute_mode, model_met
         labels_map = [labels_map[str(i)] for i in range(1000)]
 
         print("-----")
-        print(f"Model: {model_name}")
+        print(f"Model: {model_info.model_name}")
         for idx in torch.topk(results, k=5).indices.squeeze(0).tolist():
             prob = torch.softmax(results, dim=1)[0, idx].item()
             print("{label:<75} ({p:.2f}%)".format(label=labels_map[idx], p=prob * 100))
