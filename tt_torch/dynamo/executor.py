@@ -424,14 +424,20 @@ class OnnxExecutor(Executor):
         self.binary = binary
 
     def __call__(self, *inputs):
-        if self.binary is None:
+        assert (
+            self.compiler_config.compile_depth == CompileDepth.EXECUTE
+            or self.compiler_config.compile_depth == CompileDepth.TTNN_IR
+        ), "OnnxExecutor does not support op-by-op flow, please use StablehloExecutor"
+        if (
+            self.binary is None
+            or self.compiler_config.compile_depth == CompileDepth.TTNN_IR
+        ):
             # Only want to load the model proto into one inference session
             # since models can be big
             output = run_model_proto(
                 sess=self.sess, model_proto=self.model_proto, inputs=inputs
             )
             return onnx_output_to_torch(output)
-
         return tt_mlir.run_end_to_end(inputs, self.binary)
 
 
