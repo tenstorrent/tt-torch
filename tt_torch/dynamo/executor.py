@@ -170,7 +170,7 @@ class Executor:
         ]:
             return []
 
-        if self.devices != []:
+        if self.devices == []:
             descriptor_path = tempfile.NamedTemporaryFile(
                 delete=False, suffix=".ttsys"
             ).name
