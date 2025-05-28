@@ -564,7 +564,6 @@ class ModelTester:
             model = self.compile_model(model, self.compiler_config)
 
         outputs = self.run_model(model, self.inputs)
-        print(f"Outputs (after running): {outputs}")
         self.record_property("achieved_compile_depth", "EXECUTE")
 
         if self.compiler_config._enable_intermediate_verification:
