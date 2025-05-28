@@ -26,14 +26,13 @@ class ThisTester(ModelTester):
         inputs = self.tokenizer(self.test_input, return_tensors="pt")
         return inputs
 
-
-@pytest.mark.model_metadata(
-    model_metadata=ModelMetadata(
-        model_name="falcon",
-        compile_depth=CompileDepth.STABLEHLO,
-        op_by_op_backend=OpByOpBackend.TORCH,
-    )
+model_metadata=ModelMetadata(
+    model_name="falcon",
+    compile_depth=CompileDepth.STABLEHLO,
+    op_by_op_backend=OpByOpBackend.TORCH,
 )
+
+@pytest.mark.model_metadata(model_metadata=model_metadata)
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
