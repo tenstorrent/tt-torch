@@ -27,20 +27,11 @@ class ThisTester(ModelTester):
         return inputs
 
 
-
-@pytest.fixture
-def model_metadata_fixture(request):
-    """ Finds the 'model_metadata' mark on a test and returns the 
-    ModelMetadata object that was passed to it."""
-    marker = request.node.get_closest_marker("model_metadata")
-    if not marker:
-        return None
-    
-    return marker.kwargs.get("model_metadata")
-
 @pytest.mark.model_metadata(
     model_metadata=ModelMetadata(
         model_name="falcon",
+        compile_depth=CompileDepth.STABLEHLO,
+        op_by_op_backend=OpByOpBackend.TORCH,
     )
 )
 @pytest.mark.parametrize(
@@ -62,7 +53,7 @@ def test_falcon(record_property, mode, execute_mode, model_metadata_fixture):
     if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
         cc.compile_depth = execute_mode
 
-    # applying overrides from model_metadata_fixture
+    # applying overrides from model_metadata_fixture (this code can be fit into the fixture too)
     if model_metadata_fixture:
         if model_metadata_fixture.compile_depth is not None:
             cc.compile_depth = model_metadata_fixture.compile_depth
