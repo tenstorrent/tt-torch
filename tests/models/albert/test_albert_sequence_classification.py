@@ -64,26 +64,15 @@ def test_albert_sequence_classification(
     )
     results = tester.test_model()
 
+    def print_result(result):
+        logits = result.logits
+        predicted_class_id = logits.argmax().item()
+        predicted_label = tester.framework_model.config.id2label[predicted_class_id]
+        print(
+            f"Model: {model_name} | Input: {tester.input_text} | Label: {predicted_label}"
+        )
+
     if mode == "eval":
-        if data_parallel_mode:
-            # `results` is a list of result tensors, one for each device
-            for i in range(len(results)):
-                logits = results[i].logits
-                predicted_class_id = logits.argmax().item()
-                predicted_label = tester.framework_model.config.id2label[
-                    predicted_class_id
-                ]
-
-                print(
-                    f"Model: {model_name} | Input: {tester.input_text} | Label: {predicted_label} | (Device {i})"
-                )
-        else:
-            logits = results.logits
-            predicted_class_id = logits.argmax().item()
-            predicted_label = tester.framework_model.config.id2label[predicted_class_id]
-
-            print(
-                f"Model: {model_name} | Input: {tester.input_text} | Label: {predicted_label}"
-            )
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
     tester.finalize()

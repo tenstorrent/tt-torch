@@ -80,15 +80,12 @@ def test_segformer(record_property, mode, op_by_op, data_parallel_mode):
         data_parallel_mode=data_parallel_mode,
     )
     results = tester.test_model()
-    if mode == "eval":
-        if data_parallel_mode:
-            for i in range(len(results)):
-                result = results[i]
-                logits = (
-                    result.logits
-                )  # shape (batch_size, num_labels, height/4, width/4)
-                print(f"Device: {i} | Logits: {logits}")
-        logits = results.logits  # shape (batch_size, num_labels, height/4, width/4)
+
+    def print_result(result):
+        logits = result.logits  # shape (batch_size, num_labels, height/4, width/4)
         print(f"Logits: {logits}")
+
+    if mode == "eval":
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
     tester.finalize()

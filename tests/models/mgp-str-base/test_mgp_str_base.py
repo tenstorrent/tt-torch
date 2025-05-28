@@ -75,20 +75,16 @@ def test_mgp_str_base(record_property, mode, op_by_op, data_parallel_mode):
         else True,  # ATOL checking issues - No model legitimately checks ATOL, issue #690
         data_parallel_mode=data_parallel_mode,
     )
+    # TODO: This model test is still failing even with the to_host fix.
     results = tester.test_model()
 
+    def print_result(result):
+        logits = result.logits
+        generated_text = tester.processor.batch_decode(logits)["generated_text"]
+        print(f"Generated text: '{generated_text}'")
+        assert generated_text[0] == "ticket"
+
     if mode == "eval" and not disable_checking:
-        if data_parallel_mode:
-            for i in range(len(results)):
-                result = results[i]
-                logits = result.logits
-                generated_text = tester.processor.batch_decode(logits)["generated_text"]
-                print(f"Device: {i} | Generated text: '{generated_text}'")
-                assert generated_text[0] == "ticket"
-        else:
-            logits = results.logits
-            generated_text = tester.processor.batch_decode(logits)["generated_text"]
-            print(f"Generated text: '{generated_text}'")
-            assert generated_text[0] == "ticket"
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
     tester.finalize()

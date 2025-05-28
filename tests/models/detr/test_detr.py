@@ -77,12 +77,10 @@ def test_detr(record_property, mode, op_by_op, data_parallel_mode):
     )
     results = tester.test_model()
 
+    def print_result(result):
+        print(f"Result: {result}")
+
     if mode == "eval":
-        if data_parallel_mode:
-            for i in range(len(results)):
-                result = results[i]
-                print(f"Device: {i} | Result: {result}")
-        else:
-            print(f"Result: {results}")
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
     tester.finalize()
