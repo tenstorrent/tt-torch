@@ -31,8 +31,7 @@ class ThisTester(ModelTester):
         )
         return tfms(img).unsqueeze(0)
 
-
-
+# Metadata for EfficientNet models
 EFFICIENTNET_METADATA= {
     "efficientnet-b0": ModelMetadata(model_name="efficientnet-b0", compile_depth=CompileDepth.STABLEHLO),
     "efficientnet-b1": ModelMetadata(model_name="efficientnet-b1", compile_depth=CompileDepth.STABLEHLO),
@@ -55,18 +54,37 @@ EFFICIENTNET_METADATA= {
      [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
      ids=["op_by_op","full"],
 )
-def test_EfficientNet(record_property, model_name, mode, execute_mode, compiler_config):
+def test_EfficientNet(record_property, model_name, mode, execute_mode, model_metadata_fixture):
     if mode == "train":
         pytest.skip()
 
     model_group = "red" if model_name == "efficientnet-b0" else "generality"
 
-    cc = compiler_config
+    cc = CompilerConfig
     cc.enable_consteval = True
     cc.consteval_parameters = True
 
+
+    # Line below is used different in test_falcon.py # Line below is used different in test_falcon.py
+    model_metadata = model_metadata_fixture.get(model_name, None)
+
+    # set default compiler config
+    if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
+        cc.compile_depth = execute_mode
+
+    # applying overrides from model_metadata if it exists
+    if model_metadata:
+        if model_metadata.compile_depth is not None:
+            cc.compile_depth = model_metadata.compile_depth
+        if model_metadata.op_by_op_backend is not None:
+            cc.op_by_op_backend = model_metadata.op_by_op_backend
+    
     required_pcc = (
         0.98
+    )
+
+    assert_pcc = (
+        True
         if model_name
         in [
             "efficientnet-b1",

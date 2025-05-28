@@ -34,7 +34,6 @@ FALCON_METADATA = ModelMetadata(
     op_by_op_backend=OpByOpBackend.TORCH,
 )
 
-
 @pytest.mark.model_metadata(model_metadata=FALCON_METADATA)
 @pytest.mark.parametrize(
     "mode",
@@ -45,12 +44,27 @@ FALCON_METADATA = ModelMetadata(
      [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
      ids=["op_by_op","full"],
 )
-def test_falcon(record_property, mode, execute_mode, compiler_config):
+def test_falcon(record_property, mode, execute_mode, model_metadata_fixture):
     model_name = "Falcon"
 
-    cc = compiler_config
+    cc = CompilerConfig
     cc.enable_consteval = True
     cc.consteval_parameters = True
+
+    # Line below is used to get metadata from dict in the case of testEfficientNet.py
+    model_metadata = model_metadata_fixture
+
+    # set default compiler config
+    if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
+        cc.compile_depth = execute_mode
+
+    # applying overrides from model_metadata if it exists
+    if model_metadata:
+        if model_metadata.compile_depth is not None:
+            cc.compile_depth = model_metadata.compile_depth
+        if model_metadata.op_by_op_backend is not None:
+            cc.op_by_op_backend = model_metadata.op_by_op_backend
+
 
     tester = ThisTester(
         model_name,
