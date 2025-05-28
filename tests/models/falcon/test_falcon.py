@@ -26,13 +26,16 @@ class ThisTester(ModelTester):
         inputs = self.tokenizer(self.test_input, return_tensors="pt")
         return inputs
 
-model_metadata=ModelMetadata(
+
+# metadata for Falcon model
+FALCON_METADATA = ModelMetadata(
     model_name="falcon",
     compile_depth=CompileDepth.STABLEHLO,
     op_by_op_backend=OpByOpBackend.TORCH,
 )
 
-@pytest.mark.model_metadata(model_metadata=model_metadata)
+
+@pytest.mark.model_metadata(model_metadata=FALCON_METADATA)
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
@@ -42,23 +45,12 @@ model_metadata=ModelMetadata(
      [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
      ids=["op_by_op","full"],
 )
-def test_falcon(record_property, mode, execute_mode, model_metadata_fixture):
+def test_falcon(record_property, mode, execute_mode, compiler_config):
     model_name = "Falcon"
 
-    cc = CompilerConfig()
+    cc = compiler_config
     cc.enable_consteval = True
     cc.consteval_parameters = True
-
-    if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
-        cc.compile_depth = execute_mode
-
-    # applying overrides from model_metadata_fixture (this code can be fit into the fixture too)
-    if model_metadata_fixture:
-        if model_metadata_fixture.compile_depth is not None:
-            cc.compile_depth = model_metadata_fixture.compile_depth
-        if model_metadata_fixture.op_by_op_backend is not None:
-            cc.op_by_op_backend = model_metadata_fixture.op_by_op_backend
-        
 
     tester = ThisTester(
         model_name,
