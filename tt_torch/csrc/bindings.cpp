@@ -463,7 +463,7 @@ PYBIND11_MODULE(tt_mlir, m) {
           return std::get<py::object>(result);
         }
       },
-      "Moves runtim tensors to host, either returning a list of torch tensors "
+      "Moves runtime tensors to host, either returning a list of torch tensors "
       "or a modified object containing torch tensors");
   m.def("run_end_to_end", &run_end_to_end,
         "Run binary end to end, isolating all steps such as device opening, "

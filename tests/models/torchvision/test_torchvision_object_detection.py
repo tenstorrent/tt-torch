@@ -92,11 +92,11 @@ def test_torchvision_object_detection(
         data_parallel_mode=data_parallel_mode,
     )
     results = tester.test_model()
+
+    def print_result(result):
+        print(f"Model: {model_name} | Output: {result}")
+
     if mode == "eval":
-        if data_parallel_mode:
-            for i in range(len(results)):
-                result = results[i]
-                print(f"Device: {i} | Model: {model_name} | Output: {result}")
-        print(f"Model: {model_name} | Output: {results}")
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
     tester.finalize()

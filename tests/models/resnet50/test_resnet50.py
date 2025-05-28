@@ -73,19 +73,13 @@ def test_resnet(record_property, data_parallel_mode, mode, op_by_op):
     )
 
     results = tester.test_model()
+
+    def print_result(result):
+        _, indices = torch.topk(result, 5)
+        print(f"Top 5 predictions: {indices[0].tolist()}")
+
     if mode == "eval":
-        if data_parallel_mode:
-            # `results` is a list of result tensors, one for each device
-            for i in range(len(results)):
-                result = results[i]
-                # Print the top 5 predictions for each device
-                _, indices = torch.topk(result, 5)
-                print(f"Top 5 predictions for device {i}: {indices[0].tolist()}")
-        else:
-            if mode == "eval":
-                # `results` is a single result tensor
-                _, indices = torch.topk(results, 5)
-                print(f"Top 5 predictions: {indices[0].tolist()}")
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
     tester.finalize()
 

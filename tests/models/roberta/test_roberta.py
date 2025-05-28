@@ -59,26 +59,18 @@ def test_roberta(record_property, mode, op_by_op, data_parallel_mode):
         data_parallel_mode=data_parallel_mode,
     )
     results = tester.test_model()
+
+    def print_result(result):
+        logits = result.logits
+        # retrieve index of <mask>
+        mask_token_index = (tester.inputs.input_ids == tester.tokenizer.mask_token_id)[
+            0
+        ].nonzero(as_tuple=True)[0]
+
+        predicted_token_id = logits[0, mask_token_index].argmax(axis=-1)
+        output = tester.tokenizer.decode(predicted_token_id)
+        print(f"Output: {output}")
+
     if mode == "eval":
-        if data_parallel_mode:
-            for i in range(len(results)):
-                logits = results[i].logits
-                # retrieve index of <mask>
-                mask_token_index = (
-                    tester.inputs.input_ids == tester.tokenizer.mask_token_id
-                )[0].nonzero(as_tuple=True)[0]
-                predicted_token_id = logits[0, mask_token_index].argmax(axis=-1)
-                output = tester.tokenizer.decode(predicted_token_id)
-                print(f"Device: {i} | Output {i}: {output}")
-        else:
-            logits = results.logits
-            # retrieve index of <mask>
-            mask_token_index = (
-                tester.inputs.input_ids == tester.tokenizer.mask_token_id
-            )[0].nonzero(as_tuple=True)[0]
-
-            predicted_token_id = logits[0, mask_token_index].argmax(axis=-1)
-            output = tester.tokenizer.decode(predicted_token_id)
-            print(f"Output: {output}")
-
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
     tester.finalize()

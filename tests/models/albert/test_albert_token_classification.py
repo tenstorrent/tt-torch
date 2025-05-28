@@ -67,41 +67,24 @@ def test_albert_token_classification(
     )
     results = tester.test_model()
 
+    def print_result(result):
+        logits = result.logits
+        predicted_token_class_ids = logits.argmax(-1)
+
+        # Note that tokens are classified rather then input words which means that
+        # there might be more predicted token classes than words.
+        # Multiple token classes might account for the same word
+        predicted_tokens_classes = [
+            tester.framework_model.config.id2label[t.item()]
+            for t in predicted_token_class_ids[0]
+        ]
+        input_ids = tester.inputs["input_ids"]
+        tokens = tester.tokenizer.convert_ids_to_tokens(input_ids[0])
+        print(
+            f"Model: {model_name} | Tokens: {tokens} | Predictions: {predicted_tokens_classes}"
+        )
+
     if mode == "eval":
-        if data_parallel_mode:
-            for i in range(len(results)):
-                logits = results[i].logits
-                predicted_token_class_ids = logits.argmax(-1)
-
-                # Note that tokens are classified rather then input words which means that
-                # there might be more predicted token classes than words.
-                # Multiple token classes might account for the same word
-                predicted_tokens_classes = [
-                    tester.framework_model.config.id2label[t.item()]
-                    for t in predicted_token_class_ids[0]
-                ]
-
-                input_ids = tester.inputs["input_ids"]
-                tokens = tester.tokenizer.convert_ids_to_tokens(input_ids[0])
-                print(
-                    f"Model: {model_name} | Device: {i} | Tokens: {tokens} | Predictions: {predicted_tokens_classes}"
-                )
-        else:
-            logits = results.logits
-            predicted_token_class_ids = logits.argmax(-1)
-
-            # Note that tokens are classified rather then input words which means that
-            # there might be more predicted token classes than words.
-            # Multiple token classes might account for the same word
-            predicted_tokens_classes = [
-                tester.framework_model.config.id2label[t.item()]
-                for t in predicted_token_class_ids[0]
-            ]
-
-            input_ids = tester.inputs["input_ids"]
-            tokens = tester.tokenizer.convert_ids_to_tokens(input_ids[0])
-            print(
-                f"Model: {model_name} | Tokens: {tokens} | Predictions: {predicted_tokens_classes}"
-            )
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
     tester.finalize()
