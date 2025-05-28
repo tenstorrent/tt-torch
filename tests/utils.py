@@ -563,7 +563,6 @@ class ModelTester:
             model = self.compile_model(model, self.compiler_config)
 
         outputs = self.run_model(model, self.inputs)
-        print(f"Outputs (after running): {outputs}")
         self.record_property("achieved_compile_depth", "EXECUTE")
 
         if self.compiler_config._enable_intermediate_verification:
@@ -749,6 +748,18 @@ class ModelTester:
         else:
             print("No failing operations found.")
         print("[End Intermediate Verification Summary]")
+
+    @staticmethod
+    def print_outputs(results, data_parallel_mode, print_fn):
+        if data_parallel_mode:
+            assert isinstance(
+                results, list
+            ), "Results should be a list in data parallel mode"
+            for i, result in enumerate(results):
+                print(f"Results for device {i}:")
+                print_fn(result)
+        else:
+            print_fn(results)
 
 
 class OnnxModelTester(ModelTester):

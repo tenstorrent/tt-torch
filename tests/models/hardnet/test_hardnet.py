@@ -86,18 +86,15 @@ def test_hardnet(record_property, mode, op_by_op, data_parallel_mode):
         data_parallel_mode=data_parallel_mode,
     )
     results = tester.test_model()
+
+    def print_result(result):
+        # Tensor of shape 1000, with confidence scores over ImageNet's 1000 classes
+        print(result[0])
+        # The output has unnormalized scores. To get probabilities, you can run a softmax on it.
+        probabilities = torch.nn.functional.softmax(results[0], dim=0)
+        print(probabilities)
+
     if mode == "eval":
-        if data_parallel_mode:
-            for i in range(len(results)):
-                result = results[i]
-                print(f"Device: {i} | Result: {result[0]}")
-                probabilities = torch.nn.functional.softmax(result[0], dim=0)
-                print(f"Device: {i} | Probabilities: {probabilities}")
-        else:
-            # Tensor of shape 1000, with confidence scores over ImageNet's 1000 classes
-            print(results[0])
-            # The output has unnormalized scores. To get probabilities, you can run a softmax on it.
-            probabilities = torch.nn.functional.softmax(results[0], dim=0)
-            print(probabilities)
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
     tester.finalize()
