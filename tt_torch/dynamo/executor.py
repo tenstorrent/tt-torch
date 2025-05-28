@@ -170,7 +170,7 @@ class Executor:
         ]:
             return []
 
-        if not self.devices:
+        if self.devices != []:
             descriptor_path = tempfile.NamedTemporaryFile(
                 delete=False, suffix=".ttsys"
             ).name
@@ -431,6 +431,13 @@ class OnnxExecutor(Executor):
             )
             return onnx_output_to_torch(output)
 
+        assert isinstance(
+            self.devices, list
+        ), f"Expecting a list of tt_mlir.Device, received: {type(self.devices)}"
+        assert len(self.devices) == 1, "Only one device is supported for onnx executor"
+        assert isinstance(
+            self.devices[0], tt_mlir.Device
+        ), f"Expecting a tt_mlir.Device, received: {type(self.devices[0])}"
         return tt_mlir.run_end_to_end(self.devices[0], inputs, self.binary)
 
 

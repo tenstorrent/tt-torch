@@ -478,6 +478,15 @@ class StablehloExecutor(OpByOpExecutor):
 
         if self.binary is not None:
             try:
+                assert isinstance(
+                    self.devices, list
+                ), f"Expecting a list of tt_mlir.Device, received: {type(self.devices)}"
+                assert (
+                    len(self.devices) == 1
+                ), "Only one device is supported for shlo executor"
+                assert isinstance(
+                    self.devices[0], tt_mlir.Device
+                ), f"Expecting a tt_mlir.Device, received: {type(self.devices[0])}"
                 output = tt_mlir.run_end_to_end(
                     self.devices[0], self.typecast_inputs(inputs), self.binary
                 )
