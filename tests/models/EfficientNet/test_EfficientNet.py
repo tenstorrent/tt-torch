@@ -33,7 +33,6 @@ class ThisTester(ModelTester):
 
 
 
-
 EFFICIENTNET_METADATA= {
     "efficientnet-b0": ModelMetadata(model_name="efficientnet-b0", compile_depth=CompileDepth.STABLEHLO),
     "efficientnet-b1": ModelMetadata(model_name="efficientnet-b1", compile_depth=CompileDepth.STABLEHLO),
@@ -56,28 +55,15 @@ EFFICIENTNET_METADATA= {
      [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
      ids=["op_by_op","full"],
 )
-def test_EfficientNet(record_property, model_name, mode, execute_mode, model_metadata_fixture):
+def test_EfficientNet(record_property, model_name, mode, execute_mode, compiler_config):
     if mode == "train":
         pytest.skip()
 
     model_group = "red" if model_name == "efficientnet-b0" else "generality"
 
-    cc = CompilerConfig()
+    cc = compiler_config
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    
-    if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
-        cc.compile_depth = execute_mode
-
-    model_metadata_to_run = model_metadata_fixture.get(model_name)
-
-    # applying overrides from model_metadata_fixture
-    if model_metadata_to_run:
-        if model_metadata_to_run.compile_depth is not None:
-            cc.compile_depth = model_metadata_to_run.compile_depth
-        if model_metadata_to_run.op_by_op_backend is not None:
-            cc.op_by_op_backend = model_metadata_to_run.op_by_op_backend
-
 
     required_pcc = (
         0.98
