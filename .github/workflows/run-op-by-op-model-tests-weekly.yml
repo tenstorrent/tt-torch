@@ -15,6 +15,10 @@ on:
 env:
   DOCKER_CACHE_ROOT: /mnt/dockercache
 
+permissions:
+  packages: write
+  checks: write
+
 jobs:
   tests:
     timeout-minutes: 360
@@ -84,8 +88,8 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "resnet", tests: "
-              tests/models/resnet50/test_resnet50.py::test_resnet[op_by_op_torch-eval]
-              tests/models/resnet/test_resnet.py::test_resnet[op_by_op_torch-eval]
+              tests/models/resnet50/test_resnet50.py::test_resnet[op_by_op_torch-eval-single_device]
+              tests/models/resnet/test_resnet.py::test_resnet[op_by_op_torch-eval-single_device]
               "
           },
           {
@@ -131,7 +135,7 @@ jobs:
             runs-on: wormhole_b0, name: "vision-misc", tests: "
               tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io[op_by_op_torch-eval]
               tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[op_by_op_torch-eval]
-              tests/models/mnist/test_mnist.py::test_mnist_train[op_by_op_torch-eval]
+              tests/models/mnist/test_mnist.py::test_mnist_train[op_by_op_torch-eval-single_device]
               tests/models/hardnet/test_hardnet.py::test_hardnet[op_by_op_torch-eval]
               "
           },
@@ -285,7 +289,6 @@ jobs:
       with:
         name: install-artifacts
         path: install
-        github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: install tt-torch
       shell: bash

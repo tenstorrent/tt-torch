@@ -16,6 +16,10 @@ on:
     workflows: [Build] # build debug?
     types: [completed]
 
+permissions:
+  packages: write
+  checks: write
+
 jobs:
   tests:
     timeout-minutes: 20
@@ -72,7 +76,6 @@ jobs:
       with:
         name: install-artifacts
         path: install
-        github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: install tt-torch
       shell: bash
@@ -87,3 +90,9 @@ jobs:
       run: |
         source env/activate
         pytest --durations=0 -svv tests/models/llama/test_llama_7b_pipeline_parallel.py::test_llama_7b_pipeline_parallel[huggyllama/llama-7b-eval]
+
+    - name: Run Resnet50
+      shell: bash
+      run: |
+        source env/activate
+        pytest --durations=0 -svv tests/models/resnet50/test_resnet50_llmbox.py::test_resnet[full-eval]

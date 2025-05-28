@@ -11,6 +11,10 @@ on:
     workflows: [Build]
     types: [completed]
 
+permissions:
+  packages: write
+  checks: write
+
 jobs:
 
   docker-build:
@@ -59,7 +63,6 @@ jobs:
       with:
         name: install-artifacts
         path: install
-        github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: install tt-torch
       shell: bash

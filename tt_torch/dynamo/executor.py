@@ -228,7 +228,10 @@ class Executor:
         if self.devices[device_idx] is not None:
             return self.devices[device_idx]
         # Return a default parent mesh
-        device = tt_mlir.open_mesh_device([1, 1], tt_mlir.MeshDeviceOptions())
+        mesh_options = tt_mlir.MeshDeviceOptions()
+        if len(self.compiler_config.mesh_shape) == 32:
+            mesh_options.dispatch_core_type = tt_mlir.DispatchCoreType.WORKER
+        device = tt_mlir.open_mesh_device(self.compiler_config.mesh_shape, mesh_options)
         self.devices[device_idx] = device
         self.owned_device_indices.append(device_idx)
         return device
@@ -403,6 +406,7 @@ class Executor:
 
 class OnnxExecutor(Executor):
     def __init__(self, model_proto: onnx.ModelProto):
+        super().__init__()
         self.model_proto = model_proto
         self.binary = None
         self.sess = None

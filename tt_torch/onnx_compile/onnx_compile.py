@@ -31,6 +31,7 @@ from tt_torch.tools.utils import (
 from tt_torch.dynamo.shlo_backend import StablehloExecutor
 from tt_torch.dynamo.executor import OnnxExecutor
 from tt_torch.dynamo.backend import dump_module, shlo_to_flatbuffer
+from onnxruntime.quantization import shape_inference
 
 
 def generate_torch_onnx_ir(module: onnx.ModelProto, compiler_config: CompilerConfig):
@@ -80,11 +81,20 @@ def compile_onnx(model_proto: onnx.ModelProto, compiler_config: CompilerConfig =
     compiler_config.op_by_op_backend = OpByOpBackend.STABLEHLO
     compiler_config.typecast_inputs = False
     compiler_config.apply_environment_overrides()
+    model_proto = onnx.shape_inference.infer_shapes(model_proto)
+    onnx.save(model_proto, "model.onnx")
+    shape_inference.quant_pre_process(
+        input_model_path="model.onnx",
+        output_model_path="processed_model.onnx",
+        skip_optimization=False,
+        skip_onnx_shape=False,
+        skip_symbolic_shape=False,
+    )
+    model_proto = onnx.load("processed_model.onnx")
     if (
         compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP
         or compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
     ):
-        model_proto = onnx.shape_inference.infer_shapes(model_proto)
         module = generate_torch_onnx_ir(model_proto, compiler_config)
         module = torch_onnx_to_torch_backend_ir(module, compiler_config)
         module = torch_backend_ir_to_stablehlo(module, compiler_config)
@@ -92,7 +102,6 @@ def compile_onnx(model_proto: onnx.ModelProto, compiler_config: CompilerConfig =
         executor.add_onnx_model_proto(model_proto)
         return executor
     else:
-        model_proto = onnx.shape_inference.infer_shapes(model_proto)
         executor = OnnxExecutor(model_proto)
 
         module = generate_torch_onnx_ir(model_proto, compiler_config)

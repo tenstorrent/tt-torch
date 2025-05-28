@@ -9,6 +9,9 @@ on:
     types:
       - completed
 
+permissions:
+  packages: write
+  checks: write
 
 jobs:
   inspect:
