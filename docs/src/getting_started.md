@@ -104,7 +104,7 @@ sudo mkdir -p /opt/ttmlir-toolchain
 sudo chown -R $USER /opt/ttmlir-toolchain
 ```
 
-3. Build the toolchain for tt-torch:
+3. Build the toolchain for tt-torch (this build step only needs to be done once):
 
 ```bash
 cd third_party
@@ -132,6 +132,10 @@ You can check that everything is working with a basic unit test:
 ```bash
 pytest -svv tests/torch/test_basic.py
 ```
+
+>**NOTE:** Any time you use tt-torch, you need to be in the activated virtual
+> environment you created. Otherwise, you will get an error when trying to run
+> a test.
 
 ## Running the resnet Demo
 You can also try a demo:
