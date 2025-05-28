@@ -194,31 +194,16 @@ def pytest_configure(config):
         tree.write(property_file)
 
 @pytest.fixture
-def compiler_config(request, execute_mode, model_name):
-    """ Finds the 'model_metadata' mark on a test and returns the model's metadata 
-    (either a ModelMetadata object or a dict of ModelMetadata objects if there are multiple models) 
-    that was passed to it. Sets basic compiler config based on this"""
+def model_metadata_fixture(request):
+    """
+    Fixture to provide model metadata for overrides.
+    This can be used to override default compiler configs.
+    It either returns a ModelMetadata object, dictionary of ModelMetadata objects and model names
+    or None if no metadata is specified.
+    """
     marker = request.node.get_closest_marker("model_metadata")
-    if not marker:
+    if marker is not None:
+        metadata = marker.kwargs.get("model_metadata")
+        return metadata
+    else:
         return None
-    
-    cc = CompilerConfig()
-
-    metadata = marker.kwargs.get("model_metadata")
-    if isinstance(metadata, ModelMetadata):
-        model_metadata = metadata
-    elif isinstance(metadata, dict):
-        model_metadata = metadata.get(model_name)
-
-    # set default compiler config
-    if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
-        cc.compile_depth = execute_mode
-
-    # applying overrides from model_metadata if it exists
-    if model_metadata:
-        if model_metadata.compile_depth is not None:
-            cc.compile_depth = model_metadata.compile_depth
-        if model_metadata.op_by_op_backend is not None:
-            cc.op_by_op_backend = model_metadata.op_by_op_backend
-    
-    return cc
