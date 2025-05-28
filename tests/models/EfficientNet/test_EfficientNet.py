@@ -38,13 +38,13 @@ class ThisTester(ModelTester):
 
 # Metadata for EfficientNet models
 EFFICIENTNET_VARIANTS = [
-    ModelMetadata(model_name="efficientnet-b0", compile_depth=CompileDepth.STABLEHLO),
-    ModelMetadata(model_name="efficientnet-b1", compile_depth=CompileDepth.STABLEHLO),
-    ModelMetadata(model_name="efficientnet-b2", compile_depth=CompileDepth.STABLEHLO),
-    ModelMetadata(model_name="efficientnet-b3", compile_depth=CompileDepth.STABLEHLO),
-    ModelMetadata(model_name="efficientnet-b4", compile_depth=CompileDepth.STABLEHLO),
-    ModelMetadata(model_name="efficientnet-b5", compile_depth=CompileDepth.STABLEHLO),
-    ModelMetadata(model_name="efficientnet-b6", compile_depth=CompileDepth.STABLEHLO),
+    ModelMetadata(model_name="efficientnet-b0", model_group="red"),
+    ModelMetadata(model_name="efficientnet-b1", compile_depth=CompileDepth.STABLEHLO, assert_pcc=False),
+    ModelMetadata(model_name="efficientnet-b2"),
+    ModelMetadata(model_name="efficientnet-b3", compile_depth=CompileDepth.TTNN_IR),
+    ModelMetadata(model_name="efficientnet-b4"),
+    ModelMetadata(model_name="efficientnet-b5"),
+    ModelMetadata(model_name="efficientnet-b6"),
     ModelMetadata(model_name="efficientnet-b7", compile_depth=CompileDepth.STABLEHLO),
 ]
 
@@ -59,46 +59,25 @@ EFFICIENTNET_VARIANTS = [
      ids=["op_by_op","full"],
 )
 def test_EfficientNet(record_property, model_info, mode, execute_mode):
-    if mode == "train":
-        pytest.skip()
-
-    model_group = "red" if model_info.model_name == "efficientnet-b0" else "generality"
-
-    cc = CompilerConfig
+    
+    cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-
-
-    # set default compiler config
-    if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
-        cc.compile_depth = execute_mode
 
     cc.compile_depth = model_info.compile_depth
     cc.op_by_op_backend = model_info.op_by_op_backend
 
-    assert_pcc = (
-        True
-        if model_info.model_name
-        in [
-            "efficientnet-b0",
-            "efficientnet-b2",
-            "efficientnet-b3",
-            "efficientnet-b4",
-            "efficientnet-b5",
-            "efficientnet-b6",
-            "efficientnet-b7",
-        ]
-        else False
-    )
+    if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
+        cc.compile_depth = execute_mode
 
     tester = ThisTester(
         model_info.model_name,
         mode,
-        assert_pcc=assert_pcc,
+        assert_pcc=model_info.assert_pcc,
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
-        model_group=model_group,
+        model_group=model_info.model_group,
     )
 
     results = tester.test_model()

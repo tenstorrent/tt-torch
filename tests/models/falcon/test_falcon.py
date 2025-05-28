@@ -28,13 +28,11 @@ class ThisTester(ModelTester):
 
 
 # metadata for Falcon model
-FALCON_METADATA = ModelMetadata(
-    model_name="falcon",
-    compile_depth=CompileDepth.STABLEHLO,
-    op_by_op_backend=OpByOpBackend.TORCH,
-)
+FALCON_VARIANT = [
+    ModelMetadata(model_name="falcon-7b-instruct", compile_depth=CompileDepth.TTNN_IR, op_by_op_backend=OpByOpBackend.STABLEHLO,)
+]
 
-@pytest.mark.model_metadata(model_metadata=FALCON_METADATA)
+@pytest.mark.parametrize("model_info", FALCON_VARIANT, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
@@ -44,27 +42,18 @@ FALCON_METADATA = ModelMetadata(
      [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
      ids=["op_by_op","full"],
 )
-def test_falcon(record_property, mode, execute_mode, model_metadata_fixture):
+def test_falcon(record_property, model_info, mode, execute_mode):
     model_name = "Falcon"
 
     cc = CompilerConfig
     cc.enable_consteval = True
     cc.consteval_parameters = True
 
-    # Line below is used to get metadata from dict in the case of testEfficientNet.py
-    model_metadata = model_metadata_fixture
+    cc.compile_depth = model_info.compile_depth
+    cc.op_by_op_backend = model_info.op_by_op_backend
 
-    # set default compiler config
     if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
         cc.compile_depth = execute_mode
-
-    # applying overrides from model_metadata if it exists
-    if model_metadata:
-        if model_metadata.compile_depth is not None:
-            cc.compile_depth = model_metadata.compile_depth
-        if model_metadata.op_by_op_backend is not None:
-            cc.op_by_op_backend = model_metadata.op_by_op_backend
-
 
     tester = ThisTester(
         model_name,

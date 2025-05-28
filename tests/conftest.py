@@ -72,6 +72,11 @@ def pytest_addoption(parser):
         default=False,
         help="Create transacted output logs",
     )
+    parser.addoption(
+        "--compile-depth",
+        action="store",
+        help="Run only tests with specific compile depth (STABLEHLO, TTNN_IR, etc)",
+    )
 
 
 # Print more details for skipped and xfailed tests
@@ -82,6 +87,19 @@ def pytest_runtest_logreport(report):
 
 
 def pytest_collection_modifyitems(config, items):
+    # Handle compile depth filtering
+    if config.getoption("--compile-depth"):
+        target_depth = getattr(CompileDepth, config.getoption("--compile-depth"))
+        selected = []
+        
+        for item in items:
+            if hasattr(item, "callspec"):
+                model_info = item.callspec.params.get("model_info")
+                if model_info and model_info.compile_depth == target_depth:
+                    selected.append(item)
+        
+        items[:] = selected
+    
     # Filter tests based on which op_by_op flag is set
     selected_items = []
     using_torch = config.getoption("--op_by_op_torch")
@@ -207,18 +225,3 @@ def pytest_configure(config):
         root = ET.Element("testsuites")
         tree = ET.ElementTree(root)
         tree.write(property_file)
-
-@pytest.fixture
-def model_metadata_fixture(request):
-    """
-    Fixture to provide model metadata for overrides.
-    This can be used to override default compiler configs.
-    It either returns a ModelMetadata object, dictionary of ModelMetadata objects and model names
-    or None if no metadata is specified.
-    """
-    marker = request.node.get_closest_marker("model_metadata")
-    if marker is not None:
-        metadata = marker.kwargs.get("model_metadata")
-        return metadata
-    else:
-        return None

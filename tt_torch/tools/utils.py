@@ -59,28 +59,24 @@ class CompileDepth(Enum):
     COMPILE_OP_BY_OP = 4
     EXECUTE_OP_BY_OP = 5
     EXECUTE = 6
-
-class ExecuteMode(Enum):
-    EXECUTE = 1
-    OP_BY_OP = 2
-
-    def decompose_ExecuteMode(self):
-        mapping = {
-            ExecuteMode.EXECUTE: (CompileDepth.EXECUTE, OpByOpBackend.TORCH),
-            ExecuteMode.OP_BY_OP: (CompileDepth.EXECUTE_OP_BY_OP, OpByOpBackend.TORCH),
-        }
-        return mapping.get(self)
     
+class OpByOpBackend(Enum):
+    TORCH = 1
+    STABLEHLO = 2
+
 class ModelMetadata():
     def __init__(self, 
-                 model_name = None, 
-                 compile_depth = CompileDepth.EXECUTE, 
-                 op_by_op_backend = None
-                 ):
-        
+                model_name = None, 
+                compile_depth = CompileDepth.EXECUTE, 
+                op_by_op_backend = OpByOpBackend.TORCH,
+                model_group = "generality",
+                assert_pcc = True,
+                ):
         self.model_name = model_name
         self.compile_depth = compile_depth
         self.op_by_op_backend = op_by_op_backend
+        self.model_group = model_group
+        self.assert_pcc = assert_pcc
 
 class OpCompilationStatus(IntEnum):
     NOT_STARTED = 0
@@ -91,11 +87,6 @@ class OpCompilationStatus(IntEnum):
     CONVERTED_TO_TTIR = 5
     CONVERTED_TO_TTNN = 6
     EXECUTED = 7
-
-
-class OpByOpBackend(Enum):
-    TORCH = 1
-    STABLEHLO = 2
 
 
 class Tensor:
