@@ -81,25 +81,16 @@ def test_beit_image_classification(
     )
     results = tester.test_model()
 
+    def print_result(result):
+        logits = result.logits
+        # model predicts one of the 1000 ImageNet classes
+        predicted_class_idx = logits.argmax(-1).item()
+        print(
+            "Predicted class:",
+            tester.framework_model.config.id2label[predicted_class_idx],
+        )
+
     if mode == "eval":
-        if data_parallel_mode:
-            for i in range(len(results)):
-                result = results[i]
-                logits = result.logits
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
-                # model predicts one of the 1000 ImageNet classes
-                predicted_class_idx = logits.argmax(-1).item()
-                print(
-                    f"Device: {i} | Predicted class:",
-                    tester.framework_model.config.id2label[predicted_class_idx],
-                )
-        else:
-            logits = results.logits
-
-            # model predicts one of the 1000 ImageNet classes
-            predicted_class_idx = logits.argmax(-1).item()
-            print(
-                "Predicted class:",
-                tester.framework_model.config.id2label[predicted_class_idx],
-            )
     tester.finalize()

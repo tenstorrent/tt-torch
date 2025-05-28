@@ -45,7 +45,7 @@ class ThisTester(ModelTester):
         "albert/albert-base-v2",
         "albert/albert-large-v2",
         "albert/albert-xlarge-v2",
-        # "albert/albert-xxlarge-v2",
+        "albert/albert-xxlarge-v2",
     ],
 )
 @pytest.mark.parametrize(
@@ -91,32 +91,16 @@ def test_albert_masked_lm(
     )
     results = tester.test_model()
 
+    def print_result(result):
+        logits = result.logits
+        mask_token_index = (tester.inputs.input_ids == tester.tokenizer.mask_token_id)[
+            0
+        ].nonzero(as_tuple=True)[0]
+        predicted_token_id = logits[0, mask_token_index].argmax(axis=-1)
+        predicted_tokens = tester.tokenizer.decode(predicted_token_id)
+        print(f"Model: {model_name} | Input: {tester.text} | Mask: {predicted_tokens}")
+
     if mode == "eval":
-        if data_parallel_mode:
-            for i in range(len(results)):
-                result = results[i]
-                # retrieve index of [MASK]
-                logits = result.logits
-                mask_token_index = (
-                    tester.inputs.input_ids == tester.tokenizer.mask_token_id
-                )[0].nonzero(as_tuple=True)[0]
-                predicted_token_id = logits[0, mask_token_index].argmax(axis=-1)
-                predicted_tokens = tester.tokenizer.decode(predicted_token_id)
-
-                print(
-                    f"Model: {model_name} | Input: {tester.text} | Mask: {predicted_tokens} | (Device {i})"
-                )
-        else:
-            # retrieve index of [MASK]
-            logits = results.logits
-            mask_token_index = (
-                tester.inputs.input_ids == tester.tokenizer.mask_token_id
-            )[0].nonzero(as_tuple=True)[0]
-            predicted_token_id = logits[0, mask_token_index].argmax(axis=-1)
-            predicted_tokens = tester.tokenizer.decode(predicted_token_id)
-
-            print(
-                f"Model: {model_name} | Input: {tester.text} | Mask: {predicted_tokens}"
-            )
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
     tester.finalize()

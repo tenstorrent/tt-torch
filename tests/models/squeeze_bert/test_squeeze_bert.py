@@ -59,16 +59,13 @@ def test_squeeze_bert(record_property, mode, op_by_op, data_parallel_mode):
         data_parallel_mode=data_parallel_mode,
     )
     results = tester.test_model()
+
+    def print_result(result):
+        logits = result.logits
+        predicted_class_id = logits.argmax().item()
+        print(f"Predicted class ID: {predicted_class_id}")
+
     if mode == "eval":
-        if data_parallel_mode:
-            for i in range(len(results)):
-                result = results[i]
-                logits = result.logits
-                predicted_class_id = logits.argmax().item()
-                print(f"Device: {i} | Predicted class ID: {predicted_class_id}")
-        else:
-            logits = results.logits
-            predicted_class_id = logits.argmax().item()
-            print(f"Predicted class ID: {predicted_class_id}")
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
     tester.finalize()
