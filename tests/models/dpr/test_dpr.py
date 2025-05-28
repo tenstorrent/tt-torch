@@ -66,17 +66,13 @@ def test_dpr(record_property, mode, op_by_op, data_parallel_mode):
     )
     results = tester.test_model()
 
+    def print_result(result):
+        start_logits = result.start_logits
+        end_logits = result.end_logits
+        relevance_logits = result.relevance_logits
+        print(result)
+
     if mode == "eval":
-        if data_parallel_mode:
-            for result in results:
-                start_logits = result.start_logits
-                end_logits = result.end_logits
-                relevance_logits = result.relevance_logits
-                print(result)
-        else:
-            start_logits = results.start_logits
-            end_logits = results.end_logits
-            relevance_logits = results.relevance_logits
-            print(results)
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
     tester.finalize()

@@ -140,22 +140,15 @@ def test_timm_image_classification(
     )
     results = tester.test_model()
 
+    def print_result(result):
+        top5_probabilities, top5_class_indices = torch.topk(
+            result.softmax(dim=1) * 100, k=5
+        )
+        print(
+            f"Model: {model_name} | Predicted class ID: {top5_class_indices[0]} | Probability: {top5_probabilities[0]}"
+        )
+
     if mode == "eval":
-        if data_parallel_mode:
-            for i in range(len(results)):
-                result = results[i]
-                top5_probabilities, top5_class_indices = torch.topk(
-                    result.softmax(dim=1) * 100, k=5
-                )
-                print(
-                    f"Device: {i} | Model: {model_name} | Predicted class ID: {top5_class_indices[0]} | Probability: {top5_probabilities[0]}"
-                )
-        else:
-            top5_probabilities, top5_class_indices = torch.topk(
-                results.softmax(dim=1) * 100, k=5
-            )
-            print(
-                f"Model: {model_name} | Predicted class ID: {top5_class_indices[0]} | Probability: {top5_probabilities[0]}"
-            )
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
     tester.finalize()

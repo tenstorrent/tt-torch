@@ -91,13 +91,8 @@ def test_yolos(record_property, mode, op_by_op, data_parallel_mode):
                 )
                 return string
 
-        if data_parallel_mode:
-            for i in range(len(results)):
-                result = results[i]
-                decoded_output = decode_output(result)
-                print(f"Device: {i} | Result: {interpret_results(decoded_output)}")
-        else:
-            decoded_output = decode_output(results)
+        def print_result(result):
+            decoded_output = decode_output(result)
             print(
                 f"""
             model_name: {model_name}
@@ -105,5 +100,7 @@ def test_yolos(record_property, mode, op_by_op, data_parallel_mode):
             answer before: {interpret_results(decoded_output)}
             """
             )
+
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
     tester.finalize()
