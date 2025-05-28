@@ -217,10 +217,13 @@ def shlo_to_flatbuffer(
             create_verify_golden_callback(compiler_config)
         )
 
+    print("KCM Before compile_ttir_to_bytestream", flush=True)
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(
         ttir, system_desc_path, len_activations, len_graph_constants
     )
+    print("KCM After compile_ttir_to_bytestream", flush=True)
     dump_module(module=ttnn, name="TTNN", compiler_config=compiler_config)
+    print("KCM After dump_module", flush=True)
 
     return binary
 
