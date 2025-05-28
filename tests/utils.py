@@ -762,6 +762,7 @@ class ModelTester:
             print_fn(results)
 
 
+# TODO - hshahTT: Add support for data parallel mode for onnx models
 class OnnxModelTester(ModelTester):
     def __init__(
         self,
