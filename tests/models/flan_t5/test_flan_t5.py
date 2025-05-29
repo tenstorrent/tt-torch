@@ -16,7 +16,7 @@ class ThisTester(ModelTester):
         model = AutoModelForSeq2SeqLM.from_pretrained(
             "google/flan-t5-small", torch_dtype=torch.bfloat16
         )
-        return model.generate
+        return model
 
     def _load_inputs(self):
         inputs = self.tokenizer(
@@ -57,6 +57,7 @@ def test_flan_t5(record_property, mode, op_by_op):
         assert_pcc=False,
         assert_atol=False,
         is_token_output=True,
+        run_generate=True,  # run model.generate(**inputs)
     )
     results = tester.test_model(assert_eval_token_mismatch=False)
     if mode == "eval":

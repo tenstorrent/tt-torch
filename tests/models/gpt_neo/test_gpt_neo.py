@@ -16,7 +16,7 @@ class ThisTester(ModelTester):
             "EleutherAI/gpt-neo-125M", torch_dtype=torch.bfloat16
         )
         self.tokenizer = GPT2Tokenizer.from_pretrained("EleutherAI/gpt-neo-125M")
-        return model.generate
+        return model
 
     def _load_inputs(self):
         prompt = (
@@ -64,6 +64,7 @@ def test_gpt_neo(record_property, mode, op_by_op):
         assert_pcc=False,
         assert_atol=False,
         is_token_output=True,
+        run_generate=True,  # run model.generate(**inputs)
     )
     results = tester.test_model(assert_eval_token_mismatch=False)
     if mode == "eval":
