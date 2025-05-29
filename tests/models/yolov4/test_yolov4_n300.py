@@ -13,6 +13,7 @@ import cv2
 import numpy as np
 import urllib.request
 
+
 def url_to_image(url):
     resp = urllib.request.urlopen(url)
     image = np.asarray(bytearray(resp.read()), dtype="uint8")
@@ -51,7 +52,7 @@ def test_yolov4(record_property, mode, op_by_op):
     cc.enable_consteval = True
     cc.consteval_parameters = True
     cc.automatic_parallelization = True
-    cc.mesh_shape = [1,2]
+    cc.mesh_shape = [1, 2]
     cc.dump_info = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP

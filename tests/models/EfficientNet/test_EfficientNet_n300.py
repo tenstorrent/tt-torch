@@ -69,7 +69,7 @@ def test_EfficientNet(record_property, model_name, mode, op_by_op):
     cc.enable_consteval = True
     cc.consteval_parameters = True
     cc.automatic_parallelization = True
-    cc.mesh_shape = [1,2]
+    cc.mesh_shape = [1, 2]
     cc.dump_info = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
@@ -111,5 +111,7 @@ def test_EfficientNet(record_property, model_name, mode, op_by_op):
             print(f"Output {i+1}:")
             for idx in torch.topk(result_i, k=5).indices.squeeze(0).tolist():
                 prob = torch.softmax(result_i, dim=0)[idx].item()
-                print("{label:<75} ({p:.2f}%)".format(label=labels_map[idx], p=prob * 100))
+                print(
+                    "{label:<75} ({p:.2f}%)".format(label=labels_map[idx], p=prob * 100)
+                )
     tester.finalize()

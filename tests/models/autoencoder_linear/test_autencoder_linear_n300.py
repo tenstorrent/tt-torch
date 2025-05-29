@@ -97,7 +97,7 @@ def test_autoencoder_linear(record_property, mode, op_by_op):
     cc.enable_consteval = True
     cc.consteval_parameters = True
     cc.automatic_parallelization = True
-    cc.mesh_shape = [1,2]
+    cc.mesh_shape = [1, 2]
     cc.dump_info = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
