@@ -43,6 +43,7 @@ jobs:
                   tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval]
                   tests/models/yolov3/test_yolov3.py::test_yolov3[full-eval]
                   tests/models/yolov4/test_yolov4.py::test_yolov4[full-eval]
+                  tests/models/dpr/test_dpr.py::test_dpr[single_device-full-eval]
             "
           },
           {
