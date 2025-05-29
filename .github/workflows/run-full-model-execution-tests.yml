@@ -43,6 +43,7 @@ jobs:
                   tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval]
                   tests/models/yolov3/test_yolov3.py::test_yolov3[full-eval]
                   tests/models/yolov4/test_yolov4.py::test_yolov4[full-eval]
+                  tests/models/dpr/test_dpr.py::test_dpr[single_device-full-eval]
             "
           },
           {
@@ -110,7 +111,9 @@ jobs:
                 tests/models/mnist/test_mnist.py::test_mnist_train[data_parallel-full-eval]
                 tests/models/resnet50/test_resnet50.py::test_resnet[data_parallel-full-eval]
                 tests/models/resnet/test_resnet.py::test_resnet[data_parallel-full-eval]
-                tests/models/hardnet/test_hardnet_n300.py::test_hardnet[full-eval]
+                tests/models/dpr/test_dpr.py::test_dpr[data_parallel-full-eval]
+                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-vit_l_16]
+                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-vit_b_16]
             "
           },
           {
