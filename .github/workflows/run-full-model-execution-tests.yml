@@ -111,6 +111,13 @@ jobs:
                 tests/models/mnist/test_mnist.py::test_mnist_train[full-eval-data_parallel]
                 tests/models/resnet50/test_resnet50.py::test_resnet[full-eval-data_parallel]
                 tests/models/resnet/test_resnet.py::test_resnet[full-eval-data_parallel]
+                tests/models/mnist/test_mnist_n300.py::test_mnist_train[full-eval]
+                tests/models/autoencoder_linear/test_autoencoder_linear_n300.py::test_autoencoder_linear[full-eval]
+                tests/models/MobileNetV2/test_MobileNetV2_n300.py::test_MobileNetV2[full-eval]
+                tests/models/EfficientNet/test_EfficientNet_n300.py::test_EfficientNet[full-efficientnet-b0-eval]
+                tests/models/yolov4/test_yolov4_n300.py::test_yolov4[full-eval]
+                tests/models/vit/test_vit_n300.py::test_vit[full-eval]
+                tests/models/segformer/test_segformer_n300.py::test_segformer[full-eval] 
             "
           },
         ]
