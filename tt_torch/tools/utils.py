@@ -299,7 +299,11 @@ class Op:
 
 class CompilerConfig:
     def __init__(self):
-        self.compile_depth = CompileDepth.EXECUTE
+        self.compile_depth = (
+            CompileDepth.EXECUTE_CPP
+            if os.getenv("TT_TORCH_EXECUTION_DEPTH") == "EXECUTE_CPP"
+            else CompileDepth.EXECUTE
+        )
         self.profile_ops = True
         self.torch_mlir_module = None
         self.stablehlo_mlir_module = None

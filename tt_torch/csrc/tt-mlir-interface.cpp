@@ -340,8 +340,6 @@ compileTTIRToSharedObject(std::string_view code,
   std::string soFilePath = compileCppToSo(
       buffer, std::filesystem::temp_directory_path().string(), TT_METAL_HOME,
       TT_METAL_LIB_DIR.string(), TTNN_STANDALONE_DIR.string());
-  std::cerr << "compileTTIRToSharedObject (soFilePath): " << soFilePath
-            << std::endl;
 
   return std::make_tuple(soFilePath, buffer);
 }
