@@ -240,7 +240,7 @@ def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
         return executor
 
     for i, shlo in mcg.shlo_modules.items():
-        binary = shlo_to_flatbuffer(
+        binary_bytestream = shlo_to_flatbuffer(
             executor,
             executor.system_desc_paths[i],
             shlo,
@@ -248,7 +248,7 @@ def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
             len(mcg.example_inputs[i]),
             len(mcg.constant_inputs[i]),
         )
-        mcg.binaries[i] = binary
+        mcg.binaries[i] = tt_mlir.create_binary_from_bytestream(binary_bytestream)
 
     compiler_config.record_property("achieved_compile_depth", "TTNN_IR")
     return executor
