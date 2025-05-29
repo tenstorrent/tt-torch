@@ -131,7 +131,7 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-swin_b]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-densenet201]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-full-eval-ese_vovnet19b_dw.ra_in1k]
-                  tests/models/torchvision/test_torchvision_object_detection.py::test_torchvision_object_detection[single_device-full-eval-ssd300_vgg16]
+                  tests/models/torchvision/test_torchvision_object_detection.py::test_torchvision_object_detection[single_device-full-ssd300_vgg16-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-swin_s]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-densenet161]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-swin_v2_t]
