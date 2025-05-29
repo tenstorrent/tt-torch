@@ -51,11 +51,18 @@ jobs:
                   tests/models/falcon/test_falcon.py::test_falcon[full-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-googlenet]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-ghostnetv2_100.in1k]
-                  tests/models/mistral/test_pixtral.py::test_pixtral[full-eval]
-                  tests/models/mistral/test_mistral.py::test_mistral[full-mistral7b-eval]
-                  tests/models/mistral/test_mistral.py::test_mistral[full-ministral8b-eval]
+                  tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-2-eval]
+                  tests/models/seamless_m4t/test_seamless_m4t.py::test_seamless_m4t[full-eval]
             "
           },
+          # cannot run mistral/ pixtral models after torch uplift
+          # {
+          #   runs-on: wormhole_b0, name: "compile_3", tests: "
+          #         tests/models/mistral/test_pixtral.py::test_pixtral[full-eval]
+          #         tests/models/mistral/test_mistral.py::test_mistral[full-mistral7b-eval]
+          #         tests/models/mistral/test_mistral.py::test_mistral[full-ministral8b-eval]
+          #   "
+          # }
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}

@@ -50,9 +50,6 @@ class ThisTester(ModelTester):
         self.inputs = self.tokenizer(self.text, return_tensors="pt")
         return self.inputs
 
-    def set_model_eval(self, model):
-        return model
-
 
 @pytest.mark.parametrize(
     "mode",

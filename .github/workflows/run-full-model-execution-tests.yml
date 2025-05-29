@@ -81,7 +81,6 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_8gf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_16gf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_32gf]
-                  tests/models/mistral/test_mistral.py::test_mistral[full-ministral3b-eval]
             "
           },
           {
@@ -120,6 +119,12 @@ jobs:
                 tests/models/segformer/test_segformer_n300.py::test_segformer[full-eval]
             "
           },
+          # cannot run mistral/ pixtral models after torch uplift
+          # {
+          #   runs-on: wormhole_b0, name: "eval_7", tests: "
+          #   tests/models/mistral/test_mistral.py::test_mistral[full-ministral3b-eval]
+          #   "
+          # }
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}

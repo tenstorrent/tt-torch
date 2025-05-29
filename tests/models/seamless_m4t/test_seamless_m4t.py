@@ -17,7 +17,7 @@ import torchaudio
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model_name = "facebook/hf-seamless-m4t-medium"
+        model_name = "facebook/hf-seamless-m4t-large"
         self.processor = AutoProcessor.from_pretrained(model_name)
         self.model = SeamlessM4TModel.from_pretrained(model_name)
         return self.model
@@ -71,8 +71,9 @@ def test_seamless_m4t(record_property, mode, op_by_op):
     results = tester.test_model()
     if mode == "eval":
         sample_rate = tester.model.config.sampling_rate
-        scipy.io.wavfile.write(
-            "out_from_text.wav", rate=sample_rate, data=results[0].numpy().squeeze()
-        )
+        # uncomment this to download the output audio
+        # scipy.io.wavfile.write(
+        #     "out_from_text.wav", rate=sample_rate, data=results[0].numpy().squeeze()
+        # )
 
     tester.finalize()

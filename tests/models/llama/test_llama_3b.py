@@ -30,9 +30,6 @@ class ThisTester(ModelTester):
         )
         return inputs
 
-    def set_model_eval(self, model):
-        return model
-
 
 @pytest.mark.parametrize(
     "mode",
