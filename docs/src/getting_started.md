@@ -1,73 +1,147 @@
 # Getting Started
 
-## System Dependencies
+This document walks you through how to set up to run models using tt-torch. The following topics are covered:
 
-`tt-torch` requires the python 3.10 dev package, as well as the venv package. If not already installed, please run the following:
+* [Configuring Hardware](#configuring-hardware)
+* [Installing Dependencies](#installing-dependencies)
+* [Installing CMake](#installing-cmake-402)
+* [Installing Clang 17](#installing-clang-17)
+* [Building tt-torch](#building-tt-torch)
+* [Test the tt-torch Build](#test-the-tt-torch-build)
+* [Running the resnet Demo](#running-the-resnet-demo)
+* [Compiling and Running a Model](#compiling-and-running-a-model)
+* [Example - Add Two Tensors](#example---add-two-tensors)
+
+## Configuring Hardware
+
+This walkthrough assumes you are using Ubuntu 22.04.
+
+Configure your hardware with tt-installer:
+
+1. Make sure your system is up-to-date:
 
 ```bash
-sudo apt-get install python3.10-dev python3.10-venv
+sudo apt-get update
+sudo apt-get upgrade -y
 ```
 
-## Creating a Virtual Environment (skip if you already have one)
+2. Set up your hardware and dependencies using tt-installer:
 
-Create a virtual environment if you do not already have one in your project:
 ```bash
-python3.10 -m venv myvenv
-```
-This will create a virtual environemnt in the folder `myvenv` in the current directory.
-
-Activate the environemnt:
-```bash
-source myvenv/bin/activate
+/bin/bash -c "$(curl -fsSL https://github.com/tenstorrent/tt-installer/releases/latest/download/install.sh)"
 ```
 
-## Installing tt-torch
+## Installing Dependencies
 
-### Installation Notes
-- `tt-torch` requires a pytorch installation that ships with their ABI.
-    - The `tt-torch` wheel lists the following version of torch as an installation requirement:
-      `torch@https://download.pytorch.org/whl/cpu-cxx11-abi/torch-2.5.0%2Bcpu.cxx11.abi-cp310-cp310-linux_x86_64.whl`
-    - This will be installed by pip upon installing the `tt-torch` wheel
-- The `tt-torch` wheel contains a fork of `torch-mlir`. Please ensure that `torch-mlir` has not been installed in your venv before installing the `tt-torch` wheel.
+Install additional dependencies that were not installed by the tt-installer script:
 
-### Torchvision Install (Required if you need to install torchvision)
-
-**If you intend to use torchvision in your project then this step must be done before installing the tt-torch wheel**
-
-You will need to build the torchvision wheel yourself with certain build flags. This is because torchvision does not publish a wheel which uses the PyTorch CXX11 ABI.
-
-To install torchvision:
 ```bash
-git clone https://github.com/pytorch/vision.git
-cd vision
-git checkout v0.20.0 # tt-torch requires PyTorch 2.5.0. torchvision 0.20 is the latest version of torchvision that is compatible with PyTorch 2.5.0
-pip uninstall -y torchvision # Ensure torchvision is not in your virtual environment
-pip install wheel
-pip install torch@https://download.pytorch.org/whl/cpu-cxx11-abi/torch-2.5.0%2Bcpu.cxx11.abi-cp310-cp310-linux_x86_64.whl
-TORCHVISION_USE_VIDEO_CODEC=0 TORCHVISION_USE_FFMPEG=0 _GLIBCXX_USE_CXX11_ABI=1 USE_CUDA=OFF python setup.py bdist_wheel
-pip install dist/torchvision*.whl --force-reinstall
+sudo apt-get install -y \
+    libhwloc-dev \
+    libtbb-dev \
+    libcapstone-dev \
+    pkg-config \
+    linux-tools-generic \
+    ninja-build \
+    libgtest-dev \
+    ccache \
+    doxygen \
+    graphviz \
+    patchelf \
+    libyaml-cpp-dev \
+    libboost-all-dev \
+    lcov
 ```
 
-If the install was successful then there's no need to keep the torchvision source around:
+## Installing CMake 4.0.2
+
+Install CMake 4.0.2:
+
 ```bash
-cd ..
-rm -rf vision
+pip install cmake
 ```
 
-### Installing the tt-torch wheel
+## Installing Clang 17
+This section walks you through installing Clang 17.
 
-Download a `tt-torch` wheel from [here](https://github.com/tenstorrent/tt-forge/releases)
+1. Install Clang 17:
 
-Install the wheel:
 ```bash
-pip install <PATH_TO_TT_TORCH_WHEEL>.whl
+wget https://apt.llvm.org/llvm.sh
+chmod u+x llvm.sh
+sudo ./llvm.sh 17
+sudo apt install -y libc++-17-dev libc++abi-17-dev
+sudo ln -s /usr/bin/clang-17 /usr/bin/clang
+sudo ln -s /usr/bin/clang++-17 /usr/bin/clang++
 ```
 
-### Updating `PYTHONPATH`
+2. Check that the selected GCC candidate using Clang 17 is using 11:
 
-In addition to the `tt-torch` python library that gets installed in `<YOUR_ENV_ROOT>/lib/python3.x/site-packages`, some binaries will be installed in `<YOUR_ENV_ROOT>/lib`, and some files from [tt-metal](https://github.com/tenstorrent/tt-metal) will be installed under `<YOUR_ENV_ROOT>/tt-metal`. Python needs to see these installations and so you should update your `PYTHONPATH` environment variable to include them:
 ```bash
-export PYTHONPATH=$PYTHONPATH:<YOUR_ENV_ROOT>:<YOUR_ENV_ROOT>/lib
+clang -v
+```
+
+3. Delete any non-11 paths:
+
+```bash
+sudo rm -rf /usr/bin/../lib/gcc/x86_64-linux-gnu/12
+```
+
+## Building tt-torch
+This section describes how to build tt-torch. You need to build tt-torch whether you plan to do development work, or run models.
+
+1. Clone the tt-torch repo:
+
+```bash
+git clone https://github.com/tenstorrent/tt-torch.git
+cd tt-torch
+```
+
+2. Create a toolchain directory and make the account you are using the owner:
+
+```bash
+sudo mkdir -p /opt/ttmlir-toolchain
+sudo chown -R $USER /opt/ttmlir-toolchain
+```
+
+3. Build the toolchain for tt-torch (this build step only needs to be done once):
+
+```bash
+cd third_party
+cmake -B toolchain -DBUILD_TOOLCHAIN=ON
+```
+
+>**NOTE:** This step takes a long time to complete.
+
+4. Navigate back to the **tt-torch** home directory.
+
+5. Build tt-torch:
+
+```bash
+source env/activate
+cmake -G Ninja -B build
+cmake --build build
+cmake --install build
+```
+
+>**NOTE:** It takes awhile for everything to build.
+
+## Test the tt-torch Build:
+You can check that everything is working with a basic unit test:
+
+```bash
+pytest -svv tests/torch/test_basic.py
+```
+
+>**NOTE:** Any time you use tt-torch, you need to be in the activated virtual
+> environment you created. Otherwise, you will get an error when trying to run
+> a test.
+
+## Running the resnet Demo
+You can also try a demo:
+
+```bash
+python demos/resnet/resnet50_demo.py
 ```
 
 ## Compiling and Running a Model
