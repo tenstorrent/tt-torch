@@ -34,14 +34,14 @@ class ThisTester(ModelTester):
     def _load_inputs(self):
         self.test_input = "This is a sample text from "
 
-        input_length = 32
         inputs = self.tokenizer.encode_plus(
             self.test_input,
             return_tensors="pt",
-            max_length=input_length,
-            padding="max_length",
+            # max_length=input_length,
+            # padding="max_length",
             truncation=True,
         )
+
         # setup static cache
         batch_size = 1
         max_cache_len = 64
@@ -53,14 +53,19 @@ class ThisTester(ModelTester):
             dtype=self.framework_model.dtype,
         )
 
-        cache_position = torch.arange(0, input_length)
+        attention_mask = inputs.attention_mask
+        cache_position = attention_mask.cumsum(dim=-1) - 1
+        cache_position = cache_position.masked_fill(attention_mask == 0, 0)
+
+        # cache_position=torch.arange(0, input_length)
+
         args = {
             "input_ids": inputs.input_ids,
             "past_key_values": static_cache,
             "use_cache": True,
             "cache_position": cache_position,
+            "attention_mask": attention_mask,
         }
-
         return args
 
     def set_model_eval(self, model):
