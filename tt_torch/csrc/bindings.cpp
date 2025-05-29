@@ -141,19 +141,6 @@ torch::Tensor create_torch_tensor(const tt::runtime::Tensor &tensor) {
   return torch_tensor;
 }
 
-std::string stable_hlo_automatic_parallelization(
-    std::string_view code, std::vector<int64_t> mesh_shape,
-    size_t len_activations, size_t len_graph_constants) {
-  auto ret = tt::torch::stableHLOAutomaticParallelization(
-      code, mesh_shape, len_activations, len_graph_constants);
-  return ret;
-}
-
-std::string compile_stable_hlo_to_ttir(std::string_view code) {
-  auto ret = tt::torch::compileStableHLOToTTIR(code);
-  return ret;
-}
-
 std::vector<tt::runtime::Tensor>
 to_host(const std::vector<tt::runtime::Tensor> &device_tensors) {
   std::vector<tt::runtime::Tensor> host_tensors;
@@ -164,7 +151,6 @@ to_host(const std::vector<tt::runtime::Tensor> &device_tensors) {
                    return host_tensor[0];
                  });
   return host_tensors;
->>>>>>> 4a4bc55 (fixes from testing models)
 }
 
 std::vector<at::Tensor> to_torch(std::vector<tt::runtime::Tensor> &rt_tensors) {
@@ -199,6 +185,14 @@ compile_ttir_to_bytestream(std::string_view code,
   delete binary_ptr;
 
   return std::make_tuple(py::bytes(data_str), ttnn);
+}
+
+std::string stable_hlo_automatic_parallelization(
+    std::string_view code, std::vector<int64_t> mesh_shape,
+    size_t len_activations, size_t len_graph_constants) {
+  auto ret = tt::torch::stableHLOAutomaticParallelization(
+      code, mesh_shape, len_activations, len_graph_constants);
+  return ret;
 }
 
 std::string compile_stable_hlo_to_ttir(std::string_view code) {
