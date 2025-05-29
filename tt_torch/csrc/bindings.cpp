@@ -292,12 +292,18 @@ std::vector<at::Tensor> run(tt::runtime::Device device,
   std::vector<tt::runtime::Tensor> rt_outputs =
       tt::runtime::submit(device, binary, program_idx, rt_inputs);
 
+  // Create all torch tensors first before deallocating any runtime tensors
+  // This handles cases where the same tensor is returned multiple times
   std::vector<at::Tensor> outputs;
   outputs.reserve(rt_outputs.size());
 
   for (size_t i = 0; i < rt_outputs.size(); ++i) {
     auto &rt_output = rt_outputs.at(i);
     outputs.emplace_back(create_torch_tensor(rt_output));
+  }
+
+  for (size_t i = 0; i < rt_outputs.size(); ++i) {
+    auto &rt_output = rt_outputs.at(i);
     tt::runtime::deallocateTensor(rt_output, /*force=*/true);
   }
 
