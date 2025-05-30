@@ -52,6 +52,7 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_pixtral(record_property, mode, op_by_op):
+    pytest.skip()  # https://github.com/tenstorrent/tt-torch/issues/864
     model_name = "mistral-community/pixtral-12b"
     model_group = "red"
     cc = CompilerConfig()
