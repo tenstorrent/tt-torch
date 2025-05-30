@@ -180,7 +180,7 @@ class Executor:
             tt_mlir.create_system_desc(descriptor_device, descriptor_path)
 
             if device_from_user is None:
-                tt_mlir.close_mesh_device(descriptor_device)
+                self._cleanup_resources([], device_idx)
 
             system_desc_paths.append(descriptor_path)
         return system_desc_paths
@@ -244,7 +244,7 @@ class Executor:
         ):
             self.preprocessed_graph_constants[device_idx] = preprocessed_constants
 
-    def _cleanup_resources(self, preprocessed_activations):
+    def _cleanup_resources(self, preprocessed_activations, device_idx=0):
         for t in preprocessed_activations:
             tt_mlir.deallocate_tensor(t, force=True)
 
