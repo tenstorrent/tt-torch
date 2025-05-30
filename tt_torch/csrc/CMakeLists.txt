@@ -20,6 +20,7 @@ target_include_directories(TT_TORCH_MLIR PUBLIC
     ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/include/ttmlir/Target/Common
     ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir/include
     ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir/runtime/include
+    ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/install/include
     ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/stablehlo/
     ${PROJECT_SOURCE_DIR}/third_party/tt-mlir/src/tt-mlir-build/shardy/
     ${TTMLIR_TOOLCHAIN_DIR}/include
@@ -31,6 +32,7 @@ target_include_directories(TT_TORCH_MLIR PUBLIC
 target_link_libraries(TT_TORCH_MLIR PUBLIC
     TTMLIRCompiler
     TTMLIRRuntime
+    TTNNCompileSo
 )
 target_link_directories(TT_TORCH_MLIR PUBLIC
     ${TTMLIR_TOOLCHAIN_DIR}/lib
@@ -65,6 +67,7 @@ target_include_directories(${TARGET_NAME} PUBLIC
 )
 target_link_libraries(${TARGET_NAME} PUBLIC
     TT_TORCH_MLIR
+    TTNNCompileSo
     ${TORCH_LIBRARIES}
     ${TORCH_PYTHON_LIBRARY}
 )

@@ -317,7 +317,10 @@ class Executor:
         If self.async_mode is False, this function will move the runtime tensors to host
         and return them as Torch tensors.
         """
-        if self.compiler_config.compile_depth != CompileDepth.EXECUTE:
+        if self.compiler_config.compile_depth not in (
+            CompileDepth.EXECUTE,
+            CompileDepth.EXECUTE_CPP,
+        ):
             assert (
                 len(self.mcg.programs) == 1
                 and self.mcg.programs[0].graph_module != None
@@ -363,20 +366,37 @@ class Executor:
             # TODO: Enable this when device to device movement is supported. In the mean time we fall back to host: #748
             # intermediate_output = any([o.io_type == IOType.INTER_DEVICE for o in self.mcg.graph_outputs[device_idx]])
             intermediate_output = False
+            inputs = preprocessed_weights + preprocessed_activations
             if self.async_mode or intermediate_output:
                 outputs = tt_mlir.run_async(
                     device,
                     binary,
                     program_idx,
-                    preprocessed_weights + preprocessed_activations,
+                    inputs,
                 )
             else:
                 outputs = tt_mlir.run(
                     device,
                     binary,
                     program_idx,
-                    (preprocessed_weights + preprocessed_activations),
+                    inputs,
                 )
+
+            if self.compiler_config.compile_depth == CompileDepth.EXECUTE_CPP:
+                so_path = self.mcg.so_paths[device_idx]
+                # TODO (azecevic): function name is currently hardcoded
+                func_name = "main"
+                cpp_verifier = (
+                    tt_mlir.verify_cpp_ttnn
+                    if self.async_mode
+                    else tt_mlir.verify_cpp_ttnn_torch
+                )
+                is_successfull = cpp_verifier(
+                    so_path, func_name, inputs, outputs, device
+                )
+                if not is_successfull:
+                    raise RuntimeError("Verification of C++ TTNN failed")
+                print("Verification of C++ TTNN successful")
 
             for i, output in enumerate(outputs):
                 graph_output = self.mcg.graph_outputs[device_idx][i]

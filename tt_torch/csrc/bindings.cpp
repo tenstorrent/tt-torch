@@ -20,17 +20,15 @@
 #include "tt/runtime/detail/debug.h"
 #endif
 #include "tt/runtime/runtime.h"
+#include "tt/runtime/test/ttnn/dylib.h"
 #include "tt/runtime/types.h"
 #include "tt/runtime/utils.h"
 
 // tt-torch includes
 #include "tt-mlir-interface.hpp"
 
-namespace py = pybind11;
-
-py::object TORCH_TENSOR_PYCLASS = py::module::import("torch").attr("Tensor");
-
-static tt::target::DataType torch_scalar_type_to_dt(torch::ScalarType st) {
+namespace detail {
+tt::target::DataType torch_scalar_type_to_dt(torch::ScalarType st) {
   switch (st) {
   case torch::ScalarType::Byte:
     return tt::target::DataType::UInt8;
@@ -65,7 +63,7 @@ static tt::target::DataType torch_scalar_type_to_dt(torch::ScalarType st) {
   assert(false && "Unsupported scalar type");
 }
 
-static torch::ScalarType dt_to_torch_scalar_type(tt::target::DataType df) {
+torch::ScalarType dt_to_torch_scalar_type(tt::target::DataType df) {
   switch (df) {
   case tt::target::DataType::UInt8:
     return torch::ScalarType::Byte;
@@ -87,7 +85,17 @@ static torch::ScalarType dt_to_torch_scalar_type(tt::target::DataType df) {
   assert(false && "Unsupported scalar type");
 }
 
-static tt::runtime::Tensor create_tensor(const torch::Tensor &tensor) {
+template <typename T>
+std::vector<int64_t> as_vec_int64(std::vector<T> const &vec) {
+  std::vector<int64_t> result;
+  result.reserve(vec.size());
+  for (auto const &v : vec) {
+    result.push_back(v);
+  }
+  return result;
+}
+
+tt::runtime::Tensor create_tensor(const torch::Tensor &tensor) {
   auto shape =
       std::vector<uint32_t>(tensor.sizes().begin(), tensor.sizes().end());
   if (shape.empty()) {
@@ -113,17 +121,7 @@ static tt::runtime::Tensor create_tensor(const torch::Tensor &tensor) {
       torch_scalar_type_to_dt(tensor.scalar_type()));
 }
 
-template <typename T>
-std::vector<int64_t> as_vec_int64(std::vector<T> const &vec) {
-  std::vector<int64_t> result;
-  result.reserve(vec.size());
-  for (auto const &v : vec) {
-    result.push_back(v);
-  }
-  return result;
-}
-
-static torch::Tensor create_torch_tensor(const tt::runtime::Tensor &tensor) {
+torch::Tensor create_torch_tensor(const tt::runtime::Tensor &tensor) {
   tt::runtime::Tensor untilized_tensor =
       tt::runtime::toHost(tensor, /*untilize=*/true)[0];
 
@@ -143,18 +141,35 @@ static torch::Tensor create_torch_tensor(const tt::runtime::Tensor &tensor) {
   return torch_tensor;
 }
 
-std::string stable_hlo_automatic_parallelization(
-    std::string_view code, std::vector<int64_t> mesh_shape,
-    size_t len_activations, size_t len_graph_constants) {
-  auto ret = tt::torch::stableHLOAutomaticParallelization(
-      code, mesh_shape, len_activations, len_graph_constants);
-  return ret;
+std::vector<tt::runtime::Tensor>
+to_host(const std::vector<tt::runtime::Tensor> &device_tensors) {
+  std::vector<tt::runtime::Tensor> host_tensors;
+  std::transform(device_tensors.begin(), device_tensors.end(),
+                 std::back_inserter(host_tensors), [&](auto &&tensor) {
+                   auto host_tensor = tt::runtime::toHost(tensor);
+                   assert(host_tensor.size() == 1);
+                   return host_tensor[0];
+                 });
+  return host_tensors;
 }
 
-std::string compile_stable_hlo_to_ttir(std::string_view code) {
-  auto ret = tt::torch::compileStableHLOToTTIR(code);
-  return ret;
+std::vector<at::Tensor> to_torch(std::vector<tt::runtime::Tensor> &rt_tensors) {
+  std::vector<at::Tensor> torch_tensors;
+  torch_tensors.reserve(rt_tensors.size());
+
+  for (size_t i = 0; i < rt_tensors.size(); ++i) {
+    auto &rt_tensor = rt_tensors.at(i);
+    torch_tensors.emplace_back(create_torch_tensor(rt_tensor));
+    tt::runtime::deallocateTensor(rt_tensor, /*force=*/true);
+  }
+
+  return torch_tensors;
 }
+} // namespace detail
+
+namespace py = pybind11;
+
+py::object TORCH_TENSOR_PYCLASS = py::module::import("torch").attr("Tensor");
 
 std::tuple<py::bytes, std::string>
 compile_ttir_to_bytestream(std::string_view code,
@@ -170,6 +185,70 @@ compile_ttir_to_bytestream(std::string_view code,
   delete binary_ptr;
 
   return std::make_tuple(py::bytes(data_str), ttnn);
+}
+
+std::string stable_hlo_automatic_parallelization(
+    std::string_view code, std::vector<int64_t> mesh_shape,
+    size_t len_activations, size_t len_graph_constants) {
+  auto ret = tt::torch::stableHLOAutomaticParallelization(
+      code, mesh_shape, len_activations, len_graph_constants);
+  return ret;
+}
+
+std::string compile_stable_hlo_to_ttir(std::string_view code) {
+  auto ret = tt::torch::compileStableHLOToTTIR(code);
+  return ret;
+}
+
+std::tuple<std::string, std::string>
+compile_ttir_to_so(std::string_view code, std::string_view sys_desc_path,
+                   size_t len_activations, size_t len_graph_constants) {
+  return tt::torch::compileTTIRToSharedObject(
+      code, sys_desc_path, len_activations, len_graph_constants);
+}
+
+bool verify_cpp_ttnn(const std::string &so_path, const std::string &func_name,
+                     const std::vector<tt::runtime::Tensor> &input,
+                     const std::vector<tt::runtime::Tensor> &golden_output,
+                     tt::runtime::Device device) {
+  auto *so_handle = tt::runtime::test::ttnn::openSo(so_path);
+  assert(so_handle);
+
+  auto cpp_output = tt::runtime::test::ttnn::runSoProgram(so_handle, func_name,
+                                                          input, device);
+  std::vector<tt::runtime::Tensor> host_cpp_output(detail::to_host(cpp_output));
+
+  std::vector<tt::runtime::Tensor> host_golden_output(
+      detail::to_host(golden_output));
+
+  // tt::runtime::test::ttnn::closeSo(so_handle);
+
+  return tt::runtime::test::ttnn::compareOuts(host_cpp_output,
+                                              host_golden_output);
+}
+
+bool verify_cpp_ttnn_torch(const std::string &so_path,
+                           const std::string &func_name,
+                           const std::vector<tt::runtime::Tensor> &input,
+                           const std::vector<at::Tensor> &golden_output,
+                           tt::runtime::Device device) {
+  auto *so_handle = tt::runtime::test::ttnn::openSo(so_path);
+  assert(so_handle);
+
+  auto cpp_output = tt::runtime::test::ttnn::runSoProgram(so_handle, func_name,
+                                                          input, device);
+  std::vector<at::Tensor> torch_cpp_output(detail::to_torch(cpp_output));
+
+  if (torch_cpp_output.size() != golden_output.size()) {
+    return false;
+  }
+
+  for (size_t i = 0; i < torch_cpp_output.size(); ++i) {
+    if (!torch::equal(torch_cpp_output[i], golden_output[i])) {
+      return false;
+    }
+  }
+  return true;
 }
 
 std::string bytestream_to_json(py::bytes byte_stream) {
@@ -210,7 +289,7 @@ preprocess_inputs(tt::runtime::Device device, std::vector<at::Tensor> &inputs,
   std::vector<tt::runtime::Tensor> rt_inputs;
   rt_inputs.reserve(inputs.size());
   for (const auto &input : inputs) {
-    rt_inputs.emplace_back(create_tensor(input));
+    rt_inputs.emplace_back(detail::create_tensor(input));
   }
 
   std::vector<tt::runtime::Tensor> rt_inputs_with_layout;
@@ -253,7 +332,7 @@ run_async(tt::runtime::Device device, tt::runtime::Binary &binary,
 }
 
 at::Tensor to_host_single_rt_tensor(tt::runtime::Tensor &rt_output) {
-  at::Tensor output = create_torch_tensor(rt_output);
+  at::Tensor output = detail::create_torch_tensor(rt_output);
   tt::runtime::deallocateTensor(rt_output, /*force=*/true);
 
   return output;
@@ -297,7 +376,7 @@ std::vector<at::Tensor> run(tt::runtime::Device device,
 
   for (size_t i = 0; i < rt_outputs.size(); ++i) {
     auto &rt_output = rt_outputs.at(i);
-    outputs.emplace_back(create_torch_tensor(rt_output));
+    outputs.emplace_back(detail::create_torch_tensor(rt_output));
     tt::runtime::deallocateTensor(rt_output, /*force=*/true);
   }
 
@@ -339,7 +418,7 @@ get_op_output_torch_tensor(tt::runtime::OpContext opContextHandle,
     return torch::Tensor(); // Return an empty PyTorch tensor
   }
 
-  return create_torch_tensor(tensor);
+  return detail::create_torch_tensor(tensor);
 }
 
 PYBIND11_MODULE(tt_mlir, m) {
@@ -392,6 +471,18 @@ PYBIND11_MODULE(tt_mlir, m) {
   m.def("stable_hlo_automatic_parallelization",
         &stable_hlo_automatic_parallelization,
         "Run shardy automatic data parallelization pass on stableHLO");
+  m.def("compile_ttir_to_so", &compile_ttir_to_so, py::arg("ttir"),
+        py::arg("sys_desc_path"), py::arg("len_activations") = 0,
+        py::arg("len_graph_constants") = 0,
+        "A function that compiles TTIR to a shared object");
+  m.def("verify_cpp_ttnn", &verify_cpp_ttnn, py::arg("so_path"),
+        py::arg("func_name"), py::arg("input"), py::arg("golden_output"),
+        py::arg("device"),
+        "A function that verifies the C++ TTNN output of runtime tensors");
+  m.def("verify_cpp_ttnn_torch", &verify_cpp_ttnn_torch, py::arg("so_path"),
+        py::arg("func_name"), py::arg("input"), py::arg("golden_output"),
+        py::arg("device"),
+        "A function that verifies the C++ TTNN output of torch tensors");
   m.def("compile_stable_hlo_to_ttir", &compile_stable_hlo_to_ttir,
         "A function that compiles stableHLO to TTIR");
   m.def("open_mesh_device", &tt::runtime::openMeshDevice, py::arg("mesh_shape"),

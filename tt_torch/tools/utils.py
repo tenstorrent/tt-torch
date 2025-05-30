@@ -53,6 +53,7 @@ class CompileDepth(Enum):
     COMPILE_OP_BY_OP = 4
     EXECUTE_OP_BY_OP = 5
     EXECUTE = 6
+    EXECUTE_CPP = 7
 
 
 class OpCompilationStatus(IntEnum):
@@ -106,6 +107,7 @@ class MultiChipGraph:
         self.graph_inputs = {device: [] for device in devices}
         self.programs = {}
         self.binaries = {}
+        self.so_paths = {}
         self.constant_inputs = {}
         self.example_inputs = {}
         self.shlo_modules = {}
@@ -297,7 +299,11 @@ class Op:
 
 class CompilerConfig:
     def __init__(self):
-        self.compile_depth = CompileDepth.EXECUTE
+        self.compile_depth = (
+            CompileDepth.EXECUTE_CPP
+            if os.getenv("TT_TORCH_EXECUTION_DEPTH") == "EXECUTE_CPP"
+            else CompileDepth.EXECUTE
+        )
         self.profile_ops = True
         self.torch_mlir_module = None
         self.stablehlo_mlir_module = None

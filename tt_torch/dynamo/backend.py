@@ -225,6 +225,22 @@ def shlo_to_flatbuffer(
     return binary
 
 
+def shlo_to_so(
+    system_desc_path, module, compiler_config, len_activations, len_graph_constants
+):
+    ttir = tt_mlir.compile_stable_hlo_to_ttir(
+        module.operation.get_asm(enable_debug_info=True)
+    )
+    dump_module(module=ttir, name="TTIR", compiler_config=compiler_config)
+
+    so_path, cpp = tt_mlir.compile_ttir_to_so(
+        ttir, system_desc_path, len_activations, len_graph_constants
+    )
+    dump_module(module=cpp, name="CPP source code", compiler_config=compiler_config)
+
+    return so_path
+
+
 def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
     mcg = torch_to_shlo(gm, example_inputs, compiler_config)
     executor = Executor(
@@ -249,6 +265,18 @@ def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
             len(mcg.constant_inputs[i]),
         )
         mcg.binaries[i] = binary
+
+        if compiler_config.compile_depth != CompileDepth.EXECUTE_CPP:
+            continue
+
+        so_path = shlo_to_so(
+            executor.system_desc_paths[i],
+            shlo,
+            compiler_config,
+            len(mcg.example_inputs[i]),
+            len(mcg.constant_inputs[i]),
+        )
+        mcg.so_paths[i] = so_path
 
     compiler_config.record_property("achieved_compile_depth", "TTNN_IR")
     return executor
