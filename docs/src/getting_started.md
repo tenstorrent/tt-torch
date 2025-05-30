@@ -148,7 +148,9 @@ python demos/resnet/resnet50_demo.py
 
 Once you have your `torch.nn.Module` compile the model:
 ```py
-from tt_torch.dynamo.backend import backend
+from tt_torch.dynamo.backend import backend, BackendOptions
+from tt_torch.tools.device_manager import DeviceManager
+
 import torch
 
 class MyModel(torch.nn.Module):
@@ -158,9 +160,14 @@ class MyModel(torch.nn.Module):
     def foward(self, ...):
         ...
 
+device = DeviceManager.create_parent_mesh_device([1, 1])
+
+options = BackendOptions()
+options.devices = [device]
+
 model = MyModel()
 
-model = torch.compile(model, backend=backend)
+model = torch.compile(model, backend=backend, options=options)
 
 inputs = ...
 
@@ -172,7 +179,8 @@ outputs = model(inputs)
 Here is an exampe of a small model which adds its inputs running through tt-torch. Try it out!
 
 ```py
-from tt_torch.dynamo.backend import backend
+from tt_torch.dynamo.backend import backend, BackendOptions
+from tt_torch.tools.device_manager import DeviceManager
 import torch
 
 class AddTensors(torch.nn.Module):
@@ -180,10 +188,16 @@ class AddTensors(torch.nn.Module):
     return x + y
 
 
+device = DeviceManager.create_parent_mesh_device([1, 1])
+
+options = BackendOptions()
+options.devices = [device]
+
 model = AddTensors()
-tt_model = torch.compile(model, backend=backend)
+tt_model = torch.compile(model, backend=backend, options=options)
 
 x = torch.ones(5, 5)
 y = torch.ones(5, 5)
 print(tt_model(x, y))
+DeviceManager.release_parent_device(device)
 ```
