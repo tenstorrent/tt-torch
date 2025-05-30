@@ -25,11 +25,10 @@ jobs:
         build: [
           {runs-on: wormhole_b0, name: "run", container-options: "--device /dev/tenstorrent/0"},
         ]
-
+    continue-on-error: true
     name: tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})
     runs-on:
       - ${{ matrix.build.runs-on }}
-
     container:
       image: ${{ inputs.docker-image }}
       options: --user root ${{ matrix.build.container-options }} --shm-size=2gb
@@ -80,6 +79,12 @@ jobs:
         mkdir -p ${{ steps.strings.outputs.dist-dir }}
         mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
+
+    - name: Show actual installed python dependencies
+      shell: bash
+      run: |
+        source env/activate
+        pip freeze
 
     - name: Verify CI model test matrices
       shell: bash

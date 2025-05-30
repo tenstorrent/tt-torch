@@ -54,6 +54,8 @@ jobs:
                   tests/models/mistral/test_pixtral.py::test_pixtral[full-eval]
                   tests/models/mistral/test_mistral.py::test_mistral[full-mistral7b-eval]
                   tests/models/mistral/test_mistral.py::test_mistral[full-ministral8b-eval]
+                  tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-2-eval]
+                  tests/models/seamless_m4t/test_seamless_m4t.py::test_seamless_m4t[full-eval]
             "
           },
         ]
@@ -148,7 +150,7 @@ jobs:
 
   merge_mlir_artifacts:
     needs: [tests]
-    if: ${{ inputs.run-dump-mlir == 'true' }}
+    if: ${{ always() && inputs.run-dump-mlir == 'true' }}  # Runs always if MLIR dump is enabled
     runs-on: ubuntu-latest
     name: Merge MLIR Artifacts
     steps:

@@ -28,9 +28,6 @@ class ThisTester(ModelTester):
         arguments = {"input_ids": input_ids, "generation_config": generation_config}
         return arguments
 
-    def set_model_eval(self, model):
-        return model
-
 
 @pytest.mark.parametrize(
     "mode",

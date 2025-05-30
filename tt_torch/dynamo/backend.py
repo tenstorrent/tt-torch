@@ -10,7 +10,13 @@ import tt_mlir
 import sys
 import torch_mlir
 
-from tt_torch.tools.utils import CompilerConfig
+from tt_torch.tools.utils import (
+    OpByOpBackend,
+    CompilerConfig,
+    CompileDepth,
+    tt_torch_error_message,
+    sanitize_filename,
+)
 
 
 class BackendOptions:
@@ -41,12 +47,6 @@ from torch_mlir.compiler_utils import (
 )
 from tt_torch.dynamo.passes import pass_pipeline
 from tt_torch.dynamo.executor import Executor
-from tt_torch.tools.utils import (
-    OpByOpBackend,
-    CompilerConfig,
-    CompileDepth,
-    tt_torch_error_message,
-)
 
 
 def create_verify_golden_callback(compiler_config: CompilerConfig):
@@ -103,10 +103,6 @@ def dump_module(module, name, compiler_config):
         print(f"{name} module", file=sys.stderr)
         print(module, file=sys.stderr)
 
-    def sanitize_filename(name):
-        # Replace any character that is not a letter, digit, underscore, or hyphen with '_'
-        return re.sub(r"[^\w\-]", "_", name)
-
     if compiler_config.save_mlir_override and name.lower() in (
         n.lower() for n in compiler_config.save_mlir_override
     ):
@@ -116,11 +112,12 @@ def dump_module(module, name, compiler_config):
         filepath = os.path.join(
             output_dir, f"{sanitized_model_name}_{name.lower()}.mlir"
         )
-        with open(filepath, "w") as f:
+        with open(filepath, "a") as f:
             if isinstance(module, str):
                 f.write(module)
             else:
                 f.write(module.operation.get_asm())
+            f.write("\n")
 
 
 def _shlo_backend(
