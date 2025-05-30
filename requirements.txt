@@ -1,4 +1,7 @@
-torch@https://download.pytorch.org/whl/cpu-cxx11-abi/torch-2.6.0%2Bcpu.cxx11.abi-cp310-cp310-linux_x86_64.whl
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.7.0
+torchvision
+torchaudio
 black
 bi-lstm-crf
 mdutils
@@ -8,7 +11,7 @@ pybind11
 pytest
 pytest-cov
 tabulate
-transformers==4.47.1
+transformers>=4.50.0
 protobuf
 tiktoken
 sentencepiece

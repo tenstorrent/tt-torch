@@ -180,7 +180,9 @@ class Executor:
             tt_mlir.create_system_desc(descriptor_device, descriptor_path)
 
             if device_from_user is None:
-                self._cleanup_resources([], device_idx)
+                self.owned_device_indices.remove(device_idx)
+                self.devices[device_idx] = None
+                tt_mlir.close_mesh_device(descriptor_device)
 
             system_desc_paths.append(descriptor_path)
         return system_desc_paths
@@ -244,15 +246,9 @@ class Executor:
         ):
             self.preprocessed_graph_constants[device_idx] = preprocessed_constants
 
-    def _cleanup_resources(self, preprocessed_activations, device_idx):
+    def _cleanup_resources(self, preprocessed_activations):
         for t in preprocessed_activations:
             tt_mlir.deallocate_tensor(t, force=True)
-
-        # if we opened the device, close it.
-        if device_idx in self.owned_device_indices:
-            tt_mlir.close_mesh_device(self.devices[device_idx])
-            self.owned_device_indices.remove(device_idx)
-            self.devices[device_idx] = None
 
     def get_inputs(self, *inputs, binary, program_idx, device_idx=0):
         def get_torch_tensors(tensors):
@@ -347,7 +343,6 @@ class Executor:
         for device_idx, binary in self.mcg.binaries.items():
             device_inputs = graph_inputs[device_idx]
 
-            binary = tt_mlir.create_binary_from_bytestream(binary)
             program_idx = 0
             preprocessed_weights, preprocessed_activations = self.get_inputs(
                 *device_inputs,
@@ -387,7 +382,7 @@ class Executor:
                 else:
                     final_outputs[graph_output.index] = output
 
-        self._cleanup_resources(preprocessed_activations, device_idx)
+        self._cleanup_resources(preprocessed_activations)
         assert all([o is not None for o in final_outputs])
         return final_outputs
 

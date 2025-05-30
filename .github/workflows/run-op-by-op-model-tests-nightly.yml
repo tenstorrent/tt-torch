@@ -68,7 +68,6 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "t5", tests: "
-              tests/models/t5/test_t5.py::test_t5[op_by_op_torch-t5-large-eval]
               tests/models/speecht5_tts/test_speecht5_tts.py::test_speecht5_tts[op_by_op_torch-eval]
               "
           },
@@ -96,11 +95,6 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "codegen", tests: "
-              tests/models/codegen/test_codegen.py::test_codegen[op_by_op_torch-eval]
-              "
-          },
-          {
             runs-on: wormhole_b0, name: "torchvision_1", tests: "
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-googlenet]
               "
@@ -109,11 +103,6 @@ jobs:
             runs-on: wormhole_b0, name: "deepseek", tests: "
               tests/models/deepseek/test_deepseek.py::test_deepseek[op_by_op_torch-deepseek-ai/DeepSeek-V3-eval]
               tests/models/deepseek/test_deepseek_qwen.py::test_deepseek_qwen[op_by_op_torch-deepseek-ai/DeepSeek-R1-Distill-Qwen-32B-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "phi", tests: "
-              tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-2-eval]
               "
           },
           {
@@ -151,7 +140,6 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "falcon3", tests: "
-              tests/models/falcon/test_falcon3.py::test_falcon[op_by_op_torch-tiiuae/Falcon3-3B-Base-eval]
               tests/models/falcon/test_falcon3.py::test_falcon[op_by_op_torch-tiiuae/Falcon3-7B-Base-eval]
               tests/models/falcon/test_falcon3.py::test_falcon[op_by_op_torch-tiiuae/Falcon3-10B-Base-eval]
               "

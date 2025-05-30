@@ -44,9 +44,6 @@ class ThisTester(ModelTester):
         inputs["decoder_input_ids"] = decoder_input_ids
         return inputs
 
-    def set_model_eval(self, model):
-        return model
-
 
 @pytest.mark.parametrize(
     "mode",
