@@ -35,7 +35,7 @@ class ThisTester(ModelTester):
         return pipe
 
     def _load_inputs(self):
-        pytest.skip() # Failing after torch + transformers uplift: https://github.com/tenstorrent/tt-torch/issues/868
+        pytest.skip()  # Failing after torch + transformers uplift: https://github.com/tenstorrent/tt-torch/issues/868
         prompt = [
             "A cat holding a sign that says hello world",
         ]
