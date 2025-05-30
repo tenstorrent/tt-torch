@@ -148,7 +148,7 @@ jobs:
                   tests/models/mamba/test_mamba.py::test_mamba[full-state-spaces/mamba-790m-hf-eval]
             "
           },
-          # Approximately 40 minutes.
+          # Approximately 60 minutes.
           {
             runs-on: wormhole_b0, name: "eval_9", tests: "
                 tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b0-eval]
@@ -159,6 +159,8 @@ jobs:
                 tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b5-eval]
                 tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b6-eval]
                 tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b7-eval]
+                tests/models/codegen/test_codegen.py::test_codegen[full-eval]
+                tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-2-eval]
             "
           },
           {
@@ -172,7 +174,6 @@ jobs:
                 tests/models/flux/test_flux.py::test_flux[full-flux_schnell-eval]
                 tests/models/flux/test_flux.py::test_flux[full-flux_dev-eval]
                 tests/models/gliner/test_gliner.py::test_gliner[full-eval]
-                tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-2-eval]
                 tests/models/mistral/test_pixtral.py::test_pixtral[full-eval]
                 tests/models/mistral/test_mistral.py::test_mistral[full-mistral7b-eval]
                 tests/models/mistral/test_mistral.py::test_mistral[full-ministral8b-eval]

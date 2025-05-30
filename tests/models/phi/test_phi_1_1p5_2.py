@@ -53,16 +53,6 @@ def test_phi(record_property, model_name, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    skip_full_eval_test(
-        record_property,
-        cc,
-        model_name,
-        bringup_status="FAILED_RUNTIME",
-        reason="Cannot get the device from a tensor without an allocated buffer - https://github.com/tenstorrent/tt-torch/issues/733",
-        model_group=model_group,
-        model_name_filter="microsoft/phi-2",
-    )
-
     tester = ThisTester(
         model_name,
         mode,
