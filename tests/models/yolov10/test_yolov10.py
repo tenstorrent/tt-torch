@@ -8,8 +8,9 @@ import pytest
 import os
 from pathlib import Path
 import requests
-from tests.utils import ModelTester, get_file, skip_full_eval_test
+from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.tools.utils import get_file
 from ultralytics import YOLO
 
 
