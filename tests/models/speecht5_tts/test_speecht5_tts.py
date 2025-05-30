@@ -54,7 +54,6 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_speecht5_tts(record_property, mode, op_by_op):
-    pytest.skip()  # crashes in lowering to stable hlo
     model_name = "speecht5-tts"
 
     cc = CompilerConfig()
@@ -70,7 +69,6 @@ def test_speecht5_tts(record_property, mode, op_by_op):
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
-        is_token_output=True,
     )
     tester.test_model()
     # if mode == "eval":
