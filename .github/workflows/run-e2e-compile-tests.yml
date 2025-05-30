@@ -34,7 +34,6 @@ jobs:
           {
             # Approximately 50 minutes.
             runs-on: wormhole_b0, name: "compile_1", tests: "
-              tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-3B-Base-eval]
               tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-7B-Base-eval]
               tests/models/detr/test_detr_onnx.py::test_detr_onnx[full-eval]
             "
@@ -50,7 +49,6 @@ jobs:
                   tests/models/llama/test_llama_7b.py::test_llama_7b[full-eval]
                   tests/models/falcon/test_falcon.py::test_falcon[full-eval]
                   tests/models/codegen/test_codegen.py::test_codegen[full-eval]
-                  tests/models/t5/test_t5.py::test_t5[full-t5-large-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-googlenet]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-ghostnetv2_100.in1k]
                   tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-2-eval]

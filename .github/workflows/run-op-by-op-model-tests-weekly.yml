@@ -97,6 +97,7 @@ jobs:
               tests/models/t5/test_t5.py::test_t5[op_by_op_torch-t5-small-eval]
               tests/models/t5/test_t5.py::test_t5[op_by_op_torch-t5-base-eval]
               tests/models/flan_t5/test_flan_t5.py::test_flan_t5[op_by_op_torch-eval]
+              tests/models/t5/test_t5.py::test_t5[op_by_op_torch-t5-large-eval]
               "
           },
           {
@@ -230,6 +231,7 @@ jobs:
           {
             runs-on: wormhole_b0, name: "falcon3", tests: "
               tests/models/falcon/test_falcon3.py::test_falcon[op_by_op_torch-tiiuae/Falcon3-1B-Base-eval]
+              tests/models/falcon/test_falcon3.py::test_falcon[op_by_op_torch-tiiuae/Falcon3-3B-Base-eval]
               "
           },
           {
