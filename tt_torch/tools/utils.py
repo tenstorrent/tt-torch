@@ -176,9 +176,9 @@ class MultiChipGraph:
             true_graph_outputs = graph_output_node.args[0]
             expected_graph_outputs = self.graph_outputs[idx]
             if len(true_graph_outputs) > len(expected_graph_outputs):
-                print(
-                    "Found more graph outputs than expected, adding them to mcg.graph_outputs"
-                )
+                # print(
+                #     "Found more graph outputs than expected, adding them to mcg.graph_outputs"
+                # )
                 for i in range(len(expected_graph_outputs), len(true_graph_outputs)):
                     mco = MultiChipOutput(idx, IOType.USER, next_output_idx)
                     self.graph_outputs[idx].append(mco)
