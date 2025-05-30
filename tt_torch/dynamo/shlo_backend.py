@@ -468,7 +468,7 @@ class StablehloExecutor(OpByOpExecutor):
             self.print_op(op)
 
     def __call__(self, *inputs):
-
+        # breakpoint()
         if self.compiler_config.compile_depth in (
             CompileDepth.EXECUTE_OP_BY_OP,
             CompileDepth.COMPILE_OP_BY_OP,
