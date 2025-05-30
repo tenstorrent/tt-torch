@@ -61,6 +61,11 @@ jobs:
               "
           },
           {
+            runs-on: wormhole_b0, name: "codegen", tests: "
+              tests/models/codegen/test_codegen.py::test_codegen[op_by_op_torch-eval]
+              "
+          },
+          {
             runs-on: wormhole_b0, name: "gpt", tests: "
               tests/models/gpt2/test_gpt2.py::test_gpt2[op_by_op_torch-eval]
               "
@@ -205,6 +210,7 @@ jobs:
             runs-on: wormhole_b0, name: "phi", tests: "
               tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-1-eval]
               tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-1.5-eval]
+              tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-2-eval]
               "
           },
           {
