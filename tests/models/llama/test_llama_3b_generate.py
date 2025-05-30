@@ -22,7 +22,7 @@ class ThisTester(ModelTester):
             torch_dtype=torch.bfloat16,
             use_cache=True,
         )
-        model.config.num_hidden_layers = 2  # otherwise it's too big to fit on device
+        model.config.num_hidden_layers = 2  # otherwise it's too big to fit on device/
 
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_name, torch_dtype=torch.bfloat16
@@ -34,11 +34,12 @@ class ThisTester(ModelTester):
     def _load_inputs(self):
         self.test_input = "This is a sample text from "
 
+        max_input_length = 32
         inputs = self.tokenizer.encode_plus(
             self.test_input,
             return_tensors="pt",
-            # max_length=input_length,
-            # padding="max_length",
+            max_length=max_input_length,
+            padding="max_length",
             truncation=True,
         )
 
@@ -54,10 +55,9 @@ class ThisTester(ModelTester):
         )
 
         attention_mask = inputs.attention_mask
-        cache_position = attention_mask.cumsum(dim=-1) - 1
-        cache_position = cache_position.masked_fill(attention_mask == 0, 0)
 
-        # cache_position=torch.arange(0, input_length)
+        # cache position represents the positions in the cache to update -> We should include padding tokens here.
+        cache_position = torch.arange(0, max_input_length)
 
         args = {
             "input_ids": inputs.input_ids,
@@ -66,12 +66,14 @@ class ThisTester(ModelTester):
             "cache_position": cache_position,
             "attention_mask": attention_mask,
         }
+        print(args)
         return args
 
     def set_model_eval(self, model):
         return model
 
 
+@torch.inference_mode()
 def test_llama_3b(record_property):
     cc = CompilerConfig()
     cc.compile_depth = CompileDepth.EXECUTE
@@ -88,5 +90,10 @@ def test_llama_3b(record_property):
         record_property_handle=record_property,
     )
 
-    results = tester.test_model()
+    # results = tester.test_model()
+
+    model = tester.get_framework_model()
+    model = tester.compile_model(model, tester.compiler_config)
+    outputs = tester.run_model(model, tester.inputs)
+
     tester.finalize()
