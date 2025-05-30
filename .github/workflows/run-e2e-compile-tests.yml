@@ -32,10 +32,11 @@ jobs:
       matrix:
         build: [
           {
-            # Approximately 50 minutes.
+            # Approximately 60 minutes.
             runs-on: wormhole_b0, name: "compile_1", tests: "
               tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-7B-Base-eval]
               tests/models/detr/test_detr_onnx.py::test_detr_onnx[full-eval]
+              tests/models/oft/test_oft.py::test_oft[full-eval]
             "
           },
           {
