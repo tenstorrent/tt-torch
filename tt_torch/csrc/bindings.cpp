@@ -262,8 +262,50 @@ at::Tensor to_host_single_rt_tensor(tt::runtime::Tensor &rt_output) {
   return output;
 }
 
+py::object to_host_single_object(py::object obj) {
+  assert(py::isinstance<py::dict>(obj) &&
+         "Non-tensor type must be castable to a dictionary");
+  py::dict attrs = obj.cast<py::dict>();
+  for (auto &item : attrs) {
+    std::string key = py::str(item.first);
+    py::handle value = item.second;
+    py::iterable value_wrapper;
+    if (py::isinstance<tt::runtime::Tensor>(value)) {
+      value_wrapper = py::list(py::make_tuple(value));
+    } else {
+      assert(py::isinstance<py::iterable>(value) &&
+             "Value within object must be iterable");
+      value_wrapper = value.cast<py::iterable>();
+    }
+    py::list res = py::list();
+    for (auto &v : value_wrapper) {
+      if (py::isinstance<tt::runtime::Tensor>(v)) {
+        tt::runtime::Tensor rt_tensor = v.cast<tt::runtime::Tensor>();
+        at::Tensor host_tensor = to_host_single_rt_tensor(rt_tensor);
+        res.append(host_tensor);
+      } else {
+        res.append(v);
+      }
+    }
+    if (res.size() == 1) {
+      attrs[key.c_str()] = res[0];
+    } else {
+      attrs[key.c_str()] = res;
+    }
+  }
+  return attrs;
+}
+
 HostReturnType to_host(py::args args) {
   std::vector<at::Tensor> outputs;
+
+  // Handle the special case where the input is a single non-tensor object.
+  bool is_single_non_tensor_obj =
+      py::len(args) == 1 && !(py::isinstance<tt::runtime::Tensor>(args[0]) ||
+                              py::isinstance<at::Tensor>(args[0]));
+  if (is_single_non_tensor_obj) {
+    return to_host_single_object(args[0]);
+  }
 
   for (auto &arg : args) {
     if (py::isinstance<py::tuple>(arg)) {
@@ -284,38 +326,15 @@ HostReturnType to_host(py::args args) {
       outputs.emplace_back(to_host_single_rt_tensor(rt_tensor));
     } else if (py::isinstance<at::Tensor>(arg)) {
       outputs.emplace_back(arg.cast<at::Tensor>());
-    } else {
-      // If we get here, we have a non-tensor type pyobject
-      py::object obj = py::reinterpret_borrow<py::object>(arg);
-      assert(py::hasattr(obj, "__dict__") &&
-             "Non-tensor type doesn't have __dict__ attribute");
-      // Get the object's dictionary of attributes
-      py::dict attrs = obj.attr("__dict__");
-
-      // Iterate through attributes and move any RT tensors to host in-place
-      for (auto item : attrs) {
-        std::string key = py::str(item.first);
-        py::handle value = item.second;
-
-        if (py::isinstance<tt::runtime::Tensor>(value)) {
-          tt::runtime::Tensor rt_tensor = value.cast<tt::runtime::Tensor>();
-          at::Tensor host_tensor = to_host_single_rt_tensor(rt_tensor);
-          obj.attr(key.c_str()) = host_tensor;
-        }
-      }
-      // Return the modified object
-      return obj;
     }
   }
 
-  // If all args were tensor types, return the vector of host tensors
   return outputs;
 }
 
 std::vector<at::Tensor> run(tt::runtime::Device device,
                             tt::runtime::Binary &binary, uint32_t program_idx,
                             std::vector<tt::runtime::Tensor> &rt_inputs) {
-
   std::vector<tt::runtime::Tensor> rt_outputs =
       tt::runtime::submit(device, binary, program_idx, rt_inputs);
 
