@@ -42,7 +42,10 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_mgp_str_base(record_property, mode, op_by_op):
+@pytest.mark.parametrize(
+    "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
+)
+def test_mgp_str_base(record_property, mode, op_by_op, data_parallel_mode):
     if mode == "train":
         pytest.skip()
     model_name = "alibaba-damo/mgp-str-base"
@@ -51,6 +54,8 @@ def test_mgp_str_base(record_property, mode, op_by_op):
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if op_by_op:
+        if data_parallel_mode:
+            pytest.skip("Op-by-op not supported in data parallel mode")
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
@@ -68,13 +73,18 @@ def test_mgp_str_base(record_property, mode, op_by_op):
         assert_atol=False
         if disable_checking
         else True,  # ATOL checking issues - No model legitimately checks ATOL, issue #690
+        data_parallel_mode=data_parallel_mode,
     )
+    # TODO: This model test is still failing even with the to_host fix.
     results = tester.test_model()
 
-    if mode == "eval" and not disable_checking:
-        logits = results.logits
+    def print_result(result):
+        logits = result.logits
         generated_text = tester.processor.batch_decode(logits)["generated_text"]
         print(f"Generated text: '{generated_text}'")
         assert generated_text[0] == "ticket"
+
+    if mode == "eval" and not disable_checking:
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
     tester.finalize()
