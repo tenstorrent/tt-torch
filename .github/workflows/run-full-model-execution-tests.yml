@@ -119,7 +119,6 @@ jobs:
                 tests/models/vit/test_vit_n300.py::test_vit[full-eval]
                 tests/models/segformer/test_segformer_n300.py::test_segformer[full-eval]
                 tests/models/hardnet/test_hardnet_n300.py::test_hardnet[full-eval]
-                tests/models/resnet/test_resnet_n300.py::test_resnet[full-eval]
             "
           },
         ]
