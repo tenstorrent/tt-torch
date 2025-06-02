@@ -81,6 +81,12 @@ sudo ln -s /usr/bin/clang++-17 /usr/bin/clang++
 clang -v
 ```
 
+Look for the line that starts with: `Selected GCC installation:`. If it is something other than GCC 11, please uninstall that and install GCC 11 using:
+
+```bash
+sudo apt-get install gcc-11 lib32stdc++-11-dev lib32gcc-11-dev
+```
+
 3. Delete any non-11 paths:
 
 ```bash
