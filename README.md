@@ -7,7 +7,7 @@ tt-torch is a [PyTorch2.0](https://pytorch.org/get-started/pytorch-2.0/) and [to
 
 ## Links
 - [Overview](https://docs.tenstorrent.com/tt-torch/overview.html)
-- [Building](https://docs.tenstorrent.com/tt-torch/build.html)
+- [Getting Started](https://docs.tenstorrent.com/tt-torch/getting_started.html)
 - [Models](https://docs.tenstorrent.com/tt-torch/models/supported_models.html)
 
 [codecov]: https://codecov.io/gh/tenstorrent/tt-torch
