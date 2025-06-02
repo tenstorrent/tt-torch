@@ -302,11 +302,11 @@ HostReturnType to_host(py::args args) {
   // Handle the special case where the input is a single non-tensor object.
   bool is_single_non_tensor_obj =
       py::len(args) == 1 && !(py::isinstance<tt::runtime::Tensor>(args[0]) ||
-                              py::isinstance<at::Tensor>(args[0]));
+                              py::isinstance<at::Tensor>(args[0]) ||
+                              py::isinstance<py::tuple>(args[0]));
   if (is_single_non_tensor_obj) {
     return to_host_single_object(args[0]);
   }
-
   for (auto &arg : args) {
     if (py::isinstance<py::tuple>(arg)) {
       for (auto &item : arg) {
