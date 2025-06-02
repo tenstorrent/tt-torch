@@ -54,7 +54,9 @@ jobs:
         path:  ${{ steps.strings.outputs.xml-dir }}
         merge-multiple: true
         # Conditionally use the run-id input if provided
-        run-id: ${{ inputs.run-id || github.run_id }}
+        repository: tenstorrent/tt-torch
+        run-id: ${{ inputs.run-id || 15373778463 }}
+        github-token: ${{ github.token }} # needed to do cross-workflow download?
 
     - run: ls -lshR ${{ steps.strings.outputs.xml-dir }}
 
