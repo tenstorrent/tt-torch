@@ -55,16 +55,12 @@ jobs:
         merge-multiple: true
         # Conditionally use the run-id input if provided
         run-id: ${{ inputs.run-id || github.run_id }}
+        # github-token must be specified for cross-workflow artifact downloads or else
+        #   it fails silently with no artifacts found
+        github-token: ${{ github.token }}
+
 
     - run: ls -lshR ${{ steps.strings.outputs.xml-dir }}
-
-    - name: install tt-torch
-      shell: bash
-      run: |
-        source env/activate
-        mkdir -p ${{ steps.strings.outputs.dist-dir }}
-        mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
-        pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
     - name: Get git metadata and set artifact name
       id: git-info
