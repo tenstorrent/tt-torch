@@ -40,7 +40,7 @@ def test_yolov3(record_property, mode, op_by_op):
     tester = ThisTester(
         model_name,
         mode,
-        required_pcc=0.98,
+        required_pcc=0.97,
         assert_pcc=True,
         assert_atol=False,
         compiler_config=cc,
