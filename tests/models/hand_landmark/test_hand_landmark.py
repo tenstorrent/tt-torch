@@ -33,11 +33,6 @@ class ThisTester(ModelTester):
         image = mp.Image.create_from_file(str(image_path))
         return image
 
-    def set_model_eval(self, model):
-        # 'HandLandmarker' object has no attribute 'eval'
-        # model.eval()
-        return model
-
 
 @pytest.mark.parametrize(
     "mode",

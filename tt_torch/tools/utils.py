@@ -411,6 +411,16 @@ class CompilerConfig:
                     print(
                         f"Warning: Invalid SAVE_MLIR value: {dialect}. Expected one or more of {valid_dialects} separated by commas."
                     )
+            output_dir = "model_mlir"
+            os.makedirs(output_dir, exist_ok=True)
+            try:
+                sanitized_model_name = sanitize_filename(self.model_name)
+                for filename in os.listdir(output_dir):
+                    if filename.startswith(sanitized_model_name):
+                        filepath_to_remove = os.path.join(output_dir, filename)
+                        os.remove(filepath_to_remove)
+            except Exception as e:
+                print(f"Error while cleaning up old MLIR files: {e}.")
 
     def post_init(self):
         if self.consteval_parameters:
@@ -747,6 +757,11 @@ def calculate_pcc(tensor, golden_tensor):
 
 def serialize_enum(enum_value):
     return f"{enum_value.__class__.__name__}.{enum_value.name}"
+
+
+def sanitize_filename(name):
+    # Replace any character that is not a letter, digit, underscore, or hyphen with '_'
+    return re.sub(r"[^\w\-]", "_", name)
 
 
 def tt_torch_error_message(func):

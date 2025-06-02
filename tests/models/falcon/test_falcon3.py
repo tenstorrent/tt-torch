@@ -67,10 +67,8 @@ def test_falcon(record_property, model_name, mode, op_by_op):
         reason="Model is too large to fit on single device during execution.",
         model_group=model_group,
         model_name_filter=[
-            "tiiuae/Falcon3-3B-Base",
             "tiiuae/Falcon3-7B-Base",
             "tiiuae/Falcon3-10B-Base",
-            "tiiuae/Falcon3-3B-Instruct",
             "tiiuae/Falcon3-7B-Instruct",
             "tiiuae/Falcon3-10B-Instruct",
         ],

@@ -321,16 +321,14 @@ test_files
 
 ### Load Files from S3 Bucket
 
-Once files is loaded into S3 bucket we can access the file using a helper function:
+Once files is loaded into S3 bucket we can access the file using a helper function from the tt-forge-models repo:
 ```
-@staticmethod
-def get_file(s3_path):
+def get_file(path):
 ```
 
 ```
-from tests.utils import ModelTester, get_file, skip_full_eval_test
+from third_party.tt_forge_models.tools.utils import get_file
 
-...
 class ThisTester(ModelTester):
     def _load_model(self):
         file = get_file("test_files/pytorch/yoloyv10/yolov_10n.pt")
@@ -339,7 +337,7 @@ class ThisTester(ModelTester):
 
 ```
 
-The `s3_path` arg should be the full path of the file in the S3 bucket.
+The `path` arg should be the full path of the file in the S3 bucket.
 
 #### Loading Files Locally
 
