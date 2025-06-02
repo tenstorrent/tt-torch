@@ -63,7 +63,6 @@ def test_phi(record_property, model_name, mode, op_by_op):
         run_generate=True,  # run model.generate(**inputs)
     )
 
-
     results = tester.test_model(assert_eval_token_mismatch=False)
 
     if mode == "eval":

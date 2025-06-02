@@ -14,7 +14,7 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 class ThisTester(ModelTester):
     def _load_model(self):
         self.tokenizer = AutoTokenizer.from_pretrained(
-            self.model_name, torch_dtype=torch.bfloat16       
+            self.model_name, torch_dtype=torch.bfloat16
         )
         model = AutoModelForCausalLM.from_pretrained(self.model_name)
         return model.generate
@@ -29,7 +29,12 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.parametrize(
-    "model_name", ["microsoft/Phi-3-mini-128k-instruct", "microsoft/Phi-3-mini-4k-instruct", "microsoft/Phi-3.5-MoE"]
+    "model_name",
+    [
+        "microsoft/Phi-3-mini-128k-instruct",
+        "microsoft/Phi-3-mini-4k-instruct",
+        "microsoft/Phi-3.5-MoE",
+    ],
 )
 @pytest.mark.parametrize(
     "op_by_op",
