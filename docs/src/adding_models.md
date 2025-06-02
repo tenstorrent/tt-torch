@@ -1,9 +1,11 @@
 # How to add model tests?
 
 ## Requirements
-[Build your environment](https://docs.tenstorrent.com/tt-torch/build.html)
+[Getting Started](https://docs.tenstorrent.com/tt-torch/getting_started.html)
 
-## TT-Torch Backend in a nutshell
+Following the instructions on this page will show you how to build your environment and run a demo.
+
+## TT-Torch Backend in a Nutshell
 
 ### `ModelTester` and `OnnxModelTester`
 Our testing framework uses `ModelTester`, `OnnxModelTester` defined under [tests/utils.py](https://github.com/tenstorrent/tt-torch/blob/main/tests/utils.py)
@@ -147,7 +149,7 @@ This class manages settings for running models on Tenstorrent devices. Key aspec
 
 Please see [tt_torch/tools/utils.py](https://github.com/tenstorrent/tt-torch/blob/main/tt_torch/tools/utils.py) for detailed information.
 
-## How to write a test?
+## How to Write a Test?
 The following is an example test body:
 ```
 # Insert SPDX licensing. Pre-commit will insert if it is missing
@@ -235,19 +237,19 @@ def <test_name>(record_property, model_name, mode, op_by_op):
 You can find example tests under [tests/models](https://github.com/tenstorrent/tt-torch/tree/main/tests/models)
 Note: please make sure to distinguish Onnx tests by appending `_onnx` to test names. i.e. `test_EfficientNet_onnx.py`
 
-## Test run modes
+## Test Run Nodes
 
 - op-by-op flow: This will break down model into graphs and break down graphs into ops, compiling and executing unique (first seen occurrence) ops independently. Results are written to .json file and and optionally converted to XLS file for reporting, as post-processing step.  The op-by-op flow is typically used for bringing up new models and debugging and you should start there, especially if the model is a new, untested architecture or your have reason to believe it will not work end-to-end out of the box. Engaged with `cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP` in test, typically driven by pytest params `[op_by_op_torch-eval]`.
 
 - full end-to-end flow: This is the typical compile + execute of the model that typically includes functional correctness checking. Engaged with `cc.compile_depth = CompileDepth.EXECUTE` in test, typically driven by pytest params `[full-eval]`.
 
 
-## Where to add tests on tt-torch GitHub CI?
+## Where to Add Tests on tt-torch GitHub CI?
 
 If you're a Tenstorrent internal developer and have a new model that is either running fully/correctly or still needs some work (compiler support, runtime support, etc), it should be added to CI in the same PR you add the model.  Below is guide for where to add it.
 
 
-### Case 1: The new model test runs correctly end-to-end
+### Case 1: The New Model Test Runs Correctly End-to-end
 
 If you've tried it and it runs – great!
 
@@ -263,7 +265,7 @@ tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[full-Qwen/Qwen2.
 tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[op_by_op_torch-Qwen/Qwen2.5-1.5B-eval]
 ```
 
-### Case 2: The new model test runs end-to-end but encounters a PCC/ATOL/Checker error
+### Case 2: The New Model Test Runs End-to-end but Encounters a PCC/ATOL/Checker Error
 
 This is okay, there is still value in running the model.
 
@@ -275,7 +277,7 @@ assert_pcc=False,
 assert_atol=False,
 ```
 
-### Case 3: The new model test does not run correctly end-to-end
+### Case 3: The New Model Test Does Not Run Correctly End-to-end
 
 No problem. If your end-to-end model hits a compiler failure (unsupported op, etc) or runtime assert of any kind, this is why the op-by-op flow exists. The op-by-op flow is designed to flag per-op compile/runtime failures (which are perfectly fine) but is expected to return overall passed status.
 
@@ -289,11 +291,11 @@ tests/models/t5/test_t5.py::test_t5[op_by_op_torch-t5-large-eval]
 
 - If your model is reported in `results/models_op_per_op.xlsx` as being able to compile all ops successfully (ie. all ops can compile to status `6: CONVERTED_TO_TTNN`, but some hit runtime `7: EXECUTE` failures) then it should also be added to "nightly e2e compile list" in `.github/workflows/run-e2e-compile-tests.yml` which stops before executing the model via `TT_TORCH_COMPILE_DEPTH=TTNN_IR pytest ...`
 
-## How to load test files into/from Large File System (LFS)
+## How to Load Test Files into/from Large File System (LFS)
 
 We have set up access to a AWS S3 bucket to be able to load and access model related files for testing. We can load files into our S3 bucket and access them from the tester scripts. You will need access to S3 bucket portal to add files. **If you don't have an AWS account or access to the S3 bucket please reach out to the tt-torch community leader.** Then, depending on if the test is running on CI or locally we will be able to load the files from the CI/IRD LFS caches that automatically sync up with contents in S3 bucket.
 
-### Load files into S3 bucket
+### Load Files into S3 Bucket
 
 Access S3 bucket portal, **if you don't have access to the S3 bucket please reach out to the tt-torch community leader**, and load file from local dir. Please add files following this structure:
 
@@ -317,7 +319,7 @@ test_files
     └── ...
 ```
 
-### Load files from S3 bucket
+### Load Files from S3 Bucket
 
 Once files is loaded into S3 bucket we can access the file using a helper function:
 ```
@@ -339,12 +341,12 @@ class ThisTester(ModelTester):
 
 The `s3_path` arg should be the full path of the file in the S3 bucket.
 
-#### Loading files locally
+#### Loading Files Locally
 
 Locally `get_file()` will pull files directly from an IRD LFS cache. The IRD LFS cache is set up to sync up with S3 bucket every 5-10 minutes. You will need to set the `IRD_LF_CACHE` environment variable to the appropriate address. **Contact tt-torch community leader for IRD LF cache address.**
 
 The file/s will be downloaded into a local cache so next time you want to access the same file we won't have to access the IRD cache. The default location for the local cache is `~/.cache/`. If you want to redirect files to a custom cache path set the `LOCAL_LF_CACHE` env variable to the desired path.
 
-#### Loading files from CI
+#### Loading Files from CI
 
 Once a file has been loaded into ther S3 bucket the CI's shared `DOCKER_CACHE_DIR` has been set up to sync up with the contents of the S3 bucket every hour. `get_file()` will fetch the file from the `DOCKER_CACHE_DIR`.

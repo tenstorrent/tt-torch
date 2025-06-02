@@ -4,7 +4,6 @@
 
 
 # User guide
-- [Building](build.md)
 - [Testing](test.md)
 - [Controlling Compiler](controlling.md)
 - [Pre-commit](pre_commit.md)
