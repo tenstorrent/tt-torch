@@ -238,11 +238,18 @@ run_async(tt::runtime::Device device, tt::runtime::Binary &binary,
       tt::runtime::submit(device, binary, program_idx, rt_inputs);
 
   for (auto &rt_output : rt_outputs) {
+    std::cout << "[HET DEBUG C++] [RUN_ASYNC] Output tensor: "
+              << rt_output.handle << std::endl;
     auto it = std::find_if(rt_inputs.begin(), rt_inputs.end(),
                            [&rt_output](const tt::runtime::Tensor &input) {
                              return input.handle == rt_output.handle;
                            });
     if (it != rt_inputs.end()) {
+      std::cout << "[HET DEBUG C++] [RUN_ASYNC] Output tensor is the same as "
+                   "an existing input tensor."
+                << std::endl;
+      std::cout << "[HET DEBUG C++] [RUN_ASYNC] Output tensor: "
+                << rt_output.handle << std::endl;
       // Output tensor is the same as an existing input tensor.
       rt_output = tt::runtime::toHost(rt_output, /*untilize=*/true)[0];
       tt::runtime::TensorDesc desc = tt::runtime::getTensorDesc(rt_output);
@@ -263,6 +270,8 @@ at::Tensor to_host_single_rt_tensor(tt::runtime::Tensor &rt_output) {
 }
 
 py::object to_host_single_object(py::object obj) {
+  std::cout << "[HET DEBUG C++] [SINGLE OBJECT] obj: " << py::repr(obj)
+            << std::endl;
   assert(py::isinstance<py::dict>(obj) &&
          "Non-tensor type must be castable to a dictionary");
   py::dict attrs = obj.cast<py::dict>();
@@ -299,6 +308,15 @@ py::object to_host_single_object(py::object obj) {
 HostReturnType to_host(py::args args) {
   std::vector<at::Tensor> outputs;
 
+  // Handle the special case where the input is a single non-tensor object.
+  bool is_single_non_tensor_obj =
+      py::len(args) == 1 && !(py::isinstance<tt::runtime::Tensor>(args[0]) ||
+                              py::isinstance<at::Tensor>(args[0]));
+  if (is_single_non_tensor_obj) {
+    return to_host_single_object(args[0]);
+  }
+  std::cout << "[HET DEBUG C++] [MULTIPLE OBJECTS] args: " << py::repr(args)
+            << std::endl;
   for (auto &arg : args) {
     if (py::isinstance<py::tuple>(arg)) {
       for (auto &item : arg) {
