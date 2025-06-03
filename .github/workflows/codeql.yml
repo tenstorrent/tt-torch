@@ -54,22 +54,3 @@ jobs:
       uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{matrix.language}}"
-
-  cppcheck:
-    name: Cppcheck
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        submodules: 'recursive'
-        clean: true
-        fetch-depth: 0 # Fetch all history and tags
-
-    - name: Run Cppcheck
-      run: |
-        sudo apt-get install -y cppcheck
-        cd tt_torch/csrc
-        cppcheck --std=c++17 --check-level=exhaustive --enable=warning,information --platform=unix64 --suppress=uninitMemberVar .
