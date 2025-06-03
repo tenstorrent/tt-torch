@@ -79,6 +79,11 @@ jobs:
             "
           },
           {
+            # The following tests don't support data parallel mode:
+            # - tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[data_parallel-full-eval]
+            # - tests/models/squeeze_bert/test_squeeze_bert.py::test_squeeze_bert[data_parallel-full-eval]
+            # - tests/models/vit/test_vit_onnx.py::test_vit_onnx[data_parallel-full-eval]
+            # - tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small[data_parallel-full-eval]
             runs-on: n300, name: "eval_1_data_parallel", tests: "
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-vgg19]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-vgg19_bn]
@@ -139,6 +144,26 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-swin_v2_s]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-densenet121]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-densenet169]
+            "
+          },
+          {
+            # Approximately 95 minutes.
+            runs-on: n300, name: "eval_2_data_parallel", tests: "
+                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[data_parallel-full-eval-hrnet_w18.ms_aug_in1k]
+                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[data_parallel-full-eval-ghostnet_100.in1k]
+                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[data_parallel-full-eval-xception71.tf_in1k]
+                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[data_parallel-full-eval-mobilenetv1_100.ra4_e3600_r224_in1k]
+                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[data_parallel-full-eval-dla34.in1k]
+                  tests/models/albert/test_albert_question_answering.py::test_albert_question_answering[data_parallel-full-twmkn9/albert-base-v2-squad2-eval]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-swin_b]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-densenet201]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-swin_s]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-densenet161]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-swin_v2_t]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-swin_v2_b]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-swin_v2_s]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-densenet121]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-densenet169]
             "
           },
           {

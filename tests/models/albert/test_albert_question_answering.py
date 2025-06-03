@@ -36,12 +36,19 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_albert_question_answering(record_property, model_name, mode, op_by_op):
+@pytest.mark.parametrize(
+    "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
+)
+def test_albert_question_answering(
+    record_property, model_name, mode, op_by_op, data_parallel_mode
+):
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if op_by_op:
+        if data_parallel_mode:
+            pytest.skip("Op-by-op not supported in data parallel mode")
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
@@ -55,13 +62,13 @@ def test_albert_question_answering(record_property, model_name, mode, op_by_op):
         record_property_handle=record_property,
         assert_pcc=True,
         assert_atol=False,
+        data_parallel_mode=data_parallel_mode,
     )
     results = tester.test_model()
 
-    if mode == "eval":
-        answer_start_index = results.start_logits.argmax()
-        answer_end_index = results.end_logits.argmax()
-
+    def print_result(result):
+        answer_start_index = result.start_logits.argmax()
+        answer_end_index = result.end_logits.argmax()
         predict_answer_tokens = tester.inputs.input_ids[
             0, answer_start_index : answer_end_index + 1
         ]
@@ -72,5 +79,8 @@ def test_albert_question_answering(record_property, model_name, mode, op_by_op):
         print(
             f"Model: {model_name} | Question: {tester.question} | Text: {tester.text} | Answer: {answer}"
         )
+
+    if mode == "eval":
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
     tester.finalize()

@@ -45,10 +45,15 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_phi(record_property, model_name, mode, op_by_op):
+@pytest.mark.parametrize(
+    "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
+)
+def test_phi(record_property, model_name, mode, op_by_op, data_parallel_mode):
     model_group = "red"
     cc = CompilerConfig()
     if op_by_op:
+        if data_parallel_mode:
+            pytest.skip("Op-by-op not supported in data parallel mode")
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
@@ -61,13 +66,14 @@ def test_phi(record_property, model_name, mode, op_by_op):
         is_token_output=True,
         model_group=model_group,
         run_generate=True,  # run model.generate(**inputs)
+        data_parallel_mode=data_parallel_mode,
     )
 
     # TODO - Enable checking - https://github.com/tenstorrent/tt-torch/issues/528
     results = tester.test_model(assert_eval_token_mismatch=False)
 
-    if mode == "eval":
-        decoded_output = tester.tokenizer.decode(results[0])
+    def print_result(result):
+        decoded_output = tester.tokenizer.decode(result[0])
         print(
             f"""
         model_name: {model_name}
@@ -75,4 +81,8 @@ def test_phi(record_property, model_name, mode, op_by_op):
         output: {decoded_output}
         """
         )
+
+    if mode == "eval":
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
+
     tester.finalize()
