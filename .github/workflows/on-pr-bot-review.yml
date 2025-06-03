@@ -2,7 +2,7 @@ name: reviewdog
 on: [pull_request]
 jobs:
   pyflakes:
-    name: runner / pyflakes
+    name: Pyflakes
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -38,18 +38,18 @@ jobs:
         sudo dpkg -i "$TEMP_DEB" && \
         rm -f "$TEMP_DEB"
     - name: Run Cppcheck with reviewdog
-      # env:
-      #   REVIEWDOG_GITHUB_API_TOKEN: ${{ github.token }}
+      env:
+        REVIEWDOG_GITHUB_API_TOKEN: ${{ github.token }}
       run: |
         cd tt_torch/csrc
         cppcheck --std=c++17 --check-level=exhaustive --enable=warning,information --platform=unix64 --suppress=uninitMemberVar --output-file=../../.output.sarif --output-format=sarif .
         cd ../..
-        # cat .output.sarif | reviewdog -f=sarif -reporter=github-pr-check -level=warning -fail-on-error=true -filter-mode=nofilter -diff="git diff origin/main" -tee
+        cat .output.sarif | reviewdog -f=sarif -reporter=github-pr-review -level=warning -fail-on-error=true -filter-mode=nofilter -diff="git diff origin/main" -tee
 
-    - name: Upload SARIF file
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: .output.sarif
-        # Optional category for the results
-        # Used to differentiate multiple results for one commit
-        category: cppcheck
+    # - name: Upload SARIF file
+    #   uses: github/codeql-action/upload-sarif@v3
+    #   with:
+    #     sarif_file: .output.sarif
+    #     # Optional category for the results
+    #     # Used to differentiate multiple results for one commit
+    #     category: cppcheck
