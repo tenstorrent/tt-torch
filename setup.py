@@ -19,9 +19,12 @@ class install_metal_libs(install_lib):
             os.path.join(
                 os.getcwd(),
                 "third_party",
-                "tt-mlir",
+                "tt-xla",
                 "src",
-                "tt-mlir-build",
+                "tt-xla",
+                "third_party",
+                "tt-mlir",
+                "build",
                 "bin",
                 "ttmlir-opt",
             )
