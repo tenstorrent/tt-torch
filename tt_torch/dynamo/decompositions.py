@@ -333,12 +333,26 @@ def erf(x):
     return sign * y
 
 
-def gelu(x):
+def gelu(x, approximate="none"):
     """
     GELU activation using the error function
     Formula: 0.5 * x * (1 + erf(x / sqrt(2)))
     """
-    return 0.5 * x * (1.0 + torch.erf(x / math.sqrt(2.0)))
+    if approximate == "none":
+        return 0.5 * x * (1.0 + torch.erf(x / math.sqrt(2.0)))
+    elif approximate == "tanh":
+        return (
+            0.5
+            * x
+            * (
+                1.0
+                + torch.tanh(
+                    math.sqrt(2.0 / math.pi) * (x + 0.044715 * torch.pow(x, 3))
+                )
+            )
+        )
+    else:
+        raise ValueError(f"Unknown approximate method: {approximate}")
 
 
 # TODO: DO we ever need this?

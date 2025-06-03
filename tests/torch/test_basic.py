@@ -1115,3 +1115,29 @@ def test_verify_against_golden_high_atol_low_pcc(assert_pcc, assert_atol):
 
         assert passed_pcc is False
         assert passed_atol is False
+
+
+def test_gelu():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.nn.functional.gelu(x)
+
+    verify_module(
+        Basic(), input_shapes=[(32, 32)], input_range=(-6, 6), required_atol=0.02
+    )
+
+
+def test_erf():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.erf(x)
+
+    verify_module(
+        Basic(), input_shapes=[(32, 32)], input_range=(-6, 6), required_atol=0.02
+    )
