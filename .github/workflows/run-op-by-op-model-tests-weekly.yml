@@ -252,6 +252,11 @@ jobs:
               tests/models/unet_carvana/test_unet_carvana.py::test_unet_carvana[op_by_op_torch-eval]
               "
           },
+          {
+            runs-on: wormhole_b0, name: "torchaudio", tests: "
+              tests/models/seamless_m4t/test_seamless_m4t.py::test_seamless_m4t[op_by_op_torch-eval]
+            "
+          }
 
         ]
     runs-on:

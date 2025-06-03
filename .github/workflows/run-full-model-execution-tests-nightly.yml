@@ -134,6 +134,7 @@ jobs:
                   tests/models/MobileNetV2/test_MobileNetV2_onnx.py::test_MobileNetV2_onnx[full-eval]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[full-eval-inception_v4.tf_in1k]
                   tests/models/vovnet/test_vovnet_onnx.py::test_vovnet_onnx[full-eval]
+                  tests/models/seamless_m4t/test_seamless_m4t.py::test_seamless_m4t[full-eval]
             "
           },
           {
