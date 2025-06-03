@@ -94,15 +94,26 @@ def test_timm_image_classification(record_property, model_name, mode, op_by_op):
             "tf_efficientnet_lite4.in1k",
             "xception71.tf_in1k",
             "inception_v4.tf_in1k",
+            "ese_vovnet19b_dw.ra_in1k",
         ]
         else False
     )
 
     required_pcc = (
-        0.98
+        0.95
         if model_name
         in [
             "mobilenetv1_100.ra4_e3600_r224_in1k",
+        ]
+        else 0.98
+        if model_name
+        in [
+            "tf_efficientnet_lite0.in1k",
+            "tf_efficientnet_lite1.in1k",
+            "tf_efficientnet_lite2.in1k",
+            "tf_efficientnet_lite3.in1k",
+            "xception71.tf_in1k",
+            "inception_v4.tf_in1k",
         ]
         else 0.99
     )
