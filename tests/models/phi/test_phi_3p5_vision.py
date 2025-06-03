@@ -31,9 +31,7 @@ class ThisTester(ModelTester):
 @pytest.mark.parametrize(
     "model_name",
     [
-        "microsoft/Phi-3-mini-128k-instruct",
-        "microsoft/Phi-3-mini-4k-instruct",
-        "microsoft/Phi-3.5-MoE",
+        "microsoft/Phi-3.5-vision-instruct",
     ],
 )
 @pytest.mark.parametrize(
@@ -65,7 +63,7 @@ def test_phi(record_property, model_name, mode, op_by_op):
         print(
             f"""
         model_name: {model_name}
-        input: {tester.test_input_messages}
+        input: {tester.test_input}
         output: {decoded_output}
         """
         )
