@@ -13,8 +13,8 @@ jobs:
       - name: pyflakes
         uses: reviewdog/action-pyflakes@2d6743a6bb878aba173c913783dd568f4f2c2743
         with:
-          github_token: ${{  secrets.GH_TOKEN }}
-          reporter: github-pr-check
+          github_token: ${{  secrets.REVIEW_TOKEN }}
+          reporter: github-pr-review
 
   cppcheck:
     name: Cppcheck
@@ -41,7 +41,7 @@ jobs:
         rm -f "$TEMP_DEB"
     - name: Run Cppcheck with reviewdog
       env:
-        REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GH_TOKEN }}
+        REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.REVIEW_TOKEN }}
       run: |
         cd tt_torch/csrc
         cppcheck --std=c++17 --check-level=exhaustive --enable=warning,information --platform=unix64 --suppress=uninitMemberVar --output-file=../../.output.sarif --output-format=sarif .
