@@ -5,7 +5,7 @@ import torch
 import os
 import warnings
 import re
-
+import loguru
 import tt_mlir
 import sys
 import torch_mlir
