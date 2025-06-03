@@ -61,4 +61,4 @@ jobs:
         cd tt_torch/csrc
         cppcheck --std=c++17 --check-level=exhaustive --enable=warning,information --platform=unix64 --suppress=uninitMemberVar --output-file=../../.output.sarif --output-format=sarif .
         cd ../..
-        cat .output.sarif | reviewdog -f=sarif -reporter=github-pr-check -level=error -fail-on-error=true -filter-mode=nofilter -diff="git diff origin/main" -tee
+        cat .output.sarif | reviewdog -f=sarif -reporter=github-pr-check -level=warning -fail-on-error=true -filter-mode=nofilter -diff="git diff origin/main" -tee
