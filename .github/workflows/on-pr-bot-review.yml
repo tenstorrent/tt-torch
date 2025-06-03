@@ -12,7 +12,7 @@ jobs:
       - name: pyflakes
         uses: reviewdog/action-pyflakes@2d6743a6bb878aba173c913783dd568f4f2c2743
         with:
-          github_token: ${{ secrets.GH_TOKEN }}
+          github_token: ${{  github.token }}
           reporter: github-pr-check
 
   cppcheck:
@@ -37,26 +37,9 @@ jobs:
         wget -O "$TEMP_DEB" 'https://launchpad.net/ubuntu/+archive/primary/+files/cppcheck_2.17.1-1_amd64.deb' && \
         sudo dpkg -i "$TEMP_DEB" && \
         rm -f "$TEMP_DEB"
-    # - uses: actions/checkout@v4
-    #   with:
-    #     repository: 'github.com/danmar/cppcheck'
-    #     ref: '2.17.1'
-    #     path: 'cppcheck'
-    # - name: Setup Cppcheck
-    #   run: |
-    #     cd cppcheck
-    #     mkdir build
-    #     cd build
-    #     cmake ..
-    #     cmake --build .
-    #     cd ../..
-    # - name: Setup Cppcheck
-    #   run: |
-    #     sudo apt-get update
-    #     sudo apt-get install -y cppcheck
     - name: Run Cppcheck with reviewdog
       env:
-        REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GH_TOKEN }}
+        REVIEWDOG_GITHUB_API_TOKEN: ${{ github.token }}
       run: |
         cd tt_torch/csrc
         cppcheck --std=c++17 --check-level=exhaustive --enable=warning,information --platform=unix64 --suppress=uninitMemberVar --output-file=../../.output.sarif --output-format=sarif .
