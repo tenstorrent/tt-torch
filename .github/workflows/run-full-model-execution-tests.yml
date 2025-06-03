@@ -105,7 +105,6 @@ jobs:
           # This test group needs to be moved. This will be done once multichip tests are refactored: #780
           {
             runs-on: n300, name: "eval_6", tests: "
-                tests/models/llama/test_llama_7b_pipeline_parallel.py::test_llama_7b_pipeline_parallel[huggyllama/llama-7b-eval]
                 tests/torch/test_basic_async.py
                 tests/torch/test_basic_multichip.py
                 tests/models/mnist/test_mnist.py::test_mnist_train[full-eval-data_parallel]
@@ -121,6 +120,11 @@ jobs:
                 tests/models/hardnet/test_hardnet_n300.py::test_hardnet[full-eval]
             "
           },
+          {
+            runs-on: torch-n300-2, name: "eval_6_highmem_quarantine", tests: "
+              tests/models/llama/test_llama_7b_pipeline_parallel.py::test_llama_7b_pipeline_parallel[huggyllama/llama-7b-eval]
+            "
+          }
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
