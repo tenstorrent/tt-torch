@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: pyflakes
-        uses: reviewdog/action-pyflakes@master
+        uses: reviewdog/action-pyflakes@v1.17.2
         with:
           github_token: ${{ secrets.GH_TOKEN }}
           reporter: github-pr-check
