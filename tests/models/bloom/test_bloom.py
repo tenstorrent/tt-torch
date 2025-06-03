@@ -43,13 +43,18 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_bloom(record_property, mode, op_by_op):
+@pytest.mark.parametrize(
+    "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
+)
+def test_bloom(record_property, mode, op_by_op, data_parallel_mode):
     model_name = "Bloom"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if op_by_op:
+        if data_parallel_mode:
+            pytest.skip("Op-by-op not supported in data parallel mode")
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
@@ -62,17 +67,18 @@ def test_bloom(record_property, mode, op_by_op):
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
+        data_parallel_mode=data_parallel_mode,
     )
     results = tester.test_model()
 
-    if mode == "eval":
+    def print_result(result):
         # Helper function to decode output to human-readable text
         def decode_output(outputs):
             next_token_logits = outputs.logits[:, -1]
             next_token = next_token_logits.softmax(dim=-1).argmax()
             return tester.tokenizer.decode([next_token])
 
-        decoded_output = decode_output(results)
+        decoded_output = decode_output(result)
 
         print(
             f"""
@@ -81,5 +87,8 @@ def test_bloom(record_property, mode, op_by_op):
         output: {decoded_output}
         """
         )
+
+    if mode == "eval":
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
     tester.finalize()

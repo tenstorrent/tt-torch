@@ -64,7 +64,10 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_clip(record_property, mode, op_by_op):
+@pytest.mark.parametrize(
+    "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
+)
+def test_clip(record_property, mode, op_by_op, data_parallel_mode):
     if mode == "train":
         pytest.skip()
     model_name = "CLIP"
@@ -73,6 +76,8 @@ def test_clip(record_property, mode, op_by_op):
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if op_by_op:
+        if data_parallel_mode:
+            pytest.skip("Op-by-op not supported in data parallel mode")
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
@@ -84,16 +89,20 @@ def test_clip(record_property, mode, op_by_op):
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
+        data_parallel_mode=data_parallel_mode,
     )
 
     results = tester.test_model()
 
-    if mode == "eval":
+    def print_result(result):
         logits_per_image = (
-            results.logits_per_image
+            result.logits_per_image
         )  # this is the image-text similarity score
         probs = logits_per_image.softmax(
             dim=1
         )  # we can take the softmax to get the label probabilities
+
+    if mode == "eval":
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
     tester.finalize()

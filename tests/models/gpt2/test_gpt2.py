@@ -38,13 +38,18 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_gpt2(record_property, mode, op_by_op):
+@pytest.mark.parametrize(
+    "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
+)
+def test_gpt2(record_property, mode, op_by_op, data_parallel_mode):
     model_name = "GPT-2"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if op_by_op:
+        if data_parallel_mode:
+            pytest.skip("Op-by-op not supported in data parallel mode")
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
@@ -57,15 +62,17 @@ def test_gpt2(record_property, mode, op_by_op):
         record_property_handle=record_property,
         assert_pcc=True,
         assert_atol=False,
+        data_parallel_mode=data_parallel_mode,
     )
     results = tester.test_model()
-    if mode == "eval":
+
+    def print_result(result):
         # Helper function to decode output to human-readable text
         def decode_output(outputs):
             normalized = outputs.logits.softmax(dim=-1)
             return normalized.argmax().item()
 
-        decoded_output = decode_output(results)
+        decoded_output = decode_output(result)
 
         print(
             f"""
@@ -74,5 +81,8 @@ def test_gpt2(record_property, mode, op_by_op):
         output before: {decoded_output}
         """
         )
+
+    if mode == "eval":
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
     tester.finalize()
