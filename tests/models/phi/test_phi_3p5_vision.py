@@ -6,7 +6,7 @@
 import torch
 import pytest
 
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM, AutoImageProcessor
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
@@ -16,10 +16,15 @@ class ThisTester(ModelTester):
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_name, torch_dtype=torch.bfloat16
         )
+        self.image_processor = AutoImageProcessor.from_pretrained(
+            self.model_name, torch_dtype=torch.bfloat16
+        )
         model = AutoModelForCausalLM.from_pretrained(self.model_name)
         return model.generate
 
     def _load_inputs(self):
+        # Input format on Hugging Face: <|user|>\n<|image_1|>\n{prompt}<|end|>\n<|assistant|>\n
+
         inputs = self.tokenizer()
         return inputs
 
