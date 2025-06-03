@@ -3,7 +3,11 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-set(TT_MLIR_VERSION "dbdcf6406da3fce1d739fe7f14eb857a3ee5f011")
+set(TT_MLIR_VERSION "71498eae33641170d96e9419cc8a6097215061e9")
+# torch-mlir is using branch tt_torch/main
+# see issue https://github.com/tenstorrent/tt-torch/issues/671
+set(TORCH_MLIR_VERSION "fe292ef77433c9da6ff539780f2b09d8fab146f4")
+set(TTXLA_VERSION "bb08f21c4f8cc14339d7fb6b1f80997e29865872")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
@@ -35,86 +39,114 @@ else()
     message(STATUS "TT_RUNTIME_ENABLE_PERF_TRACE is set to: ${TT_RUNTIME_ENABLE_PERF_TRACE}")
 
     include(ExternalProject)
-    # set(TTMLIR_PREFIX ${TTTORCH_SOURCE_DIR}/third_party/tt-mlir)
-    # set(TTMLIR_INSTALL_PREFIX ${TTMLIR_PREFIX}/install)
-    # set(TT_MLIR_COMPILER_LIBRARY_PATH ${TTMLIR_INSTALL_PREFIX}/lib/libTTMLIRCompiler.so)
-    # set(TT_MLIR_RUNTIME_LIBRARY_PATH ${TTMLIR_INSTALL_PREFIX}/lib/libTTMLIRRuntime.so)
+    # # set(TTMLIR_PREFIX ${TTTORCH_SOURCE_DIR}/third_party/tt-mlir)
+    # # set(TTMLIR_INSTALL_PREFIX ${TTMLIR_PREFIX}/install)
+    # # set(TT_MLIR_COMPILER_LIBRARY_PATH ${TTMLIR_INSTALL_PREFIX}/lib/libTTMLIRCompiler.so)
+    # # set(TT_MLIR_RUNTIME_LIBRARY_PATH ${TTMLIR_INSTALL_PREFIX}/lib/libTTMLIRRuntime.so)
 
-    # set(TTMLIR_BUILD_DIR ${TTMLIR_PREFIX}/src/tt-mlir-build)
+    # # set(TTMLIR_BUILD_DIR ${TTMLIR_PREFIX}/src/tt-mlir-build)
 
-    # ExternalProject_Add(
-    #     tt-mlir
-    #     PREFIX ${TTMLIR_PREFIX}
-    #     INSTALL_COMMAND ${CMAKE_COMMAND} --install ${TTMLIR_BUILD_DIR} --component SharedLib
-    #     CMAKE_GENERATOR Ninja
-    #     CMAKE_ARGS
-    #       -DCMAKE_BUILD_TYPE=Release
-    #       -DCMAKE_C_COMPILER=clang-17
-    #       -DCMAKE_CXX_COMPILER=clang++-17
-    #       -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-    #       -DTT_RUNTIME_ENABLE_TTNN=ON
-    #       -DTT_RUNTIME_ENABLE_PERF_TRACE=${TT_RUNTIME_ENABLE_PERF_TRACE}
-    #       -DTT_RUNTIME_ENABLE_TTMETAL=OFF
-    #       -DTTMLIR_ENABLE_STABLEHLO=ON
-    #       -DTTMLIR_ENABLE_RUNTIME=ON
-    #       -DTTMLIR_ENABLE_BINDINGS_PYTHON=OFF
-    #       -DTT_RUNTIME_DEBUG=${TT_RUNTIME_DEBUG}
-    #       -DCMAKE_INSTALL_PREFIX=${TTMLIR_INSTALL_PREFIX}
-    #     GIT_REPOSITORY https://github.com/tenstorrent/tt-mlir.git
-    #     GIT_TAG ${TT_MLIR_VERSION}
-    #     GIT_PROGRESS ON
-    #     BUILD_BYPRODUCTS
-    #         ${TT_MLIR_COMPILER_LIBRARY_PATH}
-    #         ${TT_MLIR_RUNTIME_LIBRARY_PATH}
-    # )
+    # # ExternalProject_Add(
+    # #     tt-mlir
+    # #     PREFIX ${TTMLIR_PREFIX}
+    # #     INSTALL_COMMAND ${CMAKE_COMMAND} --install ${TTMLIR_BUILD_DIR} --component SharedLib
+    # #     CMAKE_GENERATOR Ninja
+    # #     CMAKE_ARGS
+    # #       -DCMAKE_BUILD_TYPE=Release
+    # #       -DCMAKE_C_COMPILER=clang-17
+    # #       -DCMAKE_CXX_COMPILER=clang++-17
+    # #       -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+    # #       -DTT_RUNTIME_ENABLE_TTNN=ON
+    # #       -DTT_RUNTIME_ENABLE_PERF_TRACE=${TT_RUNTIME_ENABLE_PERF_TRACE}
+    # #       -DTT_RUNTIME_ENABLE_TTMETAL=OFF
+    # #       -DTTMLIR_ENABLE_STABLEHLO=ON
+    # #       -DTTMLIR_ENABLE_RUNTIME=ON
+    # #       -DTTMLIR_ENABLE_BINDINGS_PYTHON=OFF
+    # #       -DTT_RUNTIME_DEBUG=${TT_RUNTIME_DEBUG}
+    # #       -DCMAKE_INSTALL_PREFIX=${TTMLIR_INSTALL_PREFIX}
+    # #     GIT_REPOSITORY https://github.com/tenstorrent/tt-mlir.git
+    # #     GIT_TAG ${TT_MLIR_VERSION}
+    # #     GIT_PROGRESS ON
+    # #     BUILD_BYPRODUCTS
+    # #         ${TT_MLIR_COMPILER_LIBRARY_PATH}
+    # #         ${TT_MLIR_RUNTIME_LIBRARY_PATH}
+    # # )
 
-    # add_library(TTMLIRCompiler SHARED IMPORTED GLOBAL)
-    # set_target_properties(TTMLIRCompiler PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_COMPILER_LIBRARY_PATH})
-    # add_dependencies(TTMLIRCompiler tt-mlir)
-    # add_library(TTMLIRRuntime SHARED IMPORTED GLOBAL)
-    # set_target_properties(TTMLIRRuntime PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_RUNTIME_LIBRARY_PATH})
-    # add_dependencies(TTMLIRRuntime tt-mlir)
+    # # add_library(TTMLIRCompiler SHARED IMPORTED GLOBAL)
+    # # set_target_properties(TTMLIRCompiler PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_COMPILER_LIBRARY_PATH})
+    # # add_dependencies(TTMLIRCompiler tt-mlir)
+    # # add_library(TTMLIRRuntime SHARED IMPORTED GLOBAL)
+    # # set_target_properties(TTMLIRRuntime PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_RUNTIME_LIBRARY_PATH})
+    # # add_dependencies(TTMLIRRuntime tt-mlir)
 
-    # install(DIRECTORY ${TTMLIR_INSTALL_PREFIX}/ DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
+    # # install(DIRECTORY ${TTMLIR_INSTALL_PREFIX}/ DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
 
-    # torch-mlir build
-    # torch-mlir is using branch tt_torch/main
-    # see issue https://github.com/tenstorrent/tt-torch/issues/671
-    set(TORCH_MLIR_VERSION "be21b75d7fc2a45d5cccf5ac5d8d9448106735bd")
-    set(TORCH_MLIR_PREFIX ${TTTORCH_SOURCE_DIR}/third_party/torch-mlir)
-    set(TORCH_MLIR_INSTALL_PREFIX ${TORCH_MLIR_PREFIX}/install)
+    set(TTXLA_PREFIX ${TTTORCH_SOURCE_DIR}/third_party/tt-xla)
+    set(TTXLA_INSTALL_PREFIX ${TTXLA_PREFIX}/src/tt-xla/install)
+    set(TTXLA_LIBRARY_PATH ${TTXLA_INSTALL_PREFIX}/lib/)
+    set(TTXLA_BUILD_DIR ${TTXLA_PREFIX}/src/tt-xla-build)
 
-    set(TORCH_MLIR_BUILD_DIR ${TORCH_MLIR_PREFIX}/src/torch-mlir-build)
     ExternalProject_Add(
-        torch-mlir
-        PREFIX ${TORCH_MLIR_PREFIX}
-        INSTALL_COMMAND ${CMAKE_COMMAND} --install ${TORCH_MLIR_BUILD_DIR}
+        tt-xla
+        PREFIX ${TTXLA_PREFIX}
+        INSTALL_COMMAND
+            ${CMAKE_COMMAND} --install ${TTXLA_BUILD_DIR} --prefix ${TTXLA_INSTALL_PREFIX} &&
+            chmod -R +x ${TTXLA_INSTALL_PREFIX}
         CMAKE_GENERATOR Ninja
         CMAKE_ARGS
             -DCMAKE_BUILD_TYPE=Release
-            -DPython3_FIND_VIRTUALENV=ONLY
-            -DMLIR_DIR=${TTMLIR_TOOLCHAIN_DIR}/lib/cmake/mlir/
-            -DLLVM_DIR=${TTMLIR_TOOLCHAIN_DIR}/lib/cmake/llvm/
             -DCMAKE_C_COMPILER=clang-17
             -DCMAKE_CXX_COMPILER=clang++-17
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-            -DTORCH_MLIR_ENABLE_STABLEHLO=ON
-            -DMLIR_ENABLE_BINDINGS_PYTHON=ON
-            -DLLVM_TARGETS_TO_BUILD=host
-            -DLLVM_ENABLE_ZSTD=OFF
-            -DTORCH_MLIR_ENABLE_LTC=ON
-            -DCMAKE_VISIBILITY_INLINES_HIDDEN=ON
-            -DCMAKE_C_VISIBILITY_PRESET=hidden
-            -DCMAKE_CXX_VISIBILITY_PRESET=hidden
-            -DCMAKE_INSTALL_PREFIX=${TORCH_MLIR_INSTALL_PREFIX}
-
-        GIT_SUBMODULES "externals/stablehlo"
+            -DCMAKE_INSTALL_PREFIX=${TTXLA_INSTALL_PREFIX}
+        GIT_REPOSITORY https://github.com/tenstorrent/tt-xla.git
+        GIT_TAG ${TTXLA_VERSION}
         GIT_PROGRESS ON
-        GIT_REPOSITORY https://github.com/tenstorrent/llvm-torch-mlir.git
-        GIT_TAG ${TORCH_MLIR_VERSION}
+        BUILD_BYPRODUCTS
+            ${TTXLA_LIBRARY_PATH}
     )
 
-    install(DIRECTORY ${TORCH_MLIR_INSTALL_PREFIX}/python_packages/torch_mlir/torch_mlir DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
+    install(DIRECTORY ${TTXLA_INSTALL_PREFIX}/ DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
+
+    # Set executable permissions for all binary files in installation directories
+    # install(CODE "execute_process(COMMAND chmod -R +x \"${CMAKE_INSTALL_PREFIX}/bin\" \"${CMAKE_INSTALL_PREFIX}/lib\" \"${CMAKE_INSTALL_PREFIX}/tt-metal/runtime/sfpi/compiler/bin\" ERROR_QUIET)")
+
+    # # torch-mlir build
+
+    # set(TORCH_MLIR_PREFIX ${TTTORCH_SOURCE_DIR}/third_party/torch-mlir)
+    # set(TORCH_MLIR_INSTALL_PREFIX ${TORCH_MLIR_PREFIX}/install)
+
+    # set(TORCH_MLIR_BUILD_DIR ${TORCH_MLIR_PREFIX}/src/torch-mlir-build)
+    # ExternalProject_Add(
+    #     torch-mlir
+    #     PREFIX ${TORCH_MLIR_PREFIX}
+    #     INSTALL_COMMAND ${CMAKE_COMMAND} --install ${TORCH_MLIR_BUILD_DIR}
+    #     CMAKE_GENERATOR Ninja
+    #     CMAKE_ARGS
+    #         -DCMAKE_BUILD_TYPE=Release
+    #         -DPython3_FIND_VIRTUALENV=ONLY
+    #         -DMLIR_DIR=${TTMLIR_TOOLCHAIN_DIR}/lib/cmake/mlir/
+    #         -DLLVM_DIR=${TTMLIR_TOOLCHAIN_DIR}/lib/cmake/llvm/
+    #         -DCMAKE_C_COMPILER=clang-17
+    #         -DCMAKE_CXX_COMPILER=clang++-17
+    #         -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+    #         -DTORCH_MLIR_ENABLE_STABLEHLO=ON
+    #         -DMLIR_ENABLE_BINDINGS_PYTHON=ON
+    #         -DLLVM_TARGETS_TO_BUILD=host
+    #         -DLLVM_ENABLE_ZSTD=OFF
+    #         -DTORCH_MLIR_ENABLE_LTC=ON
+    #         -DCMAKE_VISIBILITY_INLINES_HIDDEN=ON
+    #         -DCMAKE_C_VISIBILITY_PRESET=hidden
+    #         -DCMAKE_CXX_VISIBILITY_PRESET=hidden
+    #         -DCMAKE_INSTALL_PREFIX=${TORCH_MLIR_INSTALL_PREFIX}
+
+    #     GIT_SUBMODULES "externals/stablehlo"
+    #     GIT_PROGRESS ON
+    #     GIT_REPOSITORY https://github.com/tenstorrent/llvm-torch-mlir.git
+    #     GIT_TAG ${TORCH_MLIR_VERSION}
+    # )
+
+    # install(DIRECTORY ${TORCH_MLIR_INSTALL_PREFIX}/python_packages/torch_mlir/torch_mlir DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
 
     # tt-forge-models - Python-only project, no need to build.
     set(TT_FORGE_MODELS_VERSION "ef8d4a059c5490a1849da544b49f4f2cfddaa8d4")

@@ -3,12 +3,14 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import onnx
-from onnxruntime import InferenceSession
+
+# from onnxruntime import InferenceSession
 import numpy as np
 import tt_mlir
-from tt_torch.onnx_compile import compile_onnx
+
+# from tt_torch.onnx_compile import compile_onnx
 from tt_torch.tools.utils import (
-    onnx_output_to_torch,
+    # onnx_output_to_torch,
     prepare_inference_session,
     run_model_proto,
 )
@@ -28,6 +30,7 @@ def compile_model(model, compiler_config, device, async_mode):
     torch_options.compiler_config = compiler_config
     torch_options.devices = [device]
     torch_options.async_mode = async_mode
+    torch_options.use_pjrt = True
     return torch.compile(model, backend=backend, options=torch_options)
 
 
@@ -273,7 +276,7 @@ def _verify_onnx_module(
         input_data_types=input_data_types,
     )
     golden = onnx_output_to_torch(golden)
-    compiled_mod = compile_onnx(model_proto, compiler_config)
+    # compiled_mod = compile_onnx(model_proto, compiler_config)
     ret = compiled_mod(*inputs)
     if compiler_config.compile_depth not in [
         CompileDepth.EXECUTE,

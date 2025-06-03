@@ -8,7 +8,8 @@ import threading
 
 import torch
 from torch._decomp import get_decompositions, remove_decompositions
-from torch_mlir.extras.fx_decomp_util import get_decomposition_table
+
+# from torch_mlir.extras.fx_decomp_util import get_decomposition_table
 import numpy as np
 
 DecompositionTable = Dict[torch._ops.OperatorBase, Callable]

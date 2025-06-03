@@ -4,13 +4,15 @@
 import torch
 import operator
 import tt_mlir
-import torch_mlir
+
+# import torch_mlir
 import os
 import re
 import time
 import ml_dtypes
 import numpy as np
-from torch_mlir.dialects import torch as torch_dialect
+
+# from torch_mlir.dialects import torch as torch_dialect
 
 from typing import Optional, Any
 from tt_torch.tools.utils import (
@@ -21,21 +23,22 @@ from tt_torch.tools.utils import (
     calculate_atol,
     calculate_pcc,
 )
-from torch_mlir.compiler_utils import (
-    OutputType,
-    run_pipeline_with_repro_report,
-    lower_mlir_module,
-)
-from torch_mlir.extras.fx_importer import (
-    FxImporter,
-    ContextCache,
-    FxImporterHooks,
-    InputInfo,
-    GraphNodeImporter,
-    TORCH_DTYPE_TO_NPY_TYPE,
-    TORCH_DTYPE_TO_MLIR_TYPE,
-)
-from torch_mlir.ir import Context, Location, DenseElementsAttr, Operation
+
+# from torch_mlir.compiler_utils import (
+#     OutputType,
+#     run_pipeline_with_repro_report,
+#     lower_mlir_module,
+# )
+# from torch_mlir.extras.fx_importer import (
+#     FxImporter,
+#     ContextCache,
+#     FxImporterHooks,
+#     InputInfo,
+#     GraphNodeImporter,
+#     TORCH_DTYPE_TO_NPY_TYPE,
+#     TORCH_DTYPE_TO_MLIR_TYPE,
+# )
+# from torch_mlir.ir import Context, Location, DenseElementsAttr, Operation
 from tt_torch.dynamo.executor import (
     Executor,
     OpByOpExecutor,

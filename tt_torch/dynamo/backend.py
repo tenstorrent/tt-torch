@@ -8,43 +8,44 @@ import re
 
 import tt_mlir
 import sys
-import torch_mlir
 
-from tt_torch.tools.utils import (
-    OpByOpBackend,
-    CompilerConfig,
-    CompileDepth,
-    tt_torch_error_message,
-    sanitize_filename,
-)
+# import torch_mlir
+
+from tt_torch.tools.utils import CompilerConfig
+import torch_xla.core.xla_model as xm
 
 
 class BackendOptions:
     def __init__(
-        self, compiler_config=CompilerConfig(), devices=[None], async_mode=False
+        self,
+        compiler_config=CompilerConfig(),
+        device=None,
+        async_mode=False,
+        use_pjrt=True,
     ):
         self.compiler_config = compiler_config
         self.devices = devices
         self.async_mode = async_mode
+        self.use_pjrt = use_pjrt
 
 
-from tt_torch.dynamo.torch_backend import (
-    TorchExecutor,
-    import_graph,
-    import_program,
-    verify_ir,
-    lower_to_stable_hlo,
-)
-from tt_torch.dynamo.shlo_backend import (
-    generate_random_inputs_for_shlo,
-    parse_module_from_str,
-    StablehloExecutor,
-)
-from torch_mlir.compiler_utils import (
-    OutputType,
-    run_pipeline_with_repro_report,
-    lower_mlir_module,
-)
+# from tt_torch.dynamo.torch_backend import (
+#     TorchExecutor,
+#     import_graph,
+#     import_program,
+#     verify_ir,
+#     lower_to_stable_hlo,
+# )
+# from tt_torch.dynamo.shlo_backend import (
+#     generate_random_inputs_for_shlo,
+#     parse_module_from_str,
+#     StablehloExecutor,
+# )
+# from torch_mlir.compiler_utils import (
+#     OutputType,
+#     run_pipeline_with_repro_report,
+#     lower_mlir_module,
+# )
 from tt_torch.dynamo.passes import pass_pipeline
 from tt_torch.dynamo.executor import Executor
 
@@ -165,17 +166,15 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         if compiler_config.profile_ops:
             compiler_config.set_torch_mlir_module(module.operation.get_asm())
 
-        run_pipeline_with_repro_report(
-            module,
-            f"builtin.module(torchdynamo-export-to-torch-backend-pipeline)",
-            "Lowering TorchFX IR -> Torch Backend IR",
-            compiler_config.dump_debug,
-        )
-        dump_module(
-            module=module, name="Torch Backend", compiler_config=compiler_config
-        )
+    # run_pipeline_with_repro_report(
+    #     module,
+    #     f"builtin.module(torchdynamo-export-to-torch-backend-pipeline)",
+    #     "Lowering TorchFX IR -> Torch Backend IR",
+    #     compiler_config.dump_debug,
+    # )
+    dump_module(module=module, name="Torch Backend", compiler_config=compiler_config)
 
-        lower_mlir_module(False, OutputType.STABLEHLO, module)
+    # lower_mlir_module(False, OutputType.STABLEHLO, module)
 
         dump_module(module=module, name="StableHLO", compiler_config=compiler_config)
 
@@ -295,6 +294,32 @@ def backend(gm, example_inputs, options: BackendOptions = None):
                 devices=devices,
                 async_mode=async_mode,
             )
-    return _base_backend(
-        gm, example_inputs, compiler_config=cc, devices=devices, async_mode=async_mode
-    )
+
+    if options.use_pjrt:
+
+        class PJRTExecutor(Executor):
+            def __call__(self, *inputs):
+                device = xm.xla_device()
+                if self.graph_constants is not None:
+                    inputs = self.graph_constants + inputs
+
+                inputs = self.typecast_inputs(inputs)
+                inputs = tuple(input.to(device) for input in inputs)
+                gm = self.program.graph_module.to(device)
+                outputs = gm(*inputs)
+                outputs = tuple(output.to("cpu") for output in outputs)
+                return outputs
+
+        program, graph_constants = pass_pipeline(gm, example_inputs, cc)
+
+        return PJRTExecutor(
+            program=program,
+            graph_constants=graph_constants,
+            compiler_config=cc,
+            device=device,
+            async_mode=async_mode,
+        )
+    else:
+        return _base_backend(
+            gm, example_inputs, compiler_config=cc, device=device, async_mode=async_mode
+        )

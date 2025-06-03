@@ -33,7 +33,7 @@ from torch_xla.experimental import plugins
 class TTPjrtPlugin(plugins.DevicePlugin):
     def library_path(self):
         return os.path.join(
-            os.path.dirname(__file__), "../../../tt-xla/install/lib/pjrt_plugin_tt.so"
+            os.path.dirname(__file__), "../../install/lib/pjrt_plugin_tt.so"
         )
 
 
@@ -333,7 +333,7 @@ class Executor:
 
         inputs = self.typecast_inputs(inputs)
         inputs = tuple(input.to(device) for input in inputs)
-        gm = self.program.graph_module
+        gm = self.program.graph_module.to(device)
         outputs = gm(*inputs)
         outputs = tuple(output.to("cpu") for output in outputs)
         return outputs
