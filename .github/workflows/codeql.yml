@@ -8,9 +8,6 @@ on:
   schedule:
     - cron: '0 5 * * SUN'
 
-permissions:
-  contents: read
-
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
@@ -61,6 +58,8 @@ jobs:
   cppcheck:
     name: Cppcheck
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
