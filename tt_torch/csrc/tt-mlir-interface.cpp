@@ -289,4 +289,10 @@ compileTTIRToTTNN(std::string_view code, std::string_view system_desc_path,
   return std::make_tuple(binary, buffer);
 }
 
+int test() {
+  char a[10];
+  a[10] = 0;
+  return 0;
+}
+
 } // namespace tt::torch
