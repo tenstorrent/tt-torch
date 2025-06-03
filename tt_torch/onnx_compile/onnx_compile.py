@@ -4,22 +4,24 @@
 import onnx
 import torch
 import onnxruntime as ort
-from torch_mlir.extras import onnx_importer
+
+# from torch_mlir.extras import onnx_importer
 import tt_mlir
-from torch_mlir.ir import Context
-from torch_mlir.dialects import torch as torch_dialect
+
+# from torch_mlir.ir import Context
+# from torch_mlir.dialects import torch as torch_dialect
 import os
 import sys
 
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, tt_torch_error_message
 
-from torch_mlir.compiler_utils import (
-    OutputType,
-    run_pipeline_with_repro_report,
-    lower_mlir_module,
-)
+# from torch_mlir.compiler_utils import (
+#     OutputType,
+#     run_pipeline_with_repro_report,
+#     lower_mlir_module,
+# )
 
-from torch_mlir.ir import Module
+# from torch_mlir.ir import Module
 
 from tt_torch.tools.utils import (
     OpByOpBackend,
@@ -28,10 +30,9 @@ from tt_torch.tools.utils import (
     MultiChipGraph,
 )
 
-from tt_torch.dynamo.shlo_backend import StablehloExecutor
-from tt_torch.dynamo.executor import OnnxExecutor
-from tt_torch.dynamo.backend import dump_module, shlo_to_flatbuffer
-from onnxruntime.quantization import shape_inference
+# from tt_torch.dynamo.shlo_backend import StablehloExecutor
+# from tt_torch.dynamo.executor import OnnxExecutor
+# from tt_torch.dynamo.backend import dump_module, shlo_to_flatbuffer
 
 
 def generate_torch_onnx_ir(module: onnx.ModelProto, compiler_config: CompilerConfig):
@@ -48,7 +49,7 @@ def generate_torch_onnx_ir(module: onnx.ModelProto, compiler_config: CompilerCon
     return module
 
 
-def torch_onnx_to_torch_backend_ir(module: Module, compiler_config: CompilerConfig):
+def torch_onnx_to_torch_backend_ir(module, compiler_config: CompilerConfig):
     run_pipeline_with_repro_report(
         module,
         "builtin.module(torch-onnx-to-torch-backend-pipeline)",
@@ -63,7 +64,7 @@ def torch_onnx_to_torch_backend_ir(module: Module, compiler_config: CompilerConf
     return module
 
 
-def torch_backend_ir_to_stablehlo(module: Module, compiler_config: CompilerConfig):
+def torch_backend_ir_to_stablehlo(module, compiler_config: CompilerConfig):
     lower_mlir_module(False, OutputType.STABLEHLO, module)
     dump_module(module=module, name="StableHLO module", compiler_config=compiler_config)
     return module

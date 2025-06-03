@@ -8,6 +8,7 @@ import re
 
 import tt_mlir
 import sys
+import pytest
 
 # import torch_mlir
 
@@ -269,6 +270,11 @@ def backend(gm, example_inputs, options: BackendOptions = None):
 
     # Apply environment overrides at start of compilation to allow overriding what was set in the test
     cc.apply_environment_overrides()
+
+    if options.use_pjrt and (
+        cc.compile_depth != CompileDepth.EXECUTE or options.async_mode
+    ):
+        pytest.xfail("PJRT flow only supports single device ")
 
     if (
         cc.compile_depth == CompileDepth.COMPILE_OP_BY_OP

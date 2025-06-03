@@ -405,7 +405,7 @@ def _get_custom_decopositions() -> DecompositionTable:
         aten.adaptive_avg_pool2d.default: aten._adaptive_avg_pool2d,
         aten.avg_pool2d.default: avg_pool2d,
         aten.split_with_sizes.default: split_with_sizes,
-        aten.clamp.default: clamp,
+        # aten.clamp.default: clamp,
         aten.erf.default: erf,
         aten.gelu.default: gelu,
     }
