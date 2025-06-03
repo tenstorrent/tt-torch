@@ -33,8 +33,27 @@ jobs:
         reviewdog_version: latest
     - name: Setup Cppcheck
       run: |
-        sudo apt-get update
-        sudo apt-get install -y cppcheck
+        TEMP_DEB="$(mktemp)" && \
+        wget -O "$TEMP_DEB" 'https://launchpad.net/ubuntu/+archive/primary/+files/cppcheck_2.17.1-1_amd64.deb' && \
+        sudo dpkg -i "$TEMP_DEB" && \
+        rm -f "$TEMP_DEB"
+    # - uses: actions/checkout@v4
+    #   with:
+    #     repository: 'github.com/danmar/cppcheck'
+    #     ref: '2.17.1'
+    #     path: 'cppcheck'
+    # - name: Setup Cppcheck
+    #   run: |
+    #     cd cppcheck
+    #     mkdir build
+    #     cd build
+    #     cmake ..
+    #     cmake --build .
+    #     cd ../..
+    # - name: Setup Cppcheck
+    #   run: |
+    #     sudo apt-get update
+    #     sudo apt-get install -y cppcheck
     - name: Run Cppcheck with reviewdog
       env:
         REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GH_TOKEN }}
