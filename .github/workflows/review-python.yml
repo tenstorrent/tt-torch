@@ -1,5 +1,7 @@
 name: reviewdog
 on: [pull_request]
+permissions:
+  contents: read
 jobs:
   pyflakes:
     name: runner / pyflakes
@@ -10,4 +12,4 @@ jobs:
         uses: reviewdog/action-pyflakes@master
         with:
           github_token: ${{ secrets.GH_TOKEN }}
-          reporter: tt-python-pr-check-bot
+          reporter: github-pr-check
