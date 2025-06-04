@@ -44,13 +44,14 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           # Clone the tt-mlir repository
-          set -x
+          cd ${{ runner.temp }}
+          echo "### List of tt-mlir commits since previous uplift:" > commit_list.txt
           git clone https://github.com/tenstorrent/tt-mlir.git tt-mlir
           cd tt-mlir
           # Fetch commit history between $COMMIT_SHA and LATEST_SHA
-          git log --oneline ${{ env.CURRENT_COMMIT_SHA}}..${{ env.LATEST_SHA }} >../commit_history.txt
+          git log --oneline ${{ env.CURRENT_COMMIT_SHA}}..${{ env.LATEST_SHA }} >>../commit_list.txt
           cd ..
-          cat commit_history.txt
+          cat commit_list.txt
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
@@ -80,8 +81,6 @@ jobs:
         if: ${{ steps.create-pr.outputs.pull-request-number }}
         run: |
           gh pr merge --squash --auto "${{ steps.create-pr.outputs.pull-request-number }}"
-          echo "### List of tt-mlir commits since previous uplift:" > commit_list.txt
-          cat commit_history.txt >> commit_list.txt
-          gh pr comment ${{ steps.create-pr.outputs.pull-request-number }} --body "$(cat commit_list.txt)"
+          gh pr comment ${{ steps.create-pr.outputs.pull-request-number }} --body "$(cat ${{ runner.temp }}/commit_list.txt)"
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
