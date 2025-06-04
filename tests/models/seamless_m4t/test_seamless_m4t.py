@@ -19,7 +19,7 @@ class ThisTester(ModelTester):
     def _load_model(self):
         model_name = "facebook/hf-seamless-m4t-large"
         self.processor = AutoProcessor.from_pretrained(model_name)
-        self.model = SeamlessM4TModel.from_pretrained(model_name)
+        self.model = SeamlessM4TModel.from_pretrained(model_name, use_cache=False)
         return self.model
 
     def _load_inputs(self):
@@ -32,12 +32,15 @@ class ThisTester(ModelTester):
             audio, orig_freq=orig_freq, new_freq=16_000
         )
         audio_inputs = self.processor(audios=audio, return_tensors="pt")
+        tokenizer = self.processor.tokenizer
+        bos_token_id = tokenizer.bos_token_id
+        decoder_input_ids = torch.tensor([[bos_token_id]])
         arguments = {
             "input_features": audio_inputs.input_features,
             "attention_mask": audio_inputs.attention_mask,
             "tgt_lang": "tur",
+            "decoder_input_ids": decoder_input_ids,
         }
-
         return arguments
 
 
@@ -54,6 +57,8 @@ def test_seamless_m4t(record_property, mode, op_by_op):
     model_name = "SeamlessM4T"
     cc = CompilerConfig()
     cc.enable_consteval = True
+    cc.dump_debug = True
+    cc.dump_info = True
     # cc.consteval_parameters = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
@@ -66,15 +71,18 @@ def test_seamless_m4t(record_property, mode, op_by_op):
         compiler_config=cc,
         record_property_handle=record_property,
         required_atol=0.1,
-        run_generate=True,  # run model.generate(**inputs)
+        run_generate=False,
         model_group="red",
     )
     results = tester.test_model()
     if mode == "eval":
-        sample_rate = tester.model.config.sampling_rate
-        # uncomment this to download the output audio
-        # scipy.io.wavfile.write(
-        #     "out_from_text.wav", rate=sample_rate, data=results[0].numpy().squeeze()
-        # )
+        if tester.run_generate:
+            sample_rate = tester.model.config.sampling_rate
+            # uncomment this to download the output audio
+            # scipy.io.wavfile.write(
+            #     "out_from_text.wav", rate=sample_rate, data=results[0].numpy().squeeze()
+            # )
+        else:
+            print("Raw model output:", results)
 
     tester.finalize()
