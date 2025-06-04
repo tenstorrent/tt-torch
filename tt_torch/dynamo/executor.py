@@ -139,6 +139,7 @@ class Executor:
         required_atol=1e-2,
         devices=None,
         async_mode=False,
+        runtime_tensor_cache=None
     ):
         self.mcg = mcg
         if compiler_config is None:
@@ -160,6 +161,7 @@ class Executor:
         self.devices = devices if devices is not None else [None]
         self.owned_device_indices = []
         self.async_mode = async_mode
+        self.runtime_tensor_cache = runtime_tensor_cache
         self._validate_executor()
         self.system_desc_paths = self._create_system_descriptors()
 
@@ -254,7 +256,7 @@ class Executor:
             self.owned_device_indices.remove(device_idx)
             self.devices[device_idx] = None
 
-    def get_inputs(self, *inputs, binary, program_idx, device_idx=0):
+    def get_inputs(self, *inputs, binary, program_idx, device_idx=0, cachable_input_mask=[]):
         def get_torch_tensors(tensors):
             torch_tensors = []
             indices = []
@@ -305,6 +307,9 @@ class Executor:
         runtime_weights = runtime_activations_and_weights[:-input_len]
         self.preprocessed_graph_constants[device_idx] = tuple(runtime_weights)
         runtime_activations = runtime_activations_and_weights[-input_len:]
+        
+        for activation in runtime_activations:
+            self.runtime_tensor_cache[len(self.runtime_tensor_cache.keys())] = activation
 
         return runtime_weights, runtime_activations
 
@@ -354,11 +359,15 @@ class Executor:
                 binary=binary,
                 device_idx=device_idx,
                 program_idx=program_idx,
+                cachable_input_mask=[]
             )
 
             device_inputs = list(device_inputs)
             device = self._get_device(device_idx)
 
+            import sys
+            print(f"[James] Executor object ID: {id(self)}", file=sys.stderr)
+            
             # if any output is intermediate we can run in async, since tt-mlir runtime will eventually block on final outputs
             # TODO: Enable this when device to device movement is supported. In the mean time we fall back to host: #748
             # intermediate_output = any([o.io_type == IOType.INTER_DEVICE for o in self.mcg.graph_outputs[device_idx]])

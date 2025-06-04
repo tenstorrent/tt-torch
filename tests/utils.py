@@ -258,7 +258,7 @@ class ModelTester:
         return compiled_models
 
     def compile_model(
-        self, model, compiler_config, data_parallel_mode=False, device_override=None
+        self, model, compiler_config, data_parallel_mode=False, device_override=None, runtime_tensor_cache=None
     ):
         device = None
         if self.devices is not None and not data_parallel_mode:
@@ -272,6 +272,7 @@ class ModelTester:
         options.compiler_config = compiler_config
         options.devices = [device]
         options.async_mode = data_parallel_mode
+        options.runtime_tensor_cache = runtime_tensor_cache
         model = torch.compile(model, backend=backend, dynamic=False, options=options)
         self.compiled_models.append(model)
         return model

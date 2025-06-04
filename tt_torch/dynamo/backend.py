@@ -15,11 +15,12 @@ from tt_torch.tools.utils import CompilerConfig
 
 class BackendOptions:
     def __init__(
-        self, compiler_config=CompilerConfig(), devices=[None], async_mode=False
+        self, compiler_config=CompilerConfig(), devices=[None], async_mode=False, runtime_tensor_cache=None
     ):
         self.compiler_config = compiler_config
         self.devices = devices
         self.async_mode = async_mode
+        self.runtime_tensor_cache = runtime_tensor_cache
 
 
 from tt_torch.dynamo.torch_backend import (
@@ -225,13 +226,14 @@ def shlo_to_flatbuffer(
     return binary
 
 
-def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
+def _base_backend(gm, example_inputs, compiler_config, devices, async_mode, runtime_tensor_cache):
     mcg = torch_to_shlo(gm, example_inputs, compiler_config)
     executor = Executor(
         mcg,
         compiler_config,
         devices=devices,
         async_mode=async_mode,
+        runtime_tensor_cache=runtime_tensor_cache
     )
 
     compiler_config.record_property("achieved_compile_depth", "STABLEHLO")
@@ -263,10 +265,12 @@ def backend(gm, example_inputs, options: BackendOptions = None):
         cc = CompilerConfig()
         devices = None
         async_mode = False
+        runtime_tensor_cache = None
     else:
         cc = options.compiler_config
         devices = options.devices
         async_mode = options.async_mode
+        runtime_tensor_cache = options.runtime_tensor_cache
 
     # Apply environment overrides at start of compilation to allow overriding what was set in the test
     cc.apply_environment_overrides()
@@ -296,5 +300,5 @@ def backend(gm, example_inputs, options: BackendOptions = None):
                 async_mode=async_mode,
             )
     return _base_backend(
-        gm, example_inputs, compiler_config=cc, devices=devices, async_mode=async_mode
+        gm, example_inputs, compiler_config=cc, devices=devices, async_mode=async_mode, runtime_tensor_cache=runtime_tensor_cache
     )

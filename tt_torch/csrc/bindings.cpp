@@ -259,6 +259,11 @@ at::Tensor to_host_single_rt_tensor(tt::runtime::Tensor &rt_output) {
   return output;
 }
 
+at::Tensor to_host_single_rt_tensor_non_deallocating(tt::runtime::Tensor &rt_output) {
+  at::Tensor output = create_torch_tensor(rt_output);
+  return output;
+}
+
 std::vector<at::Tensor> to_host(py::args args) {
   std::vector<at::Tensor> outputs;
   for (auto &arg : args) {
@@ -266,7 +271,7 @@ std::vector<at::Tensor> to_host(py::args args) {
       for (auto &item : arg) {
         if (py::isinstance<tt::runtime::Tensor>(item)) {
           tt::runtime::Tensor rt_tensor = item.cast<tt::runtime::Tensor>();
-          outputs.emplace_back(to_host_single_rt_tensor(rt_tensor));
+          outputs.emplace_back(to_host_single_rt_tensor_non_deallocating(rt_tensor));
         }
         // Hack to get around the fact that pybind11 does not
         // recognize the torch.Tensor pyclass as the same as
@@ -277,7 +282,7 @@ std::vector<at::Tensor> to_host(py::args args) {
       }
     } else if (py::isinstance<tt::runtime::Tensor>(arg)) {
       tt::runtime::Tensor rt_tensor = arg.cast<tt::runtime::Tensor>();
-      outputs.emplace_back(to_host_single_rt_tensor(rt_tensor));
+      outputs.emplace_back(to_host_single_rt_tensor_non_deallocating(rt_tensor));
     } else if (py::isinstance<at::Tensor>(arg)) {
       outputs.emplace_back(arg.cast<at::Tensor>());
     }
