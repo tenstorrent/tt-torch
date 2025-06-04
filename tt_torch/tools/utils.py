@@ -67,16 +67,15 @@ class ExecuteMode(Enum):
     
 class ModelMetadata():
     def __init__(self, 
-                model_name = None, 
-                expected_compile_depth = CompileDepth.EXECUTE, 
-                expected_op_by_op_backend = OpByOpBackend.TORCH,
-                model_group = "generality",
-                assert_pcc = True,
-                ):
+                 model_name = None, 
+                 compile_depth = None, 
+                 op_by_op_backend = None
+                 assert_pcc = False,
+                 ):
+        
         self.model_name = model_name
-        self.expected_compile_depth = expected_compile_depth
-        self.expected_op_by_op_backend = expected_op_by_op_backend
-        self.model_group = model_group
+        self.compile_depth = compile_depth
+        self.op_by_op_backend = op_by_op_backend
         self.assert_pcc = assert_pcc
 
 class OpCompilationStatus(IntEnum):
