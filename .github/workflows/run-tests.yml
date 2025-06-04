@@ -8,6 +8,10 @@ on:
         description: 'Docker image to use for build'
         required: true
         type: string
+      docker-image-harbor:
+        description: 'Shared infra Docker image to use for build'
+        required: true
+        type: string
   workflow_run:
     workflows: [Build]
     types: [completed]
@@ -23,13 +27,13 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-          {runs-on: wormhole_b0, name: "run", container-options: "--device /dev/tenstorrent/0"},
+          {runs-on: tt-beta-ubuntu-2204-p150a-large-stable, name: "run", container-options: "--device /dev/tenstorrent/0"},
         ]
     name: tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})
     runs-on:
       - ${{ matrix.build.runs-on }}
     container:
-      image: ${{ inputs.docker-image }}
+      image: ${{ inputs.docker-image-harbor }}
       options: --user root ${{ matrix.build.container-options }} --shm-size=2gb
       volumes:
         - /dev/hugepages:/dev/hugepages

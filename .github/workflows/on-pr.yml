@@ -112,6 +112,7 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      docker-image-harbor: ${{ needs.docker-build.outputs.docker-image-harbor }}
   # llmbox-tests:
   #   needs: [build, docker-build]
   #   uses: ./.github/workflows/run-multidevice-tests.yml
@@ -125,6 +126,7 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      docker-image-harbor: ${{ needs.docker-build.outputs.docker-image-harbor }}
       run-codecov: 'false'
       run-dump-mlir: 'false'
   check-all-green:
