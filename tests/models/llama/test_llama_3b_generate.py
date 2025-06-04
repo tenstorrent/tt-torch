@@ -22,7 +22,7 @@ class PrefillTester(ModelTester):
             torch_dtype=torch.bfloat16,
             use_cache=True,
         )
-        model.config.num_hidden_layers = 2  # otherwise it's too big to fit on device
+        model.config.num_hidden_layers = 2  # too small causes repeated next-token predictions. too big causes out of DRAM
 
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_name, torch_dtype=torch.bfloat16
@@ -73,11 +73,11 @@ class PrefillTester(ModelTester):
         return args
 
     @torch.inference_mode()
-    def get_torchcompiled_gm(self):
+    def get_torchcompiled_gm(self, runtime_tensor_cache):
         model = self.get_framework_model()
         golden = self.get_golden_outputs(model, self.inputs)
 
-        model = self.compile_model(model, self.compiler_config)
+        model = self.compile_model(model, self.compiler_config, data_parallel_mode=False, runtime_tensor_cache=runtime_tensor_cache)
 
         return model
 
@@ -100,8 +100,8 @@ class PrefillTester(ModelTester):
 def test_llama_3b(record_property):
     cc = CompilerConfig()
     cc.compile_depth = CompileDepth.EXECUTE
-    cc.enable_consteval = True
-    cc.consteval_parameters = True
+    # cc.enable_consteval = True
+    # cc.consteval_parameters = True
     mode = "eval"
     model_name = "meta-llama/Llama-3.2-3B"
     tester = PrefillTester(
@@ -123,7 +123,10 @@ def test_llama_3b(record_property):
     # compile prefill fx graph to flatbuffer and run
 
     max_new_tokens = 5
-    gm = tester.get_torchcompiled_gm()
+    
+    runtime_tensor_cache = {"Test": "Hello"}
+    gm = tester.get_torchcompiled_gm(runtime_tensor_cache)
+    
 
     generated_ids = input_ids
     for i in range(max_new_tokens):

@@ -117,19 +117,19 @@ def rectify_buffer_inplace_copy(gm):
     for node in gm.graph.nodes:
         if node.op == "call_function" and node.target == torch.ops.aten.copy_.default:
             # Detect inplace copy with buffer destination
-            destination_node = node.args[0]
-            if destination_node.op != "get_attr":
-                continue
-            source_node = node.args[1]
-            output_cache.append(source_node)
+            # destination_node = node.args[0]
+            # if destination_node.op != "get_attr":
+            #     continue
+            # source_node = node.args[1]
+            # output_cache.append(source_node)
             gm.graph.erase_node(node)
 
-    output_node = [node for node in gm.graph.nodes if node.op == "output"][0]
-    current_output = output_node.args[0]  # one node reference
+    # output_node = [node for node in gm.graph.nodes if node.op == "output"][0]
+    # current_output = output_node.args[0]  # one node reference
 
-    new_args = current_output + tuple(output_cache)
-    new_args = (new_args,)
-    output_node.args = new_args
+    # new_args = current_output + tuple(output_cache)
+    # new_args = (new_args,)
+    # output_node.args = new_args
     return gm
 
 
