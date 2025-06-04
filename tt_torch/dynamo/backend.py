@@ -12,15 +12,21 @@ import pytest
 
 # import torch_mlir
 
-from tt_torch.tools.utils import CompilerConfig
+from tt_torch.tools.utils import (
+    MultiChipGraph,
+    CompilerConfig,
+    CompileDepth,
+    tt_torch_error_message,
+)
 import torch_xla.core.xla_model as xm
+from torch.export.graph_signature import InputKind
 
 
 class BackendOptions:
     def __init__(
         self,
         compiler_config=CompilerConfig(),
-        device=None,
+        devices=None,
         async_mode=False,
         use_pjrt=True,
     ):
@@ -167,15 +173,17 @@ def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         if compiler_config.profile_ops:
             compiler_config.set_torch_mlir_module(module.operation.get_asm())
 
-    # run_pipeline_with_repro_report(
-    #     module,
-    #     f"builtin.module(torchdynamo-export-to-torch-backend-pipeline)",
-    #     "Lowering TorchFX IR -> Torch Backend IR",
-    #     compiler_config.dump_debug,
-    # )
-    dump_module(module=module, name="Torch Backend", compiler_config=compiler_config)
+        # run_pipeline_with_repro_report(
+        #     module,
+        #     f"builtin.module(torchdynamo-export-to-torch-backend-pipeline)",
+        #     "Lowering TorchFX IR -> Torch Backend IR",
+        #     compiler_config.dump_debug,
+        # )
+        dump_module(
+            module=module, name="Torch Backend", compiler_config=compiler_config
+        )
 
-    # lower_mlir_module(False, OutputType.STABLEHLO, module)
+        # lower_mlir_module(False, OutputType.STABLEHLO, module)
 
         dump_module(module=module, name="StableHLO", compiler_config=compiler_config)
 
@@ -303,28 +311,59 @@ def backend(gm, example_inputs, options: BackendOptions = None):
 
     if options.use_pjrt:
 
-        class PJRTExecutor(Executor):
-            def __call__(self, *inputs):
-                device = xm.xla_device()
-                if self.graph_constants is not None:
-                    inputs = self.graph_constants + inputs
+        class PJRTExecutor:
+            def __init__(self, mcg: MultiChipGraph):
+                self.mcg = mcg
+                self.device = xm.xla_device()
 
-                inputs = self.typecast_inputs(inputs)
-                inputs = tuple(input.to(device) for input in inputs)
-                gm = self.program.graph_module.to(device)
-                outputs = gm(*inputs)
+                self.non_user_input_dict = (
+                    {
+                        name: buffer.to(self.device)
+                        for name, buffer in self.mcg.programs[0].named_buffers()
+                    }
+                    | {
+                        name: constant.to(self.device)
+                        for name, constant in self.mcg.programs[
+                            0
+                        ].tensor_constants.items()
+                    }
+                    | {
+                        name: param.to(self.device)
+                        for name, param in self.mcg.programs[0].named_parameters()
+                    }
+                )
+
+                self.ordered_inputs = [None] * len(
+                    self.mcg.programs[0].graph_signature.input_specs
+                )
+
+                # Order params/buffers/constants
+
+                self.user_input_indices = []
+
+                for input_idx, input_spec in enumerate(
+                    self.mcg.programs[0].graph_signature.input_specs
+                ):
+                    if input_spec.kind == InputKind.USER_INPUT:
+                        self.user_input_indices.append(input_idx)
+                    else:
+                        self.ordered_inputs[input_idx] = self.non_user_input_dict[
+                            input_spec.target
+                        ]
+
+            def __call__(self, *inputs):
+                for input_idx, ordered_input_idx in enumerate(self.user_input_indices):
+                    self.ordered_inputs[ordered_input_idx] = inputs[input_idx].to(
+                        self.device
+                    )
+                gm = self.mcg.programs[0].graph_module.to(self.device)
+                outputs = gm(*self.ordered_inputs)
                 outputs = tuple(output.to("cpu") for output in outputs)
                 return outputs
 
-        program, graph_constants = pass_pipeline(gm, example_inputs, cc)
+        mcg = pass_pipeline(gm, example_inputs, cc)
 
-        return PJRTExecutor(
-            program=program,
-            graph_constants=graph_constants,
-            compiler_config=cc,
-            device=device,
-            async_mode=async_mode,
-        )
+        return PJRTExecutor(mcg)
     else:
         return _base_backend(
             gm, example_inputs, compiler_config=cc, device=device, async_mode=async_mode

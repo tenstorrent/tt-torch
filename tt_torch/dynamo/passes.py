@@ -504,55 +504,120 @@ def run_pass_pipeline_for_single_gm(
     return program, constant_inputs
 
 
+def convert_scalar_ops_to_tensor_ops(gm):
+    """Convert scalar operations to tensor operations in an ExportedProgram.
+
+    This function identifies operations that use scalar values (like aten.eq.Scalar) and
+    converts them to use the equivalent tensor operations (like aten.eq.Tensor).
+
+    Args:
+        gm: The GraphModule to modify
+        float_target_dtype: The target dtype for float values (default: torch.float32)
+        int_target_dtype: The target dtype for integer values (default: torch.int32)
+
+    Returns:
+        The modified GraphModule
+    """
+    modified = False
+
+    # Dictionary to track already created tensor constants
+    constant_tensors = {}
+
+    # Find all nodes and convert scalar operations to tensor operations
+    for node in gm.graph.nodes:
+        if node.op == "call_function":
+            if (
+                hasattr(node.target, "name")
+                and "Scalar" in node.target.name()
+                and len(node.args) >= 2
+            ):
+                # Found a scalar op, now find its tensor equivalent
+                op_name = node.target.name()
+                tensor_op_name = op_name.replace("Scalar", "Tensor")
+
+                # Try to get the tensor equivalent operation
+                tensor_op = None
+                if "::" in tensor_op_name and "." in tensor_op_name.split("::")[-1]:
+                    namespace, name = tensor_op_name.split("::")[-1].split(".", 1)
+                    if hasattr(torch.ops.aten, namespace) and hasattr(
+                        getattr(torch.ops.aten, namespace), name
+                    ):
+                        tensor_op = getattr(getattr(torch.ops.aten, namespace), name)
+
+                if tensor_op is not None:
+                    # Convert scalar value to tensor
+                    for i, arg in enumerate(node.args):
+                        if i > 0 and isinstance(arg, (int, float)):
+                            # Create tensor constant for the scalar value
+                            # Use a string key based on the value and its type
+                            key = f"{type(arg).__name__}:{arg}"
+
+                            if key not in constant_tensors:
+                                # Choose appropriate dtype
+                                if isinstance(arg, float):
+                                    dtype = torch.float32
+                                elif isinstance(arg, int):  # int
+                                    # Only use int32 if the value fits within int32 range
+                                    dtype = torch.int32
+                                    arg = max(-2147483648, min(2147483647, arg))
+
+                                # Create tensor constant node
+                                with gm.graph.inserting_before(node):
+                                    tensor_node = gm.graph.create_node(
+                                        "call_function",
+                                        torch.ops.aten.scalar_tensor,
+                                        args=(arg,),
+                                        kwargs={"dtype": dtype},
+                                    )
+                                    constant_tensors[key] = tensor_node
+
+                            # Replace scalar with tensor
+                            new_args = list(node.args)
+                            new_args[i] = constant_tensors[key]
+
+                            # Create new tensor op node
+                            with gm.graph.inserting_after(node):
+                                new_node = gm.graph.create_node(
+                                    "call_function",
+                                    tensor_op,
+                                    args=tuple(new_args),
+                                    kwargs=node.kwargs,
+                                )
+                                node.replace_all_uses_with(new_node)
+                                modified = True
+                            break  # Only convert the first scalar argument
+
+    # Only recompile if we actually made changes
+    if modified:
+        gm.recompile()
+
+    gm.graph.eliminate_dead_code()
+    return gm
+
+
 def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     decompositions = torch.export.default_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
 
     mcg = split_onto_devices(gm, compiler_config)
 
-    # golden should be generated before graph is splitted
-    if compiler_config._enable_intermediate_verification:
-        assert (
-            len(mcg.device_graphs) == 1
-        ), "Intermediate verification is not supported for multi-chip models"
-        program, constants = run_pass_pipeline_for_single_gm(
-            gm, gm.graph, compiler_config, decompositions, example_inputs, 0
-        )
-        _generate_golden_intermediate_cache(
-            program, constants + example_inputs, compiler_config
-        )
+    gm = (
+        torch.export.export_for_training(gm, tuple(example_inputs), strict=False)
+        .run_decompositions(decompositions)
+        .module()
+    )
+    # We do this because python integers and floats are automatically considered as i64/f64 when pushing to PJRT device - which we do not support.
+    # We convert scalar ops to tensor ops as there is no way to keep the raw integer/float but signal that it is a 32-bit variant. We can do this
+    # with tensors of course.
+    gm = convert_scalar_ops_to_tensor_ops(gm)
 
-        # we don't need to run_pass_pipeline_for_single_gm again because there is only one device_graph
-        mcg.programs[0] = program
-        mcg.constant_inputs[0] = constants
-        mcg.example_inputs[0] = example_inputs
-        return mcg
+    program = torch.export.export(gm, tuple(example_inputs), strict=False)
+    for k, v in program.state_dict.items():
 
-    for idx, graph in mcg.device_graphs.items():
-        sub_example_inputs = []
-        for inp in mcg.graph_inputs[idx]:
-            if inp.io_type == IOType.USER:
-                sub_example_inputs.append(example_inputs[inp.producer_index])
-            else:
-                meta = inp.meta
-                if "tensor_meta" in meta:
-                    sub_example_inputs.append(
-                        torch.randn(meta["tensor_meta"].shape).to(
-                            dtype=meta["tensor_meta"].dtype
-                        )
-                    )
-                else:
-                    assert "example_value" in meta
-                    sub_example_inputs.append(
-                        torch.randn(meta["example_value"].shape).to(
-                            dtype=meta["example_value"].dtype
-                        )
-                    )
-        program, constant_inputs = run_pass_pipeline_for_single_gm(
-            gm, graph, compiler_config, decompositions, sub_example_inputs, idx
-        )
-        mcg.programs[idx] = program
-        mcg.constant_inputs[idx] = constant_inputs
-        mcg.example_inputs[idx] = sub_example_inputs
+        if v.dtype == torch.float64:
+            program._state_dict[k] = v.to(torch.float32)
+        elif v.dtype == torch.int64:
+            program._state_dict[k] = v.to(torch.int32)
 
+    mcg.programs[0] = program
     return mcg

@@ -6,7 +6,7 @@ import torch
 import pytest
 import requests
 import onnx
-from transformers.cache_utils import DynamicCache, _flatten_dynamic_cache
+from transformers.cache_utils import DynamicCache
 from onnx.tools import update_model_dims
 import gc
 from transformers.cache_utils import DynamicCache
