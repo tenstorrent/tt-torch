@@ -130,7 +130,7 @@ def test_clamp():
             super().__init__()
 
         def forward(self, x):
-            return torch.clamp(x, min=-1, max=1)
+            return torch.clamp(x, min=-1.0, max=1.0)
 
     verify_module(Basic(), input_shapes=[(32, 32)], input_range=(-5, 5))
 
