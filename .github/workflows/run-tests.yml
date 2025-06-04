@@ -33,7 +33,7 @@ jobs:
     runs-on:
       - ${{ matrix.build.runs-on }}
     container:
-      image: ${{ inputs.docker-image-harbor }}
+      image: ${{ inputs.docker-image }}
       options: --user root ${{ matrix.build.container-options }} --shm-size=2gb
       volumes:
         - /dev/hugepages:/dev/hugepages
@@ -66,6 +66,8 @@ jobs:
         echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
         echo "test_report_path_onnx=report_onnx_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
 
+        sudo apt update
+        sudo apt install unzip
     - name: Git safe dir
       run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
 
