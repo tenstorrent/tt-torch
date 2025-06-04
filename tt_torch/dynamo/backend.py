@@ -102,7 +102,6 @@ def dump_module(module, name, compiler_config):
         print(f"{name} module", file=sys.stderr)
         print(module, file=sys.stderr)
 
-    a = a + 1
     if compiler_config.save_mlir_override and name.lower() in (
         n.lower() for n in compiler_config.save_mlir_override
     ):
