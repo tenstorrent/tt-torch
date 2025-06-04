@@ -14,7 +14,6 @@ def generate_summary(docs_dir):
     summary_lines.append("- [Introduction](overview.md)")
     summary_lines.append("- [Getting Started](getting_started.md)")
     summary_lines.append("\n\n# User guide")
-    summary_lines.append("- [Building](build.md)")
     summary_lines.append("- [Testing](test.md)")
     summary_lines.append("- [Controlling Compiler](controlling.md)")
     summary_lines.append("- [Pre-commit](pre_commit.md)")

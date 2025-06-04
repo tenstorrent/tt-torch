@@ -63,10 +63,21 @@ def test_albert_masked_lm(record_property, model_name, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    assert_pcc = (
+        True
+        if model_name
+        in [
+            "albert/albert-base-v2",
+            "albert/albert-large-v2",
+            "albert/albert-xlarge-v2",
+        ]
+        else False
+    )
+
     tester = ThisTester(
         model_name,
         mode,
-        assert_pcc=False,
+        assert_pcc=assert_pcc,
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
