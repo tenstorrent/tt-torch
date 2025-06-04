@@ -66,8 +66,6 @@ jobs:
         echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
         echo "test_report_path_onnx=report_onnx_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
 
-        sudo apt update
-        sudo apt install unzip
     - name: Git safe dir
       run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
 

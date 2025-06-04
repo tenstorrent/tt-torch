@@ -144,10 +144,6 @@ jobs:
         echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
         echo "mlir_dir=$(pwd)/model_mlir" >> "$GITHUB_OUTPUT" # Define the model_mlir directory
 
-        sudo apt update
-        sudo apt install unzip
-
-
     - name: Use build artifacts
       uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
       with:
