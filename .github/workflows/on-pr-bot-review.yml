@@ -18,7 +18,7 @@ jobs:
         run: python -m pip install flake8 flake8-sarif
       - name: Run Flake8
         run: |
-          python flake8 -vv --output-file=.output.sarif --format=sarif --ignore=E501
+          python -m flake8 -v --output-file=.output.sarif --format=sarif --ignore=E501
           cat .output.sarif
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v3
@@ -42,7 +42,7 @@ jobs:
         fetch-depth: 0 # Fetch all history and tags
     - name: Setup Cppcheck
       run: |
-        echo "set man-db/auto-update false" | debconf-communicate; dpkg-reconfigure man-db
+        sudo echo "set man-db/auto-update false" | debconf-communicate; dpkg-reconfigure man-db
         TEMP_DEB="$(mktemp)" && \
         wget -O "$TEMP_DEB" 'https://launchpad.net/ubuntu/+archive/primary/+files/cppcheck_2.17.1-1_amd64.deb' && \
         sudo dpkg -i "$TEMP_DEB" && \
