@@ -285,12 +285,21 @@ def split_onto_devices(gm, compiler_config):
         output_index = 0
         for node in gm.graph.nodes:
             if node.op == "placeholder":
-                mci = MultiChipInput(
-                    0,
-                    IOType.USER,
-                    input_index,
-                    input_index,
-                )
+                if "past_key_values" in node.name:
+                    mci = MultiChipInput(
+                        0,
+                        IOType.INPUT_CACHE,
+                        input_index,
+                        input_index,
+                        node_name=node.name # attach node name to map to cachable runtime tensor
+                    )
+                else:
+                    mci = MultiChipInput(
+                        0,
+                        IOType.USER,
+                        input_index,
+                        input_index,
+                    )
                 mcg.graph_inputs[0].append(mci)
                 input_index += 1
             elif node.op == "output":
@@ -298,6 +307,7 @@ def split_onto_devices(gm, compiler_config):
                     mco = MultiChipOutput(0, IOType.USER, output_index)
                     mcg.graph_outputs[0].append(mco)
                     output_index += 1
+            
         return mcg
 
     node_to_new_nodes = {}
