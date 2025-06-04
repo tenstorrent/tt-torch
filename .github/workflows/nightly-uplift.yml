@@ -37,7 +37,7 @@ jobs:
           git clone https://github.com/tenstorrent/tt-mlir.git tt-mlir
           cd tt-mlir
           # Fetch commit history between $COMMIT_SHA and HEAD
-          git log --oneline $COMMIT_SHA..HEAD > ../commit_history.txt
+          git log --oneline ${{ env.CURRENT_COMMIT_SHA}}..HEAD > ../commit_history.txt
 
       - name: Update tt-mlir reference
         env:
