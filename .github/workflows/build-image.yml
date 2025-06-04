@@ -69,6 +69,7 @@ jobs:
           DOCKER_CI_IMAGE=$(tail -n 1 docker.log)
           echo "DOCKER_CI_IMAGE $DOCKER_CI_IMAGE"
           echo "docker-image=$DOCKER_CI_IMAGE" >> "$GITHUB_OUTPUT"
+          echo "docker-image-harbor=harbor.ci.tenstorrent.net/$DOCKER_CI_IMAGE" >> "$GITHUB_OUTPUT"
 
   set-latest:
     # Set the latest tag on the CI image
