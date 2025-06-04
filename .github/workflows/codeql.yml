@@ -57,8 +57,9 @@ jobs:
     name: Py Flake8
     runs-on: ubuntu-latest
     permissions:
+      security-events: write
       contents: read
-      checks: write
+      packages: read
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -84,9 +85,9 @@ jobs:
     name: Cppcheck
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      checks: write
       security-events: write
+      contents: read
+      packages: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
