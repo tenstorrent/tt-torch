@@ -94,7 +94,6 @@ def test_timm_image_classification(record_property, model_name, mode, op_by_op):
             "tf_efficientnet_lite4.in1k",
             "xception71.tf_in1k",
             "inception_v4.tf_in1k",
-            "ese_vovnet19b_dw.ra_in1k",
         ]
         else False
     )
