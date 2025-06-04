@@ -99,6 +99,7 @@ jobs:
                 tests/models/beit/test_beit_image_classification_n300.py::test_beit_image_classification[full-microsoft/beit-base-patch16-224-eval]
                 tests/models/beit/test_beit_image_classification_n300.py::test_beit_image_classification[full-microsoft/beit-large-patch16-224-eval]
                 tests/models/mgp-str-base/test_mgp_str_base_n300.py::test_mgp_str_base[full-eval]
+                tests/models/mlpmixer/test_mlpmixer_n300.py::test_mlpmixer[full-eval]
                 tests/models/EfficientNet/test_EfficientNet_n300.py::test_EfficientNet[full-efficientnet-b1-eval]
                 tests/models/EfficientNet/test_EfficientNet_n300.py::test_EfficientNet[full-efficientnet-b2-eval]
                 tests/models/EfficientNet/test_EfficientNet_n300.py::test_EfficientNet[full-efficientnet-b3-eval]
