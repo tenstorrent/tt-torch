@@ -65,6 +65,8 @@ jobs:
         if: ${{ steps.create-pr.outputs.pull-request-number }}
         run: |
           gh pr merge --squash --auto "${{ steps.create-pr.outputs.pull-request-number }}"
-          gh pr comment ${{ steps.create-pr.outputs.pull-request-number }} --body "### List of commits since last uplift:\n\n$(git log --oneline ${{ env.PREV_UPLIFT_SHA }}..HEAD)"
+          echo "### List of commits since last uplift:" > commit_list.txt
+          git log --oneline ${{ env.PREV_UPLIFT_SHA }}..HEAD >> commit_list.txt
+          gh pr comment ${{ steps.create-pr.outputs.pull-request-number }} --body "$(cat commit_list.txt)"
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
