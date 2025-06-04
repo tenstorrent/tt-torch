@@ -21,7 +21,7 @@ jobs:
         shell: bash
         run: |
           flake8 --version
-          flake8 -v --output-file=.output.sarif --format=sarif --ignore=E501
+          flake8 --output-file=.output.sarif --format=sarif --ignore=E501
           cat .output.sarif
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v3
