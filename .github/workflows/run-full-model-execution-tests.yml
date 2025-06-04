@@ -113,7 +113,7 @@ jobs:
     name: "test execution (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
 
     container:
-      image: ${{ inputs.docker-image }}
+      image: ${{ inputs.docker-image-harbor }}
       options: --user root --device /dev/tenstorrent/0 --shm-size=4gb
       volumes:
         - /dev/hugepages:/dev/hugepages

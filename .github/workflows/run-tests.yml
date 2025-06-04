@@ -33,7 +33,7 @@ jobs:
     runs-on:
       - ${{ matrix.build.runs-on }}
     container:
-      image: ${{ inputs.docker-image }}
+      image: ${{ inputs.docker-image-harbor }}
       options: --user root ${{ matrix.build.container-options }} --shm-size=2gb
       volumes:
         - /dev/hugepages:/dev/hugepages
