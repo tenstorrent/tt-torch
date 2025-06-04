@@ -38,16 +38,14 @@ def manage_dependencies(request):
 
 def pytest_addoption(parser):
     parser.addoption(
-        "--op_by_op_stablehlo",
-        action="store_true",
-        default=False,
-        help="Run test in stablehlo op-by-op mode",
+        "--compile-depth",
+        action="store",
+        help="Run only tests with specific compile depth (STABLEHLO, TTNN_IR, etc)",
     )
     parser.addoption(
-        "--op_by_op_torch",
-        action="store_true",
-        default=False,
-        help="Run test in torch op-by-op mode",
+        "--op-by-op-backend",
+        action="store",
+        help="Run tests with specific op-by-op backend (TORCH, STABLEHLO)",
     )
     parser.addoption(
         "--crashsafe",
@@ -65,10 +63,40 @@ def pytest_runtest_logreport(report):
 
 
 def pytest_collection_modifyitems(config, items):
+<<<<<<< HEAD
     # Filter tests based on which op_by_op flag is set
     selected_items = []
     using_torch = config.getoption("--op_by_op_torch")
     using_stablehlo = config.getoption("--op_by_op_stablehlo")
+=======
+    selected = items.copy()
+
+    # Handle compile depth filtering
+    if config.getoption("--compile-depth"):
+        target_depth = getattr(CompileDepth, config.getoption("--compile-depth"))
+        compile_depth_selected = []
+        
+        for item in selected:
+            if hasattr(item, "callspec"):
+                model_info = item.callspec.params.get("model_info")
+                if model_info and model_info.compile_depth == target_depth:
+                    compile_depth_selected.append(item)
+        
+        selected = compile_depth_selected
+
+    # Handle op_by_op backend filtering
+    if config.getoption("--op-by-op-backend"):
+        target_backend = getattr(OpByOpBackend, config.getoption("--op-by-op-backend"))
+        backend_selected = []
+        
+        for item in selected:
+            if hasattr(item, "callspec"):
+                model_info = item.callspec.params.get("model_info")
+                if model_info and model_info.op_by_op_backend == target_backend:
+                    backend_selected.append(item)
+        
+        selected = backend_selected
+>>>>>>> 272beeb (Made changes to conftest.py that adds filtering by opbyopbackend and compile depth as well for demo. test_EfficientNet.py and test_falcon.py are model test files used to show proof of concept for single and multivariant models. ModelMetadata contains metadata on models or test configurations that test functions use to parametrize tests and they are defined in the test source files itself. Any info here override default test configurations for the models.)
 
     # Check if the --crashsafe option is enabled
     if config.getoption("--crashsafe"):
@@ -80,20 +108,7 @@ def pytest_collection_modifyitems(config, items):
                 returncode=1,
             )
 
-    for item in items:
-        for param in item.iter_markers(name="parametrize"):
-            if "op_by_op" in param.args[0]:
-                op_by_op_value = item.callspec.params["op_by_op"]
-                # Only select tests that match the specific backend flag
-                if (using_torch and op_by_op_value == OpByOpBackend.TORCH) or (
-                    using_stablehlo and op_by_op_value == OpByOpBackend.STABLEHLO
-                ):
-                    selected_items.append(item)
-                    break
-
-    if using_torch or using_stablehlo:
-        # Replace the items with only the selected backend tests
-        items[:] = selected_items
+    items[:] = selected
 
 
 @pytest.fixture(scope="function", autouse=True)
