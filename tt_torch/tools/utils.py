@@ -72,7 +72,8 @@ class OpByOpBackend(Enum):
 
 class IOType(Enum):
     INTER_DEVICE = 1
-    USER = 2
+    USER = 2,
+    INPUT_CACHE = 3
 
 
 class MultiChipOutput:
@@ -90,13 +91,14 @@ class MultiChipOutput:
 
 class MultiChipInput:
     def __init__(
-        self, originating_device, io_type, producer_index, consumer_index, meta
+        self, originating_device, io_type, producer_index, consumer_index, meta, node_name=None
     ):
         self.originating_device = originating_device
         self.io_type = io_type
         self.producer_index = producer_index
         self.consumer_index = consumer_index
         self.meta = meta
+        self.node_name = node_name 
 
 
 class MultiChipGraph:
