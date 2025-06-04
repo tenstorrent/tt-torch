@@ -4,7 +4,8 @@
 import torch
 import onnx
 import onnxruntime as ort
-import tt_mlir
+
+# import tt_mlir
 import time
 import pickle
 import faulthandler

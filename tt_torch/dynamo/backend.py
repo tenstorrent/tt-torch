@@ -6,7 +6,7 @@ import os
 import warnings
 import re
 
-import tt_mlir
+# import tt_mlir
 import sys
 import pytest
 
@@ -63,7 +63,7 @@ def create_verify_golden_callback(compiler_config: CompilerConfig):
 
     def verify_golden_callback(binary, callback_context, op_context):
 
-        raw_location = tt_mlir.get_op_loc_info(op_context)
+        # raw_location = tt_mlir.get_op_loc_info(op_context)
 
         location = ""
         fused_locations = []
@@ -91,9 +91,9 @@ def create_verify_golden_callback(compiler_config: CompilerConfig):
             print(f"Found golden for op @ {intermediate_data.node.name} == {location}.")
 
             # return a null tensor for decomposed ops with invalid output tensors (eg. deallocate)
-            output_intermediate_tensor = tt_mlir.get_op_output_torch_tensor(
-                op_context, callback_context
-            )
+            # output_intermediate_tensor = tt_mlir.get_op_output_torch_tensor(
+            #     op_context, callback_context
+            # )
 
             if output_intermediate_tensor is not None:
                 if output_intermediate_tensor.dim == 0:
@@ -205,16 +205,16 @@ def shlo_to_flatbuffer(
 
     shlo = module.operation.get_asm(enable_debug_info=True)
     if compiler_config.automatic_parallelization:
-        shlo = tt_mlir.stable_hlo_automatic_parallelization(
-            shlo, compiler_config.mesh_shape, len_activations, len_graph_constants
-        )
+        # shlo = tt_mlir.stable_hlo_automatic_parallelization(
+        #     shlo, compiler_config.mesh_shape, len_activations, len_graph_constants
+        # )
         dump_module(
             module=shlo,
             name="STABLEHLO_AUTOMATIC_PARALLELIZATION",
             compiler_config=compiler_config,
         )
 
-    ttir = tt_mlir.compile_stable_hlo_to_ttir(shlo)
+    # ttir = tt_mlir.compile_stable_hlo_to_ttir(shlo)
     dump_module(module=ttir, name="TTIR", compiler_config=compiler_config)
 
     if compiler_config.enable_intermediate_verification:
@@ -222,9 +222,9 @@ def shlo_to_flatbuffer(
             create_verify_golden_callback(compiler_config)
         )
 
-    binary, ttnn = tt_mlir.compile_ttir_to_bytestream(
-        ttir, system_desc_path, len_activations, len_graph_constants
-    )
+    # binary, ttnn = tt_mlir.compile_ttir_to_bytestream(
+    #     ttir, system_desc_path, len_activations, len_graph_constants
+    # )
     dump_module(module=ttnn, name="TTNN", compiler_config=compiler_config)
 
     return binary
@@ -256,7 +256,7 @@ def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
             len(mcg.example_inputs[i]),
             len(mcg.constant_inputs[i]),
         )
-        mcg.binaries[i] = tt_mlir.create_binary_from_bytestream(binary_bytestream)
+        # mcg.binaries[i] = tt_mlir.create_binary_from_bytestream(binary_bytestream)
 
     compiler_config.record_property("achieved_compile_depth", "TTNN_IR")
     return executor

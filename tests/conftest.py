@@ -38,19 +38,19 @@ def manage_dependencies(request):
     )
 
 
-@pytest.fixture(scope="session", autouse=True)
-def create_system_descriptor(request):
-    # try:
-    #     tt_mlir.create_system_desc()
-    # except Exception as e:
-    #     print(f"Failed to create system descriptor: {e}")
+# @pytest.fixture(scope="session", autouse=True)
+# def create_system_descriptor(request):
+#     # try:
+#     #     tt_mlir.create_system_desc()
+#     # except Exception as e:
+#     #     print(f"Failed to create system descriptor: {e}")
 
-    yield
+#     yield
 
-    try:
-        os.remove(os.getenv("SYSTEM_DESC_PATH"))
-    except OSError:
-        pass
+#     try:
+#         os.remove(os.getenv("SYSTEM_DESC_PATH"))
+#     except OSError:
+#         pass
 
 
 def pytest_addoption(parser):
@@ -99,14 +99,15 @@ def pytest_collection_modifyitems(config, items):
 
     for item in items:
         for param in item.iter_markers(name="parametrize"):
-            if "op_by_op" in param.args[0]:
-                op_by_op_value = item.callspec.params["op_by_op"]
-                # Only select tests that match the specific backend flag
-                if (using_torch and op_by_op_value == OpByOpBackend.TORCH) or (
-                    using_stablehlo and op_by_op_value == OpByOpBackend.STABLEHLO
-                ):
-                    selected_items.append(item)
-                    break
+            if "op_by_op" not in param.args[0]:
+                selected_items.append(item)
+                # op_by_op_value = item.callspec.params["op_by_op"]
+                # # Only select tests that match the specific backend flag
+                # if (using_torch and op_by_op_value == OpByOpBackend.TORCH) or (
+                #     using_stablehlo and op_by_op_value == OpByOpBackend.STABLEHLO
+                # ):
+                #     selected_items.append(item)
+                #     break
 
     if using_torch or using_stablehlo:
         # Replace the items with only the selected backend tests
