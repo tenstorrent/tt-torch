@@ -20,7 +20,7 @@ RUN mkdir -p $BUILD_DIR && \
 # Copy the project from host, cloned in build-image.yml
 COPY . $BUILD_DIR/$PROJECT_NAME
 
-# Build the toolchain
+# Build the toolchain AGAIN
 WORKDIR $BUILD_DIR/$PROJECT_NAME
 RUN cd third_party && \
     cmake -B toolchain -DBUILD_TOOLCHAIN=ON
