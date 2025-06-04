@@ -26,7 +26,18 @@ jobs:
       - name: Set env variable
         run: |
           echo "TODAY=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
-          echo "PREV_UPLIFT_SHA=$(git blame third_party/CMakeLists.txt | grep 'set(TT_MLIR_VERSION ' | awk '{print $1}')" >> $GITHUB_ENV
+          echo "CURRENT_COMMIT_SHA=$(grep -oP 'set\(TT_MLIR_VERSION "\K[^"]+' third_party/CMakeLists.txt)" >> $GITHUB_ENV
+          echo "SUBMODULE_VERSION=${COMMIT_SHA}" >> $GITHUB_ENV
+
+      - name: Fetch commit history from tt-mlir repository
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          # Clone the tt-mlir repository
+          git clone https://github.com/tenstorrent/tt-mlir.git tt-mlir
+          cd tt-mlir
+          # Fetch commit history between $COMMIT_SHA and HEAD
+          git log --oneline $COMMIT_SHA..HEAD > ../commit_history.txt
 
       - name: Update tt-mlir reference
         env:
@@ -65,8 +76,8 @@ jobs:
         if: ${{ steps.create-pr.outputs.pull-request-number }}
         run: |
           gh pr merge --squash --auto "${{ steps.create-pr.outputs.pull-request-number }}"
-          echo "### List of commits since last uplift:" > commit_list.txt
-          git log --oneline ${{ env.PREV_UPLIFT_SHA }}..HEAD >> commit_list.txt
+          echo "### List of tt-mlir commits since previous uplift:" > commit_list.txt
+          cat commit_history.txt >> commit_list.txt
           gh pr comment ${{ steps.create-pr.outputs.pull-request-number }} --body "$(cat commit_list.txt)"
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
