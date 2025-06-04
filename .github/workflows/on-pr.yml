@@ -104,7 +104,7 @@ jobs:
     with:
       mlir_override: ${{ github.event.inputs.mlir_override }}
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-      setup-args: "--build_perf --include-models" #TODO - This should be toggleable?
+      setup-args: "--include-models" #TODO - This should be toggleable?
   test:
     needs: [build, docker-build]
     if: github.event.pull_request.draft == false
