@@ -26,7 +26,7 @@ jobs:
       - name: Set env variable
         run: |
           echo "TODAY=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
-          echo "PREV_UPLIFT_SHA=$(git blame third_party/CMakeLists.txt | grep 'set(TT_MLIR_VERSION '' | awk '{print $1}')" >> $GITHUB_ENV
+          echo "PREV_UPLIFT_SHA=$(git blame third_party/CMakeLists.txt | grep 'set(TT_MLIR_VERSION ' | awk '{print $1}')" >> $GITHUB_ENV
 
       - name: Update tt-mlir reference
         env:
