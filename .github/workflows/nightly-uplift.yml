@@ -49,7 +49,8 @@ jobs:
           cd tt-mlir
           # Fetch commit history between $COMMIT_SHA and LATEST_SHA
           git log --oneline ${{ env.CURRENT_COMMIT_SHA}}..${{ env.LATEST_SHA }} >../commit_history.txt
-          cat ../commit_history.txt
+          cd ..
+          cat commit_history.txt
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
