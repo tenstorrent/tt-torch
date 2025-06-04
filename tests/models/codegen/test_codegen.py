@@ -14,7 +14,7 @@ class ThisTester(ModelTester):
     def _load_model(self):
         checkpoint = "Salesforce/codegen-350M-mono"
         model = AutoModelForCausalLM.from_pretrained(
-            checkpoint, torch_dtype=torch.bfloat16
+            checkpoint, torch_dtype=torch.bfloat16, use_cache=False
         )
         self.tokenizer = AutoTokenizer.from_pretrained(checkpoint)
         return model
@@ -47,14 +47,16 @@ def test_codegen(record_property, mode, op_by_op):
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
-        is_token_output=True,
-        run_generate=True,  # run model.generate(**inputs)
+        run_generate=False,
+        assert_atol=False,
     )
 
-    # TODO - Enable checking - https://github.com/tenstorrent/tt-torch/issues/861
-    results = tester.test_model(assert_eval_token_mismatch=False)
+    results = tester.test_model()
 
     if mode == "eval":
-        print(tester.tokenizer.decode(results[0]))
+        logits = results.logits if hasattr(results, "logits") else results[0]
+        token_ids = torch.argmax(logits, dim=-1)
+        decoded = tester.tokenizer.batch_decode(token_ids, skip_special_tokens=True)[0]
+        print(decoded)
 
     tester.finalize()
