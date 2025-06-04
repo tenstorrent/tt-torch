@@ -63,6 +63,7 @@ jobs:
           {
             runs-on: wormhole_b0, name: "codegen", tests: "
               tests/models/codegen/test_codegen.py::test_codegen[op_by_op_torch-eval]
+              tests/models/codegen/test_codegen_generate.py::test_codegen_generate[op_by_op_torch-eval]
               "
           },
           {
