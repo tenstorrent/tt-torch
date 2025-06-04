@@ -47,6 +47,8 @@ jobs:
         cppcheck --std=c++17 --check-level=exhaustive --enable=warning,information --platform=unix64 --suppress=uninitMemberVar --output-file=../../.output.sarif --output-format=sarif .
         cd ../..
         cat .output.sarif
+        jq '.runs[].tool.driver.rules[].properties |= (if has("security-severity") then .["security-severity"] |= tostring else . end)' .output.sarif > .output_updated.sarif
+        mv .output_updated.sarif .output.sarif
         # cat .output.sarif | reviewdog -f=sarif -reporter=github-pr-review -level=warning -fail-on-error=true -filter-mode=nofilter -diff="git diff origin/main" -tee
 
     - name: Upload SARIF file
