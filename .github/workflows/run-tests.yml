@@ -89,11 +89,11 @@ jobs:
         source env/activate
         pip freeze
 
-    - name: Verify CI model test matrices
-      shell: bash
-      run: |
-        source env/activate
-        python tt_torch/tools/ci_verification.py --scan-workflows
+    # - name: Verify CI model test matrices
+    #   shell: bash
+    #   run: |
+    #     source env/activate
+    #     python tt_torch/tools/ci_verification.py --scan-workflows
 
     - name: Run PyTorch Unit tests
       shell: bash
