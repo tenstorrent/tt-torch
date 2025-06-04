@@ -45,11 +45,11 @@ jobs:
         run: |
           # Clone the tt-mlir repository
           cd ${{ runner.temp }}
-          echo "### List of tt-mlir commits since previous uplift:" > commit_list.txt
+          echo "### List of tt-mlir commits since previous uplift:" >commit_list.txt
           git clone https://github.com/tenstorrent/tt-mlir.git tt-mlir
           cd tt-mlir
           # Fetch commit history between $COMMIT_SHA and LATEST_SHA
-          git log --oneline ${{ env.CURRENT_COMMIT_SHA}}..${{ env.LATEST_SHA }} >>../commit_list.txt
+          git log --oneline ${{ env.CURRENT_COMMIT_SHA}}..${{ env.LATEST_SHA }} | sed -E 's/^([0-9a-f]+) (.*)$/[\1](https:\/\/github.com\/tenstorrent\/tt-mlir\/commit\/\1) \2/' >>..commit_list.txt
           cd ..
           cat commit_list.txt
 
@@ -82,5 +82,7 @@ jobs:
         run: |
           gh pr merge --squash --auto "${{ steps.create-pr.outputs.pull-request-number }}"
           gh pr comment ${{ steps.create-pr.outputs.pull-request-number }} --body "$(cat ${{ runner.temp }}/commit_list.txt)"
+          rm -rf ${{ runner.temp }}/tt-mlir
+          rm -f ${{ runner.temp }}/commit_list.txt
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
