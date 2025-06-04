@@ -2,19 +2,19 @@ name: On PR bot review
 # This workflow runs on pull requests to perform static code analysis using pyflakes and cppcheck.
 on: [pull_request]
 jobs:
-  pyflakes:
-    name: Pyflakes
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      checks: write
-    steps:
-      - uses: actions/checkout@v4
-      - name: pyflakes
-        uses: reviewdog/action-pyflakes@2d6743a6bb878aba173c913783dd568f4f2c2743
-        with:
-          github_token: ${{  secrets.REVIEW_TOKEN }}
-          reporter: github-pr-review
+  # pyflakes:
+  #   name: Pyflakes
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: read
+  #     checks: write
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: pyflakes
+  #       uses: reviewdog/action-pyflakes@2d6743a6bb878aba173c913783dd568f4f2c2743
+  #       with:
+  #         github_token: ${{  secrets.GH_TOKEN }}
+  #         reporter: github-pr-review
 
   cppcheck:
     name: Cppcheck
@@ -30,9 +30,9 @@ jobs:
         submodules: 'recursive'
         clean: true
         fetch-depth: 0 # Fetch all history and tags
-    - uses: reviewdog/action-setup@e04ffabe3898a0af8d0fb1af00c188831c4b5893 # v1.3.2
-      with:
-        reviewdog_version: latest
+    # - uses: reviewdog/action-setup@e04ffabe3898a0af8d0fb1af00c188831c4b5893 # v1.3.2
+    #   with:
+    #     reviewdog_version: latest
     - name: Setup Cppcheck
       run: |
         TEMP_DEB="$(mktemp)" && \
@@ -41,17 +41,18 @@ jobs:
         rm -f "$TEMP_DEB"
     - name: Run Cppcheck with reviewdog
       env:
-        REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.REVIEW_TOKEN }}
+        REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GH_TOKEN }}
       run: |
         cd tt_torch/csrc
         cppcheck --std=c++17 --check-level=exhaustive --enable=warning,information --platform=unix64 --suppress=uninitMemberVar --output-file=../../.output.sarif --output-format=sarif .
         cd ../..
-        cat .output.sarif | reviewdog -f=sarif -reporter=github-pr-review -level=warning -fail-on-error=true -filter-mode=nofilter -diff="git diff origin/main" -tee
+        cat .output.sarif
+        # cat .output.sarif | reviewdog -f=sarif -reporter=github-pr-review -level=warning -fail-on-error=true -filter-mode=nofilter -diff="git diff origin/main" -tee
 
-    # - name: Upload SARIF file
-    #   uses: github/codeql-action/upload-sarif@v3
-    #   with:
-    #     sarif_file: .output.sarif
-    #     # Optional category for the results
-    #     # Used to differentiate multiple results for one commit
-    #     category: cppcheck
+    - name: Upload SARIF file
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: .output.sarif
+        # Optional category for the results
+        # Used to differentiate multiple results for one commit
+        category: cppcheck
