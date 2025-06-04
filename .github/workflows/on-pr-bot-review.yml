@@ -20,7 +20,7 @@ jobs:
       - name: Run Flake8
         shell: bash
         run: |
-          set +x
+          set -x
           flake8 --version
           flake8 --output-file=.output.sarif --format=sarif --ignore=E501
       - name: Upload SARIF file
