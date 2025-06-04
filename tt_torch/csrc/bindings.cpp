@@ -164,6 +164,9 @@ compile_ttir_to_bytestream(std::string_view code,
       code, sys_desc_path, len_activations, len_graph_constants);
   auto size = ::flatbuffers::GetSizePrefixedBufferLength(
       static_cast<const uint8_t *>(binary_ptr->get()));
+  if (binary_ptr == nullptr || size == 0) {
+    throw std::runtime_error("Failed to compile TTIR to bytestream");
+  }
   tt::runtime::Binary binary = tt::runtime::Binary(*binary_ptr);
 
   std::string data_str(static_cast<const char *>(binary_ptr->get()), size);
