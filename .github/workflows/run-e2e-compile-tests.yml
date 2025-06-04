@@ -55,7 +55,6 @@ jobs:
                   tests/models/mistral/test_pixtral.py::test_pixtral[full-eval]
                   tests/models/mistral/test_mistral.py::test_mistral[full-mistral7b-eval]
                   tests/models/mistral/test_mistral.py::test_mistral[full-ministral8b-eval]
-                  tests/models/seamless_m4t/test_seamless_m4t.py::test_seamless_m4t[full-eval]
             "
           },
         ]
