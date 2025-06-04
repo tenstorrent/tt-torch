@@ -29,6 +29,16 @@ jobs:
           echo "CURRENT_COMMIT_SHA=$(grep -oP 'set\(TT_MLIR_VERSION "\K[^"]+' third_party/CMakeLists.txt)" >> $GITHUB_ENV
           echo "SUBMODULE_VERSION=${COMMIT_SHA}" >> $GITHUB_ENV
 
+      - name: Update tt-mlir reference
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+            # Fetch the latest SHA using GitHub CLI
+            LATEST_SHA=$(gh api repos/tenstorrent/tt-mlir/commits/main --jq '.sha')
+            echo "LATEST_SHA=${LATEST_SHA}" >> $GITHUB_ENV
+            # Update the CMakeLists.txt file with the new SHA
+            sed -i "s/set(TT_MLIR_VERSION \".*\")/set(TT_MLIR_VERSION \"${LATEST_SHA}\")/" third_party/CMakeLists.txt
+
       - name: Fetch commit history from tt-mlir repository
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -37,17 +47,9 @@ jobs:
           set -x
           git clone https://github.com/tenstorrent/tt-mlir.git tt-mlir
           cd tt-mlir
-          # Fetch commit history between $COMMIT_SHA and HEAD
-          git log --oneline ${{ env.CURRENT_COMMIT_SHA}}..HEAD > ../commit_history.txt
-
-      - name: Update tt-mlir reference
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-            # Fetch the latest SHA using GitHub CLI
-            LATEST_SHA=$(gh api repos/tenstorrent/tt-mlir/commits/main --jq '.sha')
-            # Update the CMakeLists.txt file with the new SHA
-            sed -i "s/set(TT_MLIR_VERSION \".*\")/set(TT_MLIR_VERSION \"${LATEST_SHA}\")/" third_party/CMakeLists.txt
+          # Fetch commit history between $COMMIT_SHA and LATEST_SHA
+          git log --oneline ${{ env.CURRENT_COMMIT_SHA}}..${{ env.LATEST_SHA }} >../commit_history.txt
+          cat ../commit_history.txt
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
