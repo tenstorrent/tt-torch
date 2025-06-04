@@ -74,12 +74,21 @@ def test_falcon(record_property, model_name, mode, op_by_op):
         ],
     )
 
+    assert_pcc = (
+        True
+        if model_name
+        in [
+            "tiiuae/Falcon3-3B-Base",
+        ]
+        else False
+    )
+
     tester = ThisTester(
         model_name,
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
-        assert_pcc=False,
+        assert_pcc=assert_pcc,
         assert_atol=False,
         model_group=model_group,
         run_generate=True,  # run model.generate(**inputs)
