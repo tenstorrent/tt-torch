@@ -290,8 +290,9 @@ compileTTIRToTTNN(std::string_view code, std::string_view system_desc_path,
 }
 
 int test() {
-  char a[10];
-  a[10] = 0;
+  char a[10], *b;
+  b = a;
+  *(b + 10) = 0;
   return 0;
 }
 
