@@ -38,8 +38,8 @@ The following models can be currently run through tt-torch as of Feb 3rd, 2025. 
 || y 1 6 | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-regnet_y_1_6gf] |
 || y 3 2 | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-regnet_y_3_2gf] |
 || y 8 | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-regnet_y_8gf] |
-|| y 32 | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-regnet_y_32gf] |
 || y 16 | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-regnet_y_16gf] |
+|| y 32 | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-regnet_y_32gf] |
 || x 400 | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-regnet_x_400mf] |
 || x 800 | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-regnet_x_800mf] |
 || x 1 6 | tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-regnet_x_1_6gf] |
