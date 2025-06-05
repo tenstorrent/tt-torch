@@ -218,7 +218,12 @@ class ModelTester:
         # configs should be set at test start, so they can be flushed immediately
         self.record_property(
             "config",
-            {"compiler_config": compiler_config.to_dict()},
+            {
+                "compiler_config": compiler_config.to_dict(),
+                "parallelism": "data_parallel"
+                if data_parallel_mode
+                else "single_device",
+            },
         )
 
     def _load_model(self):
