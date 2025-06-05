@@ -66,12 +66,10 @@ class ExecuteMode(Enum):
     
 class ModelMetadata():
     def __init__(self, 
-                 model_name = None, 
-                 compile_depth = None, 
-                 op_by_op_backend = None
-                 assert_pcc = False,
-                 ):
-        
+                model_name = None, 
+                compile_depth = None, 
+                op_by_op_backend = None
+                assert_pcc = False,):
         self.model_name = model_name
         self.compile_depth = compile_depth
         self.op_by_op_backend = op_by_op_backend
