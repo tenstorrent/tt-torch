@@ -384,14 +384,18 @@ class Executor:
 
         self._cleanup_resources(preprocessed_activations)
         assert all([o is not None for o in final_outputs])
+        self._release_device()
         return final_outputs
+
+    def _release_device(self):
+        for device_idx in self.owned_device_indices:
+            tt_mlir.close_mesh_device(self.devices[device_idx])
 
     def __del__(self):
         for _, device_weights in self.preprocessed_graph_constants.items():
             for weight in device_weights:
                 tt_mlir.deallocate_tensor(weight, force=True)
-        for device_idx in self.owned_device_indices:
-            tt_mlir.close_mesh_device(self.devices[device_idx])
+        self._release_device()
         for path in self.system_desc_paths:
             try:
                 os.remove(path)
