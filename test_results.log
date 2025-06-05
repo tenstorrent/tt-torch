@@ -1,0 +1,42 @@
+Started at: Wed Jun  4 20:49:51 UTC 2025
+[2025-06-04 20:50:58] SUCCESS: tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-vgg19]
+[2025-06-04 20:52:09] SUCCESS: tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-vgg19_bn]
+[2025-06-04 20:53:11] SUCCESS: tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-vgg16]
+[2025-06-04 20:54:16] SUCCESS: tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-vgg16_bn]
+[2025-06-04 20:55:16] SUCCESS: tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-vgg13_bn]
+[2025-06-04 20:56:08] SUCCESS: tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-vgg11_bn]
+[2025-06-04 20:56:56] SUCCESS: tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-vgg11]
+[2025-06-04 20:57:52] SUCCESS: tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-vgg13]
+[2025-06-04 20:58:51] FAILED: tests/models/dpr/test_dpr.py::test_dpr[data_parallel-full-eval]
+[2025-06-04 21:00:28] FAILED: tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[data_parallel-full-albert/albert-xlarge-v2-eval]
+[2025-06-04 21:01:46] FAILED: tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[data_parallel-full-albert/albert-large-v2-eval]
+[2025-06-04 21:02:44] FAILED: tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[data_parallel-full-albert/albert-base-v2-eval]
+[2025-06-04 21:03:40] FAILED: tests/models/albert/test_albert_sequence_classification.py::test_albert_sequence_classification[data_parallel-full-textattack/albert-base-v2-imdb-eval]
+[2025-06-04 21:04:34] FAILED: tests/models/albert/test_albert_token_classification.py::test_albert_token_classification[data_parallel-full-albert/albert-base-v2-eval]
+[2025-06-04 21:05:41] FAILED: tests/models/roberta/test_roberta.py::test_roberta[data_parallel-full-eval]
+[2025-06-04 21:07:45] SUCCESS: tests/models/hardnet/test_hardnet.py::test_hardnet[data_parallel-full-eval]
+[2025-06-04 21:09:17] SUCCESS: tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite0.in1k]
+[2025-06-04 21:10:55] SUCCESS: tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite1.in1k]
+[2025-06-04 21:12:40] SUCCESS: tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite2.in1k]
+[2025-06-04 21:14:42] SUCCESS: tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite3.in1k]
+[2025-06-04 21:17:52] SUCCESS: tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite4.in1k]
+[2025-06-04 21:20:25] FAILED: tests/models/segformer/test_segformer.py::test_segformer[data_parallel-full-eval]
+[2025-06-04 21:22:12] FAILED: tests/models/torchvision/test_torchvision_object_detection.py::test_torchvision_object_detection[data_parallel-full-ssdlite320_mobilenet_v3_large-eval]
+[2025-06-04 21:23:34] FAILED: tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[data_parallel-full-microsoft/beit-base-patch16-224-eval]
+[2025-06-04 21:25:44] FAILED: tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[data_parallel-full-microsoft/beit-large-patch16-224-eval]
+[2025-06-04 21:26:50] FAILED: tests/models/deit/test_deit.py::test_deit[data_parallel-full-facebook/deit-base-patch16-224-eval]
+[2025-06-04 21:27:41] SUCCESS: tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[data_parallel-full-eval-mixer_b16_224.goog_in21k]
+[2025-06-04 21:28:58] FAILED: tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base[data_parallel-full-eval]
+[2025-06-04 22:08:01] SUCCESS: tests/models/detr/test_detr.py::test_detr[data_parallel-full-eval]
+[2025-06-04 22:11:37] SUCCESS: tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-vit_h_14]
+[2025-06-04 22:12:48] FAILED: tests/models/yolos/test_yolos.py::test_yolos[data_parallel-full-eval]
+[2025-06-04 22:15:39] FAILED: tests/models/whisper/test_whisper.py::test_whisper[data_parallel-full-eval]
+[2025-06-04 22:16:44] FAILED: tests/models/bert/test_bert_turkish.py::test_bert_turkish[data_parallel-full-eval]
+
+==========================================
+FINAL SUMMARY - Wed Jun  4 22:16:44 UTC 2025
+==========================================
+Duration: 1h 26m 53s
+Total: 33 | Passed: 17 | Failed: 16
+Success rate: 51%
+==========================================

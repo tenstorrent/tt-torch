@@ -12,6 +12,25 @@ from tt_torch.tools.utils import CompilerConfig
 from tt_torch.tools.device_manager import DeviceManager
 
 
+def test_return_tensor_wrapped_in_class():
+    class TensorWrapper:
+        def __init__(self, tensor):
+            self.tensor = tensor
+
+        def __getitem__(self, item):
+            return self.tensor[item]
+
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return x
+
+    t = TensorWrapper(torch.rand(256, 256))
+    verify_torch_module_async(Basic(), inputs=[t])
+
+
 def test_return_same_tensors():
     class Basic(nn.Module):
         def __init__(self):

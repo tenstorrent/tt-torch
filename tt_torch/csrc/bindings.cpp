@@ -263,9 +263,10 @@ at::Tensor to_host_single_rt_tensor(tt::runtime::Tensor &rt_output) {
 }
 
 py::object to_host_single_object(py::object obj) {
-  assert(py::isinstance<py::dict>(obj) &&
+  assert((py::isinstance<py::dict>(obj) || py::hasattr(obj, "__dict__")) &&
          "Non-tensor type must be castable to a dictionary");
-  py::dict attrs = obj.cast<py::dict>();
+  py::dict attrs = py::hasattr(obj, "__dict__") ? py::getattr(obj, "__dict__")
+                                                : obj.cast<py::dict>();
   for (auto &item : attrs) {
     std::string key = py::str(item.first);
     py::handle value = item.second;
@@ -293,6 +294,10 @@ py::object to_host_single_object(py::object obj) {
       attrs[key.c_str()] = res;
     }
   }
+  // if (py::hasattr(obj, "__dict__")) {
+  //   py::setattr(obj, "__dict__", attrs);
+  //   return obj;
+  // }
   return attrs;
 }
 
