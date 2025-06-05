@@ -222,9 +222,7 @@ class ModelTester:
             "config",
             {
                 "compiler_config": compiler_config.to_dict(),
-                "parallelism": "data_parallel"
-                if data_parallel_mode
-                else "single_device",
+                "parallelism": self.get_parallelism(),
             },
         )
 
@@ -766,6 +764,25 @@ class ModelTester:
                 print_fn(result)
         else:
             print_fn(results)
+
+    def get_parallelism(self):
+        parallelism = "single_device"
+
+        assert (
+            not (
+                self.data_parallel_mode
+                and self.compiler_config.automatic_parallelization
+            ),
+            "Cannot use runtime data parallel and automatic data parallel settings at the same time.",
+        )
+
+        if self.data_parallel_mode:
+            parallelism = "runtime_data_parallel"
+
+        if self.compiler_config.automatic_parallelization:
+            parallelism = "data_parallel"
+
+        return parallelism
 
 
 # TODO - hshahTT: Add support for data parallel mode for onnx models
