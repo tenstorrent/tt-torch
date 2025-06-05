@@ -100,8 +100,8 @@ class PrefillTester(ModelTester):
 def test_llama_3b(record_property):
     cc = CompilerConfig()
     cc.compile_depth = CompileDepth.EXECUTE
-    # cc.enable_consteval = True
-    # cc.consteval_parameters = True
+    cc.enable_consteval = True
+    cc.consteval_parameters = True
     mode = "eval"
     model_name = "meta-llama/Llama-3.2-3B"
     tester = PrefillTester(
@@ -122,9 +122,9 @@ def test_llama_3b(record_property):
 
     # compile prefill fx graph to flatbuffer and run
 
-    max_new_tokens = 5
+    max_new_tokens = 1
     
-    runtime_tensor_cache = {"Test": "Hello"}
+    runtime_tensor_cache = {}
     gm = tester.get_torchcompiled_gm(runtime_tensor_cache)
     
 
