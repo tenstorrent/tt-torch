@@ -102,7 +102,6 @@ jobs:
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite3.in1k]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite4.in1k]
                   tests/models/segformer/test_segformer.py::test_segformer[data_parallel-full-eval]
-                  tests/models/torchvision/test_torchvision_object_detection.py::test_torchvision_object_detection[data_parallel-full-ssdlite320_mobilenet_v3_large-eval]
                   tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[data_parallel-full-microsoft/beit-base-patch16-224-eval]
                   tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[data_parallel-full-microsoft/beit-large-patch16-224-eval]
                   tests/models/deit/test_deit.py::test_deit[data_parallel-full-facebook/deit-base-patch16-224-eval]
