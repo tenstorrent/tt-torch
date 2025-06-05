@@ -7,7 +7,6 @@ on:
       run-id:
         description: "Optional run ID to download artifacts from a specific run"
         required: false
-        default: ""
 jobs:
   docker-build:
     uses: ./.github/workflows/build-image.yml
