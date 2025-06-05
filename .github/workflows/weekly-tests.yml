@@ -38,15 +38,3 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  download-report:
-    if: success() || failure()
-    needs: [test_op_by_op_weekly]
-    uses: ./.github/workflows/generate-model-report.yml
-    secrets: inherit
-  generate-ttnn-md:
-    if: success() || failure()
-    needs: [download-report]
-    uses: ./.github/workflows/generate-ttnn-md.yml
-    secrets: inherit
-    with:
-      spreadsheet_name: ${{ needs.download-report.outputs.spreadsheet_name }}
