@@ -775,7 +775,7 @@ class ModelTester:
         )
 
         if self.data_parallel_mode:
-            parallelism = "runtime_data_paralle"
+            parallelism = "runtime_data_parallel"
 
         if self.compiler_config.automatic_parallelization:
             parallelism = "data_parallel"
