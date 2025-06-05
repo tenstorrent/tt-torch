@@ -29,8 +29,7 @@ class ThisTester(ModelTester):
 
 # metadata for Falcon model
 FALCON_VARIANT = [
-    ModelMetadata(model_name="falcon-7b-instruct", expected_compile_depth=CompileDepth.TTNN_IR, 
-                  expected_op_by_op_backend=OpByOpBackend.STABLEHLO,)
+    ModelMetadata(model_name="falcon-7b-instruct")
 ]
 
 @pytest.mark.parametrize("model_info", FALCON_VARIANT, ids=lambda x: x.model_name)
@@ -43,35 +42,32 @@ FALCON_VARIANT = [
      [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
      ids=["op_by_op","full"],
 )
-def test_falcon(record_property, mode, execute_mode, model_metadata_fixture):
+def test_falcon(record_property, mode, execute_mode, model_info):
     model_name = "Falcon"
 
     cc = CompilerConfig
     cc.enable_consteval = True
     cc.consteval_parameters = True
 
-    # Line below is used to get metadata from dict in the case of testEfficientNet.py
-    model_metadata = model_metadata_fixture
-
-    # set default compiler config
+     # set default compiler config
     if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
         cc.compile_depth = execute_mode
-
+        cc.op_by_op_backend = model_info.op_by_op_backend # override, if needed
     # applying overrides from model_metadata if it exists
-    if model_metadata:
-        if model_metadata.compile_depth is not None:
-            cc.compile_depth = model_metadata.compile_depth
-        if model_metadata.op_by_op_backend is not None:
-            cc.op_by_op_backend = model_metadata.op_by_op_backend
-
+    elif model_info:
+        if model_info.compile_depth is not None:
+            cc.compile_depth = model_info.compile_depth
+        if model_info.op_by_op_backend is not None:
+            cc.op_by_op_backend = model_info.op_by_op_backend
+    
 
     tester = ThisTester(
-        model_name,
-        mode,
+        model_name=model_info.model_name,
+        mode=mode,
         relative_atol=0.015,
         compiler_config=cc,
         record_property_handle=record_property,
-        assert_pcc=False,
+        assert_pcc=model_info.assert_pcc,
         assert_atol=False,
     )
     results = tester.test_model()
@@ -87,7 +83,7 @@ def test_falcon(record_property, mode, execute_mode, model_metadata_fixture):
 
         print(
             f"""
-        model_name: {model_name}
+        model_name: {model_info.model_name}
         input: {tester.test_input}
         output before: {decoded_output}
         """

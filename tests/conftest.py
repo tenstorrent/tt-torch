@@ -65,12 +65,6 @@ def pytest_runtest_logreport(report):
 
 
 def pytest_collection_modifyitems(config, items):
-<<<<<<< HEAD
-    # Filter tests based on which op_by_op flag is set
-    selected_items = []
-    using_torch = config.getoption("--op_by_op_torch")
-    using_stablehlo = config.getoption("--op_by_op_stablehlo")
-=======
     selected = items.copy()
 
     # Handle compile depth filtering
@@ -81,7 +75,7 @@ def pytest_collection_modifyitems(config, items):
         for item in selected:
             if hasattr(item, "callspec"):
                 model_info = item.callspec.params.get("model_info")
-                if model_info and model_info.expected_compile_depth == target_depth:
+                if model_info and model_info.compile_depth == target_depth:
                     compile_depth_selected.append(item)
         
         selected = compile_depth_selected
@@ -94,11 +88,10 @@ def pytest_collection_modifyitems(config, items):
         for item in selected:
             if hasattr(item, "callspec"):
                 model_info = item.callspec.params.get("model_info")
-                if model_info and model_info.expected_op_by_op_backend == target_backend:
+                if model_info and model_info.op_by_op_backend == target_backend:
                     backend_selected.append(item)
         
         selected = backend_selected
->>>>>>> 272beeb (Made changes to conftest.py that adds filtering by opbyopbackend and compile depth as well for demo. test_EfficientNet.py and test_falcon.py are model test files used to show proof of concept for single and multivariant models. ModelMetadata contains metadata on models or test configurations that test functions use to parametrize tests and they are defined in the test source files itself. Any info here override default test configurations for the models.)
 
     # Check if the --crashsafe option is enabled
     if config.getoption("--crashsafe"):
@@ -207,18 +200,3 @@ def pytest_configure(config):
         root = ET.Element("testsuites")
         tree = ET.ElementTree(root)
         tree.write(property_file)
-
-@pytest.fixture
-def model_metadata_fixture(request):
-    """
-    Fixture to provide model metadata for overrides.
-    This can be used to override default compiler configs.
-    It either returns a ModelMetadata object, dictionary of ModelMetadata objects and model names
-    or None if no metadata is specified.
-    """
-    marker = request.node.get_closest_marker("model_metadata")
-    if marker is not None:
-        metadata = marker.kwargs.get("model_metadata")
-        return metadata
-    else:
-        return None
