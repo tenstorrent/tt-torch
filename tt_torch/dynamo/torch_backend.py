@@ -7,6 +7,7 @@ import tt_mlir
 
 # import torch_mlir
 import os
+import sys
 import re
 import time
 import ml_dtypes
@@ -23,6 +24,10 @@ from tt_torch.tools.utils import (
     calculate_atol,
     calculate_pcc,
 )
+import multiprocessing as mp
+import torch_xla.core.xla_model as xm
+import pickle
+import faulthandler
 
 # from torch_mlir.compiler_utils import (
 #     OutputType,
@@ -41,8 +46,11 @@ from tt_torch.tools.utils import (
 # from torch_mlir.ir import Context, Location, DenseElementsAttr, Operation
 from tt_torch.dynamo.executor import (
     Executor,
+    PJRTExecutor,
     OpByOpExecutor,
+    get_inputs_size,
 )
+
 
 from tt_torch.tools.utils import RuntimeIntermediate
 
@@ -51,97 +59,97 @@ from tt_torch.tools.utils import RuntimeIntermediate
 #########################################################
 
 
-def verify_ir(module):
-    def verify_op(op):
-        if hasattr(op, "verify"):
-            op.verify()
-        return torch_mlir.ir.WalkResult.ADVANCE
+# def verify_ir(module):
+#     def verify_op(op):
+#         if hasattr(op, "verify"):
+#             op.verify()
+#         return torch_mlir.ir.WalkResult.ADVANCE
 
-    module.operation.walk(verify_op)
-
-
-class TTContextCache(ContextCache):
-    def get_node_location(self, node: torch.fx.Node) -> Optional[Location]:
-        stack_trace = node.meta.get("stack_trace")
-        if stack_trace is None:
-            return None
-
-        stack_trace = node.stack_trace
-        if stack_trace:
-            stack_frames = re.findall(
-                r"""File "([^"]+)", line ([0-9]+),""", stack_trace
-            )
-            locations = []
-            for filename, line in stack_frames:
-                if filename:
-                    locations.append(
-                        Location.file(filename, line, col=0, context=self._c)
-                    )
-            # Add the torchfx node name as the last location
-            locations.append(Location.name(node.name))
-            return Location.fused(locations, context=self._c)
-        return Location.unknown(context=self._c)
+#     module.operation.walk(verify_op)
 
 
-def import_graph(graph: torch.fx.GraphModule):
-    with Context() as context:
-        torch_dialect.register_dialect(context)
-        importer = FxImporter(context=context)
-        importer._cc = TTContextCache(
-            importer._c, py_attr_tracker=importer._py_attr_tracker
-        )
-        importer.import_stateless_graph(graph)
-        return importer.module
+# class TTContextCache(ContextCache):
+#     def get_node_location(self, node: torch.fx.Node) -> Optional[Location]:
+#         stack_trace = node.meta.get("stack_trace")
+#         if stack_trace is None:
+#             return None
+
+#         stack_trace = node.stack_trace
+#         if stack_trace:
+#             stack_frames = re.findall(
+#                 r"""File "([^"]+)", line ([0-9]+),""", stack_trace
+#             )
+#             locations = []
+#             for filename, line in stack_frames:
+#                 if filename:
+#                     locations.append(
+#                         Location.file(filename, line, col=0, context=self._c)
+#                     )
+#             # Add the torchfx node name as the last location
+#             locations.append(Location.name(node.name))
+#             return Location.fused(locations, context=self._c)
+#         return Location.unknown(context=self._c)
 
 
-class TTFxImporterHooks(FxImporterHooks):
-    def resolve_literal(
-        self, gni: GraphNodeImporter, tensor: Any, info: Optional[InputInfo]
-    ):
-        # This implementation is a near exact copy of the default implementation of
-        # torch_mlir.extras.fx_importer._make_vtensor_literal_op. The difference is
-        # that we wish to use DenseElementsAttr at all times and never DenseResourceElementsAttr.
-        # This is because the use of DenseResourceElementsAttr is causing the GIL to block
-        # Mentioned in this IREE issue: https://github.com/iree-org/iree/issues/20102
-        if not isinstance(tensor, torch.Tensor):
-            return None
-
-        assert not (
-            tensor.dtype == torch.bfloat16 and ml_dtypes is None
-        ), f"torch.bfloat16 requires the ml_dtypes package, please run:\n\npip install ml_dtypes\n"
-        # Resolve the attribute.
-        npy_dtype = TORCH_DTYPE_TO_NPY_TYPE.get(tensor.dtype)
-        assert (
-            npy_dtype is not None
-        ), f"Can not create literal tensor for unsupported datatype: {tensor.dtype}"
-
-        np_tensor = np.array(tensor.tolist()).astype(npy_dtype)
-
-        try:
-            dtype = tensor.dtype
-            element_type = TORCH_DTYPE_TO_MLIR_TYPE[dtype]()
-        except KeyError:
-            raise TypeError(f"Could not map Torch dtype {dtype} to an MLIR type")
-        elements_attr = DenseElementsAttr.get(
-            type=element_type, array=np_tensor, shape=np_tensor.shape
-        )
-        return Operation.create(
-            name="torch.vtensor.literal",
-            results=[gni._cc.tensor_to_vtensor_type(tensor)],
-            attributes={"value": elements_attr},
-        ).result
+# def import_graph(graph: torch.fx.GraphModule):
+#     with Context() as context:
+#         torch_dialect.register_dialect(context)
+#         importer = FxImporter(context=context)
+#         importer._cc = TTContextCache(
+#             importer._c, py_attr_tracker=importer._py_attr_tracker
+#         )
+#         importer.import_stateless_graph(graph)
+#         return importer.module
 
 
-def import_program(program: torch.export.ExportedProgram):
-    with Context() as context:
-        context.enable_multithreading(False)
-        torch_dialect.register_dialect(context)
-        importer = FxImporter(context=context, hooks=TTFxImporterHooks())
-        importer._cc = TTContextCache(
-            importer._c, py_attr_tracker=importer._py_attr_tracker
-        )
-        importer.import_program(program)
-        return importer.module
+# class TTFxImporterHooks(FxImporterHooks):
+#     def resolve_literal(
+#         self, gni: GraphNodeImporter, tensor: Any, info: Optional[InputInfo]
+#     ):
+#         # This implementation is a near exact copy of the default implementation of
+#         # torch_mlir.extras.fx_importer._make_vtensor_literal_op. The difference is
+#         # that we wish to use DenseElementsAttr at all times and never DenseResourceElementsAttr.
+#         # This is because the use of DenseResourceElementsAttr is causing the GIL to block
+#         # Mentioned in this IREE issue: https://github.com/iree-org/iree/issues/20102
+#         if not isinstance(tensor, torch.Tensor):
+#             return None
+
+#         assert not (
+#             tensor.dtype == torch.bfloat16 and ml_dtypes is None
+#         ), f"torch.bfloat16 requires the ml_dtypes package, please run:\n\npip install ml_dtypes\n"
+#         # Resolve the attribute.
+#         npy_dtype = TORCH_DTYPE_TO_NPY_TYPE.get(tensor.dtype)
+#         assert (
+#             npy_dtype is not None
+#         ), f"Can not create literal tensor for unsupported datatype: {tensor.dtype}"
+
+#         np_tensor = np.array(tensor.tolist()).astype(npy_dtype)
+
+#         try:
+#             dtype = tensor.dtype
+#             element_type = TORCH_DTYPE_TO_MLIR_TYPE[dtype]()
+#         except KeyError:
+#             raise TypeError(f"Could not map Torch dtype {dtype} to an MLIR type")
+#         elements_attr = DenseElementsAttr.get(
+#             type=element_type, array=np_tensor, shape=np_tensor.shape
+#         )
+#         return Operation.create(
+#             name="torch.vtensor.literal",
+#             results=[gni._cc.tensor_to_vtensor_type(tensor)],
+#             attributes={"value": elements_attr},
+#         ).result
+
+
+# def import_program(program: torch.export.ExportedProgram):
+#     with Context() as context:
+#         context.enable_multithreading(False)
+#         torch_dialect.register_dialect(context)
+#         importer = FxImporter(context=context, hooks=TTFxImporterHooks())
+#         importer._cc = TTContextCache(
+#             importer._c, py_attr_tracker=importer._py_attr_tracker
+#         )
+#         importer.import_program(program)
+#         return importer.module
 
 
 def lower_to_stable_hlo(module, op=None, enable_ir_printing=False):
@@ -205,14 +213,14 @@ class TorchExecutor(OpByOpExecutor):
         )
         assert len(mcg.programs) == 1
         self.program = mcg.programs[0]
-        self.graph_constants = (
-            (mcg.constant_inputs[0],)
-            if isinstance(mcg.constant_inputs[0], (int, float))
-            else tuple(mcg.constant_inputs[0])
-        )
-        if self.compiler_config is None:
-            compiler_config = CompilerConfig()
-        self.compiler_config = compiler_config
+        # self.graph_constants = (
+        #     (mcg.constant_inputs[0],)
+        #     if isinstance(mcg.constant_inputs[0], (int, float))
+        #     else tuple(mcg.constant_inputs[0])
+        # )
+        # if self.compiler_config is None:
+        #     compiler_config = CompilerConfig()
+        # self.compiler_config = compiler_config
 
     def is_node_valid(self, node):
         if not isinstance(node.target, torch._ops.OpOverload):
@@ -466,9 +474,458 @@ class TorchExecutor(OpByOpExecutor):
             CompileDepth.EXECUTE_OP_BY_OP,
             CompileDepth.COMPILE_OP_BY_OP,
         ):
-            return self.run_gm_op_by_op(
-                *(self.graph_constants + tuple(self.program.buffers()) + inputs)
-            )
+            return self.run_gm_op_by_op(*(inputs))
         else:
             inputs = self.typecast_inputs(inputs)
             return self.program.graph_module(*inputs)
+
+
+def execute_process(receiver, sender, exec_event):
+    while 1:
+        obj = receiver.get()
+        faulthandler.disable()
+        gm = obj["gm"]
+        file_name = obj["dump_file"]
+        large_input = obj["large_input"]
+        inputs = None
+
+        # Load inputs from disk if they're large
+        if large_input:
+            print("Child process handling large input", flush=True)
+            inputs_file_path = obj["inputs_file_path"]
+            if inputs_file_path and os.path.exists(inputs_file_path):
+                try:
+                    with open(inputs_file_path, "rb") as f:
+                        inputs = pickle.load(f)
+                except Exception as e:
+                    print(f"Error loading inputs from disk: {e}")
+        else:
+            inputs = obj["inputs"]
+
+        file_stderr = open(file_name, "w")
+        old_stderr = sys.stderr
+        sys.stderr = file_stderr
+        old_stdout = sys.stdout
+        sys.stdout = file_stderr
+
+        outputs = None
+        if inputs is not None:
+            inputs = [arg.to(xm.xla_device()) for arg in inputs]
+            outputs = gm(*inputs)
+            if isinstance(outputs, (list, tuple)):
+                outputs = [arg.to("cpu") for arg in outputs]
+            else:
+                outputs = outputs.to("cpu")
+
+        sys.stderr = old_stderr
+        sys.stdout = old_stdout
+        file_stderr.close()
+
+        sender.put({"outputs": outputs})
+        exec_event.wait()
+
+    sys.exit(0)
+
+
+import tempfile
+
+
+class TorchPJRTExecutor(PJRTExecutor):
+    def __init__(self, mcg):
+        super().__init__(mcg, push_to_device=False)
+        self.program = self.mcg.programs[0]
+        self.execute_process = None
+        self.execute_sender = None
+        self.execute_receiver = None
+        self.stderror_redirected = False
+        self.file_stderr = None
+        self.op_memory_limit = int(0.5 * 1024 * 1024 * 1024)  # 512MB limit
+
+    def print_marker(self, msg, idx, num_nodes, op_info, error="", time=0.0):
+        print(
+            f"{msg:<10} global_op_idx: {OpByOpExecutor.global_op_idx} ({idx}/{num_nodes}): {op_info} | time: {time:.4f} s | {error}",
+            flush=True,
+        )
+
+    def should_test_op(self):
+        return (
+            OpByOpExecutor.run_global_op_idx is None
+            or OpByOpExecutor.global_op_idx == OpByOpExecutor.run_global_op_idx
+        )
+
+    def get_input_shapes_and_constants(self, *inputs):
+        input_shapes_and_constants = []
+        for inp in inputs:
+            if isinstance(inp, torch.Tensor):
+                input_shapes_and_constants.append(inp.shape)
+            elif isinstance(inp, (list, tuple)):
+                sub = []
+                for sub_inp in inp:
+                    if isinstance(sub_inp, torch.Tensor):
+                        sub.append(sub_inp.shape)
+                    else:
+                        sub.append(sub_inp)
+                input_shapes_and_constants.append(sub)
+            elif isinstance(inp, (int, float, bool)):
+                input_shapes_and_constants.append(inp)
+            elif isinstance(inp, torch.dtype):
+                input_shapes_and_constants.append(inp.__str__())
+            elif inp is None:
+                input_shapes_and_constants.append(None)
+            else:
+                raise ValueError(f"Unexpected input type: {type(inp)}")
+        return input_shapes_and_constants
+
+    def get_gm_and_tensor_inputs(self, node, *inputs, **kwargs):
+
+        input_shapes_and_constants = self.get_input_shapes_and_constants(*inputs)
+
+        name = node.target.name() if hasattr(node.target, "name") else node.name
+        if not isinstance(node.target, torch._ops.OpOverload):
+            if "getitem" not in name:
+                raise ValueError(f"Node target is not an OpOverload: {name}")
+            return None, None, None
+
+        if name == "aten::copy_":
+            raise ValueError(f"inline ops are not supported: {name}")
+            return None, None, None
+
+        op = Op(name, input_shapes_and_constants, "MODEL NAME")
+        # if op.unique_key() not in self.compiler_config.unique_ops:
+        #     op.global_op_idx = OpByOpExecutor.global_op_idx
+        #     op.model_group = self.compiler_config.model_group
+        #     self.compiler_config.unique_ops[op.unique_key()] = op
+        # else:
+        #     self.compiler_config.unique_ops[op.unique_key()].num_ops += 1
+        #     return None, None
+
+        graph = torch.fx.Graph()
+        placeholders = []
+        input_idx = 0
+        tensor_inputs = []
+        for inp in inputs:
+            if isinstance(inp, torch.Tensor):
+                placeholders.append(graph.placeholder(f"input_{input_idx}"))
+                tensor_inputs.append(inp)
+                input_idx += 1
+            elif isinstance(inp, (list, tuple)):
+                # inps = torch.fx.immutable_collections.immutable_list(
+                #     [
+                #         graph.placeholder(f"input_{idx}")
+                #         if isinstance(sub_inp, torch.Tensor)
+                #         else sub_inp
+                #         for idx, sub_inp in enumerate(inp)
+                #     ]
+                # )
+                # placeholders.append(inps)
+                inps = []
+                for sub_inp in inp:
+                    if isinstance(sub_inp, torch.Tensor):
+                        inps.append(graph.placeholder(f"input_{input_idx}"))
+                        tensor_inputs.append(sub_inp)
+                        input_idx += 1
+                    else:
+                        inps.append(sub_inp)
+                placeholders.append(torch.fx.immutable_collections.immutable_list(inps))
+            else:
+                placeholders.append(inp)
+
+        if len(placeholders) != len(node.args):
+            # are any of the args duplicates? If so, we need to duplicate the placeholders
+            for idx, arg in enumerate(node.args):
+                if arg in node.args[idx + 1 :]:
+                    placeholders.append(placeholders[idx])
+
+        placeholders = tuple(placeholders)
+        for placeholder, arg in zip(placeholders, node.args):
+            if isinstance(placeholder, torch.fx.node.Node):
+                placeholder.meta["tensor_meta"] = arg.meta["tensor_meta"]
+            elif isinstance(placeholder, (list, tuple)):
+                for sub_placeholder, sub_arg in zip(placeholder, arg):
+                    if isinstance(sub_placeholder, torch.fx.node.Node):
+                        sub_placeholder.meta["tensor_meta"] = sub_arg.meta[
+                            "tensor_meta"
+                        ]
+
+        graph_node = graph.call_function(node.target, placeholders, kwargs)
+        graph_node.meta["val"] = node.meta["val"]
+        # if the node has multiple outputs, add a getitem for each and append to graph
+        if not isinstance(node.meta["val"], torch._subclasses.fake_tensor.FakeTensor):
+            getitem_nodes = []
+            graph_node.meta["val"] = node.meta["val"]
+
+            # if the output of the getitem node is not used, we don't append it to the graph
+            for user in node.users:
+                assert user.target == operator.getitem
+                if len(user.users) == 0:
+                    continue
+
+                idx = user.args[1]
+                getitem_node = graph.call_function(
+                    operator.getitem, args=(graph_node, idx)
+                )
+                getitem_nodes.append(getitem_node)
+                tensor_val = node.meta["val"][idx]
+                getitem_node.meta["val"] = tensor_val
+                out = graph.output(getitem_node)
+        else:
+            out = graph.output(graph_node)
+        if "val" not in node.meta:
+            raise ValueError(f"Node {node} does not have val")
+
+        op.compilation_status = OpCompilationStatus.CREATED_GRAPH
+        out.meta["val"] = node.meta["val"]
+
+        out_meta = out.meta["val"]
+        if isinstance(out_meta, torch._subclasses.fake_tensor.FakeTensor):
+            out_meta = (out_meta,)
+        for out in out_meta:
+            op.output_shapes.append([dim for dim in out.shape])
+
+        gm = torch.fx.GraphModule(torch.nn.Module(), graph)
+        return op, gm, tensor_inputs
+
+    def run_op(self, gm, *inputs):
+        inputs = [inp.detach() for inp in inputs]
+        if not self.stderror_redirected:
+            self.file_stderr = tempfile.NamedTemporaryFile(mode="w+t", delete=False)
+            self.stderror_redirected = True
+
+        inputs_size = get_inputs_size(inputs)
+
+        large_input = inputs_size >= self.op_memory_limit
+
+        obj = {
+            "gm": gm,
+            "dump_file": self.file_stderr.name,
+            "large_input": large_input,
+        }
+
+        inputs_file_path = None
+        if large_input:
+            obj["inputs"] = None
+            try:
+                temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pkl")
+                inputs_file_path = temp_file.name
+                temp_file.close()
+
+                with open(inputs_file_path, "wb") as f:
+                    pickle.dump(inputs, f)
+
+                obj["inputs_file_path"] = inputs_file_path
+            except Exception as e:
+                print(f"Error saving inputs to disk: {e}")
+                if inputs_file_path and os.path.exists(inputs_file_path):
+                    try:
+                        os.remove(inputs_file_path)
+                    except OSError:
+                        pass
+                large_input = False
+        else:
+            obj["inputs"] = inputs
+            obj["inputs_file_path"] = None
+
+        exec_event = mp.Event()
+        if self.execute_process is None:
+            self.execute_sender = mp.Queue()
+            self.execute_receiver = mp.Queue()
+            self.execute_process = mp.Process(
+                target=execute_process,
+                args=(self.execute_sender, self.execute_receiver, exec_event),
+            )
+            self.execute_process.start()
+        self.execute_sender.put(obj)
+        result = {}
+        start = time.time()
+        outputs = [None]
+        timeout_exceeded = False
+        while True:
+            if not self.execute_process.is_alive():
+                self.execute_process = None
+                break
+            try:
+                result = self.execute_receiver.get_nowait()
+                outputs = result["outputs"]
+                exec_event.set()
+                break
+            except mp.queues.Empty:
+                pass
+            if time.time() - start > 20:
+                self.execute_process.terminate()
+                self.execute_process = None
+                timeout_exceeded = True
+                break
+
+        if inputs_file_path and os.path.isfile(inputs_file_path):
+            try:
+                os.remove(inputs_file_path)
+            except OSError:
+                pass
+
+        if len(outputs) == 1:
+            outputs = outputs[0]
+
+        stderr_data = ""
+        if outputs is None:
+            file_stderr = open(self.file_stderr.name, "r")
+            stderr_data = file_stderr.read()
+            stderr_data = stderr_data.replace("\n", "\\n")
+            stderr_data = re.sub(r"[^\x20-\x7E]", "", stderr_data)
+            file_stderr.close()
+
+            # If timeout is exceeded and stderr empty, add message and print to stdout.
+            if timeout_exceeded and not stderr_data:
+                stderr_data = f"Timeout exceeded for op during run after {20} seconds."
+                print(stderr_data, flush=True)
+
+        return outputs, stderr_data
+
+    def __call__(self, *user_inputs):
+        inputs = self.ordered_inputs
+        for input_idx, ordered_input_idx in enumerate(self.user_input_indices):
+            inputs[ordered_input_idx] = user_inputs[input_idx]
+
+        # run op by op now
+        node_to_tensor = {}
+        input_index = 0
+        outputs = []
+        num_nodes = len(self.program.graph_module.graph.nodes)
+        out_degree = {}
+
+        for idx, node in enumerate(self.program.graph_module.graph.nodes):
+            self.print_marker("\nProcessing", idx, num_nodes, node.target)
+            out_degree[node] = len(node.users)
+            if node.op == "placeholder":
+                # breakpoint()
+                node_to_tensor[node] = inputs[self.input_indices[node.name]]
+            elif node.op == "get_attr":
+                node_to_tensor[node] = inputs[self.input_indices[node.name]]
+            elif node.op == "call_function":
+                args = []
+                for arg in node.args:
+                    if isinstance(arg, torch.fx.node.Node):
+                        args.append(node_to_tensor[arg])
+                    elif isinstance(arg, list):
+                        args.append(
+                            [
+                                node_to_tensor[a]
+                                if isinstance(a, torch.fx.node.Node)
+                                else a
+                                for a in arg
+                            ]
+                        )
+                    else:
+                        args.append(arg)
+
+                binary = None
+                op = None
+
+                test_this_op = self.should_test_op()
+                # Another useful debug method:
+                # test_this_op = str(node.target) == "aten.gelu.default"
+
+                # if test_this_op:
+                #     try:
+                #         start = time.time()
+                #         binary, op, msg = self.compile_op(node, *args, **node.kwargs)
+                #         end = time.time()
+                #         self.print_marker(
+                #             "Compiling", idx, num_nodes, node.target, time=(end - start)
+                #         )
+                #         OpByOpExecutor.compiling_time += end - start
+
+                #         self.set_runtime_stack_dump(msg, op)
+
+                #     except Exception as e:
+                #         binary = None
+                #         self.print_marker(
+                #             "Failed to compile", idx, num_nodes, node.target, e
+                #         )
+
+                start = time.time()
+                golden = cast_ios_and_run(node, args, node.kwargs)
+                end = time.time()
+                self.print_marker(
+                    "Golden", idx, num_nodes, node.target, time=(end - start)
+                )
+                OpByOpExecutor.golden_time += end - start
+                if test_this_op:
+
+                    # try:
+                    # typecast_args = self.typecast_inputs(args)
+                    start = time.time()
+                    op, gm, tensor_inputs = self.get_gm_and_tensor_inputs(
+                        node, *args, **node.kwargs
+                    )
+                    if op is not None:
+                        try:
+                            calculated, stderr = self.run_op(gm, *tensor_inputs)
+                            end = time.time()
+                            self.print_marker(
+                                "Running",
+                                idx,
+                                num_nodes,
+                                node.target,
+                                time=(end - start),
+                            )
+                            OpByOpExecutor.running_time += end - start
+                            # self.set_runtime_stack_dump(stderr, op)
+
+                            if calculated is None:
+                                raise ValueError("Failed to execute")
+                            op.compilation_status = OpCompilationStatus.EXECUTED
+                            if True:
+                                atol = calculate_atol(
+                                    calculated,
+                                    golden[0]
+                                    if isinstance(golden, (list, tuple))
+                                    else golden,
+                                )
+                                op.atol = atol
+                                if atol > 0.01:
+                                    print(f"atol too high for {idx}: {atol}")
+                                pcc = calculate_pcc(
+                                    calculated,
+                                    golden[0]
+                                    if isinstance(golden, (list, tuple))
+                                    else golden,
+                                )
+                                op.pcc = pcc
+                                if pcc < 0.99:
+                                    print(f"pcc too low for {idx}: {pcc}")
+                        except Exception as e:
+                            self.print_marker(
+                                "Failed to execute", idx, num_nodes, node.target, e
+                            )
+
+                node_to_tensor[node] = golden
+            elif node.op == "output":
+                args = node.args[0]
+                output_tensors = [node_to_tensor[arg] for arg in args]
+                outputs = output_tensors
+
+            args_set = set()
+            for arg in node.args:
+                if arg in args_set:
+                    continue
+                args_set.add(arg)
+                if isinstance(arg, torch.fx.node.Node):
+                    out_degree[arg] -= 1
+                    if out_degree[arg] == 0 and arg.op != "output":
+                        del node_to_tensor[arg]
+                        out_degree.pop(arg)
+
+            # Finished handling this op, increment global op index
+            OpByOpExecutor.global_op_idx += 1
+
+        # self.compiler_config.save_unique_ops()
+        if self.execute_process is not None:
+            self.execute_process.terminate()
+            self.execute_process = None
+        if self.stderror_redirected:
+            os.unlink(self.file_stderr.name)
+            self.stderror_redirected = False
+        print(
+            f"Total Time - Compiling: {OpByOpExecutor.compiling_time:.2f} s, Running: {OpByOpExecutor.running_time:.2f} s, Golden: {OpByOpExecutor.golden_time:.2f} s"
+        )
+        return outputs

@@ -6,7 +6,8 @@ import onnx
 
 # from onnxruntime import InferenceSession
 import numpy as np
-import tt_mlir
+
+# import tt_mlir
 
 # from tt_torch.onnx_compile import compile_onnx
 from tt_torch.tools.utils import (

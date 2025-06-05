@@ -609,6 +609,8 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
     # We do this because python integers and floats are automatically considered as i64/f64 when pushing to PJRT device - which we do not support.
     # We convert scalar ops to tensor ops as there is no way to keep the raw integer/float but signal that it is a 32-bit variant. We can do this
     # with tensors of course.
+    gm = bypass_redundant_getitem(gm)
+    run_shape_prop(gm, example_inputs)
     gm = convert_scalar_ops_to_tensor_ops(gm)
 
     program = torch.export.export(gm, tuple(example_inputs), strict=False)

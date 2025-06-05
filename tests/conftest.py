@@ -6,14 +6,16 @@ import torch
 import subprocess
 import sys
 from datetime import datetime, timezone
-from tt_torch.tools.utils import OpByOpBackend
+
+# from tt_torch.tools.utils import OpByOpBackend
 from tt_torch.tools.crashsafe_utils import crashsafe_suffix
 import xml.etree.ElementTree as ET
 import socket
 import os
 import json
 import shutil
-import tt_mlir
+
+# import tt_mlir
 
 global junitxml_path
 junitxml_path = None

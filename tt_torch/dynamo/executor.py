@@ -29,6 +29,7 @@ from tt_torch.tools.utils import (
 from typing import Union, Optional
 
 from torch_xla.experimental import plugins
+from torch.export.graph_signature import InputKind
 
 
 class TTPjrtPlugin(plugins.DevicePlugin):
@@ -176,31 +177,31 @@ class Executor:
         self.owned_device_indices = []
         self.async_mode = async_mode
         self._validate_executor()
-        self.system_desc_paths = self._create_system_descriptors()
+        # self.system_desc_paths = self._create_system_descriptors()
 
-    def _create_system_descriptors(self):
-        if self.compiler_config.compile_depth in [
-            CompileDepth.TORCH_FX,
-            CompileDepth.STABLEHLO,
-        ]:
-            return []
+    # def _create_system_descriptors(self):
+    #     if self.compiler_config.compile_depth in [
+    #         CompileDepth.TORCH_FX,
+    #         CompileDepth.STABLEHLO,
+    #     ]:
+    #         return []
 
-        system_desc_paths = []
-        for device_idx, device_from_user in enumerate(self.devices):
-            descriptor_path = tempfile.NamedTemporaryFile(
-                delete=False, suffix=".ttsys"
-            ).name
-            descriptor_device = self._get_device(device_idx)
+    #     system_desc_paths = []
+    #     for device_idx, device_from_user in enumerate(self.devices):
+    #         descriptor_path = tempfile.NamedTemporaryFile(
+    #             delete=False, suffix=".ttsys"
+    #         ).name
+    #         descriptor_device = self._get_device(device_idx)
 
-            tt_mlir.create_system_desc(descriptor_device, descriptor_path)
+    #         tt_mlir.create_system_desc(descriptor_device, descriptor_path)
 
-            if device_from_user is None:
-                self.owned_device_indices.remove(device_idx)
-                self.devices[device_idx] = None
-                tt_mlir.close_mesh_device(descriptor_device)
+    #         if device_from_user is None:
+    #             self.owned_device_indices.remove(device_idx)
+    #             self.devices[device_idx] = None
+    #             tt_mlir.close_mesh_device(descriptor_device)
 
-            system_desc_paths.append(descriptor_path)
-        return system_desc_paths
+    #         system_desc_paths.append(descriptor_path)
+    #     return system_desc_paths
 
     def _validate_executor(self):
         if self.compiler_config.compile_depth in (
@@ -238,20 +239,20 @@ class Executor:
             new_inputs = new_inputs + ((input),)
         return new_inputs
 
-    def _get_device(self, device_idx=0):
-        assert (
-            len(self.devices) >= device_idx
-        ), f"Not enough devices provided: {len(self.devices)} <= {device_idx}"
-        if self.devices[device_idx] is not None:
-            return self.devices[device_idx]
-        # Return a default parent mesh
-        mesh_options = tt_mlir.MeshDeviceOptions()
-        if len(self.compiler_config.mesh_shape) == 32:
-            mesh_options.dispatch_core_type = tt_mlir.DispatchCoreType.WORKER
-        device = tt_mlir.open_mesh_device(self.compiler_config.mesh_shape, mesh_options)
-        self.devices[device_idx] = device
-        self.owned_device_indices.append(device_idx)
-        return device
+    # def _get_device(self, device_idx=0):
+    #     assert (
+    #         len(self.devices) >= device_idx
+    #     ), f"Not enough devices provided: {len(self.devices)} <= {device_idx}"
+    #     if self.devices[device_idx] is not None:
+    #         return self.devices[device_idx]
+    #     # Return a default parent mesh
+    #     mesh_options = tt_mlir.MeshDeviceOptions()
+    #     if len(self.compiler_config.mesh_shape) == 32:
+    #         mesh_options.dispatch_core_type = tt_mlir.DispatchCoreType.WORKER
+    #     device = tt_mlir.open_mesh_device(self.compiler_config.mesh_shape, mesh_options)
+    #     self.devices[device_idx] = device
+    #     self.owned_device_indices.append(device_idx)
+    #     return device
 
     def _cache_constants_if_needed(self, preprocessed_constants, device_idx=0):
         if (
@@ -750,3 +751,74 @@ class OpByOpExecutor(Executor):
                 print(stderr_data, flush=True)
 
         return outputs, stderr_data
+
+
+class PJRTExecutor:
+    def __init__(self, mcg: MultiChipGraph, push_to_device: bool = True):
+        self.mcg = mcg
+        self.device = xm.xla_device()
+        self.state_is_on_device = push_to_device
+
+        def find_node_name(name):
+            # breakpoint()
+            sig = self.mcg.programs[0].graph_signature.input_specs
+            for input_spec in sig:
+                if input_spec.target == name:
+                    return input_spec.arg.name
+
+        self.non_user_input_dict = (
+            {
+                find_node_name(name): buffer.to(self.device)
+                if push_to_device
+                else buffer
+                for name, buffer in self.mcg.programs[0].named_buffers()
+            }
+            | {
+                find_node_name(name): constant.to(self.device)
+                if push_to_device
+                else constant
+                for name, constant in self.mcg.programs[0].tensor_constants.items()
+            }
+            | {
+                find_node_name(name): param.to(self.device) if push_to_device else param
+                for name, param in self.mcg.programs[0].named_parameters()
+            }
+        )
+
+        self.ordered_inputs = [None] * len(
+            self.mcg.programs[0].graph_signature.input_specs
+        )
+
+        # Order params/buffers/constants
+
+        self.user_input_indices = []
+        self.input_indices = {}
+
+        for input_idx, input_spec in enumerate(
+            self.mcg.programs[0].graph_signature.input_specs
+        ):
+            if input_spec.kind == InputKind.USER_INPUT:
+                self.user_input_indices.append(input_idx)
+            else:
+                self.ordered_inputs[input_idx] = self.non_user_input_dict[
+                    input_spec.arg.name
+                ]
+
+            self.input_indices[input_spec.arg.name] = input_idx
+
+    def __call__(self, *inputs):
+        graph_inputs = self.ordered_inputs
+        if self.state_is_on_device:
+            for input_idx, ordered_input_idx in enumerate(self.user_input_indices):
+                graph_inputs[ordered_input_idx] = inputs[input_idx].to(self.device)
+        else:
+            for input_idx, ordered_input_idx in enumerate(self.user_input_indices):
+                graph_inputs[ordered_input_idx] = inputs[input_idx]
+
+            for i in range(len(graph_inputs)):
+                graph_inputs[i] = graph_inputs[i].to(self.device)
+
+        gm = self.mcg.programs[0].graph_module.to(self.device)
+        outputs = gm(*graph_inputs)
+        outputs = tuple(output.to("cpu") for output in outputs)
+        return outputs

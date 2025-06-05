@@ -6,7 +6,7 @@ import torch
 import onnxruntime as ort
 
 # from torch_mlir.extras import onnx_importer
-import tt_mlir
+# import tt_mlir
 
 # from torch_mlir.ir import Context
 # from torch_mlir.dialects import torch as torch_dialect

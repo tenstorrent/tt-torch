@@ -19,7 +19,6 @@ from tt_torch.tools.utils import (
     tt_torch_error_message,
 )
 import torch_xla.core.xla_model as xm
-from torch.export.graph_signature import InputKind
 
 
 class BackendOptions:
@@ -36,13 +35,15 @@ class BackendOptions:
         self.use_pjrt = use_pjrt
 
 
-# from tt_torch.dynamo.torch_backend import (
-#     TorchExecutor,
-#     import_graph,
-#     import_program,
-#     verify_ir,
-#     lower_to_stable_hlo,
-# )
+from tt_torch.dynamo.torch_backend import (
+    TorchExecutor,
+    TorchPJRTExecutor,
+    #     import_graph,
+    #     import_program,
+    #     verify_ir,
+    #     lower_to_stable_hlo,
+)
+
 # from tt_torch.dynamo.shlo_backend import (
 #     generate_random_inputs_for_shlo,
 #     parse_module_from_str,
@@ -54,7 +55,7 @@ class BackendOptions:
 #     lower_mlir_module,
 # )
 from tt_torch.dynamo.passes import pass_pipeline
-from tt_torch.dynamo.executor import Executor
+from tt_torch.dynamo.executor import Executor, PJRTExecutor
 
 
 def create_verify_golden_callback(compiler_config: CompilerConfig):
@@ -151,12 +152,7 @@ def _torch_backend(
     with torch.no_grad():
         mcg = pass_pipeline(gm, example_inputs, compiler_config)
 
-    executor = TorchExecutor(
-        mcg=mcg,
-        compiler_config=compiler_config,
-        devices=devices,
-        async_mode=async_mode,
-    )
+    executor = TorchPJRTExecutor(mcg=mcg)
     return executor
 
 
@@ -279,88 +275,35 @@ def backend(gm, example_inputs, options: BackendOptions = None):
     # Apply environment overrides at start of compilation to allow overriding what was set in the test
     cc.apply_environment_overrides()
 
-    if options.use_pjrt and (
-        cc.compile_depth != CompileDepth.EXECUTE or options.async_mode
-    ):
+    if options.use_pjrt and (options.async_mode):
         pytest.xfail("PJRT flow only supports single device ")
 
     if (
         cc.compile_depth == CompileDepth.COMPILE_OP_BY_OP
         or cc.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
     ):
-        if cc.op_by_op_backend == OpByOpBackend.TORCH:
-            # run torch graph op-by-op
-            return _torch_backend(
-                gm,
-                example_inputs,
-                compiler_config=cc,
-                devices=devices,
-                async_mode=async_mode,
-            )
-        else:
-            # op_by_op_backend == OpByOpBackend.STABLEHLO
-            # convert torch to stablehlo, then run stablehlo op-by-op
-            mcg = torch_to_shlo(gm, example_inputs, compiler_config=cc)
-            return _shlo_backend(
-                mcg=mcg,
-                example_inputs=example_inputs,
-                compiler_config=cc,
-                devices=devices,
-                async_mode=async_mode,
-            )
+        # if cc.op_by_op_backend == OpByOpBackend.TORCH:
+        # run torch graph op-by-op
+        return _torch_backend(
+            gm,
+            example_inputs,
+            compiler_config=cc,
+            devices=devices,
+            async_mode=async_mode,
+        )
+    # else:
+    #     # op_by_op_backend == OpByOpBackend.STABLEHLO
+    #     # convert torch to stablehlo, then run stablehlo op-by-op
+    #     mcg = torch_to_shlo(gm, example_inputs, compiler_config=cc)
+    #     return _shlo_backend(
+    #         mcg=mcg,
+    #         example_inputs=example_inputs,
+    #         compiler_config=cc,
+    #         devices=devices,
+    #         async_mode=async_mode,
+    #     )
 
     if options.use_pjrt:
-
-        class PJRTExecutor:
-            def __init__(self, mcg: MultiChipGraph):
-                self.mcg = mcg
-                self.device = xm.xla_device()
-
-                self.non_user_input_dict = (
-                    {
-                        name: buffer.to(self.device)
-                        for name, buffer in self.mcg.programs[0].named_buffers()
-                    }
-                    | {
-                        name: constant.to(self.device)
-                        for name, constant in self.mcg.programs[
-                            0
-                        ].tensor_constants.items()
-                    }
-                    | {
-                        name: param.to(self.device)
-                        for name, param in self.mcg.programs[0].named_parameters()
-                    }
-                )
-
-                self.ordered_inputs = [None] * len(
-                    self.mcg.programs[0].graph_signature.input_specs
-                )
-
-                # Order params/buffers/constants
-
-                self.user_input_indices = []
-
-                for input_idx, input_spec in enumerate(
-                    self.mcg.programs[0].graph_signature.input_specs
-                ):
-                    if input_spec.kind == InputKind.USER_INPUT:
-                        self.user_input_indices.append(input_idx)
-                    else:
-                        self.ordered_inputs[input_idx] = self.non_user_input_dict[
-                            input_spec.target
-                        ]
-
-            def __call__(self, *inputs):
-                for input_idx, ordered_input_idx in enumerate(self.user_input_indices):
-                    self.ordered_inputs[ordered_input_idx] = inputs[input_idx].to(
-                        self.device
-                    )
-                gm = self.mcg.programs[0].graph_module.to(self.device)
-                outputs = gm(*self.ordered_inputs)
-                outputs = tuple(output.to("cpu") for output in outputs)
-                return outputs
-
         mcg = pass_pipeline(gm, example_inputs, cc)
 
         return PJRTExecutor(mcg)

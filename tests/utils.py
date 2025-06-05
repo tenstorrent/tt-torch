@@ -35,7 +35,8 @@ from tt_torch.tools.device_manager import DeviceManager
 import io
 import csv
 import os
-import tt_mlir
+
+# import tt_mlir
 
 
 def skip_full_eval_test(
@@ -188,12 +189,12 @@ class ModelTester:
                 CompileDepth.COMPILE_OP_BY_OP,
                 CompileDepth.EXECUTE_OP_BY_OP,
             ), "Data parallel mode does not support op-by-op compilation or execution."
-            if self.devices is None:
-                # If user doesn't provide any devices, acquire all devices on board
-                (
-                    self.parent_device,
-                    self.devices,
-                ) = DeviceManager.acquire_available_devices()
+            # if self.devices is None:
+            #     # If user doesn't provide any devices, acquire all devices on board
+            #     (
+            #         self.parent_device,
+            #         self.devices,
+            #     ) = DeviceManager.acquire_available_devices()
 
         self.record_tag_cache = {}  # Holds for tags to be written out at finalize()
 
