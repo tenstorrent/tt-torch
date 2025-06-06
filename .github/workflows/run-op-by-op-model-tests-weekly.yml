@@ -256,7 +256,12 @@ jobs:
             runs-on: wormhole_b0, name: "torchaudio", tests: "
               tests/models/seamless_m4t/test_seamless_m4t.py::test_seamless_m4t[op_by_op_torch-eval]
             "
-          }
+          },
+          {
+            runs-on: wormhole_b0, name: "flux_schnell", tests: "
+              tests/models/flux/test_flux.py::test_flux[op_by_op_torch-flux_schnell-eval]
+            "
+          },
 
         ]
     runs-on:
