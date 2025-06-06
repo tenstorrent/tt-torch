@@ -18,14 +18,9 @@ from transformers.modeling_outputs import BaseModelOutput
 import torchaudio
 import types
 
-original_torch_rand = torch.rand
-
 
 def fake_rand(*args, **kwargs):
     return torch.ones(*args, **kwargs)
-
-
-torch.rand = fake_rand
 
 
 class ThisTester(ModelTester):
@@ -33,9 +28,8 @@ class ThisTester(ModelTester):
         model_name = "facebook/hf-seamless-m4t-large"
 
         self.config = SeamlessM4TConfig.from_pretrained(model_name, use_cache=False)
-        self.config.speech_encoder_layers = (
-            3  # Reduce the number of layers to avoid memory error
-        )
+        # Reduce the number of layers from 24 to 3 to avoid memory error
+        self.config.speech_encoder_layers = 3
         self.config.encoder_layers = 3
         self.config.decoder_layers = 3
 
@@ -74,7 +68,10 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_seamless_m4t(record_property, mode, op_by_op):
+def test_seamless_m4t(record_property, mode, op_by_op, monkeypatch):
+    # Apply monkeypatch to replace torch.rand with fake_rand
+    monkeypatch.setattr(torch, "rand", fake_rand)
+
     model_name = "SeamlessM4T"
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -103,5 +100,4 @@ def test_seamless_m4t(record_property, mode, op_by_op):
             #     "out_from_text.wav", rate=sample_rate, data=results[0].numpy().squeeze()
             # )
 
-    torch.rand = original_torch_rand
     tester.finalize()

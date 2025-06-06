@@ -35,7 +35,7 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_codegen_generate(record_property, mode, op_by_op):
-    model_name = "codegen"
+    model_name = "codegen_generate"
     cc = CompilerConfig()
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
