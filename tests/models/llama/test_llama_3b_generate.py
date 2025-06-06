@@ -11,6 +11,7 @@ from transformers import (
     GenerationConfig,
     StaticCache,
 )
+import tt_mlir
 
 
 class PrefillTester(ModelTester):
@@ -100,8 +101,8 @@ class PrefillTester(ModelTester):
 def test_llama_3b(record_property):
     cc = CompilerConfig()
     cc.compile_depth = CompileDepth.EXECUTE
-    cc.enable_consteval = True
-    cc.consteval_parameters = True
+    cc.enable_consteval = False
+    cc.consteval_parameters = False
     mode = "eval"
     model_name = "meta-llama/Llama-3.2-3B"
     tester = PrefillTester(
@@ -122,9 +123,10 @@ def test_llama_3b(record_property):
 
     # compile prefill fx graph to flatbuffer and run
 
-    max_new_tokens = 1
+    max_new_tokens = 2
     
     runtime_tensor_cache = {}
+    print("Runtime tensor cache id: ", id(runtime_tensor_cache))
     gm = tester.get_torchcompiled_gm(runtime_tensor_cache)
     
 
@@ -135,6 +137,12 @@ def test_llama_3b(record_property):
         outputs = tester.run_model_with_inputs(gm, input_args)
         next_token_ids = outputs.logits[:, -1:].argmax(dim=-1)
         print(f"Next token id prediction for decode step {i}: {next_token_ids.item()}")
+        print(f"Cache after step {i}: {list(runtime_tensor_cache.keys())}")
+        
+        for key, value in runtime_tensor_cache.items():
+            host_cache = tt_mlir.to_host(value)
+            print(f"Runtime tensor cache key: {key}")
+            print(f"{torch.mean(host_cache[0,0,:,:], dim=-1).tolist()}")
 
         #  = outputs.past_key_values
         # -> are past_key_values updated in place?
