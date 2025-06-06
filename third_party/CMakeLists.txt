@@ -5,7 +5,7 @@
 
 # 0d3ee799e24cffe0a258572c9384211dc92748a7 -> kv cache + update/fill discrim
 
-set(TT_MLIR_VERSION "jzx/kv-cache-non-dealloc")
+set(TT_MLIR_VERSION "jazpur/kv-cache")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)

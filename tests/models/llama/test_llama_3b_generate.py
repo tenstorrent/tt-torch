@@ -101,8 +101,8 @@ class PrefillTester(ModelTester):
 def test_llama_3b(record_property):
     cc = CompilerConfig()
     cc.compile_depth = CompileDepth.EXECUTE
-    cc.enable_consteval = False
-    cc.consteval_parameters = False
+    cc.enable_consteval = True
+    cc.consteval_parameters = True
     mode = "eval"
     model_name = "meta-llama/Llama-3.2-3B"
     tester = PrefillTester(
