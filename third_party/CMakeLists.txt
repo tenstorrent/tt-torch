@@ -5,7 +5,7 @@
 
 # 0d3ee799e24cffe0a258572c9384211dc92748a7 -> kv cache + update/fill discrim
 
-set(TT_MLIR_VERSION "jazpur/kv-cache")
+set(TT_MLIR_VERSION "jzx/kv-cache-non-dealloc")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
@@ -50,7 +50,7 @@ else()
         INSTALL_COMMAND ${CMAKE_COMMAND} --install ${TTMLIR_BUILD_DIR} --component SharedLib
         CMAKE_GENERATOR Ninja
         CMAKE_ARGS
-          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_BUILD_TYPE=Debug
           -DCMAKE_C_COMPILER=clang-17
           -DCMAKE_CXX_COMPILER=clang++-17
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache

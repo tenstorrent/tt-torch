@@ -307,7 +307,7 @@ class Executor:
         # pull them from the runtime_tensor_cache if they do exist
         #   for pulls, take them out of the list and jam them back in at the same indices (assuming list stability? - appears so for this case but maybe not in general?)
         
-        # big q - how do we key this cache? input index?
+        # q - how do we key this cache? input index?
         
 
         for i, runtime_tensor in enumerate(runtime_activations_and_weights):
@@ -327,6 +327,8 @@ class Executor:
                         # Cache hit - overwrite with cached version
                         runtime_activations_and_weights[i] = self.runtime_tensor_cache[name_cache_key]
                         print(f"[James] Overwriting input tensor with name '{name_cache_key}' (index {i}) with cached version", flush=True)
+        
+        print(f"[James] - Runtime tensor cache keys (id {id(self.runtime_tensor_cache)})", list(self.runtime_tensor_cache.keys()), flush=True)
         
         runtime_activations_and_weights = recreate_runtime_tensors(
             weights_and_activations, runtime_activations_and_weights, torch_indices
