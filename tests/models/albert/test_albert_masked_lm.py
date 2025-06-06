@@ -53,12 +53,18 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_albert_masked_lm(record_property, model_name, mode, op_by_op):
-
+@pytest.mark.parametrize(
+    "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
+)
+def test_albert_masked_lm(
+    record_property, model_name, mode, op_by_op, data_parallel_mode
+):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if op_by_op:
+        if data_parallel_mode:
+            pytest.skip("Op-by-op not supported in data parallel mode")
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
@@ -81,18 +87,20 @@ def test_albert_masked_lm(record_property, model_name, mode, op_by_op):
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
+        data_parallel_mode=data_parallel_mode,
     )
     results = tester.test_model()
 
-    if mode == "eval":
-        # retrieve index of [MASK]
-        logits = results.logits
+    def print_result(result):
+        logits = result.logits
         mask_token_index = (tester.inputs.input_ids == tester.tokenizer.mask_token_id)[
             0
         ].nonzero(as_tuple=True)[0]
         predicted_token_id = logits[0, mask_token_index].argmax(axis=-1)
         predicted_tokens = tester.tokenizer.decode(predicted_token_id)
-
         print(f"Model: {model_name} | Input: {tester.text} | Mask: {predicted_tokens}")
+
+    if mode == "eval":
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
     tester.finalize()

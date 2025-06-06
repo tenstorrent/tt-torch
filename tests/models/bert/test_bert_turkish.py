@@ -35,13 +35,20 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_bert_turkish(record_property, mode, op_by_op):
+@pytest.mark.parametrize(
+    "data_parallel_mode",
+    [False, True],
+    ids=["single_device", "data_parallel"],
+)
+def test_bert_turkish(record_property, mode, op_by_op, data_parallel_mode):
     model_name = "BERT_Turkish"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if op_by_op:
+        if data_parallel_mode:
+            pytest.skip("Op-by-op not supported in data parallel mode")
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
@@ -54,6 +61,7 @@ def test_bert_turkish(record_property, mode, op_by_op):
         compiler_config=cc,
         record_property_handle=record_property,
         model_group="red",
+        data_parallel_mode=data_parallel_mode,
     )
     with torch.no_grad():
         results = tester.test_model()
@@ -71,9 +79,17 @@ def test_bert_turkish(record_property, mode, op_by_op):
                 input_mask_expanded.sum(1), min=1e-9
             )
 
-        sentence_embeddings = mean_pooling(results, tester.input["attention_mask"])
+        if data_parallel_mode:
+            for i in range(len(results)):
+                result = results[i]
+                sentence_embeddings = mean_pooling(
+                    result, tester.input["attention_mask"]
+                )
+                print(f"Device {i} | Sentence embeddings: {sentence_embeddings}")
+        else:
+            sentence_embeddings = mean_pooling(results, tester.input["attention_mask"])
 
-        print("Sentence embeddings:")
-        print(sentence_embeddings)
+            print("Sentence embeddings:")
+            print(sentence_embeddings)
 
     tester.finalize()

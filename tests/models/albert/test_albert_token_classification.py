@@ -38,12 +38,19 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_albert_token_classification(record_property, model_name, mode, op_by_op):
+@pytest.mark.parametrize(
+    "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
+)
+def test_albert_token_classification(
+    record_property, model_name, mode, op_by_op, data_parallel_mode
+):
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if op_by_op:
+        if data_parallel_mode:
+            pytest.skip("Op-by-op not supported in data parallel mode")
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
@@ -56,11 +63,12 @@ def test_albert_token_classification(record_property, model_name, mode, op_by_op
         compiler_config=cc,
         record_property_handle=record_property,
         model_name_suffix="-token-cls",
+        data_parallel_mode=data_parallel_mode,
     )
     results = tester.test_model()
 
-    if mode == "eval":
-        logits = results.logits
+    def print_result(result):
+        logits = result.logits
         predicted_token_class_ids = logits.argmax(-1)
 
         # Note that tokens are classified rather then input words which means that
@@ -70,11 +78,13 @@ def test_albert_token_classification(record_property, model_name, mode, op_by_op
             tester.framework_model.config.id2label[t.item()]
             for t in predicted_token_class_ids[0]
         ]
-
         input_ids = tester.inputs["input_ids"]
         tokens = tester.tokenizer.convert_ids_to_tokens(input_ids[0])
         print(
             f"Model: {model_name} | Tokens: {tokens} | Predictions: {predicted_tokens_classes}"
         )
+
+    if mode == "eval":
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
     tester.finalize()

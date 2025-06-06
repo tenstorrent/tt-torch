@@ -220,7 +220,10 @@ class ModelTester:
         # configs should be set at test start, so they can be flushed immediately
         self.record_property(
             "config",
-            {"compiler_config": compiler_config.to_dict()},
+            {
+                "compiler_config": compiler_config.to_dict(),
+                "parallelism": self.get_parallelism(),
+            },
         )
 
     def _load_model(self):
@@ -526,12 +529,16 @@ class ModelTester:
 
         rt_tensors = []
         for compiled in compiled_models:
-            rt_tensors.append(self.run_model(compiled, self.inputs))
+            rt_tensor = self.run_model(compiled, self.inputs)
+            rt_tensors.append(rt_tensor)
 
         final_outputs = []
         for rt_tensor in rt_tensors:
-            outputs = tt_mlir.to_host(rt_tensor)[0]
-            final_outputs.append(outputs)
+            torch_tensors = tt_mlir.to_host(rt_tensor)
+            if isinstance(torch_tensors, list):
+                final_outputs.extend(torch_tensors)
+            else:
+                final_outputs.append(torch_tensors)
 
         self.record_property("achieved_compile_depth", "EXECUTE")
         if self.compiler_config._enable_intermediate_verification:
@@ -746,7 +753,39 @@ class ModelTester:
             print("No failing operations found.")
         print("[End Intermediate Verification Summary]")
 
+    @staticmethod
+    def print_outputs(results, data_parallel_mode, print_fn):
+        if data_parallel_mode:
+            assert isinstance(
+                results, list
+            ), "Results should be a list in data parallel mode"
+            for i, result in enumerate(results):
+                print(f"Results for device {i}:")
+                print_fn(result)
+        else:
+            print_fn(results)
 
+    def get_parallelism(self):
+        parallelism = "single_device"
+
+        assert (
+            not (
+                self.data_parallel_mode
+                and self.compiler_config.automatic_parallelization
+            ),
+            "Cannot use runtime data parallel and automatic data parallel settings at the same time.",
+        )
+
+        if self.data_parallel_mode:
+            parallelism = "runtime_data_parallel"
+
+        if self.compiler_config.automatic_parallelization:
+            parallelism = "data_parallel"
+
+        return parallelism
+
+
+# TODO - hshahTT: Add support for data parallel mode for onnx models
 class OnnxModelTester(ModelTester):
     def __init__(
         self,
