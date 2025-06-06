@@ -247,7 +247,11 @@ class Executor:
             self.preprocessed_graph_constants[device_idx] = preprocessed_constants
 
     def _cleanup_resources(self, preprocessed_activations, device_idx):
-        for t in preprocessed_activations:
+        for i,t in enumerate(preprocessed_activations):
+            if t in self.runtime_tensor_cache.values():
+                print("[JAMES] skipping deallocation of cached tensor @ idx",i, flush=True)
+                continue
+            
             tt_mlir.deallocate_tensor(t, force=True)
 
         # if we opened the device, close it.
