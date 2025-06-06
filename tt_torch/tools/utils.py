@@ -54,6 +54,27 @@ class CompileDepth(Enum):
     EXECUTE_OP_BY_OP = 5
     EXECUTE = 6
 
+class ExecuteMode(Enum):
+    EXECUTE = 1
+    OP_BY_OP = 2
+
+    def decompose_ExecuteMode(self):
+        mapping = {
+            ExecuteMode.EXECUTE: (CompileDepth.EXECUTE, OpByOpBackend.TORCH),
+            ExecuteMode.OP_BY_OP: (CompileDepth.EXECUTE_OP_BY_OP, OpByOpBackend.TORCH),
+        }
+        return mapping.get(self)
+    
+class ModelMetadata():
+    def __init__(self, 
+                model_name = None, 
+                compile_depth = None, 
+                op_by_op_backend = None,
+                assert_pcc = False,):
+        self.model_name = model_name
+        self.compile_depth = compile_depth
+        self.op_by_op_backend = op_by_op_backend
+        self.assert_pcc = assert_pcc
 
 class OpCompilationStatus(IntEnum):
     NOT_STARTED = 0
