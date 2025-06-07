@@ -14,7 +14,7 @@ class ThisTester(ModelTester):
     def _load_model(self):
         checkpoint = "Salesforce/codegen-350M-mono"
         model = AutoModelForCausalLM.from_pretrained(
-            checkpoint, torch_dtype=torch.bfloat16, use_cache=False
+            checkpoint, torch_dtype=torch.bfloat16
         )
         self.tokenizer = AutoTokenizer.from_pretrained(checkpoint)
         return model
@@ -34,8 +34,8 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_codegen(record_property, mode, op_by_op):
-    model_name = "codegen"
+def test_codegen_generate(record_property, mode, op_by_op):
+    model_name = "codegen_generate"
     cc = CompilerConfig()
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
@@ -47,16 +47,16 @@ def test_codegen(record_property, mode, op_by_op):
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
-        run_generate=False,
+        is_token_output=True,
+        run_generate=True,  # run model.generate(**inputs)
         assert_atol=False,
     )
 
-    results = tester.test_model()
+    results = tester.test_model(
+        assert_eval_token_mismatch=False
+    )  # don't validate token output
 
     if mode == "eval":
-        logits = results.logits if hasattr(results, "logits") else results[0]
-        token_ids = torch.argmax(logits, dim=-1)
-        decoded = tester.tokenizer.batch_decode(token_ids, skip_special_tokens=True)[0]
-        print(decoded)
+        print(tester.tokenizer.decode(results[0]))
 
     tester.finalize()
