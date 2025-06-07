@@ -256,8 +256,12 @@ jobs:
             runs-on: wormhole_b0, name: "torchaudio", tests: "
               tests/models/seamless_m4t/test_seamless_m4t.py::test_seamless_m4t[op_by_op_torch-eval]
             "
-          }
-
+          },
+          {
+            runs-on: wormhole_b0, name: "centernet", tests: "
+              tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[op_by_op_stablehlo-eval]
+              "
+          },
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
