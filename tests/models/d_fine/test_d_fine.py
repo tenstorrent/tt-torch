@@ -14,10 +14,10 @@ from transformers import DFineForObjectDetection, AutoImageProcessor
 class ThisTester(ModelTester):
     def _load_model(self):
         self.processor = AutoImageProcessor.from_pretrained(self.model_name)
-        model = DFineForObjectDetection.from_pretrained(
+        self.model = DFineForObjectDetection.from_pretrained(
             self.model_name, torch_dtype=torch.bfloat16
         )
-        return model
+        return self.model
 
     def _load_inputs(self):
         url = "http://images.cocodataset.org/val2017/000000039769.jpg"
