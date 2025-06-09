@@ -34,7 +34,8 @@ class ThisTester(ModelTester):
 @pytest.mark.parametrize(
     "model_name",
     [
-        "ustc-community/dfine-nano-coco" "ustc-community/dfine-small-coco",
+        "ustc-community/dfine-nano-coco",
+        "ustc-community/dfine-small-coco",
         "ustc-community/dfine-medium-coco",
         "ustc-community/dfine-large-coco",
         "ustc-community/dfine-xlarge-coco",
