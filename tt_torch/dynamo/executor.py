@@ -323,8 +323,9 @@ class Executor:
                         print(f"[James] Caching input tensor with name '{name_cache_key}' (index {i})", flush=True)
                     else:
                         # Cache hit - overwrite with cached version
-                        runtime_activations_and_weights[i] = self.runtime_tensor_cache[name_cache_key]
-                        print(f"[James] Overwriting input tensor with name '{name_cache_key}' (index {i}) with cached version", flush=True)
+                        pass
+                        # runtime_activations_and_weights[i] = self.runtime_tensor_cache[name_cache_key]
+                        # print(f"[James] Overwriting input tensor with name '{name_cache_key}' (index {i}) with cached version", flush=True)
         
         print(f"[James] - Runtime tensor cache keys (id {id(self.runtime_tensor_cache)})", list(self.runtime_tensor_cache.keys()), flush=True)
         

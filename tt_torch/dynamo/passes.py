@@ -280,7 +280,7 @@ def split_onto_devices(gm, compiler_config):
     if len(device_indices) == 0:
         device_indices = [0]
     mcg = MultiChipGraph(device_indices)
-    gm.graph.print_tabular()
+    # gm.graph.print_tabular()
     if len(device_indices) == 1:
         mcg.device_graphs = {0: gm.graph}
         input_index = 0
@@ -302,7 +302,7 @@ def split_onto_devices(gm, compiler_config):
                     mcg.graph_outputs[0].append(mco)
                     output_index += 1
             elif node.op == "get_attr":
-                print("[James] Get attr node found", node.name, flush=True)
+                # print("[James] Get attr node found", node.name, flush=True)
                 if ("key_states" in node.name or "value_states" in node.name): #and "past_key_values" in node.target: 
                     mci = MultiChipInput(
                         0,
