@@ -139,6 +139,7 @@ class Executor:
         required_atol=1e-2,
         devices=None,
         async_mode=False,
+        runtime_tensor_cache=None
     ):
         self.mcg = mcg
         if compiler_config is None:
@@ -160,6 +161,7 @@ class Executor:
         self.devices = devices if devices is not None else [None]
         self.owned_device_indices = []
         self.async_mode = async_mode
+        self.runtime_tensor_cache = runtime_tensor_cache
         self._validate_executor()
         self.system_desc_paths = self._create_system_descriptors()
 
@@ -250,7 +252,7 @@ class Executor:
         for t in preprocessed_activations:
             tt_mlir.deallocate_tensor(t, force=True)
 
-    def get_inputs(self, *inputs, binary, program_idx, device_idx=0):
+    def get_inputs(self, *inputs, binary, program_idx, device_idx=0, cachable_input_indices=None):
         def get_torch_tensors(tensors):
             torch_tensors = []
             indices = []
@@ -295,12 +297,46 @@ class Executor:
             program_idx,
             tensor_start_idx,
         )
+        
+        # monkey patch static kv cache inputs from runtime tensor cache
+        # put them in self.runtime_tensor_cache if they don't exist
+        # pull them from the runtime_tensor_cache if they do exist
+        #   for pulls, take them out of the list and jam them back in at the same indices (assuming list stability? - appears so for this case but maybe not in general?)
+        
+        # q - how do we key this cache? input index?
+        
+        constant_inputs_ct = 16*2        
+        for i, runtime_tensor in enumerate(runtime_activations_and_weights):
+            # Find if this index is in any of the cachable_input_indices tuples
+            # matching_entry = next((entry for entry in cachable_input_indices if entry[0] == i), None)
+            
+            # constant inputs are at the start of the runtime_activations_and_weights list and represent kv caches for llama
+            if i < constant_inputs_ct:
+                # Use the name as the cache key for stability across invocations
+                name_cache_key = f'constant_input_{i}'  # Get the name from the first matching entry
+                
+                if self.runtime_tensor_cache is not None:
+                    if name_cache_key not in self.runtime_tensor_cache:
+                        # Cache miss - put tensor in cache using name as key
+                        self.runtime_tensor_cache[name_cache_key] = runtime_tensor
+                        print(f"[James] Caching input tensor with name '{name_cache_key}' (index {i})", flush=True)
+                    else:
+                        # Cache hit - overwrite with cached version
+                        pass
+                        runtime_activations_and_weights[i] = self.runtime_tensor_cache[name_cache_key]
+                        print(f"[James] Overwriting input tensor with name '{name_cache_key}' (index {i}) with cached version", flush=True)
+        
+        print(f"[James] - Runtime tensor cache keys (id {id(self.runtime_tensor_cache)})", list(self.runtime_tensor_cache.keys()), flush=True)
+        
         runtime_activations_and_weights = recreate_runtime_tensors(
             weights_and_activations, runtime_activations_and_weights, torch_indices
         )
         runtime_weights = runtime_activations_and_weights[:-input_len]
         self.preprocessed_graph_constants[device_idx] = tuple(runtime_weights)
         runtime_activations = runtime_activations_and_weights[-input_len:]
+        
+        # for activation in runtime_activations:
+        #     self.runtime_tensor_cache[len(self.runtime_tensor_cache.keys())] = activation
 
         return runtime_weights, runtime_activations
 
@@ -328,17 +364,22 @@ class Executor:
         intermediate_results = []
         num_outputs = 0
         graph_inputs = {}
+        
+        cachable_input_indices = []
+        
         for device_idx in self.mcg.binaries.keys():
             for output in self.mcg.graph_outputs[device_idx]:
                 if output.io_type == IOType.USER:
                     num_outputs += 1
             graph_inputs[device_idx] = [None] * len(self.mcg.graph_inputs[device_idx])
-            for input in self.mcg.graph_inputs[device_idx]:
-                if input.io_type == IOType.USER:
+            for i,input in enumerate(self.mcg.graph_inputs[device_idx]):
+                if input.io_type == IOType.USER or input.io_type == IOType.INPUT_CACHE:
                     graph_inputs[device_idx][input.consumer_index] = inputs[
                         input.producer_index
                     ]
-
+                    # if input.io_type == IOType.INPUT_CACHE:
+                    #     cachable_input_indices.append((i, input.node_name))
+                
         final_outputs = [None] * num_outputs
         for device_idx, binary in self.mcg.binaries.items():
             device_inputs = graph_inputs[device_idx]
@@ -349,6 +390,7 @@ class Executor:
                 binary=binary,
                 device_idx=device_idx,
                 program_idx=program_idx,
+                cachable_input_indices=cachable_input_indices
             )
 
             device_inputs = list(device_inputs)

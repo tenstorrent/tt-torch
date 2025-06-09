@@ -288,8 +288,8 @@ class ModelTester:
         )
 
     def get_golden_outputs(self, model, inputs):
-        if self.golden_outputs is not None:
-            return self.golden_outputs
+        # if self.golden_outputs is not None:
+        #     return self.golden_outputs
 
         self.golden_outputs = self.run_model(model, inputs)
         return self.golden_outputs
@@ -304,7 +304,7 @@ class ModelTester:
         return compiled_models
 
     def compile_model(
-        self, model, compiler_config, data_parallel_mode=False, device_override=None
+        self, model, compiler_config, data_parallel_mode=False, device_override=None, runtime_tensor_cache=None
     ):
 
         clear_dynamo_cache()
@@ -329,6 +329,7 @@ class ModelTester:
             model = torch.compile(
                 model, backend=backend, dynamic=False, options=options
             )
+        options.runtime_tensor_cache = runtime_tensor_cache
         self.compiled_models.append(model)
         return model
 
