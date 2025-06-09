@@ -305,8 +305,7 @@ class Executor:
         
         # q - how do we key this cache? input index?
         
-        constant_inputs_ct = 4
-        
+        constant_inputs_ct = 16*2        
         for i, runtime_tensor in enumerate(runtime_activations_and_weights):
             # Find if this index is in any of the cachable_input_indices tuples
             # matching_entry = next((entry for entry in cachable_input_indices if entry[0] == i), None)
@@ -324,8 +323,8 @@ class Executor:
                     else:
                         # Cache hit - overwrite with cached version
                         pass
-                        # runtime_activations_and_weights[i] = self.runtime_tensor_cache[name_cache_key]
-                        # print(f"[James] Overwriting input tensor with name '{name_cache_key}' (index {i}) with cached version", flush=True)
+                        runtime_activations_and_weights[i] = self.runtime_tensor_cache[name_cache_key]
+                        print(f"[James] Overwriting input tensor with name '{name_cache_key}' (index {i}) with cached version", flush=True)
         
         print(f"[James] - Runtime tensor cache keys (id {id(self.runtime_tensor_cache)})", list(self.runtime_tensor_cache.keys()), flush=True)
         
