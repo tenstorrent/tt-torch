@@ -9,11 +9,22 @@ from third_party.tt_forge_models.bert.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
+    def __init__(self, model_name, mode, variant=None, **kwargs):
+        self.variant = variant
+        super().__init__(model_name, mode, **kwargs)
+
     def _load_model(self):
-        return ModelLoader.load_model(dtype_override=torch.bfloat16)
+        return ModelLoader.load_model(
+            variant=self.variant, dtype_override=torch.bfloat16
+        )
 
     def _load_inputs(self):
         return ModelLoader.load_inputs()
+
+
+# Print available variants for reference
+available_variants = ModelLoader.query_available_variants()
+print("Available variants:", available_variants)
 
 
 @pytest.mark.parametrize(
@@ -25,8 +36,17 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_bert(record_property, mode, op_by_op):
-    model_name = "BERT"
+@pytest.mark.parametrize(
+    "variant_info",
+    available_variants.items(),
+    ids=list(available_variants.keys()),
+)
+def test_bert(record_property, mode, op_by_op, variant_info):
+
+    # Use variant in model name if specified
+    variant, variant_desc = variant_info
+    model_name = f"BERT-{variant}"
+    print(f"Testing model_name: {model_name} variant_desc: {variant_desc}", flush=True)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -39,6 +59,7 @@ def test_bert(record_property, mode, op_by_op):
     tester = ThisTester(
         model_name,
         mode,
+        variant=variant,
         relative_atol=0.012,
         compiler_config=cc,
         record_property_handle=record_property,

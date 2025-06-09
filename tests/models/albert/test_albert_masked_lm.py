@@ -3,25 +3,29 @@
 # SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/docs/transformers/v4.44.2/en/model_doc/albert#transformers.AlbertForMaskedLM
 
-from transformers import AutoTokenizer, AlbertForMaskedLM
 import torch
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.albert.masked_lm.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
+    def __init__(self, model_name, mode, variant=None, **kwargs):
+        self.variant = variant
+        super().__init__(model_name, mode, **kwargs)
+
     def _load_model(self):
-        return AlbertForMaskedLM.from_pretrained(
-            self.model_name, torch_dtype=torch.bfloat16
+        return ModelLoader.load_model(
+            variant=self.variant, dtype_override=torch.bfloat16
         )
 
     def _load_inputs(self):
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            self.model_name, torch_dtype=torch.bfloat16
+        self.inputs = ModelLoader.load_inputs(
+            variant=self.variant, dtype_override=torch.bfloat16
         )
-        self.text = "The capital of [MASK] is Paris."
-        self.inputs = self.tokenizer(self.text, return_tensors="pt")
+        self.text = ModelLoader.sample_text
+        self.tokenizer = ModelLoader.tokenizer
         return self.inputs
 
     def set_inputs_train(self, inputs):
@@ -35,18 +39,19 @@ class ThisTester(ModelTester):
     #     return
 
 
+# Print available variants for reference
+available_variants = ModelLoader.query_available_variants()
+print("Available variants:", available_variants)
+
+
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
 @pytest.mark.parametrize(
-    "model_name",
-    [
-        "albert/albert-base-v2",
-        "albert/albert-large-v2",
-        "albert/albert-xlarge-v2",
-        "albert/albert-xxlarge-v2",
-    ],
+    "variant_info",
+    available_variants.items(),
+    ids=list(available_variants.keys()),
 )
 @pytest.mark.parametrize(
     "op_by_op",
@@ -57,7 +62,7 @@ class ThisTester(ModelTester):
     "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
 )
 def test_albert_masked_lm(
-    record_property, model_name, mode, op_by_op, data_parallel_mode
+    record_property, variant_info, mode, op_by_op, data_parallel_mode
 ):
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -69,21 +74,18 @@ def test_albert_masked_lm(
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    assert_pcc = (
-        True
-        if model_name
-        in [
-            "albert/albert-base-v2",
-            "albert/albert-large-v2",
-            "albert/albert-xlarge-v2",
-        ]
-        else False
-    )
+    variant, variant_desc = variant_info
+    model_name = f"albert/{variant}-masked_lm"
+    print(f"Testing model_name: {model_name} variant_desc: {variant_desc}", flush=True)
+
+    required_pcc = 0.98 if "xxlarge" in variant else 0.99
 
     tester = ThisTester(
         model_name,
         mode,
-        assert_pcc=assert_pcc,
+        variant=variant,
+        required_pcc=required_pcc,
+        assert_pcc=True,
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
@@ -92,12 +94,7 @@ def test_albert_masked_lm(
     results = tester.test_model()
 
     def print_result(result):
-        logits = result.logits
-        mask_token_index = (tester.inputs.input_ids == tester.tokenizer.mask_token_id)[
-            0
-        ].nonzero(as_tuple=True)[0]
-        predicted_token_id = logits[0, mask_token_index].argmax(axis=-1)
-        predicted_tokens = tester.tokenizer.decode(predicted_token_id)
+        predicted_tokens = ModelLoader.decode_output(result, tester.inputs)
         print(f"Model: {model_name} | Input: {tester.text} | Mask: {predicted_tokens}")
 
     if mode == "eval":
