@@ -40,6 +40,34 @@ def test_return_rt_tensor_and_torch_tensors():
     )
 
 
+def test_tensor_metadata_validation():
+    class GraphBreakModel(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x, y):
+            # First operation
+            a = x + y
+
+            # Access tensor properties (likely to cause a graph break)
+            shape_value = a.shape[0]
+
+            # Control flow based on tensor data (another graph break source)
+            if shape_value > 0:
+                b = a * 2
+            else:
+                b = a * 3
+
+            # Operations after potential graph breaks
+            c = torch.nn.functional.relu(b)
+            return c
+
+    verify_module(
+        GraphBreakModel(),
+        input_shapes=[(4, 5), (4, 5)],
+    )
+
+
 def test_abs():
     class Basic(nn.Module):
         def __init__(self):
