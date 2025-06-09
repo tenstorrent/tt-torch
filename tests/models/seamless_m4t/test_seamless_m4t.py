@@ -19,25 +19,19 @@ import torchaudio
 import types
 
 
-def fake_rand(*args, **kwargs):
-    return torch.ones(*args, **kwargs)
-
-
 class ThisTester(ModelTester):
     def _load_model(self):
         model_name = "facebook/hf-seamless-m4t-large"
-
         self.config = SeamlessM4TConfig.from_pretrained(model_name, use_cache=False)
-        # Reduce the number of layers from 24 to 3 to avoid memory error
-        self.config.speech_encoder_layers = 3
-        self.config.encoder_layers = 3
-        self.config.decoder_layers = 3
-
         self.processor = AutoProcessor.from_pretrained(model_name)
-        self.model = SeamlessM4TModel.from_pretrained(model_name, config=self.config)
-        return self.model
+        self.full_model = SeamlessM4TModel.from_pretrained(
+            model_name, config=self.config
+        )
+        # Compile text_decoder submodule only
+        return self.full_model.text_decoder
 
     def _load_inputs(self):
+        # Load and format audio input
         url = "https://courses.cs.duke.edu/cps001/spring06/class/06_Sound/sounds/preamble.wav"
         with urllib.request.urlopen(url) as response:
             audio_data = response.read()
@@ -47,14 +41,20 @@ class ThisTester(ModelTester):
             audio, orig_freq=orig_freq, new_freq=16_000
         )
         audio_inputs = self.processor(audios=audio, return_tensors="pt")
+        # Run encoder to get encoder_hidden_states
+        encoder_outputs = self.full_model.speech_encoder(
+            input_features=audio_inputs.input_features,
+            attention_mask=audio_inputs.attention_mask,
+        )
+        encoder_hidden_states = encoder_outputs[0]
+        # Prepare decoder input IDs
         tokenizer = self.processor.tokenizer
         bos_token_id = tokenizer.bos_token_id
         decoder_input_ids = torch.tensor([[bos_token_id]])
+        # Arguments are inputs for the text decoder submodule
         arguments = {
-            "input_features": audio_inputs.input_features,
-            "attention_mask": audio_inputs.attention_mask,
-            "tgt_lang": "tur",
-            "decoder_input_ids": decoder_input_ids,
+            "input_ids": decoder_input_ids,
+            "encoder_hidden_states": encoder_hidden_states,
         }
         return arguments
 
@@ -68,10 +68,7 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_seamless_m4t(record_property, mode, op_by_op, monkeypatch):
-    # Apply monkeypatch to replace torch.rand with fake_rand
-    monkeypatch.setattr(torch, "rand", fake_rand)
-
+def test_seamless_m4t(record_property, mode, op_by_op):
     model_name = "SeamlessM4T"
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -87,7 +84,6 @@ def test_seamless_m4t(record_property, mode, op_by_op, monkeypatch):
         compiler_config=cc,
         record_property_handle=record_property,
         assert_atol=False,
-        assert_pcc=False,
         run_generate=False,
         model_group="red",
     )
