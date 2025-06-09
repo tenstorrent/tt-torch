@@ -252,7 +252,7 @@ class Executor:
         for t in preprocessed_activations:
             tt_mlir.deallocate_tensor(t, force=True)
 
-    def get_inputs(self, *inputs, binary, program_idx, device_idx=0):
+    def get_inputs(self, *inputs, binary, program_idx, device_idx=0, cachable_input_indices=None):
         def get_torch_tensors(tensors):
             torch_tensors = []
             indices = []
@@ -305,14 +305,16 @@ class Executor:
         
         # q - how do we key this cache? input index?
         
-
+        constant_inputs_ct = 4
+        
         for i, runtime_tensor in enumerate(runtime_activations_and_weights):
             # Find if this index is in any of the cachable_input_indices tuples
-            matching_entry = next((entry for entry in cachable_input_indices if entry[0] == i), None)
+            # matching_entry = next((entry for entry in cachable_input_indices if entry[0] == i), None)
             
-            if matching_entry:
+            # constant inputs are at the start of the runtime_activations_and_weights list and represent kv caches for llama
+            if i < constant_inputs_ct:
                 # Use the name as the cache key for stability across invocations
-                name_cache_key = matching_entry[1]  # Get the name from the first matching entry
+                name_cache_key = f'constant_input_{i}'  # Get the name from the first matching entry
                 
                 if self.runtime_tensor_cache is not None:
                     if name_cache_key not in self.runtime_tensor_cache:
@@ -375,8 +377,8 @@ class Executor:
                     graph_inputs[device_idx][input.consumer_index] = inputs[
                         input.producer_index
                     ]
-                    if input.io_type == IOType.INPUT_CACHE:
-                        cachable_input_indices.append((i, input.node_name))
+                    # if input.io_type == IOType.INPUT_CACHE:
+                    #     cachable_input_indices.append((i, input.node_name))
                 
         final_outputs = [None] * num_outputs
         for device_idx, binary in self.mcg.binaries.items():

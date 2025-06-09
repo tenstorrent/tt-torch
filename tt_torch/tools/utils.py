@@ -112,6 +112,7 @@ class MultiChipGraph:
         self.constant_inputs = {}
         self.example_inputs = {}
         self.shlo_modules = {}
+        self.constant_input_to_node_name = {}
 
     def lint(self):
         output_user_nodes = self.get_nodes_of_iotype(
