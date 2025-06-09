@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-set(TT_MLIR_VERSION "9eb8ee1cb68adacaf7fcf46432a172444dcffd6c")
+set(TT_MLIR_VERSION "jazpur/kv-cache")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
