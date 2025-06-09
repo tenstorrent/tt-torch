@@ -9,7 +9,6 @@ import onnx
 from transformers.cache_utils import DynamicCache, _flatten_dynamic_cache
 from onnx.tools import update_model_dims
 import gc
-from transformers.cache_utils import DynamicCache
 import onnxruntime
 import numpy as np
 import collections
@@ -34,7 +33,6 @@ from tt_torch.tools.utils import RuntimeIntermediate, OpByOpBackend
 from tt_torch.tools.device_manager import DeviceManager
 import io
 import csv
-import os
 import tt_mlir
 
 

@@ -262,6 +262,11 @@ jobs:
               tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[op_by_op_stablehlo-eval]
               "
           },
+          {
+            runs-on: wormhole_b0, name: "flux_schnell", tests: "
+              tests/models/flux/test_flux.py::test_flux[op_by_op_torch-flux_schnell-eval]
+            "
+          },
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
