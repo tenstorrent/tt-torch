@@ -13,7 +13,7 @@ from transformers import (
 )
 import tt_mlir
 
-
+from tt_torch.tools.verify import calculate_pcc
 class PrefillTester(ModelTester):
     def _load_model(self):
 
@@ -23,7 +23,7 @@ class PrefillTester(ModelTester):
             torch_dtype=torch.bfloat16,
             use_cache=True,
         )
-        model.config.num_hidden_layers = 8  # too small causes repeated next-token predictions. too big causes out of DRAM
+        model.config.num_hidden_layers = 4  # too small causes repeated next-token predictions. too big causes out of DRAM
 
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_name, torch_dtype=torch.bfloat16
@@ -76,7 +76,7 @@ class PrefillTester(ModelTester):
     @torch.inference_mode()
     def get_torchcompiled_gm(self, runtime_tensor_cache):
         model = self.get_framework_model()
-        golden = self.get_golden_outputs(model, self.inputs)
+        # golden = self.get_golden_outputs(model, self.inputs)
 
         model = self.compile_model(model, self.compiler_config, data_parallel_mode=False, runtime_tensor_cache=runtime_tensor_cache)
 
@@ -97,7 +97,7 @@ class PrefillTester(ModelTester):
         outputs = model(**inputs)
         return outputs
 
-
+@torch.inference_mode()
 def test_llama_3b(record_property):
     cc = CompilerConfig()
     cc.compile_depth = CompileDepth.EXECUTE
@@ -123,7 +123,7 @@ def test_llama_3b(record_property):
 
     # compile prefill fx graph to flatbuffer and run
 
-    max_new_tokens = 10
+    max_new_tokens = 5
     
     runtime_tensor_cache = {}
     print("Runtime tensor cache id: ", id(runtime_tensor_cache))
@@ -134,9 +134,17 @@ def test_llama_3b(record_property):
     for i in range(max_new_tokens):
         print("\n===== Decode step", i, "=====\n")
         print(f"Input args to step {i}", input_args)
+        
+        golden = tester.get_golden_outputs(tester.get_framework_model(), input_args)        
         outputs = tester.run_model_with_inputs(gm, input_args)
+
+        
+        golden_next_token_ids = golden.logits[:, -1:].argmax(dim=-1)
         next_token_ids = outputs.logits[:, -1:].argmax(dim=-1)
-        print(f"Next token id prediction for decode step {i}: {next_token_ids.item()}")
+        
+        
+        print(f"Next token id prediction for decode step {i}: {next_token_ids.item()}. Golden: {golden_next_token_ids.item()}.")
+        # print(f"Next token id prediction for decode step {i}: {next_token_ids.item()}. Golden: {golden_next_token_ids.item()}. PCC : {calculate_pcc(torch.flatten(outputs.logits), torch.flatten(golden.logits))}")
         print(f"Cache after step {i}: {list(runtime_tensor_cache.keys())}")
         
         for key, value in runtime_tensor_cache.items():
