@@ -281,6 +281,12 @@ class TorchExecutor(OpByOpExecutor):
                         ]
 
         graph_node = graph.call_function(node.target, placeholders, kwargs)
+
+        # Skip validation ops (like aten._assert_tensor_metadata) that lack tensor metadata
+        if "tensor_meta" not in node.meta:
+            print(f"Warning: {node.target} missing tensor_meta, skipping compile.")
+            return None, None
+
         graph_node.meta["tensor_meta"] = node.meta["tensor_meta"]
 
         # if the node has multiple outputs, add a getitem for each and append to graph
