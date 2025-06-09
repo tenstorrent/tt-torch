@@ -267,13 +267,19 @@ py::object to_host_single_object(py::object obj) {
          "Non-tensor type must be castable to a dictionary");
   py::dict attrs = py::hasattr(obj, "__dict__") ? py::getattr(obj, "__dict__")
                                                 : obj.cast<py::dict>();
+  std::cout << "[HET DEBUG] attrs: " << attrs << std::endl;
   for (auto &item : attrs) {
     std::string key = py::str(item.first);
     py::handle value = item.second;
     py::iterable value_wrapper;
     if (py::isinstance<tt::runtime::Tensor>(value)) {
       value_wrapper = py::list(py::make_tuple(value));
+    } else if (value.is_none()) {
+      continue;
     } else {
+      std::cout << "[HET DEBUG] value: " << value << std::endl;
+      std::cout << "[HET DEBUG] value type: " << py::type::of(value)
+                << std::endl;
       assert(py::isinstance<py::iterable>(value) &&
              "Value within object must be iterable");
       value_wrapper = value.cast<py::iterable>();
@@ -294,10 +300,10 @@ py::object to_host_single_object(py::object obj) {
       attrs[key.c_str()] = res;
     }
   }
-  // if (py::hasattr(obj, "__dict__")) {
-  //   py::setattr(obj, "__dict__", attrs);
-  //   return obj;
-  // }
+  if (py::hasattr(obj, "__dict__")) {
+    py::setattr(obj, "__dict__", attrs);
+    return obj;
+  }
   return attrs;
 }
 
