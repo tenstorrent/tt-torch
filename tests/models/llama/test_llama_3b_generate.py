@@ -23,7 +23,7 @@ class PrefillTester(ModelTester):
             torch_dtype=torch.bfloat16,
             use_cache=True,
         )
-        model.config.num_hidden_layers = 4  # too small causes repeated next-token predictions. too big causes out of DRAM
+        model.config.num_hidden_layers = 16  # too small causes repeated next-token predictions. too big causes out of DRAM
 
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_name, torch_dtype=torch.bfloat16
@@ -143,15 +143,36 @@ def test_llama_3b(record_property):
         next_token_ids = outputs.logits[:, -1:].argmax(dim=-1)
         
         
-        print(f"Next token id prediction for decode step {i}: {next_token_ids.item()}. Golden: {golden_next_token_ids.item()}.")
-        # print(f"Next token id prediction for decode step {i}: {next_token_ids.item()}. Golden: {golden_next_token_ids.item()}. PCC : {calculate_pcc(torch.flatten(outputs.logits), torch.flatten(golden.logits))}")
+        # print(f"Next token id prediction for decode step {i}: {next_token_ids.item()}. Golden: {golden_next_token_ids.item()}.")
+        print(f"Next token id prediction for decode step {i}: {next_token_ids.item()}. Golden: {golden_next_token_ids.item()}. PCC : {calculate_pcc(torch.flatten(outputs.logits), torch.flatten(golden.logits))}")
         print(f"Cache after step {i}: {list(runtime_tensor_cache.keys())}")
+        
+        golden_static_cache_tensors = golden.past_key_values.key_cache
+        golden_static_cache_tensors.extend(golden.past_key_values.value_cache)
         
         for key, value in runtime_tensor_cache.items():
             host_cache = tt_mlir.to_host(value)[0] # returns single element tuple, I think
             # print(host_cache)
             print(f"Runtime tensor cache key: {key}")
             print(f"{torch.mean(host_cache[0,0,:,:], dim=-1).tolist()}")
+            
+            # Rake & Sweep for golden verification of static caches
+            rake_pcc = [] 
+            for golden_tensor in golden_static_cache_tensors:
+                rake_pcc.append(calculate_pcc(host_cache,golden_tensor))
+            
+            if rake_pcc:
+                best_idx = rake_pcc.index(max(rake_pcc))
+                best_value = rake_pcc[best_idx]
+                
+                # Format with the best value highlighted
+                pcc_formatted = [f"{pcc:.4f}" for pcc in rake_pcc]
+                pcc_formatted[best_idx] = f"\033[92m{best_value:.4f}\033[0m"  # Highlight best in green
+                
+                pcc_str = "[" + ", ".join(pcc_formatted) + "]"
+                print(f"PCC matches: (best: {best_value:.4f} at idx {best_idx})")
+                        
+                    
 
         #  = outputs.past_key_values
         # -> are past_key_values updated in place?
