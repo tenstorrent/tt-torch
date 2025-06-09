@@ -279,27 +279,20 @@ def split_onto_devices(gm, compiler_config):
     if len(device_indices) == 0:
         device_indices = [0]
     mcg = MultiChipGraph(device_indices)
+    gm.graph.print_tabular()
     if len(device_indices) == 1:
         mcg.device_graphs = {0: gm.graph}
         input_index = 0
         output_index = 0
         for node in gm.graph.nodes:
             if node.op == "placeholder":
-                if "past_key_values" in node.name:
-                    mci = MultiChipInput(
-                        0,
-                        IOType.INPUT_CACHE,
-                        input_index,
-                        input_index,
-                        node_name=node.name # attach node name to map to cachable runtime tensor
-                    )
-                else:
-                    mci = MultiChipInput(
-                        0,
-                        IOType.USER,
-                        input_index,
-                        input_index,
-                    )
+                mci = MultiChipInput(
+                    0,
+                    IOType.USER,
+                    input_index,
+                    input_index,
+                    node.meta
+                )
                 mcg.graph_inputs[0].append(mci)
                 input_index += 1
             elif node.op == "output":
@@ -307,7 +300,17 @@ def split_onto_devices(gm, compiler_config):
                     mco = MultiChipOutput(0, IOType.USER, output_index)
                     mcg.graph_outputs[0].append(mco)
                     output_index += 1
-            
+            elif node.op == "get_attr":
+                print("[James] Get attr node found", node.name, flush=True)
+                if ("key_states" in node.name or "value_states" in node.name): #and "past_key_values" in node.target: 
+                    mci = MultiChipInput(
+                        0,
+                        IOType.INPUT_CACHE,
+                        input_index,
+                        input_index,
+                        node.meta,
+                        node.name
+                    )
         return mcg
 
     node_to_new_nodes = {}

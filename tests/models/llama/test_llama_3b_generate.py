@@ -23,7 +23,7 @@ class PrefillTester(ModelTester):
             torch_dtype=torch.bfloat16,
             use_cache=True,
         )
-        model.config.num_hidden_layers = 2  # too small causes repeated next-token predictions. too big causes out of DRAM
+        model.config.num_hidden_layers = 8  # too small causes repeated next-token predictions. too big causes out of DRAM
 
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_name, torch_dtype=torch.bfloat16
@@ -51,7 +51,7 @@ class PrefillTester(ModelTester):
         max_cache_len = 64
         static_cache = StaticCache(
             config=self.framework_model.config,
-            batch_size=batch_size,
+            max_batch_size=batch_size,
             max_cache_len=max_cache_len,
             device=self.framework_model.device,
             dtype=self.framework_model.dtype,
@@ -123,7 +123,7 @@ def test_llama_3b(record_property):
 
     # compile prefill fx graph to flatbuffer and run
 
-    max_new_tokens = 2
+    max_new_tokens = 10
     
     runtime_tensor_cache = {}
     print("Runtime tensor cache id: ", id(runtime_tensor_cache))
@@ -140,7 +140,8 @@ def test_llama_3b(record_property):
         print(f"Cache after step {i}: {list(runtime_tensor_cache.keys())}")
         
         for key, value in runtime_tensor_cache.items():
-            host_cache = tt_mlir.to_host(value)
+            host_cache = tt_mlir.to_host(value)[0] # returns single element tuple, I think
+            # print(host_cache)
             print(f"Runtime tensor cache key: {key}")
             print(f"{torch.mean(host_cache[0,0,:,:], dim=-1).tolist()}")
 
@@ -163,8 +164,8 @@ def test_llama_3b(record_property):
         cache_position = cache_position[-1:] + 1
 
         # inspect static_cache
-        key_cache0_head0_vals = torch.mean(static_cache.key_cache_0[0, 0, :, :], dim=-1)
-        print("Key cache slice along seqlen: ", key_cache0_head0_vals.tolist())
+        # key_cache0_head0_vals = torch.mean(static_cache.key_cache_0[0, 0, :, :], dim=-1)
+        # print("Key cache slice along seqlen: ", key_cache0_head0_vals.tolist())
 
         input_args = {
             "input_ids": generated_ids[:, -1:],
