@@ -2,6 +2,7 @@
 
 This document walks you through how to set up to run models using tt-torch. The following topics are covered:
 
+* [System Dependencies](#system-dependencies)
 * [Configuring Hardware](#configuring-hardware)
 * [Installing Dependencies](#installing-dependencies)
 * [Installing CMake](#installing-cmake-402)
@@ -11,6 +12,21 @@ This document walks you through how to set up to run models using tt-torch. The 
 * [Running the resnet Demo](#running-the-resnet-demo)
 * [Compiling and Running a Model](#compiling-and-running-a-model)
 * [Example - Add Two Tensors](#example---add-two-tensors)
+
+## System Dependencies
+
+tt-torch has the following system dependencies:
+* Ubuntu 22.04
+* Python 3.10
+* python3.10-venv
+* Clang 17
+* GCC 11
+* Ninja
+* CMake 3.20 or higher
+
+```bash
+sudo apt install clang cmake ninja-build pip python3.10-venv
+```
 
 ## Configuring Hardware
 
@@ -87,6 +103,15 @@ Look for the line that starts with: `Selected GCC installation:`. If it is somet
 sudo apt-get install gcc-11 lib32stdc++-11-dev lib32gcc-11-dev
 ```
 
+You **do not** need to uninstall other versions of GCC. Instead, you can use `update-alternatives` to configure the system to prefer GCC 11:
+
+```bash
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 100
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 100
+```
+
+This approach lets multiple GCC versions coexist on your system and you can switch between them as needed.
+
 3. Delete any non-11 paths:
 
 ```bash
@@ -130,7 +155,7 @@ cmake --build build
 cmake --install build
 ```
 
->**NOTE:** It takes awhile for everything to build.
+>**NOTE:** It takes a while for everything to build.
 
 ## Test the tt-torch Build:
 You can check that everything is working with a basic unit test:
