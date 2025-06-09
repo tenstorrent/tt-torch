@@ -422,8 +422,9 @@ class StablehloExecutor(OpByOpExecutor):
                     self.set_runtime_stack_dump(msg, op)
                 except Exception as e:
                     binary = None
+                    e_msg = self.get_exception_source(e)
                     self.print_marker(
-                        "Failed to compile", idx, num_nodes, node.target, e
+                        "Failed to compile", idx, num_nodes, node.target, e_msg
                     )
 
                 if (
@@ -440,8 +441,9 @@ class StablehloExecutor(OpByOpExecutor):
                             raise ValueError("Failed to execute")
                         op.compilation_status = OpCompilationStatus.EXECUTED
                     except Exception as e:
+                        e_msg = self.get_exception_source(e)
                         self.print_marker(
-                            "Failed to execute", idx, num_ops, op.op_name, e
+                            "Failed to execute", idx, num_ops, op.op_name, e_msg
                         )
 
             # Finished handling this op, increment global op index

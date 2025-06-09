@@ -565,6 +565,13 @@ class OpByOpExecutor(Executor):
             flush=True,
         )
 
+    # Helper function to get extract exception source for printing concise message
+    def get_exception_source(self, e):
+        import traceback
+
+        filename, lineno, function, _ = traceback.extract_tb(e.__traceback__)[-1]
+        return f"{type(e).__name__}: {e} in {filename.split('/')[-1]}:{lineno} ({function})"
+
     def compile_op(self, node, *inputs, **kwargs):
         # get_stablehlo_graph is a method implemented in inheriting classes
         module, op = self.get_stable_hlo_graph(node, inputs, **kwargs)

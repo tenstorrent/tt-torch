@@ -382,8 +382,9 @@ class TorchExecutor(OpByOpExecutor):
 
                     except Exception as e:
                         binary = None
+                        e_msg = self.get_exception_source(e)
                         self.print_marker(
-                            "Failed to compile", idx, num_nodes, node.target, e
+                            "Failed to compile", idx, num_nodes, node.target, e_msg
                         )
 
                 start = time.time()
@@ -422,8 +423,9 @@ class TorchExecutor(OpByOpExecutor):
                             if pcc < self.required_pcc:
                                 print(f"pcc too low for {idx}: {pcc}")
                     except Exception as e:
+                        e_msg = self.get_exception_source(e)
                         self.print_marker(
-                            "Failed to execute", idx, num_nodes, node.target, e
+                            "Failed to execute", idx, num_nodes, node.target, e_msg
                         )
 
                 node_to_tensor[node] = golden
