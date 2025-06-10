@@ -3,14 +3,16 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import pytest
-from transformers import AutoProcessor, LlavaForConditionalGeneration
+from transformers import AutoTokenizer, LlavaForConditionalGeneration
 from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.processor = AutoProcessor.from_pretrained(self.model_name)
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            self.model_name, padding_side="left", torch_dtype=torch.bfloat16
+        )
         model = LlavaForConditionalGeneration.from_pretrained(
             self.model_name, torch_dtype=torch.bfloat16
         )
@@ -18,27 +20,9 @@ class ThisTester(ModelTester):
 
     def _load_inputs(self):
         # Set up sample input
-        chat = [
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "content": "Can this animal"},
-                    {"type": "image", "url": "https://picsum.photos/id/237/200/300"},
-                    {"type": "text", "content": "live here?"},
-                    {
-                        "type": "image",
-                        "url": "https://picsum.photos/seed/picsum/200/300",
-                    },
-                ],
-            }
-        ]
-        inputs = self.processor.apply_chat_template(
-            chat,
-            add_generation_prompt=True,
-            tokenize=True,
-            return_dict=True,
-            return_tensors="pt",
-        ).to(self.framework_model.device)
+        # Pixtral is recommended to be used with a question and an image, but here we use a text-only input for simplicity.
+        self.test_input = "How often does the letter r occur in Mistral?"
+        inputs = self.tokenizer.encode_plus(self.test_input, return_tensors="pt")
         return inputs
 
 
@@ -52,7 +36,7 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_pixtral(record_property, mode, op_by_op):
-    pytest.skip()  # https://github.com/tenstorrent/tt-torch/issues/864
+    # pytest.skip()  # https://github.com/tenstorrent/tt-torch/issues/864
     model_name = "mistral-community/pixtral-12b"
     model_group = "red"
     cc = CompilerConfig()
@@ -61,14 +45,14 @@ def test_pixtral(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    skip_full_eval_test(
-        record_property,
-        cc,
-        model_name,
-        bringup_status="FAILED_RUNTIME",
-        reason="Model is too large to fit on single device during execution.",
-        model_group=model_group,
-    )
+    # skip_full_eval_test(
+    #     record_property,
+    #     cc,
+    #     model_name,
+    #     bringup_status="FAILED_RUNTIME",
+    #     reason="Model is too large to fit on single device during execution.",
+    #     model_group=model_group,
+    # )
 
     tester = ThisTester(
         model_name,
