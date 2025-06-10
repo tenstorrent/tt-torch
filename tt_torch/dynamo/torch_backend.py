@@ -236,6 +236,11 @@ class TorchExecutor(OpByOpExecutor):
             raise ValueError(f"inline ops are not supported: {name}")
             return None, None
 
+        # Skip validation ops (like aten._assert_tensor_metadata) that lack tensor metadata
+        if "tensor_meta" not in node.meta:
+            print(f"Warning: {node.target} missing tensor_meta, skipping compile.")
+            return None, None
+
         op = Op(name, input_shapes_and_constants, self.compiler_config.model_name)
         if op.unique_key() not in self.compiler_config.unique_ops:
             op.global_op_idx = OpByOpExecutor.global_op_idx
@@ -281,12 +286,6 @@ class TorchExecutor(OpByOpExecutor):
                         ]
 
         graph_node = graph.call_function(node.target, placeholders, kwargs)
-
-        # Skip validation ops (like aten._assert_tensor_metadata) that lack tensor metadata
-        if "tensor_meta" not in node.meta:
-            print(f"Warning: {node.target} missing tensor_meta, skipping compile.")
-            return None, None
-
         graph_node.meta["tensor_meta"] = node.meta["tensor_meta"]
 
         # if the node has multiple outputs, add a getitem for each and append to graph
