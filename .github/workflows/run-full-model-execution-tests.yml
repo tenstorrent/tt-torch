@@ -52,7 +52,71 @@ jobs:
                     tests/models/EfficientNet/test_EfficientNet_llmbox.py::test_EfficientNet[full-efficientnet-b0-eval]
                     tests/models/hardnet/test_hardnet_llmbox.py::test_hardnet[full-eval]
             "
-            }
+            },
+            # {
+            #   runs-on: tt-beta-ubuntu-2204-n300-llmbox-large-stable, name: "eval_2", tests: "
+            #         tests/models/mlpmixer/test_mlpmixer_llmbox.py::test_mlpmixer[full-eval]
+            #         tests/models/stable_diffusion/test_stable_diffusion_unet_llmbox.py::test_stable_diffusion_unet[full-eval]
+            #         tests/models/unet/test_unet_llmbox.py::test_unet[full-eval]
+            #         tests/models/unet_brain/test_unet_brain_llmbox.py::test_unet_brain[full-eval]
+            #         tests/models/unet_carvana/test_unet_carvana_llmbox.py::test_unet_carvana[full-eval]
+            #         tests/models/yolos/test_yolos_llmbox.py::test_yolos[full-eval]
+            #         tests/models/yolov3/test_yolov3_llmbox.py::test_yolov3[full-eval]
+            #         tests/models/albert/test_albert_question_answering_llmbox.py::test_albert_question_answering[full-twmkn9/albert-base-v2-squad2-eval]
+            # "
+            # },
+            # {
+            #   runs-on: tt-beta-ubuntu-2204-n300-llmbox-large-stable, name: "eval_3", tests: "
+            #         tests/models/torchvision/test_torchvision_image_classification_llmbox.py::test_torchvision_image_classification[full-eval-densenet121]
+            #         tests/models/torchvision/test_torchvision_image_classification_llmbox.py::test_torchvision_image_classification[full-eval-densenet161]
+            #         tests/models/torchvision/test_torchvision_image_classification_llmbox.py::test_torchvision_image_classification[full-eval-densenet169]
+            #         tests/models/torchvision/test_torchvision_image_classification_llmbox.py::test_torchvision_image_classification[full-eval-densenet201]
+            #         tests/models/torchvision/test_torchvision_image_classification_llmbox.py::test_torchvision_image_classification[full-eval-mobilenet_v2]
+            #         tests/models/torchvision/test_torchvision_image_classification_llmbox.py::test_torchvision_image_classification[full-eval-mobilenet_v3_small]
+            #         tests/models/torchvision/test_torchvision_image_classification_llmbox.py::test_torchvision_image_classification[full-eval-mobilenet_v3_large]
+            #         tests/models/torchvision/test_torchvision_image_classification_llmbox.py::test_torchvision_image_classification[full-eval-regnet_y_400mf]
+            #         tests/models/torchvision/test_torchvision_image_classification_llmbox.py::test_torchvision_image_classification[full-eval-regnet_y_800mf]
+            #         tests/models/torchvision/test_torchvision_image_classification_llmbox.py::test_torchvision_image_classification[full-eval-regnet_y_1_6gf]
+            # "
+            # },
+            # {
+            #   runs-on: tt-beta-ubuntu-2204-n300-llmbox-large-stable, name: "eval_4", tests: "
+            #         tests/models/torchvision/test_torchvision_image_classification_llmbox.py::test_torchvision_image_classification[full-eval-regnet_y_3_2gf]
+            #         tests/models/torchvision/test_torchvision_image_classification_llmbox.py::test_torchvision_image_classification[full-eval-regnet_y_8gf]
+            #         tests/models/torchvision/test_torchvision_image_classification_llmbox.py::test_torchvision_image_classification[full-eval-regnet_y_16gf]
+            #         tests/models/torchvision/test_torchvision_image_classification_llmbox.py::test_torchvision_image_classification[full-eval-regnet_y_32gf]
+            #         tests/models/torchvision/test_torchvision_image_classification_llmbox.py::test_torchvision_image_classification[full-eval-regnet_x_400mf]
+            #         tests/models/torchvision/test_torchvision_image_classification_llmbox.py::test_torchvision_image_classification[full-eval-regnet_x_800mf]
+            #         tests/models/torchvision/test_torchvision_image_classification_llmbox.py::test_torchvision_image_classification[full-eval-regnet_x_1_6gf]
+            #         tests/models/torchvision/test_torchvision_image_classification_llmbox.py::test_torchvision_image_classification[full-eval-regnet_x_3_2gf]
+            #         tests/models/torchvision/test_torchvision_image_classification_llmbox.py::test_torchvision_image_classification[full-eval-regnet_x_8gf]
+            #         tests/models/torchvision/test_torchvision_image_classification_llmbox.py::test_torchvision_image_classification[full-eval-regnet_x_16gf]
+            #         tests/models/torchvision/test_torchvision_image_classification_llmbox.py::test_torchvision_image_classification[full-eval-regnet_x_32gf]
+            # "
+            # },
+            # {
+            #   runs-on: tt-beta-ubuntu-2204-n300-llmbox-large-stable, name: "eval_5", tests: "
+            #         tests/models/EfficientNet/test_EfficientNet_llmbox.py::test_EfficientNet[full-efficientnet-b1-eval]
+            #         tests/models/EfficientNet/test_EfficientNet_llmbox.py::test_EfficientNet[full-efficientnet-b2-eval]
+            #         tests/models/EfficientNet/test_EfficientNet_llmbox.py::test_EfficientNet[full-efficientnet-b3-eval]
+            #         tests/models/EfficientNet/test_EfficientNet_llmbox.py::test_EfficientNet[full-efficientnet-b4-eval]
+            #         tests/models/EfficientNet/test_EfficientNet_llmbox.py::test_EfficientNet[full-efficientnet-b5-eval]
+            #         tests/models/EfficientNet/test_EfficientNet_llmbox.py::test_EfficientNet[full-efficientnet-b6-eval]
+            #         tests/models/EfficientNet/test_EfficientNet_llmbox.py::test_EfficientNet[full-efficientnet-b7-eval]
+            #   "
+            # },
+            # {
+            #   runs-on: tt-beta-ubuntu-2204-n300-llmbox-large-stable, name: "eval_6", tests: "
+            #         tests/models/timm/test_timm_image_classification_llmbox.py::test_timm_image_classification[full-eval-tf_efficientnet_lite4.in1k]
+            #         tests/models/timm/test_timm_image_classification_llmbox.py::test_timm_image_classification[full-eval-dla34.in1k]
+            #         tests/models/timm/test_timm_image_classification_llmbox.py::test_timm_image_classification[full-eval-ghostnet_100.in1k]
+            #         tests/models/timm/test_timm_image_classification_llmbox.py::test_timm_image_classification[full-eval-hrnet_w18.ms_aug_in1k]
+            #         tests/models/deit/test_deit_llmbox.py::test_deit[full-facebook/deit-base-patch16-224-eval]
+            #         tests/models/beit/test_beit_image_classification_llmbox.py::test_beit_image_classification[full-microsoft/beit-base-patch16-224-eval]
+            #         tests/models/beit/test_beit_image_classification_llmbox.py::test_beit_image_classification[full-microsoft/beit-large-patch16-224-eval]
+            #         tests/models/mgp-str-base/test_mgp_str_base_llmbox.py::test_mgp_str_base[full-eval]
+            #   "
+            # },
           # {
           #   runs-on: tt-beta-ubuntu-2204-p150a-large-stable, name: "eval_1", tests: "
           #         tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval]
@@ -127,7 +191,7 @@ jobs:
 
     container:
       image: ${{ inputs.docker-image-harbor }}
-      options: --user root --device /dev/tenstorrent/0 --shm-size=4gb
+      options: --user root --device /dev/tenstorrent --shm-size=4gb
       volumes:
         - /dev/hugepages:/dev/hugepages
         - /dev/hugepages-1G:/dev/hugepages-1G
