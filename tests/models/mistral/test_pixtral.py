@@ -74,14 +74,14 @@ def test_pixtral(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    # skip_full_eval_test(
-    #     record_property,
-    #     cc,
-    #     model_name,
-    #     bringup_status="FAILED_RUNTIME",
-    #     reason="Model is too large to fit on single device during execution.",
-    #     model_group=model_group,
-    # )
+    skip_full_eval_test(
+        record_property,
+        cc,
+        model_name,
+        bringup_status="FAILED_RUNTIME",
+        reason="Model is too large to fit on single device during execution.",
+        model_group=model_group,
+    )
 
     tester = ThisTester(
         model_name,
