@@ -222,7 +222,7 @@ class TorchExecutor(OpByOpExecutor):
         name = node.target.name() if hasattr(node.target, "name") else node.name
         return name
 
-    def get_stable_hlo_graph(self, node, inputs, **kwargs):
+    def get_single_op_graph_module(self, node, inputs, **kwargs):
 
         input_shapes_and_constants = self.get_input_shapes_and_constants(*inputs)
 
@@ -252,16 +252,16 @@ class TorchExecutor(OpByOpExecutor):
 
         graph = torch.fx.Graph()
         placeholders = []
-        for inp in inputs:
+        for input_idx, inp in enumerate(inputs):
             if isinstance(inp, torch.Tensor):
-                placeholders.append(graph.placeholder("input"))
+                placeholders.append(graph.placeholder(f"input_{input_idx}"))
             elif isinstance(inp, (list, tuple)):
                 inps = torch.fx.immutable_collections.immutable_list(
                     [
-                        graph.placeholder(f"input_{idx}")
+                        graph.placeholder(f"input_{input_idx}_{sub_inp_idx}")
                         if isinstance(sub_inp, torch.Tensor)
                         else sub_inp
-                        for idx, sub_inp in enumerate(inp)
+                        for sub_inp_idx, sub_inp in enumerate(inp)
                     ]
                 )
                 placeholders.append(inps)
@@ -323,12 +323,8 @@ class TorchExecutor(OpByOpExecutor):
         for out in out_meta:
             op.output_shapes.append([dim for dim in out.shape])
 
-        module = import_graph(graph)
-        op.compilation_status = OpCompilationStatus.CONVERTED_TO_TORCH_IR
-        op.add_torch_ir_graph(module.operation.get_asm())
-        lower_to_stable_hlo(module, op=op)
-        op.add_stable_hlo_graph(module.operation.get_asm())
-        return module, op
+        gm = torch.fx.GraphModule(torch.nn.Module(), graph)
+        return gm, op
 
     def run_gm_op_by_op(self, *inputs):
         node_to_tensor = {}
@@ -376,22 +372,21 @@ class TorchExecutor(OpByOpExecutor):
                 if test_this_op:
                     try:
                         start = time.time()
-                        binary, op, msg = self.compile_op(node, *args, **node.kwargs)
+                        gm, op = self.get_single_op_graph_module(node, args)
                         end = time.time()
                         self.print_marker(
                             "Compiling", idx, num_nodes, node.target, time=(end - start)
                         )
                         OpByOpExecutor.compiling_time += end - start
 
-                        self.set_runtime_stack_dump(msg, op)
+                        self.set_runtime_stack_dump(None, op)
 
                     except Exception as e:
-                        binary = None
+                        gm = None
                         e_msg = self.get_exception_source(e)
                         self.print_marker(
                             "Failed to compile", idx, num_nodes, node.target, e_msg
                         )
-
                 start = time.time()
                 golden = cast_ios_and_run(node, args, node.kwargs)
                 end = time.time()
@@ -401,13 +396,15 @@ class TorchExecutor(OpByOpExecutor):
                 OpByOpExecutor.golden_time += end - start
                 if (
                     self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
-                    and binary is not None
+                    and test_this_op
+                    and gm is not None
                 ):
 
                     try:
                         typecast_args = self.typecast_inputs(args)
                         start = time.time()
-                        calculated, stderr = self.run_op(binary, *typecast_args)
+                        calculated, stderr = self.run_op(gm, *typecast_args)
+
                         end = time.time()
                         self.print_marker(
                             "Running", idx, num_nodes, node.target, time=(end - start)

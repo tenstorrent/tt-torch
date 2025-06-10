@@ -88,11 +88,14 @@ def print_tensor_shapes(inputs, prefix=""):
         print(f"{prefix}Not a tensor: {type(inputs)}")
 
 
+import torch_xla.core.xla_model as xm
+
+
 def execute_process(receiver, sender, exec_event):
     while 1:
         obj = receiver.get()
         faulthandler.disable()
-        binary = obj["binary"]
+        gm = obj["gm"]
         file_name = obj["dump_file"]
         large_input = obj["large_input"]
         inputs = None
@@ -118,7 +121,11 @@ def execute_process(receiver, sender, exec_event):
 
         outputs = None
         if inputs is not None:
-            outputs = tt_mlir.run_end_to_end(inputs, binary)
+            inputs = [inp.to(xm.xla_device()) for inp in inputs]
+            gm = gm.to(xm.xla_device())
+            outputs = gm(*inputs)
+            outputs = tuple(out.to("cpu") for out in outputs)
+            print(outputs)
 
         sys.stderr = old_stderr
         sys.stdout = old_stdout
@@ -639,7 +646,7 @@ class OpByOpExecutor(Executor):
 
         return binary, op, msg
 
-    def run_op(self, binary, *inputs):
+    def run_op(self, gm, *inputs):
         inputs = self.pre_process_inputs(*inputs)
         if not self.stderror_redirected:
             self.file_stderr = tempfile.NamedTemporaryFile(mode="w+t", delete=False)
@@ -650,7 +657,7 @@ class OpByOpExecutor(Executor):
         large_input = inputs_size >= self.op_memory_limit
 
         obj = {
-            "binary": binary,
+            "gm": gm,
             "dump_file": self.file_stderr.name,
             "large_input": large_input,
         }
