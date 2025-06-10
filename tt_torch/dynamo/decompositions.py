@@ -337,17 +337,12 @@ def gelu(x, approximate="none"):
     Formula: 0.5 * x * (1 + erf(x / sqrt(2)))
     """
     if approximate == "none":
-        return 0.5 * x * (1.0 + torch.erf(x / math.sqrt(2.0)))
+        return 0.5 * x * (1.0 + torch.erf(x / 1.4142135623730951))
     elif approximate == "tanh":
         return (
             0.5
             * x
-            * (
-                1.0
-                + torch.tanh(
-                    math.sqrt(2.0 / math.pi) * (x + 0.044715 * torch.pow(x, 3))
-                )
-            )
+            * (1.0 + torch.tanh(0.7978845608028654 * (x + 0.044715 * torch.pow(x, 3))))
         )
     else:
         raise ValueError(f"Unknown approximate method: {approximate}")
