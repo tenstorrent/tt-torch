@@ -423,6 +423,7 @@ class CompilerConfig:
                 print(f"Error while cleaning up old MLIR files: {e}.")
 
     def post_init(self):
+        torch._dynamo.config.capture_scalar_outputs = True
         if self.consteval_parameters:
             torch._dynamo.config.inline_inbuilt_nn_modules = False
         else:
