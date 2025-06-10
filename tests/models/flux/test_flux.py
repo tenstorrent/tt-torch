@@ -44,6 +44,9 @@ class ThisTester(ModelTester):
         return self.transformer
 
     def _load_inputs(self):
+        prompt = [
+            "A cat holding a sign that says hello world",
+        ]
         max_sequence_length = 256
         prompt = "An astronaut riding a horse in a futuristic city"
         do_classifier_free_guidance = self.guidance_scale > 1.0

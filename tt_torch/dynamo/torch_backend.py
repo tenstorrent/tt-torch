@@ -6,6 +6,7 @@ import operator
 import tt_mlir
 import torch_mlir
 import os
+import gc
 import re
 import time
 import ml_dtypes
@@ -368,8 +369,10 @@ class TorchExecutor(OpByOpExecutor):
 
                 binary = None
                 op = None
-
-                test_this_op = self.should_test_op()
+                test_this_op = False
+                if idx == "11224":
+                    test_this_op = True
+                # test_this_op = self.should_test_op()
                 # Another useful debug method:
                 # test_this_op = str(node.target) == "aten.gelu.default"
 
@@ -452,6 +455,7 @@ class TorchExecutor(OpByOpExecutor):
 
             # Finished handling this op, increment global op index
             OpByOpExecutor.global_op_idx += 1
+            gc.collect()
 
         self.compiler_config.save_unique_ops()
         if self.execute_process is not None:

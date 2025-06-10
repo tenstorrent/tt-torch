@@ -573,6 +573,7 @@ class OpByOpExecutor(Executor):
         return f"{type(e).__name__}: {e} in {filename.split('/')[-1]}:{lineno} ({function})"
 
     def compile_op(self, node, *inputs, **kwargs):
+        breakpoint()
         # get_stablehlo_graph is a method implemented in inheriting classes
         module, op = self.get_stable_hlo_graph(node, inputs, **kwargs)
 
