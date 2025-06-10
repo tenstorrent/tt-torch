@@ -27,26 +27,32 @@ class ThisTester(ModelTester):
         return inputs
 
 
+model_info_list = [
+    ("dfine-nano", "ustc-community/dfine-nano-coco"),
+    ("dfine-small", "ustc-community/dfine-small-coco"),
+    ("dfine-medium", "ustc-community/dfine-medium-coco"),
+    ("dfine-large", "ustc-community/dfine-large-coco"),
+    ("dfine-xlarge", "ustc-community/dfine-xlarge-coco"),
+]
+
+
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
 @pytest.mark.parametrize(
-    "model_name",
-    [
-        "ustc-community/dfine-nano-coco",
-        "ustc-community/dfine-small-coco",
-        "ustc-community/dfine-medium-coco",
-        "ustc-community/dfine-large-coco",
-        "ustc-community/dfine-xlarge-coco",
-    ],
+    "model_info",
+    model_info_list,
+    ids=[model_info[0] for model_info in model_info_list],
 )
 @pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_d_fine(record_property, model_name, mode, op_by_op):
+def test_d_fine(record_property, model_info, mode, op_by_op):
+
+    _, model_name = model_info
 
     cc = CompilerConfig()
     cc.enable_consteval = True
