@@ -323,11 +323,19 @@ class ModelTester:
         # compile forward pass for generative models, the model itself for discriminative
         if self.run_generate:
             model.forward = torch.compile(
-                model.forward, backend=backend, dynamic=False, options=options
+                model.forward,
+                backend=backend,
+                dynamic=False,
+                fullgraph=data_parallel_mode,
+                options=options,
             )
         else:
             model = torch.compile(
-                model, backend=backend, dynamic=False, options=options
+                model,
+                backend=backend,
+                dynamic=False,
+                fullgraph=data_parallel_mode,
+                options=options,
             )
         self.compiled_models.append(model)
         return model
