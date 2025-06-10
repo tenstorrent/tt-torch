@@ -572,7 +572,7 @@ def run_pass_pipeline_for_single_gm(
     # reduce_graph(gm) - ISSUE: https://github.com/tenstorrent/tt-torch/issues/513
     program = torch.export.export(gm_device, tuple(example_inputs), strict=False)
     # The proper order of inputs when outlining everything is constants + parameters + buffers + sub_example_inputs
-    if not compiler_config.inline_parameters:
+    if not compiler_config.inline_parameters and False:
         constant_inputs = (
             list(program.tensor_constants.values())
             + [
@@ -587,9 +587,9 @@ def run_pass_pipeline_for_single_gm(
     else:
         constant_inputs = []
 
-    if compiler_config.compile_depth == CompileDepth.EXECUTE:
-        constant_inputs = prune_inputs(program, constant_inputs)
-    run_shape_prop(program.graph_module, constant_inputs + example_inputs)
+    # if compiler_config.compile_depth == CompileDepth.EXECUTE:
+    #     constant_inputs = prune_inputs(program, constant_inputs)
+    # run_shape_prop(program.graph_module, constant_inputs + example_inputs)
 
     return program, constant_inputs
 

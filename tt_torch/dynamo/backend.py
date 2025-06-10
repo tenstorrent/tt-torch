@@ -28,6 +28,7 @@ class BackendOptions:
 
 from tt_torch.dynamo.torch_backend import (
     TorchExecutor,
+    TorchPJRTExecutor,
     import_graph,
     import_program,
     verify_ir,
@@ -44,7 +45,7 @@ from torch_mlir.compiler_utils import (
     lower_mlir_module,
 )
 from tt_torch.dynamo.passes import pass_pipeline
-from tt_torch.dynamo.executor import Executor
+from tt_torch.dynamo.executor import Executor, PJRTExecutor
 
 
 def create_verify_golden_callback(compiler_config: CompilerConfig):
@@ -141,10 +142,9 @@ def _torch_backend(
     with torch.no_grad():
         mcg = pass_pipeline(gm, example_inputs, compiler_config)
 
-    executor = TorchExecutor(
+    executor = TorchPJRTExecutor(
         mcg=mcg,
         compiler_config=compiler_config,
-        devices=devices,
         async_mode=async_mode,
     )
     return executor
@@ -221,7 +221,17 @@ def shlo_to_flatbuffer(
 
 
 def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
+
+    if not async_mode and len(devices) == 1:
+        mcg = pass_pipeline(gm, example_inputs, compiler_config)
+        return PJRTExecutor(
+            mcg,
+            compiler_config,
+            async_mode=async_mode,
+        )
+
     mcg = torch_to_shlo(gm, example_inputs, compiler_config)
+
     executor = Executor(
         mcg,
         compiler_config,
