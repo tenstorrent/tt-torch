@@ -21,7 +21,7 @@ def test_intermediate_verification():
 
     model_list = [
         "tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval]",
-        "tests/models/mnist/test_mnist.py::test_mnist_train[full-eval-single_device]",
+        "tests/models/mnist/test_mnist.py::test_mnist_train[single_device-full-eval]",
     ]
 
     log_dir = "results/intermediate_verification_logs"

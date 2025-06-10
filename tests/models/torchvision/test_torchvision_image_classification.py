@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-from torchvision import models, transforms
+from torchvision import models
 from PIL import Image
 import torch
 import requests
@@ -101,8 +101,11 @@ model_info_list = [
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
+@pytest.mark.parametrize(
+    "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
+)
 def test_torchvision_image_classification(
-    request, record_property, model_info, mode, op_by_op
+    request, record_property, model_info, mode, op_by_op, data_parallel_mode
 ):
     if mode == "train":
         pytest.skip()
@@ -111,6 +114,8 @@ def test_torchvision_image_classification(
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if op_by_op:
+        if data_parallel_mode == "data_parallel":
+            pytest.skip("Op-by-op not supported in data parallel mode")
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
@@ -140,12 +145,15 @@ def test_torchvision_image_classification(
         compiler_config=cc,
         record_property_handle=record_property,
         model_group=model_group,
+        data_parallel_mode=data_parallel_mode,
     )
     results = tester.test_model()
 
-    if mode == "eval":
-        # Print the top 5 predictions
-        _, indices = torch.topk(results, 5)
+    def print_result(result):
+        _, indices = torch.topk(result, 5)
         print(f"Model: {model_name} | Top 5 predictions: {indices[0].tolist()}")
+
+    if mode == "eval":
+        ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
     tester.finalize()

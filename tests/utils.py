@@ -206,14 +206,16 @@ class ModelTester:
         print("[MODEL NAME]", model_name + model_name_suffix)
 
         self.record_tag_cache["required_pcc"] = self.required_pcc
+
         # Avoid introducing conditional logic in DB to handle separate cases
         self.record_tag_cache["required_atol"] = (
             self.required_atol if self.required_atol is not None else self.relative_atol
         )
 
-        # Postgres jsonb requires lowercased booleans. Pipeline transform from Python->XML->Python->JSON eventually lowercases these
         self.record_tag_cache["is_asserting_pcc"] = self.assert_pcc
         self.record_tag_cache["is_asserting_atol"] = self.assert_atol
+
+        self.record_tag_cache["parallelism"] = self.get_parallelism()
 
         # configs should be set at test start, so they can be flushed immediately
         self.record_property(
@@ -524,12 +526,16 @@ class ModelTester:
 
         rt_tensors = []
         for compiled in compiled_models:
-            rt_tensors.append(self.run_model(compiled, self.inputs))
+            rt_tensor = self.run_model(compiled, self.inputs)
+            rt_tensors.append(rt_tensor)
 
         final_outputs = []
         for rt_tensor in rt_tensors:
-            outputs = tt_mlir.to_host(rt_tensor)[0]
-            final_outputs.append(outputs)
+            torch_tensors = tt_mlir.to_host(rt_tensor)
+            if isinstance(torch_tensors, list):
+                final_outputs.extend(torch_tensors)
+            else:
+                final_outputs.append(torch_tensors)
 
         self.record_property("achieved_compile_depth", "EXECUTE")
         if self.compiler_config._enable_intermediate_verification:
@@ -744,7 +750,39 @@ class ModelTester:
             print("No failing operations found.")
         print("[End Intermediate Verification Summary]")
 
+    @staticmethod
+    def print_outputs(results, data_parallel_mode, print_fn):
+        if data_parallel_mode:
+            assert isinstance(
+                results, list
+            ), "Results should be a list in data parallel mode"
+            for i, result in enumerate(results):
+                print(f"Results for device {i}:")
+                print_fn(result)
+        else:
+            print_fn(results)
 
+    def get_parallelism(self):
+        parallelism = "single_device"
+
+        assert (
+            not (
+                self.data_parallel_mode
+                and self.compiler_config.automatic_parallelization
+            ),
+            "Cannot use runtime data parallel and automatic data parallel settings at the same time.",
+        )
+
+        if self.data_parallel_mode:
+            parallelism = "runtime_data_parallel"
+
+        if self.compiler_config.automatic_parallelization:
+            parallelism = "data_parallel"
+
+        return parallelism
+
+
+# TODO - hshahTT: Add support for data parallel mode for onnx models
 class OnnxModelTester(ModelTester):
     def __init__(
         self,

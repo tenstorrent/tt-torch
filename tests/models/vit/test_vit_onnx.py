@@ -49,8 +49,14 @@ class ThisTester(OnnxModelTester):
     [OpByOpBackend.STABLEHLO, None],
     ids=["op_by_op_stablehlo", "full"],
 )
-def test_vit_onnx(record_property, mode, op_by_op):
+@pytest.mark.parametrize(
+    "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
+)
+def test_vit_onnx(record_property, mode, op_by_op, data_parallel_mode):
     model_name = "ViT"
+
+    if data_parallel_mode:
+        pytest.skip("Data parallel mode not supported for onnx models yet")
 
     cc = CompilerConfig()
     cc.enable_consteval = True
