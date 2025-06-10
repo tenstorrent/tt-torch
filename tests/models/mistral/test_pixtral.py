@@ -3,18 +3,18 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import pytest
-from transformers import LlavaForConditionalGeneration, AutoProcessor
+from transformers import LlavaForConditionalGeneration  # , AutoProcessor
 from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.processor = AutoProcessor.from_pretrained(self.model_name)
-        self.model = LlavaForConditionalGeneration.from_pretrained(
+        # self.processor = AutoProcessor.from_pretrained(self.model_name)
+        model = LlavaForConditionalGeneration.from_pretrained(
             self.model_name, torch_dtype=torch.bfloat16
         )
-        return self.model
+        return model
 
     def _load_inputs(self):
         # Set up sample input
@@ -65,7 +65,6 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_pixtral(record_property, mode, op_by_op):
-    # pytest.skip()  # https://github.com/tenstorrent/tt-torch/issues/864
     model_name = "mistral-community/pixtral-12b"
     model_group = "red"
     cc = CompilerConfig()
