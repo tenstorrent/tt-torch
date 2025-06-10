@@ -11,7 +11,7 @@ from efficientnet_pytorch import EfficientNet
 
 import pytest
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, ModelMetadata, OpByOpBackend
+from tt_torch.tools.utils import CompilerConfig, ModelMetadata, CompileDepth, OpByOpBackend
 
 
 class ThisTester(ModelTester):
@@ -62,20 +62,18 @@ def test_EfficientNet(record_property, model_info, mode, execute_mode):
     if mode == "train":
         pytest.skip()
 
-    cc = CompilerConfig
+    cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
 
-    # set default compiler config
+    # check if OpByOp
     if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
         cc.compile_depth = execute_mode
-        cc.op_by_op_backend = model_info.op_by_op_backend # override if needed
-    # applying overrides from model_metadata if it exists
-    elif model_info:
-        if model_info.compile_depth is not None:
-            cc.compile_depth = model_info.compile_depth
-        if model_info.op_by_op_backend is not None:
-            cc.op_by_op_backend = model_info.op_by_op_backend
+        cc.op_by_op_backend = model_info.op_by_op_backend
+    # applying overrides from model_metadata if EXECUTE
+    else:
+        cc.compile_depth = model_info.compile_depth
+        cc.op_by_op_backend = model_info.op_by_op_backend
     
     required_pcc = (
         0.98
@@ -83,6 +81,7 @@ def test_EfficientNet(record_property, model_info, mode, execute_mode):
 
     tester = ThisTester(
         model_name=model_info.model_name,
+        model_info=model_info,
         mode=mode,
         required_pcc=required_pcc,
         assert_pcc=model_info.assert_pcc,
