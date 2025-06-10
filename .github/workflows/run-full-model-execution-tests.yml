@@ -40,72 +40,77 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-          {
-            runs-on: tt-beta-ubuntu-2204-p150a-large-stable, name: "eval_1", tests: "
-                  tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval]
-                  tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval]
-                  tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval]
-                  tests/models/yolov3/test_yolov3.py::test_yolov3[full-eval]
-                  tests/models/yolov4/test_yolov4.py::test_yolov4[full-eval]
+          # [Grace] Put LLM Box tests here.
+             {
+            runs-on: tt-beta-ubuntu-2204-n300-llmbox-large-stable, name: "eval_1", tests: "
             "
-          },
-          {
-            runs-on: tt-beta-ubuntu-2204-p150a-large-stable, name: "eval_2", tests: "
-                  tests/models/mnist/test_mnist.py::test_mnist_train[full-eval-single_device]
-                  tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval]
-                  tests/models/openpose/test_openpose_v2.py::test_openpose_v2[full-eval]
-                  tests/models/resnet/test_resnet.py::test_resnet[full-eval-single_device]
-                  tests/models/resnet50/test_resnet50.py::test_resnet[full-eval-single_device]
-                  tests/models/distilbert/test_distilbert.py::test_distilbert_multiloop[full-distilbert-base-uncased-eval-64]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vit_l_16]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vit_b_16]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vit_l_32]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vit_b_32]
-            "
-          },
-          {
-            runs-on: tt-beta-ubuntu-2204-p150a-large-stable, name: "eval_3", tests: "
-                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-xxlarge-v2-eval]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_400mf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_800mf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_1_6gf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_3_2gf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_8gf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_16gf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_32gf]
-            "
-          },
-          {
-            runs-on: tt-beta-ubuntu-2204-p150a-large-stable, name: "eval_4", tests: "
-                  tests/models/llama/test_llama_3b.py::test_llama_3b[full-meta-llama/Llama-3.2-3B-eval]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_400mf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_800mf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_1_6gf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_3_2gf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_8gf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_16gf]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_32gf]
-                  tests/models/mistral/test_mistral.py::test_mistral[full-ministral3b-eval]
-            "
-          },
-          {
-            runs-on: tt-beta-ubuntu-2204-p150a-large-stable, name: "eval_5", tests: "
-                tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io[full-eval]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v2]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_small]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_large]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet18]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet34]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet50]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet101]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet152]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext50_32x4d]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext101_32x8d]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext101_64x4d]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-wide_resnet50_2]
-                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-wide_resnet101_2]
-            "
-          }
+            }
+          # {
+          #   runs-on: tt-beta-ubuntu-2204-p150a-large-stable, name: "eval_1", tests: "
+          #         tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval]
+          #         tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval]
+          #         tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval]
+          #         tests/models/yolov3/test_yolov3.py::test_yolov3[full-eval]
+          #         tests/models/yolov4/test_yolov4.py::test_yolov4[full-eval]
+          #   "
+          # },
+          # {
+          #   runs-on: tt-beta-ubuntu-2204-p150a-large-stable, name: "eval_2", tests: "
+          #         tests/models/mnist/test_mnist.py::test_mnist_train[full-eval-single_device]
+          #         tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval]
+          #         tests/models/openpose/test_openpose_v2.py::test_openpose_v2[full-eval]
+          #         tests/models/resnet/test_resnet.py::test_resnet[full-eval-single_device]
+          #         tests/models/resnet50/test_resnet50.py::test_resnet[full-eval-single_device]
+          #         tests/models/distilbert/test_distilbert.py::test_distilbert_multiloop[full-distilbert-base-uncased-eval-64]
+          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vit_l_16]
+          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vit_b_16]
+          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vit_l_32]
+          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-vit_b_32]
+          #   "
+          # },
+          # {
+          #   runs-on: tt-beta-ubuntu-2204-p150a-large-stable, name: "eval_3", tests: "
+          #         tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[full-albert/albert-xxlarge-v2-eval]
+          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_400mf]
+          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_800mf]
+          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_1_6gf]
+          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_3_2gf]
+          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_8gf]
+          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_16gf]
+          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_y_32gf]
+          #   "
+          # },
+          # {
+          #   runs-on: tt-beta-ubuntu-2204-p150a-large-stable, name: "eval_4", tests: "
+          #         tests/models/llama/test_llama_3b.py::test_llama_3b[full-meta-llama/Llama-3.2-3B-eval]
+          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_400mf]
+          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_800mf]
+          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_1_6gf]
+          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_3_2gf]
+          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_8gf]
+          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_16gf]
+          #         tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-regnet_x_32gf]
+          #         tests/models/mistral/test_mistral.py::test_mistral[full-ministral3b-eval]
+          #   "
+          # },
+          # {
+          #   runs-on: tt-beta-ubuntu-2204-p150a-large-stable, name: "eval_5", tests: "
+          #       tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io[full-eval]
+          #       tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v2]
+          #       tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_small]
+          #       tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-mobilenet_v3_large]
+          #       tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet18]
+          #       tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet34]
+          #       tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet50]
+          #       tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet101]
+          #       tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnet152]
+          #       tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext50_32x4d]
+          #       tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext101_32x8d]
+          #       tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-resnext101_64x4d]
+          #       tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-wide_resnet50_2]
+          #       tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[full-eval-wide_resnet101_2]
+          #   "
+          # }
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
