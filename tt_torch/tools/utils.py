@@ -939,72 +939,42 @@ def with_torch_dynamo_cleanup(func):
     return wrapper
 
 
+def _extract_tensor_metadata(
+    node: torch.fx.Node, output_dtypes: list, output_shapes: list
+):
+    """Helper function to extract dtype and shape from a torch.fx.Node's 'val' meta."""
+    if "val" in node.meta:
+        val = node.meta["val"]
+        if isinstance(val, torch.Tensor):
+            output_dtypes.append(val.dtype)
+            output_shapes.append(val.shape)
+        elif isinstance(val, (tuple, list)):
+            for item in val:
+                if isinstance(item, torch.Tensor):
+                    output_dtypes.append(item.dtype)
+                    output_shapes.append(item.shape)
+
+
 def get_output_types_from_program(program):
     output_dtypes = []
     output_shapes = []
 
-    # 1. Get the actual output Node from the graph.
-    #    Remember, program.graph_module.graph.output_node is a method, so we need to call it.
     output_node = program.graph_module.graph.output_node()
 
-    # 2. Verify it's an 'output' operation (standard for the last node in FX graphs).
     if output_node.op == "output":
-        # 3. The output node's arguments[0] typically contain the actual values being returned.
-        #    These are often a tuple or list of torch.fx.Node objects.
         returned_values = output_node.args[0]
 
-        # 4. Iterate through the returned values to extract their metadata.
-        if isinstance(returned_values, (tuple, list)):
-            for node_arg in returned_values:
-                if isinstance(node_arg, torch.fx.Node):
-                    # Check for 'val' in the node's meta attribute.
-                    # 'val' holds a symbolic representation with dtype and shape.
-                    if "val" in node_arg.meta:
-                        val = node_arg.meta["val"]
-                        if isinstance(val, torch.Tensor):
-                            output_dtypes.append(val.dtype)
-                            output_shapes.append(val.shape)
-                        elif isinstance(
-                            val, (tuple, list)
-                        ):  # Handle cases where a single output is a tuple/list of tensors
-                            for item in val:
-                                if isinstance(item, torch.Tensor):
-                                    output_dtypes.append(item.dtype)
-                                    output_shapes.append(item.shape)
-                                else:
-                                    print(
-                                        f"Warning: Item in 'val' tuple/list is not a Tensor: {type(item)}. Skipping."
-                                    )
-                        else:
-                            print(
-                                f"Warning: Unexpected 'val' type in meta for output node argument: {type(val)}. Skipping."
-                            )
-                    else:
-                        print(
-                            f"Warning: 'val' not found in meta for output node argument: {node_arg.name}. Cannot infer dtype/shape."
-                        )
-                else:
-                    print(
-                        f"Warning: Output node argument is not a torch.fx.Node: {type(node_arg)}. Skipping."
-                    )
+        # Ensure returned_values is iterable. If it's a single Node, wrap it in a list.
+        if isinstance(returned_values, torch.fx.Node):
+            iterable_returned_values = [returned_values]
+        elif isinstance(returned_values, (tuple, list)):
+            iterable_returned_values = returned_values
         else:
-            # This handles cases where the graph returns a single tensor directly (not in a tuple).
-            if isinstance(returned_values, torch.fx.Node):
-                if "val" in returned_values.meta:
-                    val = returned_values.meta["val"]
-                    if isinstance(val, torch.Tensor):
-                        output_dtypes.append(val.dtype)
-                        output_shapes.append(val.shape)
-                    else:
-                        print(
-                            f"Warning: Unexpected 'val' type in meta for single output: {type(val)}. Skipping."
-                        )
-                else:
-                    print(
-                        f"Warning: 'val' not found in meta for single output node: {returned_values.name}. Cannot infer dtype/shape."
-                    )
-            else:
-                print(
-                    f"Warning: Single output is not a torch.fx.Node: {type(returned_values)}. Skipping."
-                )
-        return output_dtypes, output_shapes
+            # If not a Node, tuple, or list, we can't process it further for dtypes/shapes.
+            return [], []
+
+        for node_arg in iterable_returned_values:
+            if isinstance(node_arg, torch.fx.Node):
+                _extract_tensor_metadata(node_arg, output_dtypes, output_shapes)
+
+    return output_dtypes, output_shapes

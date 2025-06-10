@@ -47,7 +47,7 @@ model_info_list = [
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_mistral(record_property, model_info, mode, op_by_op):
-    model_label, model_name = model_info
+    __, model_name = model_info
     model_group = "red"
 
     cc = CompilerConfig()
