@@ -4,7 +4,7 @@
 #
 
 set(TT_MLIR_VERSION "bcc59402f9b8203c8f7bee6840bad9eee7be4f2c")
-set(TTXLA_VERSION "34eb277b36e6a04c2948537ad30080ce85b9ae7a")
+set(TTXLA_VERSION "7bd60d773f5bccd5d0f89b75cd02ca16ebef4f41")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
@@ -57,7 +57,7 @@ else()
             chmod -R +x ${TTXLA_INSTALL_PREFIX}
         CMAKE_GENERATOR Ninja
         CMAKE_ARGS
-            -DCMAKE_BUILD_TYPE=Release
+            -DCMAKE_BUILD_TYPE=Debug
             -DCMAKE_C_COMPILER=clang-17
             -DCMAKE_CXX_COMPILER=clang++-17
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache

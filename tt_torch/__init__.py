@@ -26,7 +26,19 @@ from torch_xla.experimental import plugins
 
 class TTPjrtPlugin(plugins.DevicePlugin):
     def library_path(self):
-        return os.path.join(os.path.dirname(__file__), "../../../pjrt_plugin_tt.so")
+        # This is where the pjrt plugin will be located if you've built and installed tt-torch according to the instructions in README.md
+        direct_build_install_path = os.path.join(
+            os.path.dirname(__file__), "../install/lib/pjrt_plugin_tt.so"
+        )
+        if os.path.exists(direct_build_install_path):
+            return direct_build_install_path
+
+        # This is where the pjrt plugin will be located if you've installed the tt-torch wheel
+        env_path = os.path.join(os.path.dirname(__file__), "../../../pjrt_plugin_tt.so")
+        if os.path.exists(env_path):
+            return env_path
+
+        assert False, "Could not find pjrt_plugin_tt.so"
 
 
 plugins.register_plugin("TT", TTPjrtPlugin())
