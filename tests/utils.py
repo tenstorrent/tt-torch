@@ -206,22 +206,21 @@ class ModelTester:
         print("[MODEL NAME]", model_name + model_name_suffix)
 
         self.record_tag_cache["required_pcc"] = self.required_pcc
+
         # Avoid introducing conditional logic in DB to handle separate cases
         self.record_tag_cache["required_atol"] = (
             self.required_atol if self.required_atol is not None else self.relative_atol
         )
 
-        # Postgres jsonb requires lowercased booleans. Pipeline transform from Python->XML->Python->JSON eventually lowercases these
         self.record_tag_cache["is_asserting_pcc"] = self.assert_pcc
         self.record_tag_cache["is_asserting_atol"] = self.assert_atol
+
+        self.record_tag_cache["parallelism"] = self.get_parallelism()
 
         # configs should be set at test start, so they can be flushed immediately
         self.record_property(
             "config",
-            {
-                "compiler_config": compiler_config.to_dict(),
-                "parallelism": self.get_parallelism(),
-            },
+            {"compiler_config": compiler_config.to_dict()},
         )
 
     def _load_model(self):
