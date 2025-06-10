@@ -9,6 +9,7 @@ from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from transformers.image_utils import load_image
 from transformers import DFineForObjectDetection, AutoImageProcessor
+from third_party.tt_forge_models.tools.utils import get_file
 
 
 class ThisTester(ModelTester):
@@ -20,8 +21,8 @@ class ThisTester(ModelTester):
         return self.model
 
     def _load_inputs(self):
-        url = "http://images.cocodataset.org/val2017/000000039769.jpg"
-        self.image = load_image(url)
+        image_file = get_file("test_images/coco_two_cats_000000039769_640x480.jpg")
+        self.image = load_image(str(image_file))
         inputs = self.processor(images=self.image, return_tensors="pt")
         inputs = inputs.to(torch.bfloat16)
         return inputs
