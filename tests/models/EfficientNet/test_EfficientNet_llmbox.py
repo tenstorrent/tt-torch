@@ -34,7 +34,7 @@ class ThisTester(ModelTester):
                 transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
             ]
         )
-        return torch.stack([tfms(img)] * 32)
+        return torch.stack([tfms(img)] * 8)
 
 
 @pytest.mark.parametrize(

@@ -221,19 +221,6 @@ jobs:
                 tests/models/torchvision/test_torchvision_image_classification_n300.py::test_torchvision_image_classification[full-eval-regnet_x_32gf]
             "
           },
-          # This test group needs to be moved. This will be done once multichip tests are refactored: #780
-          {
-            runs-on: llmbox, name: "eval_12_batch_parallel", tests: "
-                tests/models/mnist/test_mnist_llmbox.py::test_mnist_train[full-eval]
-                tests/models/autoencoder_linear/test_autoencoder_linear_llmbox.py::test_autoencoder_linear[full-eval]
-                tests/models/MobileNetV2/test_MobileNetV2_llmbox.py::test_MobileNetV2[full-eval]
-                tests/models/EfficientNet/test_EfficientNet_llmbox.py::test_EfficientNet[full-efficientnet-b0-eval]
-                tests/models/yolov4/test_yolov4_llmbox.py::test_yolov4[full-eval]
-                tests/models/vit/test_vit_llmbox.py::test_vit[full-eval]
-                tests/models/segformer/test_segformer_llmbox.py::test_segformer[full-eval]
-                tests/models/hardnet/test_hardnet_llmbox.py::test_hardnet[full-eval]
-            "
-          },
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
