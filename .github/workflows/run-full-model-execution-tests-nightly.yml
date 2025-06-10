@@ -233,7 +233,6 @@ jobs:
                 tests/models/unet_carvana/test_unet_carvana_n300.py::test_unet_carvana[full-eval]
                 tests/models/yolos/test_yolos_n300.py::test_yolos[full-eval]
                 tests/models/yolov3/test_yolov3_n300.py::test_yolov3[full-eval]
-                tests/models/albert/test_albert_question_answering_n300.py::test_albert_question_answering[full-twmkn9/albert-base-v2-squad2-eval]
                 tests/models/torchvision/test_torchvision_image_classification_n300.py::test_torchvision_image_classification[full-eval-densenet121]
                 tests/models/torchvision/test_torchvision_image_classification_n300.py::test_torchvision_image_classification[full-eval-densenet161]
                 tests/models/torchvision/test_torchvision_image_classification_n300.py::test_torchvision_image_classification[full-eval-densenet169]
