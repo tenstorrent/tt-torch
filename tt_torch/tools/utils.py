@@ -105,6 +105,7 @@ class MultiChipGraph:
         self.graph_outputs = {device: [] for device in devices}
         self.graph_inputs = {device: [] for device in devices}
         self.programs = {}
+        self.program_outputs = {}  # store output dtype
         self.binaries = {}
         self.constant_inputs = {}
         self.example_inputs = {}
@@ -936,3 +937,74 @@ def with_torch_dynamo_cleanup(func):
             torch._dynamo.reset()
 
     return wrapper
+
+
+def get_output_types_from_program(program):
+    output_dtypes = []
+    output_shapes = []
+
+    # 1. Get the actual output Node from the graph.
+    #    Remember, program.graph_module.graph.output_node is a method, so we need to call it.
+    output_node = program.graph_module.graph.output_node()
+
+    # 2. Verify it's an 'output' operation (standard for the last node in FX graphs).
+    if output_node.op == "output":
+        # 3. The output node's arguments[0] typically contain the actual values being returned.
+        #    These are often a tuple or list of torch.fx.Node objects.
+        returned_values = output_node.args[0]
+
+        # 4. Iterate through the returned values to extract their metadata.
+        if isinstance(returned_values, (tuple, list)):
+            for node_arg in returned_values:
+                if isinstance(node_arg, torch.fx.Node):
+                    # Check for 'val' in the node's meta attribute.
+                    # 'val' holds a symbolic representation with dtype and shape.
+                    if "val" in node_arg.meta:
+                        val = node_arg.meta["val"]
+                        if isinstance(val, torch.Tensor):
+                            output_dtypes.append(val.dtype)
+                            output_shapes.append(val.shape)
+                        elif isinstance(
+                            val, (tuple, list)
+                        ):  # Handle cases where a single output is a tuple/list of tensors
+                            for item in val:
+                                if isinstance(item, torch.Tensor):
+                                    output_dtypes.append(item.dtype)
+                                    output_shapes.append(item.shape)
+                                else:
+                                    print(
+                                        f"Warning: Item in 'val' tuple/list is not a Tensor: {type(item)}. Skipping."
+                                    )
+                        else:
+                            print(
+                                f"Warning: Unexpected 'val' type in meta for output node argument: {type(val)}. Skipping."
+                            )
+                    else:
+                        print(
+                            f"Warning: 'val' not found in meta for output node argument: {node_arg.name}. Cannot infer dtype/shape."
+                        )
+                else:
+                    print(
+                        f"Warning: Output node argument is not a torch.fx.Node: {type(node_arg)}. Skipping."
+                    )
+        else:
+            # This handles cases where the graph returns a single tensor directly (not in a tuple).
+            if isinstance(returned_values, torch.fx.Node):
+                if "val" in returned_values.meta:
+                    val = returned_values.meta["val"]
+                    if isinstance(val, torch.Tensor):
+                        output_dtypes.append(val.dtype)
+                        output_shapes.append(val.shape)
+                    else:
+                        print(
+                            f"Warning: Unexpected 'val' type in meta for single output: {type(val)}. Skipping."
+                        )
+                else:
+                    print(
+                        f"Warning: 'val' not found in meta for single output node: {returned_values.name}. Cannot infer dtype/shape."
+                    )
+            else:
+                print(
+                    f"Warning: Single output is not a torch.fx.Node: {type(returned_values)}. Skipping."
+                )
+        return output_dtypes, output_shapes

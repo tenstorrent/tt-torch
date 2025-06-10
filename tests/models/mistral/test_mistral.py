@@ -48,10 +48,6 @@ model_info_list = [
 )
 def test_mistral(record_property, model_info, mode, op_by_op):
     model_label, model_name = model_info
-    if model_label == "ministral3b":
-        pytest.skip(
-            " Skipping Mistral-3B model test due to: https://github.com/tenstorrent/tt-torch/issues/905"
-        )
     model_group = "red"
 
     cc = CompilerConfig()
