@@ -7,7 +7,7 @@ import pytest
 # Load model directly
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend, ModelMetadata
+from tt_torch.tools.utils import CompilerConfig, ModelMetadata, CompileDepth, OpByOpBackend
 
 
 class ThisTester(ModelTester):
@@ -45,20 +45,18 @@ FALCON_VARIANT = [
 def test_falcon(record_property, mode, execute_mode, model_info):
     model_name = "Falcon"
 
-    cc = CompilerConfig
+    cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
 
-     # set default compiler config
+    # check if OpByOp
     if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
         cc.compile_depth = execute_mode
-        cc.op_by_op_backend = model_info.op_by_op_backend # override, if needed
-    # applying overrides from model_metadata if it exists
-    elif model_info:
-        if model_info.compile_depth is not None:
-            cc.compile_depth = model_info.compile_depth
-        if model_info.op_by_op_backend is not None:
-            cc.op_by_op_backend = model_info.op_by_op_backend
+        cc.op_by_op_backend = model_info.op_by_op_backend
+    # applying overrides from model_metadata if EXECUTE
+    else:
+        cc.compile_depth = model_info.compile_depth
+        cc.op_by_op_backend = model_info.op_by_op_backend
     
 
     tester = ThisTester(

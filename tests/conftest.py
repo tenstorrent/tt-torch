@@ -64,32 +64,40 @@ def pytest_runtest_logreport(report):
 
 def pytest_collection_modifyitems(config, items):
     selected = items.copy()
-
-    # Handle compile depth filtering
+    
+    target_depth = None
+    target_backend = None
+    
     if config.getoption("--compile-depth"):
         target_depth = getattr(CompileDepth, config.getoption("--compile-depth"))
-        compile_depth_selected = []
-        
-        for item in selected:
-            if hasattr(item, "callspec"):
-                model_info = item.callspec.params.get("model_info")
-                if model_info and model_info.compile_depth == target_depth:
-                    compile_depth_selected.append(item)
-        
-        selected = compile_depth_selected
-
-    # Handle op_by_op backend filtering
+    
     if config.getoption("--op-by-op-backend"):
         target_backend = getattr(OpByOpBackend, config.getoption("--op-by-op-backend"))
-        backend_selected = []
-        
-        for item in selected:
-            if hasattr(item, "callspec"):
-                model_info = item.callspec.params.get("model_info")
-                if model_info and model_info.op_by_op_backend == target_backend:
-                    backend_selected.append(item)
-        
-        selected = backend_selected
+
+    # Do filtering in a single pass
+    filtered_items = []
+    for item in selected:
+        if not hasattr(item, "callspec"):
+            continue
+            
+        model_info = item.callspec.params.get("model_info")
+        if not model_info:
+            continue
+
+        passes_depth = True
+        passes_backend = True
+
+        if target_depth is not None:
+            passes_depth = model_info.compile_depth == target_depth
+            
+        if target_backend is not None:
+            passes_backend = model_info.op_by_op_backend == target_backend
+
+        # Only include item if it passes all active filters
+        if passes_depth and passes_backend:
+            filtered_items.append(item)
+
+    items[:] = filtered_items
 
     # Check if the --crashsafe option is enabled
     if config.getoption("--crashsafe"):
