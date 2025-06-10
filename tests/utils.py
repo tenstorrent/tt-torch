@@ -765,13 +765,9 @@ class ModelTester:
     def get_parallelism(self):
         parallelism = "single_device"
 
-        assert (
-            not (
-                self.data_parallel_mode
-                and self.compiler_config.automatic_parallelization
-            ),
-            "Cannot use runtime data parallel and automatic data parallel settings at the same time.",
-        )
+        assert not (
+            self.data_parallel_mode and self.compiler_config.automatic_parallelization
+        ), "Cannot use runtime data parallel and automatic data parallel settings at the same time."
 
         if self.data_parallel_mode:
             parallelism = "runtime_data_parallel"
