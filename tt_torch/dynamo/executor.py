@@ -502,9 +502,11 @@ class PJRTExecutor:
             gm = program.graph_module.to(xm.xla_device(device_idx))
             ordered_inputs = self.ordered_program_inputs[device_idx]
             for i, inp in enumerate(inputs):
-                ordered_inputs[self.user_input_indices[device_idx][i]] = inp.to(
-                    xm.xla_device(device_idx)
-                )
+                ordered_inputs[self.user_input_indices[device_idx][i]] = inp
+
+            ordered_inputs = [
+                inp.to(xm.xla_device(device_idx)) for inp in ordered_inputs
+            ]
 
             outputs = gm(*ordered_inputs)
             outputs = [out.to("cpu") for out in outputs]
