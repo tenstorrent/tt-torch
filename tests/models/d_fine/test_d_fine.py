@@ -5,7 +5,7 @@
 import torch
 import pytest
 
-from tests.utils import ModelTester  # for PyTorch Tests
+from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from transformers.image_utils import load_image
 from transformers import DFineForObjectDetection, AutoImageProcessor
@@ -55,6 +55,14 @@ def test_d_fine(record_property, model_name, mode, op_by_op):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+
+    skip_full_eval_test(
+        record_property,
+        cc,
+        model_name,
+        bringup_status="FAILED_FE_COMPILATION",
+        reason="need 'aten::sort' torch-mlir -> stablehlo + mlir support: failed to legalize operation 'torch.constant.int' - https://github.com/tenstorrent/tt-torch/issues/724",
+    )
 
     tester = ThisTester(
         model_name,
