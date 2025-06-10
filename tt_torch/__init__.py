@@ -19,3 +19,18 @@ spec = importlib.util.find_spec(package_name)
 if spec is not None:
     tt_metal_home = os.path.abspath(spec.submodule_search_locations[0])
     os.environ["TT_METAL_HOME"] = tt_metal_home
+
+
+from torch_xla.experimental import plugins
+
+
+class TTPjrtPlugin(plugins.DevicePlugin):
+    def library_path(self):
+        return os.path.join(
+            os.path.dirname(__file__), "../install/lib/pjrt_plugin_tt.so"
+        )
+
+
+plugins.register_plugin("TT", TTPjrtPlugin())
+os.environ["XLA_STABLEHLO_COMPILE"] = "1"
+os.environ["PJRT_DEVICE"] = "TT"
