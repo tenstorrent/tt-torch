@@ -99,7 +99,7 @@ jobs:
       shell: bash
       run: |
         source env/activate
-        pytest -v tests/torch \
+        pytest -svv tests/torch \
            --ignore=tests/torch/test_basic_multichip.py \
            --junit-xml=${{ steps.strings.outputs.test_report_path_torch }} \
            --cov=tt_torch --cov-report term --cov-report xml:coverage.xml
@@ -115,7 +115,7 @@ jobs:
       shell: bash
       run: |
         source env/activate
-        pytest -v tests/onnx \
+        pytest -svv tests/onnx \
             --junit-xml=${{ steps.strings.outputs.test_report_path_onnx }} \
             --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
 

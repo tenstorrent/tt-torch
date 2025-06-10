@@ -88,6 +88,9 @@ def print_tensor_shapes(inputs, prefix=""):
         print(f"{prefix}Not a tensor: {type(inputs)}")
 
 
+import torch_xla.core.xla_model as xm
+
+
 def execute_process(receiver, sender, exec_event):
     while 1:
         obj = receiver.get()
@@ -119,6 +122,52 @@ def execute_process(receiver, sender, exec_event):
         outputs = None
         if inputs is not None:
             outputs = tt_mlir.run_end_to_end(inputs, binary)
+
+        sys.stderr = old_stderr
+        sys.stdout = old_stdout
+        file_stderr.close()
+
+        sender.put({"outputs": outputs})
+        exec_event.wait()
+
+    sys.exit(0)
+
+
+def execute_pjrt_process(receiver, sender, exec_event):
+    while 1:
+        obj = receiver.get()
+        faulthandler.disable()
+        gm = obj["gm"]
+        file_name = obj["dump_file"]
+        large_input = obj["large_input"]
+        inputs = None
+
+        # Load inputs from disk if they're large
+        if large_input:
+            print("Child process handling large input", flush=True)
+            inputs_file_path = obj["inputs_file_path"]
+            if inputs_file_path and os.path.exists(inputs_file_path):
+                try:
+                    with open(inputs_file_path, "rb") as f:
+                        inputs = pickle.load(f)
+                except Exception as e:
+                    print(f"Error loading inputs from disk: {e}")
+        else:
+            inputs = obj["inputs"]
+
+        file_stderr = open(file_name, "w")
+        old_stderr = sys.stderr
+        sys.stderr = file_stderr
+        old_stdout = sys.stdout
+        sys.stdout = file_stderr
+
+        outputs = None
+        if inputs is not None:
+            inputs = [inp.to(xm.xla_device()) for inp in inputs]
+            gm = gm.to(xm.xla_device())
+            outputs = gm(*inputs)
+            outputs = tuple(out.to("cpu") for out in outputs)
+            print(outputs)
 
         sys.stderr = old_stderr
         sys.stdout = old_stdout
@@ -401,6 +450,70 @@ class Executor:
                 pass
 
 
+from torch.export.graph_signature import InputKind
+
+
+class PJRTExecutor:
+    def __init__(self, mcg, compiler_config, async_mode):
+        assert len(mcg.programs) == 1, "PJRTExecutor only supports single program"
+        self.mcg = mcg
+        self.compiler_config = compiler_config
+        self.async_mode = async_mode
+
+        self.user_input_indices = {}
+        self.input_indices = {}
+        for prg_idx, program in mcg.programs.items():
+            self.user_input_indices[prg_idx] = []
+            self.input_indices[prg_idx] = {}
+            for inp_idx, input_spec in enumerate(program.graph_signature.input_specs):
+                if input_spec.kind == InputKind.USER_INPUT:
+                    self.user_input_indices[prg_idx].append(inp_idx)
+                self.input_indices[prg_idx][input_spec.arg.name] = inp_idx
+
+        self.ordered_program_inputs = {}
+
+        for prg_idx, program in mcg.programs.items():
+            self.ordered_program_inputs[prg_idx] = [None] * len(
+                program.graph_signature.input_specs
+            )
+            parameters = dict(program.named_parameters())
+            buffers = dict(program.named_buffers())
+            constants = program.tensor_constants
+            for inp_idx, input_spec in enumerate(program.graph_signature.input_specs):
+                if input_spec.target in parameters:
+                    self.ordered_program_inputs[prg_idx][inp_idx] = parameters[
+                        input_spec.target
+                    ]
+                elif input_spec.target in buffers:
+                    self.ordered_program_inputs[prg_idx][inp_idx] = buffers[
+                        input_spec.target
+                    ]
+                elif input_spec.target in constants:
+                    self.ordered_program_inputs[prg_idx][inp_idx] = constants[
+                        input_spec.target
+                    ]
+                elif inp_idx not in self.user_input_indices[prg_idx]:
+                    raise ValueError(
+                        f"Input {input_spec.target} not found in parameters, buffers or constants"
+                    )
+
+    def __call__(self, *inputs):
+        for device_idx, program in self.mcg.programs.items():
+            gm = program.graph_module.to(xm.xla_device(device_idx))
+            ordered_inputs = self.ordered_program_inputs[device_idx]
+            for i, inp in enumerate(inputs):
+                ordered_inputs[self.user_input_indices[device_idx][i]] = inp
+
+            ordered_inputs = [
+                inp.to(xm.xla_device(device_idx)) for inp in ordered_inputs
+            ]
+
+            outputs = gm(*ordered_inputs)
+            xm.mark_step()  # Graph break here so we do not compile graph for each output
+            outputs = [out.to("cpu") for out in outputs]
+        return outputs
+
+
 class OnnxExecutor(Executor):
     def __init__(self, model_proto: onnx.ModelProto):
         super().__init__()
@@ -436,6 +549,301 @@ class OnnxExecutor(Executor):
             )
             return onnx_output_to_torch(output)
         return tt_mlir.run_end_to_end(inputs, self.binary)
+
+
+class PJRTOpByOpExecutor(PJRTExecutor):
+    # Class attributes for identifying each op w/ unique incrementing id
+    # across graph breaks, and for running just a specific op.
+    global_op_idx = 0
+    run_global_op_idx = None
+    compiling_time = 0.0
+    running_time = 0.0
+    golden_time = 0.0
+
+    def __init__(
+        self,
+        mcg=None,
+        compiler_config=None,
+        required_pcc=0.99,
+        required_atol=1e-2,
+        async_mode=False,
+    ):
+        if mcg is not None:
+            assert len(mcg.programs) == 1
+
+        super().__init__(
+            mcg=mcg,
+            compiler_config=compiler_config,
+            async_mode=async_mode,
+        )
+
+        self.required_pcc = required_pcc
+        self.required_atol = required_atol
+
+        # Debug mode to run only specific op given global_op_idx
+        if OpByOpExecutor.run_global_op_idx is None:
+            run_global_op_idx_env = os.getenv("RUN_GLOBAL_OP_IDX")
+            OpByOpExecutor.run_global_op_idx = (
+                None if run_global_op_idx_env is None else int(run_global_op_idx_env)
+            )
+
+        # Opening a device in a new process is very slow as the pcie device needs to be initializes
+        # So we keep the process alive and reuse it. If the process dies, the next call will create a new process
+        self.execute_process = None
+        self.execute_sender = None
+        self.execute_receiver = None
+
+        # Create temp file at start of execution of first op and pass the name
+        # of temp file to subprocess which will be used to redirect the stderr
+        # to capture runtime stack dump.
+        self.stderror_redirected = False
+        self.file_stderr = None
+        self.op_memory_limit = gb_to_bytes(0.5)  # 512MB limit
+
+    # Determine if the current op should be tested based on RUN_GLOBAL_OP_IDX
+    def should_test_op(self):
+        return (
+            OpByOpExecutor.run_global_op_idx is None
+            or OpByOpExecutor.global_op_idx == OpByOpExecutor.run_global_op_idx
+        )
+
+    def transform_input(self, inp):
+        # Convert torch.nn.Parameter to torch.Tensor and convert non-contiguous
+        # data to contiguous.
+        if isinstance(inp, torch.nn.Parameter):
+            if not inp.data.is_contiguous():
+                inp.data = inp.data.contiguous()
+            return inp.data
+        elif isinstance(inp, torch.Tensor):
+            if not inp.is_contiguous():
+                inp = inp.contiguous()
+            return inp
+
+        return None
+
+    def pre_process_inputs(self, *inputs):
+        # Remove scalar constants as they're absorbed into the binary
+        processed_inputs = []
+        for input in inputs:
+            # If input is a list, iterate over its elements;
+            # otherwise, process it directly
+            input_items = input if isinstance(input, list) else [input]
+
+            for inp in input_items:
+                transformed_inp = self.transform_input(inp)
+                if transformed_inp is not None:
+                    processed_inputs.append(transformed_inp)
+
+        return processed_inputs
+
+    def get_input_shapes_and_constants(self, *inputs):
+        input_shapes_and_constants = []
+        for inp in inputs:
+            if isinstance(inp, torch.Tensor):
+                input_shapes_and_constants.append(inp.shape)
+            elif isinstance(inp, (list, tuple)):
+                sub = []
+                for sub_inp in inp:
+                    if isinstance(sub_inp, torch.Tensor):
+                        sub.append(sub_inp.shape)
+                    else:
+                        sub.append(sub_inp)
+                input_shapes_and_constants.append(sub)
+            elif isinstance(inp, (int, float, bool)):
+                input_shapes_and_constants.append(inp)
+            elif isinstance(inp, torch.dtype):
+                input_shapes_and_constants.append(inp.__str__())
+            elif inp is None:
+                input_shapes_and_constants.append(None)
+            else:
+                raise ValueError(f"Unexpected input type: {type(inp)}")
+        return input_shapes_and_constants
+
+    def set_runtime_stack_dump(self, error, op):
+        if op is None:
+            return
+
+        # Handle both implementations of unique_key (method or attribute)
+        key = (
+            op.unique_key()
+            if callable(getattr(op, "unique_key", None))
+            else op.unique_key
+        )
+        self.compiler_config.unique_ops[key].runtime_stack_dump = str(error)
+
+    # Helper function to print markers
+    def print_marker(self, msg, idx, num_nodes, op_info, error="", time=0.0):
+        print(
+            f"{msg:<10} global_op_idx: {OpByOpExecutor.global_op_idx} ({idx}/{num_nodes}): {op_info} | time: {time:.4f} s | {error}",
+            flush=True,
+        )
+
+    # Helper function to get extract exception source for printing concise message
+    def get_exception_source(self, e):
+        import traceback
+
+        filename, lineno, function, _ = traceback.extract_tb(e.__traceback__)[-1]
+        return f"{type(e).__name__}: {e} in {filename.split('/')[-1]}:{lineno} ({function})"
+
+    def compile_op(self, node, *inputs, **kwargs):
+        # get_stablehlo_graph is a method implemented in inheriting classes
+        module, op = self.get_stable_hlo_graph(node, inputs, **kwargs)
+
+        if module is None or op is None:
+            return None, None, None
+
+        sender = mp.Queue()
+        receiver = mp.Queue()
+        ttir_event = mp.Event()
+        ttnn_event = mp.Event()
+        json_event = mp.Event()
+        obj = {
+            "asm": module.operation.get_asm(),
+            "system_desc_path": self.system_desc_paths[0],
+        }
+        process = mp.Process(
+            target=compile_process,
+            args=(sender, receiver, ttir_event, ttnn_event, json_event),
+        )
+        process.start()
+        sender.put(obj)
+        start = time.time()
+        binary = None
+        msg = None
+        timeout_exceeded = False
+        while True:
+            try:
+                result = receiver.get_nowait()
+                if "ttir" in result:
+                    op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTIR
+                    op.add_ttir_graph(result["ttir"])
+                    ttir_event.set()
+                if "binary" in result:
+                    binary = result["binary"]
+                    op.binary = binary
+                    op.add_ttnn_graph(result["ttnn"])
+                    ttnn_event.set()
+                if "json" in result:
+                    op.json = result["json"]
+                    json_event.set()
+                    op.parse_json()
+                    op.compilation_status = OpCompilationStatus.CONVERTED_TO_TTNN
+                    break
+            except mp.queues.Empty:
+                pass
+            except Exception as e:
+                process.terminate()
+                raise e
+            if time.time() - start > self.compiler_config.single_op_timeout:
+                process.terminate()
+                timeout_exceeded = True
+                break
+            if not process.is_alive():
+                break
+            time.sleep(0.01)
+        process.join()
+
+        if timeout_exceeded:
+            msg = f"Timeout exceeded for op during compile after {self.compiler_config.single_op_timeout} seconds."
+            print(msg, flush=True)
+            binary = None
+
+        return binary, op, msg
+
+    def run_op(self, gm, *inputs):
+        inputs = self.pre_process_inputs(*inputs)
+        if not self.stderror_redirected:
+            self.file_stderr = tempfile.NamedTemporaryFile(mode="w+t", delete=False)
+            self.stderror_redirected = True
+
+        inputs_size = get_inputs_size(inputs)
+
+        large_input = inputs_size >= self.op_memory_limit
+
+        obj = {
+            "gm": gm,
+            "dump_file": self.file_stderr.name,
+            "large_input": large_input,
+        }
+
+        inputs_file_path = None
+        if large_input:
+            obj["inputs"] = None
+            try:
+                temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pkl")
+                inputs_file_path = temp_file.name
+                temp_file.close()
+
+                with open(inputs_file_path, "wb") as f:
+                    pickle.dump(inputs, f)
+
+                obj["inputs_file_path"] = inputs_file_path
+            except Exception as e:
+                print(f"Error saving inputs to disk: {e}")
+                if inputs_file_path and os.path.exists(inputs_file_path):
+                    try:
+                        os.remove(inputs_file_path)
+                    except OSError:
+                        pass
+                large_input = False
+        else:
+            obj["inputs"] = inputs
+            obj["inputs_file_path"] = None
+
+        exec_event = mp.Event()
+        if self.execute_process is None:
+            self.execute_sender = mp.Queue()
+            self.execute_receiver = mp.Queue()
+            self.execute_process = mp.Process(
+                target=execute_pjrt_process,
+                args=(self.execute_sender, self.execute_receiver, exec_event),
+            )
+            self.execute_process.start()
+        self.execute_sender.put(obj)
+        result = {}
+        start = time.time()
+        outputs = [None]
+        timeout_exceeded = False
+        while True:
+            if not self.execute_process.is_alive():
+                self.execute_process = None
+                break
+            try:
+                result = self.execute_receiver.get_nowait()
+                outputs = result["outputs"]
+                exec_event.set()
+                break
+            except mp.queues.Empty:
+                pass
+            if time.time() - start > self.compiler_config.single_op_timeout:
+                self.execute_process.terminate()
+                self.execute_process = None
+                timeout_exceeded = True
+                break
+
+        if inputs_file_path and os.path.isfile(inputs_file_path):
+            try:
+                os.remove(inputs_file_path)
+            except OSError:
+                pass
+
+        if len(outputs) == 1:
+            outputs = outputs[0]
+
+        stderr_data = ""
+        if outputs is None:
+            file_stderr = open(self.file_stderr.name, "r")
+            stderr_data = file_stderr.read()
+            stderr_data = stderr_data.replace("\n", "\\n")
+            stderr_data = re.sub(r"[^\x20-\x7E]", "", stderr_data)
+            file_stderr.close()
+
+            # If timeout is exceeded and stderr empty, add message and print to stdout.
+            if timeout_exceeded and not stderr_data:
+                stderr_data = f"Timeout exceeded for op during run after {self.compiler_config.single_op_timeout} seconds."
+                print(stderr_data, flush=True)
+
+        return outputs, stderr_data
 
 
 class OpByOpExecutor(Executor):

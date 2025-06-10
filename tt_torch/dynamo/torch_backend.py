@@ -38,6 +38,7 @@ from torch_mlir.extras.fx_importer import (
 from torch_mlir.ir import Context, Location, DenseElementsAttr, Operation
 from tt_torch.dynamo.executor import (
     Executor,
+    PJRTOpByOpExecutor,
     OpByOpExecutor,
 )
 
@@ -222,7 +223,7 @@ class TorchExecutor(OpByOpExecutor):
         name = node.target.name() if hasattr(node.target, "name") else node.name
         return name
 
-    def get_stable_hlo_graph(self, node, inputs, **kwargs):
+    def get_single_op_graph_module(self, node, inputs, **kwargs):
 
         input_shapes_and_constants = self.get_input_shapes_and_constants(*inputs)
 
@@ -252,16 +253,16 @@ class TorchExecutor(OpByOpExecutor):
 
         graph = torch.fx.Graph()
         placeholders = []
-        for inp in inputs:
+        for input_idx, inp in enumerate(inputs):
             if isinstance(inp, torch.Tensor):
-                placeholders.append(graph.placeholder("input"))
+                placeholders.append(graph.placeholder(f"input_{input_idx}"))
             elif isinstance(inp, (list, tuple)):
                 inps = torch.fx.immutable_collections.immutable_list(
                     [
-                        graph.placeholder(f"input_{idx}")
+                        graph.placeholder(f"input_{input_idx}_{sub_inp_idx}")
                         if isinstance(sub_inp, torch.Tensor)
                         else sub_inp
-                        for idx, sub_inp in enumerate(inp)
+                        for sub_inp_idx, sub_inp in enumerate(inp)
                     ]
                 )
                 placeholders.append(inps)
@@ -323,12 +324,8 @@ class TorchExecutor(OpByOpExecutor):
         for out in out_meta:
             op.output_shapes.append([dim for dim in out.shape])
 
-        module = import_graph(graph)
-        op.compilation_status = OpCompilationStatus.CONVERTED_TO_TORCH_IR
-        op.add_torch_ir_graph(module.operation.get_asm())
-        lower_to_stable_hlo(module, op=op)
-        op.add_stable_hlo_graph(module.operation.get_asm())
-        return module, op
+        gm = torch.fx.GraphModule(torch.nn.Module(), graph)
+        return gm, op
 
     def run_gm_op_by_op(self, *inputs):
         node_to_tensor = {}
@@ -378,22 +375,21 @@ class TorchExecutor(OpByOpExecutor):
                 if test_this_op:
                     try:
                         start = time.time()
-                        binary, op, msg = self.compile_op(node, *args, **node.kwargs)
+                        gm, op = self.get_single_op_graph_module(node, args)
                         end = time.time()
                         self.print_marker(
                             "Compiling", idx, num_nodes, node.target, time=(end - start)
                         )
                         OpByOpExecutor.compiling_time += end - start
 
-                        self.set_runtime_stack_dump(msg, op)
+                        self.set_runtime_stack_dump(None, op)
 
                     except Exception as e:
-                        binary = None
+                        gm = None
                         e_msg = self.get_exception_source(e)
                         self.print_marker(
                             "Failed to compile", idx, num_nodes, node.target, e_msg
                         )
-
                 start = time.time()
                 golden = cast_ios_and_run(node, args, node.kwargs)
                 end = time.time()
@@ -403,13 +399,15 @@ class TorchExecutor(OpByOpExecutor):
                 OpByOpExecutor.golden_time += end - start
                 if (
                     self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
-                    and binary is not None
+                    and test_this_op
+                    and gm is not None
                 ):
 
                     try:
                         typecast_args = self.typecast_inputs(args)
                         start = time.time()
-                        calculated, stderr = self.run_op(binary, *typecast_args)
+                        calculated, stderr = self.run_op(gm, *typecast_args)
+
                         end = time.time()
                         self.print_marker(
                             "Running", idx, num_nodes, node.target, time=(end - start)
@@ -492,4 +490,279 @@ class TorchExecutor(OpByOpExecutor):
             )
         else:
             inputs = self.typecast_inputs(inputs)
+            return self.program.graph_module(*inputs)
+
+
+class TorchPJRTExecutor(PJRTOpByOpExecutor):
+    def __init__(self, mcg, compiler_config, async_mode):
+        super().__init__(mcg, compiler_config, async_mode)
+        assert (
+            self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
+        ), "TorchPJRTExecutor only supports EXECUTE_OP_BY_OP"
+        assert len(mcg.programs) == 1
+        self.program = mcg.programs[0]
+
+    def is_node_valid(self, node):
+        if not isinstance(node.target, torch._ops.OpOverload):
+            if "getitem" not in name:
+                raise ValueError(f"Node target is not an OpOverload: {name}")
+            return False
+        return True
+
+    def get_node_name(self, node):
+        name = node.target.name() if hasattr(node.target, "name") else node.name
+        return name
+
+    def get_single_op_graph_module(self, node, inputs, **kwargs):
+
+        input_shapes_and_constants = self.get_input_shapes_and_constants(*inputs)
+
+        name = node.target.name() if hasattr(node.target, "name") else node.name
+        if not isinstance(node.target, torch._ops.OpOverload):
+            if "getitem" not in name:
+                raise ValueError(f"Node target is not an OpOverload: {name}")
+            return None, None
+
+        if name == "aten::copy_":
+            raise ValueError(f"inline ops are not supported: {name}")
+            return None, None
+
+        # Skip validation ops (like aten._assert_tensor_metadata) that lack tensor metadata
+        if "tensor_meta" not in node.meta:
+            print(f"Warning: {node.target} missing tensor_meta, skipping compile.")
+            return None, None
+
+        op = Op(name, input_shapes_and_constants, self.compiler_config.model_name)
+        if op.unique_key() not in self.compiler_config.unique_ops:
+            op.global_op_idx = OpByOpExecutor.global_op_idx
+            op.model_group = self.compiler_config.model_group
+            self.compiler_config.unique_ops[op.unique_key()] = op
+        else:
+            self.compiler_config.unique_ops[op.unique_key()].num_ops += 1
+            return None, None
+
+        graph = torch.fx.Graph()
+        placeholders = []
+        for input_idx, inp in enumerate(inputs):
+            if isinstance(inp, torch.Tensor):
+                placeholders.append(graph.placeholder(f"input_{input_idx}"))
+            elif isinstance(inp, (list, tuple)):
+                inps = torch.fx.immutable_collections.immutable_list(
+                    [
+                        graph.placeholder(f"input_{input_idx}_{sub_inp_idx}")
+                        if isinstance(sub_inp, torch.Tensor)
+                        else sub_inp
+                        for sub_inp_idx, sub_inp in enumerate(inp)
+                    ]
+                )
+                placeholders.append(inps)
+            else:
+                placeholders.append(inp)
+
+        if len(placeholders) != len(node.args):
+            # are any of the args duplicates? If so, we need to duplicate the placeholders
+            for idx, arg in enumerate(node.args):
+                if arg in node.args[idx + 1 :]:
+                    placeholders.append(placeholders[idx])
+
+        placeholders = tuple(placeholders)
+        for placeholder, arg in zip(placeholders, node.args):
+            if isinstance(placeholder, torch.fx.node.Node):
+                placeholder.meta["tensor_meta"] = arg.meta["tensor_meta"]
+            elif isinstance(placeholder, (list, tuple)):
+                for sub_placeholder, sub_arg in zip(placeholder, arg):
+                    if isinstance(sub_placeholder, torch.fx.node.Node):
+                        sub_placeholder.meta["tensor_meta"] = sub_arg.meta[
+                            "tensor_meta"
+                        ]
+
+        graph_node = graph.call_function(node.target, placeholders, kwargs)
+        graph_node.meta["tensor_meta"] = node.meta["tensor_meta"]
+
+        # if the node has multiple outputs, add a getitem for each and append to graph
+        if not isinstance(
+            node.meta["tensor_meta"], torch.fx.passes.shape_prop.TensorMetadata
+        ):
+            getitem_nodes = []
+            graph_node.meta["val"] = node.meta["val"]
+
+            # if the output of the getitem node is not used, we don't append it to the graph
+            for user in node.users:
+                assert user.target == operator.getitem
+                if len(user.users) == 0:
+                    continue
+
+                idx = user.args[1]
+                getitem_node = graph.call_function(
+                    operator.getitem, args=(graph_node, idx)
+                )
+                getitem_nodes.append(getitem_node)
+                tensor_meta = node.meta["tensor_meta"][idx]
+                getitem_node.meta["tensor_meta"] = tensor_meta
+            out = graph.output(tuple(getitem_nodes))
+        else:
+            out = graph.output((graph_node,))
+        if "tensor_meta" not in node.meta:
+            raise ValueError(f"Node {node} does not have tensor_meta")
+
+        op.compilation_status = OpCompilationStatus.CREATED_GRAPH
+        out.meta["tensor_meta"] = node.meta["tensor_meta"]
+
+        out_meta = out.meta["tensor_meta"]
+        if isinstance(out_meta, torch.fx.passes.shape_prop.TensorMetadata):
+            out_meta = (out_meta,)
+        for out in out_meta:
+            op.output_shapes.append([dim for dim in out.shape])
+
+        gm = torch.fx.GraphModule(torch.nn.Module(), graph)
+        return gm, op
+
+    def run_gm_op_by_op(self, *user_inputs):
+        node_to_tensor = {}
+        inputs = self.ordered_program_inputs[0]
+        for i, inp in enumerate(user_inputs):
+            inputs[self.user_input_indices[0][i]] = inp
+        input_index = 0
+        outputs = []
+        num_nodes = len(self.program.graph_module.graph.nodes)
+        out_degree = {}
+
+        for idx, node in enumerate(self.program.graph_module.graph.nodes):
+            self.print_marker("\nProcessing", idx, num_nodes, node.target)
+
+            out_degree[node] = len(node.users)
+            if node.op == "placeholder":
+                node_to_tensor[node] = inputs[self.input_indices[0][node.name]]
+            elif node.op == "get_attr":
+                node_to_tensor[node] = inputs[self.input_indices[0][node.name]]
+            elif node.op == "call_function":
+                args = []
+                for arg in node.args:
+                    if isinstance(arg, torch.fx.node.Node):
+                        args.append(node_to_tensor[arg])
+                    elif isinstance(arg, list):
+                        args.append(
+                            [
+                                node_to_tensor[a]
+                                if isinstance(a, torch.fx.node.Node)
+                                else a
+                                for a in arg
+                            ]
+                        )
+                    else:
+                        args.append(arg)
+
+                binary = None
+                op = None
+
+                test_this_op = self.should_test_op()
+                # Another useful debug method:
+                # test_this_op = str(node.target) == "aten.convolution.default"
+
+                if test_this_op:
+                    try:
+                        start = time.time()
+                        gm, op = self.get_single_op_graph_module(node, args)
+                        end = time.time()
+                        self.print_marker(
+                            "Compiling", idx, num_nodes, node.target, time=(end - start)
+                        )
+                        OpByOpExecutor.compiling_time += end - start
+
+                        self.set_runtime_stack_dump(None, op)
+
+                    except Exception as e:
+                        gm = None
+                        e_msg = self.get_exception_source(e)
+                        self.print_marker(
+                            "Failed to compile", idx, num_nodes, node.target, e_msg
+                        )
+                start = time.time()
+                golden = cast_ios_and_run(node, args, node.kwargs)
+                end = time.time()
+                self.print_marker(
+                    "Golden", idx, num_nodes, node.target, time=(end - start)
+                )
+                OpByOpExecutor.golden_time += end - start
+                if (
+                    self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
+                    and test_this_op
+                    and gm is not None
+                ):
+
+                    try:
+                        # typecast_args = self.typecast_inputs(args)
+                        typecast_args = [
+                            arg.to(torch.bfloat16)
+                            if isinstance(arg, torch.Tensor) and arg.dtype == torch.bool
+                            else arg
+                            for arg in args
+                        ]
+                        start = time.time()
+                        calculated, stderr = self.run_op(gm, *typecast_args)
+
+                        end = time.time()
+                        self.print_marker(
+                            "Running", idx, num_nodes, node.target, time=(end - start)
+                        )
+                        OpByOpExecutor.running_time += end - start
+                        self.set_runtime_stack_dump(stderr, op)
+
+                        if calculated is None:
+                            raise ValueError(f"Failed to execute: \n {stderr}")
+                        op.compilation_status = OpCompilationStatus.EXECUTED
+                        if self.compiler_config.verify_op_by_op:
+                            atol = calculate_atol(calculated, golden)
+                            op.atol = atol
+                            if atol > self.required_atol:
+                                print(f"atol too high for {idx}: {atol}")
+                            pcc = calculate_pcc(calculated, golden)
+                            op.pcc = pcc
+                            if pcc < self.required_pcc:
+                                print(f"pcc too low for {idx}: {pcc}")
+                    except Exception as e:
+                        e_msg = self.get_exception_source(e)
+                        self.print_marker(
+                            "Failed to execute", idx, num_nodes, node.target, e_msg
+                        )
+
+                node_to_tensor[node] = golden
+            elif node.op == "output":
+                args = node.args[0]
+                output_tensors = [node_to_tensor[arg] for arg in args]
+                outputs = output_tensors
+
+            args_set = set()
+            for arg in node.args:
+                if arg in args_set:
+                    continue
+                args_set.add(arg)
+                if isinstance(arg, torch.fx.node.Node):
+                    out_degree[arg] -= 1
+                    if out_degree[arg] == 0 and arg.op != "output":
+                        del node_to_tensor[arg]
+                        out_degree.pop(arg)
+
+            # Finished handling this op, increment global op index
+            OpByOpExecutor.global_op_idx += 1
+
+        self.compiler_config.save_unique_ops()
+        if self.execute_process is not None:
+            self.execute_process.terminate()
+            self.execute_process = None
+        if self.stderror_redirected:
+            os.unlink(self.file_stderr.name)
+            self.stderror_redirected = False
+        print(
+            f"Total Time - Compiling: {OpByOpExecutor.compiling_time:.2f} s, Running: {OpByOpExecutor.running_time:.2f} s, Golden: {OpByOpExecutor.golden_time:.2f} s"
+        )
+        return outputs
+
+    def __call__(self, *inputs):
+        if self.compiler_config.compile_depth in (
+            CompileDepth.EXECUTE_OP_BY_OP,
+            CompileDepth.COMPILE_OP_BY_OP,
+        ):
+            return self.run_gm_op_by_op(*inputs)
+        else:
             return self.program.graph_module(*inputs)
