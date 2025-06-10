@@ -26,9 +26,7 @@ from torch_xla.experimental import plugins
 
 class TTPjrtPlugin(plugins.DevicePlugin):
     def library_path(self):
-        return os.path.join(
-            os.path.dirname(__file__), "../install/lib/pjrt_plugin_tt.so"
-        )
+        return os.path.join(os.path.dirname(__file__), "../../../pjrt_plugin_tt.so")
 
 
 plugins.register_plugin("TT", TTPjrtPlugin())
