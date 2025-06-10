@@ -156,6 +156,15 @@ jobs:
               tests/models/detr/test_detr_onnx.py::test_detr_onnx[op_by_op_stablehlo-eval]
               "
           },
+          {
+            runs-on: wormhole_b0, name: "d-fine", tests: "
+              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-ustc-community/dfine-nano-coco-eval]
+              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-ustc-community/dfine-small-coco-eval]
+              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-ustc-community/dfine-medium-coco-eval]
+              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-ustc-community/dfine-large-coco-eval]
+              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-ustc-community/dfine-xlarge-coco-eval]
+              "
+          },
         ]
     runs-on:
       - ${{ matrix.build.sh-run && format('tt-beta-ubuntu-2204-{0}-large-stable', matrix.build.runs-on) ||  matrix.build.runs-on }}
