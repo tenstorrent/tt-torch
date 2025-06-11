@@ -92,8 +92,9 @@ class ThisTester(ModelTester):
 
     def _load_inputs(self):
         # Image preprocessing
-        # Local cache of https://raw.githubusercontent.com/pytorch/hub/master/images/dog.jpg
-        image_file = get_file("test_images/dog_1546x1213.jpg")
+        image_file = get_file(
+            "https://raw.githubusercontent.com/pytorch/hub/master/images/dog.jpg"
+        )
         image = Image.open(str(image_file))
         transform = transforms.Compose(
             [transforms.Resize((512, 512)), transforms.ToTensor()]

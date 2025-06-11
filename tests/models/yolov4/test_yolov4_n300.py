@@ -19,9 +19,8 @@ class ThisTester(ModelTester):
         return ModelLoader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        # Local cache of http://images.cocodataset.org/val2017/000000039769.jpg
-        image_file = get_file("test_images/coco_two_cats_000000039769_640x480.jpg")
-        img = cv2.imread(str(image_file))
+        image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
+        img = cv2.imread(str(image_file), cv2.IMREAD_COLOR)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # Convert BGR to RGB
         img = cv2.resize(img, (640, 480))  # Resize to model input size
         img = img / 255.0  # Normalize to [0,1]

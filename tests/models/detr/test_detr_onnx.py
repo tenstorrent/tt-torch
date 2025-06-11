@@ -33,8 +33,9 @@ class ThisTester(OnnxModelTester):
 
     def _load_torch_inputs(self):
         # Images
-        # Local cache of https://user-images.githubusercontent.com/87515266/177115824-289876a8-7d2d-45a8-9fa6-ab4f37b940e4.jpg (zidane)
-        image_file = get_file("test_images/zidane_1280x720.jpg")
+        image_file = get_file(
+            "https://huggingface.co/spaces/nakamura196/yolov5-char/resolve/8a166e0aa4c9f62a364dafa7df63f2a33cbb3069/ultralytics/yolov5/data/images/zidane.jpg"
+        )
         input_image = Image.open(str(image_file))
         m, s = np.mean(input_image, axis=(0, 1)), np.std(input_image, axis=(0, 1))
         preprocess = transforms.Compose(

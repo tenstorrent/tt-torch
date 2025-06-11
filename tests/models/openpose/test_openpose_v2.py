@@ -15,8 +15,9 @@ from third_party.tt_forge_models.tools.utils import get_file
 
 def get_image_tensor():
     # Image processing
-    # Local cache of https://raw.githubusercontent.com/axinc-ai/ailia-models/master/pose_estimation_3d/blazepose-fullbody/girl-5204299_640.jpg
-    image_file = get_file("test_images/girl_480x640.jpg")
+    image_file = get_file(
+        "https://raw.githubusercontent.com/axinc-ai/ailia-models/master/pose_estimation_3d/blazepose-fullbody/girl-5204299_640.jpg"
+    )
     input_image = Image.open(str(image_file))
     preprocess = transforms.Compose(
         [

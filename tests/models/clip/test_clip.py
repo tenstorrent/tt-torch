@@ -21,8 +21,7 @@ class ThisTester(ModelTester):
         return model
 
     def _load_inputs(self):
-        # Local cache of http://images.cocodataset.org/val2017/000000039769.jpg
-        image_file = get_file("test_images/coco_two_cats_000000039769_640x480.jpg")
+        image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
         image = Image.open(str(image_file))
 
         inputs = self.processor(

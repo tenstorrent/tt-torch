@@ -30,8 +30,9 @@ class ThisTester(ModelTester):
     def _load_inputs(self):
         import mediapipe as mp
 
-        # Local cache of https://storage.googleapis.com/mediapipe-tasks/hand_landmarker/woman_hands.jpg
-        image_file = get_file("test_images/woman_hands_640x960.jpg")
+        image_file = get_file(
+            "https://storage.googleapis.com/mediapipe-tasks/hand_landmarker/woman_hands.jpg"
+        )
         image = mp.Image.create_from_file(str(image_file))
         return image
 
