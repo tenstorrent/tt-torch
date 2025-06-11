@@ -13,7 +13,6 @@ jobs:
     permissions:
       # required for all workflows
       security-events: write
-      packages: read
       actions: read
       contents: read
 
@@ -31,14 +30,8 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        # submodules: 'recursive'
         clean: true
-        fetch-depth: 1 # Fetch all history and tags
-
-    - name: Set cache path
-      id: cache-path
-      shell: bash
-      run: echo "work-dir=$(pwd)" >> $GITHUB_OUTPUT
+        fetch-depth: 1
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
@@ -92,9 +85,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          submodules: 'recursive'
           clean: true
-          fetch-depth: 0 # Fetch all history and tags
+          fetch-depth: 1
       - name: Setup Cppcheck
         run: |
           echo "set man-db/auto-update false" | sudo debconf-communicate; sudo dpkg-reconfigure man-db
@@ -107,7 +99,7 @@ jobs:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           cd tt_torch/csrc
-          cppcheck --std=c++17 --check-level=exhaustive --enable=warning,information --platform=unix64 --suppress=uninitMemberVar --output-file=../../.cppcheck-output.sarif --output-format=sarif .
+          cppcheck --std=c++17 --check-level=exhaustive --enable=warning,information --platform=unix64 --suppress=uninitMemberVar -j 4 --output-file=../../.cppcheck-output.sarif --output-format=sarif .
           cd ../..
           cat .cppcheck-output.sarif
           # Convert security-severity to string for compatibility with CodeQL

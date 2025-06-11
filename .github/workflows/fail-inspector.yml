@@ -77,15 +77,15 @@ jobs:
             workflow: on-push.yml
             name: install-artifacts
             check_artifacts: true
-            path: dl
+            path: ${{ runner.temp }}/dl
 
         - name: Install wheels
           shell: bash
           run: |
             source env/activate
-            cd dl
+            cd ${{ runner.temp }}/dl
             tar xvf artifact.tar
-            pip install wheels/*.whl --force-reinstall
+            pip install wheels/*.whl
 
         - name: Run Test
           env:
