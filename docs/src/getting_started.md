@@ -69,6 +69,12 @@ sudo apt-get install -y \
     lcov
 ```
 
+Install OpenMPI:
+
+```bash
+sudo wget -q https://github.com/dmakoviichuk-tt/mpi-ulfm/releases/download/v5.0.7-ulfm/openmpi-ulfm_5.0.7-1_amd64.deb -O /tmp/openmpi-ulfm.deb && sudo apt install /tmp/openmpi-ulfm.deb
+```
+
 ## Installing CMake 4.0.2
 
 Install CMake 4.0.2:
