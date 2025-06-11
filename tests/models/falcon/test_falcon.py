@@ -7,12 +7,7 @@ import pytest
 # Load model directly
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from tests.utils import ModelTester
-from tt_torch.tools.utils import (
-    CompilerConfig,
-    ModelMetadata,
-    CompileDepth,
-    OpByOpBackend,
-)
+from tt_torch.tools.utils import CompilerConfig, ModelMetadata, CompileDepth
 
 
 class ThisTester(ModelTester):
