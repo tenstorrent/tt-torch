@@ -568,6 +568,7 @@ def run_pass_pipeline_for_single_gm(
 
     gm_device = bypass_redundant_getitem(gm_device)
     gm_device = convert_scalar_ops_to_tensor_ops(gm_device)
+    gm_device = constant_fold(gm_device)
 
     # reduce_graph(gm) - ISSUE: https://github.com/tenstorrent/tt-torch/issues/513
     program = torch.export.export(gm_device, tuple(example_inputs), strict=False)
