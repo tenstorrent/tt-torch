@@ -236,6 +236,11 @@ class TorchExecutor(OpByOpExecutor):
             raise ValueError(f"inline ops are not supported: {name}")
             return None, None
 
+        # Skip validation ops (like aten._assert_tensor_metadata) that lack tensor metadata
+        if "tensor_meta" not in node.meta:
+            print(f"Warning: {node.target} missing tensor_meta, skipping compile.")
+            return None, None
+
         op = Op(name, input_shapes_and_constants, self.compiler_config.model_name)
         if op.unique_key() not in self.compiler_config.unique_ops:
             op.global_op_idx = OpByOpExecutor.global_op_idx
@@ -382,8 +387,9 @@ class TorchExecutor(OpByOpExecutor):
 
                     except Exception as e:
                         binary = None
+                        e_msg = self.get_exception_source(e)
                         self.print_marker(
-                            "Failed to compile", idx, num_nodes, node.target, e
+                            "Failed to compile", idx, num_nodes, node.target, e_msg
                         )
 
                 start = time.time()
@@ -422,8 +428,9 @@ class TorchExecutor(OpByOpExecutor):
                             if pcc < self.required_pcc:
                                 print(f"pcc too low for {idx}: {pcc}")
                     except Exception as e:
+                        e_msg = self.get_exception_source(e)
                         self.print_marker(
-                            "Failed to execute", idx, num_nodes, node.target, e
+                            "Failed to execute", idx, num_nodes, node.target, e_msg
                         )
 
                 node_to_tensor[node] = golden
