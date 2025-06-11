@@ -8,17 +8,10 @@ import pytest
 from third_party.tt_forge_models.yolov4.pytorch import ModelLoader
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.tools.utils import get_file
 
 import cv2
 import numpy as np
-import urllib.request
-
-
-def url_to_image(url):
-    resp = urllib.request.urlopen(url)
-    image = np.asarray(bytearray(resp.read()), dtype="uint8")
-    image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-    return image
 
 
 class ThisTester(ModelTester):
@@ -26,7 +19,9 @@ class ThisTester(ModelTester):
         return ModelLoader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        img = url_to_image("http://images.cocodataset.org/val2017/000000039769.jpg")
+        # Local cache of http://images.cocodataset.org/val2017/000000039769.jpg
+        image_file = get_file("test_images/coco_two_cats_000000039769_640x480.jpg")
+        img = cv2.imread(str(image_file))
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # Convert BGR to RGB
         img = cv2.resize(img, (640, 480))  # Resize to model input size
         img = img / 255.0  # Normalize to [0,1]

@@ -8,10 +8,10 @@ import torchvision
 import torch
 from PIL import Image
 from torchvision import transforms
-import requests
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.tools.utils import get_file
 
 
 # TODO: RuntimeError: "nms_kernel" not implemented for 'BFloat16'
@@ -24,8 +24,9 @@ class ThisTester(ModelTester):
 
     def _load_inputs(self):
         # Image preprocessing
-        image_url = "http://images.cocodataset.org/val2017/000000039769.jpg"
-        image = Image.open(requests.get(image_url, stream=True).raw)
+        # Local cache of http://images.cocodataset.org/val2017/000000039769.jpg
+        image_file = get_file("test_images/coco_two_cats_000000039769_640x480.jpg")
+        image = Image.open(str(image_file))
         transform = transforms.Compose(
             [transforms.Resize((320, 320)), transforms.ToTensor()]
         )

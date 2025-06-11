@@ -12,6 +12,9 @@ on:
     workflows: [Build]
     types: [completed]
 
+env:
+  DOCKER_CACHE_ROOT: /mnt/dockercache
+
 permissions:
   packages: write
   checks: write

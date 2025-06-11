@@ -4,12 +4,12 @@
 # Reference: https://huggingface.co/dandelin/vilt-b32-finetuned-vqa
 
 from transformers import ViltProcessor, ViltForQuestionAnswering
-import requests
 from PIL import Image
 import pytest
 from tests.utils import ModelTester
 import torch
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.tools.utils import get_file
 
 
 class ThisTester(ModelTester):
@@ -24,8 +24,9 @@ class ThisTester(ModelTester):
 
     def _load_inputs(self):
         # prepare image + question
-        url = "http://images.cocodataset.org/val2017/000000039769.jpg"
-        image = Image.open(requests.get(url, stream=True).raw)
+        # Local cache of http://images.cocodataset.org/val2017/000000039769.jpg
+        image_file = get_file("test_images/coco_two_cats_000000039769_640x480.jpg")
+        image = Image.open(str(image_file))
         text = "How many cats are there?"
         # prepare inputs
         encoding = self.processor(image, text, return_tensors="pt")

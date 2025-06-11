@@ -6,14 +6,13 @@ import pytest
 import onnx
 import os
 import numpy as np
-from io import BytesIO
-import requests
 import json
 from PIL import Image
 from torchvision import transforms
 from efficientnet_pytorch import EfficientNet
 from tests.utils import OnnxModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.tools.utils import get_file
 
 
 class ThisTester(OnnxModelTester):
@@ -27,11 +26,9 @@ class ThisTester(OnnxModelTester):
         return self.model
 
     def _load_torch_inputs(self):
-        # Fetch image from URL
-        url = "http://images.cocodataset.org/val2017/000000039769.jpg"
-        response = requests.get(url)
-        response.raise_for_status()  # Ensure the request was successful
-        img = Image.open(BytesIO(response.content))
+        # Local cache of http://images.cocodataset.org/val2017/000000039769.jpg
+        image_file = get_file("test_images/coco_two_cats_000000039769_640x480.jpg")
+        img = Image.open(str(image_file))
 
         # Apply transformations
         tfms = transforms.Compose(

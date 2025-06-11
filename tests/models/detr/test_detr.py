@@ -2,13 +2,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 from PIL import Image
-import requests
 import torch
 import numpy as np
 from torchvision import transforms
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.tools.utils import get_file
 
 
 class ThisTester(ModelTester):
@@ -25,7 +25,9 @@ class ThisTester(ModelTester):
 
     def _load_inputs(self):
         # Images
-        input_image = Image.open("tests/models/detr/zidane.jpg")
+        # Local cache of https://user-images.githubusercontent.com/87515266/177115824-289876a8-7d2d-45a8-9fa6-ab4f37b940e4.jpg (zidane)
+        image_file = get_file("test_images/zidane_1280x720.jpg")
+        input_image = Image.open(str(image_file))
         m, s = np.mean(input_image, axis=(0, 1)), np.std(input_image, axis=(0, 1))
         preprocess = transforms.Compose(
             [
