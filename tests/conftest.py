@@ -6,7 +6,12 @@ import torch
 import subprocess
 import sys
 from datetime import datetime, timezone
-from tt_torch.tools.utils import OpByOpBackend, CompileDepth, ModelMetadata, CompilerConfig
+from tt_torch.tools.utils import (
+    OpByOpBackend,
+    CompileDepth,
+    ModelMetadata,
+    CompilerConfig,
+)
 from tt_torch.tools.crashsafe_utils import crashsafe_suffix
 import xml.etree.ElementTree as ET
 import socket
@@ -66,13 +71,13 @@ def pytest_runtest_logreport(report):
 
 def pytest_collection_modifyitems(config, items):
     selected = items.copy()
-    
+
     target_depth = None
     target_backend = None
-    
+
     if config.getoption("--compile-depth"):
         target_depth = getattr(CompileDepth, config.getoption("--compile-depth"))
-    
+
     if config.getoption("--op-by-op-backend"):
         target_backend = getattr(OpByOpBackend, config.getoption("--op-by-op-backend"))
 
@@ -81,7 +86,7 @@ def pytest_collection_modifyitems(config, items):
     for item in selected:
         if not hasattr(item, "callspec"):
             continue
-            
+
         model_info = item.callspec.params.get("model_info")
         if not model_info:
             continue
@@ -91,7 +96,7 @@ def pytest_collection_modifyitems(config, items):
 
         if target_depth is not None:
             passes_depth = model_info.compile_depth == target_depth
-            
+
         if target_backend is not None:
             passes_backend = model_info.op_by_op_backend == target_backend
 
