@@ -1,23 +1,31 @@
 # SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
+# Reference: https://github.com/arief25ramadhan/carvana-unet-segmentation
+
+import os
+import subprocess
+import sys
+from pathlib import Path
+import tempfile
 import torch
-import torchvision
 import pytest
+
+from tests.models.unet_carvana.carvana_unet_segmentation.model import UNET
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model = torchvision.models.get_model("resnet18", pretrained=True)
+        model = UNET(in_channels=3, out_channels=1)
         model = model.to(torch.bfloat16)
         return model
 
     def _load_inputs(self):
-        inputs = torch.rand((1, 3, 224, 224), dtype=torch.bfloat16)
-        inputs = inputs.to(torch.bfloat16)
-        return inputs
+        input_batch = torch.rand((4, 3, 224, 224))
+        input_batch = input_batch.to(torch.bfloat16)
+        return input_batch
 
 
 @pytest.mark.parametrize(
@@ -29,33 +37,24 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-@pytest.mark.parametrize(
-    "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
-)
-def test_resnet(record_property, mode, op_by_op, data_parallel_mode):
+def test_unet_carvana(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
-    model_name = "ResNet18"
+    model_name = "Unet-carvana"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    cc.automatic_parallelization = True
+    cc.mesh_shape = [1, 2]
+    cc.dump_debug = True
     if op_by_op:
-        if data_parallel_mode:
-            pytest.skip("Op-by-op not supported in data parallel mode")
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     tester = ThisTester(
-        model_name,
-        mode,
-        assert_pcc=True,
-        assert_atol=False,
-        compiler_config=cc,
-        record_property_handle=record_property,
-        data_parallel_mode=data_parallel_mode,
+        model_name, mode, compiler_config=cc, record_property_handle=record_property
     )
-    results = tester.test_model()
-
+    tester.test_model()
     tester.finalize()

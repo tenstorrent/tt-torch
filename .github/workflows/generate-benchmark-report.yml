@@ -2,8 +2,12 @@ name: Generate Benchmark Report
 
 on:
   workflow_call:
+  workflow_dispatch:
+    inputs:
+      run-id:
+        description: "Optional run ID to download artifacts from a specific run"
+        required: false
 jobs:
-
   docker-build:
     uses: ./.github/workflows/build-image.yml
     secrets: inherit
@@ -48,13 +52,14 @@ jobs:
         pattern: test-reports-models-benchmark*
         path:  ${{ steps.strings.outputs.xml-dir }}
         merge-multiple: true
-    - run: ls -lshR ${{ steps.strings.outputs.xml-dir }}
+        # Conditionally use the run-id input if provided
+        run-id: ${{ inputs.run-id || github.run_id }}
+        # github-token must be specified for cross-workflow artifact downloads or else
+        #   it fails silently with no artifacts found
+        github-token: ${{ github.token }}
 
-    - name: install tt-torch
-      shell: bash
-      run: |
-        source env/activate
-        pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
+
+    - run: ls -lshR ${{ steps.strings.outputs.xml-dir }}
 
     - name: Get git metadata and set artifact name
       id: git-info

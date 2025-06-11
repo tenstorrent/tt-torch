@@ -124,13 +124,24 @@ def test_broadcast(input):
     verify_module(Basic(), inputs=[input])
 
 
-def test_clamp():
+def test_clamp_int_bound():
     class Basic(nn.Module):
         def __init__(self):
             super().__init__()
 
         def forward(self, x):
             return torch.clamp(x, min=-1, max=1)
+
+    verify_module(Basic(), input_shapes=[(32, 32)], input_range=(-5, 5))
+
+
+def test_clamp_float_bound():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x):
+            return torch.clamp(x, min=-1.0, max=1.0)
 
     verify_module(Basic(), input_shapes=[(32, 32)], input_range=(-5, 5))
 

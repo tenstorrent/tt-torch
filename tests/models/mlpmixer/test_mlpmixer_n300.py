@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import torch
-import torchvision
+from mlp_mixer_pytorch import MLPMixer
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
@@ -10,14 +10,24 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model = torchvision.models.get_model("resnet18", pretrained=True)
+        """
+        https://github.com/lucidrains/mlp-mixer-pytorch
+        """
+        model = MLPMixer(
+            image_size=256,
+            channels=3,
+            patch_size=16,
+            dim=512,
+            depth=12,
+            num_classes=1000,
+        )
         model = model.to(torch.bfloat16)
         return model
 
     def _load_inputs(self):
-        inputs = torch.rand((1, 3, 224, 224), dtype=torch.bfloat16)
-        inputs = inputs.to(torch.bfloat16)
-        return inputs
+        img = torch.randn(32, 3, 256, 256)
+        img = img.to(torch.bfloat16)
+        return img
 
 
 @pytest.mark.parametrize(
@@ -29,20 +39,18 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-@pytest.mark.parametrize(
-    "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
-)
-def test_resnet(record_property, mode, op_by_op, data_parallel_mode):
+def test_mlpmixer(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
-    model_name = "ResNet18"
+    model_name = "MLPMixer"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    cc.automatic_parallelization = True
+    cc.mesh_shape = [1, 2]
+    cc.dump_debug = True
     if op_by_op:
-        if data_parallel_mode:
-            pytest.skip("Op-by-op not supported in data parallel mode")
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
@@ -54,8 +62,6 @@ def test_resnet(record_property, mode, op_by_op, data_parallel_mode):
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
-        data_parallel_mode=data_parallel_mode,
     )
-    results = tester.test_model()
-
+    tester.test_model()
     tester.finalize()

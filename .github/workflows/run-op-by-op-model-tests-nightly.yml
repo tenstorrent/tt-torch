@@ -83,7 +83,7 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "timm", tests: "
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[op_by_op_torch-eval-ghostnetv2_100.in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op_torch-eval-ghostnetv2_100.in1k]
               "
           },
           {
@@ -96,7 +96,7 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "torchvision_1", tests: "
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[op_by_op_torch-eval-googlenet]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op_torch-eval-googlenet]
               "
           },
           {
@@ -145,12 +145,6 @@ jobs:
               "
           },
           {
-            runs-on: n300-llmbox, name: "Flux", tests: "
-              tests/models/flux/test_flux.py::test_flux[op_by_op_torch-flux_schnell-eval]
-              tests/models/flux/test_flux.py::test_flux[op_by_op_torch-flux_dev-eval]
-              ", sh-run: true
-          },
-          {
             runs-on: wormhole_b0, name: "stable-diffusion-v3.5", tests: "
               tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[op_by_op_torch-SD3.5-medium-eval]
               tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[op_by_op_torch-SD3.5-large-eval]
@@ -161,7 +155,16 @@ jobs:
             runs-on: wormhole_b0, name: "detr", tests: "
               tests/models/detr/test_detr_onnx.py::test_detr_onnx[op_by_op_stablehlo-eval]
               "
-          }
+          },
+          {
+            runs-on: wormhole_b0, name: "d-fine", tests: "
+              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-dfine-nano-eval]
+              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-dfine-small-eval]
+              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-dfine-medium-eval]
+              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-dfine-large-eval]
+              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-dfine-xlarge-eval]
+              "
+          },
         ]
     runs-on:
       - ${{ matrix.build.sh-run && format('tt-beta-ubuntu-2204-{0}-large-stable', matrix.build.runs-on) ||  matrix.build.runs-on }}
