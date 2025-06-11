@@ -8,7 +8,7 @@ import requests
 from transformers import GLPNImageProcessor, GLPNForDepthEstimation
 import pytest
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from tt_torch.tools.utils import CompilerConfig, CompileDepth, ModelMetadata
 
 
 class ThisTester(ModelTester):
@@ -28,32 +28,39 @@ class ThisTester(ModelTester):
         return inputs
 
 
+GLPN_KITTI_VARIANTS = [
+    ModelMetadata(model_name="GLPN-KITTI", relative_atol=0.013, model_group="red")
+]
+
+
+@pytest.mark.parametrize("model_info", GLPN_KITTI_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
 @pytest.mark.parametrize(
-    "op_by_op",
-    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
-    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+    "execute_mode",
+    [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
+    ids=["op_by_op", "full"],
 )
-def test_glpn_kitti(record_property, mode, op_by_op):
-    model_name = "GLPN-KITTI"
-
+def test_glpn_kitti(record_property, model_info, mode, execute_mode):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if op_by_op:
-        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-        if op_by_op == OpByOpBackend.STABLEHLO:
-            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+    cc.op_by_op_backend = model_info.op_by_op_backend
+    if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
+        cc.compile_depth = execute_mode
+    else:
+        cc.compile_depth = model_info.compile_depth
 
     tester = ThisTester(
-        model_name,
-        mode,
-        relative_atol=0.013,
+        model_name=model_info.model_name,
+        model_info=model_info,
+        mode=mode,
+        relative_atol=model_info.relative_atol,
         compiler_config=cc,
         record_property_handle=record_property,
+        model_group=model_info.model_group,
     )
     results = tester.test_model()
     if mode == "eval":

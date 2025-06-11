@@ -69,6 +69,9 @@ class ModelMetadata:
         assert_pcc=False,
         assert_atol=False,
         model_group="generality",
+        relative_atol=None,
+        required_pcc=0.99,
+        required_atol=None,
     ):
         self.model_name = model_name
         self.compile_depth = compile_depth
@@ -76,6 +79,9 @@ class ModelMetadata:
         self.assert_pcc = assert_pcc
         self.assert_atol = assert_atol
         self.model_group = model_group
+        self.relative_atol = relative_atol
+        self.required_pcc = required_pcc
+        self.required_atol = required_atol
 
 
 class OpCompilationStatus(IntEnum):
