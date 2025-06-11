@@ -373,17 +373,17 @@ class Executor:
                     (preprocessed_weights + preprocessed_activations),
                 )
             for i, output in enumerate(outputs):
-                expected_dtype = self.mcg.program_outputs[device_idx][i]
-                output_tensor = output.to(expected_dtype)
                 graph_output = self.mcg.graph_outputs[device_idx][i]
+                if torch.is_tensor(output):
+                    expected_dtype = graph_output.output_dtype
+                    output = output.to(expected_dtype)
                 if graph_output.io_type == IOType.INTER_DEVICE:
                     mci = graph_output.linked_input
-                    graph_inputs[mci.originating_device][
-                        mci.consumer_index
-                    ] = output_tensor
-                    intermediate_results.append(output_tensor)
+                    graph_inputs[mci.originating_device][mci.consumer_index] = output
+                    intermediate_results.append(output)
                 else:
-                    final_outputs[graph_output.index] = output_tensor
+                    final_outputs[graph_output.index] = output
+
         self._cleanup_resources(preprocessed_activations)
         assert all([o is not None for o in final_outputs])
         return final_outputs

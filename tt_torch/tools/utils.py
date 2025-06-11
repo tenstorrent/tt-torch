@@ -82,6 +82,8 @@ class MultiChipOutput:
         self.io_type = io_type
         self.index = index
         self.linked_input = None
+        self.output_dtype = None
+        self.output_shape = None
 
     def link_input(self, input):
         self.linked_input = input
@@ -105,7 +107,6 @@ class MultiChipGraph:
         self.graph_outputs = {device: [] for device in devices}
         self.graph_inputs = {device: [] for device in devices}
         self.programs = {}
-        self.program_outputs = {}  # store output dtype
         self.binaries = {}
         self.constant_inputs = {}
         self.example_inputs = {}
