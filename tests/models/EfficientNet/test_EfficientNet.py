@@ -11,7 +11,7 @@ from efficientnet_pytorch import EfficientNet
 
 import pytest
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig, ModelMetadata, CompileDepth, OpByOpBackend
+from tt_torch.tools.utils import CompilerConfig, ModelMetadata, CompileDepth
 
 
 class ThisTester(ModelTester):
@@ -36,6 +36,7 @@ class ThisTester(ModelTester):
         )
         return tfms(img).unsqueeze(0)
 
+
 # Metadata for EfficientNet models
 EFFICIENTNET_VARIANTS = [
     ModelMetadata(model_name="efficientnet-b0", model_group="red"),
@@ -48,15 +49,18 @@ EFFICIENTNET_VARIANTS = [
     ModelMetadata(model_name="efficientnet-b7"),
 ]
 
-@pytest.mark.parametrize("model_info", EFFICIENTNET_VARIANTS, ids=lambda x: x.model_name)
+
+@pytest.mark.parametrize(
+    "model_info", EFFICIENTNET_VARIANTS, ids=lambda x: x.model_name
+)
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
 @pytest.mark.parametrize(
-     "execute_mode",
-     [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
-     ids=["op_by_op","full"],
+    "execute_mode",
+    [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
+    ids=["op_by_op", "full"],
 )
 def test_EfficientNet(record_property, model_info, mode, execute_mode):
     if mode == "train":
@@ -74,10 +78,8 @@ def test_EfficientNet(record_property, model_info, mode, execute_mode):
     else:
         cc.compile_depth = model_info.compile_depth
         cc.op_by_op_backend = model_info.op_by_op_backend
-    
-    required_pcc = (
-        0.98
-    )
+
+    required_pcc = 0.98
 
     tester = ThisTester(
         model_name=model_info.model_name,
