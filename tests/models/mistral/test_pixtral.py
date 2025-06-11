@@ -17,32 +17,7 @@ class ThisTester(ModelTester):
         return model
 
     def _load_inputs(self):
-        # Set up sample input
-        # chat = [
-        #     {
-        #         "role": "user",
-        #         "content": [
-        #             {"type": "text", "content": "Can this animal"},
-        #             {"type": "image", "url": "https://picsum.photos/id/237/200/300"},
-        #             {"type": "text", "content": "live here?"},
-        #             {
-        #                 "type": "image",
-        #                 "url": "https://picsum.photos/seed/picsum/200/300",
-        #             },
-        #         ],
-        #     }
-        # ]
-        # inputs = self.processor.apply_chat_template(
-        #     chat,
-        #     add_generation_prompt=True,
-        #     tokenize=True,
-        #     return_dict=True,
-        #     return_tensors="pt",
-        # )
-
-        # The proper way of handling the inputs is to use the processor. However, starting transformers >= 4.50,
-        # processor returns a different dict than what the model expects.
-        # The following inputs was generated using the processor from transformers 4.47
+        # https://github.com/tenstorrent/tt-torch/issues/904
         inputs = {
             "input_ids": torch.tensor(
                 [[1, 3, 12483, 1593, 11386, 10, 51883, 3226, 1063, 10, 4]],
