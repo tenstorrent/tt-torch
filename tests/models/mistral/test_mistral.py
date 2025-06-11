@@ -5,7 +5,7 @@ import torch
 import pytest
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from tests.utils import ModelTester, skip_full_eval_test
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from tt_torch.tools.utils import CompilerConfig, CompileDepth, ModelMetadata
 
 
 class ThisTester(ModelTester):
@@ -25,48 +25,43 @@ class ThisTester(ModelTester):
         return inputs
 
 
-model_info_list = [
-    ("mistral7b", "mistralai/Mistral-7B-v0.1"),
-    ("ministral8b", "mistralai/Ministral-8B-Instruct-2410"),
-    ("ministral3b", "ministral/Ministral-3b-instruct"),
+MISTRAL_VARIANTS = [
+    ModelMetadata(model_name="mistralai/Mistral-7B-v0.1", model_group="red"),
+    ModelMetadata(model_name="mistralai/Ministral-8B-Instruct-2410", model_group="red"),
+    ModelMetadata(model_name="ministral/Ministral-3b-instruct", model_group="red"),
 ]
 
 
+@pytest.mark.parametrize("model_info", MISTRAL_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
 @pytest.mark.parametrize(
-    "model_info",
-    model_info_list,
-    ids=[model_info[0] for model_info in model_info_list],
+    "execute_mode",
+    [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
+    ids=["op_by_op", "full"],
 )
-@pytest.mark.parametrize(
-    "op_by_op",
-    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
-    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
-)
-def test_mistral(record_property, model_info, mode, op_by_op):
-    model_label, model_name = model_info
-    if model_label == "ministral3b":
+def test_mistral(record_property, model_info, mode, execute_mode):
+    if model_info.model_name == "ministral/Ministral-3b-instruct":
         pytest.skip(
             " Skipping Mistral-3B model test due to: https://github.com/tenstorrent/tt-torch/issues/905"
         )
-    model_group = "red"
 
     cc = CompilerConfig()
-    if op_by_op:
-        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-        if op_by_op == OpByOpBackend.STABLEHLO:
-            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+    cc.op_by_op_backend = model_info.op_by_op_backend
+    if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
+        cc.compile_depth = execute_mode
+    else:
+        cc.compile_depth = model_info.compile_depth
 
     skip_full_eval_test(
         record_property,
         cc,
-        model_name,
+        model_info.model_name,
         bringup_status="FAILED_RUNTIME",
         reason="Model is too large to fit on single device during execution.",
-        model_group=model_group,
+        model_group=model_info.model_group,
         model_name_filter=[
             "mistralai/Mistral-7B-v0.1",
             "mistralai/Ministral-8B-Instruct-2410",
@@ -75,13 +70,14 @@ def test_mistral(record_property, model_info, mode, op_by_op):
 
     # TODO Enable PCC/ATOL/Checking - https://github.com/tenstorrent/tt-torch/issues/689
     tester = ThisTester(
-        model_name,
-        mode,
+        model_name=model_info.model_name,
+        model_info=model_info,
+        mode=mode,
         compiler_config=cc,
         record_property_handle=record_property,
-        assert_atol=False,
-        assert_pcc=False,
-        model_group=model_group,
+        assert_atol=model_info.assert_atol,
+        assert_pcc=model_info.assert_pcc,
+        model_group=model_info.model_group,
     )
     results = tester.test_model()
     tester.finalize()
