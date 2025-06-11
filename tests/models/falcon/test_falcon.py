@@ -56,11 +56,10 @@ def test_falcon(record_property, mode, execute_mode, model_info):
     # check if OpByOp
     if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
         cc.compile_depth = execute_mode
-        cc.op_by_op_backend = model_info.op_by_op_backend
     # applying overrides from model_metadata if EXECUTE
     else:
         cc.compile_depth = model_info.compile_depth
-        cc.op_by_op_backend = model_info.op_by_op_backend
+    cc.op_by_op_backend = model_info.op_by_op_backend
 
     tester = ThisTester(
         model_name=model_info.model_name,
