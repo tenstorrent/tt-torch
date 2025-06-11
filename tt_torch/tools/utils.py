@@ -66,12 +66,14 @@ class ModelMetadata:
         compile_depth=CompileDepth.EXECUTE,
         op_by_op_backend=OpByOpBackend.TORCH,
         assert_pcc=False,
+        assert_atol=False,
         model_group="generality",
     ):
         self.model_name = model_name
         self.compile_depth = compile_depth
         self.op_by_op_backend = op_by_op_backend
         self.assert_pcc = assert_pcc
+        self.assert_atol = assert_atol
         self.model_group = model_group
 
 
