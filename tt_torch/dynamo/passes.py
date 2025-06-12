@@ -13,6 +13,7 @@ from tt_torch.tools.utils import (
     MultiChipGraph,
     RuntimeIntermediate,
     CompileDepth,
+    get_output_types_from_program,
 )
 
 from .decompositions import (
@@ -554,5 +555,10 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         mcg.programs[idx] = program
         mcg.constant_inputs[idx] = constant_inputs
         mcg.example_inputs[idx] = sub_example_inputs
+        output_dtypes, output_shapes = get_output_types_from_program(program)
+        assert len(mcg.graph_outputs[idx]) == len(output_dtypes)
+        for i, mco in enumerate(mcg.graph_outputs[idx]):
+            mco.output_dtype = output_dtypes[i]
+            mco.output_shape = output_shapes[i]
 
     return mcg
