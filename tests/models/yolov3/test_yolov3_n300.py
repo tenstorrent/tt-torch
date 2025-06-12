@@ -10,7 +10,6 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from PIL import Image
 from torchvision import transforms
 from third_party.tt_forge_models.tools.utils import get_file
-import requests
 
 
 class ThisTester(ModelTester):
@@ -18,8 +17,10 @@ class ThisTester(ModelTester):
         return ModelLoader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        url = "https://raw.githubusercontent.com/pytorch/hub/master/images/dog.jpg"
-        image = Image.open(requests.get(url, stream=True).raw)
+        image_file = get_file(
+            "https://raw.githubusercontent.com/pytorch/hub/master/images/dog.jpg"
+        )
+        image = Image.open(str(image_file))
 
         # Preprocess the image
         transform = transforms.Compose(

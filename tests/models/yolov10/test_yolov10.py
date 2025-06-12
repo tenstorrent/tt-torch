@@ -22,21 +22,7 @@ class ThisTester(ModelTester):
         return model.model
 
     def _load_inputs(self):
-        image_url = "https://media.roboflow.com/notebooks/examples/dog.jpeg"
-        if (
-            "DOCKER_CACHE_ROOT" in os.environ
-            and Path(os.environ["DOCKER_CACHE_ROOT"]).exists()
-        ):
-            download_dir = Path(os.environ["DOCKER_CACHE_ROOT"]) / "yolov10_data"
-        else:
-            download_dir = Path.home() / ".cache/yolov10_data"
-        download_dir.mkdir(parents=True, exist_ok=True)
-
-        load_path = download_dir / image_url.split("/")[-1]
-        if not load_path.exists():
-            response = requests.get(image_url, stream=True)
-            with open(str(load_path), "wb") as f:
-                f.write(response.content)
+        load_path = get_file("https://media.roboflow.com/notebooks/examples/dog.jpeg")
         image = cv2.imread(load_path)
         # image preprocessing:
         image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)

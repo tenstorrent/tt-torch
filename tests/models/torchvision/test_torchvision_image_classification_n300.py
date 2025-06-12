@@ -4,10 +4,10 @@
 from torchvision import models, transforms
 from PIL import Image
 import torch
-import requests
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.tools.utils import get_file
 
 
 class ThisTester(ModelTester):
@@ -26,8 +26,8 @@ class ThisTester(ModelTester):
     def _load_inputs(self):
         preprocess = self.weights.transforms()
         # Load and preprocess the image
-        url = "http://images.cocodataset.org/val2017/000000039769.jpg"
-        image = Image.open(requests.get(url, stream=True).raw)
+        image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
+        image = Image.open(str(image_file))
         img_t = preprocess(image)
         batch_t = torch.stack([img_t] * 4).to(torch.bfloat16)
         return batch_t

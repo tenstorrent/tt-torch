@@ -1,8 +1,6 @@
 # SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-from io import BytesIO
-import requests
 import json
 from PIL import Image
 import torch
@@ -12,6 +10,7 @@ from efficientnet_pytorch import EfficientNet
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.tools.utils import get_file
 
 
 class ThisTester(ModelTester):
@@ -20,11 +19,8 @@ class ThisTester(ModelTester):
         return model.eval()
 
     def _load_inputs(self):
-        # Fetch image from URL
-        url = "http://images.cocodataset.org/val2017/000000039769.jpg"
-        response = requests.get(url)
-        response.raise_for_status()  # Ensure the request was successful
-        img = Image.open(BytesIO(response.content))
+        image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
+        img = Image.open(str(image_file))
 
         # Apply transformations
         tfms = transforms.Compose(
