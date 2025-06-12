@@ -49,9 +49,6 @@ def test_xglm(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    else:
-        cc.compile_depth = CompileDepth.TTNN_IR
-
     tester = ThisTester(
         model_name,
         mode,

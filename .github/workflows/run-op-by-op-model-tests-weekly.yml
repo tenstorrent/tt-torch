@@ -133,11 +133,6 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "xglm", tests: "
-              tests/models/xglm/test_xglm.py::test_xglm[op_by_op_torch-eval]
-              "
-          },
-          {
             runs-on: wormhole_b0, name: "vision-misc", tests: "
               tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io[op_by_op_torch-eval]
               tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[op_by_op_torch-eval]
