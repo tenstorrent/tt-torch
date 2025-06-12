@@ -10,6 +10,7 @@ from pathlib import Path
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import OpByOpBackend
+from third_party.tt_forge_models.tools.utils import get_file
 
 dependencies = ["mediapipe"]
 
@@ -29,8 +30,10 @@ class ThisTester(ModelTester):
     def _load_inputs(self):
         import mediapipe as mp
 
-        image_path = Path(__file__).parent / "woman_hands.jpg"
-        image = mp.Image.create_from_file(str(image_path))
+        image_file = get_file(
+            "https://storage.googleapis.com/mediapipe-tasks/hand_landmarker/woman_hands.jpg"
+        )
+        image = mp.Image.create_from_file(str(image_file))
         return image
 
 
@@ -50,7 +53,6 @@ def test_hand_landmark(record_property, mode, op_by_op):
     # Download required files unless they already exist
     urls = [
         "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
-        "https://storage.googleapis.com/mediapipe-tasks/hand_landmarker/woman_hands.jpg",
     ]
     for file_url in urls:
         os.system(f"wget -P {Path(__file__).parent} -nc {file_url}")

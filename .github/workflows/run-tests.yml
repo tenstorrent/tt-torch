@@ -12,6 +12,10 @@ on:
     workflows: [Build]
     types: [completed]
 
+env:
+  # Model files accessed via get_file() are cached here.
+  DOCKER_CACHE_ROOT: /mnt/dockercache
+
 permissions:
   packages: write
   checks: write

@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import onnx
-import requests
 import torchvision.models as models
 from torchvision import transforms
 from PIL import Image
@@ -12,6 +11,7 @@ import os
 import pytest
 from tests.utils import OnnxModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth
+from third_party.tt_forge_models.tools.utils import get_file
 
 
 class ThisTester(OnnxModelTester):
@@ -28,9 +28,8 @@ class ThisTester(OnnxModelTester):
         # Define a transformation to preprocess the input image using the weights transforms
         preprocess = self.weights.transforms()
 
-        # Load and preprocess the image
-        url = "http://images.cocodataset.org/val2017/000000039769.jpg"
-        image = Image.open(requests.get(url, stream=True).raw)
+        image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
+        image = Image.open(str(image_file))
         img_t = preprocess(image)
         batch_t = torch.unsqueeze(img_t, 0)
         return (batch_t,)

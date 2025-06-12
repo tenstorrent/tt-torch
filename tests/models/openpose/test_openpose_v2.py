@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # Reference: https://github.com/tenstorrent/tt-buda-demos/blob/main/model_demos/cv_demos/openpose/pytorch_lwopenpose_2d_osmr.py
 
-import requests
 import torch
 from PIL import Image
 from pytorchcv.model_provider import get_model as ptcv_get_model
@@ -11,12 +10,15 @@ from torchvision import transforms
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.tools.utils import get_file
 
 
 def get_image_tensor():
     # Image processing
-    url = "https://raw.githubusercontent.com/axinc-ai/ailia-models/master/pose_estimation_3d/blazepose-fullbody/girl-5204299_640.jpg"
-    input_image = Image.open(requests.get(url, stream=True).raw)
+    image_file = get_file(
+        "https://raw.githubusercontent.com/axinc-ai/ailia-models/master/pose_estimation_3d/blazepose-fullbody/girl-5204299_640.jpg"
+    )
+    input_image = Image.open(str(image_file))
     preprocess = transforms.Compose(
         [
             transforms.Resize(224),

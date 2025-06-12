@@ -4,13 +4,13 @@
 import torch
 from PIL import Image
 from torchvision import transforms
-import requests
 import subprocess
 import sys
 import os
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.tools.utils import get_file
 
 dependencies = ["ultralytics==8.2.92", "ultralytics-thop==2.0.6"]
 
@@ -92,10 +92,10 @@ class ThisTester(ModelTester):
 
     def _load_inputs(self):
         # Image preprocessing
-        image_url = (
+        image_file = get_file(
             "https://raw.githubusercontent.com/pytorch/hub/master/images/dog.jpg"
         )
-        image = Image.open(requests.get(image_url, stream=True).raw)
+        image = Image.open(str(image_file))
         transform = transforms.Compose(
             [transforms.Resize((512, 512)), transforms.ToTensor()]
         )

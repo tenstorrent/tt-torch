@@ -5,11 +5,11 @@
 
 from transformers import AutoFeatureExtractor, ViTForImageClassification
 from PIL import Image
-import requests
 import torch
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.tools.utils import get_file
 
 
 class ThisTester(ModelTester):
@@ -20,8 +20,8 @@ class ThisTester(ModelTester):
         return model
 
     def _load_inputs(self):
-        url = "http://images.cocodataset.org/val2017/000000039769.jpg"
-        image = Image.open(requests.get(url, stream=True).raw)
+        image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
+        image = Image.open(str(image_file))
         images = [image] * 16  # Create a batch of 16
         inputs = self.feature_extractor(images=images, return_tensors="pt")
         return inputs

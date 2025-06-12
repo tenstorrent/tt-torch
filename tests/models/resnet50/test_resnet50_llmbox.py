@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import torch
-import requests
 import torchvision.models as models
 from torchvision import transforms
 from PIL import Image
@@ -10,6 +9,7 @@ from PIL import Image
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.tools.utils import get_file
 
 
 class ThisTester(ModelTester):
@@ -25,8 +25,8 @@ class ThisTester(ModelTester):
         preprocess = self.weights.transforms()
 
         # Load and preprocess the image
-        url = "http://images.cocodataset.org/val2017/000000039769.jpg"
-        image = Image.open(requests.get(url, stream=True).raw)
+        image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
+        image = Image.open(str(image_file))
         img_t = preprocess(image)
         batch_t = img_t.unsqueeze(0).repeat(128, 1, 1, 1)
         batch_t = batch_t.to(torch.bfloat16)

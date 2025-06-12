@@ -4,12 +4,12 @@
 # Reference: https://huggingface.co/google/vit-base-patch16-224
 
 from transformers import ViTImageProcessor, ViTForImageClassification
-import requests
 from PIL import Image
 import pytest
 from tests.utils import ModelTester
 import torch
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.tools.utils import get_file
 
 
 class ThisTester(ModelTester):
@@ -24,8 +24,8 @@ class ThisTester(ModelTester):
 
     def _load_inputs(self):
         # Load image
-        url = "http://images.cocodataset.org/val2017/000000039769.jpg"
-        image = Image.open(requests.get(url, stream=True).raw)
+        image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
+        image = Image.open(str(image_file))
         # Prepare input
         input = self.processor(images=([image] * 16), return_tensors="pt")
         input["pixel_values"] = input["pixel_values"].to(torch.bfloat16)
