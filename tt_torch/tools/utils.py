@@ -83,6 +83,8 @@ class MultiChipOutput:
         self.io_type = io_type
         self.index = index
         self.linked_input = None
+        self.output_dtype = None
+        self.output_shape = None
 
     def link_input(self, input):
         self.linked_input = input
@@ -1012,3 +1014,44 @@ def with_torch_dynamo_cleanup(func):
             torch._dynamo.reset()
 
     return wrapper
+
+
+def _extract_tensor_metadata(
+    node: torch.fx.Node, output_dtypes: list, output_shapes: list
+):
+    """Helper function to extract dtype and shape from a torch.fx.Node's 'val' meta."""
+    if "val" in node.meta:
+        val = node.meta["val"]
+        if isinstance(val, torch.Tensor):
+            output_dtypes.append(val.dtype)
+            output_shapes.append(val.shape)
+        elif isinstance(val, (tuple, list)):
+            for item in val:
+                if isinstance(item, torch.Tensor):
+                    output_dtypes.append(item.dtype)
+                    output_shapes.append(item.shape)
+
+
+def get_output_types_from_program(program):
+    output_dtypes = []
+    output_shapes = []
+
+    output_node = program.graph_module.graph.output_node()
+
+    if output_node.op == "output":
+        returned_values = output_node.args[0]
+
+        # Ensure returned_values is iterable. If it's a single Node, wrap it in a list.
+        if isinstance(returned_values, torch.fx.Node):
+            iterable_returned_values = [returned_values]
+        elif isinstance(returned_values, (tuple, list)):
+            iterable_returned_values = returned_values
+        else:
+            # If not a Node, tuple, or list, we can't process it further for dtypes/shapes.
+            return [], []
+
+        for node_arg in iterable_returned_values:
+            if isinstance(node_arg, torch.fx.Node):
+                _extract_tensor_metadata(node_arg, output_dtypes, output_shapes)
+
+    return output_dtypes, output_shapes

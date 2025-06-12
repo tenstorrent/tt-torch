@@ -414,9 +414,11 @@ class Executor:
                     program_idx,
                     (preprocessed_weights + preprocessed_activations),
                 )
-
             for i, output in enumerate(outputs):
                 graph_output = self.mcg.graph_outputs[device_idx][i]
+                if torch.is_tensor(output):
+                    expected_dtype = graph_output.output_dtype
+                    output = output.to(expected_dtype)
                 if graph_output.io_type == IOType.INTER_DEVICE:
                     mci = graph_output.linked_input
                     graph_inputs[mci.originating_device][mci.consumer_index] = output
