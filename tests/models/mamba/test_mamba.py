@@ -8,7 +8,6 @@ import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 import torch
-import types
 
 
 class ThisTester(ModelTester):

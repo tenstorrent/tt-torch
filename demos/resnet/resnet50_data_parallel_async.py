@@ -9,7 +9,6 @@ from torchvision import transforms
 import torchvision.models as models
 import tabulate
 import requests
-import time
 import tt_mlir
 from tt_torch.tools.device_manager import DeviceManager
 

@@ -3,8 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import sys
 import glob
-import os
-from xml.etree.ElementTree import ElementTree, Element, parse
+from xml.etree.ElementTree import parse
 from tt_torch.tools.crashsafe_utils import rewrite_crashsafe_xml
 
 

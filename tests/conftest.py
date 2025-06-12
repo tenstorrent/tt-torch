@@ -11,8 +11,6 @@ from tt_torch.tools.crashsafe_utils import crashsafe_suffix
 import xml.etree.ElementTree as ET
 import socket
 import os
-import json
-import shutil
 import tt_mlir
 
 global junitxml_path

@@ -8,8 +8,6 @@ from torch_mlir.extras import onnx_importer
 import tt_mlir
 from torch_mlir.ir import Context
 from torch_mlir.dialects import torch as torch_dialect
-import os
-import sys
 
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, tt_torch_error_message
 

@@ -10,7 +10,6 @@ from tt_torch.tools.generate_benchmark_report import (
 )
 import subprocess
 import shutil
-import signal
 
 
 def insert_digit_into_filename(filename, digit):

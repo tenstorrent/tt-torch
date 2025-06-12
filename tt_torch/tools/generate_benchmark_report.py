@@ -48,7 +48,6 @@ def parse_benchmark_xml(xml_dir):
                     f"Error parsing execution time for testcase {testcase_name}. This is okay and means the pytest was abruptly killed without being able to flush the end_timestamp, but will result in a 0 execution time recorded.",
                     e,
                 )
-                pass
 
             tags_property = testcase.find(".//property[@name='tags']")
             max_achieved_compile_depth = None

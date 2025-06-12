@@ -4,7 +4,6 @@
 import os
 import requests
 import argparse
-import datetime
 import subprocess
 import zipfile
 from concurrent.futures import ThreadPoolExecutor, as_completed

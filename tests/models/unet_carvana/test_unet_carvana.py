@@ -3,11 +3,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # Reference: https://github.com/arief25ramadhan/carvana-unet-segmentation
 
-import os
-import subprocess
-import sys
-from pathlib import Path
-import tempfile
 import torch
 import pytest
 

@@ -5,8 +5,6 @@ import cv2
 import numpy as np
 import torch
 import pytest
-import os
-from pathlib import Path
 import requests
 from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend

@@ -5,11 +5,9 @@ import re
 import subprocess
 from tt_torch.tools.generate_benchmark_report import parse_tests_from_matrix
 from collections import Counter
-import csv
 import argparse
 import pandas as pd
 import os
-import pprint
 import json
 
 MAXIMUM_JOB_TIMEOUT_MINUTES = 500  # 500 minutes maximum per-job timeout
