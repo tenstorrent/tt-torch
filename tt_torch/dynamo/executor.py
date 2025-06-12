@@ -509,6 +509,7 @@ class PJRTExecutor:
             ]
 
             outputs = gm(*ordered_inputs)
+            xm.mark_step()  # Graph break here so we do not compile graph for each output
             outputs = [out.to("cpu") for out in outputs]
         return outputs
 
