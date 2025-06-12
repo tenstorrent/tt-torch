@@ -165,6 +165,11 @@ jobs:
               tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-dfine-xlarge-eval]
               "
           },
+          {
+            runs-on: wormhole_b0, name: "phi3p5", tests: "
+              tests/models/phi/test_phi_3p5_moe.py::test_phi[op_by_op_torch-microsoft/Phi-3.5-MoE-instruct-eval]
+            "
+          }
         ]
     runs-on:
       - ${{ matrix.build.sh-run && format('tt-beta-ubuntu-2204-{0}-large-stable', matrix.build.runs-on) ||  matrix.build.runs-on }}
