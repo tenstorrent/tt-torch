@@ -26,8 +26,8 @@ class ThisTester(ModelTester):
 
     def _load_inputs(self):
         # Set up sample input
-        image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
-        self.image = Image.open(str(image_file))
+        self.test_input = "http://images.cocodataset.org/val2017/000000039769.jpg"
+        self.image = Image.open(str(get_file(self.test_input)))
         inputs = self.image_processor(images=self.image, return_tensors="pt")
         inputs["pixel_values"] = inputs["pixel_values"].to(torch.bfloat16)
         return inputs
