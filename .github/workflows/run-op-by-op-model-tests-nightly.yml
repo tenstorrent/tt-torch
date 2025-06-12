@@ -166,8 +166,8 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "phi3p5", tests: "
-              tests/models/phi/test_phi_3p5_moe.py::test_phi[op_by_op_torch-microsoft/Phi-3.5-MoE-instruct-eval]
+            runs-on: wormhole_b0, name: "phi3p5_moe", tests: "
+              tests/models/phi/test_phi_3p5_moe.py::test_phi[op_by_op_torch-phi3p5_moe-eval]
             "
           }
         ]

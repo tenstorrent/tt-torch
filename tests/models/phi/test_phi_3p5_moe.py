@@ -44,23 +44,28 @@ class ThisTester(ModelTester):
         return arguments
 
 
+model_info_list = [
+    ("phi3p5_moe", "microsoft/Phi-3.5-MoE-instruct"),
+]
+
+
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
 @pytest.mark.parametrize(
-    "model_name",
-    [
-        "microsoft/Phi-3.5-MoE-instruct",
-    ],
+    "model_info",
+    model_info_list,
+    ids=[model_info[0] for model_info in model_info_list],
 )
 @pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_phi(record_property, model_name, mode, op_by_op):
+def test_phi(record_property, model_info, mode, op_by_op):
     model_group = "red"
+    __, model_name = model_info
     cc = CompilerConfig()
     cc.enable_consteval = True
     # consteval_parameters is disabled because it results in a memory related crash
