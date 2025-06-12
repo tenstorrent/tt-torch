@@ -73,6 +73,7 @@ jobs:
           {
             runs-on: wormhole_b0, name: "llama", tests: "
               tests/models/llama/test_llama_3b.py::test_llama_3b[op_by_op_torch-meta-llama/Llama-3.2-3B-eval]
+              tests/models/llama/test_llama_7b.py::test_llama_7b[op_by_op_torch-eval]
               "
           },
           {
@@ -130,11 +131,6 @@ jobs:
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op_torch-eval-mixer_b16_224.goog_in21k]
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op_torch-eval-ese_vovnet19b_dw.ra_in1k]
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op_torch-eval-inception_v4.tf_in1k]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "xglm", tests: "
-              tests/models/xglm/test_xglm.py::test_xglm[op_by_op_torch-eval]
               "
           },
           {

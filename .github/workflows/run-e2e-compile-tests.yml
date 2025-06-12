@@ -40,6 +40,7 @@ jobs:
               tests/models/autoencoder_conv/test_autoencoder_conv_v2.py::test_autoencoder_conv_v2[full-eval]
               tests/models/flux/test_flux.py::test_flux[full-flux_schnell-eval]
               tests/models/flux/test_flux.py::test_flux[full-flux_dev-eval]
+              tests/models/xglm/test_xglm.py::test_xglm[full-eval]
             "
           },
           {
@@ -53,7 +54,7 @@ jobs:
                   tests/models/llama/test_llama_7b.py::test_llama_7b[full-eval]
                   tests/models/falcon/test_falcon.py::test_falcon[full-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-googlenet]
-                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op_torch-eval-ghostnetv2_100.in1k]
+                  tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-full-eval-ghostnetv2_100.in1k]
                   tests/models/mistral/test_pixtral.py::test_pixtral[full-eval]
                   tests/models/mistral/test_mistral.py::test_mistral[full-mistral7b-eval]
                   tests/models/mistral/test_mistral.py::test_mistral[full-ministral8b-eval]

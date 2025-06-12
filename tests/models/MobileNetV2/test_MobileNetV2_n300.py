@@ -46,7 +46,7 @@ def test_MobileNetV2(record_property, mode, op_by_op):
     cc.consteval_parameters = True
     cc.automatic_parallelization = True
     cc.mesh_shape = [1, 2]
-    cc.dump_info = True
+
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:

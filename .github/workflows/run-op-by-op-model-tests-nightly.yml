@@ -52,11 +52,6 @@ jobs:
               ", sh-run: true
           },
           {
-            runs-on: wormhole_b0, name: "llama", tests: "
-              tests/models/llama/test_llama_7b.py::test_llama_7b[op_by_op_torch-eval]
-              "
-          },
-          {
             runs-on: wormhole_b0, name: "openpose", tests: "
               tests/models/openpose/test_openpose.py::test_openpose[op_by_op_torch-eval]
               "
@@ -84,6 +79,11 @@ jobs:
           {
             runs-on: wormhole_b0, name: "timm", tests: "
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op_torch-eval-ghostnetv2_100.in1k]
+              "
+          },
+          {
+            runs-on: wormhole_b0, name: "xglm", tests: "
+              tests/models/xglm/test_xglm.py::test_xglm[op_by_op_torch-eval]
               "
           },
           {

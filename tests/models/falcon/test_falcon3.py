@@ -79,6 +79,7 @@ def test_falcon(record_property, model_name, mode, op_by_op):
         if model_name
         in [
             "tiiuae/Falcon3-3B-Base",
+            "tiiuae/Falcon3-1B-Base",
         ]
         else False
     )
