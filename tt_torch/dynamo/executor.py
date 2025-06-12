@@ -305,7 +305,7 @@ class Executor:
         
         # q - how do we key this cache? input index?
         
-        constant_inputs_ct = 16*2        
+        constant_inputs_ct = 2*2        
         for i, runtime_tensor in enumerate(runtime_activations_and_weights):
             # Find if this index is in any of the cachable_input_indices tuples
             # matching_entry = next((entry for entry in cachable_input_indices if entry[0] == i), None)
