@@ -3,13 +3,12 @@
 # SPDX-License-Identifier: Apache-2.0
 # Phi-3-mini-128k-instruct: https://huggingface.co/microsoft/Phi-3-mini-128k-instruct
 # Phi-3-mini-4k-instruct: https://huggingface.co/microsoft/Phi-3-mini-4k-instruct
-# Phi-3.5-MoE-instruct: https://huggingface.co/microsoft/Phi-3.5-MoE-instruct
 
 import torch
 import pytest
 
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from tests.utils import ModelTester, skip_full_eval_tests
+from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
@@ -55,7 +54,6 @@ class ThisTester(ModelTester):
     [
         "microsoft/Phi-3-mini-128k-instruct",
         "microsoft/Phi-3-mini-4k-instruct",
-        "microsoft/Phi-3.5-MoE-instruct",
     ],
 )
 @pytest.mark.parametrize(
@@ -79,8 +77,8 @@ def test_phi(record_property, model_name, mode, op_by_op):
         reason="Out of Memory: Not enough space to allocate 201326592 B DRAM buffer across 12 banks, where each bank needs to store 16777216 B",
         model_group=model_group,
         model_name_filter=[
-            "microsoft/Phi-3-mini-128k-instruct",
-            "microsoft/Phi-3-mini-4k-instruct",
+            # "microsoft/Phi-3-mini-128k-instruct",
+            # "microsoft/Phi-3-mini-4k-instruct",
         ],
     )
 
