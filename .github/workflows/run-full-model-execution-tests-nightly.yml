@@ -203,6 +203,7 @@ jobs:
           {
             # These are WIP model_group=red models, marked w/ pytest.skip with reasons, run here for reporting.
             runs-on: wormhole_b0, name: "skip_tests_red_models", tests: "
+                tests/models/wip_models.py::test_wip_priority_red_models
                 tests/models/bi_lstm_crf/test_bi_lstm_crf.py::test_bi_lstm_crf[full-eval-lstm]
                 tests/models/bi_lstm_crf/test_bi_lstm_crf.py::test_bi_lstm_crf[full-eval-gru]
                 tests/models/oft/test_oft.py::test_oft[full-eval]
