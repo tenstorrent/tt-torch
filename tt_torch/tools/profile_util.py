@@ -2,15 +2,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import os
-import typing
 import subprocess
 import time
 import socket
-import signal
 import sys
-import shutil
 import csv
-import json
 import re
 from tt_torch.tools.filemanager import FileManager
 

@@ -1,10 +1,8 @@
 # SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-import sys
 import os
 import json
-import csv
 import xlsxwriter
 from xlsxwriter.utility import xl_rowcol_to_cell
 from mdutils.mdutils import MdUtils

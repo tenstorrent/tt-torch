@@ -5,8 +5,6 @@
 import xml.etree.ElementTree as ET
 import ast
 import pytest
-import subprocess
-import re
 
 crashsafe_suffix = "_crashsafe.xml"
 achieved_depth_mapping = {

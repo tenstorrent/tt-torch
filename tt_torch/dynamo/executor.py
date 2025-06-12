@@ -25,7 +25,7 @@ from tt_torch.tools.utils import (
     torch_input_to_onnx,
     MultiChipGraph,
 )
-from typing import Union, Optional
+from typing import Optional
 
 
 def gb_to_bytes(gb):

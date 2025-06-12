@@ -8,8 +8,6 @@ from tt_torch.tools.utils import CompilerConfig
 from tt_torch.tools.device_manager import DeviceManager
 from tt_torch.tools.verify import verify_against_golden
 
-import time
-
 
 def test_pipeline_parallel():
     class Basic(nn.Module):

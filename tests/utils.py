@@ -12,8 +12,6 @@ import gc
 import onnxruntime
 import numpy as np
 import collections
-import re
-from typing import List, Dict, Tuple
 from tt_torch.dynamo.backend import backend, BackendOptions
 from tt_torch.onnx_compile import compile_onnx
 from tt_torch.tools.utils import (
@@ -25,9 +23,7 @@ from tt_torch.tools.utils import (
     with_torch_dynamo_cleanup,
 )
 import warnings
-import json
 from onnx import version_converter
-from pathlib import Path
 from tt_torch.tools.verify import verify_against_golden
 from tt_torch.tools.utils import RuntimeIntermediate, OpByOpBackend
 from tt_torch.tools.device_manager import DeviceManager

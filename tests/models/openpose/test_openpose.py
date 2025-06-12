@@ -4,7 +4,6 @@
 # Reference: https://huggingface.co/lllyasviel/control_v11p_sd15_openpose
 
 import torch
-from pathlib import Path
 from diffusers.utils import load_image
 import pytest
 from tests.utils import ModelTester

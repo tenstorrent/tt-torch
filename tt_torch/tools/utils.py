@@ -15,7 +15,6 @@ import os
 import torch
 import math
 import sys
-import shutil
 import onnx
 from onnxruntime import SessionOptions, InferenceSession
 import tt_mlir

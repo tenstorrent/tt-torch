@@ -4,7 +4,7 @@
 import torch
 import gc
 from torch.fx.experimental import const_fold
-from typing import List, Optional, Union
+from typing import Union
 from torch.export.graph_signature import InputKind
 from tt_torch.tools.utils import (
     MultiChipInput,

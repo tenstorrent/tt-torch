@@ -4,7 +4,6 @@
 import torch
 import os
 import warnings
-import re
 import tt_mlir
 import sys
 import torch_mlir
