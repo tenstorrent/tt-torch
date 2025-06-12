@@ -35,9 +35,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        runner: [wormhole, blackhole]
         build: [
           {
-            runs-on: wormhole_b0, name: "eval_1", tests: "
+            # Once we have blackhole chips we can add a runner, i.e. 'bh-runner: p150'
+            wh-runner: wormhole_b0, name: "eval_1", tests: "
                   tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval]
                   tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval]
                   tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval]
@@ -46,7 +48,7 @@ jobs:
             "
           },
           {
-            runs-on: wormhole_b0, name: "eval_2", tests: "
+            wh-runner: wormhole_b0, name: "eval_2", tests: "
                   tests/models/mnist/test_mnist.py::test_mnist_train[single_device-full-eval]
                   tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval]
                   tests/models/openpose/test_openpose_v2.py::test_openpose_v2[full-eval]
@@ -60,7 +62,7 @@ jobs:
             "
           },
           {
-            runs-on: wormhole_b0, name: "eval_3", tests: "
+            wh-runner: wormhole_b0, name: "eval_3", tests: "
                   tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[single_device-full-albert/albert-xxlarge-v2-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_y_400mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_y_800mf]
@@ -72,7 +74,7 @@ jobs:
             "
           },
           {
-            runs-on: wormhole_b0, name: "eval_4", tests: "
+            wh-runner: wormhole_b0, name: "eval_4", tests: "
                   tests/models/llama/test_llama_3b.py::test_llama_3b[full-meta-llama/Llama-3.2-3B-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_x_400mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_x_800mf]
@@ -85,7 +87,7 @@ jobs:
             "
           },
           {
-            runs-on: wormhole_b0, name: "eval_5", tests: "
+            wh-runner: wormhole_b0, name: "eval_5", tests: "
                 tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io[full-eval]
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-mobilenet_v2]
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-mobilenet_v3_small]
@@ -104,7 +106,7 @@ jobs:
           },
           # This test group needs to be moved. This will be done once multichip tests are refactored: #780
           {
-            runs-on: n300, name: "eval_6", tests: "
+            wh-runner: n300, name: "eval_6", tests: "
                 tests/torch/test_basic_async.py
                 tests/torch/test_basic_multichip.py
                 tests/models/mnist/test_mnist.py::test_mnist_train[data_parallel-full-eval]
@@ -121,15 +123,18 @@ jobs:
             "
           },
           {
-            runs-on: high-memory-n300, name: "eval_6_highmem_quarantine", tests: "
+            wh-runner: high-memory-n300, name: "eval_6_highmem_quarantine", tests: "
               tests/models/llama/test_llama_7b_pipeline_parallel.py::test_llama_7b_pipeline_parallel[huggyllama/llama-7b-eval]
             "
           }
         ]
+    if:
+      - ${{ (matrix.runner == 'wormhole' && matrix.build.wh-runner != null) || (matrix.runner == 'blackhole' && matrix.build.bh-runner != null) }}
+    outputs:
+      runner-used: ${{ matrix.runner == 'wormhole' && matrix.build.wh-runner || matrix.build.bh-runner }}
     runs-on:
-      - ${{ matrix.build.runs-on }}
-
-    name: "test execution (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
+      - ${{ outputs.runner-used }}
+    name: "test execution on ${{ matrix.runner }} (${{ outputs.runner-used }}, ${{ matrix.build.name }})"
 
     container:
       image: ${{ inputs.docker-image }}
@@ -148,7 +153,7 @@ jobs:
       id: fetch-job-id
       uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
       with:
-        job_name: "test execution (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})" # reference above tests.name
+        job_name: "test execution (${{ outputs.runner-used }}, ${{ matrix.build.name }})" # reference above tests.name
 
     - name: Set reusable strings
       id: strings
@@ -194,14 +199,14 @@ jobs:
       uses: actions/upload-artifact@v4
       if: success() || failure()
       with:
-        name: test-log-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        name: test-log-${{ outputs.runner-used }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: pytest.log
 
     - name: Upload Test Report Models
       uses: actions/upload-artifact@v4
       if: success() || failure()
       with:
-        name: test-reports-models-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        name: test-reports-models-${{ outputs.runner-used }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: ${{ steps.strings.outputs.test_report_path_models }}
 
     - name: Upload coverage reports to Codecov
@@ -226,11 +231,11 @@ jobs:
       uses: actions/upload-artifact@v4
       if: ${{ (success() || failure()) && inputs.run-dump-mlir == 'true' }}
       with:
-        name: model-mlir-execute-push-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        name: model-mlir-execute-push-${{ outputs.runner-used }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: ${{ steps.strings.outputs.mlir_dir }}
 
   merge_mlir_artifacts:
-    needs: [tests]
+    needs: [tests, rerun-on-blackhole]
     if: ${{ always() && inputs.run-dump-mlir == 'true' }}  # Runs always if MLIR dump is enabled
     runs-on: ubuntu-latest
     name: Merge MLIR Artifacts

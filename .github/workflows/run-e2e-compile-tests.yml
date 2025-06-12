@@ -30,10 +30,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        runner: [wormhole, blackhole]
         build: [
           {
-            # Approximately 60 minutes.
-            runs-on: wormhole_b0, name: "compile_1", tests: "
+            # Approximately 60
+            # Once we have blackhole chips we can add a runner, i.e. 'bh-runner: p150'
+            wh-runner: wormhole_b0, name: "compile_1", tests: "
               tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-7B-Base-eval]
               tests/models/detr/test_detr_onnx.py::test_detr_onnx[full-eval]
               tests/models/oft/test_oft.py::test_oft[full-eval]
@@ -45,7 +47,7 @@ jobs:
           },
           {
             # Approximately 180 minutes.
-            runs-on: wormhole_b0, name: "compile_2", tests: "
+            wh-runner: wormhole_b0, name: "compile_2", tests: "
                   tests/models/glpn_kitti/test_glpn_kitti.py::test_glpn_kitti[full-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_y_128gf]
                   tests/models/deepseek/test_deepseek_qwen.py::test_deepseek_qwen[full-deepseek-ai/DeepSeek-R1-Distill-Qwen-32B-eval]
@@ -61,10 +63,14 @@ jobs:
             "
           },
         ]
+    if:
+      - ${{ (matrix.runner == 'wormhole' && matrix.build.wh-runner != null) || (matrix.runner == 'blackhole' && matrix.build.bh-runner != null) }}
+    outputs:
+      runner-used: ${{ matrix.runner == 'wormhole' && matrix.build.wh-runner || matrix.build.bh-runner }}
     runs-on:
-      - ${{ matrix.build.runs-on }}
+      - ${{ outputs.runner-used }}
 
-    name: "test compile (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
+    name: "test compile (${{ outputs.runner-used }}, ${{ matrix.build.name }})"
 
     container:
       image: ${{ inputs.docker-image }}
@@ -84,7 +90,7 @@ jobs:
       id: fetch-job-id
       uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
       with:
-        job_name: "test compile (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})" # reference above tests.name
+        job_name: "test compile (${{ outputs.runner-used }}, ${{ matrix.build.name }})" # reference above tests.name
     - name: Set reusable strings
       id: strings
       shell: bash
@@ -133,21 +139,21 @@ jobs:
       uses: actions/upload-artifact@v4
       if: success() || failure()
       with:
-        name: test-log-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        name: test-log-${{ outputs.runner-used }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: pytest.log
 
     - name: Upload Test Report Models
       uses: actions/upload-artifact@v4
       if: success() || failure()
       with:
-        name: test-reports-models-${{ matrix.build.runs-on }}-${{ matrix.build.name }}
+        name: test-reports-models-${{ outputs.runner-used }}-${{ matrix.build.name }}
         path: ${{ steps.strings.outputs.test_report_path_models }}
 
     - name: Upload MLIR files
       uses: actions/upload-artifact@v4
       if: ${{ (success() || failure()) && inputs.run-dump-mlir == 'true' }}
       with:
-        name: model-mlir-compile-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        name: model-mlir-compile-${{ outputs.runner-used }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: ${{ steps.strings.outputs.mlir_dir }}
 
   merge_mlir_artifacts:

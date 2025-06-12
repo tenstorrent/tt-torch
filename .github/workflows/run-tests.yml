@@ -28,6 +28,7 @@ jobs:
       matrix:
         build: [
           {runs-on: wormhole_b0, name: "run", container-options: "--device /dev/tenstorrent/0"},
+          # TODO: Add a matrix.build entry for blackhole chips when available
         ]
     name: tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})
     runs-on:

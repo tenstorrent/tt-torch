@@ -28,6 +28,7 @@ jobs:
       matrix:
         build: [
           {runs-on: wormhole_b0, name: "run"},
+          # TODO: Add a matrix.build entry for blackhole chips when available
         ]
 
     runs-on:

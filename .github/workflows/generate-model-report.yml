@@ -27,9 +27,12 @@ jobs:
     timeout-minutes: 120
     strategy:
       fail-fast: false
+      matrix:
+        build: [ wormhole_b0 ]
+        # TODO: Add a matrix.build entry for blackhole chips when available
 
     runs-on:
-      - wormhole_b0
+      - ${{ matrix.build.runs-on }}
 
     container:
       image: ${{ needs.docker-build.outputs.docker-image }}
