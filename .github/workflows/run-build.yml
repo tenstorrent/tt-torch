@@ -27,8 +27,9 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-          {runs-on: wormhole_b0, name: "run"},
-        ]
+            {runs-on: wormhole_b0, name: "run"},
+            # TODO: Add a build for blackhole chips when available
+          ]
 
     runs-on:
       - ${{ matrix.build.runs-on }}

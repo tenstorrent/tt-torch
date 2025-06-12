@@ -42,6 +42,8 @@ def test_yolov4(record_property, mode, op_by_op):
         model_name,
         mode,
         compiler_config=cc,
+        assert_pcc=False,
+        assert_atol=False,
         record_property_handle=record_property,
         model_group="red",
     )

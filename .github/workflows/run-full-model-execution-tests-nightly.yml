@@ -35,10 +35,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        runner: [wormhole, blackhole]
         build: [
           {
             # Approximately 70 minutes.
-            runs-on: wormhole_b0, name: "eval_1", tests: "
+            # Once we have blackhole chips we can add a runner for each entry, i.e. 'bh-runner: p150'
+           wh-runner: wormhole_b0, name: "eval_1", tests: "
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg19]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg19_bn]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg16]
@@ -79,7 +81,7 @@ jobs:
             "
           },
           {
-            runs-on: n300, name: "eval_1_data_parallel", tests: "
+            wh-runner: n300, name: "eval_1_data_parallel", tests: "
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-vgg19]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-vgg19_bn]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-vgg16]
@@ -115,7 +117,7 @@ jobs:
           },
           {
             # Approximately 95 minutes.
-            runs-on: wormhole_b0, name: "eval_2", tests: "
+            wh-runner: wormhole_b0, name: "eval_2", tests: "
                   tests/models/bloom/test_bloom.py::test_bloom[full-eval]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-full-eval-hrnet_w18.ms_aug_in1k]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-full-eval-ghostnet_100.in1k]
@@ -144,7 +146,7 @@ jobs:
           },
           {
             # Approximately 65 minutes.
-            runs-on: wormhole_b0, name: "eval_3", tests: "
+            wh-runner: wormhole_b0, name: "eval_3", tests: "
                   tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-1.5-eval]
                   tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-1B-Base-eval]
                   tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-1B-Instruct-eval]
@@ -152,7 +154,7 @@ jobs:
           },
           {
             # Approximately 70 minutes.
-            runs-on: wormhole_b0, name: "eval_5", tests: "
+            wh-runner: wormhole_b0, name: "eval_5", tests: "
                   tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[full-Qwen/Qwen2.5-1.5B-eval]
                   tests/models/opt/test_opt.py::test_opt[full-eval]
                   tests/models/t5/test_t5.py::test_t5[full-t5-small-eval]
@@ -162,7 +164,7 @@ jobs:
           },
           {
             # Approximately 55 minutes.
-            runs-on: wormhole_b0, name: "eval_6", tests: "
+            wh-runner: wormhole_b0, name: "eval_6", tests: "
                   tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet[full-eval]
                   tests/models/stable_diffusion/test_stable_diffusion_transformer.py::test_stable_diffusion_transformer[full-SD3.5-medium-transformer-eval]
                   tests/models/unet/test_unet.py::test_unet[full-eval]
@@ -176,19 +178,19 @@ jobs:
           },
           {
             # Approximately 5 minutes.
-            runs-on: wormhole_b0, name: "eval_7_bert_qrtn", tests: "
+            wh-runner: wormhole_b0, name: "eval_7_bert_qrtn", tests: "
                   tests/models/bert/test_bert.py::test_bert[full-eval]
             "
           },
           # Approximately 180 minutes.
           {
-            runs-on: wormhole_b0, name: "eval_8", tests: "
+            wh-runner: wormhole_b0, name: "eval_8", tests: "
                   tests/models/mamba/test_mamba.py::test_mamba[full-state-spaces/mamba-790m-hf-eval]
             "
           },
           # Approximately 70 minutes.
           {
-            runs-on: wormhole_b0, name: "eval_9", tests: "
+            wh-runner: wormhole_b0, name: "eval_9", tests: "
                 tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b0-eval]
                 tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b1-eval]
                 tests/models/EfficientNet/test_EfficientNet_onnx.py::test_EfficientNet_onnx[full-efficientnet-b2-eval]
@@ -208,7 +210,7 @@ jobs:
           },
           {
             # These are WIP model_group=red models, marked w/ pytest.skip with reasons, run here for reporting.
-            runs-on: wormhole_b0, name: "skip_tests_red_models", tests: "
+            wh-runner: wormhole_b0, name: "skip_tests_red_models", tests: "
                 tests/models/bi_lstm_crf/test_bi_lstm_crf.py::test_bi_lstm_crf[full-eval-lstm]
                 tests/models/bi_lstm_crf/test_bi_lstm_crf.py::test_bi_lstm_crf[full-eval-gru]
                 tests/models/oft/test_oft.py::test_oft[full-eval]
@@ -231,7 +233,7 @@ jobs:
           },
           # This test group needs to be moved. This will be done once multichip tests are refactored: #780
           {
-            runs-on: n300, name: "eval_10_batch_parallel", tests: "
+            wh-runner: n300, name: "eval_10_batch_parallel", tests: "
                 tests/models/stable_diffusion/test_stable_diffusion_unet_n300.py::test_stable_diffusion_unet[full-eval]
                 tests/models/unet/test_unet_n300.py::test_unet[full-eval]
                 tests/models/unet_brain/test_unet_brain_n300.py::test_unet_brain[full-eval]
@@ -282,7 +284,7 @@ jobs:
           },
           # This test group needs to be moved. This will be done once multichip tests are refactored: #780
           {
-            runs-on: n300, name: "eval_11_batch_parallel", tests: "
+            wh-runner: n300, name: "eval_11_batch_parallel", tests: "
                 tests/models/timm/test_timm_image_classification_n300.py::test_timm_image_classification[full-eval-dla34.in1k]
                 tests/models/timm/test_timm_image_classification_n300.py::test_timm_image_classification[full-eval-ghostnet_100.in1k]
                 tests/models/timm/test_timm_image_classification_n300.py::test_timm_image_classification[full-eval-hrnet_w18.ms_aug_in1k]
@@ -302,10 +304,14 @@ jobs:
             "
           },
         ]
+    if:
+      - ${{ (matrix.runner == 'wormhole' && matrix.build.wh-runner != null) || (matrix.runner == 'blackhole' && matrix.build.bh-runner != null) }}
+    outputs:
+      runner-used: ${{ matrix.runner == 'wormhole' && matrix.build.wh-runner || matrix.build.bh-runner }}
     runs-on:
-      - ${{ matrix.build.runs-on }}
+      - ${{ outputs.runner-used }}
 
-    name: "test execution_nightly (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
+    name: "test execution_nightly (${{ outputs.runner-used }}, ${{ matrix.build.name }})"
 
     container:
       image: ${{ inputs.docker-image }}
@@ -324,7 +330,7 @@ jobs:
       id: fetch-job-id
       uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
       with:
-        job_name: "test execution_nightly (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})" # reference above tests.name
+        job_name: "test execution_nightly (${{ outputs.runner-used }}, ${{ matrix.build.name }})" # reference above tests.name
 
     - name: Set reusable strings
       id: strings
@@ -370,14 +376,14 @@ jobs:
       uses: actions/upload-artifact@v4
       if: success() || failure()
       with:
-        name: test-log-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        name: test-log-${{ outputs.runner-used }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: pytest.log
 
     - name: Upload Test Report Models
       uses: actions/upload-artifact@v4
       if: success() || failure()
       with:
-        name: test-reports-models-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        name: test-reports-models-${{ outputs.runner-used }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: ${{ steps.strings.outputs.test_report_path_models }}
 
     - name: Upload coverage reports to Codecov
@@ -402,7 +408,7 @@ jobs:
       uses: actions/upload-artifact@v4
       if: ${{ (success() || failure()) && inputs.run-dump-mlir == 'true' }}
       with:
-        name: model-mlir-execute-nightly-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        name: model-mlir-execute-nightly-${{ outputs.runner-used }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: ${{ steps.strings.outputs.mlir_dir }}
 
   merge_mlir_artifacts:
