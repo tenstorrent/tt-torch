@@ -21,7 +21,11 @@ from transformers import AutoProcessor, AutoModelForCausalLM, pipeline
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from PIL import Image
+<<<<<<< HEAD
 >>>>>>> 6bf3f62e (need to figure out the vision model test. Not sure if im doing it well. FIXING SOME REBASE ERRORS.)
+=======
+from third_party.tt_forge_models.tools.utils import get_file
+>>>>>>> dfb55462 (3.5 vision starts op by op but doesnt complete for some reason. Need to figure out. Stops at Op 421 and throws Runtime Error.)
 
 
 class ThisTester(ModelTester):
@@ -61,53 +65,45 @@ class ThisTester(ModelTester):
 =======
         # Use AutoProcessor for multimodal models
         self.processor = AutoProcessor.from_pretrained(
-            self.model_name, trust_remote_code=True  # Important for Phi-3 models
+            self.model_name, trust_remote_code=True, torch_dtype=torch.bfloat16
         )
+        self.tokenizer = self.processor.tokenizer
         model = AutoModelForCausalLM.from_pretrained(
             self.model_name,
             torch_dtype=torch.bfloat16,  # Ensure bfloat16
-            trust_remote_code=True,  # Important for Phi-3 models
-            attn_implementation="eager",  # Use eager attention for compatibility
+            trust_remote_code=True,
+            _attn_implementation="eager",
         )
         return model
 
     def _load_inputs(self):
-        """# Example image URL and prompt structure
-        image_url = "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/p-blog/candy.JPG"
-        # Store prompt for later use/display
-        self.current_prompt_text = "<|user|>\n<|image_1|>\nWhat animal is on the candy?<|end|>\n<|assistant|>\n"
-
-        raw_image = Image.open(requests.get(image_url, stream=True).raw)
-
-        # Process both text and image using the AutoProcessor
-        inputs = self.processor(
-            text=self.current_prompt_text, images=raw_image, return_tensors="pt"
+        image_file = get_file(
+            "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/datasets/cat_style_layout.png"
         )
+        image = Image.open(str(image_file))
 
-        # Ensure pixel_values are bfloat16
-        inputs["pixel_values"] = inputs["pixel_values"].to(torch.bfloat16)
-
-        # The ModelTester expects a dictionary of tensors, which processor already provides
-        return inputs"""
-        pipe = pipeline(
-            "image-text-to-text",
-            model="microsoft/Phi-3.5-vision-instruct",
-            trust_remote_code=True,
-        )
         messages = [
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "image",
-                        "url": "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/p-blog/candy.JPG",
-                    },
-                    {"type": "text", "text": "What animal is on the candy?"},
-                ],
-            },
+            {"role": "user", "content": "<|image_1|>\nWhat is the cat wearing?"}
         ]
+<<<<<<< HEAD
         return pipe(text=messages)
 >>>>>>> 6bf3f62e (need to figure out the vision model test. Not sure if im doing it well. FIXING SOME REBASE ERRORS.)
+=======
+
+        # 3. Apply the chat template and process inputs
+        prompt = self.processor.tokenizer.apply_chat_template(
+            messages, tokenize=False, add_generation_prompt=True
+        )
+
+        inputs = self.processor(
+            prompt,
+            images=image,
+            return_tensors="pt",
+            padding=True,
+        )
+        inputs["pixel_values"] = inputs["pixel_values"].to(torch.bfloat16)
+        return inputs
+>>>>>>> dfb55462 (3.5 vision starts op by op but doesnt complete for some reason. Need to figure out. Stops at Op 421 and throws Runtime Error.)
 
 
 @pytest.mark.parametrize(

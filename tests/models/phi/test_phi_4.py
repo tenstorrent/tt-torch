@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-# Phi-3.5-vision: https://huggingface.co/microsoft/phi-4
+# Phi-4: https://huggingface.co/microsoft/phi-4
 import torch
 import pytest
 
