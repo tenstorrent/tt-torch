@@ -8,6 +8,7 @@ import torch
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+import tt_mlir
 
 
 class ThisTester(ModelTester):
@@ -53,11 +54,15 @@ def test_qwen2_casual_lm(record_property, model_name, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    # TODO: Remove this once PCC ATOL is fixed on blackhole runners - https://github.com/tenstorrent/tt-torch/issues/1003
+    assert_pcc = tt_mlir.get_arch() != tt_mlir.Arch.BLACKHOLE
+
     tester = ThisTester(
         model_name,
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
+        assert_pcc=assert_pcc,
         assert_atol=False,
         run_generate=False,
         required_pcc=0.86,

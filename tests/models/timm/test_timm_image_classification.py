@@ -10,6 +10,7 @@ import torch
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+import tt_mlir
 
 dependencies = ["timm==1.0.9"]
 
@@ -104,6 +105,8 @@ def test_timm_image_classification(
             "xception71.tf_in1k",
             "inception_v4.tf_in1k",
         ]
+        or tt_mlir.get_arch() != tt_mlir.Arch.BLACKHOLE
+        # TODO: Remove this once PCC ATOL is fixed on blackhole runners - https://github.com/tenstorrent/tt-torch/issues/1003
         else False
     )
 

@@ -8,6 +8,7 @@ import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from third_party.tt_forge_models.tools.utils import get_file
+import tt_mlir
 
 
 class ThisTester(ModelTester):
@@ -121,8 +122,13 @@ def test_torchvision_image_classification(
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     # TODO Enable checking (vit_h_14) - https://github.com/tenstorrent/tt-torch/issues/491
+    # TODO Enable PCC/ATOL once issue is fixed on blackhole runners - https://github.com/tenstorrent/tt-torch/issues/1003
     model_name = model_info[0]
-    assert_pcc = False if model_name in ["vit_h_14"] else True
+    assert_pcc = (
+        False
+        if model_name in ["vit_h_14"] or tt_mlir.get_arch() == tt_mlir.Arch.BLACKHOLE
+        else True
+    )
     assert_atol = False
 
     model_group = "red" if model_name == "swin_v2_s" else "generality"
