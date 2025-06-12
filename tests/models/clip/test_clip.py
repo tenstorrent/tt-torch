@@ -1,37 +1,19 @@
 # SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-from PIL import Image
 import torch
-from transformers import CLIPProcessor, CLIPModel
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.tools.utils import get_file
+from third_party.tt_forge_models.clip.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model = CLIPModel.from_pretrained(
-            "openai/clip-vit-base-patch32", torch_dtype=torch.bfloat16
-        )
-        self.processor = CLIPProcessor.from_pretrained(
-            "openai/clip-vit-base-patch32", torch_dtype=torch.bfloat16
-        )
-        return model
+        return ModelLoader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
-        image = Image.open(str(image_file))
-
-        inputs = self.processor(
-            text=["a photo of a cat", "a photo of a dog"],
-            images=image,
-            return_tensors="pt",
-            padding=True,
-        )
-        inputs["pixel_values"] = inputs["pixel_values"].to(torch.bfloat16)
-        return inputs
+        return ModelLoader.load_inputs(dtype_override=torch.bfloat16, batch_size=2)
 
     def set_inputs_train(self, inputs):
         inputs["pixel_values"].requires_grad_(True)
