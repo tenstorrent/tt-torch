@@ -23,7 +23,7 @@ on:
       wheel-artifact-name:
         description: "The name of the built wheel's artifact"
         value: ${{ jobs.build.outputs.wheel-artifact-name }}
-        
+
 
 jobs:
   build:
@@ -48,8 +48,8 @@ jobs:
         - /lib/modules:/lib/modules
         - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
         - /mnt/dockercache:/mnt/dockercache
-    
-    env: 
+
+    env:
       WHEEL_ARTIFACT_NAME: install-artifacts${{ inputs.artifact-key }}
     outputs:
       wheel-artifact-name: ${{ steps.set-wheel-artifact-name.outputs.wheel-artifact-name}}
@@ -113,7 +113,7 @@ jobs:
         tar cvf artifact.tar .
 
     - name: Set wheel artifact name
-      id: set-wheel-artifact-name 
+      id: set-wheel-artifact-name
       shell: bash
       run: |
         echo "wheel-artifact-name=$WHEEL_ARTIFACT_NAME" >> "$GITHUB_OUTPUT"
