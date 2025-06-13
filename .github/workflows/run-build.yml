@@ -70,12 +70,25 @@ jobs:
         create-symlink: true
         key: build_cache
 
-    # Build project
-    - name: Build
+    - name: Set reusable strings
+      id: strings
       shell: bash
       run: |
-        source env/activate
-        python setup.py bdist_wheel --code_coverage ${{ inputs.setup-args }}
+        echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
+        echo "build-output-dir=$(pwd)/build" >> "$GITHUB_OUTPUT"
+        echo "wheel-output-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
+
+    # Build project
+    - name: Build ttmlir Wheel (manylinux)
+      uses: pypa/cibuildwheel@v2.23.2
+      env:
+        CIBW_ENVIRONMENT: "IN_CIBW_ENV=ON"
+        CIBW_MANYLINUX_X86_64_IMAGE: ghcr.io/tenstorrent/tt-mlir/tt-mlir-manylinux-2-34
+        CIBW_CONFIG_SETTINGS: "--code_coverage ${{ inputs.setup-args }}"
+      with:
+        output-dir: ${{ steps.strings.outputs.wheel-output-dir }}
+        package-dir: ${{ steps.strings.outputs.work-dir }}/python
+        config-file: "${{ steps.strings.outputs.work-dir }}/python/pyproject.toml"
 
     - name: Verify tt-mlir SHA override
       if: ${{ inputs.mlir_override }}

@@ -1,0 +1,22 @@
+FROM ghcr.io/tenstorrent/tt-metal/tt-metalium/manylinux-amd64:e36da351ecea8f2a06d83cde7b9ed78f053ec1e5
+
+# Create a directory for the build and toolchain
+ARG GIT_SHA
+ENV PROJECT_NAME=tt-torch
+ENV BUILD_DIR=/home/build
+ENV TTMLIR_TOOLCHAIN_DIR=/opt/ttmlir-toolchain
+ENV TTTORCH_DIST_DIR=/opt/dist
+
+RUN echo "Building $PROJECT_NAME at $GIT_SHA"
+
+RUN mkdir -p $BUILD_DIR && \
+    mkdir -p $TTMLIR_TOOLCHAIN_DIR && \
+    mkdir -p $TTTORCH_DIST_DIR
+
+# Copy the project from host, cloned in build-image.yml
+COPY . $BUILD_DIR/$PROJECT_NAME
+
+# Build the toolchain
+WORKDIR $BUILD_DIR/$PROJECT_NAME
+RUN cd third_party && \
+    cmake -B toolchain -DBUILD_TOOLCHAIN=ON
