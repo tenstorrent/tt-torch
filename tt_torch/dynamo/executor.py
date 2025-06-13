@@ -270,7 +270,7 @@ class Executor:
             return tuple(tensors)
 
 
-        constant_inputs_ct = 2*2        
+        constant_inputs_ct = 28*2        
 
         input_len = len(inputs)
         tensor_start_idx = 0
@@ -294,14 +294,19 @@ class Executor:
                 torch_weights_and_activations
             )
 
+        
+
         # avoid preprocessing inputs if they already exist in the cache
-        already_cached_inputs = []
-        if self.runtime_tensor_cache is not None:
+        already_cached_inputs = [] 
+        # already_cached_inputs = None # comment this out to enable alloc suppression
+        
+        if already_cached_inputs is not None and self.runtime_tensor_cache is not None:
             already_cached_inputs.extend(self.runtime_tensor_cache.keys())
         
-        if len(already_cached_inputs) > 0:
+        if  already_cached_inputs is not None and len(already_cached_inputs) > 0:
             print(f"[James] Found {len(already_cached_inputs)} cached inputs. Suppressing their allocation.")
             torch_weights_and_activations = torch_weights_and_activations[len(already_cached_inputs):]
+            tensor_start_idx += len(already_cached_inputs) # these are effectively "preprocessed" graph constants
             
         runtime_activations_and_weights = tt_mlir.preprocess_inputs(
             self._get_device(device_idx=device_idx),
@@ -311,8 +316,9 @@ class Executor:
             tensor_start_idx,
         )
         
-        if len(already_cached_inputs) > 0:
-            # backfilling already cached inputs with NIL so they can be replaced
+        
+        # backfilling already cached inputs with NIL so they can be replaced
+        if  already_cached_inputs is not None and len(already_cached_inputs) > 0:
             runtime_activations_and_weights = [None]*len(already_cached_inputs) + runtime_activations_and_weights
         
         # monkey patch static kv cache inputs from runtime tensor cache
@@ -348,7 +354,12 @@ class Executor:
             weights_and_activations, runtime_activations_and_weights, torch_indices
         )
         runtime_weights = runtime_activations_and_weights[:-input_len]
-        self.preprocessed_graph_constants[device_idx] = tuple(runtime_weights)
+        
+        
+        # [James] Disable this for which should be controlled by _cache_if_needed
+        # self.preprocessed_graph_constants[device_idx] = tuple(runtime_weights)
+        
+        
         runtime_activations = runtime_activations_and_weights[-input_len:]
         
         # for activation in runtime_activations:
@@ -412,13 +423,11 @@ class Executor:
             device_inputs = list(device_inputs)
             device = self._get_device(device_idx)
             
-            
-            for tensor in preprocessed_weights+preprocessed_activations:
-                tensor = tt_mlir.to_host(tensor)[0]  # returns single element tuple
-                if isinstance(tensor, torch.Tensor):
-                    print(f"input tensor: type={type(tensor)}, dtype={tensor.dtype}, shape={tensor.shape}", flush=True)
-                else:
-                    print(f"input tensor: type={type(tensor)}, value={tensor}")
+            # [James] This prints out the weights submitted to ttmlir
+            # for tensor in preprocessed_weights+preprocessed_activations:
+            #     tensor = tt_mlir.to_host(tensor)[0]  # returns single element tuple
+            #     if isinstance(tensor, torch.Tensor):
+            #         print(f"input tensor: type={type(tensor)}, dtype={tensor.dtype}, shape={tensor.shape}", flush=True)
 
             # if any output is intermediate we can run in async, since tt-mlir runtime will eventually block on final outputs
             # TODO: Enable this when device to device movement is supported. In the mean time we fall back to host: #748
