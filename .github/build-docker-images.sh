@@ -38,5 +38,4 @@ build_and_push $CI_IMAGE_NAME .github/Dockerfile.ci
 build_and_push $CI_BUILDWHEEL_IMAGE_NAME .github/Dockerfile.cibuildwheel
 
 echo "All images built and pushed successfully"
-echo "CI_IMAGE_NAME:"
-echo $CI_IMAGE_NAME:$DOCKER_TAG
+echo $DOCKER_TAG

@@ -33,17 +33,6 @@ jobs:
     runs-on:
       - ${{ matrix.build.runs-on }}
 
-    container:
-      image: ${{ inputs.docker-image }}
-      options: --device /dev/tenstorrent/0
-      volumes:
-        - /dev/hugepages:/dev/hugepages
-        - /dev/hugepages-1G:/dev/hugepages-1G
-        - /etc/udev/rules.d:/etc/udev/rules.d
-        - /lib/modules:/lib/modules
-        - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
-        - /mnt/dockercache:/mnt/dockercache
-
     steps:
     - uses: actions/checkout@v4
 
@@ -83,7 +72,7 @@ jobs:
       uses: pypa/cibuildwheel@v2.23.2
       env:
         CIBW_ENVIRONMENT: "IN_CIBW_ENV=ON"
-        CIBW_MANYLINUX_X86_64_IMAGE: ghcr.io/tenstorrent/tt-mlir/tt-mlir-manylinux-2-34
+        CIBW_MANYLINUX_X86_64_IMAGE: ${{ inputs.docker-image }}
         CIBW_CONFIG_SETTINGS: "--code_coverage ${{ inputs.setup-args }}"
       with:
         output-dir: ${{ steps.strings.outputs.wheel-output-dir }}
