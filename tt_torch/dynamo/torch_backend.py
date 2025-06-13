@@ -640,7 +640,7 @@ class TorchPJRTExecutor(PJRTOpByOpExecutor):
 
                 test_this_op = self.should_test_op()
                 # Another useful debug method:
-                # test_this_op = str(node.target) == "aten.gelu.default"
+                # test_this_op = str(node.target) == "aten.convolution.default"
 
                 if test_this_op:
                     try:
@@ -675,8 +675,14 @@ class TorchPJRTExecutor(PJRTOpByOpExecutor):
 
                     try:
                         # typecast_args = self.typecast_inputs(args)
+                        typecast_args = [
+                            arg.to(torch.bfloat16)
+                            if isinstance(arg, torch.Tensor) and arg.dtype == torch.bool
+                            else arg
+                            for arg in args
+                        ]
                         start = time.time()
-                        calculated, stderr = self.run_op(gm, *args)
+                        calculated, stderr = self.run_op(gm, *typecast_args)
 
                         end = time.time()
                         self.print_marker(
@@ -686,7 +692,7 @@ class TorchPJRTExecutor(PJRTOpByOpExecutor):
                         self.set_runtime_stack_dump(stderr, op)
 
                         if calculated is None:
-                            raise ValueError("Failed to execute")
+                            raise ValueError(f"Failed to execute: \n {stderr}")
                         op.compilation_status = OpCompilationStatus.EXECUTED
                         if self.compiler_config.verify_op_by_op:
                             atol = calculate_atol(calculated, golden)
