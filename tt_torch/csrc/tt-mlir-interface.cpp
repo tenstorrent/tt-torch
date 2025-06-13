@@ -227,11 +227,15 @@ compileTTIRToTTNN(std::string_view code, std::string_view system_desc_path,
 
   mlir::tt::ttnn::TTIRToTTNNBackendPipelineOptions options;
 
+  std::cerr << "[james] Consteval option result pre-override: " << options.enableConstEval
+            << std::endl;
+
   // boolean env var to override consteval
   const char *consteval = std::getenv("TT_TORCH_CONSTEVAL");
-  if (consteval && std::string(consteval) == "1") {
-    options.enableConstEval = true;
+  if (consteval && std::string(consteval) == "0") {
+    options.enableConstEval = false;
   }
+
   options.enableFusing = true;
 
   if (len_activations > 0 || len_graph_constants > 0) {

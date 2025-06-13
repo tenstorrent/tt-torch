@@ -141,6 +141,7 @@ class Executor:
         async_mode=False,
         runtime_tensor_cache=None
     ):
+        print("[James] Executor initialized.", flush=True)
         self.mcg = mcg
         if compiler_config is None:
             compiler_config = CompilerConfig()
@@ -268,6 +269,9 @@ class Executor:
                 tensors[index] = runtime_tensors.pop(0)
             return tuple(tensors)
 
+
+        constant_inputs_ct = 2*2        
+
         input_len = len(inputs)
         tensor_start_idx = 0
         if device_idx in self.preprocessed_graph_constants:
@@ -290,6 +294,15 @@ class Executor:
                 torch_weights_and_activations
             )
 
+        # avoid preprocessing inputs if they already exist in the cache
+        already_cached_inputs = []
+        if self.runtime_tensor_cache is not None:
+            already_cached_inputs.extend(self.runtime_tensor_cache.keys())
+        
+        if len(already_cached_inputs) > 0:
+            print(f"[James] Found {len(already_cached_inputs)} cached inputs. Suppressing their allocation.")
+            torch_weights_and_activations = torch_weights_and_activations[len(already_cached_inputs):]
+            
         runtime_activations_and_weights = tt_mlir.preprocess_inputs(
             self._get_device(device_idx=device_idx),
             torch_weights_and_activations,
@@ -298,6 +311,10 @@ class Executor:
             tensor_start_idx,
         )
         
+        if len(already_cached_inputs) > 0:
+            # backfilling already cached inputs with NIL so they can be replaced
+            runtime_activations_and_weights = [None]*len(already_cached_inputs) + runtime_activations_and_weights
+        
         # monkey patch static kv cache inputs from runtime tensor cache
         # put them in self.runtime_tensor_cache if they don't exist
         # pull them from the runtime_tensor_cache if they do exist
@@ -305,7 +322,6 @@ class Executor:
         
         # q - how do we key this cache? input index?
         
-        constant_inputs_ct = 2*2        
         for i, runtime_tensor in enumerate(runtime_activations_and_weights):
             # Find if this index is in any of the cachable_input_indices tuples
             # matching_entry = next((entry for entry in cachable_input_indices if entry[0] == i), None)
@@ -322,11 +338,11 @@ class Executor:
                         print(f"[James] Caching input tensor with name '{name_cache_key}' (index {i})", flush=True)
                     else:
                         # Cache hit - overwrite with cached version
-                        pass
                         runtime_activations_and_weights[i] = self.runtime_tensor_cache[name_cache_key]
                         print(f"[James] Overwriting input tensor with name '{name_cache_key}' (index {i}) with cached version", flush=True)
         
-        print(f"[James] - Runtime tensor cache keys (id {id(self.runtime_tensor_cache)})", list(self.runtime_tensor_cache.keys()), flush=True)
+        if self.runtime_tensor_cache is not None:
+            print(f"[James] - Runtime tensor cache keys (id {id(self.runtime_tensor_cache)})", list(self.runtime_tensor_cache.keys()), flush=True)
         
         runtime_activations_and_weights = recreate_runtime_tensors(
             weights_and_activations, runtime_activations_and_weights, torch_indices
@@ -395,6 +411,14 @@ class Executor:
 
             device_inputs = list(device_inputs)
             device = self._get_device(device_idx)
+            
+            
+            for tensor in preprocessed_weights+preprocessed_activations:
+                tensor = tt_mlir.to_host(tensor)[0]  # returns single element tuple
+                if isinstance(tensor, torch.Tensor):
+                    print(f"input tensor: type={type(tensor)}, dtype={tensor.dtype}, shape={tensor.shape}", flush=True)
+                else:
+                    print(f"input tensor: type={type(tensor)}, value={tensor}")
 
             # if any output is intermediate we can run in async, since tt-mlir runtime will eventually block on final outputs
             # TODO: Enable this when device to device movement is supported. In the mean time we fall back to host: #748
