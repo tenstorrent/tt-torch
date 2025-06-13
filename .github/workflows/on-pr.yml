@@ -97,7 +97,7 @@ jobs:
           fi
 
   build:
-    needs: [pre-commit, spdx, check-files]
+    needs: [pre-commit, spdx, docker-build, check-files]
     if: github.event.pull_request.draft == false && needs.check-files.outputs.skip == 'false'
     uses: ./.github/workflows/run-build.yml
     secrets: inherit
