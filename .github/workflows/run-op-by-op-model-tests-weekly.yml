@@ -259,7 +259,8 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "flux_schnell", tests: "
+            runs-on: wormhole_b0, name: "flux", tests: "
+              tests/models/flux/test_flux.py::test_flux[op_by_op_torch-flux_dev-eval]
               tests/models/flux/test_flux.py::test_flux[op_by_op_torch-flux_schnell-eval]
             "
           },
