@@ -194,7 +194,7 @@ def test_flux(record_property, model_name, mode, op_by_op, guidance_scale):
 
     cc = CompilerConfig()
     cc.enable_consteval = True
-    # cc.consteval_parameters = True
+    # consteval_parameters is disabled because it results in a memory related crash
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
