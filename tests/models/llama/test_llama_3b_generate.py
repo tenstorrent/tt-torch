@@ -12,6 +12,7 @@ from transformers import (
     StaticCache,
 )
 import tt_mlir
+import time
 
 from tt_torch.tools.verify import calculate_pcc
 class PrefillTester(ModelTester):
@@ -23,7 +24,7 @@ class PrefillTester(ModelTester):
             torch_dtype=torch.bfloat16,
             use_cache=True,
         )
-        model.config.num_hidden_layers = 2
+        model.config.num_hidden_layers = 28
 
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_name, torch_dtype=torch.bfloat16
@@ -103,6 +104,8 @@ def test_llama_3b(record_property):
     cc.compile_depth = CompileDepth.EXECUTE
     cc.enable_consteval = False
     cc.consteval_parameters = False
+    cc.cache_preprocessed_constants = False # avoid fighting user-held cache.
+    
     mode = "eval"
     model_name = "meta-llama/Llama-3.2-3B"
     
@@ -124,7 +127,7 @@ def test_llama_3b(record_property):
 
     # compile prefill fx graph to flatbuffer and run
 
-    max_new_tokens = 10
+    max_new_tokens = 64-10
     
     runtime_tensor_cache = {}
     print("Runtime tensor cache id: ", id(runtime_tensor_cache))
@@ -138,6 +141,7 @@ def test_llama_3b(record_property):
         print(f"Input args to step {i}", input_args)
         
         
+        start_time = time.time()
         outputs = tester.run_model_with_inputs(gm, input_args)    
         next_token_ids = outputs.logits[:, -1:].argmax(dim=-1)
         
@@ -149,7 +153,7 @@ def test_llama_3b(record_property):
             golden_static_cache_tensors = golden.past_key_values.key_cache
             golden_static_cache_tensors.extend(golden.past_key_values.value_cache)
             # print(f"Next token id prediction for decode step {i}: {next_token_ids.item()}. Golden: {golden_next_token_ids.item()}.")
-            print(f"Next token id prediction for decode step {i}: {next_token_ids.item()}. Golden: {golden_next_token_ids.item()}. PCC : {calculate_pcc(torch.flatten(outputs.logits), torch.flatten(golden.logits))}")
+            print(f"Next token id prediction for decode step {i}: {next_token_ids.item()}. Golden: {golden_next_token_ids.item()}. PCC : {calculate_pcc(torch.flatten(outputs.logits), torch.flatten(golden.logits))}, in {time.time()-start_time}s")
         
             for key, value in runtime_tensor_cache.items():
                 host_cache = tt_mlir.to_host(value)[0] # returns single element tuple, I think
@@ -185,6 +189,7 @@ def test_llama_3b(record_property):
             tester.tokenizer.decode(generated_ids[0].tolist()),
             "\033[0m",
         )
+        print("Time elapsed for this step: ", time.time() - start_time)
 
         # attention_mask = input_args["attention_mask"]
         # attention_mask = torch.cat(
