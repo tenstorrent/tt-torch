@@ -221,7 +221,7 @@ jobs:
                 tests/models/stable_diffusion/test_stable_diffusion_transformer.py::test_stable_diffusion_transformer[full-SD3.5-large-transformer-eval]
                 tests/models/detr/test_detr_onnx.py::test_detr_onnx[full-eval]
                 tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-eval]
-                tests/models/phi/test_phi_3p5_moe.py::test_phi[full-phi3p5_moe-eval]
+                tests/models/phi/test_phi_3p5_moe.py::test_phi_3p5_moe[full-phi3p5_moe-eval]
             "
           },
           # This test group needs to be moved. This will be done once multichip tests are refactored: #780
