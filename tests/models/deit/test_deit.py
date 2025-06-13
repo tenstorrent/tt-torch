@@ -3,27 +3,22 @@
 # SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/facebook/deit-base-patch16-224
 
-from transformers import AutoFeatureExtractor, ViTForImageClassification
-from PIL import Image
 import torch
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.tools.utils import get_file
+from third_party.tt_forge_models.deit.pytorch.loader import ModelLoader
 
 
 class ThisTester(ModelTester):
+
+    model_name = "facebook/deit-base-patch16-224"
+
     def _load_model(self):
-        self.feature_extractor = AutoFeatureExtractor.from_pretrained(self.model_name)
-        model = ViTForImageClassification.from_pretrained(self.model_name)
-        model = model.to(torch.bfloat16)
-        return model
+        return ModelLoader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
-        image = Image.open(str(image_file))
-        inputs = self.feature_extractor(images=image, return_tensors="pt")
-        return inputs
+        return ModelLoader.load_inputs(dtype_override=torch.bfloat16)
 
     def set_inputs_train(self, inputs):
         inputs["pixel_values"].requires_grad_(True)
@@ -46,7 +41,6 @@ class ThisTester(ModelTester):
         "eval",
     ],
 )
-@pytest.mark.parametrize("model_name", ["facebook/deit-base-patch16-224"])
 @pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
@@ -55,7 +49,9 @@ class ThisTester(ModelTester):
 @pytest.mark.parametrize(
     "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
 )
-def test_deit(record_property, model_name, mode, op_by_op, data_parallel_mode):
+def test_deit(record_property, mode, op_by_op, data_parallel_mode):
+    model_name = "facebook/deit-base-patch16-224"
+
     if mode == "train":
         pytest.skip()
 
@@ -85,11 +81,11 @@ def test_deit(record_property, model_name, mode, op_by_op, data_parallel_mode):
     def print_result(result):
         logits = result.logits
         # model predicts one of the 1000 ImageNet classes
-        predicted_class_idx = logits.argmax(-1).item()
-        print(
-            "Predicted class:",
-            tester.framework_model.config.id2label[predicted_class_idx],
-        )
+        predicted_class_indices = logits.argmax(-1)
+        for i, class_idx in enumerate(predicted_class_indices):
+            print(
+                f"Sample {i}: Predicted class: {tester.framework_model.config.id2label[class_idx.item()]}"
+            )
 
     if mode == "eval":
         ModelTester.print_outputs(results, data_parallel_mode, print_result)
