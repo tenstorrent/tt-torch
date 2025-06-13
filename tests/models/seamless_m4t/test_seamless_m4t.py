@@ -16,7 +16,6 @@ from transformers.integrations.deepspeed import is_deepspeed_zero3_enabled
 from transformers.integrations.fsdp import is_fsdp_managed_module
 from transformers.modeling_outputs import BaseModelOutput
 import torchaudio
-import types
 
 
 class ThisTester(ModelTester):
