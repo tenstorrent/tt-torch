@@ -43,7 +43,9 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_deit(record_property, model_name, mode, op_by_op):
+def test_deit(record_property, mode, op_by_op):
+    model_name = "facebook/deit-base-patch16-224"
+
     if mode == "train":
         pytest.skip()
 
