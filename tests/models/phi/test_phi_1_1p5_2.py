@@ -18,7 +18,7 @@ class ThisTester(ModelTester):
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_name, torch_dtype=torch.bfloat16
         )
-        model = AutoModelForCausalLM.from_pretrained(self.model_name, use_cache=False)
+        model = AutoModelForCausalLM.from_pretrained(self.model_name)
         return model
 
     def _load_inputs(self):

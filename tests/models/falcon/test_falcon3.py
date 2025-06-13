@@ -15,7 +15,7 @@ class ThisTester(ModelTester):
             self.model_name, padding_side="left", torch_dtype=torch.bfloat16
         )
         model = AutoModelForCausalLM.from_pretrained(
-            self.model_name, torch_dtype=torch.bfloat16, use_cache=False
+            self.model_name, torch_dtype=torch.bfloat16
         )
         return model
 
@@ -78,8 +78,10 @@ def test_falcon(record_property, model_name, mode, op_by_op):
         True
         if model_name
         in [
-            "tiiuae/Falcon3-3B-Base",
             "tiiuae/Falcon3-1B-Base",
+            "tiiuae/Falcon3-3B-Base",
+            "tiiuae/Falcon3-1B-Instruct",
+            "tiiuae/Falcon3-3B-Instruct",
         ]
         else False
     )

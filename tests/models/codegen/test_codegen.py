@@ -14,7 +14,7 @@ class ThisTester(ModelTester):
     def _load_model(self):
         checkpoint = "Salesforce/codegen-350M-mono"
         model = AutoModelForCausalLM.from_pretrained(
-            checkpoint, torch_dtype=torch.bfloat16, use_cache=False
+            checkpoint, torch_dtype=torch.bfloat16
         )
         self.tokenizer = AutoTokenizer.from_pretrained(checkpoint)
         return model
