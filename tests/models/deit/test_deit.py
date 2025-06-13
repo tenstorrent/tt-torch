@@ -11,9 +11,6 @@ from third_party.tt_forge_models.deit.pytorch.loader import ModelLoader
 
 
 class ThisTester(ModelTester):
-
-    model_name = "facebook/deit-base-patch16-224"
-
     def _load_model(self):
         return ModelLoader.load_model(dtype_override=torch.bfloat16)
 

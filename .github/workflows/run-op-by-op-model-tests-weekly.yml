@@ -146,7 +146,7 @@ jobs:
           {
             runs-on: wormhole_b0, name: "vision-transformers", tests: "
               tests/models/segformer/test_segformer.py::test_segformer[single_device-op_by_op_torch-eval]
-              tests/models/deit/test_deit.py::test_deit[single_device-op_by_op_torch-facebook/deit-base-patch16-224-eval]
+              tests/models/deit/test_deit.py::test_deit[single_device-op_by_op_torch-eval]
               tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[single_device-op_by_op_torch-microsoft/beit-base-patch16-224-eval]
               tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[single_device-op_by_op_torch-microsoft/beit-large-patch16-224-eval]
               tests/models/detr/test_detr.py::test_detr[single_device-op_by_op_torch-eval]
