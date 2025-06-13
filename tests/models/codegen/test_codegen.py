@@ -3,26 +3,21 @@
 # SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/docs/transformers/model_doc/codegen#usage-example
 
-from transformers import AutoModelForCausalLM, AutoTokenizer
 import pytest
 from tests.utils import ModelTester
 import torch
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.codegen.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        checkpoint = "Salesforce/codegen-350M-mono"
-        model = AutoModelForCausalLM.from_pretrained(
-            checkpoint, torch_dtype=torch.bfloat16
-        )
-        self.tokenizer = AutoTokenizer.from_pretrained(checkpoint)
+        model = ModelLoader.load_model(dtype_override=torch.bfloat16)
+        self.tokenizer = ModelLoader.tokenizer
         return model
 
     def _load_inputs(self):
-        text = "def hello_world():"
-        inputs = self.tokenizer(text, return_tensors="pt")
-        return inputs
+        return ModelLoader.load_inputs(dtype_override=torch.bfloat16, batch_size=2)
 
 
 @pytest.mark.parametrize(
