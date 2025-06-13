@@ -118,7 +118,7 @@ def execute_process(receiver, sender, exec_event):
 
         outputs = None
         if inputs is not None:
-            outputs = tt_mlir.run_end_to_end(inputs, binary)
+            outputs = tt_mlir.run_on_default_device(inputs, binary)
 
         sys.stderr = old_stderr
         sys.stdout = old_stdout
@@ -157,7 +157,7 @@ class Executor:
 
         self.binary = {}
         self.preprocessed_graph_constants = {}
-        self.devices = devices if devices is not None else [None]
+        self.devices = devices if devices is not None else []
         self.owned_device_indices = []
         self.async_mode = async_mode
         self._validate_executor()
@@ -169,6 +169,13 @@ class Executor:
             CompileDepth.STABLEHLO,
         ]:
             return []
+
+        if self.devices == []:
+            descriptor_path = tempfile.NamedTemporaryFile(
+                delete=False, suffix=".ttsys"
+            ).name
+            tt_mlir.create_default_system_desc(descriptor_path)
+            return [descriptor_path]
 
         system_desc_paths = []
         for device_idx, device_from_user in enumerate(self.devices):
@@ -227,16 +234,10 @@ class Executor:
         assert (
             len(self.devices) >= device_idx
         ), f"Not enough devices provided: {len(self.devices)} <= {device_idx}"
-        if self.devices[device_idx] is not None:
-            return self.devices[device_idx]
-        # Return a default parent mesh
-        mesh_options = tt_mlir.MeshDeviceOptions()
-        if len(self.compiler_config.mesh_shape) == 32:
-            mesh_options.dispatch_core_type = tt_mlir.DispatchCoreType.WORKER
-        device = tt_mlir.open_mesh_device(self.compiler_config.mesh_shape, mesh_options)
-        self.devices[device_idx] = device
-        self.owned_device_indices.append(device_idx)
-        return device
+        assert isinstance(
+            self.devices[device_idx], tt_mlir.Device
+        ), f"Expecting a tt_mlir.Device, received: {type(self.devices[device_idx])}"
+        return self.devices[device_idx]
 
     def _cache_constants_if_needed(self, preprocessed_constants, device_idx=0):
         if (
@@ -392,8 +393,6 @@ class Executor:
         for _, device_weights in self.preprocessed_graph_constants.items():
             for weight in device_weights:
                 tt_mlir.deallocate_tensor(weight, force=True)
-        for device_idx in self.owned_device_indices:
-            tt_mlir.close_mesh_device(self.devices[device_idx])
         for path in self.system_desc_paths:
             try:
                 os.remove(path)
@@ -402,12 +401,11 @@ class Executor:
 
 
 class OnnxExecutor(Executor):
-    def __init__(self, model_proto: onnx.ModelProto):
-        super().__init__()
+    def __init__(self, model_proto: onnx.ModelProto, devices):
+        super().__init__(devices=devices)
         self.model_proto = model_proto
         self.binary = None
         self.sess = None
-        self.devices = [None]
         self.compiler_config = CompilerConfig()
         self.preprocessed_graph_constants = {}
         self.owned_device_indices = []
@@ -435,7 +433,15 @@ class OnnxExecutor(Executor):
                 sess=self.sess, model_proto=self.model_proto, inputs=inputs
             )
             return onnx_output_to_torch(output)
-        return tt_mlir.run_end_to_end(inputs, self.binary)
+
+        assert isinstance(
+            self.devices, list
+        ), f"Expecting a list of tt_mlir.Device, received: {type(self.devices)}"
+        assert len(self.devices) == 1, "Only one device is supported for onnx executor"
+        assert isinstance(
+            self.devices[0], tt_mlir.Device
+        ), f"Expecting a tt_mlir.Device, received: {type(self.devices[0])}"
+        return tt_mlir.run_end_to_end(self.devices[0], inputs, self.binary)
 
 
 class OpByOpExecutor(Executor):
