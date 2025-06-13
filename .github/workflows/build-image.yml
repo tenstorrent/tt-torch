@@ -34,6 +34,7 @@ jobs:
       docker-image: ${{ steps.build.outputs.docker-image }}
       docker-image-harbor: ${{ steps.build.outputs.docker-image-harbor }}
       docker-image-manylinux: ${{ steps.build.outputs.docker-image-manylinux }}
+      docker-image-manylinux-harbor: ${{ steps.build.outputs.docker-image-manylinux-harbor }}
     steps:
       - name: Fix permissions
         shell: bash
@@ -72,10 +73,12 @@ jobs:
           DOCKER_CI_IMAGE="${CI_IMAGE_NAME}:${TAG}"
           DOCKER_CI_IMAGE_HARBOUR="harbor.ci.tenstorrent.net/${DOCKER_CI_IMAGE}"
           DOCKER_MANY_LINUX_IMAGE="${CI_BUILDWHEEL_IMAGE_NAME}:${TAG}"
+          DOCKER_MANY_LINUX_IMAGE_HARBOUR="harbor.ci.tenstorrent.net/${DOCKER_MANY_LINUX_IMAGE}"
           echo "DOCKER_CI_IMAGE $DOCKER_CI_IMAGE"
           echo "docker-image=$DOCKER_CI_IMAGE" >> "$GITHUB_OUTPUT"
           echo "docker-image-harbor=$DOCKER_CI_IMAGE_HARBOUR" >> "$GITHUB_OUTPUT"
           echo "docker-image-manylinux=$DOCKER_MANY_LINUX_IMAGE" >> "$GITHUB_OUTPUT"
+          echo "docker-image-manylinux-harbor=$DOCKER_MANY_LINUX_IMAGE_HARBOUR" >> "$GITHUB_OUTPUT"
 
   set-latest:
     # Set the latest tag on the CI image

@@ -49,23 +49,16 @@ jobs:
       run: |
         echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
         echo "build-output-dir=$(pwd)/build" >> "$GITHUB_OUTPUT"
+        echo "wheel-output-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
 
     - name: Git safe dir
       run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
 
-    - name: ccache
-      uses: hendrikmuhs/ccache-action@v1.2
-      with:
-        create-symlink: true
-        key: build_cache
-
-    - name: Set reusable strings
-      id: strings
-      shell: bash
-      run: |
-        echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
-        echo "build-output-dir=$(pwd)/build" >> "$GITHUB_OUTPUT"
-        echo "wheel-output-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
+#    - name: ccache
+#      uses: hendrikmuhs/ccache-action@v1.2
+#      with:
+#        create-symlink: true
+#        key: build_cache
 
     # Build project
     - name: Build ttmlir Wheel (manylinux)
