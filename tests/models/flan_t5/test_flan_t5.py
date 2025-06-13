@@ -22,6 +22,8 @@ class ThisTester(ModelTester):
         inputs = self.tokenizer(
             "A step by step recipe to make bolognese pasta:", return_tensors="pt"
         )
+        decoder_input_ids = torch.tensor([[self.tokenizer.pad_token_id]])
+        inputs["decoder_input_ids"] = decoder_input_ids
         return inputs
 
 
@@ -45,7 +47,6 @@ def test_flan_t5(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    # TODO Enable checking - https://github.com/tenstorrent/tt-torch/issues/676
     tester = ThisTester(
         model_name,
         mode,
@@ -53,11 +54,12 @@ def test_flan_t5(record_property, mode, op_by_op):
         record_property_handle=record_property,
         assert_pcc=False,
         assert_atol=False,
-        is_token_output=True,
-        run_generate=True,  # run model.generate(**inputs)
+        run_generate=False,
     )
-    results = tester.test_model(assert_eval_token_mismatch=False)
+    results = tester.test_model()
     if mode == "eval":
-        results = tester.tokenizer.batch_decode(results, skip_special_tokens=True)
+        logits = results.logits if hasattr(results, "logits") else results[0]
+        token_ids = torch.argmax(logits, dim=-1)
+        results = tester.tokenizer.batch_decode(token_ids, skip_special_tokens=True)
 
     tester.finalize()

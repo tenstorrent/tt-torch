@@ -58,16 +58,19 @@ def test_phi(record_property, model_name, mode, op_by_op):
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
-        is_token_output=True,
         model_group=model_group,
-        run_generate=True,  # run model.generate(**inputs)
+        run_generate=False,
+        assert_atol=False,
     )
 
-    # TODO - Enable checking - https://github.com/tenstorrent/tt-torch/issues/528
-    results = tester.test_model(assert_eval_token_mismatch=False)
+    results = tester.test_model()
 
     if mode == "eval":
-        decoded_output = tester.tokenizer.decode(results[0])
+        logits = results.logits if hasattr(results, "logits") else results[0]
+        next_token_id = torch.argmax(logits[:, -1, :], dim=-1)
+        input_ids = tester._load_inputs()["input_ids"]
+        output_ids = torch.cat([input_ids, next_token_id.unsqueeze(-1)], dim=-1)
+        decoded_output = tester.tokenizer.decode(output_ids[0])
         print(
             f"""
         model_name: {model_name}

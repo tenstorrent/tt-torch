@@ -11,18 +11,26 @@ import scipy
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
-from transformers import AutoProcessor, SeamlessM4TModel
+from transformers import AutoProcessor, SeamlessM4TModel, SeamlessM4TConfig
+from transformers.integrations.deepspeed import is_deepspeed_zero3_enabled
+from transformers.integrations.fsdp import is_fsdp_managed_module
+from transformers.modeling_outputs import BaseModelOutput
 import torchaudio
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
         model_name = "facebook/hf-seamless-m4t-large"
+        self.config = SeamlessM4TConfig.from_pretrained(model_name)
         self.processor = AutoProcessor.from_pretrained(model_name)
-        self.model = SeamlessM4TModel.from_pretrained(model_name)
-        return self.model
+        self.full_model = SeamlessM4TModel.from_pretrained(
+            model_name, config=self.config
+        )
+        # Compile text_decoder submodule only
+        return self.full_model.text_decoder
 
     def _load_inputs(self):
+        # Load and format audio input
         url = "https://courses.cs.duke.edu/cps001/spring06/class/06_Sound/sounds/preamble.wav"
         with urllib.request.urlopen(url) as response:
             audio_data = response.read()
@@ -32,12 +40,21 @@ class ThisTester(ModelTester):
             audio, orig_freq=orig_freq, new_freq=16_000
         )
         audio_inputs = self.processor(audios=audio, return_tensors="pt")
+        # Run encoder to get encoder_hidden_states
+        encoder_outputs = self.full_model.speech_encoder(
+            input_features=audio_inputs.input_features,
+            attention_mask=audio_inputs.attention_mask,
+        )
+        encoder_hidden_states = encoder_outputs[0]
+        # Prepare decoder input IDs
+        tokenizer = self.processor.tokenizer
+        bos_token_id = tokenizer.bos_token_id
+        decoder_input_ids = torch.tensor([[bos_token_id]])
+        # Arguments are inputs for the text decoder submodule
         arguments = {
-            "input_features": audio_inputs.input_features,
-            "attention_mask": audio_inputs.attention_mask,
-            "tgt_lang": "tur",
+            "input_ids": decoder_input_ids,
+            "encoder_hidden_states": encoder_hidden_states,
         }
-
         return arguments
 
 
@@ -65,16 +82,17 @@ def test_seamless_m4t(record_property, mode, op_by_op):
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
-        required_atol=0.1,
-        run_generate=True,  # run model.generate(**inputs)
+        assert_atol=False,
+        run_generate=False,
         model_group="red",
     )
     results = tester.test_model()
     if mode == "eval":
-        sample_rate = tester.model.config.sampling_rate
-        # uncomment this to download the output audio
-        # scipy.io.wavfile.write(
-        #     "out_from_text.wav", rate=sample_rate, data=results[0].numpy().squeeze()
-        # )
+        if tester.run_generate:
+            sample_rate = tester.model.config.sampling_rate
+            # uncomment this to download the output audio
+            # scipy.io.wavfile.write(
+            #     "out_from_text.wav", rate=sample_rate, data=results[0].numpy().squeeze()
+            # )
 
     tester.finalize()

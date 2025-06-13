@@ -69,15 +69,17 @@ def test_mamba(record_property, model_name, mode, op_by_op):
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
-        is_token_output=True,
-        run_generate=True,  # run model.generate(**inputs)
+        run_generate=False,
+        required_pcc=0.95,
+        assert_atol=False,
     )
 
-    # TODO - Enable checking - # https://github.com/tenstorrent/tt-torch/issues/632
-    results = tester.test_model(assert_eval_token_mismatch=False)
+    results = tester.test_model()
 
     if mode == "eval":
-        gen_text = tester.tokenizer.batch_decode(results)
+        logits = results.logits if hasattr(results, "logits") else results[0]
+        token_ids = torch.argmax(logits, dim=-1)
+        gen_text = tester.tokenizer.batch_decode(token_ids, skip_special_tokens=True)
         print("Generated text: ", gen_text)
 
     tester.finalize()
