@@ -57,19 +57,19 @@ class PrefillTester(ModelTester):
             dtype=self.framework_model.dtype,
         )
 
-        attention_mask = inputs.attention_mask
+        # attention_mask = inputs.attention_maskmask
         # cache_position = attention_mask.cumsum(dim=-1) - 1
         # cache_position = cache_position.masked_fill(attention_mask == 0, 0)
 
         cache_position = torch.arange(0, inputs.input_ids.shape[1])
-
+        print(f"[James] @load_inputs dtype of input_ids - {inputs.input_ids.dtype}")
         args = {
-            "input_ids": inputs.input_ids,
+            "input_ids": inputs.input_ids.to(dtype=torch.int32),  # Convert to int32 for compatibility
             "past_key_values": static_cache,
             "use_cache": True,
             "cache_position": cache_position,
             # "attention_mask": attention_mask,
-            "position_ids": cache_position.unsqueeze(0),  # Assuming batch size of 1
+            # "position_ids": cache_position.unsqueeze(0),  # Assuming batch size of 1
         }
         return args
 
@@ -105,6 +105,7 @@ def test_llama_3b(record_property):
     cc.consteval_parameters = False
     mode = "eval"
     model_name = "meta-llama/Llama-3.2-3B"
+    
     tester = PrefillTester(
         model_name,
         mode,
@@ -196,14 +197,29 @@ def test_llama_3b(record_property):
         # key_cache0_head0_vals = torch.mean(static_cache.key_cache_0[0, 0, :, :], dim=-1)
         # print("Key cache slice along seqlen: ", key_cache0_head0_vals.tolist())
 
+        # print("next token_ids dtype before autocast: ", next_token_ids.dtype)
+        # next_token_ids = next_token_ids.clone().to(dtype=torch.int32)
+        # print("next token_ids dtype after autocast: ", next_token_ids.dtype)
+        
+        val = next_token_ids.item()
+        clean_ids = torch.tensor([[val]], dtype=torch.int32)
+        embedding_layer = tester.get_framework_model().get_input_embeddings()
+        next_token_embeds = embedding_layer(clean_ids)
+        
         input_args = {
-            "input_ids": next_token_ids,
+            "input_ids": next_token_ids.to(dtype=torch.int32), 
+            # "input_ids": torch.tensor([[220]], dtype=torch.int32).detach().clone(),  # For testing, use a fixed input
             "past_key_values": static_cache,  # assume in place update for now
             "use_cache": True,
             "cache_position": cache_position,
-            "position_ids": cache_position.unsqueeze(0),  # Assuming batch size of 1
+            # "position_ids": cache_position.unsqueeze(0),  # Assuming batch size of 1
             # "attention_mask": attention_mask,
         }
+
+        # use embedddings instead.
+        # print("[James] Force use imputs embeds")
+        # del input_args['input_ids']
+        # input_args['inputs_embeds'] = next_token_embeds
         
         # if i == 0:
         #     torch._dynamo.reset()

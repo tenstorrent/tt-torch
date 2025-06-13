@@ -302,7 +302,6 @@ class ModelTester:
     def compile_model(
         self, model, compiler_config, data_parallel_mode=False, device_override=None, runtime_tensor_cache=None
     ):
-
         clear_dynamo_cache()
         device = None
         if self.devices is not None and not data_parallel_mode:
