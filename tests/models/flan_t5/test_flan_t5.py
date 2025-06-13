@@ -14,7 +14,7 @@ class ThisTester(ModelTester):
     def _load_model(self):
         self.tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-small")
         model = AutoModelForSeq2SeqLM.from_pretrained(
-            "google/flan-t5-small", torch_dtype=torch.bfloat16, use_cache=False
+            "google/flan-t5-small", torch_dtype=torch.bfloat16
         )
         return model
 

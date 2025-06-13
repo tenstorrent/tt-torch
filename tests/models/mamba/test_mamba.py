@@ -14,7 +14,7 @@ import types
 class ThisTester(ModelTester):
     def _load_model(self):
         model = MambaForCausalLM.from_pretrained(
-            self.model_name, torch_dtype=torch.bfloat16, use_cache=False
+            self.model_name, torch_dtype=torch.bfloat16
         )
 
         model.generate = lambda **kwargs: type(model).generate(

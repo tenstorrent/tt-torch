@@ -13,7 +13,7 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 class ThisTester(ModelTester):
     def _load_model(self):
         model = GPTNeoForCausalLM.from_pretrained(
-            "EleutherAI/gpt-neo-125M", torch_dtype=torch.bfloat16, use_cache=False
+            "EleutherAI/gpt-neo-125M", torch_dtype=torch.bfloat16
         )
         self.tokenizer = GPT2Tokenizer.from_pretrained("EleutherAI/gpt-neo-125M")
         return model

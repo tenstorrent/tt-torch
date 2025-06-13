@@ -22,7 +22,7 @@ import types
 class ThisTester(ModelTester):
     def _load_model(self):
         model_name = "facebook/hf-seamless-m4t-large"
-        self.config = SeamlessM4TConfig.from_pretrained(model_name, use_cache=False)
+        self.config = SeamlessM4TConfig.from_pretrained(model_name)
         self.processor = AutoProcessor.from_pretrained(model_name)
         self.full_model = SeamlessM4TModel.from_pretrained(
             model_name, config=self.config
