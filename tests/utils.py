@@ -32,7 +32,7 @@ import csv
 import tt_mlir
 
 # Import from tools rather than defining here to avoid circular imports
-from tt_torch.tools.memory_utils import print_memory_usage
+from tt_torch.tools.memory_utils import print_memory_usage, print_system_memory_summary
 
 
 def skip_full_eval_test(
@@ -145,8 +145,10 @@ class ModelTester:
         self.data_parallel_mode = data_parallel_mode
 
         print_memory_usage("Before load_model inside ModelTester")
+        print_system_memory_summary("Before load_model inside ModelTester")
         self.framework_model = self._load_model()
         print_memory_usage("After load_model inside ModelTester")
+        print_system_memory_summary("After load_model inside ModelTester")
         self.is_token_output = is_token_output
         if is_token_output and not hasattr(self, "tokenizer"):
             raise ValueError(
@@ -156,6 +158,7 @@ class ModelTester:
         self.devices = devices
         self.inputs = self._load_inputs()
         print_memory_usage("After load_inputs inside ModelTester")
+        print_system_memory_summary("After load_inputs inside ModelTester")
 
         self.required_pcc = required_pcc
         self.assert_pcc = assert_pcc
