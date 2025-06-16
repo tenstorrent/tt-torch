@@ -78,8 +78,10 @@ def test_falcon(record_property, model_name, mode, op_by_op):
         True
         if model_name
         in [
-            "tiiuae/Falcon3-3B-Base",
             "tiiuae/Falcon3-1B-Base",
+            "tiiuae/Falcon3-3B-Base",
+            "tiiuae/Falcon3-1B-Instruct",
+            "tiiuae/Falcon3-3B-Instruct",
         ]
         else False
     )
@@ -92,13 +94,15 @@ def test_falcon(record_property, model_name, mode, op_by_op):
         assert_pcc=assert_pcc,
         assert_atol=False,
         model_group=model_group,
-        run_generate=True,  # run model.generate(**inputs)
+        run_generate=False,
     )
     results = tester.test_model()
 
     if mode == "eval":
+        logits = results.logits if hasattr(results, "logits") else results[0]
+        token_ids = torch.argmax(logits, dim=-1)
         output = tester.tokenizer.batch_decode(
-            results, skip_special_tokens=True, clean_up_tokenization_spaces=False
+            token_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False
         )[0]
 
     tester.finalize()

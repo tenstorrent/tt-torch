@@ -195,6 +195,7 @@ jobs:
                 tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b6-eval]
                 tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b7-eval]
                 tests/models/codegen/test_codegen.py::test_codegen[full-eval]
+                tests/models/codegen/test_codegen_generate.py::test_codegen_generate[full-eval]
                 tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-2-eval]
                 tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-3B-Base-eval]
                 tests/models/t5/test_t5.py::test_t5[full-t5-large-eval]

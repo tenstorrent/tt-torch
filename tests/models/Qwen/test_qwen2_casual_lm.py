@@ -58,22 +58,22 @@ def test_qwen2_casual_lm(record_property, model_name, mode, op_by_op):
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
-        is_token_output=True,
-        run_generate=True,  # run model.generate(**inputs)
+        assert_atol=False,
+        run_generate=False,
+        required_pcc=0.86,
     )
 
-    # TODO - Enable checking - https://github.com/tenstorrent/tt-torch/issues/526
-    results = tester.test_model(assert_eval_token_mismatch=False)
+    results = tester.test_model()
 
     if mode == "eval":
+        logits = results.logits if hasattr(results, "logits") else results[0]
+        token_ids = torch.argmax(logits, dim=-1)
         gen_text = tester.tokenizer.batch_decode(
-            results,
+            token_ids,
             skip_special_tokens=True,
             clean_up_tokenization_spaces=False,
         )[0]
 
-        print(
-            f"Model: {model_name} | Input: {tester.text} | Generated Text: {gen_text}"
-        )
+        print(f"Model: {model_name} | Input: {tester.text} | Decoded Text: {gen_text}")
 
     tester.finalize()

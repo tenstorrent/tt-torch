@@ -19,7 +19,8 @@ class ThisTester(ModelTester):
     def _load_inputs(self):
         self.input_text = "translate English to French: How are you?"
         input_ids = self.tokenizer.encode(self.input_text, return_tensors="pt")
-        return input_ids
+        decoder_input_ids = torch.tensor([[self.tokenizer.pad_token_id]])
+        return {"input_ids": input_ids, "decoder_input_ids": decoder_input_ids}
 
 
 @pytest.mark.parametrize(
@@ -42,7 +43,6 @@ def test_t5(record_property, model_name, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    # TODO Enable checking - https://github.com/tenstorrent/tt-torch/issues/676
     tester = ThisTester(
         model_name,
         mode,
@@ -50,12 +50,14 @@ def test_t5(record_property, model_name, mode, op_by_op):
         record_property_handle=record_property,
         assert_pcc=False,
         assert_atol=False,
-        is_token_output=True,
-        run_generate=True,  # run model.generate(**inputs)
+        run_generate=False,
     )
-    results = tester.test_model(assert_eval_token_mismatch=False)
+    results = tester.test_model()
     if mode == "eval":
-        output_text = tester.tokenizer.decode(results[0], skip_special_tokens=True)
+        predicted_token_ids = results[0].argmax(dim=-1)
+        output_text = tester.tokenizer.decode(
+            predicted_token_ids[0], skip_special_tokens=True
+        )
         print(
             f"Model: {model_name} | Input: {tester.input_text} | Output: {output_text}"
         )
