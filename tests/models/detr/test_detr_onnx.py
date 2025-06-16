@@ -15,6 +15,7 @@ from tt_torch.tools.utils import (
     ModelMetadata,
     OpByOpBackend,
 )
+from third_party.tt_forge_models.tools.utils import get_file
 
 
 class ThisTester(OnnxModelTester):
@@ -63,6 +64,7 @@ DETR_ONNX_VARIANTS = [
         op_by_op_backend=OpByOpBackend.STABLEHLO,
         assert_pcc=False,
         assert_atol=False,
+        compile_depth=CompileDepth.TTNN_IR,
     )
 ]
 

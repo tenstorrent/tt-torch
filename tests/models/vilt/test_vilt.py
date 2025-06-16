@@ -8,12 +8,8 @@ from PIL import Image
 import pytest
 from tests.utils import ModelTester
 import torch
-<<<<<<< HEAD
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from third_party.tt_forge_models.tools.utils import get_file
-=======
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, ModelMetadata
->>>>>>> 1031803 (refactored test_qwen2_token_classification.py, test_timm_image_classification.py, test_vilt.py for the new pytest infra.)
 
 
 class ThisTester(ModelTester):
@@ -38,7 +34,7 @@ class ThisTester(ModelTester):
 
 
 VILT_VARIANTS = [
-    ModelMetadata(model_name="ViLT", relative_atol=0.02, model_group="red")
+    ModelMetadata(model_name="ViLT", relative_atol=0.02, model_group="red", compile_depth=CompileDepth.TTNN_IR)
 ]
 
 

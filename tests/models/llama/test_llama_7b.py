@@ -38,7 +38,7 @@ class ThisTester(ModelTester):
         return inputs
 
 
-LLAMA_7B_VARIANTS = [ModelMetadata(model_name="huggyllama/llama-7b", model_group="red")]
+LLAMA_7B_VARIANTS = [ModelMetadata(model_name="huggyllama/llama-7b", model_group="red", compile_depth=CompileDepth.TTNN_IR)]
 
 
 @pytest.mark.parametrize("model_info", LLAMA_7B_VARIANTS, ids=lambda x: x.model_name)

@@ -28,16 +28,16 @@ class ThisTester(ModelTester):
 
 
 FALCON3_VARIANTS = [
-    ModelMetadata(model_name="tiiuae/Falcon3-1B-Base", model_group="red"),
+    ModelMetadata(model_name="tiiuae/Falcon3-1B-Base", model_group="red", compile_depth=CompileDepth.TTNN_IR),
     ModelMetadata(
-        model_name="tiiuae/Falcon3-3B-Base", model_group="red", assert_pcc=True
+        model_name="tiiuae/Falcon3-3B-Base", model_group="red", assert_pcc=True, compile_depth=CompileDepth.TTNN_IR
     ),
-    ModelMetadata(model_name="tiiuae/Falcon3-7B-Base", model_group="red"),
-    ModelMetadata(model_name="tiiuae/Falcon3-10B-Base", model_group="red"),
-    ModelMetadata(model_name="tiiuae/Falcon3-1B-Instruct", model_group="red"),
-    ModelMetadata(model_name="tiiuae/Falcon3-3B-Instruct", model_group="red"),
-    ModelMetadata(model_name="tiiuae/Falcon3-7B-Instruct", model_group="red"),
-    ModelMetadata(model_name="tiiuae/Falcon3-10B-Instruct", model_group="red"),
+    ModelMetadata(model_name="tiiuae/Falcon3-7B-Base", model_group="red", compile_depth=CompileDepth.TTNN_IR),
+    ModelMetadata(model_name="tiiuae/Falcon3-10B-Base", model_group="red", compile_depth=CompileDepth.TTNN_IR),
+    ModelMetadata(model_name="tiiuae/Falcon3-1B-Instruct", model_group="red", compile_depth=CompileDepth.TTNN_IR),
+    ModelMetadata(model_name="tiiuae/Falcon3-3B-Instruct", model_group="red", compile_depth=CompileDepth.TTNN_IR),
+    ModelMetadata(model_name="tiiuae/Falcon3-7B-Instruct", model_group="red", compile_depth=CompileDepth.TTNN_IR),
+    ModelMetadata(model_name="tiiuae/Falcon3-10B-Instruct", model_group="red", compile_depth=CompileDepth.TTNN_IR),
 ]
 
 

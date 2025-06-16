@@ -12,6 +12,7 @@ from tt_torch.tools.utils import (
     OpByOpBackend,
     ModelMetadata,
 )
+from third_party.tt_forge_models.tools.utils import get_file
 
 
 # TorchVision (TV) model metadata
@@ -42,76 +43,76 @@ class ThisTester(ModelTester):
 
 # List of Torch Vision Model Metadatas (TVModelMetadata)
 TORCHVISION_MODELS = [
-    TVModelMetadata(model_name="googlenet", weights_name="GoogLeNet_Weights"),
-    TVModelMetadata(model_name="densenet121", weights_name="DenseNet121_Weights"),
-    TVModelMetadata(model_name="densenet161", weights_name="DenseNet161_Weights"),
-    TVModelMetadata(model_name="densenet169", weights_name="DenseNet169_Weights"),
-    TVModelMetadata(model_name="densenet201", weights_name="DenseNet201_Weights"),
-    TVModelMetadata(model_name="mobilenet_v2", weights_name="MobileNet_V2_Weights"),
+    TVModelMetadata(model_name="googlenet", weights_name="GoogLeNet_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="densenet121", weights_name="DenseNet121_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="densenet161", weights_name="DenseNet161_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="densenet169", weights_name="DenseNet169_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="densenet201", weights_name="DenseNet201_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="mobilenet_v2", weights_name="MobileNet_V2_Weights", compile_depth=CompileDepth.TTNN_IR),
     TVModelMetadata(
-        model_name="mobilenet_v3_small", weights_name="MobileNet_V3_Small_Weights"
+        model_name="mobilenet_v3_small", weights_name="MobileNet_V3_Small_Weights", compile_depth=CompileDepth.TTNN_IR
     ),
     TVModelMetadata(
-        model_name="mobilenet_v3_large", weights_name="MobileNet_V3_Large_Weights"
+        model_name="mobilenet_v3_large", weights_name="MobileNet_V3_Large_Weights", compile_depth=CompileDepth.TTNN_IR
     ),
-    TVModelMetadata(model_name="resnet18", weights_name="ResNet18_Weights"),
-    TVModelMetadata(model_name="resnet34", weights_name="ResNet34_Weights"),
-    TVModelMetadata(model_name="resnet50", weights_name="ResNet50_Weights"),
-    TVModelMetadata(model_name="resnet101", weights_name="ResNet101_Weights"),
-    TVModelMetadata(model_name="resnet152", weights_name="ResNet152_Weights"),
+    TVModelMetadata(model_name="resnet18", weights_name="ResNet18_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="resnet34", weights_name="ResNet34_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="resnet50", weights_name="ResNet50_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="resnet101", weights_name="ResNet101_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="resnet152", weights_name="ResNet152_Weights", compile_depth=CompileDepth.TTNN_IR),
     TVModelMetadata(
-        model_name="resnext50_32x4d", weights_name="ResNeXt50_32X4D_Weights"
-    ),
-    TVModelMetadata(
-        model_name="resnext101_32x8d", weights_name="ResNeXt101_32X8D_Weights"
+        model_name="resnext50_32x4d", weights_name="ResNeXt50_32X4D_Weights", compile_depth=CompileDepth.TTNN_IR
     ),
     TVModelMetadata(
-        model_name="resnext101_64x4d", weights_name="ResNeXt101_64X4D_Weights"
-    ),
-    TVModelMetadata(model_name="vgg11", weights_name="VGG11_Weights"),
-    TVModelMetadata(model_name="vgg11_bn", weights_name="VGG11_BN_Weights"),
-    TVModelMetadata(model_name="vgg13", weights_name="VGG13_Weights"),
-    TVModelMetadata(model_name="vgg13_bn", weights_name="VGG13_BN_Weights"),
-    TVModelMetadata(model_name="vgg16", weights_name="VGG16_Weights"),
-    TVModelMetadata(model_name="vgg16_bn", weights_name="VGG16_BN_Weights"),
-    TVModelMetadata(model_name="vgg19", weights_name="VGG19_Weights"),
-    TVModelMetadata(model_name="vgg19_bn", weights_name="VGG19_BN_Weights"),
-    TVModelMetadata(model_name="vit_b_16", weights_name="ViT_B_16_Weights"),
-    TVModelMetadata(model_name="vit_b_32", weights_name="ViT_B_32_Weights"),
-    TVModelMetadata(model_name="vit_l_16", weights_name="ViT_L_16_Weights"),
-    TVModelMetadata(model_name="vit_l_32", weights_name="ViT_L_32_Weights"),
-    TVModelMetadata(
-        model_name="vit_h_14", weights_name="ViT_H_14_Weights", assert_pcc=False
+        model_name="resnext101_32x8d", weights_name="ResNeXt101_32X8D_Weights", compile_depth=CompileDepth.TTNN_IR
     ),
     TVModelMetadata(
-        model_name="wide_resnet50_2", weights_name="Wide_ResNet50_2_Weights"
+        model_name="resnext101_64x4d", weights_name="ResNeXt101_64X4D_Weights", compile_depth=CompileDepth.TTNN_IR
+    ),
+    TVModelMetadata(model_name="vgg11", weights_name="VGG11_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="vgg11_bn", weights_name="VGG11_BN_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="vgg13", weights_name="VGG13_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="vgg13_bn", weights_name="VGG13_BN_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="vgg16", weights_name="VGG16_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="vgg16_bn", weights_name="VGG16_BN_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="vgg19", weights_name="VGG19_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="vgg19_bn", weights_name="VGG19_BN_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="vit_b_16", weights_name="ViT_B_16_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="vit_b_32", weights_name="ViT_B_32_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="vit_l_16", weights_name="ViT_L_16_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="vit_l_32", weights_name="ViT_L_32_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(
+        model_name="vit_h_14", weights_name="ViT_H_14_Weights", assert_pcc=False, compile_depth=CompileDepth.TTNN_IR
     ),
     TVModelMetadata(
-        model_name="wide_resnet101_2", weights_name="Wide_ResNet101_2_Weights"
+        model_name="wide_resnet50_2", weights_name="Wide_ResNet50_2_Weights", compile_depth=CompileDepth.TTNN_IR
     ),
-    TVModelMetadata(model_name="regnet_y_400mf", weights_name="RegNet_Y_400MF_Weights"),
-    TVModelMetadata(model_name="regnet_y_800mf", weights_name="RegNet_Y_800MF_Weights"),
-    TVModelMetadata(model_name="regnet_y_1_6gf", weights_name="RegNet_Y_1_6GF_Weights"),
-    TVModelMetadata(model_name="regnet_y_3_2gf", weights_name="RegNet_Y_3_2GF_Weights"),
-    TVModelMetadata(model_name="regnet_y_8gf", weights_name="RegNet_Y_8GF_Weights"),
-    TVModelMetadata(model_name="regnet_y_16gf", weights_name="RegNet_Y_16GF_Weights"),
-    TVModelMetadata(model_name="regnet_y_32gf", weights_name="RegNet_Y_32GF_Weights"),
-    TVModelMetadata(model_name="regnet_y_128gf", weights_name="RegNet_Y_128GF_Weights"),
-    TVModelMetadata(model_name="regnet_x_400mf", weights_name="RegNet_X_400MF_Weights"),
-    TVModelMetadata(model_name="regnet_x_800mf", weights_name="RegNet_X_800MF_Weights"),
-    TVModelMetadata(model_name="regnet_x_1_6gf", weights_name="RegNet_X_1_6GF_Weights"),
-    TVModelMetadata(model_name="regnet_x_3_2gf", weights_name="RegNet_X_3_2GF_Weights"),
-    TVModelMetadata(model_name="regnet_x_8gf", weights_name="RegNet_X_8GF_Weights"),
-    TVModelMetadata(model_name="regnet_x_16gf", weights_name="RegNet_X_16GF_Weights"),
-    TVModelMetadata(model_name="regnet_x_32gf", weights_name="RegNet_X_32GF_Weights"),
-    TVModelMetadata(model_name="swin_t", weights_name="Swin_T_Weights"),
-    TVModelMetadata(model_name="swin_s", weights_name="Swin_S_Weights"),
-    TVModelMetadata(model_name="swin_b", weights_name="Swin_B_Weights"),
-    TVModelMetadata(model_name="swin_v2_t", weights_name="Swin_V2_T_Weights"),
     TVModelMetadata(
-        model_name="swin_v2_s", weights_name="Swin_V2_S_Weights", model_group="red"
+        model_name="wide_resnet101_2", weights_name="Wide_ResNet101_2_Weights", compile_depth=CompileDepth.TTNN_IR
     ),
-    TVModelMetadata(model_name="swin_v2_b", weights_name="Swin_V2_B_Weights"),
+    TVModelMetadata(model_name="regnet_y_400mf", weights_name="RegNet_Y_400MF_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="regnet_y_800mf", weights_name="RegNet_Y_800MF_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="regnet_y_1_6gf", weights_name="RegNet_Y_1_6GF_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="regnet_y_3_2gf", weights_name="RegNet_Y_3_2GF_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="regnet_y_8gf", weights_name="RegNet_Y_8GF_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="regnet_y_16gf", weights_name="RegNet_Y_16GF_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="regnet_y_32gf", weights_name="RegNet_Y_32GF_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="regnet_y_128gf", weights_name="RegNet_Y_128GF_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="regnet_x_400mf", weights_name="RegNet_X_400MF_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="regnet_x_800mf", weights_name="RegNet_X_800MF_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="regnet_x_1_6gf", weights_name="RegNet_X_1_6GF_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="regnet_x_3_2gf", weights_name="RegNet_X_3_2GF_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="regnet_x_8gf", weights_name="RegNet_X_8GF_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="regnet_x_16gf", weights_name="RegNet_X_16GF_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="regnet_x_32gf", weights_name="RegNet_X_32GF_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="swin_t", weights_name="Swin_T_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="swin_s", weights_name="Swin_S_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="swin_b", weights_name="Swin_B_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(model_name="swin_v2_t", weights_name="Swin_V2_T_Weights", compile_depth=CompileDepth.TTNN_IR),
+    TVModelMetadata(
+        model_name="swin_v2_s", weights_name="Swin_V2_S_Weights", model_group="red", compile_depth=CompileDepth.TTNN_IR
+    ),
+    TVModelMetadata(model_name="swin_v2_b", weights_name="Swin_V2_B_Weights", compile_depth=CompileDepth.TTNN_IR),
 ]
 
 

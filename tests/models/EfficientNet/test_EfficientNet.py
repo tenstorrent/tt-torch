@@ -10,6 +10,7 @@ from efficientnet_pytorch import EfficientNet
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, ModelMetadata, CompileDepth
+from third_party.tt_forge_models.tools.utils import get_file
 
 
 class ThisTester(ModelTester):

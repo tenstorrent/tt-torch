@@ -28,7 +28,7 @@ class ThisTester(ModelTester):
 
 
 # metadata for Falcon model
-FALCON_VARIANT = [ModelMetadata(model_name="falcon-7b-instruct")]
+FALCON_VARIANT = [ModelMetadata(model_name="falcon-7b-instruct", compile_depth=CompileDepth.TTNN_IR)]
 
 
 @pytest.mark.parametrize("model_info", FALCON_VARIANT, ids=lambda x: x.model_name)

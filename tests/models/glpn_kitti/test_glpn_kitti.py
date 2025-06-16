@@ -8,6 +8,7 @@ from transformers import GLPNImageProcessor, GLPNForDepthEstimation
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, ModelMetadata
+from third_party.tt_forge_models.tools.utils import get_file
 
 
 class ThisTester(ModelTester):
@@ -28,7 +29,7 @@ class ThisTester(ModelTester):
 
 
 GLPN_KITTI_VARIANTS = [
-    ModelMetadata(model_name="GLPN-KITTI", relative_atol=0.013, model_group="red")
+    ModelMetadata(model_name="GLPN-KITTI", relative_atol=0.013, model_group="red", compile_depth=CompileDepth.TTNN_IR)
 ]
 
 

@@ -35,29 +35,29 @@ jobs:
             # Approximately 60 minutes.
             runs-on: wormhole_b0, name: "compile_1", tests: "
               tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-7B-Base-eval]
-              tests/models/detr/test_detr_onnx.py::test_detr_onnx[full-eval]
-              tests/models/oft/test_oft.py::test_oft[full-eval]
-              tests/models/autoencoder_conv/test_autoencoder_conv_v2.py::test_autoencoder_conv_v2[full-eval]
-              tests/models/flux/test_flux.py::test_flux[full-flux_schnell-eval]
-              tests/models/flux/test_flux.py::test_flux[full-flux_dev-eval]
+              tests/models/detr/test_detr_onnx.py::test_detr_onnx[full-DETR_onnx-eval]
+              tests/models/oft/test_oft.py::test_oft[full-OFT-eval]
+              tests/models/autoencoder_conv/test_autoencoder_conv_v2.py::test_autoencoder_conv_v2[full-Autoencoder_conv-eval]
+              tests/models/flux/test_flux.py::test_flux[full-FLUX.1-schnell-eval]
+              tests/models/flux/test_flux.py::test_flux[full-FLUX.1-dev-eval]
               tests/models/xglm/test_xglm.py::test_xglm[full-eval]
             "
           },
           {
             # Approximately 180 minutes.
             runs-on: wormhole_b0, name: "compile_2", tests: "
-                  tests/models/glpn_kitti/test_glpn_kitti.py::test_glpn_kitti[full-eval]
+                  tests/models/glpn_kitti/test_glpn_kitti.py::test_glpn_kitti[full-GLPN-KITTI-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_y_128gf]
                   tests/models/deepseek/test_deepseek_qwen.py::test_deepseek_qwen[full-deepseek-ai/DeepSeek-R1-Distill-Qwen-32B-eval]
                   tests/models/Qwen/test_qwen2_token_classification.py::test_qwen2_token_classification[full-Qwen/Qwen2-7B-eval]
-                  tests/models/vilt/test_vilt.py::test_vilt[full-eval]
-                  tests/models/llama/test_llama_7b.py::test_llama_7b[full-eval]
-                  tests/models/falcon/test_falcon.py::test_falcon[full-eval]
+                  tests/models/vilt/test_vilt.py::test_vilt[full-ViLT-eval]
+                  tests/models/llama/test_llama_7b.py::test_llama_7b[full-huggyllama/llama-7b-eval]
+                  tests/models/falcon/test_falcon.py::test_falcon[full-falcon-7b-instruct-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-googlenet]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-full-eval-ghostnetv2_100.in1k]
-                  tests/models/mistral/test_pixtral.py::test_pixtral[full-eval]
-                  tests/models/mistral/test_mistral.py::test_mistral[full-mistral7b-eval]
-                  tests/models/mistral/test_mistral.py::test_mistral[full-ministral8b-eval]
+                  tests/models/mistral/test_pixtral.py::test_pixtral[full-mistral-community/pixtral-12b-eval]
+                  tests/models/mistral/test_mistral.py::test_mistral[full-mistralai/Mistral-7B-v0.1-eval]
+                  tests/models/mistral/test_mistral.py::test_mistral[full-mistralai/Ministral-8B-Instruct-2410-eval]
             "
           },
         ]

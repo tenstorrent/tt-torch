@@ -31,7 +31,7 @@ class ThisTester(ModelTester):
 
 
 PIXTRAL_VARIANTS = [
-    ModelMetadata(model_name="mistral-community/pixtral-12b", model_group="red")
+    ModelMetadata(model_name="mistral-community/pixtral-12b", model_group="red", compile_depth=CompileDepth.TTNN_IR)
 ]
 
 

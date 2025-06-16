@@ -24,6 +24,7 @@ OFT_VARIANTS = [
         model_name="OFT",
         model_group="red",
         assert_atol=False,
+        compile_depth=CompileDepth.TTNN_IR
     )
 ]
 

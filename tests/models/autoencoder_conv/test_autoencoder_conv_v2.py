@@ -71,7 +71,7 @@ class ThisTester(ModelTester):
         return batch_tensor
 
 
-AUTOENCODER_VARIANTS = [ModelMetadata(model_name="Autoencoder (conv)")]
+AUTOENCODER_VARIANTS = [ModelMetadata(model_name="Autoencoder_conv", compile_depth=CompileDepth.TTNN_IR)]
 
 
 @pytest.mark.parametrize("model_info", AUTOENCODER_VARIANTS, ids=lambda x: x.model_name)

@@ -32,6 +32,7 @@ DEEPSEEK_VARIANTS = [
         model_name="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
         required_atol=0.5,
         model_group="red",
+        compile_depth=CompileDepth.TTNN_IR
     )
 ]
 

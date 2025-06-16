@@ -31,6 +31,7 @@ QWEN_VARIANTS = [
         model_group="red",
         assert_pcc=False,
         assert_atol=False,
+        compile_depth=CompileDepth.TTNN_IR
     )
 ]
 
