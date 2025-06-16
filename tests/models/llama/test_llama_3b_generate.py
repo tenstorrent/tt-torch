@@ -4,7 +4,7 @@
 import torch
 import pytest
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from tt_torch.tools.utils import CompilerConfig, CompileDepth
 from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
@@ -24,7 +24,7 @@ class PrefillTester(ModelTester):
             torch_dtype=torch.bfloat16,
             use_cache=True,
         )
-        model.config.num_hidden_layers = 28
+        model.config.num_hidden_layers = 2
 
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_name, torch_dtype=torch.bfloat16
@@ -81,6 +81,7 @@ class PrefillTester(ModelTester):
 
         model = self.compile_model(model, self.compiler_config, data_parallel_mode=False, runtime_tensor_cache=runtime_tensor_cache)
 
+        
         return model
 
         # outputs = self.run_model(model, self.inputs)
@@ -132,7 +133,7 @@ def test_llama_3b(record_property):
     runtime_tensor_cache = {}
     print("Runtime tensor cache id: ", id(runtime_tensor_cache))
     gm = tester.get_torchcompiled_gm(runtime_tensor_cache)
-    
+
     compare_golden = False
 
     generated_ids = input_ids

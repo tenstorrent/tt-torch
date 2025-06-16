@@ -141,7 +141,7 @@ class Executor:
         async_mode=False,
         runtime_tensor_cache=None
     ):
-        print("[James] Executor initialized.", flush=True)
+        print("[James] Executor initialized with id", id(self), flush=True)
         self.mcg = mcg
         if compiler_config is None:
             compiler_config = CompilerConfig()
@@ -158,11 +158,11 @@ class Executor:
         }
 
         self.binary = {}
-        self.preprocessed_graph_constants = {}
+        # self.preprocessed_graph_constants = {}
         self.devices = devices if devices is not None else [None]
         self.owned_device_indices = []
         self.async_mode = async_mode
-        self.runtime_tensor_cache = runtime_tensor_cache
+        self.runtime_tensor_cache = runtime_tensor_cache # ref to BackendOptions.runtime_tensor_cache
         self._validate_executor()
         self.system_desc_paths = self._create_system_descriptors()
 
@@ -186,6 +186,7 @@ class Executor:
                 self.owned_device_indices.remove(device_idx)
                 self.devices[device_idx] = None
                 tt_mlir.close_mesh_device(descriptor_device)
+                print("[James] Closed mesh device with idx ", device_idx, flush=True)
 
             system_desc_paths.append(descriptor_path)
         return system_desc_paths
@@ -236,7 +237,10 @@ class Executor:
         mesh_options = tt_mlir.MeshDeviceOptions()
         if len(self.compiler_config.mesh_shape) == 32:
             mesh_options.dispatch_core_type = tt_mlir.DispatchCoreType.WORKER
+        
         device = tt_mlir.open_mesh_device(self.compiler_config.mesh_shape, mesh_options)
+        print("[James] Opened new mesh device, with idx ", device_idx, flush=True)
+        print("Count self.devices ", len(self.devices), "count owned device indices", len(self.owned_device_indices), flush=True)
         self.devices[device_idx] = device
         self.owned_device_indices.append(device_idx)
         return device
@@ -257,11 +261,21 @@ class Executor:
         def get_torch_tensors(tensors):
             torch_tensors = []
             indices = []
+            tensor_start_idx = 0
             for idx, tensor in enumerate(tensors):
-                if isinstance(tensor, torch.Tensor):
+                assert isinstance(tensor, torch.Tensor),  f"[James] Found non-torch tensor in inputs: {tensor}"
+                
+                tensor_cache = self.runtime_tensor_cache.get(self.devices[device_idx], None)
+                # if the tensor is already in the cache, we can skip it
+                if tensor_cache is not None and tensor_cache.get(tensor, None) is not None:
+                    print("[James] Fetching tensor from runtime tensor cache", flush=True)
+                    tensor_start_idx+=1
+                    continue
+                else:
                     torch_tensors.append(tensor)
                     indices.append(idx)
-            return torch_tensors, indices
+                   
+            return torch_tensors, indices, tensor_start_idx
 
         def recreate_runtime_tensors(tensors, runtime_tensors, indices):
             tensors = list(tensors)
@@ -270,22 +284,30 @@ class Executor:
             return tuple(tensors)
 
 
-        constant_inputs_ct = 28*2        
+        # constant_inputs_ct = 2*2        
 
         input_len = len(inputs)
-        tensor_start_idx = 0
-        if device_idx in self.preprocessed_graph_constants:
-            preprocessed_weights = self.preprocessed_graph_constants[device_idx]
-            weights_and_activations = preprocessed_weights + inputs
-            tensor_start_idx = len(preprocessed_weights)
-        elif self.mcg.constant_inputs[device_idx] is not None:
-            weights_and_activations = (
-                tuple(self.mcg.constant_inputs[device_idx]) + inputs
-            )
-        else:
-            weights_and_activations = inputs
-
-        torch_weights_and_activations, torch_indices = get_torch_tensors(
+        
+        # if self.devices[device_idx] in self.runtime_tensor_cache:
+        #     preprocessed_weights = self.runtime_tensor_cache[self.devices[device_idx]]
+        #     weights_and_activations = preprocessed_weights + inputs
+        #     tensor_start_idx = len(preprocessed_weights)
+            
+        # if device_idx in self.preprocessed_graph_constants:
+        #     preprocessed_weights = self.preprocessed_graph_constants[device_idx]
+        #     weights_and_activations = preprocessed_weights + inputs
+        #     tensor_start_idx = len(preprocessed_weights)
+        
+        # elif self.mcg.constant_inputs[device_idx] is not None:
+        #     weights_and_activations = (
+        #         tuple(self.mcg.constant_inputs[device_idx]) + inputs
+        #     )
+        # else:
+        #     weights_and_activations = inputs
+        
+        weights_and_activations = tuple(self.mcg.constant_inputs[device_idx]) + inputs
+        print("len weights_and_activations", len(weights_and_activations), "from ", len(self.mcg.constant_inputs[device_idx]), "+", len(inputs), flush=True)
+        torch_weights_and_activations, torch_indices, tensor_start_idx = get_torch_tensors(
             weights_and_activations
         )
 
@@ -294,19 +316,17 @@ class Executor:
                 torch_weights_and_activations
             )
 
-        
-
         # avoid preprocessing inputs if they already exist in the cache
-        already_cached_inputs = [] 
+        # already_cached_inputs = [] 
         # already_cached_inputs = None # comment this out to enable alloc suppression
         
-        if already_cached_inputs is not None and self.runtime_tensor_cache is not None:
-            already_cached_inputs.extend(self.runtime_tensor_cache.keys())
+        # if already_cached_inputs is not None and self.runtime_tensor_cache is not None:
+        #     already_cached_inputs.extend(self.runtime_tensor_cache.keys())
         
-        if  already_cached_inputs is not None and len(already_cached_inputs) > 0:
-            print(f"[James] Found {len(already_cached_inputs)} cached inputs. Suppressing their allocation.")
-            torch_weights_and_activations = torch_weights_and_activations[len(already_cached_inputs):]
-            tensor_start_idx += len(already_cached_inputs) # these are effectively "preprocessed" graph constants
+        # if  already_cached_inputs is not None and len(already_cached_inputs) > 0:
+        #     print(f"[James] Found {len(already_cached_inputs)} cached inputs. Suppressing their allocation.")
+        #     torch_weights_and_activations = torch_weights_and_activations[len(already_cached_inputs):]
+        #     tensor_start_idx += len(already_cached_inputs) # these are effectively "preprocessed" graph constants
             
         runtime_activations_and_weights = tt_mlir.preprocess_inputs(
             self._get_device(device_idx=device_idx),
@@ -317,9 +337,21 @@ class Executor:
         )
         
         
+        # after the first call to get_device, we have a valid device in the executor. We can now set up a cache of runtime tensors keyed to the device
+
+        
+        for torch_tensor, runtime_tensor in zip(torch_weights_and_activations, runtime_activations_and_weights):
+            # get the tensor cache if it's not none, else initialize to {}
+            tensor_cache = self.runtime_tensor_cache.setdefault(self.devices[device_idx], {})
+                
+            # Cache the runtime tensor using the torch tensor as the key
+            if torch_tensor not in self.runtime_tensor_cache[self.devices[device_idx]]:
+                tensor_cache[torch_tensor] = runtime_tensor
+                print(f"[James] Caching input tensor to equivalent runtime tensor (id {id(torch_tensor)})", flush=True)        
+        
         # backfilling already cached inputs with NIL so they can be replaced
-        if  already_cached_inputs is not None and len(already_cached_inputs) > 0:
-            runtime_activations_and_weights = [None]*len(already_cached_inputs) + runtime_activations_and_weights
+        # if  already_cached_inputs is not None and len(already_cached_inputs) > 0:
+        #     runtime_activations_and_weights = [None]*len(already_cached_inputs) + runtime_activations_and_weights
         
         # monkey patch static kv cache inputs from runtime tensor cache
         # put them in self.runtime_tensor_cache if they don't exist
@@ -327,25 +359,26 @@ class Executor:
         #   for pulls, take them out of the list and jam them back in at the same indices (assuming list stability? - appears so for this case but maybe not in general?)
         
         # q - how do we key this cache? input index?
-        
-        for i, runtime_tensor in enumerate(runtime_activations_and_weights):
-            # Find if this index is in any of the cachable_input_indices tuples
-            # matching_entry = next((entry for entry in cachable_input_indices if entry[0] == i), None)
+        # print('[James] Disable Caching runtime activations and weights', flush=True)        
+        # for i, runtime_tensor in enumerate(runtime_activations_and_weights):
+        #     continue # [OVERRIDE to disable caching for now]
+        #     # Find if this index is in any of the cachable_input_indices tuples
+        #     # matching_entry = next((entry for entry in cachable_input_indices if entry[0] == i), None)
             
-            # constant inputs are at the start of the runtime_activations_and_weights list and represent kv caches for llama
-            if i < constant_inputs_ct:
-                # Use the name as the cache key for stability across invocations
-                name_cache_key = f'constant_input_{i}'  # Get the name from the first matching entry
+        #     # constant inputs are at the start of the runtime_activations_and_weights list and represent kv caches for llama
+        #     if i < constant_inputs_ct:
+        #         # Use the name as the cache key for stability across invocations
+        #         name_cache_key = f'constant_input_{i}'  # Get the name from the first matching entry
                 
-                if self.runtime_tensor_cache is not None:
-                    if name_cache_key not in self.runtime_tensor_cache:
-                        # Cache miss - put tensor in cache using name as key
-                        self.runtime_tensor_cache[name_cache_key] = runtime_tensor
-                        print(f"[James] Caching input tensor with name '{name_cache_key}' (index {i})", flush=True)
-                    else:
-                        # Cache hit - overwrite with cached version
-                        runtime_activations_and_weights[i] = self.runtime_tensor_cache[name_cache_key]
-                        print(f"[James] Overwriting input tensor with name '{name_cache_key}' (index {i}) with cached version", flush=True)
+        #         if self.runtime_tensor_cache is not None:
+        #             if name_cache_key not in self.runtime_tensor_cache:
+        #                 # Cache miss - put tensor in cache using name as key
+        #                 self.runtime_tensor_cache[name_cache_key] = runtime_tensor
+        #                 print(f"[James] Caching input tensor with name '{name_cache_key}' (index {i})", flush=True)
+        #             else:
+        #                 # Cache hit - overwrite with cached version
+        #                 runtime_activations_and_weights[i] = self.runtime_tensor_cache[name_cache_key]
+        #                 print(f"[James] Overwriting input tensor with name '{name_cache_key}' (index {i}) with cached version", flush=True)
         
         if self.runtime_tensor_cache is not None:
             print(f"[James] - Runtime tensor cache keys (id {id(self.runtime_tensor_cache)})", list(self.runtime_tensor_cache.keys()), flush=True)
@@ -353,14 +386,17 @@ class Executor:
         runtime_activations_and_weights = recreate_runtime_tensors(
             weights_and_activations, runtime_activations_and_weights, torch_indices
         )
+        
+        # runtime_activations_and_weights = 
+        
         runtime_weights = runtime_activations_and_weights[:-input_len]
+        runtime_activations = runtime_activations_and_weights[-input_len:]
         
         
         # [James] Disable this for which should be controlled by _cache_if_needed
         # self.preprocessed_graph_constants[device_idx] = tuple(runtime_weights)
+        # self.runtime_tensor_cache[self.devices[device_idx]] = tuple(runtime_weights)
         
-        
-        runtime_activations = runtime_activations_and_weights[-input_len:]
         
         # for activation in runtime_activations:
         #     self.runtime_tensor_cache[len(self.runtime_tensor_cache.keys())] = activation
@@ -441,6 +477,7 @@ class Executor:
                     preprocessed_weights + preprocessed_activations,
                 )
             else:
+                print("[James] Running synchronously on device", device_idx, "with ct inputs", len(preprocessed_weights + preprocessed_activations), flush=True)
                 outputs = tt_mlir.run(
                     device,
                     binary,
@@ -464,11 +501,15 @@ class Executor:
         return final_outputs
 
     def __del__(self):
-        for _, device_weights in self.preprocessed_graph_constants.items():
+        print("[James] Executor destructor called, id: ", id(self), flush=True)
+        
+        for _, device_weights in self.runtime_tensor_cache.items():
             for weight in device_weights:
                 tt_mlir.deallocate_tensor(weight, force=True)
         for device_idx in self.owned_device_indices:
             tt_mlir.close_mesh_device(self.devices[device_idx])
+            print("[James] closed submesh device, with idx ", device_idx, flush=True)
+
         for path in self.system_desc_paths:
             try:
                 os.remove(path)

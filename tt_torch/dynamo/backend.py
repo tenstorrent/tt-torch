@@ -21,13 +21,12 @@ from tt_torch.tools.utils import (
 
 class BackendOptions:
     def __init__(
-        self, compiler_config=CompilerConfig(), devices=[None], async_mode=False, runtime_tensor_cache=None
+        self, compiler_config=CompilerConfig(), devices=[None], async_mode=False, runtime_tensor_cache={}
     ):
         self.compiler_config = compiler_config
         self.devices = devices
-        self.async_mode = async_mode
+        self.async_mode = async_mode        
         self.runtime_tensor_cache = runtime_tensor_cache
-
 
 from tt_torch.dynamo.torch_backend import (
     TorchExecutor,

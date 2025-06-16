@@ -101,6 +101,8 @@ class DeviceManager:
             for sub_device in sub_devices.copy():
                 cls.release_sub_mesh_device(sub_device, parent=parent_device)
         tt_mlir.close_mesh_device(parent_device)
+        print("[James] close parent mesh device", flush=True)
+
         del cls._devices[parent_device]
         del cls._parent_shapes[parent_device]
 
@@ -176,6 +178,8 @@ class DeviceManager:
         if cleanup_parent:
             if len(cls._devices[parent]) == 0:
                 tt_mlir.close_mesh_device(parent)
+                print("[James] close submesh mesh device", flush=True)
+                
                 del cls._devices[parent]
                 del cls._parent_shapes[parent]
 
