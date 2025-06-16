@@ -351,7 +351,8 @@ class TorchExecutor(OpByOpExecutor):
 
             out_degree[node] = len(node.users)
             if node.op == "placeholder":
-                node_to_tensor[node] = inputs[input_index]
+                if out_degree[node] > 0:
+                    node_to_tensor[node] = inputs[input_index]
                 input_index += 1
             elif node.op == "get_attr":
                 for buffer in self.program.graph_module.named_buffers():
@@ -483,11 +484,26 @@ class TorchExecutor(OpByOpExecutor):
                 output_tensors = [node_to_tensor[arg] for arg in args]
                 outputs = output_tensors
 
-            args_set = set()
-            for arg in node.args:
-                if arg in args_set:
-                    continue
-                args_set.add(arg)
+            def flatten_fx_nodes(*args):
+                result = []
+
+                def _flatten(arg):
+                    if isinstance(arg, torch.fx.node.Node):
+                        result.append(arg)
+                    elif isinstance(arg, (list, tuple)):
+                        for item in arg:
+                            _flatten(item)
+                    elif isinstance(arg, dict):
+                        for item in arg.values():
+                            _flatten(item)
+
+                for arg in args:
+                    _flatten(arg)
+
+                return result
+
+            args_set = set(flatten_fx_nodes(node.args))
+            for arg in args_set:
                 if isinstance(arg, torch.fx.node.Node):
                     out_degree[arg] -= 1
                     if out_degree[arg] == 0 and arg.op != "output":
