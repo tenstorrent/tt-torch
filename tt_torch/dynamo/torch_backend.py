@@ -510,7 +510,9 @@ class TorchExecutor(OpByOpExecutor):
                 #     f"Total size of node_to_tensor dictionary in MB: {total_dict_size:.2f}"
                 # )
 
-                node_to_tensor[node] = golden
+                if out_degree[node] > 0:
+                    node_to_tensor[node] = golden
+
             elif node.op == "output":
                 args = node.args[0]
                 output_tensors = [node_to_tensor[arg] for arg in args]
