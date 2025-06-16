@@ -127,6 +127,7 @@ jobs:
                   tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-1-eval]
                   tests/models/clip/test_clip.py::test_clip[full-eval]
                   tests/models/gpt2/test_gpt2.py::test_gpt2[full-eval]
+                  tests/models/gpt_neo/test_gpt_neo.py::test_gpt_neo[full-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-swin_b]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-densenet201]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-full-eval-ese_vovnet19b_dw.ra_in1k]

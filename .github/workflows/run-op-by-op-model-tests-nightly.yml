@@ -47,11 +47,6 @@ jobs:
               "
           },
           {
-            runs-on: n300, name: "gpt", tests: "
-              tests/models/gpt_neo/test_gpt_neo.py::test_gpt_neo[op_by_op_torch-eval]
-              ", sh-run: true
-          },
-          {
             runs-on: wormhole_b0, name: "openpose", tests: "
               tests/models/openpose/test_openpose.py::test_openpose[op_by_op_torch-eval]
               "

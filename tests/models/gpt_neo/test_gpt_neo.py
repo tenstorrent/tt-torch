@@ -58,7 +58,8 @@ def test_gpt_neo(record_property, mode, op_by_op):
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
-        assert_pcc=False,
+        required_pcc=0.98,
+        assert_pcc=True,
         assert_atol=False,
         run_generate=False,
     )
