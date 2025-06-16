@@ -12,6 +12,8 @@ import ml_dtypes
 import numpy as np
 from torch_mlir.dialects import torch as torch_dialect
 
+import psutil
+
 from typing import Optional, Any
 from tt_torch.tools.utils import (
     CompilerConfig,
@@ -40,6 +42,13 @@ from tt_torch.dynamo.executor import (
     Executor,
     OpByOpExecutor,
 )
+
+
+def print_memory_usage(label=""):
+    process = psutil.Process(os.getpid())
+    mem = process.memory_info().rss / (1024 * 1024)  # in MB
+    print(f"[{label}] Memory Usage: {mem:.2f} MB")
+
 
 from tt_torch.tools.utils import RuntimeIntermediate
 
@@ -370,8 +379,10 @@ class TorchExecutor(OpByOpExecutor):
                 op = None
 
                 test_this_op = self.should_test_op()
+                test_this_op = False
                 # Another useful debug method:
                 # test_this_op = str(node.target) == "aten.gelu.default"
+                print_memory_usage(f"Before compile {OpByOpExecutor.global_op_idx}")
 
                 if test_this_op:
                     try:
@@ -392,12 +403,14 @@ class TorchExecutor(OpByOpExecutor):
                             "Failed to compile", idx, num_nodes, node.target, e_msg
                         )
 
+                print_memory_usage(f"Before golden {OpByOpExecutor.global_op_idx}")
                 start = time.time()
                 golden = cast_ios_and_run(node, args, node.kwargs)
                 end = time.time()
                 self.print_marker(
                     "Golden", idx, num_nodes, node.target, time=(end - start)
                 )
+                print_memory_usage(f"Before run {OpByOpExecutor.global_op_idx}")
                 OpByOpExecutor.golden_time += end - start
                 if (
                     self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
@@ -432,6 +445,37 @@ class TorchExecutor(OpByOpExecutor):
                         self.print_marker(
                             "Failed to execute", idx, num_nodes, node.target, e_msg
                         )
+
+                print_memory_usage(f"After run {OpByOpExecutor.global_op_idx}")
+                # Print the size of golden in MB:
+                def get_tensor_size_mb(tensor):
+                    """Calculate the size of a tensor in MB"""
+                    if tensor is None:
+                        return 0.0
+                    return tensor.numel() * tensor.element_size() / (1024 * 1024)
+
+                if isinstance(golden, tuple):
+                    total_size = sum(
+                        get_tensor_size_mb(t) for t in golden if torch.is_tensor(t)
+                    )
+                    print(f"Size of golden tuple in MB: {total_size}")
+                else:
+                    print(f"Size of golden in MB: {get_tensor_size_mb(golden)}")
+
+                # Calculate total size of all tensors in node_to_tensor
+                total_dict_size = 0.0
+                for tensor_or_tuple in node_to_tensor.values():
+                    if isinstance(tensor_or_tuple, tuple):
+                        total_dict_size += sum(
+                            get_tensor_size_mb(t)
+                            for t in tensor_or_tuple
+                            if torch.is_tensor(t)
+                        )
+                    elif torch.is_tensor(tensor_or_tuple):
+                        total_dict_size += get_tensor_size_mb(tensor_or_tuple)
+                print(
+                    f"Total size of node_to_tensor dictionary in MB: {total_dict_size}"
+                )
 
                 node_to_tensor[node] = golden
             elif node.op == "output":
