@@ -261,21 +261,11 @@ class Executor:
         def get_torch_tensors(tensors):
             torch_tensors = []
             indices = []
-            tensor_start_idx = 0
             for idx, tensor in enumerate(tensors):
-                assert isinstance(tensor, torch.Tensor),  f"[James] Found non-torch tensor in inputs: {tensor}"
-                
-                tensor_cache = self.runtime_tensor_cache.get(self.devices[device_idx], None)
-                # if the tensor is already in the cache, we can skip it
-                if tensor_cache is not None and tensor_cache.get(tensor, None) is not None:
-                    print("[James] Fetching tensor from runtime tensor cache", flush=True)
-                    tensor_start_idx+=1
-                    continue
-                else:
+                if isinstance(tensor, torch.Tensor):
                     torch_tensors.append(tensor)
                     indices.append(idx)
-                   
-            return torch_tensors, indices, tensor_start_idx
+            return torch_tensors, indices
 
         def recreate_runtime_tensors(tensors, runtime_tensors, indices):
             tensors = list(tensors)
@@ -283,31 +273,23 @@ class Executor:
                 tensors[index] = runtime_tensors.pop(0)
             return tuple(tensors)
 
-
-        # constant_inputs_ct = 2*2        
-
         input_len = len(inputs)
+        tensor_start_idx = 0
         
-        # if self.devices[device_idx] in self.runtime_tensor_cache:
-        #     preprocessed_weights = self.runtime_tensor_cache[self.devices[device_idx]]
-        #     weights_and_activations = preprocessed_weights + inputs
-        #     tensor_start_idx = len(preprocessed_weights)
-            
-        # if device_idx in self.preprocessed_graph_constants:
-        #     preprocessed_weights = self.preprocessed_graph_constants[device_idx]
-        #     weights_and_activations = preprocessed_weights + inputs
-        #     tensor_start_idx = len(preprocessed_weights)
         
-        # elif self.mcg.constant_inputs[device_idx] is not None:
-        #     weights_and_activations = (
-        #         tuple(self.mcg.constant_inputs[device_idx]) + inputs
-        #     )
-        # else:
-        #     weights_and_activations = inputs
-        
-        weights_and_activations = tuple(self.mcg.constant_inputs[device_idx]) + inputs
-        print("len weights_and_activations", len(weights_and_activations), "from ", len(self.mcg.constant_inputs[device_idx]), "+", len(inputs), flush=True)
-        torch_weights_and_activations, torch_indices, tensor_start_idx = get_torch_tensors(
+        weights_and_activations = []
+        if self.devices[device_idx] is not None and self.devices[device_idx] in self.runtime_tensor_cache.keys():
+            preprocessed_weights = list(self.runtime_tensor_cache[self.devices[device_idx]].values())
+            weights_and_activations = tuple(preprocessed_weights) + inputs
+            tensor_start_idx = len(preprocessed_weights)
+        elif self.mcg.constant_inputs[device_idx] is not None:
+            weights_and_activations = (
+                tuple(self.mcg.constant_inputs[device_idx]) + inputs
+            )
+        else:
+            weights_and_activations = inputs
+                
+        torch_weights_and_activations, torch_indices = get_torch_tensors(
             weights_and_activations
         )
 
@@ -337,17 +319,7 @@ class Executor:
         )
         
         
-        # after the first call to get_device, we have a valid device in the executor. We can now set up a cache of runtime tensors keyed to the device
-
-        
-        for torch_tensor, runtime_tensor in zip(torch_weights_and_activations, runtime_activations_and_weights):
-            # get the tensor cache if it's not none, else initialize to {}
-            tensor_cache = self.runtime_tensor_cache.setdefault(self.devices[device_idx], {})
-                
-            # Cache the runtime tensor using the torch tensor as the key
-            if torch_tensor not in self.runtime_tensor_cache[self.devices[device_idx]]:
-                tensor_cache[torch_tensor] = runtime_tensor
-                print(f"[James] Caching input tensor to equivalent runtime tensor (id {id(torch_tensor)})", flush=True)        
+ 
         
         # backfilling already cached inputs with NIL so they can be replaced
         # if  already_cached_inputs is not None and len(already_cached_inputs) > 0:
@@ -383,6 +355,11 @@ class Executor:
         if self.runtime_tensor_cache is not None:
             print(f"[James] - Runtime tensor cache keys (id {id(self.runtime_tensor_cache)})", list(self.runtime_tensor_cache.keys()), flush=True)
         
+        # for i, tensor in enumerate(runtime_activations_and_weights):
+        #     tensor_cache = self.runtime_tensor_cache.setdefault(self.devices[device_idx], {})
+        #     if tensor_cache is not None and tensor_cache.get(tensor, None) is not None:
+        #         tensor = tensor_cache[tensor]
+                
         runtime_activations_and_weights = recreate_runtime_tensors(
             weights_and_activations, runtime_activations_and_weights, torch_indices
         )
@@ -390,12 +367,22 @@ class Executor:
         # runtime_activations_and_weights = 
         
         runtime_weights = runtime_activations_and_weights[:-input_len]
+        
+        # after the first call to get_device, we have a valid device in the executor. We can now set up a cache of runtime tensors keyed to the device
+        for torch_tensor, runtime_tensor in zip(torch_weights_and_activations, runtime_activations_and_weights[:-input_len]):
+            # get the tensor cache if it's not none, else initialize to {}
+            tensor_cache = self.runtime_tensor_cache.setdefault(self.devices[device_idx], {})
+                
+            # Cache the runtime tensor using the torch tensor as the key
+            if torch_tensor not in self.runtime_tensor_cache[self.devices[device_idx]]:
+                tensor_cache[torch_tensor] = runtime_tensor
+                print(f"[James] Caching input tensor to equivalent runtime tensor (id {id(torch_tensor)})", flush=True)       
+        
         runtime_activations = runtime_activations_and_weights[-input_len:]
         
         
         # [James] Disable this for which should be controlled by _cache_if_needed
         # self.preprocessed_graph_constants[device_idx] = tuple(runtime_weights)
-        # self.runtime_tensor_cache[self.devices[device_idx]] = tuple(runtime_weights)
         
         
         # for activation in runtime_activations:
