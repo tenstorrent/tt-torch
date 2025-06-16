@@ -151,6 +151,9 @@ jobs:
       run: |
         source env/activate
 
+        # Install time for memory profiling
+        apt install -y time
+
         # Make sure we don't stop on first failure
         set +e
 
@@ -166,7 +169,7 @@ jobs:
           counter=$((counter + 1))
 
           echo "====== BEGIN LOG: $test_case ======" >> full_job_output.log
-          pytest -svv -rf "$test_case" > test.log 2>&1
+          /usr/bin/time -v pytest -svv -rf "$test_case" > test.log 2>&1
           exit_code=$?
           cat test.log >> full_job_output.log
           sed -n '/=========================== short test summary info ============================/,$p' test.log >>pytest.log
