@@ -7,7 +7,11 @@ import contextlib
 import threading
 
 import torch
-from torch._decomp import get_decompositions, remove_decompositions
+from torch._decomp import (
+    core_aten_decompositions,
+    get_decompositions,
+    remove_decompositions,
+)
 from torch_mlir.extras.fx_decomp_util import get_decomposition_table
 import numpy as np
 
@@ -353,50 +357,50 @@ def _get_default_decomposition_ops() -> DecompositionOpsList:
     aten = torch.ops.aten
     # default decompositions pulled from SHARK / torch._decomp
     return [
-        aten.embedding_dense_backward,
+        # aten.embedding_dense_backward,
         aten.native_layer_norm_backward,
-        aten.slice_backward,
-        aten.select_backward,
-        aten.norm.ScalarOpt_dim,
+        # aten.slice_backward,
+        # aten.select_backward,
+        # aten.norm.ScalarOpt_dim,
         aten.native_group_norm,
-        aten.split.Tensor,
-        # aten.split_with_sizes,
+        # aten.split.Tensor,
+        # # aten.split_with_sizes,
         aten.native_layer_norm,
-        aten.masked_fill.Tensor,
-        aten.masked_fill.Scalar,
-        aten.t,
-        aten.addmm,
-        # decompositions that aid us in handling nn.BatchNorm2d
+        # aten.masked_fill.Tensor,
+        # aten.masked_fill.Scalar,
+        # aten.t,
+        # aten.addmm,
+        # # decompositions that aid us in handling nn.BatchNorm2d
         aten._native_batch_norm_legit_functional,
         aten._native_batch_norm_legit_no_training,
         aten._native_batch_norm_legit,
         aten._native_batch_norm_legit.no_stats,
-        aten.squeeze.dims,
-        # decompositions for miscellaneous ops that are not handled in torch-mlir but have available decompositions
-        aten.soft_margin_loss,
-        aten.im2col,
-        aten._euclidean_dist,
-        aten.index_copy,
-        aten.index_copy_,
-        aten.grid_sampler_2d,
-        aten.log_sigmoid_forward,
-        aten.unsafe_split.Tensor,
-        aten.binary_cross_entropy,
-        aten.dot,
-        aten._adaptive_avg_pool2d,
-        aten._prelu_kernel,
-        aten.full,
-        aten._log_softmax,
-        aten.nll_loss_forward,
-        aten.nll_loss_backward,
-        aten._to_copy,
-        aten._log_softmax_backward_data,
-        aten.lift_fresh_copy.default,
-        aten._unsafe_index.Tensor,
-        aten.unbind.int,
-        aten.linspace.Tensor_Tensor,
-        aten._scaled_dot_product_flash_attention_for_cpu.default,
-        aten.slice_scatter,
+        # aten.squeeze.dims,
+        # # decompositions for miscellaneous ops that are not handled in torch-mlir but have available decompositions
+        # aten.soft_margin_loss,
+        # aten.im2col,
+        # aten._euclidean_dist,
+        # aten.index_copy,
+        # aten.index_copy_,
+        # aten.grid_sampler_2d,
+        # aten.log_sigmoid_forward,
+        # aten.unsafe_split.Tensor,
+        # aten.binary_cross_entropy,
+        # aten.dot,
+        # aten._adaptive_avg_pool2d,
+        # aten._prelu_kernel,
+        # aten.full,
+        # aten._log_softmax,
+        # aten.nll_loss_forward,
+        # aten.nll_loss_backward,
+        # aten._to_copy,
+        # aten._log_softmax_backward_data,
+        # aten.lift_fresh_copy.default,
+        # aten._unsafe_index.Tensor,
+        # aten.unbind.int,
+        # aten.linspace.Tensor_Tensor,
+        # aten._scaled_dot_product_flash_attention_for_cpu.default,
+        # aten.slice_scatter,
     ]
 
 
@@ -417,5 +421,6 @@ def _get_custom_decopositions() -> DecompositionTable:
     }
 
 
-CUSTOM_DECOMPOSITION_TABLE = get_decompositions(_get_default_decomposition_ops())
+CUSTOM_DECOMPOSITION_TABLE = core_aten_decompositions()
+CUSTOM_DECOMPOSITION_TABLE.update(get_decompositions(_get_default_decomposition_ops()))
 CUSTOM_DECOMPOSITION_TABLE.update(_get_custom_decopositions())
