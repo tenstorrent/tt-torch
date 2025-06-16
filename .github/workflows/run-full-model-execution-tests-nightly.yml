@@ -201,6 +201,7 @@ jobs:
                 tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-2-eval]
                 tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-3B-Base-eval]
                 tests/models/t5/test_t5.py::test_t5[full-t5-large-eval]
+                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-eval]
             "
           },
           {
@@ -223,7 +224,6 @@ jobs:
                 tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[full-SD3.5-large-eval]
                 tests/models/stable_diffusion/test_stable_diffusion_transformer.py::test_stable_diffusion_transformer[full-SD3.5-large-transformer-eval]
                 tests/models/detr/test_detr_onnx.py::test_detr_onnx[full-eval]
-                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-eval]
                 tests/models/phi/test_phi_3p5_moe.py::test_phi_3p5_moe[full-phi3p5_moe-eval]
             "
           },
