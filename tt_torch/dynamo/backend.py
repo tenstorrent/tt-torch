@@ -7,6 +7,7 @@ import warnings
 import tt_mlir
 import sys
 import torch_mlir
+from tt_torch.tools.memory_utils import print_memory_usage
 
 from tt_torch.tools.utils import (
     OpByOpBackend,
@@ -138,8 +139,14 @@ def _shlo_backend(
 def _torch_backend(
     gm: torch.fx.GraphModule, example_inputs, compiler_config, devices, async_mode
 ):
+    print_memory_usage("Before starting _torch_backend process")
+
     with torch.no_grad():
+        print_memory_usage("Before pass_pipeline")
         mcg = pass_pipeline(gm, example_inputs, compiler_config)
+        print_memory_usage("After pass_pipeline")
+
+    print_memory_usage("Before TorchExecutor creation")
 
     executor = TorchExecutor(
         mcg=mcg,
@@ -147,12 +154,16 @@ def _torch_backend(
         devices=devices,
         async_mode=async_mode,
     )
+    print_memory_usage("After TorchExecutor creation")
     return executor
 
 
 def torch_to_shlo(gm: torch.fx.GraphModule, example_inputs, compiler_config):
+    print_memory_usage("At start of torch_to_shlo")
     with torch.no_grad():
+        print_memory_usage("Before pass_pipeline in torch_to_shlo")
         mcg = pass_pipeline(gm, example_inputs, compiler_config)
+        print_memory_usage("After pass_pipeline in torch_to_shlo")
 
     for device_idx, program in mcg.programs.items():
         module = import_program(program)
@@ -221,7 +232,9 @@ def shlo_to_flatbuffer(
 
 
 def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
+    print_memory_usage("At start of _base_backend")
     mcg = torch_to_shlo(gm, example_inputs, compiler_config)
+    print_memory_usage("After torch_to_shlo in _base_backend")
     executor = Executor(
         mcg,
         compiler_config,
@@ -251,6 +264,7 @@ def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
 
 @tt_torch_error_message
 def backend(gm, example_inputs, options: BackendOptions = None):
+    print_memory_usage("At start of backend function")
     warnings.filterwarnings("ignore", message="Failed to fetch module*")
     assert isinstance(gm, torch.fx.GraphModule), "Backend only supports torch graphs"
 

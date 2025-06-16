@@ -25,6 +25,7 @@ from tt_torch.tools.utils import (
     torch_input_to_onnx,
     MultiChipGraph,
 )
+from tt_torch.tools.memory_utils import print_memory_usage
 from typing import Optional
 
 
@@ -140,6 +141,7 @@ class Executor:
         devices=None,
         async_mode=False,
     ):
+        print_memory_usage("Start of Executor.__init__")
         self.mcg = mcg
         if compiler_config is None:
             compiler_config = CompilerConfig()
@@ -457,6 +459,7 @@ class OpByOpExecutor(Executor):
         devices=None,
         async_mode=False,
     ):
+        print_memory_usage("Start of OpByOpExecutor.__init__")
         if mcg is not None:
             assert len(mcg.programs) == 1
 
@@ -468,6 +471,7 @@ class OpByOpExecutor(Executor):
             devices=devices,
             async_mode=async_mode,
         )
+        print_memory_usage("After super().__init__ in OpByOpExecutor.__init__")
 
         # Debug mode to run only specific op given global_op_idx
         if OpByOpExecutor.run_global_op_idx is None:

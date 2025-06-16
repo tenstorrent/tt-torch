@@ -6,6 +6,7 @@ import gc
 from torch.fx.experimental import const_fold
 from typing import Union
 from torch.export.graph_signature import InputKind
+from tt_torch.tools.memory_utils import print_memory_usage, print_system_memory_summary
 from tt_torch.tools.utils import (
     MultiChipInput,
     MultiChipOutput,
@@ -460,29 +461,53 @@ def run_pass_pipeline_for_single_gm(
     example_inputs,
     idx,
 ):
+    print_memory_usage(f"Start of run_pass_pipeline_for_single_gm for device {idx}")
+    print_system_memory_summary(
+        f"Start of run_pass_pipeline_for_single_gm for device {idx}"
+    )
     gm_device = torch.fx.GraphModule(gm, graph, f"_device_{idx}")
+    print_memory_usage(f"After creating GraphModule for device {idx}")
+
     # we use the export API to run the decompositions, as this maintains the
     # source locations in stack_trace
+    print_memory_usage(f"Before export_for_training for device {idx}")
     gm_device = (
         torch.export.export_for_training(gm_device, tuple(example_inputs), strict=False)
         .run_decompositions(decompositions)
         .module()
     )
+    print_memory_usage(f"After export_for_training and decompositions for device {idx}")
     gm_device = bypass_dtype_promotion(gm_device, compiler_config)
+    print_memory_usage(f"After bypass_dtype_promotion for device {idx}")
+
     # shape prop also propagates dtypes, need to run to figure out which casts are redundant
     run_shape_prop(gm_device, example_inputs)
+    print_memory_usage(f"After run_shape_prop for device {idx}")
     gm_device = bypass_redundant_cast(gm_device)
+    print_memory_usage(f"After bypass_redundant_cast for device {idx}")
+    print_system_memory_summary(f"After bypass_redundant_cast for device {idx}")
 
+    # KCM - Increase by 32GB here for SD3.5 Large
     if compiler_config.enable_consteval:
         gm_device = constant_fold(gm_device)
+        print_memory_usage(f"After constant_fold for device {idx}")
+        print_system_memory_summary(f"After constant_fold for device {idx}")
     elif compiler_config.consteval_parameters:
         raise Exception("consteval_parameters is enabled but enable_consteval is not")
 
+    print_memory_usage(f"Before bypass_redundant_getitem for device {idx}")
     gm_device = bypass_redundant_getitem(gm_device)
+    print_memory_usage(f"After bypass_redundant_getitem for device {idx}")
 
     # reduce_graph(gm) - ISSUE: https://github.com/tenstorrent/tt-torch/issues/513
+    print_memory_usage(f"Before torch.export.export for device {idx}")
     program = torch.export.export(gm_device, tuple(example_inputs), strict=False)
+    print_memory_usage(f"After torch.export.export for device {idx}")
     # The proper order of inputs when outlining everything is constants + parameters + buffers + sub_example_inputs
+    print_memory_usage(f"Before building constant_inputs for device {idx}")
+    print_system_memory_summary(f"Before building constant_inputs for device {idx}")
+
+    # KCM - Increase by 15GB here for SD3.5 Large
     if not compiler_config.inline_parameters:
         constant_inputs = (
             list(program.tensor_constants.values())
@@ -492,6 +517,8 @@ def run_pass_pipeline_for_single_gm(
             ]
             + list(program.buffers())
         )
+        print_memory_usage(f"After building constant_inputs for device {idx}")
+        print_system_memory_summary(f"After building constant_inputs for device {idx}")
         for i in range(len(program._graph_signature.input_specs)):
             if program._graph_signature.input_specs[i].kind != InputKind.USER_INPUT:
                 program._graph_signature.input_specs[i].kind = InputKind.USER_INPUT
@@ -499,17 +526,32 @@ def run_pass_pipeline_for_single_gm(
         constant_inputs = []
 
     if compiler_config.compile_depth == CompileDepth.EXECUTE:
+        print_memory_usage(f"Before pruning inputs for device {idx}")
         constant_inputs = prune_inputs(program, constant_inputs)
-    run_shape_prop(program.graph_module, constant_inputs + example_inputs)
+        print_memory_usage(f"After pruning inputs for device {idx}")
 
+    print_memory_usage(f"Before final shape_prop for device {idx}")
+    run_shape_prop(program.graph_module, constant_inputs + example_inputs)
+    print_memory_usage(f"After final shape_prop for device {idx}")
+
+    gc.collect()  # Try to free any unused memory before returning
+    print_memory_usage(f"End of run_pass_pipeline_for_single_gm for device {idx}")
+    print_system_memory_summary(
+        f"End of run_pass_pipeline_for_single_gm for device {idx}"
+    )
     return program, constant_inputs
 
 
 def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
+    print_memory_usage("At start of pass_pipeline")
+    print_memory_usage("Before loading decompositions")
     decompositions = torch.export.default_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
+    print_memory_usage("After loading decompositions")
 
+    print_memory_usage("Before splitting onto devices")
     mcg = split_onto_devices(gm, compiler_config)
+    print_memory_usage("After splitting onto devices")
 
     # golden should be generated before graph is splitted
     if compiler_config._enable_intermediate_verification:
@@ -530,6 +572,7 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         return mcg
 
     for idx, graph in mcg.device_graphs.items():
+        print_memory_usage(f"Before processing device {idx}")
         sub_example_inputs = []
         for inp in mcg.graph_inputs[idx]:
             if inp.io_type == IOType.USER:
@@ -549,12 +592,16 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
                             dtype=meta["example_value"].dtype
                         )
                     )
+        print_memory_usage(f"After creating sub_example_inputs for device {idx}")
+        print_memory_usage(f"Before run_pass_pipeline_for_single_gm for device {idx}")
         program, constant_inputs = run_pass_pipeline_for_single_gm(
             gm, graph, compiler_config, decompositions, sub_example_inputs, idx
         )
+        print_memory_usage(f"After run_pass_pipeline_for_single_gm for device {idx}")
         mcg.programs[idx] = program
         mcg.constant_inputs[idx] = constant_inputs
         mcg.example_inputs[idx] = sub_example_inputs
+        print_memory_usage(f"After storing results in mcg for device {idx}")
         output_dtypes, output_shapes = get_output_types_from_program(program)
         assert len(mcg.graph_outputs[idx]) == len(output_dtypes)
         for i, mco in enumerate(mcg.graph_outputs[idx]):

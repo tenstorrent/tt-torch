@@ -31,6 +31,9 @@ import io
 import csv
 import tt_mlir
 
+# Import from tools rather than defining here to avoid circular imports
+from tt_torch.tools.memory_utils import print_memory_usage
+
 
 def skip_full_eval_test(
     record_property,
@@ -140,7 +143,10 @@ class ModelTester:
         self.model_name = model_name
         self.mode = mode
         self.data_parallel_mode = data_parallel_mode
+
+        print_memory_usage("Before load_model inside ModelTester")
         self.framework_model = self._load_model()
+        print_memory_usage("After load_model inside ModelTester")
         self.is_token_output = is_token_output
         if is_token_output and not hasattr(self, "tokenizer"):
             raise ValueError(
@@ -149,6 +155,7 @@ class ModelTester:
         self.compiled_models = []
         self.devices = devices
         self.inputs = self._load_inputs()
+        print_memory_usage("After load_inputs inside ModelTester")
 
         self.required_pcc = required_pcc
         self.assert_pcc = assert_pcc

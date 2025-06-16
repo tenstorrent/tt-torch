@@ -44,10 +44,46 @@ from tt_torch.dynamo.executor import (
 )
 
 
-def print_memory_usage(label=""):
-    process = psutil.Process(os.getpid())
-    mem = process.memory_info().rss / (1024 * 1024)  # in MB
-    print(f"[{label}] Memory Usage: {mem:.2f} MB")
+# Import from tools rather than defining here to avoid circular imports
+from tt_torch.tools.memory_utils import print_memory_usage, print_system_memory_summary
+
+
+def get_tensor_size_mb(tensor):
+    """Calculate the size of a tensor in MB"""
+    if tensor is None:
+        return 0.0
+    return tensor.numel() * tensor.element_size() / (1024 * 1024)
+
+
+def calculate_tensor_size(tensor_obj):
+    """Calculate size of a tensor or tensor structure (tuple/list) in MB"""
+    if tensor_obj is None:
+        return 0.0
+    elif isinstance(tensor_obj, (tuple, list)):
+        return sum(
+            get_tensor_size_mb(t)
+            for t in tensor_obj
+            if t is not None and torch.is_tensor(t)
+        )
+    elif torch.is_tensor(tensor_obj):
+        return get_tensor_size_mb(tensor_obj)
+    else:
+        return 0.0  # Non-tensor objects
+
+
+def print_tensor_size(tensor_obj, label="Tensor"):
+    """Print the size of a tensor or tensor structure with a label"""
+    size = calculate_tensor_size(tensor_obj)
+    print(f"Size of {label} in MB: {size:.2f}")
+    return size
+
+
+def calculate_total_dict_size(node_to_tensor):
+    """Calculate total size of all tensors in the dictionary in MB"""
+    total_dict_size = 0.0
+    for tensor_or_tuple in node_to_tensor.values():
+        total_dict_size += calculate_tensor_size(tensor_or_tuple)
+    return total_dict_size
 
 
 from tt_torch.tools.utils import RuntimeIntermediate
@@ -201,6 +237,8 @@ class TorchExecutor(OpByOpExecutor):
         devices=None,
         async_mode=False,
     ):
+        print_memory_usage("Start of TorchExecutor.__init__")
+        print_system_memory_summary("Start of TorchExecutor.__init__")
         super().__init__(
             mcg=mcg,
             compiler_config=compiler_config,
@@ -345,17 +383,29 @@ class TorchExecutor(OpByOpExecutor):
         outputs = []
         num_nodes = len(self.program.graph_module.graph.nodes)
         out_degree = {}
+        print_memory_usage(f"Before run_gm_op_by_op loop")
+        print_system_memory_summary(f"Before run_gm_op_by_op loop")
 
         for idx, node in enumerate(self.program.graph_module.graph.nodes):
             self.print_marker("\nProcessing", idx, num_nodes, node.target)
+            print_memory_usage(f"Before processing {OpByOpExecutor.global_op_idx}")
+
+            total_dict_size = calculate_total_dict_size(node_to_tensor)
+            print(
+                f"Total size of node_to_tensor dictionary in MB: {total_dict_size:.2f} at start of loop iteration"
+            )
 
             out_degree[node] = len(node.users)
             if node.op == "placeholder":
                 node_to_tensor[node] = inputs[input_index]
+                print_tensor_size(
+                    inputs[input_index], f"placeholder input {input_index}"
+                )
                 input_index += 1
             elif node.op == "get_attr":
                 for buffer in self.program.graph_module.named_buffers():
                     if buffer[0] == node.target:
+                        print_tensor_size(buffer[1], f"buffer {buffer[0]}")
                         node_to_tensor[node] = buffer[1]
                         break
             elif node.op == "call_function":
@@ -447,34 +497,16 @@ class TorchExecutor(OpByOpExecutor):
                         )
 
                 print_memory_usage(f"After run {OpByOpExecutor.global_op_idx}")
-                # Print the size of golden in MB:
-                def get_tensor_size_mb(tensor):
-                    """Calculate the size of a tensor in MB"""
-                    if tensor is None:
-                        return 0.0
-                    return tensor.numel() * tensor.element_size() / (1024 * 1024)
 
-                if isinstance(golden, tuple):
-                    total_size = sum(
-                        get_tensor_size_mb(t) for t in golden if torch.is_tensor(t)
-                    )
-                    print(f"Size of golden tuple in MB: {total_size}")
-                else:
-                    print(f"Size of golden in MB: {get_tensor_size_mb(golden)}")
+                # Print the size of golden in MB using the helper function
+                print_tensor_size(
+                    golden, f"golden for op {OpByOpExecutor.global_op_idx}"
+                )
 
-                # Calculate total size of all tensors in node_to_tensor
-                total_dict_size = 0.0
-                for tensor_or_tuple in node_to_tensor.values():
-                    if isinstance(tensor_or_tuple, tuple):
-                        total_dict_size += sum(
-                            get_tensor_size_mb(t)
-                            for t in tensor_or_tuple
-                            if torch.is_tensor(t)
-                        )
-                    elif torch.is_tensor(tensor_or_tuple):
-                        total_dict_size += get_tensor_size_mb(tensor_or_tuple)
+                # Calculate and print total dictionary size
+                total_dict_size = calculate_total_dict_size(node_to_tensor)
                 print(
-                    f"Total size of node_to_tensor dictionary in MB: {total_dict_size}"
+                    f"Total size of node_to_tensor dictionary in MB: {total_dict_size:.2f}"
                 )
 
                 node_to_tensor[node] = golden
@@ -496,6 +528,12 @@ class TorchExecutor(OpByOpExecutor):
 
             # Finished handling this op, increment global op index
             OpByOpExecutor.global_op_idx += 1
+            print_memory_usage(f"At end of loop {OpByOpExecutor.global_op_idx}")
+
+            total_dict_size = calculate_total_dict_size(node_to_tensor)
+            print(
+                f"Total size of node_to_tensor dictionary in MB: {total_dict_size:.2f} at end of loop iteration"
+            )
 
         self.compiler_config.save_unique_ops()
         if self.execute_process is not None:
@@ -510,6 +548,7 @@ class TorchExecutor(OpByOpExecutor):
         return outputs
 
     def __call__(self, *inputs):
+        print_memory_usage(f"at start of call function")
         if self.compiler_config.compile_depth in (
             CompileDepth.EXECUTE_OP_BY_OP,
             CompileDepth.COMPILE_OP_BY_OP,
