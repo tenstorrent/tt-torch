@@ -434,8 +434,8 @@ class TorchExecutor(OpByOpExecutor):
                         self.print_marker(
                             "Failed to execute", idx, num_nodes, node.target, e_msg
                         )
-
-                node_to_tensor[node] = golden
+                if out_degree[node] > 0:
+                    node_to_tensor[node] = golden
             elif node.op == "output":
                 args = node.args[0]
                 output_tensors = [node_to_tensor[arg] for arg in args]
