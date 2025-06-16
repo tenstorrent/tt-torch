@@ -433,7 +433,7 @@ class TorchExecutor(OpByOpExecutor):
                 test_this_op = False
                 # Another useful debug method:
                 # test_this_op = str(node.target) == "aten.gelu.default"
-                print_memory_usage(f"Before compile {OpByOpExecutor.global_op_idx}")
+                # print_memory_usage(f"Before compile {OpByOpExecutor.global_op_idx}")
 
                 if test_this_op:
                     try:
@@ -454,14 +454,14 @@ class TorchExecutor(OpByOpExecutor):
                             "Failed to compile", idx, num_nodes, node.target, e_msg
                         )
 
-                print_memory_usage(f"Before golden {OpByOpExecutor.global_op_idx}")
+                # print_memory_usage(f"Before golden {OpByOpExecutor.global_op_idx}")
                 start = time.time()
                 golden = cast_ios_and_run(node, args, node.kwargs)
                 end = time.time()
                 self.print_marker(
                     "Golden", idx, num_nodes, node.target, time=(end - start)
                 )
-                print_memory_usage(f"Before run {OpByOpExecutor.global_op_idx}")
+                # print_memory_usage(f"Before run {OpByOpExecutor.global_op_idx}")
                 OpByOpExecutor.golden_time += end - start
                 if (
                     self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
@@ -497,18 +497,18 @@ class TorchExecutor(OpByOpExecutor):
                             "Failed to execute", idx, num_nodes, node.target, e_msg
                         )
 
-                print_memory_usage(f"After run {OpByOpExecutor.global_op_idx}")
+                # print_memory_usage(f"After run {OpByOpExecutor.global_op_idx}")
 
                 # Print the size of golden in MB using the helper function
-                print_tensor_size(
-                    golden, f"golden for op {OpByOpExecutor.global_op_idx}"
-                )
+                # print_tensor_size(
+                #     golden, f"golden for op {OpByOpExecutor.global_op_idx}"
+                # )
 
                 # Calculate and print total dictionary size
-                total_dict_size = calculate_total_dict_size(node_to_tensor)
-                print(
-                    f"Total size of node_to_tensor dictionary in MB: {total_dict_size:.2f}"
-                )
+                # total_dict_size = calculate_total_dict_size(node_to_tensor)
+                # print(
+                #     f"Total size of node_to_tensor dictionary in MB: {total_dict_size:.2f}"
+                # )
 
                 node_to_tensor[node] = golden
             elif node.op == "output":
