@@ -274,41 +274,6 @@ def split_with_sizes(
     return splits
 
 
-# TODO: Remove this decomposition when this issue is resolved: https://github.com/tenstorrent/tt-torch/issues/431
-# This decomposition specifically places the input which must be broadcasted on the RHS, which is necessarry for ttnn.
-# This should be fixed in tt-mlir but to keep aten.clamp working with the PyTorch uplift, we need this decomposition.
-def clamp(
-    input: torch.Tensor,
-    min: Optional[Union[torch.Tensor, float]] = None,
-    max: Optional[Union[torch.Tensor, float]] = None,
-) -> torch.Tensor:
-    if min is None and max is None:
-        return input
-    if min is None:
-        min = float("-inf")
-    if max is None:
-        max = float("inf")
-
-    if not isinstance(max, torch.Tensor):
-        max = torch.ones(1, dtype=input.dtype) * max
-
-    if not isinstance(min, torch.Tensor):
-        min = torch.ones(1, dtype=input.dtype) * min
-
-    out = input
-    if max.numel() <= out.numel():
-        out = torch.minimum(out, max)
-    else:
-        out = torch.minimum(max, out)
-
-    if min.numel() <= out.numel():
-        out = torch.maximum(out, min)
-    else:
-        out = torch.maximum(min, out)
-
-    return out
-
-
 # TODO: DO we ever need this?
 def _get_default_decomposition_ops() -> DecompositionOpsList:
     aten = torch.ops.aten
@@ -373,7 +338,6 @@ def _get_custom_decopositions() -> DecompositionTable:
         aten.adaptive_avg_pool2d.default: aten._adaptive_avg_pool2d,
         aten.avg_pool2d.default: avg_pool2d,
         aten.split_with_sizes.default: split_with_sizes,
-        aten.clamp.default: clamp,
     }
 
 
