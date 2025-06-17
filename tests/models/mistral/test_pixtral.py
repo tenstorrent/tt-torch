@@ -31,15 +31,18 @@ class ThisTester(ModelTester):
 
 
 PIXTRAL_VARIANTS = [
-    ModelMetadata(model_name="mistral-community/pixtral-12b", model_group="red", compile_depth=CompileDepth.TTNN_IR)
+    ModelMetadata(
+        model_name="mistral-community/pixtral-12b",
+        model_group="red",
+    )
 ]
 
 
-@pytest.mark.parametrize("model_info", PIXTRAL_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
+@pytest.mark.parametrize("model_info", PIXTRAL_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "execute_mode",
     [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],

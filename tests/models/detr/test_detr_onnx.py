@@ -64,16 +64,15 @@ DETR_ONNX_VARIANTS = [
         op_by_op_backend=OpByOpBackend.STABLEHLO,
         assert_pcc=False,
         assert_atol=False,
-        compile_depth=CompileDepth.TTNN_IR,
     )
 ]
 
 
-@pytest.mark.parametrize("model_info", DETR_ONNX_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
+@pytest.mark.parametrize("model_info", DETR_ONNX_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "execute_mode",
     [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],

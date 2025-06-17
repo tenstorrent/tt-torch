@@ -28,30 +28,53 @@ class ThisTester(ModelTester):
 
 
 FALCON3_VARIANTS = [
-    ModelMetadata(model_name="tiiuae/Falcon3-1B-Base", model_group="red", compile_depth=CompileDepth.TTNN_IR),
     ModelMetadata(
-        model_name="tiiuae/Falcon3-3B-Base", model_group="red", assert_pcc=True, compile_depth=CompileDepth.TTNN_IR
+        model_name="tiiuae/Falcon3-1B-Base",
+        model_group="red",
     ),
-    ModelMetadata(model_name="tiiuae/Falcon3-7B-Base", model_group="red", compile_depth=CompileDepth.TTNN_IR),
-    ModelMetadata(model_name="tiiuae/Falcon3-10B-Base", model_group="red", compile_depth=CompileDepth.TTNN_IR),
-    ModelMetadata(model_name="tiiuae/Falcon3-1B-Instruct", model_group="red", compile_depth=CompileDepth.TTNN_IR),
-    ModelMetadata(model_name="tiiuae/Falcon3-3B-Instruct", model_group="red", compile_depth=CompileDepth.TTNN_IR),
-    ModelMetadata(model_name="tiiuae/Falcon3-7B-Instruct", model_group="red", compile_depth=CompileDepth.TTNN_IR),
-    ModelMetadata(model_name="tiiuae/Falcon3-10B-Instruct", model_group="red", compile_depth=CompileDepth.TTNN_IR),
+    ModelMetadata(
+        model_name="tiiuae/Falcon3-3B-Base",
+        model_group="red",
+        assert_pcc=True,
+    ),
+    ModelMetadata(
+        model_name="tiiuae/Falcon3-7B-Base",
+        model_group="red",
+    ),
+    ModelMetadata(
+        model_name="tiiuae/Falcon3-10B-Base",
+        model_group="red",
+    ),
+    ModelMetadata(
+        model_name="tiiuae/Falcon3-1B-Instruct",
+        model_group="red",
+    ),
+    ModelMetadata(
+        model_name="tiiuae/Falcon3-3B-Instruct",
+        model_group="red",
+    ),
+    ModelMetadata(
+        model_name="tiiuae/Falcon3-7B-Instruct",
+        model_group="red",
+    ),
+    ModelMetadata(
+        model_name="tiiuae/Falcon3-10B-Instruct",
+        model_group="red",
+    ),
 ]
 
 
-@pytest.mark.parametrize("model_info", FALCON3_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
+@pytest.mark.parametrize("model_info", FALCON3_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "execute_mode",
     [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
     ids=["op_by_op", "full"],
 )
-def test_falcon(record_property, model_info, mode, execute_mode):
+def test_falcon(record_property, execute_mode, model_info, mode):
     cc = CompilerConfig()
     cc.enable_consteval = True
     # consteval_parameters is disabled because it results in a memory related crash

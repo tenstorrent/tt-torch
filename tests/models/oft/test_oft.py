@@ -24,16 +24,15 @@ OFT_VARIANTS = [
         model_name="OFT",
         model_group="red",
         assert_atol=False,
-        compile_depth=CompileDepth.TTNN_IR
     )
 ]
 
 
-@pytest.mark.parametrize("model_info", OFT_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "mode",
     ["train", "eval"],
 )
+@pytest.mark.parametrize("model_info", OFT_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "execute_mode",
     [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],

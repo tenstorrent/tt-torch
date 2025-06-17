@@ -34,15 +34,20 @@ class ThisTester(ModelTester):
 
 
 VILT_VARIANTS = [
-    ModelMetadata(model_name="ViLT", relative_atol=0.02, model_group="red", compile_depth=CompileDepth.TTNN_IR)
+    ModelMetadata(
+        model_name="ViLT",
+        relative_atol=0.02,
+        model_group="red",
+        compile_depth=CompileDepth.TTNN_IR,
+    )
 ]
 
 
-@pytest.mark.parametrize("model_info", VILT_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
+@pytest.mark.parametrize("model_info", VILT_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "execute_mode",
     [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],

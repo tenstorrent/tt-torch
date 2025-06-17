@@ -30,9 +30,13 @@ class FluxModelMetadata(ModelMetadata):
 
 FLUX_MODELS = [
     FluxModelMetadata(
-        model_name="black-forest-labs/FLUX.1-schnell", guidance_scale=0.0, compile_depth=CompileDepth.TTNN_IR
+        model_name="black-forest-labs/FLUX.1-schnell",
+        guidance_scale=0.0,
     ),
-    FluxModelMetadata(model_name="black-forest-labs/FLUX.1-dev", guidance_scale=3.5, compile_depth=CompileDepth.TTNN_IR),
+    FluxModelMetadata(
+        model_name="black-forest-labs/FLUX.1-dev",
+        guidance_scale=3.5,
+    ),
 ]
 
 

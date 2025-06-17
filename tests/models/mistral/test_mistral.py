@@ -26,17 +26,26 @@ class ThisTester(ModelTester):
 
 
 MISTRAL_VARIANTS = [
-    ModelMetadata(model_name="mistralai/Mistral-7B-v0.1", model_group="red", compile_depth=CompileDepth.TTNN_IR),
-    ModelMetadata(model_name="mistralai/Ministral-8B-Instruct-2410", model_group="red", compile_depth=CompileDepth.TTNN_IR),
-    ModelMetadata(model_name="ministral/Ministral-3b-instruct", model_group="red", compile_depth=CompileDepth.TTNN_IR),
+    ModelMetadata(
+        model_name="mistralai/Mistral-7B-v0.1",
+        model_group="red",
+    ),
+    ModelMetadata(
+        model_name="mistralai/Ministral-8B-Instruct-2410",
+        model_group="red",
+    ),
+    ModelMetadata(
+        model_name="ministral/Ministral-3b-instruct",
+        model_group="red",
+    ),
 ]
 
 
-@pytest.mark.parametrize("model_info", MISTRAL_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
+@pytest.mark.parametrize("model_info", MISTRAL_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "execute_mode",
     [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],

@@ -28,14 +28,16 @@ class ThisTester(ModelTester):
 
 
 # metadata for Falcon model
-FALCON_VARIANT = [ModelMetadata(model_name="falcon-7b-instruct", compile_depth=CompileDepth.TTNN_IR)]
+FALCON_VARIANT = [
+    ModelMetadata(model_name="falcon-7b-instruct", compile_depth=CompileDepth.TTNN_IR)
+]
 
 
-@pytest.mark.parametrize("model_info", FALCON_VARIANT, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
+@pytest.mark.parametrize("model_info", FALCON_VARIANT, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "execute_mode",
     [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],

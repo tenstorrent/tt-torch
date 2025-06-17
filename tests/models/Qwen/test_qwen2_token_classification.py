@@ -31,16 +31,16 @@ QWEN_VARIANTS = [
         model_group="red",
         assert_pcc=False,
         assert_atol=False,
-        compile_depth=CompileDepth.TTNN_IR
+        compile_depth=CompileDepth.TTNN_IR,
     )
 ]
 
 
-@pytest.mark.parametrize("model_info", QWEN_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "mode",
     ["eval", "train"],
 )
+@pytest.mark.parametrize("model_info", QWEN_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "execute_mode",
     [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],

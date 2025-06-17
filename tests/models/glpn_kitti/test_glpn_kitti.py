@@ -29,15 +29,20 @@ class ThisTester(ModelTester):
 
 
 GLPN_KITTI_VARIANTS = [
-    ModelMetadata(model_name="GLPN-KITTI", relative_atol=0.013, model_group="red", compile_depth=CompileDepth.TTNN_IR)
+    ModelMetadata(
+        model_name="GLPN-KITTI",
+        relative_atol=0.013,
+        model_group="red",
+        compile_depth=CompileDepth.TTNN_IR,
+    )
 ]
 
 
-@pytest.mark.parametrize("model_info", GLPN_KITTI_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
+@pytest.mark.parametrize("model_info", GLPN_KITTI_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "execute_mode",
     [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],

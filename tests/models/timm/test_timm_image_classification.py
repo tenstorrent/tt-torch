@@ -46,72 +46,63 @@ model_list = [
         model_name="tf_efficientnet_lite0.in1k",
         assert_pcc=True,
         required_pcc=0.98,
-        compile_depth=CompileDepth.TTNN_IR
     ),
     ModelMetadata(
         model_name="tf_efficientnet_lite1.in1k",
         assert_pcc=True,
         required_pcc=0.98,
-        compile_depth=CompileDepth.TTNN_IR
     ),
     ModelMetadata(
         model_name="tf_efficientnet_lite2.in1k",
         assert_pcc=True,
         required_pcc=0.98,
-        compile_depth=CompileDepth.TTNN_IR
     ),
     ModelMetadata(
         model_name="tf_efficientnet_lite3.in1k",
         assert_pcc=True,
         required_pcc=0.98,
-        compile_depth=CompileDepth.TTNN_IR
     ),
     ModelMetadata(
         model_name="tf_efficientnet_lite4.in1k",
         assert_pcc=True,
-        compile_depth=CompileDepth.TTNN_IR
     ),
     ModelMetadata(
         model_name="ghostnet_100.in1k",
         assert_pcc=True,
-        compile_depth=CompileDepth.TTNN_IR
     ),
-    ModelMetadata(model_name="ghostnetv2_100.in1k", model_group="generality"),
+    ModelMetadata(
+        model_name="ghostnetv2_100.in1k",
+        model_group="generality",
+        compile_depth=CompileDepth.TTNN_IR,
+    ),
     ModelMetadata(
         model_name="inception_v4.tf_in1k",
         assert_pcc=True,
         required_pcc=0.98,
-        compile_depth=CompileDepth.TTNN_IR
     ),
     ModelMetadata(
         model_name="mixer_b16_224.goog_in21k",
-        compile_depth=CompileDepth.TTNN_IR
     ),
     ModelMetadata(
         model_name="mobilenetv1_100.ra4_e3600_r224_in1k",
         assert_pcc=True,
         required_pcc=0.95,
-        compile_depth=CompileDepth.TTNN_IR
     ),
     ModelMetadata(
         model_name="ese_vovnet19b_dw.ra_in1k",
-        compile_depth=CompileDepth.TTNN_IR
     ),
     ModelMetadata(
         model_name="xception71.tf_in1k",
         assert_pcc=True,
         required_pcc=0.98,
-        compile_depth=CompileDepth.TTNN_IR
     ),
     ModelMetadata(
         model_name="dla34.in1k",
         assert_pcc=True,
-        compile_depth=CompileDepth.TTNN_IR
     ),
     ModelMetadata(
         model_name="hrnet_w18.ms_aug_in1k",
         assert_pcc=True,
-        compile_depth=CompileDepth.TTNN_IR
     ),
 ]
 

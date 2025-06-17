@@ -38,14 +38,19 @@ class ThisTester(ModelTester):
         return inputs
 
 
-LLAMA_7B_VARIANTS = [ModelMetadata(model_name="huggyllama/llama-7b", model_group="red", compile_depth=CompileDepth.TTNN_IR)]
+LLAMA_7B_VARIANTS = [
+    ModelMetadata(
+        model_name="huggyllama/llama-7b",
+        model_group="red",
+    )
+]
 
 
-@pytest.mark.parametrize("model_info", LLAMA_7B_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
+@pytest.mark.parametrize("model_info", LLAMA_7B_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "execute_mode",
     [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],

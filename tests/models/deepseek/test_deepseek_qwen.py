@@ -32,16 +32,16 @@ DEEPSEEK_VARIANTS = [
         model_name="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
         required_atol=0.5,
         model_group="red",
-        compile_depth=CompileDepth.TTNN_IR
+        compile_depth=CompileDepth.TTNN_IR,
     )
 ]
 
 
-@pytest.mark.parametrize("model_info", DEEPSEEK_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "mode",
     ["eval", "train"],
 )
+@pytest.mark.parametrize("model_info", DEEPSEEK_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
     "execute_mode",
     [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],

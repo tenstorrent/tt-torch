@@ -120,19 +120,19 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "timm", tests: "
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op_torch-eval-hrnet_w18.ms_aug_in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op_torch-eval-dla34.in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op_torch-eval-mobilenetv1_100.ra4_e3600_r224_in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op_torch-eval-xception71.tf_in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op_torch-eval-ghostnet_100.in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op_torch-eval-tf_efficientnet_lite0.in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op_torch-eval-tf_efficientnet_lite1.in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op_torch-eval-tf_efficientnet_lite2.in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op_torch-eval-tf_efficientnet_lite3.in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op_torch-eval-tf_efficientnet_lite4.in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op_torch-eval-mixer_b16_224.goog_in21k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op_torch-eval-ese_vovnet19b_dw.ra_in1k]
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op_torch-eval-inception_v4.tf_in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op-eval-hrnet_w18.ms_aug_in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op-eval-dla34.in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op-eval-mobilenetv1_100.ra4_e3600_r224_in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op-eval-xception71.tf_in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op-eval-ghostnet_100.in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op-eval-tf_efficientnet_lite0.in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op-eval-tf_efficientnet_lite1.in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op-eval-tf_efficientnet_lite2.in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op-eval-tf_efficientnet_lite3.in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op-eval-tf_efficientnet_lite4.in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op-eval-mixer_b16_224.goog_in21k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op-eval-ese_vovnet19b_dw.ra_in1k]
+              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op-eval-inception_v4.tf_in1k]
               "
           },
           {
@@ -187,22 +187,22 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "torchvision_1", tests: "
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op_torch-eval-mobilenet_v2]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op_torch-eval-mobilenet_v3_large]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op_torch-eval-resnet152]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op_torch-eval-resnext101_64x4d]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op_torch-eval-vit_h_14]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op_torch-eval-densenet201]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op-eval-mobilenet_v2]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op-eval-mobilenet_v3_large]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op-eval-resnet152]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op-eval-resnext101_64x4d]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op-eval-vit_h_14]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op-eval-densenet201]
               "
           },
           {
             runs-on: wormhole_b0, name: "torchvision_2", tests: "
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op_torch-eval-vgg19]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op_torch-eval-vgg19_bn]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op_torch-eval-wide_resnet101_2]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op_torch-eval-regnet_y_32gf]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op_torch-eval-regnet_x_32gf]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op_torch-eval-swin_b]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op-eval-vgg19]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op-eval-vgg19_bn]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op-eval-wide_resnet101_2]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op-eval-regnet_y_32gf]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op-eval-regnet_x_32gf]
+              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op-eval-swin_b]
               "
           },
           {
@@ -229,13 +229,13 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "mistral", tests: "
-              tests/models/mistral/test_mistral.py::test_mistral[op_by_op_torch-ministral3b-eval]
+              tests/models/mistral/test_mistral.py::test_mistral[op_by_op-ministral/Ministral-3b-instruct-eval]
               "
           },
           {
             runs-on: wormhole_b0, name: "falcon3", tests: "
-              tests/models/falcon/test_falcon3.py::test_falcon[op_by_op_torch-tiiuae/Falcon3-1B-Base-eval]
-              tests/models/falcon/test_falcon3.py::test_falcon[op_by_op_torch-tiiuae/Falcon3-3B-Base-eval]
+              tests/models/falcon/test_falcon3.py::test_falcon[op_by_op-tiiuae/Falcon3-1B-Base-eval]
+              tests/models/falcon/test_falcon3.py::test_falcon[op_by_op-tiiuae/Falcon3-3B-Base-eval]
               "
           },
           {
@@ -262,8 +262,8 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "flux", tests: "
-              tests/models/flux/test_flux.py::test_flux[op_by_op_torch-flux_dev-eval]
-              tests/models/flux/test_flux.py::test_flux[op_by_op_torch-flux_schnell-eval]
+              tests/models/flux/test_flux.py::test_flux[op_by_op-black-forest-labs/FLUX.1-schnell-eval]
+              tests/models/flux/test_flux.py::test_flux[op_by_op-black-forest-labs/FLUX.1-dev-eval]
             "
           },
         ]
