@@ -73,7 +73,7 @@ def test_EfficientNet_onnx(record_property, model_name, mode, op_by_op):
     tester = ThisTester(
         model_name,
         mode,
-        assert_pcc=False,
+        assert_pcc=True,
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,

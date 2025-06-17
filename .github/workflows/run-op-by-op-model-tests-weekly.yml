@@ -69,6 +69,7 @@ jobs:
           {
             runs-on: wormhole_b0, name: "gpt", tests: "
               tests/models/gpt2/test_gpt2.py::test_gpt2[op_by_op_torch-eval]
+              tests/models/gpt_neo/test_gpt_neo.py::test_gpt_neo[op_by_op_torch-eval]
               "
           },
           {

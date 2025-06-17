@@ -58,7 +58,7 @@ def test_bloom(record_property, mode, op_by_op):
         model_name,
         mode,
         relative_atol=0.01,
-        assert_pcc=False,
+        assert_pcc=True,
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
