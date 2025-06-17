@@ -253,7 +253,7 @@ class Executor:
         for t in preprocessed_activations:
             tt_mlir.deallocate_tensor(t, force=True)
 
-    def get_inputs(self, *inputs, binary, program_idx, device_idx=0, cachable_input_indices=None):
+    def get_inputs(self, *inputs, binary, program_idx, device_idx=0):
         def get_torch_tensors(tensors):
             torch_tensors = []
             indices = []
@@ -269,8 +269,6 @@ class Executor:
                 tensors[index] = runtime_tensors.pop(0)
             return tuple(tensors)
 
-
-        constant_inputs_ct = 2*2        
 
         input_len = len(inputs)
         tensor_start_idx = 0
@@ -330,7 +328,7 @@ class Executor:
             ), "Cannot run base executor without torch graph"
             return self.mcg.programs[0].graph_module(
                 *tuple(self.mcg.constant_inputs[0])
-                + tuple(self.mcg.programs[0].buffers())
+                + tuple(self.mcg.buffers[0])
                 + inputs
             )
 
@@ -343,15 +341,17 @@ class Executor:
             for output in self.mcg.graph_outputs[device_idx]:
                 if output.io_type == IOType.USER:
                     num_outputs += 1
-            graph_inputs[device_idx] = [None] * len(self.mcg.graph_inputs[device_idx])
+            graph_inputs[device_idx] = [None] * (len(self.mcg.graph_inputs[device_idx]) + len(self.mcg.buffers[device_idx]))
+            
+            for i, buffer in enumerate(self.mcg.buffers[device_idx]):
+                graph_inputs[device_idx][i] = buffer
+            
             for i,input in enumerate(self.mcg.graph_inputs[device_idx]):
-                if input.io_type == IOType.USER or input.io_type == IOType.INPUT_CACHE:
-                    graph_inputs[device_idx][input.consumer_index] = inputs[
+                if input.io_type == IOType.USER:
+                    graph_inputs[device_idx][input.consumer_index + len(self.mcg.buffers[device_idx])] = inputs[
                         input.producer_index
                     ]
-                    # if input.io_type == IOType.INPUT_CACHE:
-                    #     cachable_input_indices.append((i, input.node_name))
-                
+
         final_outputs = [None] * num_outputs
         for device_idx, binary in self.mcg.binaries.items():
             device_inputs = graph_inputs[device_idx]
@@ -362,7 +362,6 @@ class Executor:
                 binary=binary,
                 device_idx=device_idx,
                 program_idx=program_idx,
-                cachable_input_indices=cachable_input_indices
             )
 
             device_inputs = list(device_inputs)

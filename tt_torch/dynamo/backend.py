@@ -246,7 +246,7 @@ def _base_backend(gm, example_inputs, compiler_config, devices, async_mode, runt
             executor.system_desc_paths[i],
             shlo,
             compiler_config,
-            len(mcg.example_inputs[i]),
+            len(mcg.example_inputs[i]) + len(mcg.buffers[i]),
             len(mcg.constant_inputs[i]),
         )
         mcg.binaries[i] = tt_mlir.create_binary_from_bytestream(binary_bytestream)
