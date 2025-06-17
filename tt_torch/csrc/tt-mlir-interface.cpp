@@ -35,8 +35,8 @@
 #include "stablehlo/dialect/StablehloOps.h"  // from @stablehlo
 #include "stablehlo/transforms/Passes.h"     // from @stablehlo
 
-#include "ttmlir/Dialect/TT/IR/TTOps.h"
-#include "ttmlir/Dialect/TT/IR/TTTraits.h"
+#include "ttmlir/Dialect/TTCore/IR/TTCoreOps.h"
+#include "ttmlir/Dialect/TTCore/IR/TTCoreTraits.h"
 
 #include "ttmlir/Dialect/StableHLO/Pipelines/StableHLOPipelines.h"
 #include "ttmlir/Dialect/TTIR/Pipelines/TTIRPipelines.h"
