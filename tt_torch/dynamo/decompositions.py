@@ -290,10 +290,10 @@ def clamp(
         max = float("inf")
 
     if not isinstance(max, torch.Tensor):
-        max = torch.ones(1, dtype=input.dtype) * max
+        max = (torch.ones(1, dtype=input.dtype) * max).to(input.dtype)
 
     if not isinstance(min, torch.Tensor):
-        min = torch.ones(1, dtype=input.dtype) * min
+        min = (torch.ones(1, dtype=input.dtype) * min).to(input.dtype)
 
     out = input
     if max.numel() <= out.numel():
