@@ -130,7 +130,7 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "pixtral", tests: "
-              tests/models/mistral/test_pixtral.py::test_pixtral[op_by_op_torch-eval]
+              tests/models/mistral/test_pixtral.py::test_pixtral[op_by_op-eval]
             "
           },
           {
