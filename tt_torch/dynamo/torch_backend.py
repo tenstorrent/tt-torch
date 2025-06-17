@@ -407,7 +407,8 @@ class TorchExecutor(OpByOpExecutor):
                 for buffer in self.program.graph_module.named_buffers():
                     if buffer[0] == node.target:
                         print_tensor_size(buffer[1], f"buffer {buffer[0]}")
-                        node_to_tensor[node] = buffer[1]
+                        if out_degree[node] > 0:
+                            node_to_tensor[node] = buffer[1]
                         break
             elif node.op == "call_function":
                 args = []
@@ -512,7 +513,6 @@ class TorchExecutor(OpByOpExecutor):
 
                 if out_degree[node] > 0:
                     node_to_tensor[node] = golden
-
             elif node.op == "output":
                 args = node.args[0]
                 output_tensors = [node_to_tensor[arg] for arg in args]
