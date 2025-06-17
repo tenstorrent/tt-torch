@@ -262,6 +262,11 @@ at::Tensor to_host_single_rt_tensor(tt::runtime::Tensor &rt_output) {
   return output;
 }
 
+at::Tensor to_host_single_rt_tensor_non_deallocating(tt::runtime::Tensor &rt_output) {
+  at::Tensor output = create_torch_tensor(rt_output);
+  return output;
+}
+
 py::object to_host_single_object(py::object obj) {
   assert(py::isinstance<py::dict>(obj) &&
          "Non-tensor type must be castable to a dictionary");
