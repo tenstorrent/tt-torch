@@ -25,7 +25,7 @@ def load_model(model_name="meta-llama/Llama-3.2-3B"):
         use_cache=True,
     )
 
-    model.config.num_hidden_layers = 28
+    model.config.num_hidden_layers = 2
 
     tokenizer = AutoTokenizer.from_pretrained(model_name, torch_dtype=torch.bfloat16)
     tokenizer.pad_token = tokenizer.eos_token
@@ -69,8 +69,8 @@ def main():
 
     clear_dynamo_cache()
     cc = CompilerConfig()
-    cc.enable_consteval = False
-    cc.consteval_parameters = False
+    cc.enable_consteval = True
+    cc.consteval_parameters = True
 
     options = BackendOptions()
     options.compiler_config = cc

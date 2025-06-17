@@ -110,6 +110,7 @@ class MultiChipGraph:
         self.programs = {}
         self.binaries = {}
         self.constant_inputs = {}
+        self.buffers = {}
         self.example_inputs = {}
         self.shlo_modules = {}
         self.constant_input_to_node_name = {}

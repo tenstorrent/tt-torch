@@ -270,7 +270,7 @@ class Executor:
             return tuple(tensors)
 
 
-        constant_inputs_ct = 28*2        
+        constant_inputs_ct = 2*2        
 
         input_len = len(inputs)
         tensor_start_idx = 0
@@ -294,19 +294,6 @@ class Executor:
                 torch_weights_and_activations
             )
 
-        
-
-        # avoid preprocessing inputs if they already exist in the cache
-        already_cached_inputs = [] 
-        # already_cached_inputs = None # comment this out to enable alloc suppression
-        
-        if already_cached_inputs is not None and self.runtime_tensor_cache is not None:
-            already_cached_inputs.extend(self.runtime_tensor_cache.keys())
-        
-        if  already_cached_inputs is not None and len(already_cached_inputs) > 0:
-            print(f"[James] Found {len(already_cached_inputs)} cached inputs. Suppressing their allocation.")
-            torch_weights_and_activations = torch_weights_and_activations[len(already_cached_inputs):]
-            tensor_start_idx += len(already_cached_inputs) # these are effectively "preprocessed" graph constants
             
         runtime_activations_and_weights = tt_mlir.preprocess_inputs(
             self._get_device(device_idx=device_idx),
@@ -314,57 +301,17 @@ class Executor:
             binary,
             program_idx,
             tensor_start_idx,
-        )
+        )   
         
-        
-        # backfilling already cached inputs with NIL so they can be replaced
-        if  already_cached_inputs is not None and len(already_cached_inputs) > 0:
-            runtime_activations_and_weights = [None]*len(already_cached_inputs) + runtime_activations_and_weights
-        
-        # monkey patch static kv cache inputs from runtime tensor cache
-        # put them in self.runtime_tensor_cache if they don't exist
-        # pull them from the runtime_tensor_cache if they do exist
-        #   for pulls, take them out of the list and jam them back in at the same indices (assuming list stability? - appears so for this case but maybe not in general?)
-        
-        # q - how do we key this cache? input index?
-        
-        for i, runtime_tensor in enumerate(runtime_activations_and_weights):
-            # Find if this index is in any of the cachable_input_indices tuples
-            # matching_entry = next((entry for entry in cachable_input_indices if entry[0] == i), None)
-            
-            # constant inputs are at the start of the runtime_activations_and_weights list and represent kv caches for llama
-            if i < constant_inputs_ct:
-                # Use the name as the cache key for stability across invocations
-                name_cache_key = f'constant_input_{i}'  # Get the name from the first matching entry
-                
-                if self.runtime_tensor_cache is not None:
-                    if name_cache_key not in self.runtime_tensor_cache:
-                        # Cache miss - put tensor in cache using name as key
-                        self.runtime_tensor_cache[name_cache_key] = runtime_tensor
-                        print(f"[James] Caching input tensor with name '{name_cache_key}' (index {i})", flush=True)
-                    else:
-                        # Cache hit - overwrite with cached version
-                        runtime_activations_and_weights[i] = self.runtime_tensor_cache[name_cache_key]
-                        print(f"[James] Overwriting input tensor with name '{name_cache_key}' (index {i}) with cached version", flush=True)
-        
-        if self.runtime_tensor_cache is not None:
-            print(f"[James] - Runtime tensor cache keys (id {id(self.runtime_tensor_cache)})", list(self.runtime_tensor_cache.keys()), flush=True)
         
         runtime_activations_and_weights = recreate_runtime_tensors(
             weights_and_activations, runtime_activations_and_weights, torch_indices
         )
         runtime_weights = runtime_activations_and_weights[:-input_len]
-        
-        
-        # [James] Disable this for which should be controlled by _cache_if_needed
-        # self.preprocessed_graph_constants[device_idx] = tuple(runtime_weights)
-        
+        self.preprocessed_graph_constants[device_idx] = tuple(runtime_weights)
         
         runtime_activations = runtime_activations_and_weights[-input_len:]
         
-        # for activation in runtime_activations:
-        #     self.runtime_tensor_cache[len(self.runtime_tensor_cache.keys())] = activation
-
         return runtime_weights, runtime_activations
 
     def __call__(self, *inputs):
@@ -391,8 +338,6 @@ class Executor:
         intermediate_results = []
         num_outputs = 0
         graph_inputs = {}
-        
-        cachable_input_indices = []
         
         for device_idx in self.mcg.binaries.keys():
             for output in self.mcg.graph_outputs[device_idx]:

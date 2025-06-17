@@ -280,7 +280,7 @@ def split_onto_devices(gm, compiler_config):
     if len(device_indices) == 0:
         device_indices = [0]
     mcg = MultiChipGraph(device_indices)
-    # gm.graph.print_tabular()
+    gm.graph.print_tabular()
     if len(device_indices) == 1:
         mcg.device_graphs = {0: gm.graph}
         input_index = 0
@@ -312,6 +312,7 @@ def split_onto_devices(gm, compiler_config):
                         node.meta,
                         node.name
                     )
+                    # mcg.graph_inputs[0].append(mci)
         return mcg
 
     node_to_new_nodes = {}
@@ -329,6 +330,7 @@ def split_onto_devices(gm, compiler_config):
             device_idx = prev_device_idx
         prev_device_idx = device_idx
         return device_idx
+
 
     for node in gm.graph.nodes:
         if node.op == "get_attr" or node.op == "placeholder":
@@ -464,7 +466,7 @@ def split_onto_devices(gm, compiler_config):
     return mcg
 
 
-def prune_inputs(program, constant_inputs):
+def prune_inputs(program, constant_inputs, buffers):
     placeholder_index = 0
     indices_to_remove = []
     for node in program.graph_module.graph.nodes:
@@ -473,21 +475,32 @@ def prune_inputs(program, constant_inputs):
                 indices_to_remove.append(placeholder_index)
                 program.graph_module.graph.erase_node(node)
             placeholder_index += 1
-            if placeholder_index == len(constant_inputs):
+            if placeholder_index == len(constant_inputs+buffers):
                 break
 
     program.graph_module.graph.eliminate_dead_code()
+    
+    original_constant_inputs_len = len(constant_inputs)
+    
     constant_inputs = [
         constant_inputs[i]
         for i in range(len(constant_inputs))
         if i not in indices_to_remove
     ]
+    
+    # buffer indices fall after constant inputs
+    buffers = [
+        buffers[i]
+        for i in range(len(buffers))
+        if i+original_constant_inputs_len not in indices_to_remove
+    ]
+    
     program._graph_signature.input_specs = [
         input_spec
         for i, input_spec in enumerate(program._graph_signature.input_specs)
         if i not in indices_to_remove
     ]
-    return constant_inputs
+    return constant_inputs, buffers
 
 
 def run_pass_pipeline_for_single_gm(
@@ -521,6 +534,9 @@ def run_pass_pipeline_for_single_gm(
 
     # reduce_graph(gm) - ISSUE: https://github.com/tenstorrent/tt-torch/issues/513
     program = torch.export.export(gm_device, tuple(example_inputs), strict=False)
+    
+    buffers = list(program.buffers())
+    
     # The proper order of inputs when outlining everything is constants + parameters + buffers + sub_example_inputs
     if not compiler_config.inline_parameters:
         constant_inputs = (
@@ -529,7 +545,6 @@ def run_pass_pipeline_for_single_gm(
                 param.contiguous() if not param.is_contiguous() else param
                 for param in program.parameters()
             ]
-            + list(program.buffers())
         )
         for i in range(len(program._graph_signature.input_specs)):
             if program._graph_signature.input_specs[i].kind != InputKind.USER_INPUT:
@@ -538,10 +553,10 @@ def run_pass_pipeline_for_single_gm(
         constant_inputs = []
 
     if compiler_config.compile_depth == CompileDepth.EXECUTE:
-        constant_inputs = prune_inputs(program, constant_inputs)
-    run_shape_prop(program.graph_module, constant_inputs + example_inputs)
+        constant_inputs, buffers = prune_inputs(program, constant_inputs, buffers)
+    run_shape_prop(program.graph_module, constant_inputs + buffers + example_inputs)
 
-    return program, constant_inputs
+    return program, constant_inputs, buffers
 
 
 def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
@@ -555,17 +570,18 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         assert (
             len(mcg.device_graphs) == 1
         ), "Intermediate verification is not supported for multi-chip models"
-        program, constants = run_pass_pipeline_for_single_gm(
+        program, constants, buffers = run_pass_pipeline_for_single_gm(
             gm, gm.graph, compiler_config, decompositions, example_inputs, 0
         )
         _generate_golden_intermediate_cache(
-            program, constants + example_inputs, compiler_config
+            program, constants + buffers + example_inputs, compiler_config
         )
 
         # we don't need to run_pass_pipeline_for_single_gm again because there is only one device_graph
         mcg.programs[0] = program
         mcg.constant_inputs[0] = constants
         mcg.example_inputs[0] = example_inputs
+        mcg.buffers[0] = buffers
         return mcg
 
     for idx, graph in mcg.device_graphs.items():
@@ -588,12 +604,13 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
                             dtype=meta["example_value"].dtype
                         )
                     )
-        program, constant_inputs = run_pass_pipeline_for_single_gm(
+        program, constant_inputs, buffers = run_pass_pipeline_for_single_gm(
             gm, graph, compiler_config, decompositions, sub_example_inputs, idx
         )
         mcg.programs[idx] = program
         mcg.constant_inputs[idx] = constant_inputs
         mcg.example_inputs[idx] = sub_example_inputs
+        mcg.buffers[idx] = buffers
         output_dtypes, output_shapes = get_output_types_from_program(program)
         assert len(mcg.graph_outputs[idx]) == len(output_dtypes)
         for i, mco in enumerate(mcg.graph_outputs[idx]):
