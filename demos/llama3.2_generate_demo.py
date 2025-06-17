@@ -13,6 +13,8 @@ from transformers import (
 import tt_mlir
 import time
 import argparse
+from tests.utils import clear_dynamo_cache
+
 
 
 def load_model(model_name="meta-llama/Llama-3.2-3B"):
@@ -31,7 +33,7 @@ def load_model(model_name="meta-llama/Llama-3.2-3B"):
 
 
 def load_inputs(
-    model, tokenizer, test_input="This is a sample text from ", max_cache_len=64
+    model, tokenizer, test_input="This is a sample text from ", max_cache_len=64+7
 ):
     batch_size = 1
     inputs = tokenizer.encode_plus(
@@ -65,6 +67,7 @@ def main():
     input_args = load_inputs(model, tokenizer)
     generated_ids = input_args["input_ids"]
 
+    clear_dynamo_cache()
     cc = CompilerConfig()
     cc.enable_consteval = False
     cc.consteval_parameters = False
@@ -72,13 +75,16 @@ def main():
     options = BackendOptions()
     options.compiler_config = cc
     options.devices = [None]  # defer to Executor to inplace-initialize device
+    
+    runtime_tensor_cache = {}
+    options.runtime_tensor_cache = runtime_tensor_cache
 
     compare_golden = False  # enable golden comparison - significantly slows down test due to h2d transfer of cache weights
     compiled_model = torch.compile(
         model, backend=backend, dynamic=False, options=options
     )
 
-    tokens_to_generate = 8
+    tokens_to_generate = 64
     for i in range(tokens_to_generate):
         print("\n===== Decode step", i, "=====\n")
         print(f"Input args to step {i}", input_args)
