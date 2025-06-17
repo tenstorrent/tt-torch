@@ -84,7 +84,7 @@ def main():
         model, backend=backend, dynamic=False, options=options
     )
 
-    tokens_to_generate = 64
+    tokens_to_generate = 3
     for i in range(tokens_to_generate):
         print("\n===== Decode step", i, "=====\n")
         print(f"Input args to step {i}", input_args)

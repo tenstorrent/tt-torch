@@ -139,7 +139,7 @@ class Executor:
         required_atol=1e-2,
         devices=None,
         async_mode=False,
-        runtime_tensor_cache=None
+        buffer_cache=None
     ):
         print("[James] Executor initialized.", flush=True)
         self.mcg = mcg
@@ -162,7 +162,7 @@ class Executor:
         self.devices = devices if devices is not None else [None]
         self.owned_device_indices = []
         self.async_mode = async_mode
-        self.runtime_tensor_cache = runtime_tensor_cache
+        self.buffer_cache = buffer_cache
         self._validate_executor()
         self.system_desc_paths = self._create_system_descriptors()
 
@@ -253,25 +253,58 @@ class Executor:
         for t in preprocessed_activations:
             tt_mlir.deallocate_tensor(t, force=True)
 
-    def get_inputs(self, *inputs, binary, program_idx, device_idx=0):
+    def get_inputs(self, *inputs, binary, program_idx, device_idx=0, buffer_indices=[None]):
         def get_torch_tensors(tensors):
             torch_tensors = []
             indices = []
+            buffer_indices = []
+            already_cached_buffers = []
             for idx, tensor in enumerate(tensors):
+                if tensor in self.buffer_cache:
+                    if self.buffer_cache[tensor] is None:
+                        torch_tensors.append(tensor) # do convert on first run if not allocated
+                    else:
+                        already_cached_buffers.append(tensor)
+                    buffer_indices.append(idx)
+                    continue
                 if isinstance(tensor, torch.Tensor):
                     torch_tensors.append(tensor)
                     indices.append(idx)
-            return torch_tensors, indices
+            return torch_tensors, indices, buffer_indices, already_cached_buffers
 
-        def recreate_runtime_tensors(tensors, runtime_tensors, indices):
+        def recreate_runtime_tensors(tensors, runtime_tensors, indices, torch_buffer_indices):
             tensors = list(tensors)
             for index in indices:
                 tensors[index] = runtime_tensors.pop(0)
+            for index in torch_buffer_indices:
+                print("[James] Substituting buffer tensor from runtime buffer tensor cache.", flush=True)
+                tensors[index] = self.buffer_cache[tensors[index]]
             return tuple(tensors)
 
 
+        def insert_runtime_buffer_tensors_into_cache(torch_tensors, runtime_tensors):
+            if self.buffer_cache is None:
+                return
+            for torch_tensor, runtime_tensor in zip(torch_tensors, runtime_tensors):
+                if torch_tensor in self.buffer_cache and self.buffer_cache[torch_tensor] is None:
+                    print("[James] Caching buffer tensor for the first time.", flush=True)
+                    self.buffer_cache[torch_tensor] = runtime_tensor
+
         input_len = len(inputs)
         tensor_start_idx = 0
+        
+        # some of the inputs may be buffers. ideally tag their indices within the inputs list, but for now just try to hard cache
+        # buffer indices are relative to the start of the inputs array, not anything else.
+        
+        print("[James] len constant inputs: ", len(self.mcg.constant_inputs[device_idx]), "Input count: ", len(inputs))
+        
+        print("Buffer indices relative to original inputs:", buffer_indices)
+        for idx in buffer_indices:
+            buffer_torch_tensor = inputs[idx]
+            if self.buffer_cache is not None and buffer_torch_tensor not in self.buffer_cache:
+                print("[James] Adding blank for buffer for the first time.", flush=True)
+                self.buffer_cache[buffer_torch_tensor] = None # add a blank in the cache
+        
         if device_idx in self.preprocessed_graph_constants:
             preprocessed_weights = self.preprocessed_graph_constants[device_idx]
             weights_and_activations = preprocessed_weights + inputs
@@ -283,16 +316,21 @@ class Executor:
         else:
             weights_and_activations = inputs
 
-        torch_weights_and_activations, torch_indices = get_torch_tensors(
+        # convert to torch tensors
+        torch_weights_and_activations, torch_indices, torch_buffer_indices, already_cached_buffers = get_torch_tensors(
             weights_and_activations
         )
+        
+        print("[James] torch buffer indices:", torch_buffer_indices)
+        
+        # torch_buffer_indices weren't added to torch_weights and activations because a preproc'd version exists.
+        tensor_start_idx += len(already_cached_buffers)
 
         if self.compiler_config.typecast_inputs:
             torch_weights_and_activations = self.typecast_inputs(
                 torch_weights_and_activations
             )
 
-            
         runtime_activations_and_weights = tt_mlir.preprocess_inputs(
             self._get_device(device_idx=device_idx),
             torch_weights_and_activations,
@@ -301,10 +339,16 @@ class Executor:
             tensor_start_idx,
         )   
         
+        print("processed #runtime activations and weights, len:", len(runtime_activations_and_weights))
+        # @ first prefill, insert alloc'd buffer tensors into cache
+        insert_runtime_buffer_tensors_into_cache(torch_weights_and_activations, runtime_activations_and_weights)        
         
+        # substitute buffers from cache
         runtime_activations_and_weights = recreate_runtime_tensors(
-            weights_and_activations, runtime_activations_and_weights, torch_indices
+            weights_and_activations, runtime_activations_and_weights, torch_indices, torch_buffer_indices
         )
+        
+        # james - continue investigation here.
         runtime_weights = runtime_activations_and_weights[:-input_len]
         self.preprocessed_graph_constants[device_idx] = tuple(runtime_weights)
         
@@ -336,6 +380,7 @@ class Executor:
         intermediate_results = []
         num_outputs = 0
         graph_inputs = {}
+        buffer_indices = {}
         
         for device_idx in self.mcg.binaries.keys():
             for output in self.mcg.graph_outputs[device_idx]:
@@ -345,6 +390,9 @@ class Executor:
             
             for i, buffer in enumerate(self.mcg.buffers[device_idx]):
                 graph_inputs[device_idx][i] = buffer
+                if device_idx not in buffer_indices:
+                    buffer_indices[device_idx] = []
+                buffer_indices[device_idx].append(i)
             
             for i,input in enumerate(self.mcg.graph_inputs[device_idx]):
                 if input.io_type == IOType.USER:
@@ -362,6 +410,7 @@ class Executor:
                 binary=binary,
                 device_idx=device_idx,
                 program_idx=program_idx,
+                buffer_indices=buffer_indices[device_idx]
             )
 
             device_inputs = list(device_inputs)
@@ -369,19 +418,21 @@ class Executor:
             
             
             n_printed_tensors = 0
+            do_print_static_cache_tensors = False
             # [James] This prints out the weights submitted to ttmlir
-            # for tensor in preprocessed_weights+preprocessed_activations:
-            #     tensor = tt_mlir.to_host_non_deallocating(tensor)[0]  # returns single element tuple
-            #     if isinstance(tensor, torch.Tensor):
-            #         # print(f"input tensor: type={type(tensor)}, dtype={tensor.dtype}, shape={tensor.shape}", flush=True)
-            #         if tensor.dim() == 4 and tensor.shape[0] == 1 and tensor.shape[1] == 8 and tensor.shape[3] == 128:
-            #             # this is a static cache tensor.
-            #             print(f"static cache tensor found with shape {tensor.shape}", flush=True)
-            #             print(f"internals: {torch.mean(tensor[0,0,:,:], dim = -1)}", flush=True)
-            #             n_printed_tensors += 1
-            #         if n_printed_tensors == 3: # this doesn't really help because we need to fetch most of the tensors to host anyways to see their shapes and sizes. More complex bindings could be used but whatever 
-            #             break
-
+            for i,tensor in enumerate(preprocessed_weights+preprocessed_activations):
+                tensor = tt_mlir.to_host_non_deallocating(tensor)[0]  # returns single element tuple
+                if isinstance(tensor, torch.Tensor):
+                    print(f"input tensor: type={type(tensor)}, dtype={tensor.dtype}, shape={tensor.shape}", flush=True)
+                    if do_print_static_cache_tensors and tensor.dim() == 4 and tensor.shape[0] == 1 and tensor.shape[1] == 8 and tensor.shape[3] == 128:
+                        # this is a static cache tensor.
+                        print(f"static cache tensor found with shape {tensor.shape} @ input index {i}", flush=True)
+                        print(f"internals: {torch.mean(tensor[0,0,:,:], dim = -1)}", flush=True)
+                        n_printed_tensors += 1
+                    if n_printed_tensors == 3: # this doesn't really help because we need to fetch most of the tensors to host anyways to see their shapes and sizes. More complex bindings could be used but whatever 
+                        break
+            
+            print("End of tensor inputs")
 
             # if any output is intermediate we can run in async, since tt-mlir runtime will eventually block on final outputs
             # TODO: Enable this when device to device movement is supported. In the mean time we fall back to host: #748

@@ -232,7 +232,7 @@ def _base_backend(gm, example_inputs, compiler_config, devices, async_mode, runt
         compiler_config,
         devices=devices,
         async_mode=async_mode,
-        runtime_tensor_cache=runtime_tensor_cache
+        buffer_cache=runtime_tensor_cache
     )
 
     compiler_config.record_property("achieved_compile_depth", "STABLEHLO")
