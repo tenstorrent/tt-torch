@@ -162,9 +162,11 @@ std::string compile_stable_hlo_to_ttir(std::string_view code) {
 std::tuple<py::bytes, std::string>
 compile_ttir_to_bytestream(std::string_view code,
                            std::string_view sys_desc_path,
-                           size_t len_activations, size_t len_graph_constants) {
-  auto [binary_ptr, ttnn] = tt::torch::compileTTIRToTTNN(
-      code, sys_desc_path, len_activations, len_graph_constants);
+                           size_t len_activations, size_t len_graph_constants,
+                           bool enable_consteval = true) {
+  auto [binary_ptr, ttnn] =
+      tt::torch::compileTTIRToTTNN(code, sys_desc_path, len_activations,
+                                   len_graph_constants, enable_consteval);
   auto size = ::flatbuffers::GetSizePrefixedBufferLength(
       static_cast<const uint8_t *>(binary_ptr->get()));
   tt::runtime::Binary binary = tt::runtime::Binary(*binary_ptr);
@@ -445,6 +447,7 @@ PYBIND11_MODULE(tt_mlir, m) {
   m.def("compile_ttir_to_bytestream", &compile_ttir_to_bytestream,
         py::arg("ttir"), py::arg("system_desc_path"),
         py::arg("len_activations") = 0, py::arg("len_graph_constants") = 0,
+        py::arg("enable_consteval") = true,
         "A function that compiles TTIR to a bytestream");
   m.def("stable_hlo_automatic_parallelization",
         &stable_hlo_automatic_parallelization,
