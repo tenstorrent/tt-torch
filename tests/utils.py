@@ -6,6 +6,7 @@ import torch
 import pytest
 import requests
 import onnx
+import time
 from transformers.cache_utils import DynamicCache, _flatten_dynamic_cache
 from onnx.tools import update_model_dims
 import gc
@@ -326,6 +327,16 @@ class ModelTester:
                 model, backend=backend, dynamic=False, options=options
             )
         self.compiled_models.append(model)
+        if isinstance(self.inputs, collections.abc.Mapping):
+            explanation = torch._dynamo.explain(model)(**self.inputs)
+        elif isinstance(self.inputs, collections.abc.Sequence):
+            explanation = torch._dynamo.explain(model)(*self.inputs)
+        else:
+            explanation = torch._dynamo.explain(model)(self.inputs)
+        print(f"Number of graph breaks: {explanation.graph_break_count}")
+        print(f"Graph break reasons: {explanation.break_reasons}")
+        self.record_tag_cache["graph_break_count"] = explanation.graph_break_count
+        self.record_tag_cache["break_reasons"] = explanation.break_reasons
         return model
 
     def run_model(self, model, inputs):
@@ -574,8 +585,13 @@ class ModelTester:
 
         if on_device == True:
             model = self.compile_model(model, self.compiler_config)
-
+        start = time.time()
         outputs = self.run_model(model, self.inputs)
+        end = time.time()
+        print(
+            f"Op-by-op execution time: {end - start:.2f} seconds for model {self.model_name}"
+        )
+        self.record_tag_cache["op_by_op_execution_time"] = end - start
         self.record_property("achieved_compile_depth", "EXECUTE")
 
         return outputs
