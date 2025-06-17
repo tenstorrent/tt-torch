@@ -7,6 +7,7 @@ import pytest
 import requests
 import onnx
 import time
+import logging
 from transformers.cache_utils import DynamicCache, _flatten_dynamic_cache
 from onnx.tools import update_model_dims
 import gc
@@ -31,6 +32,9 @@ from tt_torch.tools.device_manager import DeviceManager
 import io
 import csv
 import tt_mlir
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def skip_full_eval_test(
@@ -300,6 +304,7 @@ class ModelTester:
         self.compiled_models = compiled_models
         return compiled_models
 
+    @torch._dynamo.config.patch(ignore_logger_methods={logger.info, logger.warning})
     def compile_model(
         self, model, compiler_config, data_parallel_mode=False, device_override=None
     ):
