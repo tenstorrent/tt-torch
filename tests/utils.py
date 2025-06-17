@@ -95,7 +95,6 @@ class ModelTester:
     def __init__(
         self,
         model_name,
-        model_info,
         mode,
         required_pcc=0.99,
         required_atol=None,
@@ -110,6 +109,7 @@ class ModelTester:
         model_name_suffix="",
         devices=None,
         data_parallel_mode=False,
+        model_info=None,
     ):
         """
         Initializes the ModelTester.

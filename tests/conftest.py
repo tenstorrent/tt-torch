@@ -9,8 +9,6 @@ from datetime import datetime, timezone
 from tt_torch.tools.utils import (
     OpByOpBackend,
     CompileDepth,
-    ModelMetadata,
-    CompilerConfig,
 )
 from tt_torch.tools.crashsafe_utils import crashsafe_suffix
 import xml.etree.ElementTree as ET
@@ -45,7 +43,7 @@ def pytest_addoption(parser):
     parser.addoption(
         "--compile-depth",
         action="store",
-        help="Run only tests with specific compile depth (STABLEHLO, TTNN_IR, etc)",
+        help="Run tests to specific compile depth (STABLEHLO, TTNN_IR, etc) by filtering for tests with specified compile depth override",
     )
     parser.addoption(
         "--op-by-op-backend",

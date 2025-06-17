@@ -9,7 +9,6 @@ from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import (
     CompilerConfig,
     CompileDepth,
-    OpByOpBackend,
     ModelMetadata,
 )
 from third_party.tt_forge_models.tools.utils import get_file
