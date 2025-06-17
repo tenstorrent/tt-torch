@@ -49,8 +49,9 @@ def test_codegen(record_property, mode, op_by_op):
     results = tester.test_model()
 
     if mode == "eval":
-        decoded_outputs = ModelLoader.decode_outputs(results)
-        for i, text in enumerate(decoded_outputs):
-            print(f"Output {i}: {text}")
+        logits = results.logits if hasattr(results, "logits") else results[0]
+        token_ids = torch.argmax(logits, dim=-1)
+        decoded = tester.tokenizer.batch_decode(token_ids, skip_special_tokens=True)[0]
+        print(decoded)
 
     tester.finalize()
