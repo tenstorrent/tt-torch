@@ -273,7 +273,6 @@ def split_with_sizes(
         start_idx += length
     return splits
 
-
 # TODO: DO we ever need this?
 def _get_default_decomposition_ops() -> DecompositionOpsList:
     aten = torch.ops.aten
