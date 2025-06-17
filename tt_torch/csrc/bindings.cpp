@@ -18,7 +18,7 @@
 
 // tt-mlir includes
 #if defined(TT_RUNTIME_DEBUG) && TT_RUNTIME_DEBUG == 1
-#include "tt/runtime/detail/debug.h"
+#include "tt/runtime/debug.h"
 #endif
 #include "tt/runtime/runtime.h"
 #include "tt/runtime/types.h"
