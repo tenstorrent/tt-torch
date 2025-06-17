@@ -25,7 +25,7 @@ def load_model(model_name="meta-llama/Llama-3.2-3B"):
         use_cache=True,
     )
 
-    model.config.num_hidden_layers = 2
+    model.config.num_hidden_layers = 16
 
     tokenizer = AutoTokenizer.from_pretrained(model_name, torch_dtype=torch.bfloat16)
     tokenizer.pad_token = tokenizer.eos_token

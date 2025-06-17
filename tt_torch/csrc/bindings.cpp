@@ -319,6 +319,43 @@ HostReturnType to_host(py::args args) {
       for (auto &item : arg) {
         if (py::isinstance<tt::runtime::Tensor>(item)) {
           tt::runtime::Tensor rt_tensor = item.cast<tt::runtime::Tensor>();
+          outputs.emplace_back(to_host_single_rt_tensor(rt_tensor));
+        }
+        // Hack to get around the fact that pybind11 does not
+        // recognize the torch.Tensor pyclass as the same as
+        // the at::Tensor C++ class when inside a py::tuple.
+        else if (py::isinstance(item, TORCH_TENSOR_PYCLASS)) {
+          outputs.emplace_back(item.cast<at::Tensor>());
+        }
+      }
+    } else if (py::isinstance<tt::runtime::Tensor>(arg)) {
+      tt::runtime::Tensor rt_tensor = arg.cast<tt::runtime::Tensor>();
+      outputs.emplace_back(to_host_single_rt_tensor(rt_tensor));
+    } else if (py::isinstance<at::Tensor>(arg)) {
+      outputs.emplace_back(arg.cast<at::Tensor>());
+    }
+  }
+
+  return outputs;
+}
+
+
+HostReturnType to_host_non_deallocating(py::args args) {
+  std::vector<at::Tensor> outputs;
+
+  // Handle the special case where the input is a single non-tensor object.
+  bool is_single_non_tensor_obj =
+      py::len(args) == 1 && !(py::isinstance<tt::runtime::Tensor>(args[0]) ||
+                              py::isinstance<at::Tensor>(args[0]) ||
+                              py::isinstance<py::tuple>(args[0]));
+  if (is_single_non_tensor_obj) {
+    return to_host_single_object(args[0]);
+  }
+  for (auto &arg : args) {
+    if (py::isinstance<py::tuple>(arg)) {
+      for (auto &item : arg) {
+        if (py::isinstance<tt::runtime::Tensor>(item)) {
+          tt::runtime::Tensor rt_tensor = item.cast<tt::runtime::Tensor>();
           outputs.emplace_back(to_host_single_rt_tensor_non_deallocating(rt_tensor));
         }
         // Hack to get around the fact that pybind11 does not
@@ -488,6 +525,16 @@ PYBIND11_MODULE(tt_mlir, m) {
       },
       "Moves runtime tensors to host, either returning a list of torch tensors "
       "or a modified object containing torch tensors");
+  m.def("to_host_non_deallocating", [](py::args args) {
+        auto result = to_host_non_deallocating(args);
+        if (std::holds_alternative<std::vector<at::Tensor>>(result)) {
+          return py::cast(std::get<std::vector<at::Tensor>>(result));
+        } else {
+          return std::get<py::object>(result);
+        }
+      },
+        "Moves runtime tensors to host, either returning a list of torch tensors "
+        "or a modified object containing torch tensors");
   m.def("run_end_to_end", &run_end_to_end,
         "Run binary end to end, isolating all steps such as device opening, "
         "input preprocessing, execution and device closing");

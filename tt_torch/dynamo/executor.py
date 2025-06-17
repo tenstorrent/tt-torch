@@ -367,11 +367,21 @@ class Executor:
             device_inputs = list(device_inputs)
             device = self._get_device(device_idx)
             
+            
+            n_printed_tensors = 0
             # [James] This prints out the weights submitted to ttmlir
             # for tensor in preprocessed_weights+preprocessed_activations:
-            #     tensor = tt_mlir.to_host(tensor)[0]  # returns single element tuple
+            #     tensor = tt_mlir.to_host_non_deallocating(tensor)[0]  # returns single element tuple
             #     if isinstance(tensor, torch.Tensor):
-            #         print(f"input tensor: type={type(tensor)}, dtype={tensor.dtype}, shape={tensor.shape}", flush=True)
+            #         # print(f"input tensor: type={type(tensor)}, dtype={tensor.dtype}, shape={tensor.shape}", flush=True)
+            #         if tensor.dim() == 4 and tensor.shape[0] == 1 and tensor.shape[1] == 8 and tensor.shape[3] == 128:
+            #             # this is a static cache tensor.
+            #             print(f"static cache tensor found with shape {tensor.shape}", flush=True)
+            #             print(f"internals: {torch.mean(tensor[0,0,:,:], dim = -1)}", flush=True)
+            #             n_printed_tensors += 1
+            #         if n_printed_tensors == 3: # this doesn't really help because we need to fetch most of the tensors to host anyways to see their shapes and sizes. More complex bindings could be used but whatever 
+            #             break
+
 
             # if any output is intermediate we can run in async, since tt-mlir runtime will eventually block on final outputs
             # TODO: Enable this when device to device movement is supported. In the mean time we fall back to host: #748
