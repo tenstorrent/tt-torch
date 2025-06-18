@@ -58,6 +58,7 @@ jobs:
           {
             runs-on: wormhole_b0, name: "eval_9", tests: "
                 tests/models/codegen/test_codegen.py::test_codegen[full-eval]
+                tests/models/codegen/test_codegen_generate.py::test_codege_generate[full-eval]
             "
           },
           # This test group needs to be moved. This will be done once multichip tests are refactored: #780
