@@ -47,11 +47,11 @@ EFFICIENTNET_VARIANTS = [
 
 
 @pytest.mark.parametrize(
-    "model_info", EFFICIENTNET_VARIANTS, ids=lambda x: x.model_name
-)
-@pytest.mark.parametrize(
     "mode",
     ["eval"],
+)
+@pytest.mark.parametrize(
+    "model_info", EFFICIENTNET_VARIANTS, ids=lambda x: x.model_name
 )
 @pytest.mark.parametrize(
     "execute_mode",
