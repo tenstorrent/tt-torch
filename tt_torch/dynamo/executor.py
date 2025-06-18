@@ -158,7 +158,7 @@ class Executor:
         }
 
         self.binary = {}
-        self.preprocessed_graph_constants = {}
+        # self.preprocessed_graph_constants = {}
         self.devices = devices if devices is not None else [None]
         self.owned_device_indices = []
         self.async_mode = async_mode
@@ -242,13 +242,13 @@ class Executor:
         self.owned_device_indices.append(device_idx)
         return device
 
-    def _cache_constants_if_needed(self, preprocessed_constants, device_idx=0):
-        if (
-            self.compiler_config.cache_preprocessed_constants
-            and self.graph_constants is not None
-            and self.preprocessed_graph_constants[device_idx] is None
-        ):
-            self.preprocessed_graph_constants[device_idx] = preprocessed_constants
+    # def _cache_constants_if_needed(self, preprocessed_constants, device_idx=0):
+    #     if (
+    #         self.compiler_config.cache_preprocessed_constants
+    #         and self.graph_constants is not None
+    #         and self.constant_cache[device_idx] is None
+    #     ):
+    #         self.constant_cache[device_idx] = preprocessed_constants
 
     def _cleanup_resources(self, preprocessed_activations):
         for t in preprocessed_activations:
@@ -288,7 +288,7 @@ class Executor:
         # some of the inputs may be buffers. ideally tag their indices within the inputs list, but for now just try to hard cache
         # buffer indices are relative to the start of the inputs array, not anything else.
         
-        print("[James] len constant inputs: ", len(self.mcg.constant_inputs[device_idx]), "Input count: ", len(inputs))
+        print("[James] len constant inputs: ", len(self.mcg.constant_inputs[device_idx]),"len buffers: ", len(self.mcg.buffers[device_idx]), "Input count: ", len(inputs), "total =", len(self.mcg.constant_inputs[device_idx]) + len(self.mcg.buffers[device_idx]) + len(inputs))
         
         # print("Buffer indices relative to original inputs:", buffer_indices)
         # for idx in buffer_indices:
@@ -309,14 +309,15 @@ class Executor:
         #     )
         # else:
         #     weights_and_activations = inputs
+        
         constants = self.mcg.constant_inputs.get(device_idx, [])
         buffers = self.mcg.buffers.get(device_idx, [])
         weights_and_activations = constants + buffers + list(inputs)
         
         # fill weights_and_activations from cache if possible
         # substitute preprocessed weights immediately @ start
-        if device_idx in self.preprocessed_graph_constants:
-            weights_and_activations[:len(constants)] = self.preprocessed_graph_constants[device_idx]
+        if device_idx in self.constant_cache:
+            weights_and_activations[:len(constants)] = self.constant_cache[device_idx]
             tensor_start_idx += len(constants)
             
         # substitute buffers if available
@@ -384,7 +385,7 @@ class Executor:
         runtime_activations = runtime_activations_and_weights[-input_len:]
         
         # push runtime tensors into caches
-        self.preprocessed_graph_constants[device_idx] = tuple(runtime_weights)
+        self.constant_cache[device_idx] = tuple(runtime_activations_and_weights[:len(constants)]) 
         insert_runtime_buffer_tensors_into_cache(torch_weights_and_activations, runtime_activations_and_weights)    
         
         return runtime_weights, runtime_activations
@@ -422,6 +423,7 @@ class Executor:
             # graph_inputs[device_idx] = [None] * (len(self.mcg.graph_inputs[device_idx]) + len(self.mcg.buffers[device_idx]))
             graph_inputs[device_idx] = [None] * (len(self.mcg.graph_inputs[device_idx]))
             
+            # TODO unnecessary to do here. We know what are buffers based on self.mcg.buffers which is global to the executor class
             for i, buffer in enumerate(self.mcg.buffers[device_idx]):
                 # graph_inputs[device_idx][i] = buffer
                 if device_idx not in buffer_indices:
@@ -458,7 +460,7 @@ class Executor:
             
             
             n_printed_tensors = 0
-            do_print_static_cache_tensors = True
+            do_print_static_cache_tensors = False
             print(f"[James] preprocessed weights and activations ct: {len(preprocessed_weights)}w + {len(preprocessed_activations)}a")
             # [James] This prints out the weights submitted to ttmlir
             for i,tensor in enumerate(preprocessed_weights+preprocessed_activations):
@@ -510,7 +512,7 @@ class Executor:
         return final_outputs
 
     def __del__(self):
-        for _, device_weights in self.preprocessed_graph_constants.items():
+        for _, device_weights in self.constant_cache.items():
             for weight in device_weights:
                 tt_mlir.deallocate_tensor(weight, force=True)
         for device_idx in self.owned_device_indices:
