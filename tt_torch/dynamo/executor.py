@@ -274,14 +274,16 @@ class Executor:
                 tensors[index] = runtime_tensors.pop(0)
             return tuple(tensors)
 
-        def insert_runtime_buffer_tensors_into_cache(torch_tensors, runtime_tensors):
-            if self.buffer_cache is None:
+        def insert_runtime_tensors_into_caches(torch_tensors, runtime_tensors):
+            if self.buffer_cache is None and self.constant_cache is None:
                 return
             for torch_tensor, runtime_tensor in zip(torch_tensors, runtime_tensors):
                 if torch_tensor in self.buffer_cache and self.buffer_cache[torch_tensor] is None:
                     print("[James] Caching buffer tensor for the first time.", flush=True)
                     self.buffer_cache[torch_tensor] = runtime_tensor
-
+                if torch_tensor in self.constant_cache and self.constant_cache[torch_tensor] is None:
+                    print("[James] Caching constant tensor for the first time.", flush=True)
+                    self.constant_cache[torch_tensor] = runtime_tensor
         input_len = len(inputs)
         tensor_start_idx = 0
         
@@ -316,9 +318,19 @@ class Executor:
         
         # fill weights_and_activations from cache if possible
         # substitute preprocessed weights immediately @ start
-        if device_idx in self.constant_cache:
-            weights_and_activations[:len(constants)] = self.constant_cache[device_idx]
-            tensor_start_idx += len(constants)
+        
+        # for now - bulk substitute constants to block granular reallocation (not currently possible)
+        # everything should either be none or NOT none, but not a mix
+        if self.constant_cache is not None:
+            for i in range(len(constants)):
+                cached_constant = self.constant_cache.get(weights_and_activations[i], None) # None signals not present.
+                if cached_constant is not None:
+                    weights_and_activations[i] = cached_constant
+                    tensor_start_idx += 1
+                
+            
+            # weights_and_activations[:len(constants)] = self.constant_cache
+            # tensor_start_idx += len(constants)
             
         # substitute buffers if available
         for i in range(len(constants), len(constants)+ len(buffers)):
@@ -384,9 +396,11 @@ class Executor:
         runtime_weights = runtime_activations_and_weights[:-input_len]        
         runtime_activations = runtime_activations_and_weights[-input_len:]
         
-        # push runtime tensors into caches
-        self.constant_cache[device_idx] = tuple(runtime_activations_and_weights[:len(constants)]) 
-        insert_runtime_buffer_tensors_into_cache(torch_weights_and_activations, runtime_activations_and_weights)    
+        # push runtime tensors into caches ! disable for now
+        # self.constant_cache[device_idx] = tuple(runtime_activations_and_weights[:len(constants)]) 
+               
+        # push runtime buffer tensors into cache
+        insert_runtime_tensors_into_caches(torch_weights_and_activations, runtime_activations_and_weights)    
         
         return runtime_weights, runtime_activations
 
@@ -415,7 +429,7 @@ class Executor:
         num_outputs = 0
         graph_inputs = {}
         buffer_indices = {}
-        
+
         for device_idx in self.mcg.binaries.keys():
             for output in self.mcg.graph_outputs[device_idx]:
                 if output.io_type == IOType.USER:
@@ -440,12 +454,36 @@ class Executor:
         final_outputs = [None] * num_outputs
         for device_idx, binary in self.mcg.binaries.items():
             device_inputs = graph_inputs[device_idx]
+            device = self.devices[device_idx]
 
             # initialize buffers
             print("Preparing buffer cache for device ", device_idx, "with indices ", buffer_indices[device_idx], flush=True)
             for torch_buffer in self.mcg.buffers[device_idx]:
                 if self.buffer_cache is not None and torch_buffer not in self.buffer_cache:
                     self.buffer_cache[torch_buffer] = None # add a blank in the cache
+
+            # Check if we should invalidate the constant cache because it has some valid and some invalid entries
+            cache_invalidated = False
+            if self.constant_cache is not None and len (self.constant_cache.keys()) > 0:
+                for torch_constant in self.mcg.constant_inputs[device_idx]:
+                    if torch_constant not in self.constant_cache:
+                        cache_invalidated = True
+                        print("[James] Constant cache is invalidated because it has invalid entry with shape", torch_constant.shape, flush=True)
+                        
+            
+            if cache_invalidated:
+                for value in self.constant_cache.values():
+                    if type(value) == tt_mlir.Tensor:
+                        tt_mlir.deallocate_tensor(value, force=True)
+                self.constant_cache = {}
+                print("[James] Invalidating constant cache for device ", device_idx, flush=True)
+            
+            print("Preparing constant cache for device ", device_idx, flush=True)
+            
+            if self.constant_cache is not None:
+                for torch_constant in self.mcg.constant_inputs[device_idx]:
+                    # the constant_cache should be initialized by caller to {}
+                    self.constant_cache[torch_constant] = None # add a blank in the cache
             
             program_idx = 0
             preprocessed_weights, preprocessed_activations = self.get_inputs(
@@ -460,20 +498,25 @@ class Executor:
             
             
             n_printed_tensors = 0
-            do_print_static_cache_tensors = False
+            do_print_input_tensors = True
+            do_print_static_cache_tensors = True
+            do_print_activation_contents = True
             print(f"[James] preprocessed weights and activations ct: {len(preprocessed_weights)}w + {len(preprocessed_activations)}a")
             # [James] This prints out the weights submitted to ttmlir
-            for i,tensor in enumerate(preprocessed_weights+preprocessed_activations):
-                tensor = tt_mlir.to_host_non_deallocating(tensor)[0]  # returns single element tuple
-                if isinstance(tensor, torch.Tensor):
-                    print(f"input tensor: type={type(tensor)}, dtype={tensor.dtype}, shape={tensor.shape}", flush=True)
-                    if do_print_static_cache_tensors and tensor.dim() == 4 and tensor.shape[0] == 1 and tensor.shape[1] == 8 and tensor.shape[3] == 128:
-                        # this is a static cache tensor.
-                        print(f"static cache tensor found with shape {tensor.shape} @ input index {i}", flush=True)
-                        print(f"internals: {torch.mean(tensor[0,0,:,:], dim = -1)}", flush=True)
-                        n_printed_tensors += 1
-                    if n_printed_tensors == 3: # this doesn't really help because we need to fetch most of the tensors to host anyways to see their shapes and sizes. More complex bindings could be used but whatever 
-                        break
+            if do_print_input_tensors:
+                for i,tensor in enumerate(preprocessed_weights+preprocessed_activations):
+                    tensor = tt_mlir.to_host_non_deallocating(tensor)[0]  # returns single element tuple
+                    if isinstance(tensor, torch.Tensor):
+                        print(f"input tensor: type={type(tensor)}, dtype={tensor.dtype}, shape={tensor.shape}", flush=True)
+                        if do_print_static_cache_tensors and tensor.dim() == 4 and tensor.shape[0] == 1 and tensor.shape[1] == 8 and tensor.shape[3] == 128 and n_printed_tensors < 3:
+                            # this is a static cache tensor.
+                            print(f"static cache tensor found with shape {tensor.shape} @ input index {i}", flush=True)
+                            print(f"internals: {torch.mean(tensor[0,0,:,:], dim = -1)}", flush=True)
+                            n_printed_tensors += 1
+                        
+                        if do_print_activation_contents and i >= len(preprocessed_weights):
+                            print(f"Input tensor contents: {tensor}", flush=True)
+
             
             print("End of tensor inputs")
 
@@ -514,6 +557,7 @@ class Executor:
     def __del__(self):
         for _, device_weights in self.constant_cache.items():
             for weight in device_weights:
+                # TODO - this doesn't work bc constant cache is a flat cache w/o device
                 tt_mlir.deallocate_tensor(weight, force=True)
         for device_idx in self.owned_device_indices:
             tt_mlir.close_mesh_device(self.devices[device_idx])
