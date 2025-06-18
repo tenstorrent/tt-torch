@@ -429,24 +429,69 @@ def split_onto_devices(gm, compiler_config):
     return mcg
 
 
-# Check that the device map is consistent with topological ordering of the graph module
+# # Check that the device map is consistent with topological ordering of the graph module
+# def check_device_map(gm, compiler_config):
+#     # Use gm to track which modules depend on which other modules
+#     device_map = compiler_config.device_map
+
+#     for node in gm.graph.nodes:
+#         node_device = node_to_device(node, device_map)
+#         for input_node in node.all_input_nodes:
+#             input_device = node_to_device(input_node, device_map)
+#             if (
+#                 node_device is not None
+#                 and input_device is not None
+#                 and input_device > node_device
+#             ):
+#                 raise RuntimeError(
+#                     f"Device map error: Node '{node.name}' (device {node_device}) "
+#                     f"depends on '{input_node.name}' (device {input_device}), "
+#                     "which is assigned to a later device."
+#                 )
+
+
+def node_to_device_with_key(node, device_map):
+    if (
+        not hasattr(node, "meta")
+        or "nn_module_stack" not in node.meta
+        or len(node.meta["nn_module_stack"]) == 0
+    ):
+        return None, None
+
+    module_stack = list(node.meta["nn_module_stack"].values())[-1][0]
+    vals = module_stack.rsplit(".")[1:]
+    parsed_vals = []
+    for val in vals:
+        if val.startswith("_modules['"):
+            parsed_vals.append(val[10:-2])
+        else:
+            parsed_vals.append(val)
+
+    for i in range(1, len(parsed_vals) + 1):
+        layer = ".".join(parsed_vals[:i])
+        if layer in device_map:
+            return device_map[layer], layer
+
+    return None, None
+
+
 def check_device_map(gm, compiler_config):
-    # Use gm to track which modules depend on which other modules
     device_map = compiler_config.device_map
 
     for node in gm.graph.nodes:
-        node_device = node_to_device(node, device_map)
+        node_device, node_key = node_to_device_with_key(node, device_map)
         for input_node in node.all_input_nodes:
-            input_device = node_to_device(input_node, device_map)
+            input_device, input_key = node_to_device_with_key(input_node, device_map)
             if (
                 node_device is not None
                 and input_device is not None
                 and input_device > node_device
             ):
                 raise RuntimeError(
-                    f"Device map error: Node '{node.name}' (device {node_device}) "
-                    f"depends on '{input_node.name}' (device {input_device}), "
-                    "which is assigned to a later device."
+                    f"Device map error: Node '{node.name}' (device {node_device}, map key '{node_key}') "
+                    f"depends on '{input_node.name}' (device {input_device}, map key '{input_key}'), "
+                    "which is assigned to a later device.\n"
+                    f"Check your device_map assignments: {input_key} -> {input_device}, {node_key} -> {node_device}"
                 )
 
 
