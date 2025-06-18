@@ -172,7 +172,7 @@ class ModelTester:
         if compiler_config is None:
             compiler_config = CompilerConfig()
         self.compiler_config = compiler_config
-        self.compiler_config.model_name = model_name
+        self.compiler_config.set_model_name(model_name)
         self.compiler_config.model_group = model_group
 
         self.record_property = record_property_handle

@@ -331,6 +331,11 @@ class CompilerConfig:
         self.automatic_parallelization = False
         self.mesh_shape = [1, 1]
 
+    def set_model_name(self, model_name):
+        self.model_name = model_name
+        if self.save_mlir_override:
+            self.cleanup_old_mlir_files()
+
     @property
     def model_name(self):
         return self._model_name
@@ -442,6 +447,19 @@ class CompilerConfig:
                     print(
                         f"Warning: Invalid SAVE_MLIR value: {dialect}. Expected one or more of {valid_dialects} separated by commas."
                     )
+
+    def cleanup_old_mlir_files(self):
+        output_dir = self.output_mlir_dir
+        os.makedirs(output_dir, exist_ok=True)
+        try:
+            sanitized_model_name = sanitize_filename(self.model_name)
+            if sanitized_model_name:
+                for filename in os.listdir(output_dir):
+                    if filename.startswith(sanitized_model_name):
+                        filepath_to_remove = os.path.join(output_dir, filename)
+                        os.remove(filepath_to_remove)
+        except Exception as e:
+            print(f"Error while cleaning up old MLIR files: {e}.")
 
     def post_init(self):
         if self.consteval_parameters:
