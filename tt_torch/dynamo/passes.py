@@ -250,6 +250,9 @@ def _generate_golden_intermediate_cache(gm, inputs, compiler_config):
 # The following function splits the graph onto the devices specified in the device_map
 # We create empty subgraphs for each device and then add the nodes to the appropriate subgraph
 def split_onto_devices(gm, compiler_config):
+
+    check_device_map(gm, compiler_config)
+
     device_indices = set(compiler_config.device_map.values())
     if len(device_indices) == 0:
         device_indices = [0]
@@ -424,6 +427,27 @@ def split_onto_devices(gm, compiler_config):
         graph.lint()
 
     return mcg
+
+
+# Check that the device map is consistent with topological ordering of the graph module
+def check_device_map(gm, compiler_config):
+    # Use gm to track which modules depend on which other modules
+    device_map = compiler_config.device_map
+
+    for node in gm.graph.nodes:
+        node_device = node_to_device(node, device_map)
+        for input_node in node.all_input_nodes:
+            input_device = node_to_device(input_node, device_map)
+            if (
+                node_device is not None
+                and input_device is not None
+                and input_device > node_device
+            ):
+                raise RuntimeError(
+                    f"Device map error: Node '{node.name}' (device {node_device}) "
+                    f"depends on '{input_node.name}' (device {input_device}), "
+                    "which is assigned to a later device."
+                )
 
 
 def prune_inputs(program, constant_inputs):
