@@ -101,11 +101,14 @@ def dump_module(module, name, compiler_config):
         print(f"{name} module", file=sys.stderr)
         print(module, file=sys.stderr)
 
+    if not compiler_config.model_name:
+        print("Cannot dump module, no model name provided", file=sys.stderr)
+        return
+
     if compiler_config.save_mlir_override and name.lower() in (
         n.lower() for n in compiler_config.save_mlir_override
     ):
-        output_dir = "model_mlir"
-        os.makedirs(output_dir, exist_ok=True)
+        output_dir = compiler_config.output_mlir_dir
         sanitized_model_name = sanitize_filename(compiler_config.model_name)
         filepath = os.path.join(
             output_dir, f"{sanitized_model_name}_{name.lower()}.mlir"
