@@ -19,12 +19,13 @@ from tt_torch.tools.utils import (
 
 class BackendOptions:
     def __init__(
-        self, compiler_config=CompilerConfig(), devices=[None], async_mode=False, runtime_tensor_cache=None
+        self, compiler_config=CompilerConfig(), devices=[None], async_mode=False, buffer_cache=None, constant_cache=None
     ):
         self.compiler_config = compiler_config
         self.devices = devices
         self.async_mode = async_mode
-        self.runtime_tensor_cache = runtime_tensor_cache
+        self.buffer_cache = buffer_cache
+        self.constant_cache = constant_cache    
 
 
 from tt_torch.dynamo.torch_backend import (
@@ -225,14 +226,15 @@ def shlo_to_flatbuffer(
     return binary
 
 
-def _base_backend(gm, example_inputs, compiler_config, devices, async_mode, runtime_tensor_cache):
+def _base_backend(gm, example_inputs, compiler_config, devices, async_mode, buffer_cache, constant_cache):
     mcg = torch_to_shlo(gm, example_inputs, compiler_config)
     executor = Executor(
         mcg,
         compiler_config,
         devices=devices,
         async_mode=async_mode,
-        buffer_cache=runtime_tensor_cache
+        buffer_cache=buffer_cache,
+        constant_cache=constant_cache
     )
 
     compiler_config.record_property("achieved_compile_depth", "STABLEHLO")
@@ -264,12 +266,14 @@ def backend(gm, example_inputs, options: BackendOptions = None):
         cc = CompilerConfig()
         devices = None
         async_mode = False
-        runtime_tensor_cache = None
+        buffer_cache = None
+        constant_cache = None
     else:
         cc = options.compiler_config
         devices = options.devices
         async_mode = options.async_mode
-        runtime_tensor_cache = options.runtime_tensor_cache
+        buffer_cache = options.buffer_cache
+        constant_cache = options.constant_cache
 
     # Apply environment overrides at start of compilation to allow overriding what was set in the test
     cc.apply_environment_overrides()
@@ -296,8 +300,8 @@ def backend(gm, example_inputs, options: BackendOptions = None):
                 example_inputs=example_inputs,
                 compiler_config=cc,
                 devices=devices,
-                async_mode=async_mode,
+                async_mode=async_mode
             )
     return _base_backend(
-        gm, example_inputs, compiler_config=cc, devices=devices, async_mode=async_mode, runtime_tensor_cache=runtime_tensor_cache
+        gm, example_inputs, compiler_config=cc, devices=devices, async_mode=async_mode, buffer_cache=buffer_cache, constant_cache=constant_cache
     )

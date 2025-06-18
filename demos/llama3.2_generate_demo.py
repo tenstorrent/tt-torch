@@ -76,8 +76,11 @@ def main():
     options.compiler_config = cc
     options.devices = [None]  # defer to Executor to inplace-initialize device
     
-    runtime_tensor_cache = {}
-    options.runtime_tensor_cache = runtime_tensor_cache
+    buffer_cache = {}
+    options.buffer_cache = buffer_cache
+
+    constant_cache = {}
+    options.constant_cache = constant_cache
 
     compare_golden = False  # enable golden comparison - significantly slows down test due to h2d transfer of cache weights
     compiled_model = torch.compile(
