@@ -253,7 +253,7 @@ class Executor:
         for t in preprocessed_activations:
             tt_mlir.deallocate_tensor(t, force=True)
 
-    def get_inputs(self, *inputs, binary, program_idx, device_idx=0, buffer_indices=[None]):
+    def get_inputs(self, *inputs, binary, program_idx, device_idx=0):
         def get_torch_tensors(tensors):
             torch_tensors = []
             indices = []
@@ -264,7 +264,7 @@ class Executor:
                     if self.buffer_cache[tensor] is None:
                         torch_tensors.append(tensor) # do convert on first run if not allocated
                     else:
-                        already_cached_buffers.append(tensor)
+                        already_cached_buffers.append(self.buffer_cache[tensor])
                     buffer_indices.append(idx)
                     continue
                 if isinstance(tensor, torch.Tensor):
@@ -272,13 +272,13 @@ class Executor:
                     indices.append(idx)
             return torch_tensors, indices, buffer_indices, already_cached_buffers
 
-        def recreate_runtime_tensors(tensors, runtime_tensors, indices, torch_buffer_indices):
+        def recreate_runtime_tensors(tensors, runtime_tensors, indices):
             tensors = list(tensors)
             for index in indices:
                 tensors[index] = runtime_tensors.pop(0)
-            for index in torch_buffer_indices:
-                print("[James] Substituting buffer tensor from runtime buffer tensor cache.", flush=True)
-                tensors[index] = self.buffer_cache[tensors[index]]
+            # for index in torch_buffer_indices:
+            #     print("[James] Substituting buffer tensor from runtime buffer tensor cache.", flush=True)
+            #     tensors[index] = self.buffer_cache[tensors[index]]
             return tuple(tensors)
 
 
@@ -298,12 +298,12 @@ class Executor:
         
         print("[James] len constant inputs: ", len(self.mcg.constant_inputs[device_idx]), "Input count: ", len(inputs))
         
-        print("Buffer indices relative to original inputs:", buffer_indices)
-        for idx in buffer_indices:
-            buffer_torch_tensor = inputs[idx]
-            if self.buffer_cache is not None and buffer_torch_tensor not in self.buffer_cache:
-                print("[James] Adding blank for buffer for the first time.", flush=True)
-                self.buffer_cache[buffer_torch_tensor] = None # add a blank in the cache
+        # print("Buffer indices relative to original inputs:", buffer_indices)
+        # for idx in buffer_indices:
+        #     buffer_torch_tensor = inputs[idx]
+        #     if self.buffer_cache is not None and buffer_torch_tensor not in self.buffer_cache:
+        #         print("[James] Adding blank for buffer for the first time.", flush=True)
+        #         self.buffer_cache[buffer_torch_tensor] = None # add a blank in the cache
         
         if device_idx in self.preprocessed_graph_constants:
             preprocessed_weights = self.preprocessed_graph_constants[device_idx]
@@ -339,13 +339,27 @@ class Executor:
             tensor_start_idx,
         )   
         
-        print("processed #runtime activations and weights, len:", len(runtime_activations_and_weights))
+        # print("processed #runtime activations and weights, len:", len(runtime_activations_and_weights))
         # @ first prefill, insert alloc'd buffer tensors into cache
         insert_runtime_buffer_tensors_into_cache(torch_weights_and_activations, runtime_activations_and_weights)        
         
+        # buffer_runtime_activations_and_weights = []
+        # for idx in torch_buffer_indices:
+        #     buffer_runtime_activations_and_weights.append(runtime_activations_and_weights[idx])
+        # for i in torch_buffer_indices:
+        #     runtime_activations_and_weights.pop(i)
+            
+        
+        # for idx in torch_buffer_indices[::-1]:
+        #     if idx < len(runtime_activations_and_weights):
+        #         runtime_activations_and_weights.pop(idx)
+        
+        
+        runtime_activations_and_weights += already_cached_buffers
+        
         # substitute buffers from cache
         runtime_activations_and_weights = recreate_runtime_tensors(
-            weights_and_activations, runtime_activations_and_weights, torch_indices, torch_buffer_indices
+            weights_and_activations, runtime_activations_and_weights, torch_indices+torch_buffer_indices
         )
         
         # james - continue investigation here.
@@ -404,13 +418,20 @@ class Executor:
         for device_idx, binary in self.mcg.binaries.items():
             device_inputs = graph_inputs[device_idx]
 
+            # initialize buffers
+            print("Preparing buffer cache for device ", device_idx, "with indices ", buffer_indices[device_idx], flush=True)
+            for idx in buffer_indices[device_idx]:
+                buffer_torch_tensor = device_inputs[idx]
+                if self.buffer_cache is not None and buffer_torch_tensor not in self.buffer_cache:
+                    # print("[James] Adding blank for buffer for the first time.", flush=True)
+                    self.buffer_cache[buffer_torch_tensor] = None # add a blank in the cache
+            
             program_idx = 0
             preprocessed_weights, preprocessed_activations = self.get_inputs(
                 *device_inputs,
                 binary=binary,
                 device_idx=device_idx,
                 program_idx=program_idx,
-                buffer_indices=buffer_indices[device_idx]
             )
 
             device_inputs = list(device_inputs)
@@ -419,6 +440,7 @@ class Executor:
             
             n_printed_tensors = 0
             do_print_static_cache_tensors = False
+            print(f"[James] preprocessed weights and activations ct: {len(preprocessed_weights)}w + {len(preprocessed_activations)}a")
             # [James] This prints out the weights submitted to ttmlir
             for i,tensor in enumerate(preprocessed_weights+preprocessed_activations):
                 tensor = tt_mlir.to_host_non_deallocating(tensor)[0]  # returns single element tuple
