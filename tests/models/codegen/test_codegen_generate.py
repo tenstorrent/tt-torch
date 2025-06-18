@@ -3,11 +3,11 @@
 # SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/docs/transformers/model_doc/codegen#usage-example
 
-from transformers import AutoModelForCausalLM, AutoTokenizer
 import pytest
 from tests.utils import ModelTester
 import torch
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.codegen.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
