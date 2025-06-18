@@ -257,7 +257,8 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "centernet", tests: "
-              tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[op_by_op_stablehlo-eval]
+              tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[op_by_op_stablehlo-centernet-od-resdcn18-eval]
+              tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[op_by_op_stablehlo-centernet-od-resdcn101-eval]
               "
           },
           {
