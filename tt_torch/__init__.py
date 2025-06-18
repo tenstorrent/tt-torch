@@ -6,6 +6,7 @@
 #   - The backend will hang if attempting to retrieve the device descriptor from a forked process if there are multiple chips
 #   - torch tensors cannot be made contiguous in a forked process
 import multiprocessing as mp
+import torch
 
 if mp.get_start_method() != "forkserver":
     mp.set_start_method("forkserver", force=True)
