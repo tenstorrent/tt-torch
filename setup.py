@@ -5,9 +5,39 @@ from skbuild import setup
 import os
 from skbuild.command.install_lib import install_lib
 import glob
-from setuptools import find_namespace_packages
 import sys
 import shutil
+
+
+from setuptools.command.build_py import build_py as _build_py
+from setuptools import find_namespace_packages
+import os
+
+
+class build_py_with_torch_mlir(_build_py):
+    def finalize_options(self):
+        super().finalize_options()
+
+        torch_mlir_path = os.path.join(
+            "third_party",
+            "torch-mlir",
+            "src",
+            "torch-mlir-build",
+            "python_packages",
+            "torch_mlir",
+        )
+
+        assert os.path.exists(torch_mlir_path)
+        extra_packages = find_namespace_packages(
+            where=torch_mlir_path, include=["torch_mlir*"]
+        )
+        self.packages.extend(extra_packages)
+        self.package_dir.update(
+            {
+                pkg: os.path.join(torch_mlir_path, *pkg.split("."))
+                for pkg in extra_packages
+            }
+        )
 
 
 class install_metal_libs(install_lib):
@@ -50,7 +80,6 @@ class install_metal_libs(install_lib):
             shutil.copytree(src_tools_dir, dest_tools_dir, dirs_exist_ok=True)
 
         if include_models:
-
             # Copy entire TT Forge Models repo (python)
             src_models_dir = os.path.abspath(
                 os.path.join(os.getcwd(), "third_party", "tt_forge_models")
@@ -134,15 +163,13 @@ setup(
     author_email="aknezevic@tenstorrent.com",
     license="Apache-2.0",
     url="https://github.com/tenstorrent/tt-torch",
-    packages=find_namespace_packages(include=["tt_torch*"])
-    + find_namespace_packages(
-        where="third_party/torch-mlir/src/torch-mlir-build/python_packages/torch_mlir"
-    ),
+    packages=find_namespace_packages(include=["tt_torch*"]),
     description="TT PyTorch FrontEnd",
     long_description=long_description,
     long_description_content_type="text/markdown",
     cmake_args=cmake_args,
     cmdclass={
+        "build_py": build_py_with_torch_mlir,
         "install_lib": install_metal_libs,
     },
     zip_safe=False,
@@ -154,4 +181,5 @@ setup(
         "onnxruntime",
         "ml_dtypes",
     ],
+    include_package_data=True,
 )
