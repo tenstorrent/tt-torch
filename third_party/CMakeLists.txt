@@ -75,7 +75,10 @@ else()
     set_target_properties(TTMLIRRuntime PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_RUNTIME_LIBRARY_PATH})
     add_dependencies(TTMLIRRuntime tt-mlir)
 
-    install(DIRECTORY ${TTMLIR_INSTALL_PREFIX}/ DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
+    # Only install tt-mlir directly if not building wheel (when DONT_OVERRIDE_INSTALL_PATH is not set)
+    if(NOT DEFINED ENV{DONT_OVERRIDE_INSTALL_PATH})
+        install(DIRECTORY ${TTMLIR_INSTALL_PREFIX}/ DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
+    endif()
 
     # torch-mlir build
     # torch-mlir is using branch tt_torch/main
@@ -114,7 +117,10 @@ else()
         GIT_TAG ${TORCH_MLIR_VERSION}
     )
 
-    install(DIRECTORY ${TORCH_MLIR_INSTALL_PREFIX}/python_packages/torch_mlir/torch_mlir DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
+    # Only install torch_mlir directly if not building wheel (when DONT_OVERRIDE_INSTALL_PATH is not set)
+    if(NOT DEFINED ENV{DONT_OVERRIDE_INSTALL_PATH})
+        install(DIRECTORY ${TORCH_MLIR_INSTALL_PREFIX}/python_packages/torch_mlir/torch_mlir DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
+    endif()
 
     # tt-forge-models - Python-only project, no need to build.
     set(TT_FORGE_MODELS_VERSION "8222c58102587c4fd9fbf24ae521e8208203100e")
