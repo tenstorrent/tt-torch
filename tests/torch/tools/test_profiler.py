@@ -5,7 +5,7 @@ import pytest
 import tt_torch
 import subprocess
 import os
-from tt_torch.tools.profile import profile
+from tt_torch.tools.tt_profile import tt_profile
 from tt_torch.tools.profile_util import Profiler
 import csv
 
@@ -15,7 +15,7 @@ expected_report_path = f"results/perf/{Profiler.DEFAULT_OUTPUT_FILENAME}"
 
 
 def test_profiler_cli():
-    profiler_command = f'python tt_torch/tools/profile.py "{test_command_add}"'
+    profiler_command = f'python tt_torch/tools/tt_profile.py "{test_command_add}"'
     profiler_subprocess = subprocess.run(profiler_command, shell=True)
 
     # Check return code
@@ -40,7 +40,7 @@ def test_profiler_cli():
 
 
 def test_profiler_module():
-    profile(test_command_add)
+    tt_profile(test_command_add)
 
     assert os.path.exists(
         expected_report_path
