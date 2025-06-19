@@ -266,13 +266,11 @@ def move_device_map_key(input_key, target_device, device_map, gm, visited=None):
     if input_node is None:
         return
 
-    # Check all consumers of input_node
-    for user in input_node.users:
-        user_device, _ = node_to_device(user, device_map, key=True)
-        if user_device is not None and user_device != target_device:
-            # Recursively move the consumer to the target device
-            user_key = node_to_device(user, device_map, key=True)[1]
-            move_device_map_key(user_key, target_device, device_map, gm, visited)
+    # Recursively move all inputs of input_node to target_device
+    for dep_node in input_node.all_input_nodes:
+        dep_device, dep_key = node_to_device(dep_node, device_map, key=True)
+        if dep_device is not None and dep_device > target_device:
+            move_device_map_key(dep_key, target_device, device_map, gm, visited)
 
     # Now it's safe to move
     device_map[input_key] = target_device
@@ -282,31 +280,19 @@ def move_device_map_key(input_key, target_device, device_map, gm, visited=None):
 # Check that the device map is consistent with topological ordering of the graph module
 def check_device_map(gm, compiler_config):
     device_map = compiler_config.device_map
-    changed = True
-    while changed:
-        changed = False
-        for node in gm.graph.nodes:
-            node_device, node_key = node_to_device(node, device_map, key=True)
-            for input_node in node.all_input_nodes:
-                input_device, input_key = node_to_device(
-                    input_node, device_map, key=True
-                )
-                if (
-                    node_device is not None
-                    and input_device is not None
-                    and input_device > node_device
-                ):
-                    move_device_map_key(input_key, node_device, device_map, gm)
-                    changed = True
 
-                # Need to add a check here to see if the change is allowed
+    for node in gm.graph.nodes:
+        node_device, node_key = node_to_device(node, device_map, key=True)
+        for input_node in node.all_input_nodes:
+            input_device, input_key = node_to_device(input_node, device_map, key=True)
+            if (
+                node_device is not None
+                and input_device is not None
+                and input_device > node_device
+            ):
+                move_device_map_key(input_key, node_device, device_map, gm)
 
-                # raise RuntimeError(
-                #     f"Device map error: Node '{node.name}' (device {node_device}, map key '{node_key}') "
-                #     f"depends on '{input_node.name}' (device {input_device}, map key '{input_key}'), "
-                #     "which is assigned to a later device.\n"
-                #     f"Check your device_map assignments: {input_key} -> {input_device}, {node_key} -> {node_device}"
-                # )
+    # Should maybe add a warning that the device map was modified and memory might not be properly distributed across devices
 
 
 # The following function splits the graph onto the devices specified in the device_map
