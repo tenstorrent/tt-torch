@@ -7,6 +7,7 @@ import warnings
 import tt_mlir
 import sys
 import torch_mlir
+from torch._dynamo import register_backend
 
 from tt_torch.tools.utils import (
     OpByOpBackend,
@@ -250,6 +251,7 @@ def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
 
 
 @tt_torch_error_message
+@register_backend(name="tt")
 def backend(gm, example_inputs, options: BackendOptions = None):
     warnings.filterwarnings("ignore", message="Failed to fetch module*")
     assert isinstance(gm, torch.fx.GraphModule), "Backend only supports torch graphs"

@@ -35,7 +35,7 @@ options = BackendOptions()
 options.compiler_config = cc
 # We didn't provide any explicit device while
 # compiling the model.
-tt_model = torch.compile(model, backend=backend, dynamic=False, options=options)
+tt_model = torch.compile(model, backend="tt", dynamic=False, options=options)
 ```
 This causes the model to be compiled onto the default device present in the board. The device acquisition and release get handled automatically.
 
@@ -43,6 +43,7 @@ This causes the model to be compiled onto the default device present in the boar
 This file shows how to split multiple model requests across all available devices on the board using the `DeviceManager` module. The relevant device management code is:
 
 ```Python
+import tt_torch
 from tt_torch.tools.device_manager import DeviceManager
 ...
 def main():
@@ -58,7 +59,7 @@ def main():
         options.compiler_config = cc
         options.device = device # Explicitly compile the model for a specific device
         tt_models.append(
-            torch.compile(model, backend=backend, dynamic=False, options=options)
+            torch.compile(model, backend="tt", dynamic=False, options=options)
         )
     ...
     # Release all acquired devices after use

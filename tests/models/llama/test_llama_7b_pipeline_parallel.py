@@ -4,9 +4,10 @@
 import pytest
 import torch
 import torch.nn as nn
+import tt_torch
 from tt_torch.tools.device_manager import DeviceManager
 from tt_torch.tools.utils import CompilerConfig
-from tt_torch.dynamo.backend import backend, BackendOptions
+from tt_torch.dynamo.backend import BackendOptions
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers.modeling_outputs import (
     CausalLMOutputWithPast,
@@ -85,9 +86,7 @@ def test_llama_7b_pipeline_parallel(record_property, model_name, mode):
     cc.enable_consteval = True
     cc.consteval_parameters = True
     options.devices = [device1, device2]
-    compiled_model = torch.compile(
-        model, backend=backend, dynamic=False, options=options
-    )
+    compiled_model = torch.compile(model, backend="tt", dynamic=False, options=options)
     out = compiled_model(**test_input)
     golden = model(**test_input)
     verify_against_golden(

@@ -182,4 +182,9 @@ setup(
         "ml_dtypes",
     ],
     include_package_data=True,
+    entry_points={
+        "torch_dynamo_backends": [
+            "tt = tt_torch.dynamo.backend:backend",
+        ]
+    },
 )
