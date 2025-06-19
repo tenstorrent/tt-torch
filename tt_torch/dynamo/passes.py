@@ -249,21 +249,55 @@ def _generate_golden_intermediate_cache(gm, inputs, compiler_config):
             node_to_tensor[node] = tensor
 
 
+def move_device_map_key(input_key, target_device, device_map, gm, visited=None):
+    if visited is None:
+        visited = set()
+    if input_key in visited:
+        return
+    visited.add(input_key)
+
+    # Find the node corresponding to input_key
+    input_node = None
+    for node in gm.graph.nodes:
+        _, key = node_to_device(node, device_map, key=True)
+        if key == input_key:
+            input_node = node
+            break
+    if input_node is None:
+        return
+
+    # Check all consumers of input_node
+    for user in input_node.users:
+        user_device, _ = node_to_device(user, device_map, key=True)
+        if user_device is not None and user_device != target_device:
+            # Recursively move the consumer to the target device
+            user_key = node_to_device(user, device_map, key=True)[1]
+            move_device_map_key(user_key, target_device, device_map, gm, visited)
+
+    # Now it's safe to move
+    device_map[input_key] = target_device
+    # print(f"Moved device map key '{input_key}' to device {target_device} for node '{input_node.name}'")
+
+
 # Check that the device map is consistent with topological ordering of the graph module
 def check_device_map(gm, compiler_config):
     device_map = compiler_config.device_map
-
-    for node in gm.graph.nodes:
-        node_device, node_key = node_to_device(node, device_map, key=True)
-        for input_node in node.all_input_nodes:
-            input_device, input_key = node_to_device(input_node, device_map, key=True)
-            if (
-                node_device is not None
-                and input_device is not None
-                and input_device > node_device
-            ):
-                # Move the key to the device that depends on it
-                device_map[input_key] = node_device
+    changed = True
+    while changed:
+        changed = False
+        for node in gm.graph.nodes:
+            node_device, node_key = node_to_device(node, device_map, key=True)
+            for input_node in node.all_input_nodes:
+                input_device, input_key = node_to_device(
+                    input_node, device_map, key=True
+                )
+                if (
+                    node_device is not None
+                    and input_device is not None
+                    and input_device > node_device
+                ):
+                    move_device_map_key(input_key, node_device, device_map, gm)
+                    changed = True
 
                 # Need to add a check here to see if the change is allowed
 
