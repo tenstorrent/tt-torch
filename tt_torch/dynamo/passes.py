@@ -293,6 +293,11 @@ def move_device_map_key(gm, node_key, target_device, device_map, call_stack=None
 
 def sort_device_map(gm, compiler_config):
     # Check that the device map is consistent with topological ordering of the graph module
+    # Current implementation moved inputs to the device of the node that consumes them if
+    # the input is on a later device.
+    # If this causes the first device to become full, an alternative approach could be to
+    # consider moving the consuming node to the device of the input.
+    # - Calculate the cost to move the input vs consumer and choose the cheaper option.
 
     device_map = compiler_config.device_map.copy()
     for node in gm.graph.nodes:
