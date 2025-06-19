@@ -44,17 +44,16 @@ def test_pipeline_parallel():
     DeviceManager.release_parent_device(parent_device, True)
 
 
-class L3(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.linear = nn.Linear(32, 32)
-
-    def forward(self, a, b):
-        # Example: add the two inputs, then apply linear
-        return self.linear(a + b)
-
-
 def test_pipeline_parallel_topological_sort():
+    class L3(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.linear = nn.Linear(32, 32)
+
+        def forward(self, a, b):
+            # Example: add the two inputs, then apply linear
+            return self.linear(a + b)
+
     class Basic(nn.Module):
         def __init__(self):
             super().__init__()
