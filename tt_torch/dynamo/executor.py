@@ -270,7 +270,7 @@ class Executor:
             return tuple(tensors)
 
 
-        constant_inputs_ct = 28*2        
+        constant_inputs_ct = 16*2        
 
         input_len = len(inputs)
         tensor_start_idx = 0
@@ -423,11 +423,34 @@ class Executor:
             device_inputs = list(device_inputs)
             device = self._get_device(device_idx)
             
-            # [James] This prints out the weights submitted to ttmlir
-            # for tensor in preprocessed_weights+preprocessed_activations:
-            #     tensor = tt_mlir.to_host(tensor)[0]  # returns single element tuple
-            #     if isinstance(tensor, torch.Tensor):
-            #         print(f"input tensor: type={type(tensor)}, dtype={tensor.dtype}, shape={tensor.shape}", flush=True)
+            do_print_static_cache_tensors = True
+            do_print_input_tensors = True
+            do_save_cache_tensors = True
+            do_print_activation_contents = True
+            n_printed_tensors = 0
+            
+            if do_print_input_tensors:
+                for i,tensor in enumerate(preprocessed_weights+preprocessed_activations):
+                    tensor = tt_mlir.to_host(tensor)[0]  # returns single element tuple
+                    if isinstance(tensor, torch.Tensor):
+                        print(f"input tensor: type={type(tensor)}, dtype={tensor.dtype}, shape={tensor.shape}", flush=True)
+                        if tensor.dim() == 4 and tensor.shape[0] == 1 and tensor.shape[1] == 8 and tensor.shape[3] == 128 and n_printed_tensors < 64:
+                            if do_print_static_cache_tensors:
+                                # this is a static cache tensor.
+                                print(f"static cache tensor found with shape {tensor.shape} @ input index {i}", flush=True)
+                                print(f"internals: {torch.mean(tensor[0,0,:,:], dim = -1)}", flush=True)
+                                n_printed_tensors += 1
+                            if do_save_cache_tensors:
+                                # Find next available file index
+                                import os
+                                file_idx = 0
+                                while os.path.exists(f"dump/static_cache[{i}]_{file_idx}.pt"):
+                                    file_idx += 1
+                                file_path = f"dump/static_cache[{i}]_{file_idx}.pt"
+                                torch.save(tensor, file_path)
+                                print(f"Saved cache tensor to {file_path}", flush=True)
+                        if do_print_activation_contents and i >= len(preprocessed_weights):
+                            print(f"Input tensor contents: {tensor}", flush=True)
 
             # if any output is intermediate we can run in async, since tt-mlir runtime will eventually block on final outputs
             # TODO: Enable this when device to device movement is supported. In the mean time we fall back to host: #748

@@ -25,7 +25,7 @@ def load_model(model_name="meta-llama/Llama-3.2-3B"):
         use_cache=True,
     )
 
-    model.config.num_hidden_layers = 28
+    model.config.num_hidden_layers = 16
 
     tokenizer = AutoTokenizer.from_pretrained(model_name, torch_dtype=torch.bfloat16)
     tokenizer.pad_token = tokenizer.eos_token
@@ -33,7 +33,7 @@ def load_model(model_name="meta-llama/Llama-3.2-3B"):
 
 
 def load_inputs(
-    model, tokenizer, test_input="This is a sample text from ", max_cache_len=64+7
+    model, tokenizer, test_input="This is a sample text from ", max_cache_len=32
 ):
     batch_size = 1
     inputs = tokenizer.encode_plus(
