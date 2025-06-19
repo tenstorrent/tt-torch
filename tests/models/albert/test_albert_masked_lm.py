@@ -13,19 +13,16 @@ from third_party.tt_forge_models.albert.masked_lm.pytorch import ModelLoader
 class ThisTester(ModelTester):
     def __init__(self, model_name, mode, variant=None, **kwargs):
         self.variant = variant
+        self.loader = ModelLoader(variant=variant)
         super().__init__(model_name, mode, **kwargs)
 
     def _load_model(self):
-        return ModelLoader.load_model(
-            variant=self.variant, dtype_override=torch.bfloat16
-        )
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        self.inputs = ModelLoader.load_inputs(
-            variant=self.variant, dtype_override=torch.bfloat16
-        )
-        self.text = ModelLoader.sample_text
-        self.tokenizer = ModelLoader.tokenizer
+        self.inputs = self.loader.load_inputs(dtype_override=torch.bfloat16)
+        self.text = ModelLoader.sample_text  # class attribute remains the same
+        self.tokenizer = ModelLoader.tokenizer  # class attribute remains the same
         return self.inputs
 
     def set_inputs_train(self, inputs):
@@ -94,7 +91,7 @@ def test_albert_masked_lm(
     results = tester.test_model()
 
     def print_result(result):
-        predicted_tokens = ModelLoader.decode_output(result, tester.inputs)
+        predicted_tokens = tester.loader.decode_output(result, tester.inputs)
         print(f"Model: {model_name} | Input: {tester.text} | Mask: {predicted_tokens}")
 
     if mode == "eval":
