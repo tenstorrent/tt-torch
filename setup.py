@@ -58,7 +58,7 @@ class install_metal_libs(install_lib):
         )
         self.copy_file(ttmlir_opt, install_path)
 
-        # Copy profiling tools
+        # Copy profiling tools to site-packages
         src_tools_dir = os.path.abspath(
             os.path.join(
                 os.getcwd(),
@@ -74,7 +74,8 @@ class install_metal_libs(install_lib):
                 "tools",
             )
         )
-        dest_tools_dir = os.path.join(self.install_dir, "tt-metal", "tools")
+        # Install to site-packages/tt-metal/tools instead of venv/tt-metal/tools
+        dest_tools_dir = os.path.join(self.install_dir, "tt_torch", "tt-metal", "tools")
         if os.path.exists(src_tools_dir):
             os.makedirs(os.path.dirname(dest_tools_dir), exist_ok=True)
             shutil.copytree(src_tools_dir, dest_tools_dir, dirs_exist_ok=True)
@@ -85,8 +86,9 @@ class install_metal_libs(install_lib):
                 os.path.join(os.getcwd(), "third_party", "tt_forge_models")
             )
 
+            # Install to site-packages/tt_torch/third_party instead of venv/third_party
             dest_models_dir = os.path.join(
-                self.install_dir, "third_party", "tt_forge_models"
+                self.install_dir, "tt_torch", "tt_forge_models"
             )
             if os.path.exists(src_models_dir):
                 os.makedirs(os.path.dirname(dest_models_dir), exist_ok=True)
@@ -96,9 +98,9 @@ class install_metal_libs(install_lib):
                     dirs_exist_ok=True,
                     ignore=shutil.ignore_patterns(".git"),
                 )
-        # copy everything from skbuild cmake-install/tt-metal to self.install_dir/tt-metal
+        # copy everything from skbuild cmake-install/tt-metal to site-packages/tt_torch/tt-metal
         src_metal_dir = "_skbuild/linux-x86_64-3.10/cmake-install/tt-metal"
-        dest_metal_dir = os.path.join(self.install_dir, "tt-metal")
+        dest_metal_dir = os.path.join(self.install_dir, "tt_torch", "tt-metal")
         if os.path.exists(src_metal_dir):
             os.makedirs(dest_metal_dir, exist_ok=True)
             shutil.copytree(src_metal_dir, dest_metal_dir, dirs_exist_ok=True)
