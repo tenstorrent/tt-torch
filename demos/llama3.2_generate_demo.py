@@ -9,12 +9,12 @@ from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
     StaticCache,
+    # _prepare_4d_causal_attention_mask_with_cache_position
 )
 import tt_mlir
 import time
 import argparse
 from tests.utils import clear_dynamo_cache
-
 
 
 def load_model(model_name="meta-llama/Llama-3.2-3B"):
@@ -33,7 +33,7 @@ def load_model(model_name="meta-llama/Llama-3.2-3B"):
 
 
 def load_inputs(
-    model, tokenizer, test_input="This is a sample text from ", max_cache_len=64+7
+    model, tokenizer, test_input="This is a sample text from ", max_cache_len=32
 ):
     batch_size = 1
     inputs = tokenizer.encode_plus(
@@ -87,7 +87,7 @@ def main():
         model, backend=backend, dynamic=False, options=options
     )
 
-    tokens_to_generate = 10
+    tokens_to_generate = 4
     for i in range(tokens_to_generate):
         print("\n===== Decode step", i, "=====\n")
         print(f"Input args to step {i}", input_args)
