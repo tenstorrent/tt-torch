@@ -11,15 +11,14 @@ from third_party.tt_forge_models.bert.pytorch import ModelLoader
 class ThisTester(ModelTester):
     def __init__(self, model_name, mode, variant=None, **kwargs):
         self.variant = variant
+        self.loader = ModelLoader(variant=variant)
         super().__init__(model_name, mode, **kwargs)
 
     def _load_model(self):
-        return ModelLoader.load_model(
-            variant=self.variant, dtype_override=torch.bfloat16
-        )
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        return ModelLoader.load_inputs()
+        return self.loader.load_inputs()
 
 
 # Print available variants for reference
@@ -69,7 +68,7 @@ def test_bert(record_property, mode, op_by_op, variant_info):
     results = tester.test_model()
 
     if mode == "eval":
-        answer = ModelLoader.decode_output(results, tester.inputs)
+        answer = tester.loader.decode_output(results, tester.inputs)
 
         print(
             f"""
