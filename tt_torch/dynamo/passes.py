@@ -262,12 +262,17 @@ def check_device_map(gm, compiler_config):
                 and input_device is not None
                 and input_device > node_device
             ):
-                raise RuntimeError(
-                    f"Device map error: Node '{node.name}' (device {node_device}, map key '{node_key}') "
-                    f"depends on '{input_node.name}' (device {input_device}, map key '{input_key}'), "
-                    "which is assigned to a later device.\n"
-                    f"Check your device_map assignments: {input_key} -> {input_device}, {node_key} -> {node_device}"
-                )
+                # Move the key to the device that depends on it
+                device_map[input_key] = node_device
+
+                # Need to add a check here to see if the change is allowed
+
+                # raise RuntimeError(
+                #     f"Device map error: Node '{node.name}' (device {node_device}, map key '{node_key}') "
+                #     f"depends on '{input_node.name}' (device {input_device}, map key '{input_key}'), "
+                #     "which is assigned to a later device.\n"
+                #     f"Check your device_map assignments: {input_key} -> {input_device}, {node_key} -> {node_device}"
+                # )
 
 
 # The following function splits the graph onto the devices specified in the device_map
