@@ -835,8 +835,15 @@ class OnnxModelTester(ModelTester):
         return model
 
     def run_model(self, model, inputs):
-        outputs = self.sess.run(None, inputs)
-        return onnx_output_to_torch(outputs)
+        if isinstance(model, onnx.ModelProto):
+            outputs = self.sess.run(None, inputs)
+            return onnx_output_to_torch(outputs)
+        elif isinstance(inputs, collections.abc.Mapping):
+            return model(**inputs)
+        elif isinstance(inputs, collections.abc.Sequence):
+            return model(*inputs)
+        else:
+            return model(inputs)
 
     def test_model_train(self, on_device=True):
         raise NotImplementedError("TODO: Implement this method")
@@ -846,8 +853,13 @@ class OnnxModelTester(ModelTester):
 
         if on_device == True:
             model = self.compile_model(self.framework_model, self.compiler_config)
+        else:
+            model = self.framework_model
 
-        outputs = self.run_model(model, self.numpy_inputs)
+        if isinstance(model, onnx.ModelProto):
+            outputs = self.run_model(model, self.numpy_inputs)
+        else:
+            outputs = self.run_model(model, self.torch_inputs)
 
         self.verify_outputs(golden, outputs)
 
