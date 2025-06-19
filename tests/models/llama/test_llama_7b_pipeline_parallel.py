@@ -71,13 +71,6 @@ def test_llama_7b_pipeline_parallel(record_property, model_name, mode):
     device_map = infer_auto_device_map(
         model, max_memory={0: "8GiB", 1: "8GiB"}, no_split_module_classes=dont_split
     )
-    # The device map shards model chunks based on the order they're defined in the model
-    # not based on the topological order of the graph. We need to move rotary embeddings
-    # to the first device, otherwise we wouldn't be able to execute each device in full.
-    # That is, device 1 would need to run rotart_emb, device 0 the full graph, device 1,
-    # the remainder of the graph. We should extend the pass to be able to automatically
-    # handle this: https://github.com/tenstorrent/tt-torch/issues/779
-    # device_map["model.rotary_emb"] = 0
 
     options = BackendOptions()
     cc = CompilerConfig()
