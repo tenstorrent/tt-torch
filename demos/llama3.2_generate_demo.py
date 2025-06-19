@@ -9,12 +9,16 @@ from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
     StaticCache,
-    # _prepare_4d_causal_attention_mask_with_cache_position
 )
+
+from transformers.models.llama.modeling_llama import LlamaModel
+
 import tt_mlir
 import time
 import argparse
 from tests.utils import clear_dynamo_cache
+
+_global_max_cache_len = 32
 
 
 def load_model(model_name="meta-llama/Llama-3.2-3B"):
@@ -25,7 +29,7 @@ def load_model(model_name="meta-llama/Llama-3.2-3B"):
         use_cache=True,
     )
 
-    model.config.num_hidden_layers = 16
+    model.config.num_hidden_layers = 28
 
     tokenizer = AutoTokenizer.from_pretrained(model_name, torch_dtype=torch.bfloat16)
     tokenizer.pad_token = tokenizer.eos_token
@@ -33,7 +37,7 @@ def load_model(model_name="meta-llama/Llama-3.2-3B"):
 
 
 def load_inputs(
-    model, tokenizer, test_input="This is a sample text from ", max_cache_len=32
+    model, tokenizer, test_input="This is a sample text from ", max_cache_len=_global_max_cache_len
 ):
     batch_size = 1
     inputs = tokenizer.encode_plus(
@@ -51,12 +55,27 @@ def load_inputs(
         dtype=model.dtype,
     )
 
+   
+    
+
     cache_position = torch.arange(0, inputs.input_ids.shape[1])
+    
+    print("[James] Manually forwarding attention mask")
+    #  Experiment - Generate attention mask using the LlamaModel method
+    attention_mask = LlamaModel._prepare_4d_causal_attention_mask_with_cache_position(
+        attention_mask=None,  # No initial attention mask
+        sequence_length=inputs.input_ids.shape[1],
+        target_length=max_cache_len,
+        dtype=model.dtype,
+        cache_position=cache_position,
+        batch_size=batch_size,
+    )
     args = {
         "input_ids": inputs.input_ids,
         "past_key_values": static_cache,
         "use_cache": True,
         "cache_position": cache_position,
+        "attention_mask": attention_mask
     }
     return args
 
@@ -87,7 +106,7 @@ def main():
         model, backend=backend, dynamic=False, options=options
     )
 
-    tokens_to_generate = 4
+    tokens_to_generate = 16
     for i in range(tokens_to_generate):
         print("\n===== Decode step", i, "=====\n")
         print(f"Input args to step {i}", input_args)
@@ -113,6 +132,15 @@ def main():
             "past_key_values": input_args["past_key_values"],  # updated in place
             "cache_position": cache_position,
             "use_cache": True,
+                # Generate new attention mask for the next token
+            "attention_mask": LlamaModel._prepare_4d_causal_attention_mask_with_cache_position(
+                attention_mask=None,
+                sequence_length=1,  # Just one new token
+                target_length=_global_max_cache_len,
+                dtype=model.dtype,
+                cache_position=cache_position,
+                batch_size=1,
+            ),
         }
 
 
