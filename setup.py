@@ -39,6 +39,25 @@ class build_py_with_torch_mlir(_build_py):
             }
         )
 
+    def find_data_files(self, package, src_dir):
+        data_files = super().find_data_files(package, src_dir)
+
+        # Add all non-Python files from torch_mlir packages
+        if package.startswith("torch_mlir"):
+            files = [
+                f
+                for f in os.listdir(src_dir)
+                if os.path.isfile(os.path.join(src_dir, f))
+            ]
+            for file in files:
+                if not file.endswith(".py") and not file.endswith(".pyc"):
+                    full_path = os.path.join(src_dir, file)
+                    # Check if file exists before adding
+                    if os.path.isfile(full_path):
+                        data_files.append(full_path)
+
+        return data_files
+
 
 class install_metal_libs(install_lib):
     def run(self):
