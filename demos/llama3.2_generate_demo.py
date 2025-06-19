@@ -90,7 +90,10 @@ def main():
 
     options = BackendOptions()
     options.compiler_config = cc
-    options.devices = [None]  # defer to Executor to inplace-initialize device
+    
+    mesh_options = tt_mlir.MeshDeviceOptions()
+    device = tt_mlir.open_mesh_device([1, 1], mesh_options)
+    options.devices = [device]
     
     buffer_cache = {}
     options.buffer_cache = buffer_cache
