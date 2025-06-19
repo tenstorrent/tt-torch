@@ -4,6 +4,7 @@
 #
 
 set(TT_MLIR_VERSION "0423379b588df28faaee598274a33fe0fff7c013")
+set(TTXLA_VERSION "0f40e574a1bc22e86692bd3d3b41c9b03dbd8e22")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
@@ -76,6 +77,51 @@ else()
     add_dependencies(TTMLIRRuntime tt-mlir)
 
     install(DIRECTORY ${TTMLIR_INSTALL_PREFIX}/ DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
+
+    set(TTXLA_PREFIX ${TTTORCH_SOURCE_DIR}/third_party/tt-xla)
+    set(TTXLA_INSTALL_PREFIX ${TTXLA_PREFIX}/src/tt-xla/install)
+    set(TTXLA_PJRT_DYLIB ${TTXLA_INSTALL_PREFIX}/lib/pjrt_plugin_tt.so)
+    set(TTNN_DYLIB ${TTXLA_INSTALL_PREFIX}/lib/_ttnncpp.so)
+    set(TTXLA_LIBDEVICE_DYLIB ${TTXLA_INSTALL_PREFIX}/lib/libdevice.so)
+    set(TTMETAL_DYLIB ${TTXLA_INSTALL_PREFIX}/lib/libtt_metal.so)
+    set(TTXLA_BUILD_DIR ${TTXLA_PREFIX}/src/tt-xla-build)
+
+    set(TTXLA_TTMLIR_COMPILER_LIBRARY_PATH ${TTXLA_INSTALL_PREFIX}/lib/libTTMLIRCompiler.so)
+    set(TTXLA_TTMLIR_RUNTIME_LIBRARY_PATH ${TTXLA_INSTALL_PREFIX}/lib/libTTMLIRRuntime.so)
+
+    ExternalProject_Add(
+        tt-xla
+        PREFIX ${TTXLA_PREFIX}
+        INSTALL_COMMAND
+            ${CMAKE_COMMAND} --install ${TTXLA_BUILD_DIR} --prefix ${TTXLA_INSTALL_PREFIX} &&
+            chmod -R +x ${TTXLA_INSTALL_PREFIX}
+        CMAKE_GENERATOR Ninja
+        CMAKE_ARGS
+            -DCMAKE_BUILD_TYPE=Release
+            -DCMAKE_C_COMPILER=clang-17
+            -DCMAKE_CXX_COMPILER=clang++-17
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+            -DCMAKE_INSTALL_PREFIX=${TTXLA_INSTALL_PREFIX}
+        GIT_REPOSITORY https://github.com/tenstorrent/tt-xla.git
+        GIT_TAG ${TTXLA_VERSION}
+        GIT_PROGRESS ON
+        BUILD_BYPRODUCTS
+            ${TTXLA_PJRT_DYLIB}
+            ${TTNN_DYLIB}
+            ${TTXLA_LIBDEVICE_DYLIB}
+            ${TTMETAL_DYLIB}
+            ${TTXLA_TTMLIR_COMPILER_LIBRARY_PATH}
+            ${TTXLA_TTMLIR_RUNTIME_LIBRARY_PATH}
+    )
+
+    add_library(TTXLA_TTMLIRCompiler SHARED IMPORTED GLOBAL)
+    set_target_properties(TTXLA_TTMLIRCompiler PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TTXLA_TTMLIR_COMPILER_LIBRARY_PATH})
+    add_dependencies(TTXLA_TTMLIRCompiler tt-xla)
+    add_library(TTXLA_TTMLIRRuntime SHARED IMPORTED GLOBAL)
+    set_target_properties(TTXLA_TTMLIRRuntime PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TTXLA_TTMLIR_RUNTIME_LIBRARY_PATH})
+    add_dependencies(TTXLA_TTMLIRRuntime tt-xla)
+    install(DIRECTORY ${TTXLA_INSTALL_PREFIX}/ DESTINATION "${CMAKE_INSTALL_PREFIX}/tt-xla" USE_SOURCE_PERMISSIONS)
+
 
     # torch-mlir build
     # torch-mlir is using branch tt_torch/main
