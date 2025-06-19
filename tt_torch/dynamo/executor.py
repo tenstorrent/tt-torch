@@ -282,7 +282,7 @@ class Executor:
                     print("[James] Caching buffer tensor for the first time.", flush=True)
                     self.buffer_cache[torch_tensor] = runtime_tensor
                 if torch_tensor in self.constant_cache and self.constant_cache[torch_tensor] is None:
-                    print("[James] Caching constant tensor for the first time.", flush=True)
+                    print(f"[James] Caching constant tensor for the first time. (id: {id(torch_tensor)})", flush=True)
                     self.constant_cache[torch_tensor] = runtime_tensor
         input_len = len(inputs)
         tensor_start_idx = 0
@@ -499,7 +499,7 @@ class Executor:
             
             n_printed_tensors = 0
             max_printed_tensors = 64 # todo change to 3
-            do_print_input_tensors = True
+            do_print_input_tensors = False
             do_print_static_cache_tensors = False
             do_print_activation_contents = True
             do_save_cache_tensors = True

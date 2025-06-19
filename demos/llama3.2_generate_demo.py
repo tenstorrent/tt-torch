@@ -18,7 +18,7 @@ import time
 import argparse
 from tests.utils import clear_dynamo_cache
 
-_global_max_cache_len = 32
+_global_max_cache_len = 64+64
 
 
 def load_model(model_name="meta-llama/Llama-3.2-3B"):
@@ -55,9 +55,6 @@ def load_inputs(
         dtype=model.dtype,
     )
 
-   
-    
-
     cache_position = torch.arange(0, inputs.input_ids.shape[1])
     
     print("[James] Manually forwarding attention mask")
@@ -75,7 +72,7 @@ def load_inputs(
         "past_key_values": static_cache,
         "use_cache": True,
         "cache_position": cache_position,
-        "attention_mask": attention_mask
+        # "attention_mask": attention_mask
     }
     return args
 
@@ -88,8 +85,8 @@ def main():
 
     clear_dynamo_cache()
     cc = CompilerConfig()
-    cc.enable_consteval = True
-    cc.consteval_parameters = True
+    cc.enable_consteval = False
+    cc.consteval_parameters = False
 
     options = BackendOptions()
     options.compiler_config = cc
@@ -106,7 +103,7 @@ def main():
         model, backend=backend, dynamic=False, options=options
     )
 
-    tokens_to_generate = 16
+    tokens_to_generate = 64
     for i in range(tokens_to_generate):
         print("\n===== Decode step", i, "=====\n")
         print(f"Input args to step {i}", input_args)
@@ -120,7 +117,8 @@ def main():
 
         generated_ids = torch.cat([generated_ids, next_token_ids], dim=-1)
         print(
-            "\033[91mDecoded output so far: ",
+            "Decoded output so far:",
+            "\033[91m",
             tokenizer.decode(generated_ids[0].tolist()),
             "\033[0m",
         )
@@ -133,14 +131,14 @@ def main():
             "cache_position": cache_position,
             "use_cache": True,
                 # Generate new attention mask for the next token
-            "attention_mask": LlamaModel._prepare_4d_causal_attention_mask_with_cache_position(
-                attention_mask=None,
-                sequence_length=1,  # Just one new token
-                target_length=_global_max_cache_len,
-                dtype=model.dtype,
-                cache_position=cache_position,
-                batch_size=1,
-            ),
+            # "attention_mask": LlamaModel._prepare_4d_causal_attention_mask_with_cache_position(
+            #     attention_mask=None,
+            #     sequence_length=1,  # Just one new token
+            #     target_length=_global_max_cache_len,
+            #     dtype=model.dtype,
+            #     cache_position=cache_position,
+            #     batch_size=1,
+            # ),
         }
 
 
