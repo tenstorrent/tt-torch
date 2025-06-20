@@ -19,6 +19,8 @@ import onnx
 from onnxruntime import SessionOptions, InferenceSession
 import tt_mlir
 
+import pytest
+
 
 """
 The CompileDepth's below represent the different stages of the compilation
@@ -331,6 +333,18 @@ class CompilerConfig:
         self.post_init()
         self.automatic_parallelization = False
         self.mesh_shape = [1, 1]
+
+        if os.environ.get("TT_TORCH_USE_XLA", False):
+            if self.compile_depth not in [
+                CompileDepth.EXECUTE,
+                CompileDepth.EXECUTE_OP_BY_OP,
+            ]:
+                pytest.skip(
+                    "XLA backend only supports EXECUTE and EXECUTE_OP_BY_OP compile depth"
+                )
+
+            if self.op_by_op_backend != OpByOpBackend.TORCH:
+                pytest.skip("XLA backend only supports TORCH op-by-op backend")
 
     @property
     def model_name(self):
