@@ -41,6 +41,7 @@ def skip_full_eval_test(
     reason,
     model_group="generality",
     model_name_filter=None,
+    skip=True,
 ):
     """
     Helper function to skip a test when frontend has issues and record properties.
@@ -73,13 +74,15 @@ def skip_full_eval_test(
         record_property(
             "tags",
             {
+                "parallelism": "single_device",
                 "bringup_status": bringup_status,
                 "model_name": model_name,
             },
         )
         record_property("group", model_group)
 
-        pytest.skip(reason=reason)
+        if skip:
+            pytest.skip(reason=reason)
         return True
     return False
 
