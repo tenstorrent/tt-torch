@@ -299,6 +299,8 @@ def sort_device_map(gm, compiler_config):
     # - Calculate the cost to move the input vs consumer and choose the cheaper option.
 
     device_map = compiler_config.device_map.copy()
+    device_map_was_modified = False
+
     for node in gm.graph.nodes:
         node_device, _ = node_to_device(node, device_map)
         for input_node in node.all_input_nodes:
@@ -309,6 +311,12 @@ def sort_device_map(gm, compiler_config):
                 and input_device > node_device
             ):
                 device_map = move_device_map_key(gm, input_key, node_device, device_map)
+                device_map_was_modified = True
+
+    if device_map_was_modified:
+        print(
+            "\033[93m\nWARNING: Device map was modified to ensure topological ordering. This may cause memory on earlier devices to become full.\n\033[0m"
+        )
 
     return device_map
 
