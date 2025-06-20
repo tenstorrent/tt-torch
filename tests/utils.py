@@ -6,13 +6,14 @@ import torch
 import pytest
 import requests
 import onnx
+import tt_torch
 from transformers.cache_utils import DynamicCache, _flatten_dynamic_cache
 from onnx.tools import update_model_dims
 import gc
 import onnxruntime
 import numpy as np
 import collections
-from tt_torch.dynamo.backend import backend, BackendOptions
+from tt_torch.dynamo.backend import BackendOptions
 from tt_torch.onnx_compile import compile_onnx
 from tt_torch.tools.utils import (
     CompilerConfig,
@@ -319,12 +320,10 @@ class ModelTester:
         # compile forward pass for generative models, the model itself for discriminative
         if self.run_generate:
             model.forward = torch.compile(
-                model.forward, backend=backend, dynamic=False, options=options
+                model.forward, backend="tt", dynamic=False, options=options
             )
         else:
-            model = torch.compile(
-                model, backend=backend, dynamic=False, options=options
-            )
+            model = torch.compile(model, backend="tt", dynamic=False, options=options)
         self.compiled_models.append(model)
         return model
 

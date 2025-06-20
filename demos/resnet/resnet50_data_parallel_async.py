@@ -2,8 +2,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import torch
+import tt_torch
 from tt_torch.tools.utils import CompilerConfig
-from tt_torch.dynamo.backend import backend, BackendOptions
+from tt_torch.dynamo.backend import BackendOptions
 from PIL import Image
 from torchvision import transforms
 import torchvision.models as models
@@ -45,7 +46,7 @@ def main():
         options.async_mode = True
 
         tt_models.append(
-            torch.compile(model, backend=backend, dynamic=False, options=options)
+            torch.compile(model, backend="tt", dynamic=False, options=options)
         )
 
     # List of image URLs to be processed

@@ -2,8 +2,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import torch
+import tt_torch
 from tt_torch.tools.utils import CompilerConfig
-from tt_torch.dynamo.backend import backend, BackendOptions
+from tt_torch.dynamo.backend import BackendOptions
 from PIL import Image
 from torchvision import transforms
 import torchvision.models as models
@@ -130,7 +131,7 @@ if __name__ == "__main__":
     single_options = BackendOptions()
     single_options.compiler_config = cc
     single_model = torch.compile(
-        model, backend=backend, dynamic=False, options=single_options
+        model, backend="tt", dynamic=False, options=single_options
     )
     print("Compiled model for single device")
     # Execute this once to get the compilation overhead out of the way
@@ -155,7 +156,7 @@ if __name__ == "__main__":
         multi_options.compiler_config = cc
         multi_options.devices = [device]
         multi_models.append(
-            torch.compile(model, backend=backend, dynamic=False, options=multi_options)
+            torch.compile(model, backend="tt", dynamic=False, options=multi_options)
         )
     print("Compiled models for multi device")
     # Execute this once to get the compilation overhead out of the way

@@ -1,9 +1,10 @@
 # SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-from tt_torch.dynamo.backend import backend, BackendOptions
+from tt_torch.dynamo.backend import BackendOptions
 from torch import nn
 import torch
+import tt_torch
 from tt_torch.tools.utils import CompilerConfig
 from tt_torch.tools.device_manager import DeviceManager
 from tt_torch.tools.verify import verify_against_golden
@@ -34,7 +35,7 @@ def test_pipeline_parallel():
 
     host_model = Basic()
 
-    model = torch.compile(host_model, backend=backend, options=options)
+    model = torch.compile(host_model, backend="tt", options=options)
     x = torch.rand(32, 32)
     y = torch.rand(32, 64)
     calculated = model(x, y)

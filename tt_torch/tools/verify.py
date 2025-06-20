@@ -12,7 +12,7 @@ from tt_torch.tools.utils import (
     prepare_inference_session,
     run_model_proto,
 )
-from tt_torch.dynamo.backend import backend, BackendOptions
+from tt_torch.dynamo.backend import BackendOptions
 from tt_torch.tools.utils import (
     calculate_atol,
     calculate_pcc,
@@ -28,7 +28,7 @@ def compile_model(model, compiler_config, device, async_mode):
     torch_options.compiler_config = compiler_config
     torch_options.devices = [device]
     torch_options.async_mode = async_mode
-    return torch.compile(model, backend=backend, options=torch_options)
+    return torch.compile(model, backend="tt", options=torch_options)
 
 
 def generate_inputs(input_shapes, input_data_types, input_range, input_range_int):

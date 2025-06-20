@@ -3,8 +3,9 @@
 # SPDX-License-Identifier: Apache-2.0
 import argparse
 import torch
+import tt_torch
 from tt_torch.tools.utils import CompilerConfig
-from tt_torch.dynamo.backend import backend, BackendOptions
+from tt_torch.dynamo.backend import BackendOptions
 from PIL import Image
 from torchvision import transforms
 import torchvision.models as models
@@ -25,7 +26,7 @@ def main(run_default_img):
 
     options = BackendOptions()
     options.compiler_config = cc
-    tt_model = torch.compile(model, backend=backend, dynamic=False, options=options)
+    tt_model = torch.compile(model, backend="tt", dynamic=False, options=options)
 
     headers = ["Top 5 Predictions"]
     topk = 5

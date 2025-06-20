@@ -9,7 +9,7 @@ import sys
 from argparse import ArgumentParser
 
 
-def profile(
+def tt_profile(
     test_command: str,
     output_filename: str = Profiler.DEFAULT_OUTPUT_FILENAME,
     port: int = 8086,
@@ -61,10 +61,10 @@ if __name__ == "__main__":
     gathering device-side performance data associated with individual torchfx ops.
 
     Usage:
-        python profile.py test_command -o output_name
+        python tt_profile.py test_command -o output_name
 
     Examples:
-        python tt_torch/tools/profile.py "pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval-single_device]"
+        python tt_torch/tools/tt_profile.py "pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval-single_device]"
 
     Notes:
         Providing an output name is optional and defaults to 'device_ops_perf_trace.csv'."""
@@ -88,4 +88,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    profile(args.test_command, args.output_path, args.port)
+    tt_profile(args.test_command, args.output_path, args.port)

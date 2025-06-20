@@ -20,3 +20,5 @@ spec = importlib.util.find_spec(package_name)
 if spec is not None:
     tt_metal_home = os.path.abspath(spec.submodule_search_locations[0])
     os.environ["TT_METAL_HOME"] = tt_metal_home
+
+import tt_torch.dynamo.backend
