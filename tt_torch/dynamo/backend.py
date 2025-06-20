@@ -7,7 +7,6 @@ import warnings
 import tt_mlir
 import sys
 import torch_mlir
-from torch._dynamo import register_backend
 
 from tt_torch.tools.utils import (
     OpByOpBackend,
@@ -20,11 +19,35 @@ from tt_torch.tools.utils import (
 
 class BackendOptions:
     def __init__(
-        self, compiler_config=CompilerConfig(), devices=[None], async_mode=False
+        self,
+        compiler_config=CompilerConfig(),
+        devices=[None],
+        async_mode=False,
+        buffer_cache=None,
+        constant_cache=None,
     ):
         self.compiler_config = compiler_config
         self.devices = devices
         self.async_mode = async_mode
+
+        # These caches store runtime tensors reprsenting buffers and graph constants
+        # and are reused between executors, as long as they share the same BackendOptions object
+
+        self.buffer_cache = buffer_cache if buffer_cache is not None else {}
+        self.constant_cache = constant_cache if constant_cache is not None else {}
+
+    def clear_caches(self):
+        # Deallocate runtime tensors when the BackendOptions object is deleted
+        for device_weights in self.constant_cache.keys():
+            for runtime_weight in device_weights.keys():
+                tt_mlir.deallocate_tensor(runtime_weight, force=True)
+
+        for device_buffers in self.buffer_cache.keys():
+            for runtime_buffer in device_buffers.keys():
+                tt_mlir.deallocate_tensor(runtime_buffer, force=True)
+
+    def __del__(self):
+        self.clear_caches()
 
 
 from tt_torch.dynamo.torch_backend import (
@@ -230,13 +253,23 @@ def shlo_to_flatbuffer(
     return binary
 
 
-def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
+def _base_backend(
+    gm,
+    example_inputs,
+    compiler_config,
+    devices,
+    async_mode,
+    buffer_cache,
+    constant_cache,
+):
     mcg = torch_to_shlo(gm, example_inputs, compiler_config)
     executor = Executor(
         mcg,
         compiler_config,
         devices=devices,
         async_mode=async_mode,
+        buffer_cache=buffer_cache,
+        constant_cache=constant_cache,
     )
 
     compiler_config.record_property("achieved_compile_depth", "STABLEHLO")
@@ -250,7 +283,7 @@ def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
             executor.system_desc_paths[i],
             shlo,
             compiler_config,
-            len(mcg.example_inputs[i]),
+            len(mcg.example_inputs[i]) + len(mcg.buffers[i]),
             len(mcg.constant_inputs[i]),
         )
         mcg.binaries[i] = tt_mlir.create_binary_from_bytestream(binary_bytestream)
@@ -260,7 +293,6 @@ def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
 
 
 @tt_torch_error_message
-@register_backend(name="tt")
 def backend(gm, example_inputs, options: BackendOptions = None):
     warnings.filterwarnings("ignore", message="Failed to fetch module*")
     assert isinstance(gm, torch.fx.GraphModule), "Backend only supports torch graphs"
@@ -269,10 +301,17 @@ def backend(gm, example_inputs, options: BackendOptions = None):
         cc = CompilerConfig()
         devices = None
         async_mode = False
+
+        # If the backend is called without options,
+        # tt-torch runtime tensor caches are default-disabled.
+        buffer_cache = None
+        constant_cache = None
     else:
         cc = options.compiler_config
         devices = options.devices
         async_mode = options.async_mode
+        buffer_cache = options.buffer_cache
+        constant_cache = options.constant_cache
 
     # Apply environment overrides at start of compilation to allow overriding what was set in the test
     cc.apply_environment_overrides()
@@ -302,5 +341,11 @@ def backend(gm, example_inputs, options: BackendOptions = None):
                 async_mode=async_mode,
             )
     return _base_backend(
-        gm, example_inputs, compiler_config=cc, devices=devices, async_mode=async_mode
+        gm,
+        example_inputs,
+        compiler_config=cc,
+        devices=devices,
+        async_mode=async_mode,
+        buffer_cache=buffer_cache,
+        constant_cache=constant_cache,
     )
