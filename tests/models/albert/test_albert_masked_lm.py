@@ -21,8 +21,8 @@ class ThisTester(ModelTester):
 
     def _load_inputs(self):
         self.inputs = self.loader.load_inputs(dtype_override=torch.bfloat16)
-        self.text = ModelLoader.sample_text  # class attribute remains the same
-        self.tokenizer = ModelLoader.tokenizer  # class attribute remains the same
+        self.text = ModelLoader.sample_text
+        self.tokenizer = self.loader.tokenizer
         return self.inputs
 
     def set_inputs_train(self, inputs):
@@ -71,9 +71,9 @@ def test_albert_masked_lm(
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    variant, variant_desc = variant_info
+    variant, variant_config = variant_info
     model_name = f"albert/{variant}-masked_lm"
-    print(f"Testing model_name: {model_name} variant_desc: {variant_desc}", flush=True)
+    print(f"Testing model_name: {model_name} variant: {variant}", flush=True)
 
     required_pcc = 0.98 if "xxlarge" in variant else 0.99
 
