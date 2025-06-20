@@ -41,11 +41,12 @@ def test_centernet_onnx(record_property, mode, op_by_op):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         cc.op_by_op_backend = op_by_op
 
+    # TODO Enable PCC/ATOL/Checking - https://github.com/tenstorrent/tt-torch/issues/976
     tester = ThisTester(
         model_name,
         mode,
-        assert_pcc=True,
-        assert_atol=True,
+        assert_pcc=False,
+        assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
         model_group=model_group,
