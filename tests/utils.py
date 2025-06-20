@@ -286,6 +286,7 @@ class ModelTester:
 
     def get_golden_outputs(self, model, inputs):
         if self.golden_outputs is not None:
+            print("Reusing cached golden outputs instead of rerunning the model.")
             return self.golden_outputs
 
         self.golden_outputs = self.run_model(model, inputs)
