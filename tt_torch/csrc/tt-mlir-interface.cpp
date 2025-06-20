@@ -191,7 +191,8 @@ void create_system_desc(tt::runtime::Device device,
 
 std::tuple<std::shared_ptr<void> *, std::string>
 compileTTIRToTTNN(std::string_view code, std::string_view system_desc_path,
-                  size_t len_activations, size_t len_graph_constants) {
+                  size_t len_activations, size_t len_graph_constants,
+                  bool enable_consteval) {
 
   mlir::MLIRContext context;
   mlir::DialectRegistry registry;
@@ -227,12 +228,8 @@ compileTTIRToTTNN(std::string_view code, std::string_view system_desc_path,
 
   mlir::tt::ttnn::TTIRToTTNNBackendPipelineOptions options;
 
-  // boolean env var to override consteval
-  const char *consteval = std::getenv("TT_TORCH_CONSTEVAL");
-  if (consteval && std::string(consteval) == "1") {
-    options.enableConstEval = true;
-  }
   options.enableFusing = true;
+  options.enableConstEval = enable_consteval;
 
   if (len_activations > 0 || len_graph_constants > 0) {
     llvm::SmallVector<mlir::tt::ArgumentType> argTypes;

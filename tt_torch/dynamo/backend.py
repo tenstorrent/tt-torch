@@ -214,7 +214,11 @@ def shlo_to_flatbuffer(
         )
 
     binary, ttnn = tt_mlir.compile_ttir_to_bytestream(
-        ttir, system_desc_path, len_activations, len_graph_constants
+        ttir,
+        system_desc_path,
+        len_activations,
+        len_graph_constants,
+        compiler_config.enable_consteval,
     )
     dump_module(module=ttnn, name="TTNN", compiler_config=compiler_config)
 
