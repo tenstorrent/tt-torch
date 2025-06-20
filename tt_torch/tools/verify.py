@@ -6,6 +6,7 @@ import onnx
 from onnxruntime import InferenceSession
 import numpy as np
 import tt_mlir
+import os
 from tt_torch.onnx_compile import compile_onnx
 from tt_torch.tools.utils import (
     onnx_output_to_torch,
@@ -21,6 +22,7 @@ from tt_torch.tools.utils import (
     CompilerConfig,
 )
 from tt_torch.tools.device_manager import DeviceManager
+import torch_xla.core.xla_model as xm
 
 
 def compile_model(model, compiler_config, device, async_mode):
@@ -211,19 +213,29 @@ def _verify_torch_module(
 
     from tt_torch.dynamo.backend import backend  # avoid circular import
 
-    tt_mod = compile_model(mod, compiler_config, device, async_mode=False)
     if inputs is None:
         inputs = generate_inputs(
             input_shapes, input_data_types, input_range, input_range_int
         )
 
-    ret = tt_mod(*inputs)
     golden = mod(*inputs)
+    if os.environ.get("TT_TORCH_USE_XLA", False):
+        tt_mod = compile_model(
+            mod.to(xm.xla_device()), compiler_config, device, async_mode=False
+        )
+        inputs = [i.to(xm.xla_device()) for i in inputs]
+    else:
+        tt_mod = compile_model(mod, compiler_config, device, async_mode=False)
+
+    ret = tt_mod(*inputs)
 
     if isinstance(golden, torch.Tensor):
         golden = (golden,)
     if isinstance(ret, torch.Tensor):
         ret = (ret,)
+
+    if os.environ.get("TT_TORCH_USE_XLA", False):
+        ret = [r.to("cpu") for r in ret]
 
     # Incase they are lists
     golden = tuple(golden)
