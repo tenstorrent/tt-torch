@@ -93,12 +93,12 @@ class DeviceManager:
         associated with the given parent device.
         """
         assert parent_device in cls._devices, "Parent Device not found."
-        sub_devices = cls._devices[parent_device]
+        sub_devices = list(cls._devices[parent_device])
         assert (
             len(sub_devices) == 0 or cleanup_sub_devices
         ), "Sub devices still exist under this parent mesh."
         if cleanup_sub_devices:
-            for sub_device in sub_devices.copy():
+            for sub_device in sub_devices:
                 cls.release_sub_mesh_device(sub_device, parent=parent_device)
         tt_mlir.close_mesh_device(parent_device)
         del cls._devices[parent_device]
@@ -212,3 +212,8 @@ class DeviceManager:
         for i in range(num_devices):
             cls.create_sub_mesh_device(parent, (0, i))
         return (parent, list(cls._devices[parent]))
+
+    @classmethod
+    def release_all_devices(cls):
+        for parent in cls._devices.copy():
+            cls.release_parent_device(parent, cleanup_sub_devices=True)

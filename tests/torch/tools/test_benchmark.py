@@ -97,7 +97,7 @@ def test_crashsafe_utils():
         subprocess.run(merge_command, shell=True, check=True)
         assert os.path.exists(
             merged_report_name
-        ), f"Fusedf report not generated, expected at {merged_report_name}"
+        ), f"Fused report not generated, expected at {merged_report_name}"
 
         # check for 1+n_dupes models in the merged report
         bm_results = parse_benchmark_xml(merged_report_dir)
@@ -163,7 +163,9 @@ def test_crashsafe_multitest_assert():
 
 
 def try_sigkill_safe_logging(test_command):
-    search_string = "SiliconDriver"  # We know that we passed the constructor when we see this loguru printout: 2025-03-26 20:04:47.944 | INFO     | SiliconDriver   - Opened PCI device 6; KMD version: 1.31.0, IOMMU: disabled
+
+    # We know that we passed model constructor when we see [MODEL NAME] in the output.
+    search_string = "[MODEL NAME]"
 
     process = subprocess.Popen(
         test_command,

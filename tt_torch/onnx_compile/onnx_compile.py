@@ -68,7 +68,9 @@ def torch_backend_ir_to_stablehlo(module: Module, compiler_config: CompilerConfi
 
 
 @tt_torch_error_message
-def compile_onnx(model_proto: onnx.ModelProto, compiler_config: CompilerConfig = None):
+def compile_onnx(
+    model_proto: onnx.ModelProto, compiler_config: CompilerConfig = None, devices=None
+):
     if compiler_config is None:
         compiler_config = CompilerConfig()
 
@@ -96,11 +98,14 @@ def compile_onnx(model_proto: onnx.ModelProto, compiler_config: CompilerConfig =
         module = generate_torch_onnx_ir(model_proto, compiler_config)
         module = torch_onnx_to_torch_backend_ir(module, compiler_config)
         module = torch_backend_ir_to_stablehlo(module, compiler_config)
-        executor = StablehloExecutor(module=module, compiler_config=compiler_config)
+
+        executor = StablehloExecutor(
+            module=module, compiler_config=compiler_config, devices=devices
+        )
         executor.add_onnx_model_proto(model_proto)
         return executor
     else:
-        executor = OnnxExecutor(model_proto)
+        executor = OnnxExecutor(model_proto, devices=devices)
 
         module = generate_torch_onnx_ir(model_proto, compiler_config)
 

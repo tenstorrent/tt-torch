@@ -26,7 +26,11 @@ from tt_torch.tools.device_manager import DeviceManager
 def compile_model(model, compiler_config, device, async_mode):
     torch_options = BackendOptions()
     torch_options.compiler_config = compiler_config
-    torch_options.devices = [device]
+    if compiler_config.compile_depth not in [
+        CompileDepth.COMPILE_OP_BY_OP,
+        CompileDepth.EXECUTE_OP_BY_OP,
+    ]:
+        torch_options.devices = [device]
     torch_options.async_mode = async_mode
     return torch.compile(model, backend=backend, options=torch_options)
 
@@ -244,6 +248,7 @@ def _verify_onnx_module(
     input_range_int,
     compiler_config,
     do_assert,
+    devices=None,
 ):
     sess = prepare_inference_session(model_proto=model_proto)
     input_shapes = [nodearg.shape for nodearg in sess.get_inputs()]
@@ -273,7 +278,7 @@ def _verify_onnx_module(
         input_data_types=input_data_types,
     )
     golden = onnx_output_to_torch(golden)
-    compiled_mod = compile_onnx(model_proto, compiler_config)
+    compiled_mod = compile_onnx(model_proto, compiler_config, devices)
     ret = compiled_mod(*inputs)
     if compiler_config.compile_depth not in [
         CompileDepth.EXECUTE,
@@ -313,6 +318,12 @@ def verify_module(
     do_assert=True,
     device=None,
 ):
+    create_device = device is None and compiler_config.compile_depth not in [
+        CompileDepth.COMPILE_OP_BY_OP,
+        CompileDepth.EXECUTE_OP_BY_OP,
+    ]
+    if create_device:
+        device = DeviceManager.create_parent_mesh_device([1, 1])
 
     if isinstance(mod, torch.nn.Module):
         assert (
@@ -345,9 +356,15 @@ def verify_module(
             input_range_int,
             compiler_config,
             do_assert,
+            None if device is None else [device],
         )
     else:
-        raise ValueError("Invalid module type")
+        if create_device:
+            DeviceManager.release_parent_device(device)
+        raise ValueError(f"Invalid module type {type(mod)}")
+
+    if create_device:
+        DeviceManager.release_parent_device(device)
 
 
 @with_torch_dynamo_cleanup

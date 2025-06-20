@@ -18,12 +18,64 @@ from tt_torch.tools.utils import (
 
 
 class BackendOptions:
+    _devices: [tt_mlir.Device]
+    _compiler_config: CompilerConfig
+    _async_mode: bool
+
     def __init__(
-        self, compiler_config=CompilerConfig(), devices=[None], async_mode=False
+        self, compiler_config=CompilerConfig(), devices=None, async_mode=False
     ):
+        assert isinstance(
+            compiler_config, CompilerConfig
+        ), "compiler_config must be a CompilerConfig object"
         self.compiler_config = compiler_config
-        self.devices = devices
+        # devices may be none as that is the default value and will be checked later
+        assert devices == None or (
+            isinstance(devices, list)
+            and all(isinstance(device, tt_mlir.Device) for device in devices)
+        ), "devices must be a list of tt_mlir.Device objects"
+        self._devices = devices
+        assert isinstance(async_mode, bool), "async_mode must be a boolean"
         self.async_mode = async_mode
+
+    @property
+    def compiler_config(self):
+        return self._compiler_config
+
+    @compiler_config.setter
+    def compiler_config(self, value):
+        assert isinstance(
+            value, CompilerConfig
+        ), "compiler_config must be a CompilerConfig"
+        self._compiler_config = value
+
+    @property
+    def devices(self):
+        return self._devices
+
+    @devices.setter
+    def devices(self, value):
+        assert self.compiler_config.compile_depth not in [
+            CompileDepth.COMPILE_OP_BY_OP,
+            CompileDepth.EXECUTE_OP_BY_OP,
+        ], "Devices must not be set by the user when compiling/executing in op-by-op mode. Devices will be managed automatically."
+        assert isinstance(
+            value, list
+        ), f"Devices must be a list of Devices, received: {value}. You can create and open a device with DeviceManager.create_parent_mesh_device()."
+        assert all(
+            isinstance(device, tt_mlir.Device) for device in value
+        ), f"Devices must be a list of open Devices, received: {[type(obj) for obj in value]}. You can create and open a device with DeviceManager.create_parent_mesh_device()."
+
+        self._devices = value
+
+    @property
+    def async_mode(self):
+        return self._async_mode
+
+    @async_mode.setter
+    def async_mode(self, value):
+        assert isinstance(value, bool), "async_mode must be a boolean"
+        self._async_mode = value
 
 
 from tt_torch.dynamo.torch_backend import (
@@ -250,18 +302,21 @@ def _base_backend(gm, example_inputs, compiler_config, devices, async_mode):
 
 
 @tt_torch_error_message
-def backend(gm, example_inputs, options: BackendOptions = None):
+def backend(gm, example_inputs, options: BackendOptions):
     warnings.filterwarnings("ignore", message="Failed to fetch module*")
     assert isinstance(gm, torch.fx.GraphModule), "Backend only supports torch graphs"
 
-    if options is None:
-        cc = CompilerConfig()
-        devices = None
-        async_mode = False
-    else:
-        cc = options.compiler_config
-        devices = options.devices
-        async_mode = options.async_mode
+    assert isinstance(
+        options, BackendOptions
+    ), f"options must be a BackendOptions, recieved: {options}"
+    cc = options.compiler_config
+    devices = options.devices
+    if cc.compile_depth not in [
+        CompileDepth.COMPILE_OP_BY_OP,
+        CompileDepth.EXECUTE_OP_BY_OP,
+    ]:
+        assert devices is not None, "Devices not set in options"
+    async_mode = options.async_mode
 
     # Apply environment overrides at start of compilation to allow overriding what was set in the test
     cc.apply_environment_overrides()

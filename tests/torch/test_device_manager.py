@@ -56,6 +56,9 @@ def test_create_parent_mesh_device(mock_tt_mlir):
     assert len(DeviceManager._submesh_shapes) == 0
     assert DeviceManager._parent_shapes[device] == (1, 1)
 
+    # Release the parent mesh
+    DeviceManager.release_parent_device(device)
+
 
 def test_create_sub_mesh_device(mock_tt_mlir):
     with pytest.raises(AssertionError, match="Parent mesh not found."):
@@ -78,6 +81,9 @@ def test_create_sub_mesh_device(mock_tt_mlir):
     for subdevice in valid_subdevices:
         assert subdevice in DeviceManager._devices[parent]
         assert DeviceManager._submesh_shapes[subdevice] == (1, 1)
+
+    # Release the parent mesh
+    DeviceManager.release_parent_device(parent, cleanup_sub_devices=True)
 
 
 def test_release_sub_mesh_device(mock_tt_mlir):

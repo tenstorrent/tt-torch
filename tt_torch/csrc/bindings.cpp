@@ -356,12 +356,11 @@ std::vector<at::Tensor> run(tt::runtime::Device device,
   return outputs;
 }
 
-std::vector<at::Tensor> run_end_to_end(std::vector<at::Tensor> &inputs,
+std::vector<at::Tensor> run_end_to_end(tt::runtime::Device device,
+                                       std::vector<at::Tensor> &inputs,
                                        py::bytes byte_stream) {
 
   tt::runtime::Binary binary = create_binary_from_bytestream(byte_stream);
-
-  tt::runtime::Device device = tt::runtime::openMeshDevice({1, 1});
 
   const int program_idx = 0;
 
@@ -370,9 +369,24 @@ std::vector<at::Tensor> run_end_to_end(std::vector<at::Tensor> &inputs,
 
   std::vector<at::Tensor> outputs = run(device, binary, program_idx, rt_inputs);
 
-  tt::runtime::closeMeshDevice(device);
-
   return outputs;
+}
+
+std::vector<at::Tensor> run_on_default_device(std::vector<at::Tensor> &inputs,
+                                              py::bytes byte_stream) {
+  tt::runtime::Device device = tt::runtime::openMeshDevice({1, 1});
+  std::vector<at::Tensor> outputs = run_end_to_end(device, inputs, byte_stream);
+  tt::runtime::closeMeshDevice(device);
+  return outputs;
+}
+
+void create_default_system_desc(std::string_view descriptor_path) {
+  tt::runtime::Device device = tt::runtime::openMeshDevice({1, 1});
+  const std::string desc_path_str(descriptor_path);
+  std::remove(desc_path_str.c_str());
+  tt::runtime::getCurrentSystemDesc(std::nullopt, device)
+      .store(desc_path_str.c_str());
+  tt::runtime::closeMeshDevice(device);
 }
 
 torch::Tensor
@@ -483,6 +497,13 @@ PYBIND11_MODULE(tt_mlir, m) {
   m.def("run_end_to_end", &run_end_to_end,
         "Run binary end to end, isolating all steps such as device opening, "
         "input preprocessing, execution and device closing");
+  m.def("create_default_system_desc", &create_default_system_desc,
+        "Creates a system desc based on a [1, 1] mesh device. WARNING: If the "
+        "user has already opened all devices in their system, this will fail.");
+  m.def("run_on_default_device", &run_on_default_device,
+        "Run binary end to end. Allow the runtime to open a [1, 1] mesh device "
+        "to run the binary on, and close it. WARNING: If the user has already "
+        "opened all devices in their system, this will fail.");
   m.def("get_num_available_devices", &tt::runtime::getNumAvailableDevices,
         "Get the number of available devices");
   m.def("bytestream_to_json", &bytestream_to_json,
