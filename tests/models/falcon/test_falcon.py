@@ -7,7 +7,7 @@ import pytest
 # Load model directly
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from tt_torch.tools.utils import CompilerConfig, ModelMetadata, CompileDepth
 
 
 class ThisTester(ModelTester):
@@ -27,33 +27,44 @@ class ThisTester(ModelTester):
         return inputs
 
 
+# metadata for Falcon model
+FALCON_VARIANT = [
+    ModelMetadata(model_name="falcon-7b-instruct", compile_depth=CompileDepth.TTNN_IR)
+]
+
+
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
+@pytest.mark.parametrize("model_info", FALCON_VARIANT, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
-    "op_by_op",
-    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
-    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+    "execute_mode",
+    [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
+    ids=["op_by_op", "full"],
 )
-def test_falcon(record_property, mode, op_by_op):
+def test_falcon(record_property, mode, execute_mode, model_info):
     model_name = "Falcon"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if op_by_op:
-        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-        if op_by_op == OpByOpBackend.STABLEHLO:
-            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+
+    # check if OpByOp
+    if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
+        cc.compile_depth = execute_mode
+    # applying overrides from model_metadata if EXECUTE
+    else:
+        cc.compile_depth = model_info.compile_depth
+    cc.op_by_op_backend = model_info.op_by_op_backend
 
     tester = ThisTester(
-        model_name,
-        mode,
+        model_name=model_info.model_name,
+        mode=mode,
         relative_atol=0.015,
         compiler_config=cc,
         record_property_handle=record_property,
-        assert_pcc=False,
+        assert_pcc=model_info.assert_pcc,
         assert_atol=False,
     )
     results = tester.test_model()
@@ -69,7 +80,7 @@ def test_falcon(record_property, mode, op_by_op):
 
         print(
             f"""
-        model_name: {model_name}
+        model_name: {model_info.model_name}
         input: {tester.test_input}
         output before: {decoded_output}
         """

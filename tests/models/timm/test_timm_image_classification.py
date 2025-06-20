@@ -9,7 +9,7 @@ from PIL import Image
 import torch
 import pytest
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from tt_torch.tools.utils import CompilerConfig, CompileDepth, ModelMetadata
 
 dependencies = ["timm==1.0.9"]
 
@@ -42,30 +42,78 @@ class ThisTester(ModelTester):
 
 # Separate lists for models and modes
 model_list = [
-    "tf_efficientnet_lite0.in1k",
-    "tf_efficientnet_lite1.in1k",
-    "tf_efficientnet_lite2.in1k",
-    "tf_efficientnet_lite3.in1k",
-    "tf_efficientnet_lite4.in1k",
-    "ghostnet_100.in1k",
-    "ghostnetv2_100.in1k",
-    "inception_v4.tf_in1k",
-    "mixer_b16_224.goog_in21k",
-    "mobilenetv1_100.ra4_e3600_r224_in1k",
-    "ese_vovnet19b_dw.ra_in1k",
-    "xception71.tf_in1k",
-    "dla34.in1k",
-    "hrnet_w18.ms_aug_in1k",
+    ModelMetadata(
+        model_name="tf_efficientnet_lite0.in1k",
+        assert_pcc=True,
+        required_pcc=0.98,
+    ),
+    ModelMetadata(
+        model_name="tf_efficientnet_lite1.in1k",
+        assert_pcc=True,
+        required_pcc=0.98,
+    ),
+    ModelMetadata(
+        model_name="tf_efficientnet_lite2.in1k",
+        assert_pcc=True,
+        required_pcc=0.98,
+    ),
+    ModelMetadata(
+        model_name="tf_efficientnet_lite3.in1k",
+        assert_pcc=True,
+        required_pcc=0.98,
+    ),
+    ModelMetadata(
+        model_name="tf_efficientnet_lite4.in1k",
+        assert_pcc=True,
+    ),
+    ModelMetadata(
+        model_name="ghostnet_100.in1k",
+        assert_pcc=True,
+    ),
+    ModelMetadata(
+        model_name="ghostnetv2_100.in1k",
+        model_group="generality",
+        compile_depth=CompileDepth.TTNN_IR,
+    ),
+    ModelMetadata(
+        model_name="inception_v4.tf_in1k",
+        assert_pcc=True,
+        required_pcc=0.98,
+    ),
+    ModelMetadata(
+        model_name="mixer_b16_224.goog_in21k",
+    ),
+    ModelMetadata(
+        model_name="mobilenetv1_100.ra4_e3600_r224_in1k",
+        assert_pcc=True,
+        required_pcc=0.95,
+    ),
+    ModelMetadata(
+        model_name="ese_vovnet19b_dw.ra_in1k",
+    ),
+    ModelMetadata(
+        model_name="xception71.tf_in1k",
+        assert_pcc=True,
+        required_pcc=0.98,
+    ),
+    ModelMetadata(
+        model_name="dla34.in1k",
+        assert_pcc=True,
+    ),
+    ModelMetadata(
+        model_name="hrnet_w18.ms_aug_in1k",
+        assert_pcc=True,
+    ),
 ]
 
 
 @pytest.mark.usefixtures("manage_dependencies")
-@pytest.mark.parametrize("model_name", model_list)
+@pytest.mark.parametrize("model_info", model_list, ids=lambda x: x.model_name)
 @pytest.mark.parametrize("mode", ["train", "eval"])
 @pytest.mark.parametrize(
-    "op_by_op",
-    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
-    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+    "execute_mode",
+    [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
+    ids=["op_by_op", "full"],
 )
 @pytest.mark.parametrize(
     "data_parallel_mode",
@@ -73,7 +121,7 @@ model_list = [
     ids=["single_device", "data_parallel"],
 )
 def test_timm_image_classification(
-    record_property, model_name, mode, op_by_op, data_parallel_mode
+    record_property, model_info, mode, execute_mode, data_parallel_mode
 ):
     if mode == "train":
         pytest.skip()
@@ -81,61 +129,24 @@ def test_timm_image_classification(
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if op_by_op:
+    cc.op_by_op_backend = model_info.op_by_op_backend
+    if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
         if data_parallel_mode:
             pytest.skip("Op-by-op not supported in data parallel mode")
-        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-        if op_by_op == OpByOpBackend.STABLEHLO:
-            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+        cc.compile_depth = execute_mode
+    else:
+        cc.compile_depth = model_info.compile_depth
 
-    assert_pcc = (
-        True
-        if model_name
-        in [
-            "mobilenetv1_100.ra4_e3600_r224_in1k",
-            "dla34.in1k",
-            "ghostnet_100.in1k",
-            "hrnet_w18.ms_aug_in1k",
-            "tf_efficientnet_lite0.in1k",
-            "tf_efficientnet_lite1.in1k",
-            "tf_efficientnet_lite2.in1k",
-            "tf_efficientnet_lite3.in1k",
-            "tf_efficientnet_lite4.in1k",
-            "xception71.tf_in1k",
-            "inception_v4.tf_in1k",
-        ]
-        else False
-    )
-
-    required_pcc = (
-        0.95
-        if model_name
-        in [
-            "mobilenetv1_100.ra4_e3600_r224_in1k",
-        ]
-        else 0.98
-        if model_name
-        in [
-            "tf_efficientnet_lite0.in1k",
-            "tf_efficientnet_lite1.in1k",
-            "tf_efficientnet_lite2.in1k",
-            "tf_efficientnet_lite3.in1k",
-            "xception71.tf_in1k",
-            "inception_v4.tf_in1k",
-        ]
-        else 0.99
-    )
-
-    model_group = "generality"
     tester = ThisTester(
-        model_name,
-        mode,
-        required_pcc=required_pcc,
+        model_name=model_info.model_name,
+        model_info=model_info,
+        mode=mode,
+        required_pcc=model_info.required_pcc,
         compiler_config=cc,
-        assert_pcc=assert_pcc,
-        assert_atol=False,
+        assert_pcc=model_info.assert_pcc,
+        assert_atol=model_info.assert_atol,
         record_property_handle=record_property,
-        model_group=model_group,
+        model_group=model_info.model_group,
         data_parallel_mode=data_parallel_mode,
     )
     results = tester.test_model()
@@ -145,7 +156,7 @@ def test_timm_image_classification(
             result.softmax(dim=1) * 100, k=5
         )
         print(
-            f"Model: {model_name} | Predicted class ID: {top5_class_indices[0]} | Probability: {top5_probabilities[0]}"
+            f"Model: {model_info.model_name} | Predicted class ID: {top5_class_indices[0]} | Probability: {top5_probabilities[0]}"
         )
 
     if mode == "eval":

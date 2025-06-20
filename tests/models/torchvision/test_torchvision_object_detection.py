@@ -12,14 +12,14 @@ from third_party.tt_forge_models.tools.utils import get_file
 
 # TODO: RuntimeError: "nms_kernel" not implemented for 'BFloat16'
 class ThisTester(ModelTester):
-    # pass model_info instead of model_name
-    def __init__(self, model_info, mode, *args, **kwargs):
-        # model name in model_info[0]
-        self.model_info = model_info
-        super().__init__(model_info[0], mode, *args, **kwargs)
+    # pass model_tuple instead of model_name
+    def __init__(self, model_tuple, mode, *args, **kwargs):
+        # model name in model_tuple[0]
+        self.model_tuple = model_tuple
+        super().__init__(model_tuple[0], mode, *args, **kwargs)
 
     def _load_model(self):
-        model_name, weights_name = self.model_info
+        model_name, weights_name = self.model_tuple
         self.weights = getattr(models.detection, weights_name).DEFAULT
         model = getattr(models.detection, model_name)(
             weights=self.weights
@@ -36,7 +36,7 @@ class ThisTester(ModelTester):
         return batch_t
 
 
-model_info_list = [
+model_tuple_list = [
     ("ssd300_vgg16", "SSD300_VGG16_Weights"),
     ("ssdlite320_mobilenet_v3_large", "SSDLite320_MobileNet_V3_Large_Weights"),
     ("retinanet_resnet50_fpn", "RetinaNet_ResNet50_FPN_Weights"),
@@ -49,9 +49,9 @@ model_info_list = [
     ["eval"],
 )
 @pytest.mark.parametrize(
-    "model_info",
-    model_info_list,
-    ids=[model_info[0] for model_info in model_info_list],
+    "model_tuple",
+    model_tuple_list,
+    ids=[model_tuple[0] for model_tuple in model_tuple_list],
 )
 @pytest.mark.parametrize(
     "op_by_op",
@@ -62,9 +62,9 @@ model_info_list = [
     "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
 )
 def test_torchvision_object_detection(
-    record_property, model_info, mode, op_by_op, data_parallel_mode
+    record_property, model_tuple, mode, op_by_op, data_parallel_mode
 ):
-    model_name, _ = model_info
+    model_name, _ = model_tuple
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -83,7 +83,7 @@ def test_torchvision_object_detection(
         assert_pcc = True
 
     tester = ThisTester(
-        model_info,
+        model_tuple,
         mode,
         assert_pcc=assert_pcc,
         assert_atol=False,
