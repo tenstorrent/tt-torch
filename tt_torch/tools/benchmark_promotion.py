@@ -37,7 +37,11 @@ def enumerate_all_tests(filter_full_eval=True, test_dir="tests/models", dry_run=
         test_cases = re.findall(r"(\S+::\S+)", result.stdout)
 
         return (
-            [tc for tc in test_cases if "full" in tc and "eval" in tc]
+            [
+                tc
+                for tc in test_cases
+                if "full" in tc and "eval" in tc and "data_parallel" not in tc
+            ]
             if filter_full_eval
             else test_cases
         )
