@@ -1,0 +1,619 @@
+# SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
+#
+# SPDX-License-Identifier: Apache-2.0
+import torch
+import time
+from .backend import BackendOptions, CompilerConfig
+from torch.fx.experimental.proxy_tensor import make_fx
+import torch_xla.core.dynamo_bridge as bridge
+from .xla_decompositions import (
+    CUSTOM_DECOMPOSITION_TABLE,
+)
+import os
+import tempfile
+import multiprocessing as mp
+import re
+import pickle
+import sys
+import faulthandler
+from torch.func import functionalize
+
+from tt_torch.tools.utils import (
+    CompilerConfig,
+    CompileDepth,
+    tt_torch_error_message,
+    sanitize_filename,
+    Op,
+    OpCompilationStatus,
+)
+
+import torch_xla.core.xla_model as xm
+
+
+def get_tensor_size(tensor):
+    """Calculate the memory size of a tensor in bytes."""
+    if isinstance(tensor, torch.Tensor):
+        return tensor.element_size() * tensor.nelement()
+    return 0
+
+
+def get_inputs_size(inputs):
+    """Calculate the total memory size of inputs in bytes."""
+    total_size = 0
+
+    if isinstance(inputs, torch.Tensor):
+        total_size += get_tensor_size(inputs)
+    elif isinstance(inputs, (list, tuple)):
+        for item in inputs:
+            total_size += get_inputs_size(item)
+    elif isinstance(inputs, dict):
+        for item in inputs.values():
+            total_size += get_inputs_size(item)
+    elif isinstance(inputs, (int, float)):
+        return 8
+    elif isinstance(inputs, bool):
+        return 1
+    elif isinstance(inputs, torch.dtype):
+        return 8
+    elif inputs is None:
+        return 0
+    else:
+        assert False, f"Unexpected input type: {type(inputs)}"
+    return total_size
+
+
+def gb_to_bytes(gb):
+    return gb * 1024 * 1024 * 1024
+
+
+def cast_ios_and_run(node, args, kwargs):
+    try:
+        out_df = node.meta["tensor_meta"].dtype
+        out_df_known = True
+    except Exception:
+        out_df_known = False
+
+    if out_df_known:
+        cast_args = [
+            arg.to(torch.float32)
+            if isinstance(arg, torch.Tensor) and torch.is_floating_point(arg)
+            else arg
+            for arg in args
+        ]
+        golden = node.target(*cast_args, **kwargs)
+        golden = golden.to(out_df)
+    else:
+        golden = node.target(*args, **kwargs)
+    return golden
+
+
+def execute_pjrt_process(receiver, sender, exec_event):
+    while 1:
+        obj = receiver.get()
+        faulthandler.disable()
+        gm = obj["gm"]
+        file_name = obj["dump_file"]
+        large_input = obj["large_input"]
+        inputs = None
+
+        # Load inputs from disk if they're large
+        if large_input:
+            print("Child process handling large input", flush=True)
+            inputs_file_path = obj["inputs_file_path"]
+            if inputs_file_path and os.path.exists(inputs_file_path):
+                try:
+                    with open(inputs_file_path, "rb") as f:
+                        inputs = pickle.load(f)
+                except Exception as e:
+                    print(f"Error loading inputs from disk: {e}")
+        else:
+            inputs = obj["inputs"]
+
+        file_stderr = open(file_name, "w")
+        old_stderr = sys.stderr
+        sys.stderr = file_stderr
+        old_stdout = sys.stdout
+        sys.stdout = file_stderr
+        from typing import Union, List, Dict
+
+        def push_tensors_to_device(
+            tensors, device, detach=False
+        ) -> Union[torch.Tensor, List[torch.Tensor], Dict[str, torch.Tensor]]:
+            if isinstance(tensors, torch.Tensor):
+                out = tensors.to(device)
+                if detach:
+                    out = out.detach()
+                return out
+            elif isinstance(tensors, (list, tuple)):
+                return [
+                    push_tensors_to_device(tensor, device, detach) for tensor in tensors
+                ]
+            elif isinstance(tensors, dict):
+                return {
+                    k: push_tensors_to_device(v, device, detach)
+                    for k, v in tensors.items()
+                }
+            else:
+                return tensors
+
+        def flatten_inputs(inputs):
+            if isinstance(inputs, (list, tuple)):
+                flattened = []
+                for inp in inputs:
+                    flattened.extend(flatten_inputs(inp))
+                return flattened
+            elif isinstance(inputs, dict):
+                return {k: flatten_inputs(v) for k, v in inputs.items()}
+            else:
+                return [inputs]
+
+        outputs = None
+        if inputs is not None:
+            inputs = push_tensors_to_device(inputs, device=xm.xla_device())
+            inputs = flatten_inputs(inputs)
+            gm = gm.to(xm.xla_device())
+            outputs = gm(*inputs)
+            xm.mark_step()
+            outputs = push_tensors_to_device(outputs, device="cpu", detach=True)
+
+        sys.stderr = old_stderr
+        sys.stdout = old_stdout
+        file_stderr.close()
+
+        sender.put({"outputs": outputs})
+        exec_event.wait()
+
+    sys.exit(0)
+
+
+class XLAOpByOpExecutor:
+
+    # Class attributes for identifying each op w/ unique incrementing id
+    # across graph breaks, and for running just a specific op.
+    global_op_idx = 0
+    run_global_op_idx = None
+    compiling_time = 0.0
+    running_time = 0.0
+    golden_time = 0.0
+
+    def __init__(self, gm, compiler_config):
+        self.gm = gm
+        self.compiler_config = compiler_config
+
+        # Debug mode to run only specific op given global_op_idx
+        if XLAOpByOpExecutor.run_global_op_idx is None:
+            run_global_op_idx_env = os.getenv("RUN_GLOBAL_OP_IDX")
+            XLAOpByOpExecutor.run_global_op_idx = (
+                None if run_global_op_idx_env is None else int(run_global_op_idx_env)
+            )
+
+        # Opening a device in a new process is very slow as the pcie device needs to be initializes
+        # So we keep the process alive and reuse it. If the process dies, the next call will create a new process
+        self.execute_process = None
+        self.execute_sender = None
+        self.execute_receiver = None
+
+        # Create temp file at start of execution of first op and pass the name
+        # of temp file to subprocess which will be used to redirect the stderr
+        # to capture runtime stack dump.
+        self.stderror_redirected = False
+        self.file_stderr = None
+        self.op_memory_limit = gb_to_bytes(0.5)  # 512MB limi
+
+    def is_node_valid(self, node):
+        if not isinstance(node.target, torch._ops.OpOverload):
+            if "getitem" not in name:
+                raise ValueError(f"Node target is not an OpOverload: {name}")
+            return False
+        return True
+
+    def get_node_name(self, node):
+        name = node.target.name() if hasattr(node.target, "name") else node.name
+        return name
+
+    def get_input_shapes_and_constants(self, *inputs):
+        input_shapes_and_constants = []
+        for inp in inputs:
+            if isinstance(inp, torch.Tensor):
+                input_shapes_and_constants.append(inp.shape)
+            elif isinstance(inp, (list, tuple)):
+                sub = []
+                for sub_inp in inp:
+                    if isinstance(sub_inp, torch.Tensor):
+                        sub.append(sub_inp.shape)
+                    else:
+                        sub.append(sub_inp)
+                input_shapes_and_constants.append(sub)
+            elif isinstance(inp, (int, float, bool)):
+                input_shapes_and_constants.append(inp)
+            elif isinstance(inp, torch.dtype):
+                input_shapes_and_constants.append(inp.__str__())
+            elif inp is None:
+                input_shapes_and_constants.append(None)
+            else:
+                raise ValueError(f"Unexpected input type: {type(inp)}")
+        return input_shapes_and_constants
+
+    def set_runtime_stack_dump(self, error, op):
+        if op is None:
+            return
+
+        # Handle both implementations of unique_key (method or attribute)
+        key = (
+            op.unique_key()
+            if callable(getattr(op, "unique_key", None))
+            else op.unique_key
+        )
+        self.compiler_config.unique_ops[key].runtime_stack_dump = str(error)
+
+    def get_single_op_graph_module(self, node, inputs, **kwargs):
+        input_shapes_and_constants = self.get_input_shapes_and_constants(*inputs)
+
+        name = node.target.name() if hasattr(node.target, "name") else node.name
+        if not isinstance(node.target, torch._ops.OpOverload):
+            if "getitem" not in name:
+                raise ValueError(f"Node target is not an OpOverload: {name}")
+            return None, None
+
+        if name == "aten::copy_":
+            raise ValueError(f"inline ops are not supported: {name}")
+            return None, None
+
+        # Skip validation ops (like aten._assert_tensor_metadata) that lack tensor metadata
+        if "tensor_meta" not in node.meta:
+            print(f"Warning: {node.target} missing tensor_meta, skipping compile.")
+            return None, None
+
+        op = Op(name, input_shapes_and_constants, self.compiler_config.model_name)
+        if op.unique_key() not in self.compiler_config.unique_ops:
+            op.global_op_idx = XLAOpByOpExecutor.global_op_idx
+            op.model_group = self.compiler_config.model_group
+            self.compiler_config.unique_ops[op.unique_key()] = op
+        else:
+            self.compiler_config.unique_ops[op.unique_key()].num_ops += 1
+            return None, None
+
+        graph = torch.fx.Graph()
+
+        def generate_placeholders(args, prefix="input_"):
+            placeholders = []
+            for input_idx, inp in enumerate(args):
+                if isinstance(inp, (list, tuple)):
+                    sub_placeholders = generate_placeholders(
+                        inp, prefix=f"{prefix}{input_idx}_"
+                    )
+                    placeholders.append(sub_placeholders)
+                else:
+                    placeholders.append(graph.placeholder(f"{prefix}{input_idx}"))
+            return placeholders
+
+        placeholders = generate_placeholders(inputs)
+
+        if len(placeholders) != len(node.args):
+            # are any of the args duplicates? If so, we need to duplicate the placeholders
+            for idx, arg in enumerate(node.args):
+                if arg in node.args[idx + 1 :]:
+                    placeholders.append(placeholders[idx])
+
+        placeholders = tuple(placeholders)
+
+        graph_node = graph.call_function(node.target, placeholders, kwargs)
+        graph_node.meta["tensor_meta"] = node.meta["tensor_meta"]
+
+        # if the node has multiple outputs, add a getitem for each and append to graph
+        if not isinstance(
+            node.meta["tensor_meta"], torch.fx.passes.shape_prop.TensorMetadata
+        ):
+            getitem_nodes = []
+            graph_node.meta["val"] = node.meta["val"]
+
+            # if the output of the getitem node is not used, we don't append it to the graph
+            for user in node.users:
+                assert user.target == operator.getitem
+                if len(user.users) == 0:
+                    continue
+
+                idx = user.args[1]
+                getitem_node = graph.call_function(
+                    operator.getitem, args=(graph_node, idx)
+                )
+                getitem_nodes.append(getitem_node)
+                tensor_meta = node.meta["tensor_meta"][idx]
+                getitem_node.meta["tensor_meta"] = tensor_meta
+            out = graph.output(tuple(getitem_nodes))
+        else:
+            out = graph.output((graph_node,))
+        if "tensor_meta" not in node.meta:
+            raise ValueError(f"Node {node} does not have tensor_meta")
+
+        op.compilation_status = OpCompilationStatus.CREATED_GRAPH
+        out.meta["tensor_meta"] = node.meta["tensor_meta"]
+
+        out_meta = out.meta["tensor_meta"]
+        if isinstance(out_meta, torch.fx.passes.shape_prop.TensorMetadata):
+            out_meta = (out_meta,)
+        for out in out_meta:
+            op.output_shapes.append([dim for dim in out.shape])
+
+        gm = torch.fx.GraphModule(torch.nn.Module(), graph)
+        return gm, op
+
+    # Helper function to print markers
+    def print_marker(self, msg, idx, num_nodes, op_info, error="", time=0.0):
+        print(
+            f"{msg:<10} global_op_idx: {XLAOpByOpExecutor.global_op_idx} ({idx}/{num_nodes}): {op_info} | time: {time:.4f} s | {error}",
+            flush=True,
+        )
+
+    def should_test_op(self):
+        return (
+            XLAOpByOpExecutor.run_global_op_idx is None
+            or XLAOpByOpExecutor.global_op_idx == XLAOpByOpExecutor.run_global_op_idx
+        )
+
+    # Helper function to get extract exception source for printing concise message
+    def get_exception_source(self, e):
+        import traceback
+
+        filename, lineno, function, _ = traceback.extract_tb(e.__traceback__)[-1]
+        return f"{type(e).__name__}: {e} in {filename.split('/')[-1]}:{lineno} ({function})"
+
+    def run_op(self, gm, *inputs):
+        inputs  # = self.pre_process_inputs(*inputs)
+        if not self.stderror_redirected:
+            self.file_stderr = tempfile.NamedTemporaryFile(mode="w+t", delete=False)
+            self.stderror_redirected = True
+
+        inputs_size = get_inputs_size(inputs)
+
+        large_input = inputs_size >= self.op_memory_limit
+
+        obj = {
+            "gm": gm,
+            "dump_file": self.file_stderr.name,
+            "large_input": large_input,
+        }
+
+        inputs_file_path = None
+        if large_input:
+            obj["inputs"] = None
+            try:
+                temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pkl")
+                inputs_file_path = temp_file.name
+                temp_file.close()
+
+                with open(inputs_file_path, "wb") as f:
+                    pickle.dump(inputs, f)
+
+                obj["inputs_file_path"] = inputs_file_path
+            except Exception as e:
+                print(f"Error saving inputs to disk: {e}")
+                if inputs_file_path and os.path.exists(inputs_file_path):
+                    try:
+                        os.remove(inputs_file_path)
+                    except OSError:
+                        pass
+                large_input = False
+        else:
+            obj["inputs"] = inputs
+            obj["inputs_file_path"] = None
+
+        exec_event = mp.Event()
+        if self.execute_process is None:
+            self.execute_sender = mp.Queue()
+            self.execute_receiver = mp.Queue()
+            self.execute_process = mp.Process(
+                target=execute_pjrt_process,
+                args=(self.execute_sender, self.execute_receiver, exec_event),
+            )
+            self.execute_process.start()
+        self.execute_sender.put(obj)
+        result = {}
+        start = time.time()
+        outputs = [None]
+        timeout_exceeded = False
+        while True:
+            if not self.execute_process.is_alive():
+                self.execute_process = None
+                break
+            try:
+                result = self.execute_receiver.get_nowait()
+                outputs = result["outputs"]
+                exec_event.set()
+                break
+            except mp.queues.Empty:
+                pass
+            if time.time() - start > self.compiler_config.single_op_timeout:
+                self.execute_process.terminate()
+                self.execute_process = None
+                timeout_exceeded = True
+                break
+
+        if inputs_file_path and os.path.isfile(inputs_file_path):
+            try:
+                os.remove(inputs_file_path)
+            except OSError:
+                pass
+
+        if len(outputs) == 1:
+            outputs = outputs[0]
+
+        stderr_data = ""
+        if outputs is None:
+            file_stderr = open(self.file_stderr.name, "r")
+            stderr_data = file_stderr.read()
+            stderr_data = stderr_data.replace("\n", "\\n")
+            stderr_data = re.sub(r"[^\x20-\x7E]", "", stderr_data)
+            file_stderr.close()
+
+            # If timeout is exceeded and stderr empty, add message and print to stdout.
+            if timeout_exceeded and not stderr_data:
+                stderr_data = f"Timeout exceeded for op during run after {self.compiler_config.single_op_timeout} seconds."
+                print(stderr_data, flush=True)
+
+        return outputs, stderr_data
+
+    def run_gm_op_by_op(self, *user_inputs):
+        node_to_tensor = {}
+        inputs = user_inputs
+        input_index = 0
+        outputs = []
+        num_nodes = len(self.gm.graph.nodes)
+        out_degree = {}
+
+        for idx, node in enumerate(self.gm.graph.nodes):
+            self.print_marker("\nProcessing", idx, num_nodes, node.target)
+
+            out_degree[node] = len(node.users)
+            if node.op == "placeholder":
+                node_to_tensor[node] = inputs[input_index]
+                input_index += 1
+            elif node.op == "get_attr":
+                node_to_tensor[node] = getattr(self.gm, node.name)
+            elif node.op == "call_function":
+                args = []
+                for arg in node.args:
+                    if isinstance(arg, torch.fx.node.Node):
+                        args.append(node_to_tensor[arg])
+                    elif isinstance(arg, list):
+                        args.append(
+                            [
+                                node_to_tensor[a]
+                                if isinstance(a, torch.fx.node.Node)
+                                else a
+                                for a in arg
+                            ]
+                        )
+                    else:
+                        args.append(arg)
+
+                binary = None
+                op = None
+
+                test_this_op = self.should_test_op()
+                # Another useful debug method:
+                # test_this_op = str(node.target) == "aten.convolution.default"
+
+                if test_this_op:
+                    try:
+                        start = time.time()
+                        gm, op = self.get_single_op_graph_module(node, args)
+                        end = time.time()
+                        self.print_marker(
+                            "Compiling", idx, num_nodes, node.target, time=(end - start)
+                        )
+                        XLAOpByOpExecutor.compiling_time += end - start
+
+                        self.set_runtime_stack_dump(None, op)
+
+                    except Exception as e:
+                        gm = None
+                        e_msg = self.get_exception_source(e)
+                        self.print_marker(
+                            "Failed to compile", idx, num_nodes, node.target, e_msg
+                        )
+                start = time.time()
+                golden = cast_ios_and_run(node, args, node.kwargs)
+                end = time.time()
+                self.print_marker(
+                    "Golden", idx, num_nodes, node.target, time=(end - start)
+                )
+                XLAOpByOpExecutor.golden_time += end - start
+                if (
+                    self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
+                    and test_this_op
+                    and gm is not None
+                ):
+
+                    try:
+                        start = time.time()
+                        calculated, stderr = self.run_op(gm, *args)
+
+                        end = time.time()
+                        self.print_marker(
+                            "Running", idx, num_nodes, node.target, time=(end - start)
+                        )
+                        XLAOpByOpExecutor.running_time += end - start
+                        self.set_runtime_stack_dump(stderr, op)
+
+                        if calculated is None:
+                            raise ValueError(f"Failed to execute: \n {stderr}")
+                        op.compilation_status = OpCompilationStatus.EXECUTED
+                        if self.compiler_config.verify_op_by_op:
+                            atol = calculate_atol(calculated, golden)
+                            op.atol = atol
+                            if atol > self.required_atol:
+                                print(f"atol too high for {idx}: {atol}")
+                            pcc = calculate_pcc(calculated, golden)
+                            op.pcc = pcc
+                            if pcc < self.required_pcc:
+                                print(f"pcc too low for {idx}: {pcc}")
+                    except Exception as e:
+                        e_msg = self.get_exception_source(e)
+                        self.print_marker(
+                            "Failed to execute", idx, num_nodes, node.target, e_msg
+                        )
+
+                node_to_tensor[node] = golden
+            elif node.op == "output":
+                args = node.args[0]
+                output_tensors = [node_to_tensor[arg] for arg in args]
+                outputs = output_tensors
+
+            args_set = set()
+            for arg in node.args:
+                if arg in args_set:
+                    continue
+                args_set.add(arg)
+                if isinstance(arg, torch.fx.node.Node):
+                    out_degree[arg] -= 1
+                    if out_degree[arg] == 0 and arg.op != "output":
+                        del node_to_tensor[arg]
+                        out_degree.pop(arg)
+
+            # Finished handling this op, increment global op index
+            XLAOpByOpExecutor.global_op_idx += 1
+
+        self.compiler_config.save_unique_ops()
+        if self.execute_process is not None:
+            self.execute_process.terminate()
+            self.execute_process = None
+        if self.stderror_redirected:
+            os.unlink(self.file_stderr.name)
+            self.stderror_redirected = False
+        print(
+            f"Total Time - Compiling: {XLAOpByOpExecutor.compiling_time:.2f} s, Running: {XLAOpByOpExecutor.running_time:.2f} s, Golden: {XLAOpByOpExecutor.golden_time:.2f} s"
+        )
+        return outputs
+
+    def __call__(self, *inputs):
+        return self.run_gm_op_by_op(*inputs)
+
+
+def xla_pass_pipeline(gm, example_inputs, compiler_config):
+    decompositions = torch._decomp.core_aten_decompositions()
+    decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
+
+    gm = make_fx(gm, decomposition_table=decompositions, tracing_mode="real")(
+        *example_inputs
+    )
+    gm = bridge.extract_compiled_graph(gm, example_inputs)
+    gm.graph.eliminate_dead_code()
+    return gm
+
+
+def xla_backend(gm, example_inputs, options: BackendOptions = None):
+    if options is None:
+        cc = CompilerConfig()
+        devices = None
+        async_mode = False
+    else:
+        cc = options.compiler_config
+        devices = options.devices
+        async_mode = options.async_mode
+
+    gm = xla_pass_pipeline(gm, example_inputs, cc)
+
+    if cc.compile_depth == CompileDepth.EXECUTE_OP_BY_OP:
+        return XLAOpByOpExecutor(gm, cc)
+    return gm
