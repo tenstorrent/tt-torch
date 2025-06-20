@@ -71,9 +71,9 @@ def test_albert_masked_lm(
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    variant, variant_desc = variant_info
+    variant, variant_config = variant_info
     model_name = f"albert/{variant}-masked_lm"
-    print(f"Testing model_name: {model_name} variant_desc: {variant_desc}", flush=True)
+    print(f"Testing model_name: {model_name} variant: {variant}", flush=True)
 
     required_pcc = 0.98 if "xxlarge" in variant else 0.99
 

@@ -43,9 +43,9 @@ print("Available variants:", available_variants)
 def test_bert(record_property, mode, op_by_op, variant_info):
 
     # Use variant in model name if specified
-    variant, variant_desc = variant_info
+    variant, variant_config = variant_info
     model_name = f"BERT-{variant}"
-    print(f"Testing model_name: {model_name} variant_desc: {variant_desc}", flush=True)
+    print(f"Testing model_name: {model_name} variant: {variant}", flush=True)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
