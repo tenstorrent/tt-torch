@@ -298,6 +298,11 @@ def _base_backend(
 @tt_torch_error_message
 @register_backend(name="tt")
 def backend(gm, example_inputs, options: BackendOptions = None):
+    if os.environ.get("TT_TORCH_USE_XLA", False):
+        from tt_torch.dynamo.xla_backend import xla_backend
+
+        return xla_backend(gm, example_inputs, options)
+
     warnings.filterwarnings("ignore", message="Failed to fetch module*")
     assert isinstance(gm, torch.fx.GraphModule), "Backend only supports torch graphs"
 

@@ -68,9 +68,12 @@ class install_metal_libs(install_lib):
             os.path.join(
                 os.getcwd(),
                 "third_party",
-                "tt-mlir",
+                "tt-xla",
                 "src",
-                "tt-mlir-build",
+                "tt-xla",
+                "third_party",
+                "tt-mlir",
+                "build",
                 "bin",
                 "ttmlir-opt",
             )
@@ -81,6 +84,10 @@ class install_metal_libs(install_lib):
         src_tools_dir = os.path.abspath(
             os.path.join(
                 os.getcwd(),
+                "third_party",
+                "tt-xla",
+                "src",
+                "tt-xla",
                 "third_party",
                 "tt-mlir",
                 "src",
@@ -193,7 +200,8 @@ setup(
     },
     zip_safe=False,
     install_requires=[
-        "torch@https://download.pytorch.org/whl/cpu/torch-2.7.0%2Bcpu-cp310-cp310-manylinux_2_28_x86_64.whl",
+        "torch==2.7.0",
+        "torch-xla==2.7.0",
         "stablehlo@https://github.com/openxla/stablehlo/releases/download/v1.0.0/stablehlo-1.0.0.1715728102%2B6051bcdf-cp310-cp310-linux_x86_64.whl",
         "numpy",
         "onnx==1.17.0",

@@ -32,6 +32,8 @@ import io
 import csv
 import tt_mlir
 
+import torch_xla.core.xla_model as xm
+
 
 def skip_full_eval_test(
     record_property,
@@ -502,8 +504,12 @@ class ModelTester:
             self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP
             or self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
         ):
+            # assert not os.environ.get("TT_TORCH_USE_XLA", False), "Op-by-op mode is not supported with XLA currently"
             return self._test_model_eval_op_by_op(on_device)
         if self.data_parallel_mode:
+            assert not os.environ.get(
+                "TT_TORCH_USE_XLA", False
+            ), "Data parallel mode is not supported with XLA currently"
             outputs = self._test_model_eval_data_parallel(assert_eval_token_mismatch)
             assert len(outputs) == len(self.devices), "Num outputs != num devices"
             return outputs
@@ -571,15 +577,35 @@ class ModelTester:
                 )
         return final_outputs
 
+    def push_inputs_to_xla_device(self, inputs, device):
+        if isinstance(inputs, torch.Tensor):
+            return inputs.to(device)
+        elif isinstance(inputs, collections.abc.Mapping):
+            return {k: push_inputs_to_xla_device(v, device) for k, v in inputs.items()}
+        elif isinstance(inputs, collections.abc.Sequence):
+            return [push_inputs_to_xla_device(i) for i in inputs]
+        else:
+            raise NotImplementedError
+
     @torch.inference_mode()
     def _test_model_eval_base(self, on_device, assert_eval_token_mismatch):
         model = self.get_framework_model()
         golden = self.get_golden_outputs(model, self.inputs)
 
         if on_device == True:
+            if os.environ.get("TT_TORCH_USE_XLA", False):
+                model = model.to(xm.xla_device())
             model = self.compile_model(model, self.compiler_config)
 
-        outputs = self.run_model(model, self.inputs)
+        inputs = self.inputs
+        if os.environ.get("TT_TORCH_USE_XLA", False):
+            inputs = self.push_inputs_to_xla_device(inputs, xm.xla_device())
+
+        outputs = self.run_model(model, inputs)
+
+        if os.environ.get("TT_TORCH_USE_XLA", False):
+            outputs = self.push_inputs_to_xla_device(outputs, "cpu")
+
         self.record_property("achieved_compile_depth", "EXECUTE")
 
         if self.compiler_config._enable_intermediate_verification:
