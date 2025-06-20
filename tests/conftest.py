@@ -100,9 +100,10 @@ def pytest_collection_modifyitems(config, items):
         if passes_depth and passes_backend:
             filtered_items.append(item)
 
-    items[:] = filtered_items
+        # Only apply item filtering if filters are specified.
+        items[:] = filtered_items
 
-    # Check if the --crashsafe option is enabled
+    # Disable crashsafe logging for multiple tests as it only supports single test runs
     if config.getoption("--crashsafe"):
         # Count the number of collected tests
         num_tests = len(items)
