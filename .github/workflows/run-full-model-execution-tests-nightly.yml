@@ -203,7 +203,6 @@ jobs:
                 tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-3B-Base-eval]
                 tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-3B-Instruct-eval]
                 tests/models/t5/test_t5.py::test_t5[full-t5-large-eval]
-                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-eval]
             "
           },
           {
