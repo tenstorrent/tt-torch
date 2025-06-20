@@ -117,7 +117,7 @@ def constant_fold(gm):
     return gm
 
 
-def node_to_device(node, device_map, key=False, verbose=True):
+def node_to_device(node, device_map, verbose=False):
     # If key is True, output both the node's device and the key used in the device map.
     # If key is False, output only the node's device.
     if (
@@ -125,7 +125,7 @@ def node_to_device(node, device_map, key=False, verbose=True):
         or "nn_module_stack" not in node.meta
         or len(node.meta["nn_module_stack"]) == 0
     ):
-        return (None, None) if key else None
+        return (None, None)
 
     # The last stack contains the most information, only relevent fields will be used
     # Contains string like: "L['self']._modules['model']._modules['layers']._modules['30'].mlp.up_proj"
@@ -145,11 +145,11 @@ def node_to_device(node, device_map, key=False, verbose=True):
     for i in range(1, len(parsed_vals) + 1):
         layer = ".".join(parsed_vals[:i])
         if layer in device_map:
-            return (device_map[layer], layer) if key else device_map[layer]
+            return (device_map[layer], layer)
 
     if verbose:
         print(f"Warning: No device found for node {node}")
-    return (None, None) if key else None
+    return (None, None)
 
 
 def flatten_args(args):
@@ -258,7 +258,7 @@ def move_device_map_key(gm, node_key, target_device, device_map, call_stack=None
     if call_stack is None:
         call_stack = set()
 
-    # Prevent infinite recursion when a node_key has internal dependencies
+    # Prevent infinite recursion when loop in graph (unlikely)
     if node_key in call_stack:
         return device_map
 
@@ -267,25 +267,24 @@ def move_device_map_key(gm, node_key, target_device, device_map, call_stack=None
     # Find all nodes that will be moved and check their inputs
     nodes_with_key = []
     for graph_node in gm.graph.nodes:
-        _, key = node_to_device(graph_node, device_map, key=True, verbose=False)
+        _, key = node_to_device(graph_node, device_map)
         if key == node_key:
             nodes_with_key.append(graph_node)
 
     for curr_node in nodes_with_key:
-        # Recursively move all inputs of curr_node to target_device if they are on a later device
+        # Recursively move any inputs of curr_node to target_device when input_device > target_device
         for input_node in curr_node.all_input_nodes:
-            input_device, input_key = node_to_device(
-                input_node, device_map, key=True, verbose=False
-            )
-            if input_device is not None and input_device > target_device:
+            input_device, input_key = node_to_device(input_node, device_map)
+            if (
+                input_key != node_key
+                and input_device is not None
+                and input_device > target_device
+            ):
                 device_map = move_device_map_key(
                     gm, input_key, target_device, device_map, call_stack
                 )
 
     device_map[node_key] = target_device
-    print(
-        f"Moved device map key '{node_key}' to device {target_device} (affects {len(nodes_with_key)} nodes)"
-    )
     call_stack.remove(node_key)
 
     return device_map
@@ -301,11 +300,9 @@ def sort_device_map(gm, compiler_config):
 
     device_map = compiler_config.device_map.copy()
     for node in gm.graph.nodes:
-        node_device = node_to_device(node, device_map, verbose=False)
+        node_device, _ = node_to_device(node, device_map)
         for input_node in node.all_input_nodes:
-            input_device, input_key = node_to_device(
-                input_node, device_map, key=True, verbose=False
-            )
+            input_device, input_key = node_to_device(input_node, device_map)
             if (
                 node_device is not None
                 and input_device is not None
@@ -319,10 +316,6 @@ def sort_device_map(gm, compiler_config):
 # The following function splits the graph onto the devices specified in the device_map
 # We create empty subgraphs for each device and then add the nodes to the appropriate subgraph
 def split_onto_devices(gm, compiler_config):
-
-    device_map = sort_device_map(gm, compiler_config)
-    # Update the compiler_config with the fixed device_map
-    compiler_config.device_map = device_map
 
     device_indices = set(compiler_config.device_map.values())
     if len(device_indices) == 0:
@@ -350,6 +343,9 @@ def split_onto_devices(gm, compiler_config):
                     output_index += 1
         return mcg
 
+    device_map = sort_device_map(gm, compiler_config)
+    compiler_config.device_map = device_map
+
     node_to_new_nodes = {}
     user_input_index = 0
     consumer_input_indices = [0] * len(device_indices)
@@ -359,7 +355,7 @@ def split_onto_devices(gm, compiler_config):
 
     def update_device_index(node):
         nonlocal prev_device_idx
-        device_idx = node_to_device(node, compiler_config.device_map)
+        device_idx, _ = node_to_device(node, compiler_config.device_map, verbose=True)
         if device_idx is None:
             assert prev_device_idx is not None
             device_idx = prev_device_idx
@@ -370,7 +366,8 @@ def split_onto_devices(gm, compiler_config):
         if node.op == "get_attr" or node.op == "placeholder":
             is_placeholder = node.op == "placeholder"
             user_devices = [
-                node_to_device(user, compiler_config.device_map) for user in node.users
+                node_to_device(user, compiler_config.device_map, verbose=True)[0]
+                for user in node.users
             ]
             user_devices = [d for d in user_devices if d is not None]
             devices = list(set(user_devices))
