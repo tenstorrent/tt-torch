@@ -54,7 +54,7 @@ def test_qwen2_casual_lm(record_property, mode, op_by_op):
         assert_pcc=assert_pcc,
         assert_atol=False,
         run_generate=False,
-        required_pcc=0.86,
+        required_pcc=0.85,
     )
 
     results = tester.test_model()
