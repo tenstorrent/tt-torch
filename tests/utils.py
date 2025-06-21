@@ -596,7 +596,7 @@ class ModelTester:
             inputs.value_cache = self.push_tensors_to_device(inputs.value_cache, device)
             return inputs
         else:
-            raise NotImplementedError("Type not supported: " + str(type(inputs)))
+            return inputs
 
     @torch.inference_mode()
     def _test_model_eval_base(self, on_device, assert_eval_token_mismatch):

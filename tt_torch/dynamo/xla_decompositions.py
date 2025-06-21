@@ -350,6 +350,13 @@ def gelu(x, approximate="none"):
         raise ValueError(f"Unknown approximate method: {approximate}")
 
 
+def masked_fill_tensor(input, mask, value):
+    if value.device != input.device:
+        value = value.to(input.device)
+        return torch.masked_fill(input, mask, value)
+    return NotImplemented
+
+
 # TODO: DO we ever need this?
 def _get_default_decomposition_ops() -> DecompositionOpsList:
     aten = torch.ops.aten
@@ -422,6 +429,7 @@ def _get_custom_decopositions() -> DecompositionTable:
         aten.split_with_sizes.default: split_with_sizes,
         aten.gelu.default: gelu,
         aten.erf.default: erf,
+        aten.masked_fill.Tensor: masked_fill_tensor,
     }
 
 
