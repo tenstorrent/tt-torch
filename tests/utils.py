@@ -7,7 +7,7 @@ import pytest
 import requests
 import onnx
 import tt_torch
-from transformers.cache_utils import DynamicCache, _flatten_dynamic_cache
+from transformers.cache_utils import Cache, DynamicCache, _flatten_dynamic_cache
 from onnx.tools import update_model_dims
 import gc
 import onnxruntime
@@ -33,6 +33,7 @@ import csv
 import tt_mlir
 
 import torch_xla.core.xla_model as xm
+import copy
 
 
 def skip_full_eval_test(
@@ -578,14 +579,25 @@ class ModelTester:
         return final_outputs
 
     def push_inputs_to_xla_device(self, inputs, device):
-        if isinstance(inputs, torch.Tensor):
+        if hasattr(inputs, "to"):
             return inputs.to(device)
         elif isinstance(inputs, collections.abc.Mapping):
-            return {k: push_inputs_to_xla_device(v, device) for k, v in inputs.items()}
+            out_object = type(inputs)()
+            for k, v in inputs.items():
+                out_object[k] = self.push_inputs_to_xla_device(v, device)
+            return out_object
         elif isinstance(inputs, collections.abc.Sequence):
-            return [push_inputs_to_xla_device(i) for i in inputs]
+            return type(inputs)(
+                [self.push_inputs_to_xla_device(i, device) for i in inputs]
+            )
+        elif isinstance(inputs, Cache):
+            inputs.key_cache = self.push_inputs_to_xla_device(inputs.key_cache, device)
+            inputs.value_cache = self.push_inputs_to_xla_device(
+                inputs.value_cache, device
+            )
+            return inputs
         else:
-            raise NotImplementedError
+            raise NotImplementedError("Type not supported: " + str(type(inputs)))
 
     @torch.inference_mode()
     def _test_model_eval_base(self, on_device, assert_eval_token_mismatch):
@@ -597,7 +609,9 @@ class ModelTester:
                 model = model.to(xm.xla_device())
             model = self.compile_model(model, self.compiler_config)
 
-        inputs = self.inputs
+        inputs = copy.deepcopy(
+            self.inputs
+        )  # do not want to mutate self.inputs, that is put and leave them on device
         if os.environ.get("TT_TORCH_USE_XLA", False):
             inputs = self.push_inputs_to_xla_device(inputs, xm.xla_device())
 
