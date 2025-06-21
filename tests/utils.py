@@ -7,7 +7,7 @@ import pytest
 import requests
 import onnx
 import tt_torch
-from transformers.cache_utils import DynamicCache, _flatten_dynamic_cache
+from transformers.cache_utils import Cache, DynamicCache, _flatten_dynamic_cache
 from onnx.tools import update_model_dims
 import gc
 import onnxruntime
@@ -590,8 +590,14 @@ class ModelTester:
             return type(inputs)(
                 [self.push_inputs_to_xla_device(i, device) for i in inputs]
             )
+        elif isinstance(inputs, Cache):
+            inputs.key_cache = self.push_inputs_to_xla_device(inputs.key_cache, device)
+            inputs.value_cache = self.push_inputs_to_xla_device(
+                inputs.value_cache, device
+            )
+            return inputs
         else:
-            raise NotImplementedError
+            raise NotImplementedError("Type not supported: " + str(type(inputs)))
 
     @torch.inference_mode()
     def _test_model_eval_base(self, on_device, assert_eval_token_mismatch):
