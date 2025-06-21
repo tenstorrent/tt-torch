@@ -8,6 +8,10 @@ from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from tt_torch.tools.device_manager import DeviceManager
 
+import os
+import copy
+import torch_xla.core.xla_model as xm
+
 
 class ThisTester(ModelTester):
     def _load_model(self):
@@ -81,7 +85,11 @@ def test_distilbert_multiloop(record_property, model_name, mode, op_by_op, num_l
     cc.consteval_parameters = True
     cc.cache_preprocessed_constants = True
 
-    device = DeviceManager.create_parent_mesh_device(mesh_shape=[1, 1])
+    device = (
+        DeviceManager.create_parent_mesh_device(mesh_shape=[1, 1])
+        if not os.environ.get("TT_TORCH_USE_XLA", False)
+        else xm.xla_device()
+    )
 
     tester = ThisTester(
         model_name,
@@ -93,16 +101,26 @@ def test_distilbert_multiloop(record_property, model_name, mode, op_by_op, num_l
         model_name_suffix="-multiloop",
         devices=[device],
     )
-    model = tester.compile_model(tester.get_framework_model(), tester.compiler_config)
+    model = tester.get_framework_model()
+    if os.environ.get("TT_TORCH_USE_XLA", False):
+        model = model.to(device)
+
+    model = tester.compile_model(model, tester.compiler_config)
+    inputs = copy.deepcopy(tester.inputs)
+    if os.environ.get("TT_TORCH_USE_XLA", False):
+        inputs = tester.push_tensors_to_device(inputs, device)
 
     with torch.no_grad():
         start_time = time.time()
         for _ in range(num_loops):
-            results = tester.run_model(model, tester.inputs)
+            results = tester.run_model(model, inputs)
+            if os.environ.get("TT_TORCH_USE_XLA", False):
+                results = tester.push_tensors_to_device(results, "cpu")
         end_time = time.time()
 
         print(f"Model: {model_name} | Input: {tester.text} | Output: {results}")
         print(f"{num_loops} iterations took {(end_time - start_time)} seconds")
 
     tester.finalize()
-    DeviceManager.release_parent_device(device)
+    if not os.environ.get("TT_TORCH_USE_XLA", False):
+        DeviceManager.release_parent_device(device)
