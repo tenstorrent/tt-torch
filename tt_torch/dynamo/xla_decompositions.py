@@ -242,7 +242,6 @@ def upsample_nearest_default(
     scales_w: Optional[float] = None,
     scales_d: Optional[float] = None,
 ) -> torch.Tensor:
-    breakpoint()
     scale_factors = [scales_h, scales_w, scales_d] if output_size is None else None
     osize = torch._decomp.decompositions.upsample_compute_output_size(
         input.size(), output_size, scale_factors

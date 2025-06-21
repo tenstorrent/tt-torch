@@ -578,23 +578,22 @@ class ModelTester:
                 )
         return final_outputs
 
-    def push_inputs_to_xla_device(self, inputs, device):
+    def push_tensors_to_device(self, inputs, device):
         if hasattr(inputs, "to"):
             return inputs.to(device)
-        elif isinstance(inputs, collections.abc.Mapping):
-            out_object = type(inputs)()
-            for k, v in inputs.items():
-                out_object[k] = self.push_inputs_to_xla_device(v, device)
-            return out_object
+        elif isinstance(
+            inputs, dict
+        ):  # transformers input/output objects are subclasses of dict, however we still wish to return the same wrapper object
+            return type(inputs)(
+                **{k: self.push_tensors_to_device(v, device) for k, v in inputs.items()}
+            )
         elif isinstance(inputs, collections.abc.Sequence):
             return type(inputs)(
-                [self.push_inputs_to_xla_device(i, device) for i in inputs]
+                [self.push_tensors_to_device(i, device) for i in inputs]
             )
         elif isinstance(inputs, Cache):
-            inputs.key_cache = self.push_inputs_to_xla_device(inputs.key_cache, device)
-            inputs.value_cache = self.push_inputs_to_xla_device(
-                inputs.value_cache, device
-            )
+            inputs.key_cache = self.push_tensors_to_device(inputs.key_cache, device)
+            inputs.value_cache = self.push_tensors_to_device(inputs.value_cache, device)
             return inputs
         else:
             raise NotImplementedError("Type not supported: " + str(type(inputs)))
@@ -613,12 +612,12 @@ class ModelTester:
             self.inputs
         )  # do not want to mutate self.inputs, that is put and leave them on device
         if os.environ.get("TT_TORCH_USE_XLA", False):
-            inputs = self.push_inputs_to_xla_device(inputs, xm.xla_device())
+            inputs = self.push_tensors_to_device(inputs, xm.xla_device())
 
         outputs = self.run_model(model, inputs)
 
         if os.environ.get("TT_TORCH_USE_XLA", False):
-            outputs = self.push_inputs_to_xla_device(outputs, "cpu")
+            outputs = self.push_tensors_to_device(outputs, "cpu")
 
         self.record_property("achieved_compile_depth", "EXECUTE")
 
