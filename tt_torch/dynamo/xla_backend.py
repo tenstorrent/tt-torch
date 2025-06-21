@@ -469,7 +469,7 @@ class XLAOpByOpExecutor:
                 node_to_tensor[node] = inputs[input_index]
                 input_index += 1
             elif node.op == "get_attr":
-                node_to_tensor[node] = getattr(self.gm, node.name)
+                node_to_tensor[node] = getattr(self.gm, node.target)
             elif node.op == "call_function":
                 args = []
                 for arg in node.args:
