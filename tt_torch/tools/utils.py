@@ -304,7 +304,7 @@ class CompilerConfig:
         self.stablehlo_mlir_module = None
         self.unique_ops = {}
         self.stable_hlo_ops = []
-        self.model_name = ""
+        self._model_name = ""
         self.model_group = ""
         self.results_path = "results/models/"
         self.single_op_timeout = 30
@@ -323,11 +323,39 @@ class CompilerConfig:
         self.record_property = lambda *args, **kwargs: None  # Default to no-op
         self.runtime_intermediate_cache = None  # Do not serialize.
         self.save_mlir_override = None
+        self.output_mlir_dir = "model_mlir"
+        self.valid_dialects = ["STABLEHLO", "TTIR", "TTNN"]
         self.device_map = {}
         self.apply_environment_overrides()
         self.post_init()
         self.automatic_parallelization = False
         self.mesh_shape = [1, 1]
+
+    @property
+    def model_name(self):
+        return self._model_name
+
+    @model_name.setter
+    def model_name(self, value):
+        self._model_name = value
+        if value and self.save_mlir_override:
+            self.cleanup_old_mlir_files()
+
+    def cleanup_old_mlir_files(self):
+        try:
+            sanitized_model_name = sanitize_filename(self._model_name)
+            if not sanitized_model_name:
+                return
+            output_dir = self.output_mlir_dir
+            os.makedirs(output_dir, exist_ok=True)
+            for dialect in self.save_mlir_override:
+                filepath_to_remove = os.path.join(
+                    output_dir, f"{sanitized_model_name}_{dialect.lower()}.mlir"
+                )
+                if os.path.exists(filepath_to_remove):
+                    os.remove(filepath_to_remove)
+        except Exception as e:
+            print(f"Error while cleaning up old MLIR files: {e}.")
 
     @property
     def verify_op_by_op(self):
@@ -404,24 +432,16 @@ class CompilerConfig:
             dialects = [
                 d.strip() for d in save_mlir_str.split(",")
             ]  # Using comma as a separator
-            valid_dialects = ["STABLEHLO", "TTIR", "TTNN"]
             for dialect in dialects:
-                if dialect in valid_dialects and dialect not in self.save_mlir_override:
+                if (
+                    dialect in self.valid_dialects
+                    and dialect not in self.save_mlir_override
+                ):
                     self.save_mlir_override.append(dialect)
                 elif dialect:
                     print(
                         f"Warning: Invalid SAVE_MLIR value: {dialect}. Expected one or more of {valid_dialects} separated by commas."
                     )
-            output_dir = "model_mlir"
-            os.makedirs(output_dir, exist_ok=True)
-            try:
-                sanitized_model_name = sanitize_filename(self.model_name)
-                for filename in os.listdir(output_dir):
-                    if filename.startswith(sanitized_model_name):
-                        filepath_to_remove = os.path.join(output_dir, filename)
-                        os.remove(filepath_to_remove)
-            except Exception as e:
-                print(f"Error while cleaning up old MLIR files: {e}.")
 
     def post_init(self):
         if self.consteval_parameters:
@@ -762,7 +782,8 @@ def serialize_enum(enum_value):
 
 def sanitize_filename(name):
     # Replace any character that is not a letter, digit, underscore, or hyphen with '_'
-    return re.sub(r"[^\w\-]", "_", name)
+    output = re.sub(r"[^\w\-]", "_", name)
+    return output if output != "" else None
 
 
 def tt_torch_error_message(func):
