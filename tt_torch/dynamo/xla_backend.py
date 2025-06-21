@@ -594,15 +594,25 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
     decompositions = torch._decomp.core_aten_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
 
-    gm = make_fx(gm, decomposition_table=decompositions, tracing_mode="real")(
-        *example_inputs
+    # gm = make_fx(gm, decomposition_table=decompositions, tracing_mode="real")(
+    #     *example_inputs
+    # )
+
+    gm = (
+        torch.export.export(gm, tuple(example_inputs), strict=False)
+        .run_decompositions(decompositions)
+        .module()
     )
+
     gm = bridge.extract_compiled_graph(gm, example_inputs)
-    gm.graph.eliminate_dead_code()
+    # gm.graph.eliminate_dead_code()
     return gm
 
 
 def xla_backend(gm, example_inputs, options: BackendOptions = None):
+    assert (
+        example_inputs[0].device.type == "xla"
+    ), "Sanity check failed, the xla_backend should not be called with inputs not on an xla device"
     if options is None:
         cc = CompilerConfig()
         devices = None
