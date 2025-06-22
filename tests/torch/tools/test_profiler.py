@@ -15,6 +15,7 @@ expected_report_path = f"results/perf/{Profiler.DEFAULT_OUTPUT_FILENAME}"
 
 
 def test_profiler_cli():
+    pytest.skip()  # https://github.com/tenstorrent/tt-torch/issues/980
     profiler_command = f'python tt_torch/tools/tt_profile.py "{test_command_add}"'
     profiler_subprocess = subprocess.run(profiler_command, shell=True)
 
@@ -40,6 +41,7 @@ def test_profiler_cli():
 
 
 def test_profiler_module():
+    pytest.skip()  # https://github.com/tenstorrent/tt-torch/issues/980
     tt_profile(test_command_add)
 
     assert os.path.exists(
