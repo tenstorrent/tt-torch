@@ -27,7 +27,7 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-      setup-args: "--include-models"
+      setup-args: "--code_coverage --include-models"
 
   # Just run weekly set of op-by-op tests which are op-by-op models that are already
   # covered in full-model-execute, and in general should remain passing. Don't bother
