@@ -207,6 +207,7 @@ class TorchExecutor(OpByOpExecutor):
             if isinstance(mcg.constant_inputs[0], (int, float))
             else tuple(mcg.constant_inputs[0])
         )
+        self.buffers = list(self.mcg.buffers.values())[0]
         if self.compiler_config is None:
             compiler_config = CompilerConfig()
         self.compiler_config = compiler_config
@@ -488,7 +489,7 @@ class TorchExecutor(OpByOpExecutor):
             CompileDepth.COMPILE_OP_BY_OP,
         ):
             return self.run_gm_op_by_op(
-                *(self.graph_constants + tuple(self.program.buffers()) + inputs)
+                *(self.graph_constants + tuple(self.buffers) + inputs)
             )
         else:
             inputs = self.typecast_inputs(inputs)
