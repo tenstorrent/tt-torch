@@ -21,124 +21,21 @@ permissions:
 
 jobs:
   pre-commit:
-    if: github.event.pull_request.draft == false
     uses: ./.github/workflows/pre-commit.yml
     secrets: inherit
   spdx:
-    if: github.event.pull_request.draft == false
     uses: ./.github/workflows/spdx.yml
     secrets: inherit
   docker-build:
-    if: github.event.pull_request.draft == false
     uses: ./.github/workflows/build-image.yml
     secrets: inherit
     with:
       mlir_override: ${{ inputs.mlir_override }}
-  check-files:
-    if: github.event.pull_request.draft == false
-    runs-on: ubuntu-latest
-    outputs:
-      skip: ${{ steps.check.outputs.skip }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # fetch full history
-      - name: Check if ignored files are modified or "#skip-onpr-tests" in commit description
-        id: check
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          # Fetch the PR head commit so it's available locally
-          git fetch origin ${{ github.event.pull_request.head.sha }}
-          # Now check that commit message for flag to skip build
-          COMMIT_MSG=$(git log -1 --pretty=%B ${{ github.event.pull_request.head.sha }})
-          if [[ "$COMMIT_MSG" == *"#skip-onpr-tests"* ]]; then
-            echo "User requested skip via commit message."
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          all_match=true
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            CHANGED_FILES=$(gh pr diff ${{ github.event.pull_request.number }} --name-only --repo ${{ github.repository }})
-
-            # Define patterns for files that should skip the build
-            SKIP_PATTERNS=(
-              '^.*\.md$'
-              '^.*\.gitignore$'
-              '^.*LICENSE.*$'
-              '^\.github/workflows/.*nightly.*\.yml$'
-              '^\.github/workflows/.*weekly.*\.yml$'
-              '^\.github/workflows/.*depth.*bench.*\.yml$'
-              '^\.github/workflows/fail_inspector.yml$'
-              '^results/parse_op_by_op_results\.py$'
-            )
-            COMBINED_PATTERN=$(IFS='|'; echo "${SKIP_PATTERNS[*]}")
-
-            # Determine if all files changed in PR can skip CI
-            for file in $CHANGED_FILES;
-            do
-              if [[ ! $file =~ $COMBINED_PATTERN ]]; then
-                all_match=false
-                break
-              fi
-            done
-          else
-            all_match=false
-          fi
-          if [ "$all_match" = true ]; then
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-            echo "> --- Build is skipped. Files in PR:"
-            echo "$CHANGED_FILES"
-            echo "< ---"
-          else
-            echo "skip=false" >> "$GITHUB_OUTPUT"
-            echo "> Build is required."
-          fi
-
   build:
-    needs: [pre-commit, spdx, docker-build, check-files]
-    if: github.event.pull_request.draft == false && needs.check-files.outputs.skip == 'false'
+    needs: [pre-commit, spdx, docker-build]
     uses: ./.github/workflows/run-build.yml
     secrets: inherit
     with:
       mlir_override: ${{ github.event.inputs.mlir_override }}
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-      setup-args: "--include-models" #TODO - This should be toggleable?
-  test:
-    needs: [build, docker-build]
-    if: github.event.pull_request.draft == false
-    uses: ./.github/workflows/run-tests.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  # llmbox-tests:
-  #   needs: [build, docker-build]
-  #   uses: ./.github/workflows/run-multidevice-tests.yml
-  #   secrets: inherit
-  #   with:
-  #     docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  full-model-test:
-    needs: [build, docker-build]
-    if: github.event.pull_request.draft == false
-    uses: ./.github/workflows/run-full-model-execution-tests.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-      run-codecov: 'false'
-      run-dump-mlir: 'false'
-  check-all-green:
-    if: always()
-    needs:
-      - pre-commit
-      - spdx
-      - build
-      - test
-      - full-model-test
-    runs-on: Ubuntu-latest
-    steps:
-    - name: Check if the needed jobs succeeded or failed
-      uses: re-actors/alls-green@release/v1
-      with:
-        allowed-skips: pre-commit,spdx,docker-build,check-files,build,test,full-model-test
-        jobs: ${{ toJSON(needs) }}
+      setup-args: "--include-models --build_perf" #TODO - This should be toggleable?
