@@ -322,12 +322,18 @@ class StablehloExecutor(OpByOpExecutor):
         ) and self.compiler_config.op_by_op_backend == OpByOpBackend.STABLEHLO, (
             "program can only be added in op by op mode"
         )
+
+        assert (
+            len(mcg.programs) == 0
+        ), "SHLO OpbyOpExecutor does not support multichip pipeline parallel execution"
+
         self.program = mcg.programs[0]
         self.graph_constants = (
             (mcg.constant_inputs[0],)
             if isinstance(mcg.constant_inputs[0], (int, float))
             else tuple(mcg.constant_inputs[0])
         )
+        self.buffers = list(mcg.buffers.values())[0]
 
     def add_onnx_model_proto(self, model_proto: onnx.ModelProto):
         assert (
@@ -490,7 +496,7 @@ class StablehloExecutor(OpByOpExecutor):
         if self.program is not None:
             try:
                 return self.program.graph_module(
-                    *(self.graph_constants + tuple(self.program.buffers()) + inputs)
+                    *(self.graph_constants + tuple(self.buffers) + inputs)
                 )
             except Exception as e:
                 assert False, f"Failed to execute binary or program: {e}"

@@ -37,14 +37,16 @@ class BackendOptions:
         self.constant_cache = constant_cache if constant_cache is not None else {}
 
     def clear_caches(self):
-        # Deallocate runtime tensors when the BackendOptions object is deleted
-        for device_weights in self.constant_cache.keys():
-            for runtime_weight in device_weights.keys():
-                tt_mlir.deallocate_tensor(runtime_weight, force=True)
+        # Deallocate runtime tensors when the BackendOptions object is deleted\
+        if self.constant_cache is not None:
+            for device_weights in self.constant_cache.keys():
+                for runtime_weight in device_weights.keys():
+                    tt_mlir.deallocate_tensor(runtime_weight, force=True)
 
-        for device_buffers in self.buffer_cache.keys():
-            for runtime_buffer in device_buffers.keys():
-                tt_mlir.deallocate_tensor(runtime_buffer, force=True)
+        if self.buffer_cache is not None:
+            for device_buffers in self.buffer_cache.keys():
+                for runtime_buffer in device_buffers.keys():
+                    tt_mlir.deallocate_tensor(runtime_buffer, force=True)
 
     def __del__(self):
         self.clear_caches()
