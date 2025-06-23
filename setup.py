@@ -193,7 +193,7 @@ setup(
     },
     zip_safe=False,
     install_requires=[
-        "torch@https://download.pytorch.org/whl/cpu-cxx11-abi/torch-2.7.0%2Bcpu.cxx11.abi-cp310-cp310-linux_x86_64.whl",
+        "torch@https://download.pytorch.org/whl/cpu/torch-2.7.0%2Bcpu-cp310-cp310-manylinux_2_28_x86_64.whl",
         "stablehlo@https://github.com/openxla/stablehlo/releases/download/v1.0.0/stablehlo-1.0.0.1715728102%2B6051bcdf-cp310-cp310-linux_x86_64.whl",
         "numpy",
         "onnx==1.17.0",
