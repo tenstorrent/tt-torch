@@ -278,6 +278,8 @@ def move_device_map_key(gm, node_key, target_device, device_map, call_stack=None
             if (
                 input_key != node_key
                 and input_device is not None
+                # and isinstance(target_device, (int, float))
+                # and isinstance(input_device, (int, float))
                 and input_device > target_device
             ):
                 device_map = move_device_map_key(
@@ -298,7 +300,16 @@ def sort_device_map(gm, compiler_config):
     # consider moving the consuming node to the device of the input.
     # - Calculate the cost to move the input vs consumer and choose the cheaper option.
 
+    # Replace "disk" device assignments with the highest device index
+    num_disk_nodes = 0
+    highest_device = len(set(compiler_config.device_map.values())) - 2
+    for key, value in compiler_config.device_map.items():
+        if value == "disk":
+            compiler_config.device_map[key] = highest_device
+            num_disk_nodes += 1
+
     device_map = compiler_config.device_map.copy()
+    print(f"Device map before sorting: {device_map}")
     device_map_was_modified = False
 
     for node in gm.graph.nodes:
@@ -317,7 +328,7 @@ def sort_device_map(gm, compiler_config):
         print(
             "\033[93m\nWARNING: Device map was modified to ensure topological ordering. This may cause memory on earlier devices to become full.\n\033[0m"
         )
-
+    print(f"Device map after sorting: {device_map}")
     return device_map
 
 
@@ -326,6 +337,7 @@ def sort_device_map(gm, compiler_config):
 def split_onto_devices(gm, compiler_config):
 
     device_indices = set(compiler_config.device_map.values())
+    device_indices.discard("disk")
     if len(device_indices) == 0:
         device_indices = [0]
     mcg = MultiChipGraph(device_indices)
