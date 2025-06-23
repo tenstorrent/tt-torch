@@ -3,28 +3,19 @@
 # SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/docs/transformers/en/model_doc/flan-t5
 
-from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, GenerationConfig
 import pytest
 from tests.utils import ModelTester
 import torch
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.flan_t5.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-small")
-        model = AutoModelForSeq2SeqLM.from_pretrained(
-            "google/flan-t5-small", torch_dtype=torch.bfloat16
-        )
-        return model
+        return ModelLoader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        inputs = self.tokenizer(
-            "A step by step recipe to make bolognese pasta:", return_tensors="pt"
-        )
-        decoder_input_ids = torch.tensor([[self.tokenizer.pad_token_id]])
-        inputs["decoder_input_ids"] = decoder_input_ids
-        return inputs
+        return ModelLoader.load_inputs(dtype_override=torch.bfloat16)
 
 
 @pytest.mark.parametrize(
@@ -58,8 +49,6 @@ def test_flan_t5(record_property, mode, op_by_op):
     )
     results = tester.test_model()
     if mode == "eval":
-        logits = results.logits if hasattr(results, "logits") else results[0]
-        token_ids = torch.argmax(logits, dim=-1)
-        results = tester.tokenizer.batch_decode(token_ids, skip_special_tokens=True)
+        results = ModelLoader.decode_output(results)
 
     tester.finalize()
