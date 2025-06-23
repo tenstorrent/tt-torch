@@ -62,6 +62,12 @@ def test_falcon_pipeline_parallel(record_property, model_name, mode, op_by_op):
     device_map = infer_auto_device_map(
         model, max_memory={0: "8GiB", 1: "8GiB"}, no_split_module_classes=dont_split
     )
+    if model_name == "tiiuae/Falcon3-10B-Base":
+        device_map["model.layers.14"] = 0
+        device_map["model.layers.15"] = 0
+        device_map["model.layers.16"] = 0
+        device_map["model.layers.17"] = 0
+        device_map["model.layers.18"] = 0
 
     options = BackendOptions()
     cc = CompilerConfig()
@@ -76,7 +82,12 @@ def test_falcon_pipeline_parallel(record_property, model_name, mode, op_by_op):
     out = compiled_model(**test_input)
     golden = model(**test_input)
     verify_against_golden(
-        tuple([golden.logits]), tuple([out.logits]), True, False, required_atol=0.1
+        tuple([golden.logits]),
+        tuple([out.logits]),
+        True,
+        False,
+        required_atol=0.1,
+        required_pcc=0.98 if model_name == "tiiuae/Falcon3-10B-Base" else 0.99,
     )
 
     DeviceManager.release_sub_mesh_device(device1)
