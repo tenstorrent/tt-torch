@@ -324,7 +324,7 @@ class StablehloExecutor(OpByOpExecutor):
         )
 
         assert (
-            len(mcg.programs) == 0
+            len(mcg.programs) == 1
         ), "SHLO OpbyOpExecutor does not support multichip pipeline parallel execution"
 
         self.program = mcg.programs[0]
