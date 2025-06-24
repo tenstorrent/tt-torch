@@ -21,8 +21,8 @@ class ThisTester(ModelTester):
 
     def _load_inputs(self):
         self.inputs = self.loader.load_inputs(dtype_override=torch.bfloat16)
-        self.text = ModelLoader.sample_text  # class attribute remains the same
-        self.tokenizer = ModelLoader.tokenizer  # class attribute remains the same
+        self.text = ModelLoader.sample_text
+        self.tokenizer = self.loader.tokenizer
         return self.inputs
 
     def set_inputs_train(self, inputs):
