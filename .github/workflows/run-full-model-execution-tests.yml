@@ -118,6 +118,8 @@ jobs:
                 tests/models/vit/test_vit_n300.py::test_vit[full-eval]
                 tests/models/segformer/test_segformer_n300.py::test_segformer[full-eval]
                 tests/models/hardnet/test_hardnet_n300.py::test_hardnet[full-eval]
+                tests/models/falcon/test_falcon3_7b_10b_pipeline_parallel.py::test_falcon_pipeline_parallel[full-tiiuae/Falcon3-7B-Base-eval]
+                tests/models/falcon/test_falcon3_7b_10b_pipeline_parallel.py::test_falcon_pipeline_parallel[full-tiiuae/Falcon3-10B-Base-eval]
             "
           },
           {
