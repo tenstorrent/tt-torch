@@ -5,9 +5,9 @@ import torch
 import pytest
 
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from tests.utils import ModelTester, skip_full_eval_test
+from tests.utils import ModelTester
 from tt_torch.tools.device_manager import DeviceManager
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from tt_torch.tools.utils import CompilerConfig, OpByOpBackend
 from tt_torch.dynamo.backend import BackendOptions
 from accelerate import infer_auto_device_map
 from tt_torch.tools.verify import verify_against_golden
@@ -64,6 +64,11 @@ def test_falcon_pipeline_parallel(record_property, model_name, mode, op_by_op):
         model, max_memory={0: "11GiB", 1: "11GiB"}, no_split_module_classes=dont_split
     )
 
+    required_atol = 0.1
+    required_pcc = 0.98 if model_name == "tiiuae/Falcon3-10B-Base" else 0.99
+    assert_pcc = True
+    assert_atol = False
+
     options = BackendOptions()
     cc = CompilerConfig()
     options.compiler_config = cc
@@ -74,13 +79,25 @@ def test_falcon_pipeline_parallel(record_property, model_name, mode, op_by_op):
     compiled_model = torch.compile(model, backend="tt", dynamic=False, options=options)
     out = compiled_model(**test_input)
     golden = model(**test_input)
-    verify_against_golden(
+    pccs, atols, _, _ = verify_against_golden(
         tuple([golden.logits]),
         tuple([out.logits]),
-        True,
-        False,
-        required_atol=0.1,
-        required_pcc=0.98 if model_name == "tiiuae/Falcon3-10B-Base" else 0.99,
+        assert_pcc=assert_pcc,
+        assert_atol=assert_atol,
+        required_atol=required_atol,
+        required_pcc=required_pcc,
+    )
+
+    ModelTester.GenerateCustomTestReport(
+        record_property,
+        model_name,
+        cc,
+        pccs,
+        atols,
+        required_atol=required_atol,
+        assert_pcc=assert_pcc,
+        assert_atol=assert_atol,
+        model_group="red",
     )
 
     DeviceManager.release_sub_mesh_device(device1)
