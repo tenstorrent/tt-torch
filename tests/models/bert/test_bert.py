@@ -39,8 +39,9 @@ def test_bert(record_property, mode, op_by_op, variant_info):
 
     # Use variant in model name if specified
     variant, variant_config = variant_info
-    model_name = f"BERT-{variant}"
     loader = ModelLoader(variant=variant)
+    model_info = loader.get_model_info()
+    model_name = model_info.name
 
     cc = CompilerConfig()
     cc.enable_consteval = True

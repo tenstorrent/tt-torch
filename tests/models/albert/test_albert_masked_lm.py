@@ -67,8 +67,9 @@ def test_albert_masked_lm(
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     variant, variant_config = variant_info
-    model_name = f"albert/{variant}-masked_lm"
     loader = ModelLoader(variant=variant)
+    model_info = loader.get_model_info()
+    model_name = model_info.name
 
     required_pcc = 0.98 if "xxlarge" in variant else 0.99
 
