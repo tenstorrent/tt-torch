@@ -5,7 +5,7 @@ import torch
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.bert.pytorch import ModelLoader
+from third_party.tt_forge_models.bert.pytorch import ModelLoader, Variants
 
 
 class ThisTester(ModelTester):
@@ -23,7 +23,7 @@ class ThisTester(ModelTester):
 
 # Print available variants for reference
 available_variants = ModelLoader.query_available_variants()
-print("Available variants:", available_variants)
+print("Available variants:", {str(k): v for k, v in available_variants.items()})
 
 
 @pytest.mark.parametrize(
@@ -38,7 +38,7 @@ print("Available variants:", available_variants)
 @pytest.mark.parametrize(
     "variant_info",
     available_variants.items(),
-    ids=list(available_variants.keys()),
+    ids=[str(k) for k in available_variants.keys()],
 )
 def test_bert(record_property, mode, op_by_op, variant_info):
 
