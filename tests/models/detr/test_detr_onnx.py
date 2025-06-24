@@ -9,7 +9,12 @@ import numpy as np
 from torchvision import transforms
 import pytest
 from tests.utils import OnnxModelTester, skip_full_eval_test
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from tt_torch.tools.utils import (
+    CompilerConfig,
+    CompileDepth,
+    ModelMetadata,
+    OpByOpBackend,
+)
 from third_party.tt_forge_models.tools.utils import get_file
 
 
@@ -52,44 +57,58 @@ class ThisTester(OnnxModelTester):
         return (output_object["pred_logits"], output_object["pred_boxes"])
 
 
+DETR_ONNX_VARIANTS = [
+    ModelMetadata(
+        model_name="DETR_onnx",
+        model_group="red",
+        op_by_op_backend=OpByOpBackend.STABLEHLO,
+        assert_pcc=False,
+        assert_atol=False,
+    )
+]
+
+
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
+@pytest.mark.parametrize("model_info", DETR_ONNX_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
-    "op_by_op",
-    [OpByOpBackend.STABLEHLO, None],
-    ids=["op_by_op_stablehlo", "full"],
+    "execute_mode",
+    [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
+    ids=["op_by_op", "full"],
 )
-def test_detr_onnx(record_property, mode, op_by_op):
-    model_name = "DETR_onnx"
-    model_group = "red"
-
+def test_detr_onnx(record_property, model_info, mode, execute_mode):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
 
-    if op_by_op is not None:
-        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-        cc.op_by_op_backend = op_by_op
+    # check if OpByOp
+    if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
+        cc.compile_depth = execute_mode
+    # applying overrides from model_metadata if EXECUTE
+    else:
+        cc.compile_depth = model_info.compile_depth
+    cc.op_by_op_backend = model_info.op_by_op_backend
 
     skip_full_eval_test(
         record_property,
         cc,
-        model_name,
+        model_info.model_name,
         bringup_status="FAILED_RUNTIME",
         reason="Out of Memory: Not enough space to allocate 59244544 B L1 buffer across 64 banks, where each bank needs to store 925696 B - https://github.com/tenstorrent/tt-torch/issues/729",
-        model_group=model_group,
+        model_group=model_info.model_group,
     )
 
     tester = ThisTester(
-        model_name,
-        mode,
-        assert_pcc=False,
-        assert_atol=False,
+        model_name=model_info.model_name,
+        model_info=model_info,
+        mode=mode,
+        assert_pcc=model_info.assert_pcc,
+        assert_atol=model_info.assert_atol,
         compiler_config=cc,
         record_property_handle=record_property,
-        model_group=model_group,
+        model_group=model_info.model_group,
     )
     results = tester.test_model()
 

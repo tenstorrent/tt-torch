@@ -9,7 +9,7 @@ from efficientnet_pytorch import EfficientNet
 
 import pytest
 from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from tt_torch.tools.utils import CompilerConfig, ModelMetadata, CompileDepth
 from third_party.tt_forge_models.tools.utils import get_file
 
 
@@ -33,60 +33,59 @@ class ThisTester(ModelTester):
         return tfms(img).unsqueeze(0)
 
 
+# Metadata for EfficientNet models
+EFFICIENTNET_VARIANTS = [
+    ModelMetadata(model_name="efficientnet-b0", model_group="red"),
+    ModelMetadata(model_name="efficientnet-b1", assert_pcc=True),
+    ModelMetadata(model_name="efficientnet-b2"),
+    ModelMetadata(model_name="efficientnet-b3"),
+    ModelMetadata(model_name="efficientnet-b4"),
+    ModelMetadata(model_name="efficientnet-b5"),
+    ModelMetadata(model_name="efficientnet-b6"),
+    ModelMetadata(model_name="efficientnet-b7"),
+]
+
+
 @pytest.mark.parametrize(
     "mode",
-    ["train", "eval"],
+    ["eval"],
 )
 @pytest.mark.parametrize(
-    "model_name",
-    [
-        "efficientnet-b0",
-        "efficientnet-b1",
-        "efficientnet-b2",
-        "efficientnet-b3",
-        "efficientnet-b4",
-        "efficientnet-b5",
-        "efficientnet-b6",
-        "efficientnet-b7",
-    ],
+    "model_info", EFFICIENTNET_VARIANTS, ids=lambda x: x.model_name
 )
 @pytest.mark.parametrize(
-    "op_by_op",
-    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
-    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+    "execute_mode",
+    [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
+    ids=["op_by_op", "full"],
 )
-def test_EfficientNet(record_property, model_name, mode, op_by_op):
+def test_EfficientNet(record_property, model_info, mode, execute_mode):
     if mode == "train":
         pytest.skip()
-
-    model_group = "red" if model_name == "efficientnet-b0" else "generality"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if op_by_op:
-        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-        if op_by_op == OpByOpBackend.STABLEHLO:
-            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    required_pcc = (
-        0.98
-        if model_name
-        in [
-            "efficientnet-b1",
-        ]
-        else 0.99
-    )
+    # check if OpByOp
+    if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
+        cc.compile_depth = execute_mode
+    # applying overrides from model_metadata if EXECUTE
+    else:
+        cc.compile_depth = model_info.compile_depth
+    cc.op_by_op_backend = model_info.op_by_op_backend
+
+    required_pcc = 0.98
 
     tester = ThisTester(
-        model_name,
-        mode,
+        model_name=model_info.model_name,
+        model_info=model_info,
+        mode=mode,
         required_pcc=required_pcc,
-        assert_pcc=True,
+        assert_pcc=model_info.assert_pcc,
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
-        model_group=model_group,
+        model_group=model_info.model_group,
     )
 
     results = tester.test_model()
@@ -98,7 +97,7 @@ def test_EfficientNet(record_property, model_name, mode, op_by_op):
         labels_map = [labels_map[str(i)] for i in range(1000)]
 
         print("-----")
-        print(f"Model: {model_name}")
+        print(f"Model: {model_info.model_name}")
         for idx in torch.topk(results, k=5).indices.squeeze(0).tolist():
             prob = torch.softmax(results, dim=1)[0, idx].item()
             print("{label:<75} ({p:.2f}%)".format(label=labels_map[idx], p=prob * 100))

@@ -6,7 +6,10 @@ import torch
 import subprocess
 import sys
 from datetime import datetime, timezone
-from tt_torch.tools.utils import OpByOpBackend
+from tt_torch.tools.utils import (
+    OpByOpBackend,
+    CompileDepth,
+)
 from tt_torch.tools.crashsafe_utils import crashsafe_suffix
 import xml.etree.ElementTree as ET
 import socket
@@ -38,16 +41,14 @@ def manage_dependencies(request):
 
 def pytest_addoption(parser):
     parser.addoption(
-        "--op_by_op_stablehlo",
-        action="store_true",
-        default=False,
-        help="Run test in stablehlo op-by-op mode",
+        "--compile-depth",
+        action="store",
+        help="Run tests to specific compile depth (STABLEHLO, TTNN_IR, etc) by filtering for tests with specified compile depth override",
     )
     parser.addoption(
-        "--op_by_op_torch",
-        action="store_true",
-        default=False,
-        help="Run test in torch op-by-op mode",
+        "--op-by-op-backend",
+        action="store",
+        help="Run tests with specific op-by-op backend (TORCH, STABLEHLO)",
     )
     parser.addoption(
         "--crashsafe",
@@ -65,12 +66,44 @@ def pytest_runtest_logreport(report):
 
 
 def pytest_collection_modifyitems(config, items):
-    # Filter tests based on which op_by_op flag is set
-    selected_items = []
-    using_torch = config.getoption("--op_by_op_torch")
-    using_stablehlo = config.getoption("--op_by_op_stablehlo")
+    selected = items.copy()
 
-    # Check if the --crashsafe option is enabled
+    target_depth = None
+    target_backend = None
+
+    if config.getoption("--compile-depth"):
+        target_depth = getattr(CompileDepth, config.getoption("--compile-depth"))
+
+    if config.getoption("--op-by-op-backend"):
+        target_backend = getattr(OpByOpBackend, config.getoption("--op-by-op-backend"))
+
+    # Do filtering in a single pass
+    filtered_items = []
+    for item in selected:
+        if not hasattr(item, "callspec"):
+            continue
+
+        model_info = item.callspec.params.get("model_info")
+        if not model_info:
+            continue
+
+        passes_depth = True
+        passes_backend = True
+
+        if target_depth is not None:
+            passes_depth = model_info.compile_depth == target_depth
+
+        if target_backend is not None:
+            passes_backend = model_info.op_by_op_backend == target_backend
+
+        # Only include item if it passes all active filters
+        if passes_depth and passes_backend:
+            filtered_items.append(item)
+
+        # Only apply item filtering if filters are specified.
+        items[:] = filtered_items
+
+    # Disable crashsafe logging for multiple tests as it only supports single test runs
     if config.getoption("--crashsafe"):
         # Count the number of collected tests
         num_tests = len(items)
@@ -80,20 +113,7 @@ def pytest_collection_modifyitems(config, items):
                 returncode=1,
             )
 
-    for item in items:
-        for param in item.iter_markers(name="parametrize"):
-            if "op_by_op" in param.args[0]:
-                op_by_op_value = item.callspec.params["op_by_op"]
-                # Only select tests that match the specific backend flag
-                if (using_torch and op_by_op_value == OpByOpBackend.TORCH) or (
-                    using_stablehlo and op_by_op_value == OpByOpBackend.STABLEHLO
-                ):
-                    selected_items.append(item)
-                    break
-
-    if using_torch or using_stablehlo:
-        # Replace the items with only the selected backend tests
-        items[:] = selected_items
+    items[:] = selected
 
 
 @pytest.fixture(scope="function", autouse=True)

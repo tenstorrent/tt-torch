@@ -4,8 +4,8 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 import pytest
-from tests.utils import ModelTester
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from tests.utils import ModelTester, skip_full_eval_test
+from tt_torch.tools.utils import CompilerConfig, CompileDepth, ModelMetadata
 
 
 class ThisTester(ModelTester):
@@ -27,40 +27,54 @@ class ThisTester(ModelTester):
         return self.inputs
 
 
+DEEPSEEK_VARIANTS = [
+    ModelMetadata(
+        model_name="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
+        required_atol=0.5,
+        model_group="red",
+        compile_depth=CompileDepth.TTNN_IR,
+    )
+]
+
+
 @pytest.mark.parametrize(
     "mode",
     ["eval", "train"],
 )
+@pytest.mark.parametrize("model_info", DEEPSEEK_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
-    "model_name",
-    [
-        "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",
-    ],
+    "execute_mode",
+    [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
+    ids=["op_by_op", "full"],
 )
-@pytest.mark.parametrize(
-    "op_by_op",
-    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
-    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
-)
-def test_deepseek_qwen(record_property, model_name, mode, op_by_op):
+def test_deepseek_qwen(record_property, model_info, mode, execute_mode):
     if mode == "train":
         pytest.skip()
 
     cc = CompilerConfig()
-    if op_by_op:
-        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-        if op_by_op == OpByOpBackend.STABLEHLO:
-            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+    cc.op_by_op_backend = model_info.op_by_op_backend
+    if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
+        cc.compile_depth = execute_mode
+    else:
+        cc.compile_depth = model_info.compile_depth
 
-    if op_by_op is None and cc.compile_depth == CompileDepth.EXECUTE:
-        pytest.skip("Model is too large to fit on single device during execution.")
+    skip_full_eval_test(
+        record_property,
+        cc,
+        model_info.model_name,
+        bringup_status="FAILED_RUNTIME",
+        reason="Model is too large to fit on single device during execution.",
+        model_group=model_info.model_group,
+    )
 
     tester = ThisTester(
-        model_name,
-        mode,
+        model_name=model_info.model_name,
+        model_info=model_info,
+        mode=mode,
         compiler_config=cc,
         record_property_handle=record_property,
-        required_atol=0.5,
+        required_atol=model_info.required_atol,
+        model_group=model_info.model_group,
     )
 
     tester.test_model()

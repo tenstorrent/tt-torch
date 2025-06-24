@@ -6,7 +6,7 @@ import pytest
 
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from tests.utils import ModelTester, skip_full_eval_test
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from tt_torch.tools.utils import CompilerConfig, CompileDepth, ModelMetadata
 
 
 class ThisTester(ModelTester):
@@ -27,45 +27,73 @@ class ThisTester(ModelTester):
         return inputs
 
 
+FALCON3_VARIANTS = [
+    ModelMetadata(
+        model_name="tiiuae/Falcon3-1B-Base",
+        model_group="red",
+    ),
+    ModelMetadata(
+        model_name="tiiuae/Falcon3-3B-Base",
+        model_group="red",
+        assert_pcc=True,
+    ),
+    ModelMetadata(
+        model_name="tiiuae/Falcon3-7B-Base",
+        model_group="red",
+    ),
+    ModelMetadata(
+        model_name="tiiuae/Falcon3-10B-Base",
+        model_group="red",
+    ),
+    ModelMetadata(
+        model_name="tiiuae/Falcon3-1B-Instruct",
+        model_group="red",
+    ),
+    ModelMetadata(
+        model_name="tiiuae/Falcon3-3B-Instruct",
+        model_group="red",
+    ),
+    ModelMetadata(
+        model_name="tiiuae/Falcon3-7B-Instruct",
+        model_group="red",
+    ),
+    ModelMetadata(
+        model_name="tiiuae/Falcon3-10B-Instruct",
+        model_group="red",
+    ),
+]
+
+
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
+@pytest.mark.parametrize("model_info", FALCON3_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
-    "model_name",
-    [
-        "tiiuae/Falcon3-1B-Base",
-        "tiiuae/Falcon3-3B-Base",
-        "tiiuae/Falcon3-7B-Base",
-        "tiiuae/Falcon3-10B-Base",
-        "tiiuae/Falcon3-1B-Instruct",
-        "tiiuae/Falcon3-3B-Instruct",
-        "tiiuae/Falcon3-7B-Instruct",
-        "tiiuae/Falcon3-10B-Instruct",
-    ],
+    "execute_mode",
+    [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
+    ids=["op_by_op", "full"],
 )
-@pytest.mark.parametrize(
-    "op_by_op",
-    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
-    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
-)
-def test_falcon(record_property, model_name, mode, op_by_op):
-    model_group = "red"
+def test_falcon(record_property, execute_mode, model_info, mode):
     cc = CompilerConfig()
     cc.enable_consteval = True
     # consteval_parameters is disabled because it results in a memory related crash
-    if op_by_op:
-        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-        if op_by_op == OpByOpBackend.STABLEHLO:
-            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+
+    # check if OpByOp
+    if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
+        cc.compile_depth = execute_mode
+    # applying overrides from model_metadata if EXECUTE
+    else:
+        cc.compile_depth = model_info.compile_depth
+    cc.op_by_op_backend = model_info.op_by_op_backend
 
     skip_full_eval_test(
         record_property,
         cc,
-        model_name,
+        model_info.model_name,
         bringup_status="FAILED_RUNTIME",
         reason="Model is too large to fit on single device during execution.",
-        model_group=model_group,
+        model_group=model_info.model_group,
         model_name_filter=[
             "tiiuae/Falcon3-7B-Base",
             "tiiuae/Falcon3-10B-Base",
@@ -73,28 +101,16 @@ def test_falcon(record_property, model_name, mode, op_by_op):
             "tiiuae/Falcon3-10B-Instruct",
         ],
     )
-
-    assert_pcc = (
-        True
-        if model_name
-        in [
-            "tiiuae/Falcon3-1B-Base",
-            "tiiuae/Falcon3-3B-Base",
-            "tiiuae/Falcon3-1B-Instruct",
-            "tiiuae/Falcon3-3B-Instruct",
-        ]
-        else False
-    )
-
     tester = ThisTester(
-        model_name,
-        mode,
+        model_name=model_info.model_name,
+        model_info=model_info,
+        mode=mode,
         compiler_config=cc,
         record_property_handle=record_property,
-        assert_pcc=assert_pcc,
+        assert_pcc=model_info.assert_pcc,
         assert_atol=False,
-        model_group=model_group,
-        run_generate=False,
+        model_group=model_info.model_group,
+        run_generate=True,  # run model.generate(**inputs)
     )
     results = tester.test_model()
 

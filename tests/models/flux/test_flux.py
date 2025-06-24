@@ -10,19 +10,42 @@ import numpy as np
 import torch
 
 from tests.utils import ModelTester, skip_full_eval_test
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from tt_torch.tools.utils import (
+    CompilerConfig,
+    CompileDepth,
+    ModelMetadata,
+)
+
+# Special subclass for ModelMetadata for Flux models
+class FluxModelMetadata(ModelMetadata):
+    def __init__(self, model_name, guidance_scale, model_group="red", **kwargs):
+        super().__init__(
+            model_name=model_name,
+            model_group=model_group,
+            **kwargs  # Pass through other ModelMetadata params like compile_depth, etc.
+        )
+        self.guidance_scale = guidance_scale
+
+
+FLUX_MODELS = [
+    FluxModelMetadata(
+        model_name="black-forest-labs/FLUX.1-schnell",
+        guidance_scale=0.0,
+    ),
+    FluxModelMetadata(
+        model_name="black-forest-labs/FLUX.1-dev",
+        guidance_scale=3.5,
+    ),
+]
 
 
 class ThisTester(ModelTester):
-    def __init__(self, *args, **kwargs):
-        self.guidance_scale = kwargs.pop("guidance_scale", 0.0)
-        super().__init__(*args, **kwargs)
-
     def _load_model(self):
         # Flux Pipeline
-        model_info = self.model_name
+        # self.model_name is set by ModelTester's __init__ via model_info.model_name
+        # "model_info", FLUX_MODELS, ids=lambda mi: mi.model_name.split("/")[-1]
         pipe = FluxPipeline.from_pretrained(
-            model_info,
+            self.model_name,  # Uses self.model_name (derived from model_info)
             torch_dtype=torch.bfloat16,
             use_safetensors=True,
         )
@@ -46,7 +69,8 @@ class ThisTester(ModelTester):
     def _load_inputs(self):
         max_sequence_length = 256
         prompt = "An astronaut riding a horse in a futuristic city"
-        do_classifier_free_guidance = self.guidance_scale > 1.0
+        # Use guidance_scale from model_info
+        do_classifier_free_guidance = self.model_info.guidance_scale > 1.0
 
         num_inference_steps = 1  # set to 1 for single denoising loop
         max_sequence_length = 256
@@ -151,7 +175,8 @@ class ThisTester(ModelTester):
         joint_attention_kwargs = {}
 
         if do_classifier_free_guidance:
-            guidance = torch.full([1], self.guidance_scale, dtype=dtype)
+            # Use guidance_scale from model_info
+            guidance = torch.full([1], self.model_info.guidance_scale, dtype=dtype)
         else:
             guidance = None
 
@@ -170,54 +195,51 @@ class ThisTester(ModelTester):
         return arguments
 
 
-flux_model_configs = [
-    pytest.param("black-forest-labs/FLUX.1-schnell", 0.0, id="flux_schnell"),
-    pytest.param("black-forest-labs/FLUX.1-dev", 3.5, id="flux_dev"),
-]
-
-
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
+# Updated parametrization to use model_info from FLUX_MODELS
+@pytest.mark.parametrize("model_info", FLUX_MODELS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
-    "model_name, guidance_scale",
-    flux_model_configs,
+    "execute_mode",
+    [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
+    ids=["op_by_op", "full"],
 )
-@pytest.mark.parametrize(
-    "op_by_op",
-    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
-    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
-)
-def test_flux(record_property, model_name, mode, op_by_op, guidance_scale):
-    model_group = "red"
+# Updated function signature: removed model_name and guidance_scale, added model_info
+def test_flux(record_property, mode, model_info, execute_mode):
+    # model_group = "red" # Removed, now comes from model_info.model_group
 
     cc = CompilerConfig()
-    cc.enable_consteval = True
-    # consteval_parameters is disabled because it results in a memory related crash
-    if op_by_op:
-        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-        if op_by_op == OpByOpBackend.STABLEHLO:
-            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+    cc.enable_consteval = False
+    cc.consteval_parameters = False
+
+    # check if OpByOp
+    if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
+        cc.compile_depth = execute_mode
+    # applying overrides from model_metadata if EXECUTE
+    else:
+        cc.compile_depth = model_info.compile_depth
+    cc.op_by_op_backend = model_info.op_by_op_backend
 
     skip_full_eval_test(
         record_property,
         cc,
-        model_name,
+        model_info.model_name,  # Use model_info.model_name
         bringup_status="FAILED_RUNTIME",
         reason="Out of Memory: Not enough space to allocate 75497472 B DRAM buffer across 12 banks, where each bank needs to store 6291456 B",
-        model_group=model_group,
+        model_group=model_info.model_group,  # Use model_info.model_group
     )
 
     tester = ThisTester(
-        model_name,
+        model_info.model_name,  # Pass model_name string from model_info
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
-        assert_atol=False,
-        assert_pcc=False,
-        model_group=model_group,
-        guidance_scale=guidance_scale,
+        assert_atol=model_info.assert_atol,
+        assert_pcc=model_info.assert_pcc,
+        model_group=model_info.model_group,
+        model_info=model_info,
     )
     results = tester.test_model()
     if mode == "eval":

@@ -11,14 +11,14 @@ from third_party.tt_forge_models.tools.utils import get_file
 
 
 class ThisTester(ModelTester):
-    # pass model_info instead of model_name
-    def __init__(self, model_info, mode, *args, **kwargs):
-        # model name in model_info[0]
-        self.model_info = model_info
-        super().__init__(model_info[0], mode, *args, **kwargs)
+    # pass model_tuple instead of model_name
+    def __init__(self, model_tuple, mode, *args, **kwargs):
+        # model name in model_tuple[0]
+        self.model_tuple = model_tuple
+        super().__init__(model_tuple[0], mode, *args, **kwargs)
 
     def _load_model(self):
-        model_name, weights_name = self.model_info
+        model_name, weights_name = self.model_tuple
         self.weights = getattr(models, weights_name).DEFAULT
         model = models.get_model(model_name, weights=self.weights).to(torch.bfloat16)
         return model
@@ -34,7 +34,7 @@ class ThisTester(ModelTester):
 
 
 # List of model information tuples (model_name, weights_name)
-model_info_list = [
+model_tuple_list = [
     # ("googlenet", "GoogLeNet_Weights"),
     ("densenet121", "DenseNet121_Weights"),
     ("densenet161", "DenseNet161_Weights"),
@@ -91,9 +91,9 @@ model_info_list = [
 
 
 @pytest.mark.parametrize(
-    "model_info",
-    model_info_list,
-    ids=[info[0] for info in model_info_list],
+    "model_tuple",
+    model_tuple_list,
+    ids=[info[0] for info in model_tuple_list],
 )
 @pytest.mark.parametrize("mode", ["train", "eval"])
 @pytest.mark.parametrize(
@@ -102,7 +102,7 @@ model_info_list = [
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_torchvision_image_classification(
-    request, record_property, model_info, mode, op_by_op
+    request, record_property, model_tuple, mode, op_by_op
 ):
     if mode == "train":
         pytest.skip()
@@ -119,7 +119,7 @@ def test_torchvision_image_classification(
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     # TODO Enable checking (vit_h_14) - https://github.com/tenstorrent/tt-torch/issues/491
-    model_name = model_info[0]
+    model_name = model_tuple[0]
     assert_pcc = False if model_name in ["vit_h_14"] else True
     assert_atol = False
 
@@ -135,7 +135,7 @@ def test_torchvision_image_classification(
         )
 
     tester = ThisTester(
-        model_info,
+        model_tuple,
         mode,
         required_pcc=0.96,
         assert_pcc=assert_pcc,

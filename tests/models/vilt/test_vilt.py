@@ -8,8 +8,8 @@ from PIL import Image
 import pytest
 from tests.utils import ModelTester
 import torch
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from third_party.tt_forge_models.tools.utils import get_file
+from tt_torch.tools.utils import CompilerConfig, CompileDepth, ModelMetadata
 
 
 class ThisTester(ModelTester):
@@ -33,32 +33,44 @@ class ThisTester(ModelTester):
         return encoding
 
 
+VILT_VARIANTS = [
+    ModelMetadata(
+        model_name="ViLT",
+        relative_atol=0.02,
+        model_group="red",
+        compile_depth=CompileDepth.TTNN_IR,
+    )
+]
+
+
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
+@pytest.mark.parametrize("model_info", VILT_VARIANTS, ids=lambda x: x.model_name)
 @pytest.mark.parametrize(
-    "op_by_op",
-    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
-    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+    "execute_mode",
+    [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
+    ids=["op_by_op", "full"],
 )
-def test_vilt(record_property, mode, op_by_op):
-    model_name = "ViLT"
-
+def test_vilt(record_property, model_info, mode, execute_mode):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if op_by_op:
-        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-        if op_by_op == OpByOpBackend.STABLEHLO:
-            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+    cc.op_by_op_backend = model_info.op_by_op_backend
+    if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
+        cc.compile_depth = execute_mode
+    else:
+        cc.compile_depth = model_info.compile_depth
 
     tester = ThisTester(
-        model_name,
-        mode,
-        relative_atol=0.02,
+        model_name=model_info.model_name,
+        model_info=model_info,
+        mode=mode,
+        relative_atol=model_info.relative_atol,
         compiler_config=cc,
         record_property_handle=record_property,
+        model_group=model_info.model_group,
     )
     results = tester.test_model()
     if mode == "eval":

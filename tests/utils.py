@@ -110,11 +110,13 @@ class ModelTester:
         model_name_suffix="",
         devices=None,
         data_parallel_mode=False,
+        model_info=None,
     ):
         """
         Initializes the ModelTester.
         Args:
             model_name (str): Name of the model.
+            model_info (ModelMetadata): Model metadata.
             mode (str): "train" or "eval" mode.
             required_pcc (float, optional): Required Pearson Correlation Coefficient for verification. Defaults to 0.99.
             required_atol (float, optional): Required absolute tolerance for verification. Defaults to None.
@@ -139,6 +141,7 @@ class ModelTester:
         if mode not in ["train", "eval"]:
             raise ValueError(f"Current mode is not supported: {mode}")
         self.model_name = model_name
+        self.model_info = model_info
         self.mode = mode
         self.data_parallel_mode = data_parallel_mode
         self.framework_model = self._load_model()
