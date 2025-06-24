@@ -15,7 +15,9 @@ class ThisTester(ModelTester):
         return ModelLoader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        return ModelLoader.load_inputs(dtype_override=torch.bfloat16)
+        inputs = ModelLoader.load_inputs(dtype_override=torch.bfloat16)
+        self.image = ModelLoader.image
+        return inputs
 
 
 @pytest.mark.parametrize(
