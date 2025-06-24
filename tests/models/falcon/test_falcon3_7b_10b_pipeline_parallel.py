@@ -58,13 +58,10 @@ def test_falcon_pipeline_parallel(record_property, model_name, mode, op_by_op):
     dont_split = (
         model._no_split_modules if hasattr(model, "_no_split_modules") else None
     )
-    max_memory = (
-        {0: "10GiB", 1: "10GiB"}
-        if model_name == "tiiuae/Falcon3-10B-Base"
-        else {0: "8GiB", 1: "8GiB"}
-    )
+    # The devices have 12GB of memory each, but we set it to 11GB to ensure
+    # there's enough room for activation tensors and other overhead.
     device_map = infer_auto_device_map(
-        model, max_memory=max_memory, no_split_module_classes=dont_split
+        model, max_memory={0: "11GiB", 1: "11GiB"}, no_split_module_classes=dont_split
     )
 
     options = BackendOptions()

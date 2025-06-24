@@ -68,8 +68,10 @@ def test_llama_7b_pipeline_parallel(record_property, model_name, mode):
     dont_split = (
         model._no_split_modules if hasattr(model, "_no_split_modules") else None
     )
+    # The devices have 12GB of memory each, but we set it to 11GB to ensure
+    # there's enough room for activation tensors and other overhead.
     device_map = infer_auto_device_map(
-        model, max_memory={0: "8GiB", 1: "8GiB"}, no_split_module_classes=dont_split
+        model, max_memory={0: "11GiB", 1: "11GiB"}, no_split_module_classes=dont_split
     )
 
     options = BackendOptions()

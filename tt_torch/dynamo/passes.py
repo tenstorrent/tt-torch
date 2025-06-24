@@ -328,18 +328,10 @@ def split_onto_devices(gm, compiler_config):
 
     device_indices = set(compiler_config.device_map.values())
 
-    # If "disk" is in the device indices, throw warning and move it's modules to the last device
-    # Moving all disk modules to the last device may cause the last device to become full,
-    #  - in some cases increasing the max_memory per device may help
-    if "disk" in device_indices:
-        print(
-            "\033[93m\nWARNING: 'disk' device found in device_map. This may cause memory on later devices to become full. \nIf an out of memory error occurs, consider increasing max_memory per device -- infer_auto_device_map may not fully utilize available device memory.\n\033[0m"
-        )
-        device_indices.discard("disk")
-        highest_device = len(device_indices) - 1
-        for key, value in compiler_config.device_map.items():
-            if value == "disk":
-                compiler_config.device_map[key] = highest_device
+    # If "disk" is in the device indices, assert that the model is too large for the available devices
+    assert (
+        "disk" not in device_indices
+    ), f"Model too large for {len(device_indices) - 1} devices. Consider increasing max_memory per device to 12GiB"
 
     if len(device_indices) == 0:
         device_indices = [0]
