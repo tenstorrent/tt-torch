@@ -232,6 +232,9 @@ compileTTIRToTTNN(std::string_view code, std::string_view system_desc_path,
   options.enableFusing = true;
   options.enableConstEval = enable_consteval;
 
+  options.optimizerPassEnabled = true;
+  options.memoryLayoutAnalysisEnabled = true;
+
   if (len_activations > 0 || len_graph_constants > 0) {
     llvm::SmallVector<mlir::tt::ttcore::ArgumentType> argTypes;
     for (size_t i = 0; i < len_graph_constants; ++i) {
