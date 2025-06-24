@@ -18,6 +18,7 @@ from transformers.cache_utils import Cache, DynamicCache
 from transformers.processing_utils import Unpack
 from accelerate import infer_auto_device_map
 from tt_torch.tools.verify import verify_against_golden
+from tests.utils import ModelTester
 
 
 def get_model_and_tokenizer(model_name):
@@ -74,6 +75,10 @@ def test_llama_7b_pipeline_parallel(record_property, model_name, mode):
         model, max_memory={0: "11GiB", 1: "11GiB"}, no_split_module_classes=dont_split
     )
 
+    required_atol = 0.1
+    assert_pcc = True
+    assert_atol = False
+
     options = BackendOptions()
     cc = CompilerConfig()
     options.compiler_config = cc
@@ -84,8 +89,23 @@ def test_llama_7b_pipeline_parallel(record_property, model_name, mode):
     compiled_model = torch.compile(model, backend="tt", dynamic=False, options=options)
     out = compiled_model(**test_input)
     golden = model(**test_input)
-    verify_against_golden(
-        tuple([golden.logits]), tuple([out.logits]), True, False, required_atol=0.1
+    pccs, atols, _, _ = verify_against_golden(
+        tuple([golden.logits]),
+        tuple([out.logits]),
+        assert_pcc,
+        assert_atol,
+        required_atol=required_atol,
+    )
+
+    ModelTester.GenerateCustomTestReport(
+        record_property,
+        model_name,
+        cc,
+        pccs,
+        atols,
+        required_atol=required_atol,
+        assert_pcc=assert_pcc,
+        assert_atol=assert_atol,
     )
 
     DeviceManager.release_sub_mesh_device(device1)

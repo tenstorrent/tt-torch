@@ -650,20 +650,14 @@ class ModelTester:
 
         return "PASSED" if min_pcc >= required_pcc else "INCORRECT_RESULT"
 
-    def flush_tag_cache_to_record(self):
-        # record the tags property at the very end of the test as data may
-        # be appended to the cache during the test run
-
-        self.record_property("tags", self.record_tag_cache)
-
     def finalize(self):
         # to be called at the end of the test
 
-        filter_nan_inf_for_record(self.record_tag_cache, "pccs")
-        filter_nan_inf_for_record(self.record_tag_cache, "atols")
+        ModelTester.filter_nan_inf_for_record(self.record_tag_cache, "pccs")
+        ModelTester.filter_nan_inf_for_record(self.record_tag_cache, "atols")
 
-        record_aggregate_model_metric(self.record_tag_cache, "pccs")
-        record_aggregate_model_metric(self.record_tag_cache, "atols")
+        ModelTester.record_aggregate_model_metric(self.record_tag_cache, "pccs")
+        ModelTester.record_aggregate_model_metric(self.record_tag_cache, "atols")
 
         # FE standardization - pack a single PCC & ATOL into the tag record
         # use cached metrics. Guaranteed to be init'd to the default value
@@ -672,11 +666,12 @@ class ModelTester:
 
         # Compile depth is remapped post-execution to FE-standardized format
         # based on actual execution result.
-        self.record_tag_cache["bringup_status"] = remap_compile_depth(
-            self.compiler_config.compile_depth, self.record_tag_cache["min_pccs"], self.required_pcc
+        self.record_tag_cache["bringup_status"] = ModelTester.remap_compile_depth(
+            self.compiler_config.compile_depth,
+            self.record_tag_cache["min_pccs"],
+            self.required_pcc,
         )
-
-        flush_tag_cache_to_record(self.record_tag_cache)
+        self.record_property("tags", self.record_tag_cache)
 
     def verify_intermediates_after_execution(self):
         # Prepare CSV output
@@ -761,9 +756,6 @@ class ModelTester:
         else:
             print_fn(results)
 
-    def get_parallelism(self):
-        return _get_parallelism(self.data_parallel_mode, self.compiler_config.automatic_parallelization)
-    
     @staticmethod
     def _get_parallelism(data_parallel_mode, automatic_parallelization):
         parallelism = "single_device"
@@ -780,15 +772,34 @@ class ModelTester:
 
         return parallelism
 
+    def get_parallelism(self):
+        return ModelTester._get_parallelism(
+            self.data_parallel_mode, self.compiler_config.automatic_parallelization
+        )
+
     @staticmethod
-    def GenerateCustomTestReport(record_property, model_name, compiler_config,  test_pcc, test_atol, model_group="generality",required_pcc=0.99, required_atol=None, relative_atol=None, assert_pcc=True, assert_atol=True, data_parallel_mode=False, automatic_parallelization=False):
-        '''
+    def GenerateCustomTestReport(
+        record_property,
+        model_name,
+        compiler_config,
+        test_pcc,
+        test_atol,
+        model_group="generality",
+        required_pcc=0.99,
+        required_atol=None,
+        relative_atol=None,
+        assert_pcc=True,
+        assert_atol=True,
+        data_parallel_mode=False,
+        automatic_parallelization=False,
+    ):
+        """
         Test reporting is tightly coupled to the ModelTester, under the assumption that almost all
         tests go through the ModelTester. For those tests that do not go through the ModelTester,
         this function can be used to generate a custom test report.
-        
+
         It imitates the mechanics of ModelTester.finalize() and ModelTester ctor
-        '''
+        """
         record_tag_cache = {}  # Holds for tags to be written out at finalize()
 
         record_property("model_name", model_name)
@@ -796,7 +807,9 @@ class ModelTester:
         record_property("owner", "tt-torch")
         record_property("group", model_group)
 
-        record_tag_cache["note"] = "Using custom test report generation path, not tt-torch ModelTester."
+        record_tag_cache[
+            "note"
+        ] = "Using custom test report generation path, not tt-torch ModelTester."
         record_tag_cache["required_pcc"] = required_pcc
 
         record_tag_cache["required_atol"] = (
@@ -805,20 +818,22 @@ class ModelTester:
 
         record_tag_cache["is_asserting_pcc"] = assert_pcc
         record_tag_cache["is_asserting_atol"] = assert_atol
-        
-        record_tag_cache["parallelism"] = _get_parallelism(data_parallel_mode, automatic_parallelization)
+
+        record_tag_cache["parallelism"] = ModelTester._get_parallelism(
+            data_parallel_mode, automatic_parallelization
+        )
 
         # configs should be set at test start, so they can be flushed immediately
         record_property(
             "config",
             {"compiler_config": compiler_config.to_dict()},
         )
-        
-        filter_nan_inf_for_record(record_tag_cache, "pccs")
-        filter_nan_inf_for_record(record_tag_cache, "atols")
 
-        record_aggregate_model_metric(record_tag_cache, "pccs")
-        record_aggregate_model_metric(record_tag_cache, "atols")
+        ModelTester.filter_nan_inf_for_record(record_tag_cache, "pccs")
+        ModelTester.filter_nan_inf_for_record(record_tag_cache, "atols")
+
+        ModelTester.record_aggregate_model_metric(record_tag_cache, "pccs")
+        ModelTester.record_aggregate_model_metric(record_tag_cache, "atols")
 
         # FE standardization - pack a single PCC & ATOL into the tag record
         # use cached metrics. Guaranteed to be init'd to the default value
@@ -827,12 +842,12 @@ class ModelTester:
 
         # Compile depth is remapped post-execution to FE-standardized format
         # based on actual execution result.
-        record_tag_cache["bringup_status"] = remap_compile_depth(
-            compile_depth, record_tag_cache["min_pccs"], required_pcc
+        record_tag_cache["bringup_status"] = ModelTester.remap_compile_depth(
+            compiler_config.compile_depth, record_tag_cache["min_pccs"], required_pcc
         )
 
         record_property("tags", record_tag_cache)
-        
+
 
 # TODO - hshahTT: Add support for data parallel mode for onnx models
 class OnnxModelTester(ModelTester):
