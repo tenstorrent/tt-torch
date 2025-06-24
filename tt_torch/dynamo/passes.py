@@ -300,16 +300,7 @@ def sort_device_map(gm, compiler_config):
     # consider moving the consuming node to the device of the input.
     # - Calculate the cost to move the input vs consumer and choose the cheaper option.
 
-    # Replace "disk" device assignments with the highest device index
-    num_disk_nodes = 0
-    highest_device = len(set(compiler_config.device_map.values())) - 2
-    for key, value in compiler_config.device_map.items():
-        if value == "disk":
-            compiler_config.device_map[key] = highest_device
-            num_disk_nodes += 1
-
     device_map = compiler_config.device_map.copy()
-    print(f"Device map before sorting: {device_map}")
     device_map_was_modified = False
 
     for node in gm.graph.nodes:
@@ -328,7 +319,6 @@ def sort_device_map(gm, compiler_config):
         print(
             "\033[93m\nWARNING: Device map was modified to ensure topological ordering. This may cause memory on earlier devices to become full.\n\033[0m"
         )
-    print(f"Device map after sorting: {device_map}")
     return device_map
 
 
@@ -337,7 +327,20 @@ def sort_device_map(gm, compiler_config):
 def split_onto_devices(gm, compiler_config):
 
     device_indices = set(compiler_config.device_map.values())
-    device_indices.discard("disk")
+
+    # If "disk" is in the device indices, throw warning and move it's modules to the last device
+    # Moving all disk modules to the last device may cause the last device to become full,
+    #  - in some cases increasing the max_memory per device may help
+    if "disk" in device_indices:
+        print(
+            "\033[93m\nWARNING: 'disk' device found in device_map. This may cause memory on later devices to become full. \nIf an out of memory error occurs, consider increasing max_memory per device -- infer_auto_device_map may not fully utilize available device memory.\n\033[0m"
+        )
+        device_indices.discard("disk")
+        highest_device = len(device_indices) - 1
+        for key, value in compiler_config.device_map.items():
+            if value == "disk":
+                compiler_config.device_map[key] = highest_device
+
     if len(device_indices) == 0:
         device_indices = [0]
     mcg = MultiChipGraph(device_indices)

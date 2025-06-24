@@ -45,7 +45,6 @@ def load_inputs(tokenizer, prompt):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_falcon_pipeline_parallel(record_property, model_name, mode, op_by_op):
-    model_group = "red"
 
     prompt = "Hey, are you conscious? Can you talk to me?"
     model, tokenizer = load_model(model_name)
@@ -59,15 +58,14 @@ def test_falcon_pipeline_parallel(record_property, model_name, mode, op_by_op):
     dont_split = (
         model._no_split_modules if hasattr(model, "_no_split_modules") else None
     )
-    device_map = infer_auto_device_map(
-        model, max_memory={0: "8GiB", 1: "8GiB"}, no_split_module_classes=dont_split
+    max_memory = (
+        {0: "10GiB", 1: "10GiB"}
+        if model_name == "tiiuae/Falcon3-10B-Base"
+        else {0: "8GiB", 1: "8GiB"}
     )
-    if model_name == "tiiuae/Falcon3-10B-Base":
-        device_map["model.layers.14"] = 0
-        device_map["model.layers.15"] = 0
-        device_map["model.layers.16"] = 0
-        device_map["model.layers.17"] = 0
-        device_map["model.layers.18"] = 0
+    device_map = infer_auto_device_map(
+        model, max_memory=max_memory, no_split_module_classes=dont_split
+    )
 
     options = BackendOptions()
     cc = CompilerConfig()
@@ -77,8 +75,6 @@ def test_falcon_pipeline_parallel(record_property, model_name, mode, op_by_op):
     cc.consteval_parameters = True
     options.devices = [device1, device2]
     compiled_model = torch.compile(model, backend="tt", dynamic=False, options=options)
-    print(f"Device map: {device_map}")
-
     out = compiled_model(**test_input)
     golden = model(**test_input)
     verify_against_golden(
