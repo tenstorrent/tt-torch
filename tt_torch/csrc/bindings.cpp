@@ -257,14 +257,17 @@ run_async(tt::runtime::Device device, tt::runtime::Binary &binary,
   return rt_outputs;
 }
 
-at::Tensor to_host_single_rt_tensor(tt::runtime::Tensor &rt_output) {
+at::Tensor to_host_single_rt_tensor(tt::runtime::Tensor &rt_output,
+                                    bool deallocate_tensor = true) {
   at::Tensor output = create_torch_tensor(rt_output);
-  tt::runtime::deallocateTensor(rt_output, /*force=*/true);
-
+  if (deallocate_tensor) {
+    tt::runtime::deallocateTensor(rt_output, /*force=*/true);
+  }
   return output;
 }
 
-py::object to_host_single_object(py::object obj) {
+py::object to_host_single_object(py::object obj,
+                                 bool deallocate_tensor = true) {
   assert(py::isinstance<py::dict>(obj) &&
          "Non-tensor type must be castable to a dictionary");
   py::dict attrs = obj.cast<py::dict>();
@@ -283,7 +286,8 @@ py::object to_host_single_object(py::object obj) {
     for (auto &v : value_wrapper) {
       if (py::isinstance<tt::runtime::Tensor>(v)) {
         tt::runtime::Tensor rt_tensor = v.cast<tt::runtime::Tensor>();
-        at::Tensor host_tensor = to_host_single_rt_tensor(rt_tensor);
+        at::Tensor host_tensor =
+            to_host_single_rt_tensor(rt_tensor, deallocate_tensor);
         res.append(host_tensor);
       } else {
         res.append(v);
@@ -298,8 +302,12 @@ py::object to_host_single_object(py::object obj) {
   return attrs;
 }
 
-HostReturnType to_host(py::args args) {
+HostReturnType to_host(py::args args, py::kwargs kwargs) {
   std::vector<at::Tensor> outputs;
+
+  // Accept a keyword argument `deallocate_tensor` to control whether to
+  // deallocate the runtime tensor. Defaulting to true.
+  bool should_deallocate_tensor = kwargs.get("deallocate_tensor", true);
 
   // Handle the special case where the input is a single non-tensor object.
   bool is_single_non_tensor_obj =
@@ -307,14 +315,15 @@ HostReturnType to_host(py::args args) {
                               py::isinstance<at::Tensor>(args[0]) ||
                               py::isinstance<py::tuple>(args[0]));
   if (is_single_non_tensor_obj) {
-    return to_host_single_object(args[0]);
+    return to_host_single_object(args[0], should_deallocate_tensor);
   }
   for (auto &arg : args) {
     if (py::isinstance<py::tuple>(arg)) {
       for (auto &item : arg) {
         if (py::isinstance<tt::runtime::Tensor>(item)) {
           tt::runtime::Tensor rt_tensor = item.cast<tt::runtime::Tensor>();
-          outputs.emplace_back(to_host_single_rt_tensor(rt_tensor));
+          outputs.emplace_back(
+              to_host_single_rt_tensor(rt_tensor, should_deallocate_tensor));
         }
         // Hack to get around the fact that pybind11 does not
         // recognize the torch.Tensor pyclass as the same as
@@ -325,7 +334,8 @@ HostReturnType to_host(py::args args) {
       }
     } else if (py::isinstance<tt::runtime::Tensor>(arg)) {
       tt::runtime::Tensor rt_tensor = arg.cast<tt::runtime::Tensor>();
-      outputs.emplace_back(to_host_single_rt_tensor(rt_tensor));
+      outputs.emplace_back(
+          to_host_single_rt_tensor(rt_tensor, should_deallocate_tensor));
     } else if (py::isinstance<at::Tensor>(arg)) {
       outputs.emplace_back(arg.cast<at::Tensor>());
     }
