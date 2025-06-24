@@ -48,9 +48,9 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg11]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg13]
                   tests/models/dpr/test_dpr.py::test_dpr[single_device-full-eval]
-                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[single_device-full-albert/albert-xlarge-v2-eval]
-                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[single_device-full-albert/albert-large-v2-eval]
-                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[single_device-full-albert/albert-base-v2-eval]
+                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[single_device-full-albert-xlarge-v2-eval]
+                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[single_device-full-albert-large-v2-eval]
+                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[single_device-full-albert-base-v2-eval]
                   tests/models/albert/test_albert_sequence_classification.py::test_albert_sequence_classification[single_device-full-textattack/albert-base-v2-imdb-eval]
                   tests/models/albert/test_albert_token_classification.py::test_albert_token_classification[single_device-full-albert/albert-base-v2-eval]
                   tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[single_device-full-eval]
@@ -89,9 +89,9 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-vgg11]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-vgg13]
                   tests/models/dpr/test_dpr.py::test_dpr[data_parallel-full-eval]
-                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[data_parallel-full-albert/albert-xlarge-v2-eval]
-                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[data_parallel-full-albert/albert-large-v2-eval]
-                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[data_parallel-full-albert/albert-base-v2-eval]
+                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[data_parallel-full-albert-xlarge-v2-eval]
+                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[data_parallel-full-albert-large-v2-eval]
+                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[data_parallel-full-albert-base-v2-eval]
                   tests/models/albert/test_albert_sequence_classification.py::test_albert_sequence_classification[data_parallel-full-textattack/albert-base-v2-imdb-eval]
                   tests/models/albert/test_albert_token_classification.py::test_albert_token_classification[data_parallel-full-albert/albert-base-v2-eval]
                   tests/models/roberta/test_roberta.py::test_roberta[data_parallel-full-eval]
@@ -177,7 +177,7 @@ jobs:
           {
             # Approximately 5 minutes.
             runs-on: wormhole_b0, name: "eval_7_bert_qrtn", tests: "
-                  tests/models/bert/test_bert.py::test_bert[full-eval]
+                  tests/models/bert/test_bert.py::test_bert[large-full-eval]
             "
           },
           # Approximately 180 minutes.
