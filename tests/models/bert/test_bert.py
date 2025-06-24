@@ -9,11 +9,6 @@ from third_party.tt_forge_models.bert.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
-    def __init__(self, model_name, mode, variant=None, **kwargs):
-        self.variant = variant
-        self.loader = ModelLoader(variant=variant)
-        super().__init__(model_name, mode, **kwargs)
-
     def _load_model(self):
         return self.loader.load_model(dtype_override=torch.bfloat16)
 
@@ -45,7 +40,7 @@ def test_bert(record_property, mode, op_by_op, variant_info):
     # Use variant in model name if specified
     variant, variant_config = variant_info
     model_name = f"BERT-{variant}"
-    print(f"Testing model_name: {model_name} variant: {variant}", flush=True)
+    loader = ModelLoader(variant=variant)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -58,7 +53,7 @@ def test_bert(record_property, mode, op_by_op, variant_info):
     tester = ThisTester(
         model_name,
         mode,
-        variant=variant,
+        loader=loader,
         relative_atol=0.012,
         compiler_config=cc,
         record_property_handle=record_property,
@@ -68,7 +63,7 @@ def test_bert(record_property, mode, op_by_op, variant_info):
     results = tester.test_model()
 
     if mode == "eval":
-        answer = tester.loader.decode_output(results, tester.inputs)
+        answer = loader.decode_output(results, tester.inputs)
 
         print(
             f"""

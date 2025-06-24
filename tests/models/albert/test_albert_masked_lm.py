@@ -11,11 +11,6 @@ from third_party.tt_forge_models.albert.masked_lm.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
-    def __init__(self, model_name, mode, variant=None, **kwargs):
-        self.variant = variant
-        self.loader = ModelLoader(variant=variant)
-        super().__init__(model_name, mode, **kwargs)
-
     def _load_model(self):
         return self.loader.load_model(dtype_override=torch.bfloat16)
 
@@ -73,14 +68,14 @@ def test_albert_masked_lm(
 
     variant, variant_config = variant_info
     model_name = f"albert/{variant}-masked_lm"
-    print(f"Testing model_name: {model_name} variant: {variant}", flush=True)
+    loader = ModelLoader(variant=variant)
 
     required_pcc = 0.98 if "xxlarge" in variant else 0.99
 
     tester = ThisTester(
         model_name,
         mode,
-        variant=variant,
+        loader=loader,
         required_pcc=required_pcc,
         assert_pcc=True,
         assert_atol=False,
@@ -91,7 +86,7 @@ def test_albert_masked_lm(
     results = tester.test_model()
 
     def print_result(result):
-        predicted_tokens = tester.loader.decode_output(result, tester.inputs)
+        predicted_tokens = loader.decode_output(result, tester.inputs)
         print(f"Model: {model_name} | Input: {tester.text} | Mask: {predicted_tokens}")
 
     if mode == "eval":
