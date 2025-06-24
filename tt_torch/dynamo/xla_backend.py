@@ -610,9 +610,6 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
 
 
 def xla_backend(gm, example_inputs, options: BackendOptions = None):
-    assert (
-        example_inputs[0].device.type == "xla"
-    ), "Sanity check failed, the xla_backend should not be called with inputs not on an xla device"
     if options is None:
         cc = CompilerConfig()
         devices = None
@@ -621,6 +618,16 @@ def xla_backend(gm, example_inputs, options: BackendOptions = None):
         cc = options.compiler_config
         devices = options.devices
         async_mode = options.async_mode
+
+    assert (
+        cc.compile_depth != CompileDepth.EXECUTE
+        or example_inputs[0].device.type == "xla"
+    ), "Sanity check failed, the xla_backend should not be called with inputs not on an xla device when using compile depth EXECUTE"
+
+    assert (
+        cc.compile_depth != CompileDepth.EXECUTE_OP_BY_OP
+        or example_inputs[0].device.type != "xla"
+    ), "Sanity check failed, the xla_backend should not be called with inputs not on an xla device when using compile depth EXECUTE_OP_BY_OP"
 
     gm = xla_pass_pipeline(gm, example_inputs, cc)
 
