@@ -58,6 +58,7 @@ def test_gliner(record_property, mode, op_by_op):
 
     entities = tester.test_model()
     if mode == "eval":
-        for entity in entities:
-            print(entity["text"], "=>", entity["label"])
+        for batch_entities in entities:
+            for entity in batch_entities:
+                print(entity["text"], "=>", entity["label"])
     tester.finalize()
