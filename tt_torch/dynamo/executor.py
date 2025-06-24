@@ -231,6 +231,8 @@ class Executor:
             return self.devices[device_idx]
         # Return a default parent mesh
         mesh_options = tt_mlir.MeshDeviceOptions()
+        # Force enable program cache on for experiment
+        mesh_options.enable_program_cache = True
         if len(self.compiler_config.mesh_shape) == 32:
             mesh_options.dispatch_core_type = tt_mlir.DispatchCoreType.WORKER
         device = tt_mlir.open_mesh_device(self.compiler_config.mesh_shape, mesh_options)

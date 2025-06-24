@@ -27,8 +27,8 @@ class DeviceManager:
             options.device_ids = device_ids
         if num_hw_cqs is not None:
             options.num_hw_cqs = num_hw_cqs
-        if enable_program_cache is not None:
-            options.enable_program_cache = enable_program_cache
+        # Force enable program cache on for experiment
+        options.enable_program_cache = True
         if l1_small_size is not None:
             options.l1_small_size = l1_small_size
         if dispatch_core_type is not None:
