@@ -690,6 +690,12 @@ def generate_op_reports_xlsx():
         else:
             model_group = "unknown"
 
+        # Dirty-ish Workaround. Model names are quite long w/ get_model_info() so
+        # explicitly remove some known frameworks which are at the start of the name
+        model_name = model_name.replace("pytorch_", "")
+        model_name = model_name.replace("jax_", "")
+        model_name = model_name.replace("numpy_", "")
+
         # If invalid excel char in name: []:*?/\, replace with _
         model_name = re.sub(r"[^a-zA-Z0-9_]", "_", model_name)
         if len(model_name) > 28:
