@@ -68,7 +68,7 @@ def test_albert_masked_lm(
 
     variant, variant_config = variant_info
     loader = ModelLoader(variant=variant)
-    model_info = loader.get_model_info()
+    model_info = loader.get_model_info(variant=variant)
     model_name = model_info.name
 
     required_pcc = 0.98 if "xxlarge" in variant else 0.99

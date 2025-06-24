@@ -40,7 +40,7 @@ def test_bert(record_property, mode, op_by_op, variant_info):
     # Use variant in model name if specified
     variant, variant_config = variant_info
     loader = ModelLoader(variant=variant)
-    model_info = loader.get_model_info()
+    model_info = loader.get_model_info(variant=variant)
     model_name = model_info.name
 
     cc = CompilerConfig()
