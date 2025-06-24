@@ -5,7 +5,7 @@ import torch
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.bert.pytorch import ModelLoader
+from third_party.tt_forge_models.bert.pytorch import ModelLoader, ModelVariant
 
 
 class ThisTester(ModelTester):
@@ -18,7 +18,7 @@ class ThisTester(ModelTester):
 
 # Print available variants for reference
 available_variants = ModelLoader.query_available_variants()
-print("Available variants:", available_variants)
+print("Available variants: ", [str(k) for k in available_variants.keys()])
 
 
 @pytest.mark.parametrize(
@@ -31,14 +31,12 @@ print("Available variants:", available_variants)
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 @pytest.mark.parametrize(
-    "variant_info",
+    "variant,variant_config",
     available_variants.items(),
-    ids=list(available_variants.keys()),
+    ids=[str(k) for k in available_variants.keys()],
 )
-def test_bert(record_property, mode, op_by_op, variant_info):
+def test_bert(record_property, mode, op_by_op, variant, variant_config):
 
-    # Use variant in model name if specified
-    variant, variant_config = variant_info
     loader = ModelLoader(variant=variant)
     model_info = loader.get_model_info(variant=variant)
     model_name = model_info.name
