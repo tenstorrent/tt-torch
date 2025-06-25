@@ -4,27 +4,19 @@
 import torch
 import numpy as np
 from PIL import Image
-from transformers import GLPNImageProcessor, GLPNForDepthEstimation
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.tools.utils import get_file
+from third_party.tt_forge_models.glpn_kitti.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.processor = GLPNImageProcessor.from_pretrained("vinvino02/glpn-kitti")
-        model = GLPNForDepthEstimation.from_pretrained(
-            "vinvino02/glpn-kitti", torch_dtype=torch.bfloat16
-        )
-        return model
+        return ModelLoader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
-        self.image = Image.open(str(image_file))
-        # prepare image for the model
-        inputs = self.processor(images=self.image, return_tensors="pt")
-        inputs["pixel_values"] = inputs["pixel_values"].to(torch.bfloat16)
+        inputs = ModelLoader.load_inputs(dtype_override=torch.bfloat16)
+        self.image = ModelLoader.image
         return inputs
 
 
