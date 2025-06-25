@@ -782,6 +782,7 @@ class OnnxModelTester(ModelTester):
         self,
         model_name,
         mode,
+        loader=None,
         required_pcc=0.99,
         required_atol=None,
         relative_atol=None,
@@ -800,6 +801,7 @@ class OnnxModelTester(ModelTester):
         super().__init__(
             model_name,
             mode,
+            loader,
             required_pcc,
             required_atol,
             relative_atol,
