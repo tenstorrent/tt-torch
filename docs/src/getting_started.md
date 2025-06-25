@@ -2,18 +2,21 @@
 
 This document walks you through how to set up to run models using tt-torch. The following topics are covered:
 
-* [System Dependencies](#system-dependencies)
-* [Configuring Hardware](#configuring-hardware)
-* [Installing Dependencies](#installing-dependencies)
-* [Installing CMake](#installing-cmake-402)
-* [Installing Clang 17](#installing-clang-17)
-* [Building tt-torch](#building-tt-torch)
-* [Test the tt-torch Build](#test-the-tt-torch-build)
-* [Running the resnet Demo](#running-the-resnet-demo)
-* [Compiling and Running a Model](#compiling-and-running-a-model)
-* [Example - Add Two Tensors](#example---add-two-tensors)
+* [Building tt-torch From Source](#building-tt-torch-from-source)
+    * [System Dependencies](#system-dependencies)
+    * [Configuring Hardware](#configuring-hardware)
+    * [Installing Dependencies](#installing-dependencies)
+    * [Installing CMake](#installing-cmake-402)
+    * [Installing Clang 17](#installing-clang-17)
+    * [How to Build From Source](#how-to-build-from-source)
+* [Building tt-torch From Wheel](#building-tt-torch-from-wheel)
+    * [Wheel Pre-requisites](#wheel-pre-requisites)
+    * [How to Build From Wheel](#how-to-build-from-wheel)
+* [Next Steps](#next-steps)
 
-## System Dependencies
+## Building tt-torch from Source
+
+### System Dependencies
 
 tt-torch has the following system dependencies:
 * Ubuntu 22.04
@@ -28,7 +31,7 @@ tt-torch has the following system dependencies:
 sudo apt install clang cmake ninja-build pip python3.10-venv
 ```
 
-## Configuring Hardware
+### Configuring Hardware
 
 This walkthrough assumes you are using Ubuntu 22.04.
 
@@ -47,7 +50,7 @@ sudo apt-get upgrade -y
 /bin/bash -c "$(curl -fsSL https://github.com/tenstorrent/tt-installer/releases/latest/download/install.sh)"
 ```
 
-## Installing Dependencies
+### Installing Dependencies
 
 Install additional dependencies that were not installed by the tt-installer script:
 
@@ -75,7 +78,7 @@ Install OpenMPI:
 sudo wget -q https://github.com/dmakoviichuk-tt/mpi-ulfm/releases/download/v5.0.7-ulfm/openmpi-ulfm_5.0.7-1_amd64.deb -O /tmp/openmpi-ulfm.deb && sudo apt install /tmp/openmpi-ulfm.deb
 ```
 
-## Installing CMake 4.0.2
+### Installing CMake 4.0.2
 
 Install CMake 4.0.2:
 
@@ -83,7 +86,7 @@ Install CMake 4.0.2:
 pip install cmake
 ```
 
-## Installing Clang 17
+### Installing Clang 17
 This section walks you through installing Clang 17.
 
 1. Install Clang 17:
@@ -124,7 +127,7 @@ This approach lets multiple GCC versions coexist on your system and you can swit
 sudo rm -rf /usr/bin/../lib/gcc/x86_64-linux-gnu/12
 ```
 
-## Building tt-torch
+### How to build from source
 This section describes how to build tt-torch. You need to build tt-torch whether you plan to do development work, or run models.
 
 1. Clone the tt-torch repo:
@@ -163,63 +166,36 @@ cmake --install build
 
 >**NOTE:** It takes a while for everything to build.
 
-## Test the tt-torch Build:
-You can check that everything is working with a basic unit test:
+## Building tt-torch From Wheel
+
+### Wheel Pre-requisites
+
+Please follow [Configuring Hardware](#configuring-hardware) and install OpenMPI:
 
 ```bash
-pytest -svv tests/torch/test_basic.py
+sudo wget -q https://github.com/dmakoviichuk-tt/mpi-ulfm/releases/download/v5.0.7-ulfm/openmpi-ulfm_5.0.7-1_amd64.deb -O /tmp/openmpi-ulfm.deb && sudo apt install /tmp/openmpi-ulfm.deb
 ```
 
->**NOTE:** Any time you use tt-torch, you need to be in the activated virtual
-> environment you created. Otherwise, you will get an error when trying to run
-> a test.
+### How to Build from Wheel
 
-## Running the resnet Demo
-You can also try a demo:
+1. (Optional) Create a virtual environment
 
-```bash
-python demos/resnet/resnet50_demo.py
+We recommend using a virtual environment.
+
+```
+VENV_DIR=./venv
+python3 -m venv $VENV_DIR
+source $VENV_DIR/bin/activate
 ```
 
-## Compiling and Running a Model
+2. Install the wheel
 
-Once you have your `torch.nn.Module` compile the model:
-```py
-import torch
+You can find available wheel releases under [https://pypi.eng.aws.tenstorrent.com/tt-torch/](https://pypi.eng.aws.tenstorrent.com/tt-torch/)
 
-class MyModel(torch.nn.Module):
-    def __init__(self):
-        ...
-
-    def foward(self, ...):
-        ...
-
-model = MyModel()
-
-model = torch.compile(model, backend="tt")
-
-inputs = ...
-
-outputs = model(inputs)
+```
+pip install --pre --extra-index-url https://pypi.eng.aws.tenstorrent.com/ --upgrade tt_torch
 ```
 
-## Example - Add Two Tensors
+## Next Steps
 
-Here is an exampe of a small model which adds its inputs running through tt-torch. Try it out!
-
-```py
-import torch
-import tt_torch
-
-class AddTensors(torch.nn.Module):
-  def forward(self, x, y):
-    return x + y
-
-
-model = AddTensors()
-tt_model = torch.compile(model, backend="tt")
-
-x = torch.ones(5, 5)
-y = torch.ones(5, 5)
-print(tt_model(x, y))
-```
+Please follow [Testing](test.md)
