@@ -1,28 +1,19 @@
 # SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-from transformers import AutoTokenizer, Qwen2ForTokenClassification
 import torch
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.qwen.token_classification.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        return Qwen2ForTokenClassification.from_pretrained(
-            self.model_name, torch_dtype=torch.bfloat16
-        )
+        return ModelLoader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            self.model_name, torch_dtype=torch.bfloat16
-        )
-        self.text = "HuggingFace is a company based in Paris and New York."
-        self.inputs = self.tokenizer(
-            self.text, add_special_tokens=False, return_tensors="pt"
-        )
-        return self.inputs
+        return ModelLoader.load_inputs(dtype_override=torch.bfloat16)
 
 
 @pytest.mark.parametrize(
@@ -30,17 +21,13 @@ class ThisTester(ModelTester):
     ["eval", "train"],
 )
 @pytest.mark.parametrize(
-    "model_name",
-    [
-        "Qwen/Qwen2-7B",
-    ],
-)
-@pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_qwen2_token_classification(record_property, model_name, mode, op_by_op):
+def test_qwen2_token_classification(record_property, mode, op_by_op):
+    model_name = "Qwen/Qwen2-7B"
+
     if mode == "train":
         pytest.skip()
 

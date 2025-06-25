@@ -8,24 +8,15 @@ from diffusers.utils import load_image
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-
-dependencies = ["controlnet_aux==0.0.9"]
+from third_party.tt_forge_models.openpose.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        from controlnet_aux import OpenposeDetector
-
-        model = OpenposeDetector.from_pretrained("lllyasviel/ControlNet")
-        model = model.to(torch.bfloat16)
-        return model
+        return ModelLoader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        image = load_image(
-            "https://huggingface.co/lllyasviel/control_v11p_sd15_openpose/resolve/main/images/input.png"
-        )
-        arguments = {"input_image": image, "hand_and_face": True}
-        return arguments
+        return ModelLoader.load_inputs()
 
 
 @pytest.mark.parametrize(

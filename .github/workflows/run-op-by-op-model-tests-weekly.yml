@@ -28,7 +28,7 @@ jobs:
         build: [
           {
             runs-on: wormhole_b0, name: "qwen", tests: "
-              tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[op_by_op_torch-Qwen/Qwen2.5-1.5B-eval]
+              tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[op_by_op_torch-eval]
               "
           },
           {
