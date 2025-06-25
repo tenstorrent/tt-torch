@@ -353,7 +353,6 @@ def split_onto_devices(gm, compiler_config):
     if len(device_indices) == 0:
         device_indices = [0]
     mcg = MultiChipGraph(device_indices)
-    # gm.graph.print_tabular()
     if len(device_indices) == 1:
         mcg.device_graphs = {0: gm.graph}
         input_index = 0

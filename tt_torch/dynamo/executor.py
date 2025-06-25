@@ -175,16 +175,10 @@ class Executor:
         if buffer_cache is None:
             self.buffer_cache = None
         elif not buffer_cache:
-            # Empty dict was passed, initialize it with device structure
-            self.buffer_cache = buffer_cache  # Keep the reference to the original dict
-            for device in self.devices:
-                buffer_cache[device] = {}
-        elif set(buffer_cache.keys()) != set(self.devices):
-            # Buffer cache has stale devices. Reinitialize.
-            buffer_cache.clear()
-            for device in self.devices:
-                buffer_cache[device] = {}
+            # Empty dict {} was passed, initialize it with known devices
             self.buffer_cache = buffer_cache
+            for device in self.devices:
+                buffer_cache[device] = {}
         else:
             # Buffer cache exists and has correct keys
             self.buffer_cache = buffer_cache
@@ -192,18 +186,10 @@ class Executor:
         if constant_cache is None:
             self.constant_cache = None
         elif not constant_cache:
-            # Empty dict was passed, initialize it with device structure
-            self.constant_cache = (
-                constant_cache  # Keep the reference to the original dict
-            )
-            for device in self.devices:
-                constant_cache[device] = {}
-        elif set(constant_cache.keys()) != set(self.devices):
-            # Constant cache has stale devices. Reinitialize.
-            constant_cache.clear()
-            for device in self.devices:
-                constant_cache[device] = {}
+            # Empty dict was passed, initialize it with known devices
             self.constant_cache = constant_cache
+            for device in self.devices:
+                constant_cache[device] = {}
         else:
             # Constant cache exists and has correct keys
             self.constant_cache = constant_cache
@@ -283,8 +269,8 @@ class Executor:
         self.owned_device_indices.append(device_idx)
         return device
 
-    def _cleanup_resources(self, preprocessed_activations):
-        for t in preprocessed_activations:
+    def _cleanup_runtime_tensor_list(self, runtime_tensor_list):
+        for t in runtime_tensor_list:
             tt_mlir.deallocate_tensor(t, force=True)
 
     def get_inputs(self, *inputs, binary, program_idx, device_idx=0):
@@ -308,6 +294,19 @@ class Executor:
             return tuple(tensors)
 
         def insert_runtime_tensors_into_caches(torch_tensors, runtime_tensors):
+            """
+            Iterate over a list of torch and runtime tensors, and insert them
+            into the appropriate device runtime tensor cache.
+
+            The runtime tensor cache will look like:
+            torch_tensor -> runtime_tensor, keyed on python id()
+
+            If there was no runtime_tensor previously associated with the given torch_tensor,
+            the cache entry will appear as:
+            torch_tensor -> None
+
+            Which signals that its associated runtime tensor should be inserted into the cache.
+            """
             if self.buffer_cache is None and self.constant_cache is None:
                 return
 
@@ -331,7 +330,8 @@ class Executor:
                     and device_buffer_cache[torch_tensor] is None
                 ):
                     device_buffer_cache[torch_tensor] = runtime_tensor
-                if (
+
+                elif (
                     device_constant_cache is not None
                     and torch_tensor in device_constant_cache
                     and device_constant_cache[torch_tensor] is None
@@ -346,14 +346,17 @@ class Executor:
 
         weights_and_activations = constants + buffers + list(inputs)
 
-        # fill weights_and_activations from cache if possible
+        # fill weights_and_activations from caches, if a cache for the device
+        #   exists and there is a runtime tensor with id() corresponding to the
+        #   input torch tensor
+
         if self.constant_cache is not None:
             device = self.devices[device_idx]
             device_constant_cache = self.constant_cache.get(device, {})
             for i in range(len(constants)):
                 cached_constant = device_constant_cache.get(
                     weights_and_activations[i], None
-                )  # None signals not present.
+                )
                 if cached_constant is not None:
                     weights_and_activations[i] = cached_constant
                     tensor_start_idx += 1
@@ -364,7 +367,7 @@ class Executor:
             for i in range(len(constants), len(constants) + len(buffers)):
                 cached_buffer = device_buffer_cache.get(
                     weights_and_activations[i], None
-                )  # None signals not present.
+                )
                 if cached_buffer is not None:
                     weights_and_activations[i] = cached_buffer
                     tensor_start_idx += 1
@@ -431,12 +434,10 @@ class Executor:
             for output in self.mcg.graph_outputs[device_idx]:
                 if output.io_type == IOType.USER:
                     num_outputs += 1
-            # graph_inputs[device_idx] = [None] * (len(self.mcg.graph_inputs[device_idx]) + len(self.mcg.buffers[device_idx]))
             graph_inputs[device_idx] = [None] * (len(self.mcg.graph_inputs[device_idx]))
 
             for i, input in enumerate(self.mcg.graph_inputs[device_idx]):
                 if input.io_type == IOType.USER:
-                    # graph_inputs[device_idx][input.consumer_index + len(self.mcg.buffers[device_idx])] = inputs[
                     graph_inputs[device_idx][input.consumer_index] = inputs[
                         input.producer_index
                     ]
@@ -468,21 +469,14 @@ class Executor:
                         if torch_constant not in device_constant_cache:
                             cache_invalidated = True
 
+            # If the constant cache is invalid, deallocate all its existing tensors and clear it
             if cache_invalidated:
                 device_constant_cache = self.constant_cache.get(device, {})
-                for value in device_constant_cache.values():
-                    if isinstance(value, tt_mlir.Tensor):
-                        tt_mlir.deallocate_tensor(value, force=True)
+                self._cleanup_runtime_tensor_list(list(device_constant_cache.values()))
                 self.constant_cache[device] = {}
-                print(
-                    "Invalidating constant cache for device due to stale torch tensor references.",
-                    device_idx,
-                    flush=True,
-                )
 
             if self.constant_cache is not None:
                 if device not in self.constant_cache:
-                    # create a new entry for the device in the constant cache
                     self.constant_cache[device] = {}
                 device_constant_cache = self.constant_cache[device]
                 for torch_constant in self.mcg.constant_inputs[device_idx]:
@@ -532,7 +526,7 @@ class Executor:
                 else:
                     final_outputs[graph_output.index] = output
 
-        self._cleanup_resources(preprocessed_activations)
+        self._cleanup_runtime_tensor_list(preprocessed_activations)
         assert all([o is not None for o in final_outputs])
         return final_outputs
 

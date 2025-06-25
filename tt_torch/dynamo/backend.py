@@ -7,6 +7,7 @@ import warnings
 import tt_mlir
 import sys
 import torch_mlir
+from torch._dynamo import register_backend
 
 from tt_torch.tools.utils import (
     OpByOpBackend,
@@ -30,22 +31,22 @@ class BackendOptions:
         self.devices = devices
         self.async_mode = async_mode
 
-        # These caches store runtime tensors reprsenting buffers and graph constants
+        # These caches store runtime tensors representing buffers and graph constants
         # and are reused between executors, as long as they share the same BackendOptions object
 
         self.buffer_cache = buffer_cache if buffer_cache is not None else {}
         self.constant_cache = constant_cache if constant_cache is not None else {}
 
     def clear_caches(self):
-        # Deallocate runtime tensors when the BackendOptions object is deleted\
+        # Deallocate runtime tensors when the BackendOptions object is deleted
         if self.constant_cache is not None:
-            for device_weights in self.constant_cache.keys():
-                for runtime_weight in device_weights.keys():
+            for torch_to_runtime_tensors in self.constant_cache.values():
+                for runtime_weight in torch_to_runtime_tensors.values():
                     tt_mlir.deallocate_tensor(runtime_weight, force=True)
 
         if self.buffer_cache is not None:
-            for device_buffers in self.buffer_cache.keys():
-                for runtime_buffer in device_buffers.keys():
+            for torch_to_runtime_tensors in self.buffer_cache.values():
+                for runtime_buffer in torch_to_runtime_tensors.values():
                     tt_mlir.deallocate_tensor(runtime_buffer, force=True)
 
     def __del__(self):
@@ -295,6 +296,7 @@ def _base_backend(
 
 
 @tt_torch_error_message
+@register_backend(name="tt")
 def backend(gm, example_inputs, options: BackendOptions = None):
     warnings.filterwarnings("ignore", message="Failed to fetch module*")
     assert isinstance(gm, torch.fx.GraphModule), "Backend only supports torch graphs"
