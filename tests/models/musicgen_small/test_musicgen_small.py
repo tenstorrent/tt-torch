@@ -8,41 +8,15 @@ import pytest
 import torch
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.musicgen_small.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model = MusicgenForConditionalGeneration.from_pretrained(
-            "facebook/musicgen-small"
-        )
-        return model
+        return ModelLoader.load_model()
 
     def _load_inputs(self):
-        processor = AutoProcessor.from_pretrained("facebook/musicgen-small")
-        inputs = processor(
-            text=[
-                "80s pop track with bassy drums and synth",
-                "90s rock song with loud guitars and heavy drums",
-            ],
-            padding=True,
-            return_tensors="pt",
-        )
-        pad_token_id = self.framework_model.generation_config.pad_token_id
-        decoder_input_ids = (
-            torch.ones(
-                (
-                    inputs.input_ids.shape[0]
-                    * self.framework_model.decoder.num_codebooks,
-                    1,
-                ),
-                dtype=torch.long,
-            )
-            * pad_token_id
-        )
-
-        inputs["max_new_tokens"] = 1
-        inputs["decoder_input_ids"] = decoder_input_ids
-        return inputs
+        return ModelLoader.load_inputs()
 
 
 @pytest.mark.parametrize(

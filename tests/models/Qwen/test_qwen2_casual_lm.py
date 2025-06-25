@@ -3,31 +3,20 @@
 # SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/Qwen/Qwen2.5-1.5B
 
-from transformers import AutoTokenizer, Qwen2ForCausalLM, GenerationConfig
 import torch
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 import tt_mlir
+from third_party.tt_forge_models.qwen.casual_lm.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model = Qwen2ForCausalLM.from_pretrained(
-            self.model_name, torch_dtype=torch.bfloat16
-        )
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            self.model_name, torch_dtype=torch.bfloat16
-        )
-        return model
+        return ModelLoader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-
-        self.text = "Hey, are you conscious? Can you talk to me?"
-        input_ids = self.tokenizer(self.text, return_tensors="pt").input_ids
-        generation_config = GenerationConfig(max_length=30)
-        arguments = {"input_ids": input_ids, "generation_config": generation_config}
-        return arguments
+        return ModelLoader.load_inputs(dtype_override=torch.bfloat16)
 
 
 @pytest.mark.parametrize(
@@ -35,17 +24,13 @@ class ThisTester(ModelTester):
     ["eval", "train"],
 )
 @pytest.mark.parametrize(
-    "model_name",
-    [
-        "Qwen/Qwen2.5-1.5B",
-    ],
-)
-@pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_qwen2_casual_lm(record_property, model_name, mode, op_by_op):
+def test_qwen2_casual_lm(record_property, mode, op_by_op):
+    model_name = "Qwen/Qwen2.5-1.5B"
+
     if mode == "train":
         pytest.skip()
     cc = CompilerConfig()
@@ -71,14 +56,10 @@ def test_qwen2_casual_lm(record_property, model_name, mode, op_by_op):
     results = tester.test_model()
 
     if mode == "eval":
-        logits = results.logits if hasattr(results, "logits") else results[0]
-        token_ids = torch.argmax(logits, dim=-1)
-        gen_text = tester.tokenizer.batch_decode(
-            token_ids,
-            skip_special_tokens=True,
-            clean_up_tokenization_spaces=False,
-        )[0]
+        gen_text = ModelLoader.decode_output(results)
 
-        print(f"Model: {model_name} | Input: {tester.text} | Decoded Text: {gen_text}")
+        print(
+            f"Model: {model_name} | Input: {ModelLoader.text} | Decoded Text: {gen_text}"
+        )
 
     tester.finalize()

@@ -256,13 +256,13 @@ If you've tried it and it runs – great!
 - Add it to run in "nightly full model execute list" in `.github/workflows/run-full-model-execution-tests-nightly.yml` while ideally balancing existing groups of tests. Example:
 
 ```
-tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[full-Qwen/Qwen2.5-1.5B-eval]
+tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[full-eval]
 ```
 
 - Also add it to "weekly op-by-op-flow list" in `.github/workflows/run-op-by-op-flow-tests-weekly.yml` where we less frequently run tests that have all ops passing through to `EXECUTE` depth in op-by-op flow. Example:
 
 ```
-tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[op_by_op_torch-Qwen/Qwen2.5-1.5B-eval]
+tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[op_by_op_torch-eval]
 ```
 
 ### Case 2: The New Model Test Runs End-to-end but Encounters a PCC/ATOL/Checker Error

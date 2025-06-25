@@ -6,28 +6,16 @@ import pytest
 from transformers import LlavaForConditionalGeneration  # , AutoProcessor
 from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.mistral.pixtral.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        # self.processor = AutoProcessor.from_pretrained(self.model_name)
-        model = LlavaForConditionalGeneration.from_pretrained(
-            self.model_name, torch_dtype=torch.bfloat16
-        )
-        return model
+        return ModelLoader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
         # https://github.com/tenstorrent/tt-torch/issues/904
-        inputs = {
-            "input_ids": torch.tensor(
-                [[1, 3, 12483, 1593, 11386, 10, 51883, 3226, 1063, 10, 4]],
-                dtype=torch.long,
-            ),
-            "attention_mask": torch.tensor(
-                [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]], dtype=torch.long
-            ),
-        }
-        return inputs
+        return ModelLoader.load_inputs()
 
 
 @pytest.mark.parametrize(
