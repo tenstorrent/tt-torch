@@ -1,44 +1,19 @@
 # SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-from PIL import Image
 import torch
-import numpy as np
-from torchvision import transforms
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.tools.utils import get_file
+from third_party.tt_forge_models.detr.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        """
-        The model is from https://github.com/facebookresearch/detr
-        """
-        # Model
-        torch.hub._validate_not_a_forked_repo = lambda a, b, c: True
-        model = torch.hub.load(
-            "facebookresearch/detr:main", "detr_resnet50", pretrained=True
-        ).to(torch.bfloat16)
-        return model
+        return ModelLoader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        # Images
-        image_file = get_file(
-            "https://huggingface.co/spaces/nakamura196/yolov5-char/resolve/8a166e0aa4c9f62a364dafa7df63f2a33cbb3069/ultralytics/yolov5/data/images/zidane.jpg"
-        )
-        input_image = Image.open(str(image_file))
-        m, s = np.mean(input_image, axis=(0, 1)), np.std(input_image, axis=(0, 1))
-        preprocess = transforms.Compose(
-            [
-                transforms.ToTensor(),
-                transforms.Normalize(mean=m, std=s),
-            ]
-        )
-        input_tensor = preprocess(input_image)
-        input_batch = input_tensor.unsqueeze(0).to(torch.bfloat16)
-        return input_batch
+        return ModelLoader.load_inputs(dtype_override=torch.bfloat16)
 
     def _extract_outputs(self, output_object):
         return (output_object["pred_logits"], output_object["pred_boxes"])
@@ -81,7 +56,14 @@ def test_detr(record_property, mode, op_by_op, data_parallel_mode):
     results = tester.test_model()
 
     def print_result(result):
-        print(f"Result: {result}")
+        if isinstance(result, tuple) and len(result) == 2:
+            pred_logits, pred_boxes = result
+            batch_size = pred_logits.shape[0] if hasattr(pred_logits, "shape") else 1
+            print(f"DETR Results (batch_size={batch_size}):")
+            print(f"  pred_logits: shape {pred_logits.shape}")
+            print(f"  pred_boxes: shape {pred_boxes.shape}")
+        else:
+            print(f"Result: {result}")
 
     if mode == "eval":
         ModelTester.print_outputs(results, data_parallel_mode, print_result)
