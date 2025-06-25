@@ -164,7 +164,12 @@ jobs:
             runs-on: wormhole_b0, name: "phi3p5_moe", tests: "
             tests/models/phi/test_phi_3p5_moe.py::test_phi_3p5_moe[op_by_op_torch-phi3p5_moe-eval]
             "
-          }
+          },
+          {
+            runs-on: wormhole_b0, name: "phi3p5_vision", tests: "
+              tests/models/phi/test_phi_3p5_vision.py::test_phi_3p5_vision[op_by_op_torch-microsoft/Phi-3.5-vision-instruct-eval]
+            "
+          },
         ]
     runs-on:
       - ${{ matrix.build.sh-run && format('tt-beta-ubuntu-2204-{0}-large-stable', matrix.build.runs-on) ||  matrix.build.runs-on }}
