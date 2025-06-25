@@ -79,22 +79,20 @@ def test_all_models(loader_path, mode, op_by_op, record_property):
 
     class DynamicTester(ModelTester):
         def _load_model(self):
-            return ModelLoader.load_model(dtype_override=torch.bfloat16)
+            # Check if load_model method supports dtype_override parameter
+            sig = inspect.signature(self.loader.load_model)
+            if "dtype_override" in sig.parameters:
+                return self.loader.load_model(dtype_override=torch.bfloat16)
+            else:
+                return self.loader.load_model()
 
         def _load_inputs(self):
             # Check if load_inputs method supports dtype_override parameter
-            sig = inspect.signature(ModelLoader.load_inputs)
+            sig = inspect.signature(self.loader.load_inputs)
             if "dtype_override" in sig.parameters:
-                return ModelLoader.load_inputs(dtype_override=torch.bfloat16)
+                return self.loader.load_inputs(dtype_override=torch.bfloat16)
             else:
-                return ModelLoader.load_inputs()
-
-    # Get model name from the ModelLoader
-    model_name = getattr(
-        ModelLoader,
-        "model_name",
-        os.path.relpath(os.path.dirname(loader_path), MODELS_ROOT),
-    )
+                return self.loader.load_inputs()
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -104,9 +102,20 @@ def test_all_models(loader_path, mode, op_by_op, record_property):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    # TODO - Figure out how to run variants in this test.
+    # they are normally pytest params after querying via
+    # available_variants = ModelLoader.query_available_variants()
+    variant = None
+    loader = ModelLoader(variant=variant)
+
+    # Get model name from the ModelLoader's ModelInfo
+    model_info = ModelLoader.get_model_info(variant=variant)
+    model_name = model_info.name
+
     tester = DynamicTester(
         model_name,
         mode,
+        loader=loader,
         compiler_config=cc,
         assert_atol=False,
         assert_pcc=True,
