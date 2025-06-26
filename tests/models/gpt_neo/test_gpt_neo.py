@@ -53,6 +53,6 @@ def test_gpt_neo(record_property, mode, op_by_op):
     )
     results = tester.test_model()
     if mode == "eval":
-        gen_text = ModelLoader.decode_output(results)
+        gen_text = loader.decode_output(results)
 
     tester.finalize()

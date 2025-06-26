@@ -52,6 +52,6 @@ def test_flan_t5(record_property, mode, op_by_op):
     )
     results = tester.test_model()
     if mode == "eval":
-        results = ModelLoader.decode_output(results)
+        results = loader.decode_output(results)
 
     tester.finalize()

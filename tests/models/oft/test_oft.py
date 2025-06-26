@@ -9,10 +9,10 @@ from third_party.tt_forge_models.oft.pytorch import ModelLoader
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        return ModelLoader.load_model()
+        return self.loader.load_model()
 
     def _load_inputs(self):
-        return ModelLoader.load_inputs()
+        return self.loader.load_inputs()
 
 
 @pytest.mark.parametrize(

@@ -51,10 +51,10 @@ def test_gliner(record_property, mode, op_by_op):
     skip_full_eval_test(
         record_property,
         cc,
-        model_name,
+        model_info.name,
         bringup_status="FAILED_TTMLIR_COMPILATION",
         reason="moreh_softmax_device_operation.cpp Inputs must be of bfloat16 or bfloat8_b type - https://github.com/tenstorrent/tt-torch/issues/732",
-        model_group=model_group,
+        model_group=model_info.group,
     )
 
     entities = tester.test_model()

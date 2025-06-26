@@ -56,7 +56,7 @@ def test_codegen_generate(record_property, mode, op_by_op):
     )  # don't validate token output
 
     if mode == "eval":
-        decoded_outputs = ModelLoader.decode_outputs(results)
+        decoded_outputs = loader.decode_outputs(results)
         for i, text in enumerate(decoded_outputs):
             print(f"Output {i}: {text}")
 
