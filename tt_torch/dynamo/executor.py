@@ -156,7 +156,6 @@ class Executor:
             torch.int64: torch.int32,
             torch.float64: torch.float32,
         }
-
         self.binary = {}
         self.devices = devices if devices is not None else [None]
         self.owned_device_indices = []
@@ -273,7 +272,7 @@ class Executor:
         for t in runtime_tensor_list:
             tt_mlir.deallocate_tensor(t, force=True)
 
-    def _try_invalidate_constant_cache(self, device, device_idx):
+    def _try_initialize_or_invalidate_constant_cache(self, device, device_idx):
         """
         It is possible that between different executor instances, the constant cache will contain
         some invalid entries (where there are torch tensors from mcg.constant_inputs that do not exist
@@ -283,28 +282,28 @@ class Executor:
         In this case, invalidate and discard the entire constant cache and mark it to be repopulated
         with the graph constants identified in the current executor's compute graph.
         """
+
+        if self.constant_cache is None:
+            return
+
+        device_constant_cache = self.constant_cache.get(device, {})
+
+        # Check if cache is uninitialized or has invalid entries
+        cache_uninitialized = not device_constant_cache
         cache_invalidated = False
-        if self.constant_cache is not None:
-            device_constant_cache = self.constant_cache.get(device, {})
-            if len(device_constant_cache.keys()) > 0:
-                for torch_constant in self.mcg.constant_inputs[device_idx]:
-                    if torch_constant not in device_constant_cache:
-                        cache_invalidated = True
-
-        # If the constant cache is invalid, deallocate all its existing tensors and clear it
-        if cache_invalidated:
-            device_constant_cache = self.constant_cache.get(device, {})
-            self._cleanup_runtime_tensor_list(list(device_constant_cache.values()))
-            self.constant_cache[device] = {}
-
-        # Then, reinitialize it with blanks for torch constants tensors that we
-        # want to fill with their equivalent runtime tensors once available
-        if self.constant_cache is not None:
-            if device not in self.constant_cache:
-                self.constant_cache[device] = {}
-            device_constant_cache = self.constant_cache[device]
+        if device_constant_cache:
             for torch_constant in self.mcg.constant_inputs[device_idx]:
-                device_constant_cache[torch_constant] = None
+                if torch_constant not in device_constant_cache:
+                    cache_invalidated = True
+                    break
+
+        # Reset cache if needed by repopulating it from mcg constant inputs
+        if cache_uninitialized or cache_invalidated:
+            self._cleanup_runtime_tensor_list(list(device_constant_cache.values()))
+            self.constant_cache[device] = {
+                torch_constant: None
+                for torch_constant in self.mcg.constant_inputs[device_idx]
+            }
 
     def get_inputs(self, *inputs, binary, program_idx, device_idx=0):
         def get_torch_tensors(tensors):
@@ -318,6 +317,7 @@ class Executor:
                 if isinstance(tensor, torch.Tensor):
                     torch_tensors.append(tensor)
                     indices.append(idx)
+
             return torch_tensors, indices
 
         def recreate_runtime_tensors(tensors, runtime_tensors, indices):
@@ -457,7 +457,6 @@ class Executor:
                 + tuple(self.mcg.buffers[0])
                 + inputs
             )
-
         assert len(self.mcg.binaries) > 0
         intermediate_results = []
         num_outputs = 0
@@ -489,12 +488,13 @@ class Executor:
                     # create a new entry for the device in the buffer cache
                     self.buffer_cache[device] = {}
                     device_buffer_cache = self.buffer_cache[device]
+
                 for torch_buffer in self.mcg.buffers[device_idx]:
                     if torch_buffer not in device_buffer_cache:
                         device_buffer_cache[torch_buffer] = None
 
             # Check if we should invalidate the constant cache because it has some valid and some invalid entries
-            self._try_invalidate_constant_cache(device, device_idx)
+            self._try_initialize_or_invalidate_constant_cache(device, device_idx)
 
             program_idx = 0
             preprocessed_weights, preprocessed_activations = self.get_inputs(
