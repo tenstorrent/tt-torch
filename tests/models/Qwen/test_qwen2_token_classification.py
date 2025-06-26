@@ -10,7 +10,9 @@ from third_party.tt_forge_models.qwen.token_classification.pytorch import ModelL
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        return ModelLoader.load_model(dtype_override=torch.bfloat16)
+        model = ModelLoader.load_model(dtype_override=torch.bfloat16)
+        self.tokenizer = ModelLoader.tokenizer
+        return model
 
     def _load_inputs(self):
         return ModelLoader.load_inputs(dtype_override=torch.bfloat16)
