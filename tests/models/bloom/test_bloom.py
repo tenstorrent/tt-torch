@@ -53,7 +53,7 @@ def test_bloom(record_property, mode, op_by_op):
     results = tester.test_model()
 
     if mode == "eval":
-        decoded_output = ModelLoader.decode_output(results)
+        decoded_output = loader.decode_output(results)
 
         print(f"model_name: {model_name}")
         for i, (inp, out) in enumerate(zip(ModelLoader.test_input, decoded_output)):
