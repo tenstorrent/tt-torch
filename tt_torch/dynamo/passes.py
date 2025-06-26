@@ -278,6 +278,8 @@ def move_device_map_key(gm, node_key, target_device, device_map, call_stack=None
             if (
                 input_key != node_key
                 and input_device is not None
+                # and isinstance(target_device, (int, float))
+                # and isinstance(input_device, (int, float))
                 and input_device > target_device
             ):
                 device_map = move_device_map_key(
@@ -317,7 +319,6 @@ def sort_device_map(gm, compiler_config):
         print(
             "\033[93m\nWARNING: Device map was modified to ensure topological ordering. This may cause memory on earlier devices to become full.\n\033[0m"
         )
-
     return device_map
 
 
@@ -326,6 +327,12 @@ def sort_device_map(gm, compiler_config):
 def split_onto_devices(gm, compiler_config):
 
     device_indices = set(compiler_config.device_map.values())
+
+    # If "disk" is in the device indices, assert that the model is too large for the available devices
+    assert (
+        "disk" not in device_indices
+    ), f"Model too large for {len(device_indices) - 1} devices. Consider increasing max_memory per device to 12GiB"
+
     if len(device_indices) == 0:
         device_indices = [0]
     mcg = MultiChipGraph(device_indices)

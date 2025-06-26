@@ -1,65 +1,54 @@
 # SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-import pytest
 import torch
-import torch.nn as nn
-import tt_torch
-from tt_torch.tools.device_manager import DeviceManager
-from tt_torch.tools.utils import CompilerConfig
-from tt_torch.dynamo.backend import BackendOptions
+import pytest
+
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from transformers.modeling_outputs import (
-    CausalLMOutputWithPast,
-    BaseModelOutputWithPast,
-)
-from transformers.modeling_flash_attention_utils import FlashAttentionKwargs
-from transformers.cache_utils import Cache, DynamicCache
-from transformers.processing_utils import Unpack
+from tests.utils import ModelTester
+from tt_torch.tools.device_manager import DeviceManager
+from tt_torch.tools.utils import CompilerConfig, OpByOpBackend
+from tt_torch.dynamo.backend import BackendOptions
 from accelerate import infer_auto_device_map
 from tt_torch.tools.verify import verify_against_golden
-from tests.utils import ModelTester
 
 
-def get_model_and_tokenizer(model_name):
-    # Download model from cloud
+def load_model(model_name):
     tokenizer = AutoTokenizer.from_pretrained(
         model_name, padding_side="left", torch_dtype=torch.bfloat16
     )
-    tokenizer.pad_token = tokenizer.eos_token
-    m = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.bfloat16)
-    for param in m.parameters():
+    model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.bfloat16)
+    for param in model.parameters():
         param.requires_grad = False
-    return m, tokenizer
+    return model, tokenizer
 
 
-def get_sample_input(tokenizer, test_input):
-    inputs = tokenizer.encode_plus(
-        test_input,
-        return_tensors="pt",
-        max_length=32,
-        padding="max_length",
-        add_special_tokens=True,
-        truncation=True,
-    )
+def load_inputs(tokenizer, prompt):
+    inputs = tokenizer(prompt, return_tensors="pt", return_token_type_ids=False)
     return inputs
-
-
-def decode_output(outputs, tokenizer):
-    next_token_logits = outputs.logits[:, -1]
-    next_token = next_token_logits.softmax(dim=-1).argmax()
-    return tokenizer.decode([next_token])
 
 
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
-@pytest.mark.parametrize("model_name", ["huggyllama/llama-7b"])
-def test_llama_7b_pipeline_parallel(record_property, model_name, mode):
-    prompt = "I enjoy walking in the"
-    model, tokenizer = get_model_and_tokenizer(model_name)
-    test_input = get_sample_input(tokenizer, prompt)
+@pytest.mark.parametrize(
+    "model_name",
+    [
+        "tiiuae/Falcon3-7B-Base",
+        "tiiuae/Falcon3-10B-Base",
+    ],
+)
+@pytest.mark.parametrize(
+    "op_by_op",
+    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
+    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+)
+def test_falcon_pipeline_parallel(record_property, model_name, mode, op_by_op):
+
+    prompt = "Hey, are you conscious? Can you talk to me?"
+    model, tokenizer = load_model(model_name)
+    test_input = load_inputs(tokenizer, prompt)
     parent_device = DeviceManager.create_parent_mesh_device([1, 2])
 
     # Create submeshes that target different devices
@@ -76,6 +65,7 @@ def test_llama_7b_pipeline_parallel(record_property, model_name, mode):
     )
 
     required_atol = 0.1
+    required_pcc = 0.98 if model_name == "tiiuae/Falcon3-10B-Base" else 0.99
     assert_pcc = True
     assert_atol = False
 
@@ -92,9 +82,10 @@ def test_llama_7b_pipeline_parallel(record_property, model_name, mode):
     pccs, atols, _, _ = verify_against_golden(
         tuple([golden.logits]),
         tuple([out.logits]),
-        assert_pcc,
-        assert_atol,
+        assert_pcc=assert_pcc,
+        assert_atol=assert_atol,
         required_atol=required_atol,
+        required_pcc=required_pcc,
     )
 
     ModelTester.GenerateCustomTestReport(
@@ -106,6 +97,7 @@ def test_llama_7b_pipeline_parallel(record_property, model_name, mode):
         required_atol=required_atol,
         assert_pcc=assert_pcc,
         assert_atol=assert_atol,
+        model_group="red",
     )
 
     DeviceManager.release_sub_mesh_device(device1)
