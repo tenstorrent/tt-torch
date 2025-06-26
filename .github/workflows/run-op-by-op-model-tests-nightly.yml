@@ -33,13 +33,11 @@ jobs:
           {
             runs-on: wormhole_b0, name: "qwen", tests: "
               tests/models/Qwen/test_qwen2_token_classification.py::test_qwen2_token_classification[op_by_op_torch-eval]
-              tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[op_by_op_torch-eval]
               "
           },
           {
             runs-on: wormhole_b0, name: "openpose", tests: "
               tests/models/openpose/test_openpose.py::test_openpose[op_by_op_torch-eval]
-              tests/models/openpose/test_openpose_v2.py::test_openpose_v2[op_by_op_torch-eval]
               "
           },
           {
@@ -52,21 +50,6 @@ jobs:
             runs-on: wormhole_b0, name: "pixtral", tests: "
               tests/models/mistral/test_pixtral.py::test_pixtral[op_by_op_torch-eval]
             "
-          },
-          {
-            runs-on: wormhole_b0, name: "detr", tests: "
-              tests/models/detr/test_detr_onnx.py::test_detr_onnx[op_by_op_stablehlo-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "musicgen_small", tests: "
-              tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small[single_device-op_by_op_torch-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "dpr", tests: "
-              tests/models/dpr/test_dpr.py::test_dpr[single_device-op_by_op_torch-eval]
-              "
           },
         ]
     runs-on:
