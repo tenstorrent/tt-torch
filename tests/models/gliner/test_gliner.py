@@ -5,15 +5,15 @@ import torch
 import pytest
 from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.gliner.pytorch import ModelLoader
+from third_party.tt_forge_models.gliner_model.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        return ModelLoader.load_model()
+        return self.loader.load_model()
 
     def _load_inputs(self):
-        return ModelLoader.load_inputs()
+        return self.loader.load_inputs()
 
 
 @pytest.mark.parametrize(
@@ -26,9 +26,6 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_gliner(record_property, mode, op_by_op):
-    model_name = "gliner-v2"
-    model_group = "red"
-
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
@@ -37,14 +34,18 @@ def test_gliner(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
+        model_info=model_info,
         assert_pcc=False,
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
-        model_group=model_group,
     )
 
     skip_full_eval_test(

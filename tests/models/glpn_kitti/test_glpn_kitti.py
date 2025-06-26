@@ -12,11 +12,11 @@ from third_party.tt_forge_models.glpn_kitti.pytorch import ModelLoader
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        return ModelLoader.load_model(dtype_override=torch.bfloat16)
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        inputs = ModelLoader.load_inputs(dtype_override=torch.bfloat16)
-        self.image = ModelLoader.image
+        inputs = self.loader.load_inputs(dtype_override=torch.bfloat16)
+        self.image = self.loader.image
         return inputs
 
 
@@ -30,8 +30,6 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_glpn_kitti(record_property, mode, op_by_op):
-    model_name = "GLPN-KITTI"
-
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
@@ -40,9 +38,14 @@ def test_glpn_kitti(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
+        model_info=model_info,
         relative_atol=0.013,
         compiler_config=cc,
         record_property_handle=record_property,

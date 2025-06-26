@@ -13,11 +13,11 @@ class ThisTester(OnnxModelTester):
         The model is from https://github.com/xingyizhou/CenterNet
         """
         # Model
-        return ModelLoader.load_model()
+        return self.loader.load_model()
 
     def _load_torch_inputs(self):
         # Images
-        return ModelLoader.load_inputs()
+        return self.loader.load_inputs()
 
 
 @pytest.mark.parametrize(
@@ -30,9 +30,6 @@ class ThisTester(OnnxModelTester):
     ids=["op_by_op_stablehlo", "full"],
 )
 def test_centernet_onnx(record_property, mode, op_by_op):
-    model_name = "CENTERNET_ONNX"
-    model_group = "red"
-
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
@@ -41,15 +38,19 @@ def test_centernet_onnx(record_property, mode, op_by_op):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         cc.op_by_op_backend = op_by_op
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     # TODO Enable PCC/ATOL/Checking - https://github.com/tenstorrent/tt-torch/issues/976
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
+        model_info=model_info,
         assert_pcc=False,
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
-        model_group=model_group,
     )
     results = tester.test_model()
 

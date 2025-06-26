@@ -12,10 +12,10 @@ from third_party.tt_forge_models.deit.pytorch.loader import ModelLoader
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        return ModelLoader.load_model(dtype_override=torch.bfloat16)
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        return ModelLoader.load_inputs(dtype_override=torch.bfloat16, batch_size=16)
+        return self.loader.load_inputs(dtype_override=torch.bfloat16, batch_size=16)
 
     def set_inputs_train(self, inputs):
         inputs["pixel_values"].requires_grad_(True)
@@ -44,10 +44,11 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_deit(record_property, mode, op_by_op):
-    model_name = "facebook/deit-base-patch16-224"
-
     if mode == "train":
         pytest.skip()
+
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -61,8 +62,10 @@ def test_deit(record_property, mode, op_by_op):
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
+        model_info=model_info,
         required_pcc=0.97,
         relative_atol=0.015,
         compiler_config=cc,

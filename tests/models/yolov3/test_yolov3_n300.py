@@ -14,7 +14,7 @@ from third_party.tt_forge_models.tools.utils import get_file
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        return ModelLoader.load_model(dtype_override=torch.bfloat16)
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
         image_file = get_file(
@@ -46,7 +46,6 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_yolov3(record_property, mode, op_by_op):
-    model_name = "YOLOv3"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -59,9 +58,14 @@ def test_yolov3(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
+        model_info=model_info,
         required_pcc=0.97,
         assert_pcc=True,
         assert_atol=False,

@@ -27,8 +27,6 @@ class ThisTester(ModelTester):
 def test_oft(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
-    model_name = "OFT"
-    model_group = "red"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -38,22 +36,26 @@ def test_oft(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     skip_full_eval_test(
         record_property,
         cc,
-        model_name,
+        model_info.name,
         bringup_status="FAILED_RUNTIME",
         reason="Out of Memory: Not enough space to allocate 2902982656 B DRAM buffer across 12 banks - https://github.com/tenstorrent/tt-torch/issues/727",
-        model_group=model_group,
+        model_group=model_info.group,
     )
 
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
+        model_info=model_info,
         compiler_config=cc,
         assert_atol=False,
         record_property_handle=record_property,
-        model_group=model_group,
     )
 
     results = tester.test_model()
