@@ -19,10 +19,10 @@ MODELS_ROOT = os.path.join(PROJECT_ROOT, "third_party", "tt_forge_models")
 if MODELS_ROOT not in sys.path:
     sys.path.insert(0, MODELS_ROOT)
 
-loader_paths = []
+loader_paths = {}
 for root, dirs, files in os.walk(MODELS_ROOT):
     if os.path.basename(root) == "pytorch" and "loader.py" in files:
-        loader_paths.append(os.path.join(root, "loader.py"))
+        loader_paths[os.path.join(root, "loader.py")] = []
 
 
 def import_model_loader(loader_path):
@@ -58,6 +58,39 @@ def import_model_loader(loader_path):
     return mod.ModelLoader
 
 
+def get_model_variants(loader_path):
+    try:
+        loader = import_model_loader(loader_path)
+        variants = loader.query_available_variants()
+        for variant in variants.keys():
+            loader_paths[loader_path].append(variant)
+
+    except:
+        print(f"Cannor import path: {loader_path}")
+
+
+for path in loader_paths.keys():
+    get_model_variants(path)
+
+# Create test entries combining loader paths and variants
+test_entries = []
+for loader_path, variants in loader_paths.items():
+    if variants:  # Model has variants
+        for variant in variants:
+            test_entries.append({"path": loader_path, "variant": variant})
+    else:  # Model has no variants
+        test_entries.append({"path": loader_path, "variant": None})
+
+
+def generate_test_id(test_entry):
+    """Generate test ID from test entry."""
+    model_path = os.path.relpath(os.path.dirname(test_entry["path"]), MODELS_ROOT)
+    if test_entry["variant"]:
+        return f"{model_path}-{test_entry['variant']}"
+    else:
+        return model_path
+
+
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
@@ -70,11 +103,14 @@ def import_model_loader(loader_path):
     # ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 @pytest.mark.parametrize(
-    "loader_path",
-    loader_paths,
-    ids=lambda p: os.path.relpath(os.path.dirname(p), MODELS_ROOT),
+    "test_entry",
+    test_entries,
+    ids=generate_test_id,
 )
-def test_all_models(loader_path, mode, op_by_op, record_property):
+def test_all_models(test_entry, mode, op_by_op, record_property):
+    loader_path = test_entry["path"]
+    variant = test_entry["variant"]
+
     ModelLoader = import_model_loader(loader_path)
 
     class DynamicTester(ModelTester):
@@ -102,10 +138,7 @@ def test_all_models(loader_path, mode, op_by_op, record_property):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    # TODO - Figure out how to run variants in this test.
-    # they are normally pytest params after querying via
-    # available_variants = ModelLoader.query_available_variants()
-    variant = None
+    # Use the variant from the test_entry parameter
     loader = ModelLoader(variant=variant)
 
     # Get model name from the ModelLoader's ModelInfo
