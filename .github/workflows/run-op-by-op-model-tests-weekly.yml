@@ -218,6 +218,11 @@ jobs:
               "
           },
           {
+            runs-on: wormhole_b0, name: "vilt", tests: "
+              tests/models/vilt/test_vilt.py::test_vilt[op_by_op_torch-eval]
+              "
+          },
+          {
             runs-on: wormhole_b0, name: "stable-diffusion-unet", tests: "
               tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet[op_by_op_torch-eval]
               "

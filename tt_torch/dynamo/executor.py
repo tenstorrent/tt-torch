@@ -533,8 +533,9 @@ class Executor:
                     program_idx,
                     (preprocessed_weights + preprocessed_activations),
                 )
-            for i, output in enumerate(outputs):
-                graph_output = self.mcg.graph_outputs[device_idx][i]
+            for graph_output, output in zip(
+                self.mcg.graph_outputs[device_idx], outputs
+            ):
                 if torch.is_tensor(output):
                     expected_dtype = graph_output.output_dtype
                     output = output.to(expected_dtype)
@@ -543,6 +544,7 @@ class Executor:
                     graph_inputs[mci.originating_device][mci.consumer_index] = output
                     intermediate_results.append(output)
                 else:
+                    output = output.reshape(graph_output.output_shape)
                     final_outputs[graph_output.index] = output
 
         self._cleanup_runtime_tensor_list(preprocessed_activations)
