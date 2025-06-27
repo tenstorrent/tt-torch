@@ -30,8 +30,6 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_qwen2_token_classification(record_property, mode, op_by_op):
-    model_name = "Qwen/Qwen2-7B"
-
     if mode == "train":
         pytest.skip()
 
@@ -70,7 +68,7 @@ def test_qwen2_token_classification(record_property, mode, op_by_op):
         input_ids = tester.inputs["input_ids"]
         tokens = tester.tokenizer.convert_ids_to_tokens(input_ids[0])
         print(
-            f"Model: {model_name} | Tokens: {tokens} | Predictions: {predicted_tokens_classes}"
+            f"Model: {model_info.name} | Tokens: {tokens} | Predictions: {predicted_tokens_classes}"
         )
 
     tester.finalize()
