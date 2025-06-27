@@ -5,7 +5,7 @@ import torch
 import pytest
 
 # Load model directly
-from third_party.tt_forge_models.bloom.pytorch import ModelLoader
+from third_party.tt_forge_models.detr.pytorch import ModelLoader
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
