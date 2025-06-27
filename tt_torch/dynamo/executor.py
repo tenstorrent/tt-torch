@@ -544,7 +544,11 @@ class Executor:
                     graph_inputs[mci.originating_device][mci.consumer_index] = output
                     intermediate_results.append(output)
                 else:
-                    output = output.reshape(graph_output.output_shape)
+                    output = (
+                        output.reshape(graph_output.output_shape)
+                        if isinstance(output, torch.Tensor)
+                        else output
+                    )
                     final_outputs[graph_output.index] = output
 
         self._cleanup_runtime_tensor_list(preprocessed_activations)
