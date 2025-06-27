@@ -81,6 +81,12 @@ jobs:
         mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
+    - name: Run Simple Test
+      shell: bash
+      run: |
+        source env/activate
+        pytest -svv tests/models/yolov3/test_yolov3.py -k full
+
     - name: Run Model Discovery Test
       shell: bash
       run: |
