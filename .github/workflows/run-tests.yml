@@ -145,6 +145,9 @@ jobs:
         python demos/resnet/resnet50_demo.py --run_default_img
 
     - name: Run Llama generative demo
+      env:
+        HF_HOME: /mnt/dockercache/huggingface
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
       shell: bash
       run: |
         source env/activate
