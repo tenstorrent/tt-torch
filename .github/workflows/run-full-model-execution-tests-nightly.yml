@@ -46,7 +46,7 @@ jobs:
             "
           },
           {
-            runs-on: n300, name: "eval_1_data_parallel", tests: "
+            wh-runner: n300, name: "eval_1_data_parallel", tests: "
                   tests/models/dpr/test_dpr.py::test_dpr[data_parallel-full-eval]
                   tests/models/detr/test_detr.py::test_detr[data_parallel-full-eval]
             "
