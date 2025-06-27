@@ -56,7 +56,7 @@ def test_bloom(record_property, mode, op_by_op):
         decoded_output = loader.decode_output(results)
 
         print(f"model_name: {model_info.name}")
-        for i, (inp, out) in enumerate(zip(ModelLoader.test_input, decoded_output)):
+        for i, (inp, out) in enumerate(zip(loader.test_input, decoded_output)):
             print(f"input {i}: {inp}\noutput {i}: {out}\n")
 
     tester.finalize()
