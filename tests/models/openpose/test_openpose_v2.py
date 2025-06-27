@@ -2,25 +2,22 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # Reference: https://github.com/tenstorrent/tt-buda-demos/blob/main/model_demos/cv_demos/openpose/pytorch_lwopenpose_2d_osmr.py
-
 import torch
-from PIL import Image
-from pytorchcv.model_provider import get_model as ptcv_get_model
-from torchvision import transforms
 import pytest
+
+# Load model directly
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.tools.utils import get_file
 from third_party.tt_forge_models.openpose.v2.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
         # Create PyBuda module from PyTorch model
-        return ModelLoader.load_model(dtype_override=torch.bfloat16)
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        return ModelLoader.load_inputs(dtype_override=torch.bfloat16)
+        return self.loader.load_inputs(dtype_override=torch.bfloat16)
 
 
 @pytest.mark.parametrize(
@@ -35,7 +32,6 @@ class ThisTester(ModelTester):
 def test_openpose_v2(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
-    model_name = "OpenPose V2"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -45,9 +41,14 @@ def test_openpose_v2(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
+        model_info=model_info,
         assert_pcc=False,
         assert_atol=False,
         compiler_config=cc,

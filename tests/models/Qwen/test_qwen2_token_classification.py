@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import pytest
+
+# Load model directly
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from third_party.tt_forge_models.qwen.token_classification.pytorch import ModelLoader
@@ -10,12 +12,12 @@ from third_party.tt_forge_models.qwen.token_classification.pytorch import ModelL
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model = ModelLoader.load_model(dtype_override=torch.bfloat16)
-        self.tokenizer = ModelLoader.tokenizer
+        model = self.loader.load_model(dtype_override=torch.bfloat16)
+        self.tokenizer = self.loader.tokenizer
         return model
 
     def _load_inputs(self):
-        return ModelLoader.load_inputs(dtype_override=torch.bfloat16)
+        return self.loader.load_inputs(dtype_override=torch.bfloat16)
 
 
 @pytest.mark.parametrize(
@@ -42,9 +44,14 @@ def test_qwen2_token_classification(record_property, mode, op_by_op):
     if op_by_op is None and cc.compile_depth == CompileDepth.EXECUTE:
         pytest.skip("Model is too large to fit on single device during execution.")
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
+        model_info=model_info,
         assert_pcc=False,
         assert_atol=False,
         compiler_config=cc,
