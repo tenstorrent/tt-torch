@@ -9,15 +9,10 @@ from third_party.tt_forge_models.centernet.pytorch import ModelLoader
 
 class ThisTester(OnnxModelTester):
     def _load_model(self):
-        """
-        The model is from https://github.com/xingyizhou/CenterNet
-        """
-        # Model
-        return self.loader.load_model()
+        return self.loader.load_model(variant_name="resdcn18_od")
 
     def _load_torch_inputs(self):
-        # Images
-        return self.loader.load_inputs()
+        return self.loader.load_inputs(variant_name="resdcn18_od")
 
 
 @pytest.mark.parametrize(
