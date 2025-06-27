@@ -83,3 +83,10 @@ jobs:
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       build-artifact-key: "-debug" # reference above artifact key
+
+  test-models-discovery:
+    needs: [docker-build, build]
+    uses: ./.github/workflows/run-models-discovery.yml
+    secrets: inherit
+    with:
+      docker-image: ${{ needs.docker-build.outputs.docker-image }}
