@@ -57,6 +57,8 @@ def skip_full_eval_test(
     Returns:
         bool: True if test was skipped, False otherwise
     """
+    # Make sure model_group is string for json serializing. It may come from ModelGroup StrEnum.
+    model_group = str(model_group)
 
     # If there is a model name filter applied, and the model name passed herein does not match,
     #   then run the test as normal. Useful for parameterized tests.
@@ -154,6 +156,10 @@ class ModelTester:
         self.model_name = model_name
         self.loader = loader
         self.mode = mode
+
+        # Make sure model_group is string for json serializing. It may come from ModelGroup StrEnum.
+        model_group = str(model_group)
+
         self.data_parallel_mode = data_parallel_mode
         self.framework_model = self._load_model()
         self.is_token_output = is_token_output
