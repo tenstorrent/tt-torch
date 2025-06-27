@@ -63,7 +63,7 @@ def test_qwen2_casual_lm(record_property, mode, op_by_op):
         gen_text = loader.decode_output(results, dtype_override=torch.bfloat16)
 
         print(
-            f"Model: {model_info.name} | Input: {ModelLoader.text} | Decoded Text: {gen_text}"
+            f"Model: {model_info.name} | Input: {loader.text} | Decoded Text: {gen_text}"
         )
 
     tester.finalize()
