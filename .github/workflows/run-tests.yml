@@ -146,13 +146,12 @@ jobs:
 
     - name: Run Llama generative demo
       env:
-        HF_HOME: /mnt/dockercache/huggingface
+        HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
       shell: bash
       run: |
         source env/activate
         python3 demos/llama3.2_generate_demo.py
-
 
     - name: Show Test Report
       continue-on-error: true

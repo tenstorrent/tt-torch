@@ -3,13 +3,13 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 from tt_torch.tools.utils import CompilerConfig
+from tt_torch.tools.device_manager import DeviceManager
 from tt_torch.dynamo.backend import backend, BackendOptions
 from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
     StaticCache,
 )
-import tt_mlir
 import time
 from tests.utils import clear_dynamo_cache
 
@@ -23,8 +23,6 @@ def load_model(model_name="meta-llama/Llama-3.2-3B"):
         torch_dtype=torch.bfloat16,
         use_cache=True,
     )
-
-    model.config.num_hidden_layers = 28
 
     tokenizer = AutoTokenizer.from_pretrained(model_name, torch_dtype=torch.bfloat16)
     tokenizer.pad_token = tokenizer.eos_token
@@ -78,8 +76,7 @@ def main():
     options = BackendOptions()
     options.compiler_config = cc
 
-    mesh_options = tt_mlir.MeshDeviceOptions()
-    device = tt_mlir.open_mesh_device([1, 1], mesh_options)
+    device = DeviceManager.create_parent_mesh_device(mesh_shape=[1, 1])
     options.devices = [device]
 
     buffer_cache = {}
@@ -92,14 +89,15 @@ def main():
         model, backend=backend, dynamic=False, options=options
     )
 
-    tokens_to_generate = 64
+    # up to _global_max_cache_len - input_args["input_ids"].shape[1]
+    tokens_to_generate = 32
+
     for i in range(tokens_to_generate):
         print("\n===== Decode step", i, "=====\n")
         print(f"Input args to step {i}", input_args)
 
         start_time = time.time()
 
-        # Execute through backend
         outputs = compiled_model(**input_args)
 
         next_token_ids = outputs.logits[:, -1:].argmax(dim=-1)
@@ -120,6 +118,9 @@ def main():
             "cache_position": cache_position,
             "use_cache": True,
         }
+
+    DeviceManager.release_parent_device(device)
+    clear_dynamo_cache()
 
 
 if __name__ == "__main__":
