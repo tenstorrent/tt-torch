@@ -469,7 +469,7 @@ class XLAOpByOpExecutor:
                 node_to_tensor[node] = inputs[input_index]
                 input_index += 1
             elif node.op == "get_attr":
-                node_to_tensor[node] = getattr(self.gm, node.target)
+                node_to_tensor[node] = self.gm.state_dict()[node.target]
             elif node.op == "call_function":
                 args = []
                 for arg in node.args:
@@ -605,7 +605,6 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
     )
 
     gm = bridge.extract_compiled_graph(gm, example_inputs)
-    # gm.graph.eliminate_dead_code()
     return gm
 
 
