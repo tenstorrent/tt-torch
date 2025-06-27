@@ -4,7 +4,7 @@
 import pytest
 from tests.utils import OnnxModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.centernet.pytorch import ModelLoader
+from third_party.tt_forge_models.centernet.onnx import ModelLoader
 
 
 class ThisTester(OnnxModelTester):
