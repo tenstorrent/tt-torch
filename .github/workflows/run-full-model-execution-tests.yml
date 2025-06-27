@@ -106,7 +106,7 @@ jobs:
           },
           # This test group needs to be moved. This will be done once multichip tests are refactored: #780
           {
-            runs-on: n300, name: "eval_6", tests: "
+            wh-runner: n300, name: "eval_6", tests: "
                 tests/torch/test_basic_async.py
                 tests/torch/test_basic_multichip.py
                 tests/models/mnist/test_mnist.py::test_mnist_train[data_parallel-full-eval]
