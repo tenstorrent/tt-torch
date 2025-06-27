@@ -379,6 +379,8 @@ class Executor:
                 ):
                     device_constant_cache[torch_tensor] = runtime_tensor
 
+        device = self.devices[device_idx]
+
         input_len = len(inputs)
         tensor_start_idx = 0
 
@@ -392,7 +394,6 @@ class Executor:
         #   input torch tensor
 
         if self.constant_cache is not None:
-            device = self.devices[device_idx]
             device_constant_cache = self.constant_cache.get(device, {})
             for i in range(len(constants)):
                 cached_constant = device_constant_cache.get(
@@ -403,7 +404,6 @@ class Executor:
                     tensor_start_idx += 1
 
         if self.buffer_cache is not None:
-            device = self.devices[device_idx]
             device_buffer_cache = self.buffer_cache.get(device, {})
             for i in range(len(constants), len(constants) + len(buffers)):
                 cached_buffer = device_buffer_cache.get(
@@ -424,7 +424,7 @@ class Executor:
 
         # execute conversion from torch tensors to runtime tensors
         runtime_activations_and_weights = tt_mlir.preprocess_inputs(
-            self._get_device(device_idx=device_idx),
+            device,
             torch_weights_and_activations,
             binary,
             program_idx,
@@ -485,6 +485,8 @@ class Executor:
         final_outputs = [None] * num_outputs
         for device_idx, binary in self.mcg.binaries.items():
             device_inputs = graph_inputs[device_idx]
+
+            self._get_device(device_idx=device_idx)
             device = self.devices[device_idx]
 
             # initialize buffers by iterating over known mcg.buffers and creating
