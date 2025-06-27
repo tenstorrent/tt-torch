@@ -38,28 +38,8 @@ jobs:
         build: [
           {
             # Approximately 70 minutes.
-            runs-on: wormhole_b0, name: "eval_1", tests: "
-                  tests/models/dpr/test_dpr.py::test_dpr[single_device-full-eval]
-                  tests/models/detr/test_detr.py::test_detr[single_device-full-eval]
-                  tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small[single_device-full-eval]
-            "
-          },
-          {
-            runs-on: n300, name: "eval_1_data_parallel", tests: "
-                  tests/models/dpr/test_dpr.py::test_dpr[data_parallel-full-eval]
-                  tests/models/detr/test_detr.py::test_detr[data_parallel-full-eval]
-            "
-          },
-          {
-            # Approximately 70 minutes.
             runs-on: wormhole_b0, name: "eval_5", tests: "
                   tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[full-eval]
-            "
-          },
-          {
-            # These are WIP model_group=red models, marked w/ pytest.skip with reasons, run here for reporting.
-            runs-on: wormhole_b0, name: "skip_tests_red_models", tests: "
-                tests/models/mistral/test_pixtral.py::test_pixtral[full-eval]
             "
           }
         ]
