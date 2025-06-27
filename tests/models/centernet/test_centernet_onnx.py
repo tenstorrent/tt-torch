@@ -48,7 +48,6 @@ model_info_list = [
     ids=["op_by_op_stablehlo", "full"],
 )
 def test_centernet_onnx(record_property, model_info, mode, op_by_op):
-    model_group = "red"
     model_name, _ = model_info
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -58,7 +57,8 @@ def test_centernet_onnx(record_property, model_info, mode, op_by_op):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         cc.op_by_op_backend = op_by_op
 
-    # TODO - update this once centernet ModelLoader is updated to properly support variants
+    # TODO - update this test once centernet ModelLoader is updated to properly support variants
+    # for now it contains a few hacks.
     loader = ModelLoader(variant=None)
     model_info = loader.get_model_info(variant=None)
 
@@ -68,7 +68,7 @@ def test_centernet_onnx(record_property, model_info, mode, op_by_op):
         model_name,
         bringup_status="FAILED_RUNTIME",
         reason="'ttir.conv_transpose2d' op Number of input channels from input tensor must match the first dimension of the weight tensor. Got 256 input channels and 1 in the weight tensor.",
-        model_group=model_group,
+        model_group=model_info.group,
         model_name_filter=[
             "centernet-od-dla1x",
             "centernet-od-dla2x",
@@ -83,15 +83,17 @@ def test_centernet_onnx(record_property, model_info, mode, op_by_op):
 
     # TODO Enable PCC/ATOL/Checking - https://github.com/tenstorrent/tt-torch/issues/976
     tester = ThisTester(
-        model_info.name,
+        model_name,
         mode,
         loader=loader,
-        model_info=model_info,
         assert_pcc=False,
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
+        model_group=model_info.group,
     )
+
+    print(f"KCM model_name: {model_name} model_group: {model_info.group}", flush=True)
     results = tester.test_model()
 
     if mode == "eval":
