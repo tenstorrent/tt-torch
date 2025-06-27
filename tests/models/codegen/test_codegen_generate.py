@@ -12,12 +12,12 @@ from third_party.tt_forge_models.codegen.pytorch import ModelLoader
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model = ModelLoader.load_model(dtype_override=torch.bfloat16)
-        self.tokenizer = ModelLoader.tokenizer
+        model = self.loader.load_model(dtype_override=torch.bfloat16)
+        self.tokenizer = self.loader.tokenizer
         return model
 
     def _load_inputs(self):
-        return ModelLoader.load_inputs(dtype_override=torch.bfloat16, batch_size=2)
+        return self.loader.load_inputs(dtype_override=torch.bfloat16, batch_size=2)
 
 
 @pytest.mark.parametrize(
@@ -30,16 +30,20 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_codegen_generate(record_property, mode, op_by_op):
-    model_name = "codegen_generate"
     cc = CompilerConfig()
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
+        model_info=model_info,
         compiler_config=cc,
         record_property_handle=record_property,
         is_token_output=True,
@@ -52,7 +56,7 @@ def test_codegen_generate(record_property, mode, op_by_op):
     )  # don't validate token output
 
     if mode == "eval":
-        decoded_outputs = ModelLoader.decode_outputs(results)
+        decoded_outputs = loader.decode_outputs(results)
         for i, text in enumerate(decoded_outputs):
             print(f"Output {i}: {text}")
 

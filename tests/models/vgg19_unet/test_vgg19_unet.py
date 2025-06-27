@@ -11,10 +11,10 @@ from third_party.tt_forge_models.vgg19_unet.pytorch import ModelLoader
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        return ModelLoader.load_model(dtype_override=torch.bfloat16)
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        return ModelLoader.load_inputs(dtype_override=torch.bfloat16)
+        return self.loader.load_inputs(dtype_override=torch.bfloat16)
 
 
 @pytest.mark.parametrize(
@@ -29,8 +29,6 @@ class ThisTester(ModelTester):
 def test_vgg19_unet(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
-    model_name = "VGG19-Unet"
-    model_group = "red"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -40,21 +38,25 @@ def test_vgg19_unet(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     skip_full_eval_test(
         record_property,
         cc,
-        model_name,
+        model_info.name,
         bringup_status="FAILED_RUNTIME",
         reason="Out of Memory: Not enough space to allocate 84213760 B L1 buffer across 64 banks, where each bank needs to store 1315840 B - https://github.com/tenstorrent/tt-torch/issues/729",
-        model_group=model_group,
+        model_group=model_info.group,
     )
 
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
+        model_info=model_info,
         compiler_config=cc,
         record_property_handle=record_property,
-        model_group=model_group,
     )
 
     with torch.no_grad():

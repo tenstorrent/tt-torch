@@ -10,10 +10,10 @@ from third_party.tt_forge_models.clip.pytorch import ModelLoader
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        return ModelLoader.load_model(dtype_override=torch.bfloat16)
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        return ModelLoader.load_inputs(dtype_override=torch.bfloat16, batch_size=2)
+        return self.loader.load_inputs(dtype_override=torch.bfloat16, batch_size=2)
 
     def set_inputs_train(self, inputs):
         inputs["pixel_values"].requires_grad_(True)
@@ -49,7 +49,6 @@ class ThisTester(ModelTester):
 def test_clip(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
-    model_name = "CLIP"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -59,9 +58,14 @@ def test_clip(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
+        model_info=model_info,
         assert_pcc=False,
         assert_atol=False,
         compiler_config=cc,

@@ -13,10 +13,10 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        return ModelLoader.load_model(dtype_override=torch.bfloat16)
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        return ModelLoader.load_inputs(dtype_override=torch.bfloat16)
+        return self.loader.load_inputs(dtype_override=torch.bfloat16)
 
 
 @pytest.mark.parametrize(
@@ -31,8 +31,6 @@ class ThisTester(ModelTester):
 def test_autoencoder_linear(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
-    model_name = "Autoencoder (linear)"
-
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
@@ -41,8 +39,16 @@ def test_autoencoder_linear(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     tester = ThisTester(
-        model_name, mode, compiler_config=cc, record_property_handle=record_property
+        model_info.name,
+        mode,
+        loader=loader,
+        model_info=model_info,
+        compiler_config=cc,
+        record_property_handle=record_property,
     )
     results = tester.test_model()
 

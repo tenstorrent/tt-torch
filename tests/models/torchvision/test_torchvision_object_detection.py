@@ -12,14 +12,14 @@ from third_party.tt_forge_models.tools.utils import get_file
 
 # TODO: RuntimeError: "nms_kernel" not implemented for 'BFloat16'
 class ThisTester(ModelTester):
-    # pass model_info instead of model_name
-    def __init__(self, model_info, mode, *args, **kwargs):
-        # model name in model_info[0]
-        self.model_info = model_info
-        super().__init__(model_info[0], mode, *args, **kwargs)
+    # pass model_info_tuple instead of model_name
+    def __init__(self, model_info_tuple, mode, *args, **kwargs):
+        # model name in model_info_tuple[0]
+        self.model_info_tuple = model_info_tuple
+        super().__init__(model_info_tuple[0], mode, *args, **kwargs)
 
     def _load_model(self):
-        model_name, weights_name = self.model_info
+        model_name, weights_name = self.model_info_tuple
         self.weights = getattr(models.detection, weights_name).DEFAULT
         model = getattr(models.detection, model_name)(
             weights=self.weights

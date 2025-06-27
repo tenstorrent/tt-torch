@@ -16,7 +16,7 @@ import numpy as np
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        return ModelLoader.load_model(dtype_override=torch.bfloat16)
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
         image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
@@ -40,13 +40,14 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_yolov4(record_property, mode, op_by_op):
-    model_name = "YOLOv4"
-
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
     cc.automatic_parallelization = True
     cc.mesh_shape = [1, 2]
+
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
 
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
@@ -54,8 +55,10 @@ def test_yolov4(record_property, mode, op_by_op):
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
+        model_info=model_info,
         compiler_config=cc,
         record_property_handle=record_property,
         model_group="red",

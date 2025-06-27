@@ -11,14 +11,14 @@ from third_party.tt_forge_models.tools.utils import get_file
 
 
 class ThisTester(ModelTester):
-    # pass model_info instead of model_name
-    def __init__(self, model_info, mode, *args, **kwargs):
+    # pass model_info_tuple instead of model_name
+    def __init__(self, model_info_tuple, mode, *args, **kwargs):
         # model name in model_info[0]
-        self.model_info = model_info
-        super().__init__(model_info[0], mode, *args, **kwargs)
+        self.model_info_tuple = model_info_tuple
+        super().__init__(model_info_tuple[0], mode, *args, **kwargs)
 
     def _load_model(self):
-        model_name, weights_name = self.model_info
+        model_name, weights_name = self.model_info_tuple
         self.weights = getattr(models, weights_name).DEFAULT
         model = models.get_model(model_name, weights=self.weights).to(torch.bfloat16)
         return model

@@ -12,10 +12,10 @@ from third_party.tt_forge_models.gpt_neo.pytorch import ModelLoader
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        return ModelLoader.load_model(dtype_override=torch.bfloat16)
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        return ModelLoader.load_inputs(dtype_override=torch.bfloat16)
+        return self.loader.load_inputs(dtype_override=torch.bfloat16)
 
 
 @pytest.mark.parametrize(
@@ -28,8 +28,6 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_gpt_neo(record_property, mode, op_by_op):
-    model_name = "GPTNeo"
-
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
@@ -38,9 +36,14 @@ def test_gpt_neo(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
+        model_info=model_info,
         compiler_config=cc,
         record_property_handle=record_property,
         required_pcc=0.98,
@@ -50,6 +53,6 @@ def test_gpt_neo(record_property, mode, op_by_op):
     )
     results = tester.test_model()
     if mode == "eval":
-        gen_text = ModelLoader.decode_output(results)
+        gen_text = loader.decode_output(results)
 
     tester.finalize()

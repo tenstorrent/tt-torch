@@ -7,11 +7,12 @@ import os
 from tests.utils import OnnxModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from third_party.tt_forge_models.oft import ModelLoader
+import torch
 
 
 class ThisTester(OnnxModelTester):
     def _load_model(self):
-        model = ModelLoader.load_model()
+        model = self.loader.load_model()
         torch.onnx.export(model, self._load_torch_inputs(), f"{self.model_name}.onnx")
         model = onnx.load(f"{self.model_name}.onnx")
         onnx.checker.check_model(model)
@@ -19,7 +20,7 @@ class ThisTester(OnnxModelTester):
         return model
 
     def _load_torch_inputs(self):
-        return ModelLoader.load_inputs()
+        return self.loader.load_inputs()
 
 
 @pytest.mark.parametrize(
@@ -30,7 +31,9 @@ class ThisTester(OnnxModelTester):
 def test_oft_onnx(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
-    model_name = "OFT"
+
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
 
     cc = CompilerConfig()
 
@@ -40,12 +43,13 @@ def test_oft_onnx(record_property, mode, op_by_op):
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
+        model_info=model_info,
         compiler_config=cc,
         assert_atol=False,
         record_property_handle=record_property,
-        model_group="red",
     )
 
     results = tester.test_model()
