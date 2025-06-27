@@ -86,6 +86,7 @@ jobs:
               tests/models/glpn_kitti/test_glpn_kitti.py::test_glpn_kitti[op_by_op_torch-eval]
               tests/models/hand_landmark/test_hand_landmark.py::test_hand_landmark[op_by_op_torch-eval]
               tests/models/segment_anything/test_segment_anything.py::test_segment_anything[op_by_op_torch-eval]
+              tests/models/vilt/test_vilt.py::test_vilt[op_by_op_torch-eval]
               "
           },
           {
