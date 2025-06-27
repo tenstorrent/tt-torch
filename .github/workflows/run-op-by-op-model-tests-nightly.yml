@@ -166,17 +166,10 @@ jobs:
             "
           },
           {
-            runs-on: wormhole_b0, name: "centernet_1", tests: "
-            tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[op_by_op_stablehlo-centernet-od-dla1x-eval]
-            tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[op_by_op_stablehlo-centernet-od-dla2x-eval]
+            # Only testing few variants since runtime on these is long. Increase when more mahcines or priority increases.
+            runs-on: wormhole_b0, name: "centernet", tests: "
             tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[op_by_op_stablehlo-centernet-hpe-dla1x-eval]
-            "
-          },
-          {
-            runs-on: wormhole_b0, name: "centernet_2", tests: "
-            tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[op_by_op_stablehlo-centernet-hpe-dla3x-eval]
             tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[op_by_op_stablehlo-centernet-3d_bb-ddd_3dop-eval]
-            tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[op_by_op_stablehlo-centernet-3d_bb-ddd_sub-eval]
             "
           },
           {

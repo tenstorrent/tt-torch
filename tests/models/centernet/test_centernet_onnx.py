@@ -93,7 +93,6 @@ def test_centernet_onnx(record_property, model_info, mode, op_by_op):
         model_group=model_info.group,
     )
 
-    print(f"KCM model_name: {model_name} model_group: {model_info.group}", flush=True)
     results = tester.test_model()
 
     if mode == "eval":
