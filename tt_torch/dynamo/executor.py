@@ -288,18 +288,26 @@ class Executor:
 
         device_constant_cache = self.constant_cache.get(device, {})
 
-        # Check if cache is uninitialized or has invalid entries
+        # Check if cache is uninitialized or the set of cached constants doesn't match the current graph's constants
         cache_uninitialized = not device_constant_cache
         cache_invalidated = False
         if device_constant_cache:
-            for torch_constant in self.mcg.constant_inputs[device_idx]:
-                if torch_constant not in device_constant_cache:
-                    cache_invalidated = True
-                    break
+            mcg_constants = set(self.mcg.constant_inputs[device_idx])
+            cache_constants = set(device_constant_cache.keys())
+            cache_invalidated = mcg_constants != cache_constants
 
         # Reset cache if needed by repopulating it from mcg constant inputs
         if cache_uninitialized or cache_invalidated:
-            self._cleanup_runtime_tensor_list(list(device_constant_cache.values()))
+            # Only cleanup tensors that are not None. Complex graph break scenarios can cause a single
+            # graph execution to decompose into multiple __call__s with subgraphs with different constants
+            # or none at all.
+
+            runtime_tensors_to_cleanup = [
+                t for t in device_constant_cache.values() if t is not None
+            ]
+            if runtime_tensors_to_cleanup:
+                self._cleanup_runtime_tensor_list(runtime_tensors_to_cleanup)
+
             self.constant_cache[device] = {
                 torch_constant: None
                 for torch_constant in self.mcg.constant_inputs[device_idx]
