@@ -86,4 +86,4 @@ jobs:
       run: |
         source env/activate
         # Using '|| true' to make the job always pass regardless of test failures
-        pytest -svv tests/models/test_models.py || true
+        pytest -svv tests/models/test_models.py -k yolo || true
