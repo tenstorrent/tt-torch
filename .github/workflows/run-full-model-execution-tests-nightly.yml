@@ -203,7 +203,8 @@ jobs:
                 tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-3B-Base-eval]
                 tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-3B-Instruct-eval]
                 tests/models/t5/test_t5.py::test_t5[full-t5-large-eval]
-                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-eval]
+                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-od-resdcn18-eval]
+                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-od-resdcn101-eval]
             "
           },
           {
@@ -228,6 +229,14 @@ jobs:
                 tests/models/detr/test_detr_onnx.py::test_detr_onnx[full-eval]
                 tests/models/phi/test_phi_3p5_moe.py::test_phi_3p5_moe[full-phi3p5_moe-eval]
                 tests/models/phi/test_phi_3p5_vision.py::test_phi_3p5_vision[full-microsoft/Phi-3.5-vision-instruct-eval]
+                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-od-dla1x-eval]
+                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-od-dla2x-eval]
+                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-od-hg-eval]
+                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-hpe-dla1x-eval]
+                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-hpe-dla3x-eval]
+                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-hpe-hg3x-eval]
+                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-3d_bb-ddd_3dop-eval]
+                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-3d_bb-ddd_sub-eval]
             "
           },
           # This test group needs to be moved. This will be done once multichip tests are refactored: #780

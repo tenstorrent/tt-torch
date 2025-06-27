@@ -166,6 +166,13 @@ jobs:
             "
           },
           {
+            # Only testing few variants since runtime on these is long. Increase when more mahcines or priority increases.
+            runs-on: wormhole_b0, name: "centernet", tests: "
+            tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[op_by_op_stablehlo-centernet-hpe-dla1x-eval]
+            tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[op_by_op_stablehlo-centernet-3d_bb-ddd_3dop-eval]
+            "
+          },
+          {
             runs-on: wormhole_b0, name: "phi3p5_vision", tests: "
               tests/models/phi/test_phi_3p5_vision.py::test_phi_3p5_vision[op_by_op_torch-microsoft/Phi-3.5-vision-instruct-eval]
             "
