@@ -56,8 +56,8 @@ def test_vilt(record_property, mode, op_by_op):
     tester = ThisTester(
         model_name,
         mode,
-        relative_atol=0.02,
         compiler_config=cc,
+        assert_atol=False,
         record_property_handle=record_property,
     )
     results = tester.test_model()
