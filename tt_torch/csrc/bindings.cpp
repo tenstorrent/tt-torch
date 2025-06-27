@@ -494,6 +494,13 @@ PYBIND11_MODULE(tt_mlir, m) {
         "Create a binary from bytestream");
   m.def("create_system_desc", &tt::torch::create_system_desc, py::arg("device"),
         py::arg("descriptor_path"), "Create a system description");
+  py::enum_<tt::runtime::Arch>(m, "Arch")
+      .value("GRAYSKULL", tt::runtime::Arch::GRAYSKULL)
+      .value("WORMHOLE", tt::runtime::Arch::WORMHOLE_B0)
+      .value("BLACKHOLE", tt::runtime::Arch::BLACKHOLE)
+      .value("QUASAR", tt::runtime::Arch::QUASAR);
+  m.def("get_arch", &tt::runtime::getArch,
+        "Get the architecture of the device");
 
 #if defined(TT_RUNTIME_DEBUG) && TT_RUNTIME_DEBUG == 1
   py::class_<tt::runtime::CallbackContext>(m, "CallbackContext");

@@ -31,13 +31,14 @@ permissions:
 
 jobs:
   tests:
-    timeout-minutes: 90
+    timeout-minutes: 120
     strategy:
       fail-fast: false
       matrix:
+        runner: [wormhole, blackhole]
         build: [
           {
-            runs-on: wormhole_b0, name: "eval_1", tests: "
+            wh-runner: wormhole_b0, bh-runner: p150, name: "eval_1", tests: "
                   tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval]
                   tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval]
                   tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval]
@@ -47,7 +48,7 @@ jobs:
             "
           },
           {
-            runs-on: wormhole_b0, name: "eval_2", tests: "
+            wh-runner: wormhole_b0, bh-runner: p150, name: "eval_2", tests: "
                   tests/models/mnist/test_mnist.py::test_mnist_train[single_device-full-eval]
                   tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval]
                   tests/models/openpose/test_openpose_v2.py::test_openpose_v2[full-eval]
@@ -61,7 +62,7 @@ jobs:
             "
           },
           {
-            runs-on: wormhole_b0, name: "eval_3", tests: "
+            wh-runner: wormhole_b0, bh-runner: p150, name: "eval_3", tests: "
                   tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[single_device-full-albert-xxlarge-v2-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_y_400mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_y_800mf]
@@ -73,7 +74,7 @@ jobs:
             "
           },
           {
-            runs-on: wormhole_b0, name: "eval_4", tests: "
+            wh-runner: wormhole_b0, bh-runner: p150, name: "eval_4", tests: "
                   tests/models/llama/test_llama_3b.py::test_llama_3b[full-meta-llama/Llama-3.2-3B-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_x_400mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_x_800mf]
@@ -86,7 +87,7 @@ jobs:
             "
           },
           {
-            runs-on: wormhole_b0, name: "eval_5", tests: "
+            wh-runner: wormhole_b0, bh-runner: p150, name: "eval_5", tests: "
                 tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io[full-eval]
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-mobilenet_v2]
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-mobilenet_v3_small]
@@ -122,17 +123,15 @@ jobs:
             "
           },
           {
-            runs-on: high-memory-n300, name: "eval_6_highmem_quarantine", tests: "
+            wh-runner: high-memory-n300, name: "eval_6_highmem_quarantine", tests: "
               tests/models/llama/test_llama_7b_pipeline_parallel.py::test_llama_7b_pipeline_parallel[huggyllama/llama-7b-eval]
               tests/models/falcon/test_falcon3_7b_10b_pipeline_parallel.py::test_falcon_pipeline_parallel[full-tiiuae/Falcon3-7B-Base-eval]
               tests/models/falcon/test_falcon3_7b_10b_pipeline_parallel.py::test_falcon_pipeline_parallel[full-tiiuae/Falcon3-10B-Base-eval]
             "
           }
         ]
-    runs-on:
-      - ${{ matrix.build.runs-on }}
-
-    name: "test execution (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
+    runs-on: ${{ matrix.runner == 'wormhole' && matrix.build.wh-runner || matrix.runner == 'blackhole' && matrix.build.bh-runner  || 'wormhole_b0'}}
+    name: "test execution on ${{ matrix.runner }} (${{ matrix.build.name }})"
 
     container:
       image: ${{ inputs.docker-image }}
@@ -147,13 +146,25 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Check for runner # Check if we need to skip testing when a wh-runner is not set for wormhole run or a bh-runner on blackhole run
+      run: |
+        if [ "${{ matrix.runner }}" = "wormhole" ] && [ -n "${{ matrix.build.wh-runner }}" ]; then
+          echo "RUN_TEST=wormhole" >> $GITHUB_ENV
+        elif [ "${{ matrix.runner }}" = "blackhole" ] && [ -n "${{ matrix.build.bh-runner }}" ]; then
+          echo "RUN_TEST=blackhole" >> $GITHUB_ENV
+        else
+          echo "RUN_TEST=skip" >> $GITHUB_ENV
+        fi
+
     - name: Fetch job id
       id: fetch-job-id
+      if: ${{ env.RUN_TEST != 'skip' }}
       uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
       with:
-        job_name: "test execution (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})" # reference above tests.name
+        job_name: "test execution on ${{ matrix.runner }} (${{ matrix.build.name }})" # reference above tests.name
 
     - name: Set reusable strings
+      if: ${{ env.RUN_TEST != 'skip' }}
       id: strings
       shell: bash
       env:
@@ -167,12 +178,14 @@ jobs:
         echo "mlir_dir=$(pwd)/model_mlir" >> "$GITHUB_OUTPUT" # Define the model_mlir directory
 
     - name: Use build artifacts
+      if: ${{ env.RUN_TEST != 'skip' }}
       uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
       with:
         name: install-artifacts
         path: install
 
     - name: install tt-torch
+      if: ${{ env.RUN_TEST != 'skip' }}
       shell: bash
       run: |
         source env/activate
@@ -181,6 +194,7 @@ jobs:
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
     - name: Run Full Model Execution Tests
+      if: ${{ env.RUN_TEST != 'skip' }}
       env:
         HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
         TORCH_HOME: ${{ env.DOCKER_CACHE_ROOT }}/torch
@@ -195,20 +209,20 @@ jobs:
 
     - name: Upload Test Log
       uses: actions/upload-artifact@v4
-      if: success() || failure()
+      if: ${{ (success() || failure()) && env.RUN_TEST != 'skip' }}
       with:
-        name: test-log-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        name: test-log-${{ matrix.runner }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: pytest.log
 
     - name: Upload Test Report Models
       uses: actions/upload-artifact@v4
-      if: success() || failure()
+      if: ${{ (success() || failure()) && env.RUN_TEST != 'skip' }}
       with:
-        name: test-reports-models-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        name: test-reports-models-${{ matrix.runner }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: ${{ steps.strings.outputs.test_report_path_models }}
 
     - name: Upload coverage reports to Codecov
-      if: ${{ (success() || failure()) && inputs.run-codecov == 'true' }}
+      if: ${{ (success() || failure()) && inputs.run-codecov == 'true' && env.RUN_TEST != 'skip' }}
       continue-on-error: true
       uses: codecov/codecov-action@v5
       with:
@@ -217,7 +231,7 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Upload test results to Codecov
-      if: ${{ (success() || failure()) && inputs.run-codecov == 'true' }}
+      if: ${{ (success() || failure()) && inputs.run-codecov == 'true' && env.RUN_TEST != 'skip' }}
       continue-on-error: true
       uses: codecov/test-results-action@v1
       with:
@@ -227,9 +241,9 @@ jobs:
 
     - name: Upload MLIR files
       uses: actions/upload-artifact@v4
-      if: ${{ (success() || failure()) && inputs.run-dump-mlir == 'true' }}
+      if: ${{ (success() || failure()) && inputs.run-dump-mlir == 'true' && env.RUN_TEST != 'skip' }}
       with:
-        name: model-mlir-execute-push-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        name: model-mlir-execute-push-${{ matrix.runner }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: ${{ steps.strings.outputs.mlir_dir }}
 
   merge_mlir_artifacts:
