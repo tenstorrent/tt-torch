@@ -2,21 +2,30 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/lllyasviel/control_v11p_sd15_openpose
-import torch
-import pytest
 
-# Load model directly
+import torch
+from diffusers.utils import load_image
+import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.openpose.pytorch import ModelLoader
+
+dependencies = ["controlnet_aux==0.0.9"]
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        return self.loader.load_model(dtype_override=torch.bfloat16)
+        from controlnet_aux import OpenposeDetector
+
+        model = OpenposeDetector.from_pretrained("lllyasviel/ControlNet")
+        model = model.to(torch.bfloat16)
+        return model
 
     def _load_inputs(self):
-        return self.loader.load_inputs()
+        image = load_image(
+            "https://huggingface.co/lllyasviel/control_v11p_sd15_openpose/resolve/main/images/input.png"
+        )
+        arguments = {"input_image": image, "hand_and_face": True}
+        return arguments
 
 
 @pytest.mark.parametrize(
@@ -31,6 +40,8 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_openpose(record_property, mode, op_by_op):
+    model_name = "OpenPose"
+
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
@@ -39,16 +50,8 @@ def test_openpose(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    loader = ModelLoader(variant=None)
-    model_info = loader.get_model_info(variant=None)
-
     tester = ThisTester(
-        model_info.name,
-        mode,
-        loader=loader,
-        model_info=model_info,
-        compiler_config=cc,
-        record_property_handle=record_property,
+        model_name, mode, compiler_config=cc, record_property_handle=record_property
     )
     tester.test_model()
     tester.finalize()
