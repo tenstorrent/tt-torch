@@ -27,6 +27,8 @@ from tt_torch.tools.utils import (
     sanitize_filename,
     Op,
     OpCompilationStatus,
+    calculate_atol,
+    calculate_pcc,
 )
 
 import torch_xla.core.xla_model as xm
@@ -178,9 +180,12 @@ class XLAOpByOpExecutor:
     running_time = 0.0
     golden_time = 0.0
 
-    def __init__(self, gm, compiler_config):
+    def __init__(self, gm, compiler_config, required_pcc=0.99, required_atol=1e-2):
         self.gm = gm
         self.compiler_config = compiler_config
+
+        self.required_pcc = required_pcc
+        self.required_atol = required_atol
 
         # Debug mode to run only specific op given global_op_idx
         if XLAOpByOpExecutor.run_global_op_idx is None:
