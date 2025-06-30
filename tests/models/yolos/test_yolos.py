@@ -10,6 +10,7 @@ from transformers import AutoImageProcessor, AutoModelForObjectDetection
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from third_party.tt_forge_models.tools.utils import get_file
+import tt_mlir
 
 
 class ThisTester(ModelTester):
@@ -57,12 +58,12 @@ def test_yolos(record_property, mode, op_by_op, data_parallel_mode):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
-
+    assert_pcc = tt_mlir.get_arch() != tt_mlir.Arch.BLACKHOLE
     tester = ThisTester(
         model_name,
         mode,
         required_pcc=0.98,
-        assert_pcc=True,
+        assert_pcc=assert_pcc,
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,

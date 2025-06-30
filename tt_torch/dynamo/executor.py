@@ -549,6 +549,7 @@ class Executor:
                     output = (
                         output.reshape(graph_output.output_shape)
                         if isinstance(output, torch.Tensor)
+                        and graph_output.output_shape is not None
                         else output
                     )
                     final_outputs[graph_output.index] = output

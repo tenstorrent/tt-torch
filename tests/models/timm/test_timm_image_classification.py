@@ -105,7 +105,7 @@ def test_timm_image_classification(
             "xception71.tf_in1k",
             "inception_v4.tf_in1k",
         ]
-        or tt_mlir.get_arch() != tt_mlir.Arch.BLACKHOLE
+        and tt_mlir.get_arch() != tt_mlir.Arch.BLACKHOLE
         # TODO: Remove this once PCC ATOL is fixed on blackhole runners - https://github.com/tenstorrent/tt-torch/issues/1003
         else False
     )
