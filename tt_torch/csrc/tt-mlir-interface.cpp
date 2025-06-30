@@ -64,7 +64,8 @@ setArgumentTypes(size_t len_activations, size_t len_graph_constants) {
     argTypes.push_back(mlir::tt::ttcore::ArgumentType::Input);
   }
 
-  llvm::StringMap<llvm::SmallVector<mlir::tt::ttcore::ArgumentType>> argTypesMap;
+  llvm::StringMap<llvm::SmallVector<mlir::tt::ttcore::ArgumentType>>
+      argTypesMap;
   argTypesMap["main"] = argTypes;
   return argTypesMap;
 }
@@ -239,7 +240,8 @@ compileTTIRToTTNN(std::string_view code, std::string_view system_desc_path,
     for (size_t i = 0; i < len_activations; ++i) {
       argTypes.push_back(mlir::tt::ttcore::ArgumentType::Input);
     }
-    llvm::StringMap<llvm::SmallVector<mlir::tt::ttcore::ArgumentType>> argTypesMap;
+    llvm::StringMap<llvm::SmallVector<mlir::tt::ttcore::ArgumentType>>
+        argTypesMap;
     argTypesMap["main"] = argTypes;
     options.argumentTypeMap =
         tt::torch::setArgumentTypes(len_activations, len_graph_constants);
