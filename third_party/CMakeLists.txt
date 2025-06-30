@@ -4,7 +4,7 @@
 #
 
 set(TT_MLIR_VERSION "1c19d9cb0371b1ee04fa3ae8febc2532cf38b61d")
-set(TTXLA_VERSION "d97cc9865c5064ba1e90fbb75a67f36064750754")
+set(TTXLA_VERSION "bd5c6618acf6e5797dbb2f02635f4928c389f4f5")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
