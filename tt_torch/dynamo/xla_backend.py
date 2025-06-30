@@ -5,6 +5,7 @@ import torch
 import time
 from .backend import BackendOptions, CompilerConfig
 from torch.fx.experimental.proxy_tensor import make_fx
+
 import torch_xla.core.dynamo_bridge as bridge
 from .xla_decompositions import (
     CUSTOM_DECOMPOSITION_TABLE,
@@ -17,6 +18,7 @@ import pickle
 import sys
 import faulthandler
 from torch.func import functionalize
+from .passes import bypass_redundant_getitem
 
 from tt_torch.tools.utils import (
     CompilerConfig,
@@ -469,7 +471,10 @@ class XLAOpByOpExecutor:
                 node_to_tensor[node] = inputs[input_index]
                 input_index += 1
             elif node.op == "get_attr":
-                node_to_tensor[node] = self.gm.state_dict()[node.target]
+                if node.target in self.gm.state_dict():
+                    node_to_tensor[node] = self.gm.state_dict()[node.target]
+                elif hasattr(self.gm, node.target):
+                    node_to_tensor[node] = getattr(self.gm, node.target)
             elif node.op == "call_function":
                 args = []
                 for arg in node.args:
@@ -590,6 +595,10 @@ class XLAOpByOpExecutor:
         return self.run_gm_op_by_op(*inputs)
 
 
+import gc
+from torch.fx.experimental import const_fold
+
+
 def xla_pass_pipeline(gm, example_inputs, compiler_config):
     decompositions = torch._decomp.core_aten_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
@@ -605,6 +614,12 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
     )
 
     gm = bridge.extract_compiled_graph(gm, example_inputs)
+    gm = const_fold.split_const_subgraphs(gm)
+    gc.collect()
+    gm.run_folding()
+
+    gm.graph.eliminate_dead_code()
+    gm = bypass_redundant_getitem(gm)
     return gm
 
 
@@ -617,15 +632,13 @@ def xla_backend(gm, example_inputs, options: BackendOptions = None):
         cc = options.compiler_config
         devices = options.devices
         async_mode = options.async_mode
-
-    assert (
-        cc.compile_depth != CompileDepth.EXECUTE
-        or example_inputs[0].device.type == "xla"
+    device = example_inputs[0].device if len(example_inputs) > 0 else None
+    assert cc.compile_depth != CompileDepth.EXECUTE or (
+        device is None or device.type == "xla"
     ), "Sanity check failed, the xla_backend should not be called with inputs not on an xla device when using compile depth EXECUTE"
 
-    assert (
-        cc.compile_depth != CompileDepth.EXECUTE_OP_BY_OP
-        or example_inputs[0].device.type != "xla"
+    assert cc.compile_depth != CompileDepth.EXECUTE_OP_BY_OP or (
+        device is None or device.type != "xla"
     ), "Sanity check failed, the xla_backend should not be called with inputs not on an xla device when using compile depth EXECUTE_OP_BY_OP"
 
     gm = xla_pass_pipeline(gm, example_inputs, cc)

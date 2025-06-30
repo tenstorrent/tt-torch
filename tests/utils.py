@@ -33,7 +33,6 @@ import csv
 import tt_mlir
 
 import torch_xla.core.xla_model as xm
-import copy
 
 
 def skip_full_eval_test(
@@ -608,9 +607,7 @@ class ModelTester:
                 model = model.to(xm.xla_device())
             model = self.compile_model(model, self.compiler_config)
 
-        inputs = copy.deepcopy(
-            self.inputs
-        )  # do not want to mutate self.inputs, that is put and leave them on device
+        inputs = self.inputs
         if os.environ.get("TT_TORCH_USE_XLA", False):
             inputs = self.push_tensors_to_device(inputs, xm.xla_device())
 
