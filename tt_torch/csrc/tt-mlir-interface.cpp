@@ -52,19 +52,20 @@
 
 namespace tt::torch {
 
-static inline llvm::StringMap<llvm::SmallVector<mlir::tt::ArgumentType>>
+static inline llvm::StringMap<llvm::SmallVector<mlir::tt::ttcore::ArgumentType>>
 setArgumentTypes(size_t len_activations, size_t len_graph_constants) {
-  llvm::SmallVector<mlir::tt::ArgumentType> argTypes;
+  llvm::SmallVector<mlir::tt::ttcore::ArgumentType> argTypes;
 
   for (size_t i = 0; i < len_graph_constants; ++i) {
-    argTypes.push_back(mlir::tt::ArgumentType::Constant);
+    argTypes.push_back(mlir::tt::ttcore::ArgumentType::Constant);
   }
 
   for (size_t i = 0; i < len_activations; ++i) {
-    argTypes.push_back(mlir::tt::ArgumentType::Input);
+    argTypes.push_back(mlir::tt::ttcore::ArgumentType::Input);
   }
 
-  llvm::StringMap<llvm::SmallVector<mlir::tt::ArgumentType>> argTypesMap;
+  llvm::StringMap<llvm::SmallVector<mlir::tt::ttcore::ArgumentType>>
+      argTypesMap;
   argTypesMap["main"] = argTypes;
   return argTypesMap;
 }
@@ -232,14 +233,15 @@ compileTTIRToTTNN(std::string_view code, std::string_view system_desc_path,
   options.enableConstEval = enable_consteval;
 
   if (len_activations > 0 || len_graph_constants > 0) {
-    llvm::SmallVector<mlir::tt::ArgumentType> argTypes;
+    llvm::SmallVector<mlir::tt::ttcore::ArgumentType> argTypes;
     for (size_t i = 0; i < len_graph_constants; ++i) {
-      argTypes.push_back(mlir::tt::ArgumentType::Constant);
+      argTypes.push_back(mlir::tt::ttcore::ArgumentType::Constant);
     }
     for (size_t i = 0; i < len_activations; ++i) {
-      argTypes.push_back(mlir::tt::ArgumentType::Input);
+      argTypes.push_back(mlir::tt::ttcore::ArgumentType::Input);
     }
-    llvm::StringMap<llvm::SmallVector<mlir::tt::ArgumentType>> argTypesMap;
+    llvm::StringMap<llvm::SmallVector<mlir::tt::ttcore::ArgumentType>>
+        argTypesMap;
     argTypesMap["main"] = argTypes;
     options.argumentTypeMap =
         tt::torch::setArgumentTypes(len_activations, len_graph_constants);
