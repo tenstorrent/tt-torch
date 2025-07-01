@@ -1,4 +1,57 @@
 # Getting Started
+This document walks you through how to set up TT-Torch. TT-Torch is TT-Forge's front end for converting PyTorch models to TT-Forge's Intermediate Representation (IR). This is the main Getting Started page. There are two additional Getting Started pages depending on what you want to do. They are all described here, with links provided to each.
+
+The following topics are covered:
+
+* [Setup Options](#setup-options)
+* [Configuring Hardware](#configuring-hardware)
+* [Installing a Wheel and Running an Example](#installing-a-wheel-and-running-an-example)
+* [Other Setup Options](#other-set-up-options)
+    * [Using a Docker Container to Run an Example](getting_started_docker.md)
+    * [Building From Source](getting_started_build_from_source.md)
+* [Where to Go Next](#where-to-go-next)
+
+## Setup Options
+TT-Torch can be used to run PyTorch models. Because TT-Torch is open source, you can also develop and add features to it. Setup instructions differ based on the task. You have the following options, listed in order of difficulty:
+* [Installing a Wheel and Running an Example](#installing-a-wheel-and-running-an-example) - You should choose this option if you want to run models.
+* [Using a Docker Container to Run an Example](getting_started_docker.md) - Choose this option if you want to keep the environment for running models separate from your existing environment.
+* [Building from Source](getting_started_build_from_source.md) - This option is best if you want to develop TT-Torch further. It's a more complex process you are unlikely to need if you want to stick with running a model.
+
+## Configuring Hardware
+Before setup can happen, you must configure your hardware. You can skip this section if you already completed the configuration steps. Otherwise, this section of the walkthrough shows you how to do a quick setup using TT-Installer.
+
+1. Configure your hardware with TT-Installer using the [Quick Installation section here.](https://docs.tenstorrent.com/getting-started/README.html#quick-installation)
+
+2. Reboot your machine.
+
+3. Please ensure that after you run this script, after you complete reboot, you activate the virtual environment it sets up - ```source ~/.tenstorrent-venv/bin/activate```.
+
+4. After your environment is running, to check that everything is configured, type the following:
+
+```bash
+tt-smi
+```
+
+You should see the Tenstorrent System Management Interface. It allows you to view real-time stats, diagnostics, and health info about your Tenstorrent device.
+
+![TT-SMI](./imgs/tt_smi.png)
+## Installing a Wheel and Running an Example
+
+## Other Setup Options
+
+## Where to Go Next
+
+
+
+
+
+
+
+
+
+
+----OLD------
+# Getting Started
 
 This document walks you through how to set up to run models using tt-torch. The following topics are covered:
 
