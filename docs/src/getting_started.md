@@ -1,7 +1,7 @@
 # Getting Started
-This document walks you through how to set up TT-Torch. TT-Torch is TT-Forge's front end for converting PyTorch models to TT-Forge's Intermediate Representation (IR). This is the main Getting Started page. There are two additional Getting Started pages depending on what you want to do. They are all described here, with links provided to each.
+This document walks you through how to set up TT-Torch. TT-Torch is TT-Forge's front end for converting PyTorch models to TT-Forge's Intermediate Representation (IR). This is the main Getting Started page. There are two additional Getting Started pages depending on what you want to do. They are all described here, with links provided to each. 
 
-The following topics are covered:
+The following topics are covered: 
 
 * [Setup Options](#setup-options)
 * [Configuring Hardware](#configuring-hardware)
@@ -11,8 +11,11 @@ The following topics are covered:
     * [Building From Source](getting_started_build_from_source.md)
 * [Where to Go Next](#where-to-go-next)
 
+> **NOTE:** If you encounter issues, please request assistance on the
+>[TT-Torch Issues](https://github.com/tenstorrent/tt-torch/issues) page.
+
 ## Setup Options
-TT-Torch can be used to run PyTorch models. Because TT-Torch is open source, you can also develop and add features to it. Setup instructions differ based on the task. You have the following options, listed in order of difficulty:
+TT-Torch can be used to run PyTorch models. Because TT-Torch is open source, you can also develop and add features to it. Setup instructions differ based on the task. You have the following options, listed in order of difficulty: 
 * [Installing a Wheel and Running an Example](#installing-a-wheel-and-running-an-example) - You should choose this option if you want to run models.
 * [Using a Docker Container to Run an Example](getting_started_docker.md) - Choose this option if you want to keep the environment for running models separate from your existing environment.
 * [Building from Source](getting_started_build_from_source.md) - This option is best if you want to develop TT-Torch further. It's a more complex process you are unlikely to need if you want to stick with running a model.
@@ -35,7 +38,37 @@ tt-smi
 You should see the Tenstorrent System Management Interface. It allows you to view real-time stats, diagnostics, and health info about your Tenstorrent device.
 
 ![TT-SMI](./imgs/tt_smi.png)
+
 ## Installing a Wheel and Running an Example
+
+This section walks you through downloading and installing a wheel. You can install the wheel wherever you would like if it is for running a model.
+
+1. Make sure you are in an active virtual environment. This walkthrough uses the same environment you activated to look at TT-SMI in the [Configuring Hardware](#configuring-hardware) section. If you are using multiple TT-Forge front ends to run models, you may want to set up a separate virtual environment instead. For example:
+
+```bash
+python3 -m venv .torch-venv
+source .torch-venv/bin/activate
+```
+
+2. Download the wheel in your active virtual environment:
+
+```bash
+pip install tt-torch --pre --extra-index-url https://pypi.eng.aws.tenstorrent.com/
+```
+
+3. You are now ready to try running a model. Navigate to the section of the [TT-Forge repo that contains TT-Torch demos](https://github.com/tenstorrent/tt-forge/tree/main/demos/tt-torch).
+
+4. For this walkthrough, the **resnet50_demo.py** demo is used. This demo image as input and outputs a prediction of what object (or objects) are present in that image.
+
+5. Download the [**resnet50_demo.py** file from the **tt-torch** folder](https://github.com/tenstorrent/tt-forge/blob/main/demos/tt-torch/resnet50_demo.py) inside your activated virtual environment in a place where you can run it. 
+
+6. Download and install the MPI implementation:
+
+```bash
+wget -q https://github.com/dmakoviichuk-tt/mpi-ulfm/releases/download/v5.0.7-ulfm/openmpi-ulfm_5.0.7-1_amd64.deb -O /tmp/openmpi-ulfm.deb && \
+sudo apt install -y /tmp/openmpi-ulfm.deb
+```
+
 
 ## Other Setup Options
 
