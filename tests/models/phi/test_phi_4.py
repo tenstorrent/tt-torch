@@ -6,7 +6,7 @@ import torch
 import pytest
 
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from tests.utils import ModelTester
+from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
@@ -16,7 +16,7 @@ class ThisTester(ModelTester):
             self.model_name, torch_dtype=torch.bfloat16
         )
         model = AutoModelForCausalLM.from_pretrained(self.model_name)
-        return model.generate
+        return model
 
     def _load_inputs(self):
         messages = [
@@ -25,19 +25,15 @@ class ThisTester(ModelTester):
                 "role": "user",
                 "content": "Can you provide ways to eat combinations of bananas and dragonfruits?",
             },
-            {
-                "role": "assistant",
-                "content": "Sure! Here are some ways to eat bananas and dragonfruits together: 1. Banana and dragonfruit smoothie: Blend bananas and dragonfruits together with some milk and honey. 2. Banana and dragonfruit salad: Mix sliced bananas and dragonfruits together with some lemon juice and honey.",
-            },
-            {"role": "user", "content": "What about solving an 2x + 3 = 7 equation?"},
         ]
+
         self.test_input = messages
         inputs = self.tokenizer.apply_chat_template(
             messages,
             tokenize=True,
             add_generation_prompt=True,
             return_tensors="pt",
-            return_attention_mask=True,
+            # return_attention_mask=True,
         )
         return inputs
 
@@ -60,6 +56,15 @@ def test_phi(record_property, model_name, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    skip_full_eval_test(
+        record_property,
+        cc,
+        model_name,
+        bringup_status="FAILED_RUNTIME",
+        reason="Out of Memory: Not enough space to allocate 734003200 B DRAM buffer across 12 banks, where each bank needs to store 61169664 B",
+        model_group=model_group,
+    )
+
     tester = ThisTester(
         model_name,
         mode,
@@ -67,6 +72,7 @@ def test_phi(record_property, model_name, mode, op_by_op):
         record_property_handle=record_property,
         is_token_output=True,
         model_group=model_group,
+        run_generate=True,
     )
 
     results = tester.test_model(assert_eval_token_mismatch=False)
@@ -76,7 +82,7 @@ def test_phi(record_property, model_name, mode, op_by_op):
         print(
             f"""
         model_name: {model_name}
-        input: {tester.test_input_messages}
+        input: {tester.test_input}
         output: {decoded_output}
         """
         )
