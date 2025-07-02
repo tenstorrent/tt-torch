@@ -2,32 +2,22 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/facebook/dpr-reader-single-nq-base
-
-from transformers import DPRReader, DPRReaderTokenizer
-import pytest
-from tests.utils import ModelTester
 import torch
+import pytest
+
+
+# Load model directly
+from third_party.tt_forge_models.dpr.reader.pytorch import ModelLoader
+from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.tokenizer = DPRReaderTokenizer.from_pretrained(
-            "facebook/dpr-reader-single-nq-base"
-        )
-        model = DPRReader.from_pretrained(
-            "facebook/dpr-reader-single-nq-base", torch_dtype=torch.bfloat16
-        )
-        return model
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        encoded_inputs = self.tokenizer(
-            questions=["What is love ?"],
-            titles=["Haddaway"],
-            texts=["'What Is Love' is a song recorded by the artist Haddaway"],
-            return_tensors="pt",
-        )
-        return encoded_inputs
+        return self.loader.load_inputs(dtype_override=torch.bfloat16)
 
 
 @pytest.mark.parametrize(
@@ -43,8 +33,6 @@ class ThisTester(ModelTester):
     "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
 )
 def test_dpr(record_property, mode, op_by_op, data_parallel_mode):
-    model_name = "DPR"
-
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
@@ -55,9 +43,14 @@ def test_dpr(record_property, mode, op_by_op, data_parallel_mode):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
+        model_info=model_info,
         assert_pcc=True,
         assert_atol=False,
         compiler_config=cc,
@@ -67,9 +60,9 @@ def test_dpr(record_property, mode, op_by_op, data_parallel_mode):
     results = tester.test_model()
 
     def print_result(result):
-        start_logits = result.start_logits
-        end_logits = result.end_logits
-        relevance_logits = result.relevance_logits
+        # start_logits = result.start_logits
+        # end_logits = result.end_logits
+        # relevance_logits = result.relevance_logits
         print(result)
 
     if mode == "eval":

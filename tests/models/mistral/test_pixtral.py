@@ -3,31 +3,20 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import pytest
-from transformers import LlavaForConditionalGeneration  # , AutoProcessor
+
+# Load model directly
 from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.mistral.pixtral.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        # self.processor = AutoProcessor.from_pretrained(self.model_name)
-        model = LlavaForConditionalGeneration.from_pretrained(
-            self.model_name, torch_dtype=torch.bfloat16
-        )
-        return model
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
         # https://github.com/tenstorrent/tt-torch/issues/904
-        inputs = {
-            "input_ids": torch.tensor(
-                [[1, 3, 12483, 1593, 11386, 10, 51883, 3226, 1063, 10, 4]],
-                dtype=torch.long,
-            ),
-            "attention_mask": torch.tensor(
-                [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]], dtype=torch.long
-            ),
-        }
-        return inputs
+        return self.loader.load_inputs()
 
 
 @pytest.mark.parametrize(
@@ -40,29 +29,32 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_pixtral(record_property, mode, op_by_op):
-    model_name = "mistral-community/pixtral-12b"
-    model_group = "red"
     cc = CompilerConfig()
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     skip_full_eval_test(
         record_property,
         cc,
-        model_name,
+        model_info.name,
         bringup_status="FAILED_RUNTIME",
         reason="Model is too large to fit on single device during execution.",
-        model_group=model_group,
+        model_group=model_info.group,
     )
 
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
+        model_info=model_info,
         compiler_config=cc,
         record_property_handle=record_property,
-        model_group=model_group,
+        model_group=model_info.group,
         assert_pcc=False,
         assert_atol=False,
     )
