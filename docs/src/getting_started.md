@@ -1,7 +1,7 @@
 # Getting Started
-This document walks you through how to set up TT-Torch. TT-Torch is TT-Forge's front end for converting PyTorch models to TT-Forge's Intermediate Representation (IR). This is the main Getting Started page. There are two additional Getting Started pages depending on what you want to do. They are all described here, with links provided to each. 
+This document walks you through how to set up TT-Torch. TT-Torch is TT-Forge's front end for converting PyTorch models to TT-Forge's Intermediate Representation (IR). This is the main Getting Started page. There are two additional Getting Started pages depending on what you want to do. They are all described here, with links provided to each.
 
-The following topics are covered: 
+The following topics are covered:
 
 * [Setup Options](#setup-options)
 * [Configuring Hardware](#configuring-hardware)
@@ -15,7 +15,7 @@ The following topics are covered:
 >[TT-Torch Issues](https://github.com/tenstorrent/tt-torch/issues) page.
 
 ## Setup Options
-TT-Torch can be used to run PyTorch models. Because TT-Torch is open source, you can also develop and add features to it. Setup instructions differ based on the task. You have the following options, listed in order of difficulty: 
+TT-Torch can be used to run PyTorch models. Because TT-Torch is open source, you can also develop and add features to it. Setup instructions differ based on the task. You have the following options, listed in order of difficulty:
 * [Installing a Wheel and Running an Example](#installing-a-wheel-and-running-an-example) - You should choose this option if you want to run models.
 * [Using a Docker Container to Run an Example](getting_started_docker.md) - Choose this option if you want to keep the environment for running models separate from your existing environment.
 * [Building from Source](getting_started_build_from_source.md) - This option is best if you want to develop TT-Torch further. It's a more complex process you are unlikely to need if you want to stick with running a model.
@@ -72,7 +72,7 @@ pip install tabulate
 pip install requests
 ```
 
-5. Clone the TT-Forge repo: 
+5. Clone the TT-Forge repo:
 
 ```bash
 git clone https://github.com/tenstorrent/tt-forge.git
@@ -80,13 +80,13 @@ git clone https://github.com/tenstorrent/tt-forge.git
 
 6. Navigate into **tt-forge**. You are now ready to try running a model.
 
-7. Run the demo: 
+7. Run the demo:
 
 ```bash
 python demos/tt-torch/resnet50_demo.py
 ```
 
-If all goes well, you should get a list of top five predictions for what the example image is, with the top one being a cat. 
+If all goes well, you should get a list of top five predictions for what the example image is, with the top one being a cat.
 
 ## Other Setup Options
 If you want to keep your environment completely separate in a Docker container, or you want to develop TT-Torch further, this section links you to the pages with those options:

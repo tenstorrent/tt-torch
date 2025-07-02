@@ -4,25 +4,20 @@
 ----OLD------
 # Getting Started
 
-This document walks you through how to set up to run models using tt-torch. The following topics are covered:
+This document walks you through how to build from source so you can develop the TT-Torch frontend. The following topics are covered:
 
-* [Building tt-torch From Source](#building-tt-torch-from-source)
+* [Building TT-Torch From Source](#building-tt-torch-from-source)
     * [System Dependencies](#system-dependencies)
     * [Configuring Hardware](#configuring-hardware)
     * [Installing Dependencies](#installing-dependencies)
     * [Installing CMake](#installing-cmake-402)
     * [Installing Clang 17](#installing-clang-17)
     * [How to Build From Source](#how-to-build-from-source)
-* [Building tt-torch From Wheel](#building-tt-torch-from-wheel)
-    * [Wheel Pre-requisites](#wheel-pre-requisites)
-    * [How to Build From Wheel](#how-to-build-from-wheel)
 * [Next Steps](#next-steps)
 
-## Building tt-torch from Source
+## System Dependencies
 
-### System Dependencies
-
-tt-torch has the following system dependencies:
+TT-Torch has the following system dependencies:
 * Ubuntu 22.04
 * Python 3.10
 * python3.10-venv
@@ -35,28 +30,28 @@ tt-torch has the following system dependencies:
 sudo apt install clang cmake ninja-build pip python3.10-venv
 ```
 
-### Configuring Hardware
+## Configuring Hardware
+Before setup can happen, you must configure your hardware. You can skip this section if you already completed the configuration steps. Otherwise, this section of the walkthrough shows you how to do a quick setup using TT-Installer.
 
-This walkthrough assumes you are using Ubuntu 22.04.
+1. Configure your hardware with TT-Installer using the [Quick Installation section here.](https://docs.tenstorrent.com/getting-started/README.html#quick-installation)
 
-Configure your hardware with tt-installer:
+2. Reboot your machine.
 
-1. Make sure your system is up-to-date:
+3. Please ensure that after you run this script, after you complete reboot, you activate the virtual environment it sets up - ```source ~/.tenstorrent-venv/bin/activate```.
 
-```bash
-sudo apt-get update
-sudo apt-get upgrade -y
-```
-
-2. Set up your hardware and dependencies using tt-installer:
+4. After your environment is running, to check that everything is configured, type the following:
 
 ```bash
-/bin/bash -c "$(curl -fsSL https://github.com/tenstorrent/tt-installer/releases/latest/download/install.sh)"
+tt-smi
 ```
+
+You should see the Tenstorrent System Management Interface. It allows you to view real-time stats, diagnostics, and health info about your Tenstorrent device.
+
+![TT-SMI](./imgs/tt_smi.png)
 
 ### Installing Dependencies
 
-Install additional dependencies that were not installed by the tt-installer script:
+Install additional dependencies required by TT-Torch that were not installed by the TT-Installer script:
 
 ```bash
 sudo apt-get install -y \
@@ -131,7 +126,7 @@ This approach lets multiple GCC versions coexist on your system and you can swit
 sudo rm -rf /usr/bin/../lib/gcc/x86_64-linux-gnu/12
 ```
 
-### How to build from source
+### How to Build From Source
 This section describes how to build tt-torch. You need to build tt-torch whether you plan to do development work, or run models.
 
 1. Clone the tt-torch repo:
@@ -159,7 +154,7 @@ cmake -B toolchain -DBUILD_TOOLCHAIN=ON
 
 4. Navigate back to the **tt-torch** home directory.
 
-5. Build tt-torch:
+5. Build TT-Torch:
 
 ```bash
 source env/activate
@@ -169,36 +164,6 @@ cmake --install build
 ```
 
 >**NOTE:** It takes a while for everything to build.
-
-## Building tt-torch From Wheel
-
-### Wheel Pre-requisites
-
-Please follow [Configuring Hardware](#configuring-hardware) and install OpenMPI:
-
-```bash
-sudo wget -q https://github.com/dmakoviichuk-tt/mpi-ulfm/releases/download/v5.0.7-ulfm/openmpi-ulfm_5.0.7-1_amd64.deb -O /tmp/openmpi-ulfm.deb && sudo apt install /tmp/openmpi-ulfm.deb
-```
-
-### How to Build from Wheel
-
-1. (Optional) Create a virtual environment
-
-We recommend using a virtual environment.
-
-```
-VENV_DIR=./venv
-python3 -m venv $VENV_DIR
-source $VENV_DIR/bin/activate
-```
-
-2. Install the wheel
-
-You can find available wheel releases under [https://pypi.eng.aws.tenstorrent.com/tt-torch/](https://pypi.eng.aws.tenstorrent.com/tt-torch/)
-
-```
-pip install --pre --extra-index-url https://pypi.eng.aws.tenstorrent.com/ --upgrade tt_torch
-```
 
 ## Next Steps
 
