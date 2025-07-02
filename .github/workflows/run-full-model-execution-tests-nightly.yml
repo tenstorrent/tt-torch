@@ -230,6 +230,7 @@ jobs:
                 tests/models/detr/test_detr_onnx.py::test_detr_onnx[full-eval]
                 tests/models/phi/test_phi_3p5_moe.py::test_phi_3p5_moe[full-phi3p5_moe-eval]
                 tests/models/phi/test_phi_3p5_vision.py::test_phi_3p5_vision[full-microsoft/Phi-3.5-vision-instruct-eval]
+                tests/models/phi/test_phi_4.py::test_phi_4[full-microsoft/phi-4-eval]
                 tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-od-dla1x-eval]
                 tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-od-dla2x-eval]
                 tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-od-hg-eval]
