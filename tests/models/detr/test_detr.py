@@ -33,6 +33,7 @@ class ThisTester(ModelTester):
 @pytest.mark.parametrize(
     "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
 )
+@pytest.mark.skip(reason="Skipping test_detr due to DRAM OOM; see issue #1024")
 def test_detr(record_property, mode, op_by_op, data_parallel_mode):
     cc = CompilerConfig()
     cc.enable_consteval = True
