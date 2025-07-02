@@ -70,7 +70,7 @@ jobs:
                   tests/models/deit/test_deit.py::test_deit[single_device-full-eval]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-full-eval-mixer_b16_224.goog_in21k]
                   tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base[single_device-full-eval]
-                  tests/models/detr/test_detr.py::test_detr[single_device-full-eval]
+                  # tests/models/detr/test_detr.py::test_detr[single_device-full-eval] # failing due to DRAM OOM; see issue #1024 https://github.com/tenstorrent/tt-torch/issues/1024
                   tests/models/vit/test_vit_onnx.py::test_vit_onnx[single_device-full-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vit_h_14]
                   tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small[single_device-full-eval]
