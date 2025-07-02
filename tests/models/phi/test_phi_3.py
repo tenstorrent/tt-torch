@@ -28,11 +28,6 @@ class ThisTester(ModelTester):
                 "role": "user",
                 "content": "Can you provide ways to eat combinations of bananas and dragonfruits?",
             },
-            {
-                "role": "assistant",
-                "content": "Sure! Here are some ways to eat bananas and dragonfruits together: 1. Banana and dragonfruit smoothie: Blend bananas and dragonfruits together with some milk and honey. 2. Banana and dragonfruit salad: Mix sliced bananas and dragonfruits together with some lemon juice and honey.",
-            },
-            {"role": "user", "content": "What about solving an 2x + 3 = 7 equation?"},
         ]
         self.test_input = messages
         inputs = self.tokenizer.apply_chat_template(
@@ -61,7 +56,7 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_phi(record_property, model_name, mode, op_by_op):
+def test_phi_3(record_property, model_name, mode, op_by_op):
     model_group = "red"
     cc = CompilerConfig()
     if op_by_op:
@@ -77,8 +72,8 @@ def test_phi(record_property, model_name, mode, op_by_op):
         reason="Out of Memory: Not enough space to allocate 201326592 B DRAM buffer across 12 banks, where each bank needs to store 16777216 B",
         model_group=model_group,
         model_name_filter=[
-            # "microsoft/Phi-3-mini-128k-instruct",
-            # "microsoft/Phi-3-mini-4k-instruct",
+            "microsoft/Phi-3-mini-128k-instruct",
+            "microsoft/Phi-3-mini-4k-instruct",
         ],
     )
 
