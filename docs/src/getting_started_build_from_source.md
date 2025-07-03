@@ -38,7 +38,7 @@ TT-Torch has the following system dependencies:
 * CMake 3.20 or higher
 
 ### Installing Python
-If your system already has Python installed, make sure it is Python 3.10 or higher: 
+If your system already has Python installed, make sure it is Python 3.10 or higher:
 
 ```bash
 python3 --version
@@ -51,7 +51,7 @@ sudo apt install python3
 ```
 
 ### Installing CMake 4.0.3
-This section walks you through installing CMake 4 or higher. 
+This section walks you through installing CMake 4 or higher.
 
 1. Install CMake 4.0.3:
 
@@ -59,13 +59,13 @@ This section walks you through installing CMake 4 or higher.
 pip install cmake==4.0.3
 ```
 
-2. Check that the correct version of CMake is installed: 
+2. Check that the correct version of CMake is installed:
 
 ```bash
 cmake --version
 ```
 
-If you see ```cmake version 4.0.3``` you are ready for the next section. 
+If you see ```cmake version 4.0.3``` you are ready for the next section.
 
 ### Installing Clang 17
 This section walks you through installing Clang 17.
@@ -93,7 +93,7 @@ clang -v
 sudo apt-get install gcc-11 lib32stdc++-11-dev lib32gcc-11-dev
 ```
 
-4. If you see GCC 12 listed as installed and listed as the default choice, uninstall it with: 
+4. If you see GCC 12 listed as installed and listed as the default choice, uninstall it with:
 
 ```bash
 sudo rm -rf /usr/bin/../lib/gcc/x86_64-linux-gnu/12
@@ -165,9 +165,9 @@ cmake --install build
 
 >**NOTE:** It takes a while for everything to build.
 
-After the build completes, you are ready to run a test model. 
+After the build completes, you are ready to run a test model.
 
-## Running a Test Model 
+## Running a Test Model
 You can test your installation by running the **resnet50_demo.py**:
 
 ```bash
