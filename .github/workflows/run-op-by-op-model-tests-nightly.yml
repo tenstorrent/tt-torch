@@ -161,9 +161,9 @@ jobs:
               "
           },
           {
-            # only testing 128k variant
+            # only testing 4k variant as they're identical aside from token size
             runs-on: wormhole_b0, name: "phi3", tests: "
-              tests/models/phi/test_phi_3.py::test_phi_3[op_by_op_torch-microsoft/Phi-3-mini-128k-instruct-eval]
+              tests/models/phi/test_phi_3.py::test_phi_3[op_by_op_torch-microsoft/Phi-3-mini-4k-instruct-eval]
             "
           },
           {
