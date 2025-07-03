@@ -142,7 +142,7 @@ jobs:
       shell: bash
       run: |
         source env/activate
-        python demos/resnet/resnet50_demo.py --run_default_img
+        python demos/resnet/resnet50_demo.py
 
     - name: Run Llama generative demo
       env:

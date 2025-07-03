@@ -14,7 +14,7 @@ import requests
 from tt_torch.tools.device_manager import DeviceManager
 
 
-def main(run_default_img):
+def main(run_interactive):
     weights = models.ResNet50_Weights.IMAGENET1K_V2
     model = models.resnet50(weights=weights).to(torch.bfloat16).eval()
     classes = weights.meta["categories"]
@@ -57,8 +57,8 @@ def main(run_default_img):
         print(tabulate.tabulate(rows, headers=headers))
         print()
 
-    if run_default_img:
-        print("Running with default image URL: ", DEFAULT_URL)
+    if not run_interactive:
+        print("Running with default image image: ", DEFAULT_URL)
         process_image("")
     else:
         prompt = 'Enter the path of the image (type "stop" to exit or hit enter to use a default image): '
@@ -71,9 +71,9 @@ def main(run_default_img):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--run_default_img",
+        "--run_interactive",
         action="store_true",
-        help="Run the demo once with the default image.",
+        help="Run the demo interactively as opposed to once with the default image.",
     )
     args = parser.parse_args()
-    main(args.run_default_img)
+    main(args.run_interactive)
