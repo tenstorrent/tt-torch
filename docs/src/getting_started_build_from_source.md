@@ -135,9 +135,9 @@ sudo wget -q https://github.com/dmakoviichuk-tt/mpi-ulfm/releases/download/v5.0.
 ```
 
 ### How to Build From Source
-This section describes how to build tt-torch. You need to build tt-torch whether you plan to do development work, or run models.
+This section describes how to build TT-Torch. You need to build TT-Torch whether you plan to do development work, or run models.
 
-1. Clone the tt-torch repo:
+1. Clone the TT-Torch repo:
 
 ```bash
 git clone https://github.com/tenstorrent/tt-torch.git
@@ -151,7 +151,7 @@ sudo mkdir -p /opt/ttmlir-toolchain
 sudo chown -R $USER /opt/ttmlir-toolchain
 ```
 
-3. Build the toolchain for tt-torch (this build step only needs to be done once):
+3. Build the toolchain for TT-Torch (this build step only needs to be done once):
 
 ```bash
 cd third_party
