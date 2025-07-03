@@ -184,7 +184,7 @@ jobs:
           # Approximately 180 minutes.
           {
             wh-runner: wormhole_b0, bh-runner: p150, name: "eval_8", tests: "
-                  tests/models/mamba/test_mamba.py::test_mamba[full-state-spaces/mamba-790m-hf-eval]
+                  tests/models/mamba/test_mamba.py::test_mamba[full-base-eval]
             "
           },
           # Approximately 70 minutes.
