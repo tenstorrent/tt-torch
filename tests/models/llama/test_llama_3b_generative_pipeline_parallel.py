@@ -15,49 +15,47 @@ from tests.utils import clear_dynamo_cache
 from accelerate import infer_auto_device_map
 
 
-class PrefillTester(ModelTester):
-    def _load_model(self):
-        # set up the model and tokenizer
-        self.model = AutoModelForCausalLM.from_pretrained(
-            self.model_name,
-            torch_dtype=torch.bfloat16,
-            use_cache=True,
-        )
+def load_model(model_name):
+    # set up the model and tokenizer
+    model = AutoModelForCausalLM.from_pretrained(
+        model_name,
+        torch_dtype=torch.bfloat16,
+        use_cache=True,
+    )
 
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            self.model_name, torch_dtype=torch.bfloat16
-        )
-        self.tokenizer.pad_token = self.tokenizer.eos_token
-        return self.model.eval()
+    tokenizer = AutoTokenizer.from_pretrained(model_name, torch_dtype=torch.bfloat16)
+    tokenizer.pad_token = tokenizer.eos_token
+    return model.eval(), tokenizer
 
-    def _load_inputs(self):
-        self.test_input = "This is a sample text from "
-        self.max_cache_len = 64 + 64
-        batch_size = 1
-        inputs = self.tokenizer.encode_plus(
-            self.test_input,
-            return_tensors="pt",
-            truncation=True,
-        )
 
-        # set up static cache
-        static_cache = StaticCache(
-            config=self.model.config,
-            max_batch_size=batch_size,
-            max_cache_len=self.max_cache_len,
-            device=self.model.device,
-            dtype=self.model.dtype,
-        )
+def load_inputs(model, tokenizer):
+    test_input = "This is a sample text from "
+    max_cache_len = 64 + 64
+    batch_size = 1
+    inputs = tokenizer.encode_plus(
+        test_input,
+        return_tensors="pt",
+        truncation=True,
+    )
 
-        cache_position = torch.arange(0, inputs.input_ids.shape[1])
+    # set up static cache
+    static_cache = StaticCache(
+        config=model.config,
+        max_batch_size=batch_size,
+        max_cache_len=max_cache_len,
+        device=model.device,
+        dtype=model.dtype,
+    )
 
-        args = {
-            "input_ids": inputs.input_ids,
-            "past_key_values": static_cache,
-            "use_cache": True,
-            "cache_position": cache_position,
-        }
-        return args
+    cache_position = torch.arange(0, inputs.input_ids.shape[1])
+
+    args = {
+        "input_ids": inputs.input_ids,
+        "past_key_values": static_cache,
+        "use_cache": True,
+        "cache_position": cache_position,
+    }
+    return args
 
 
 @torch.inference_mode()
@@ -69,21 +67,20 @@ def test_llama_3b_generative_pipeline_parallel(record_property):
     cc.dump_debug = True
     cc.dump_info = True
 
-    mode = "eval"
+    # mode = "eval"
     model_name = "meta-llama/Llama-3.2-3B"
 
-    tester = PrefillTester(
-        model_name,
-        mode,
-        compiler_config=cc,
-        assert_atol=False,
-        assert_pcc=False,
-        record_property_handle=record_property,
-    )
+    # tester = PrefillTester(
+    #     model_name,
+    #     mode,
+    #     compiler_config=cc,
+    #     assert_atol=False,
+    #     assert_pcc=False,
+    #     record_property_handle=record_property,
+    # )
 
-    model = tester._load_model()
-    tokenizer = tester.tokenizer
-    input_args = tester._load_inputs()
+    model, tokenizer = load_model(model_name)
+    input_args = load_inputs(model, tokenizer)
     generated_ids = input_args["input_ids"]
     print(tokenizer.decode(generated_ids[0].tolist()), end="", flush=True)
 
@@ -102,6 +99,8 @@ def test_llama_3b_generative_pipeline_parallel(record_property):
 
     options = BackendOptions()
     options.compiler_config = cc
+    cc.dump_info = True
+    cc.dump_debug = True
     cc.device_map = device_map
     options.devices = [device1, device2]
 
