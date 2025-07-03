@@ -1,9 +1,10 @@
 # Summary
 - [Introduction](overview.md)
 - [Getting Started](getting_started.md)
+  - [Getting Started with Docker](./getting_started_docker.md)
+  - [Getting Started with Building from Source](./getting_started_build_from_source.md)
 
-
-# User guide
+# User Guide
 - [Testing](test.md)
 - [Controlling Compiler](controlling.md)
 - [Pre-commit](pre_commit.md)
