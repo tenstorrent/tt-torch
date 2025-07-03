@@ -302,26 +302,26 @@ Access S3 bucket portal, **if you don't have access to the S3 bucket please reac
 ```
 test_files
 ├── pytorch
-|   ├── huggingface
-|   |   ├── meta-llama
-│   |   |   ├── Llama-3.1-70B
-│   |   |   |   └── <hugginface files>
-│   |   |   ├── Llama-2-7b-hf
-│   |   |   |   └── <hugginface files>
-│   |   |   └── ...
-│   |   └── ...
+│   ├── huggingface
+│   │   ├── meta-llama
+│   │   │   ├── Llama-3.1-70B
+│   │   │   │   └── <hugginface files>
+│   │   │   ├── Llama-2-7b-hf
+│   │   │   │   └── <hugginface files>
+│   │   │   └── ...
+│   │   └── ...
 │   ├── yolov10
-│   |   └── yolov10.pt
+│   │   └── yolov10.pt
 │   └── ...
 └── onnx
     ├── ViT
-    |   └── ViT.onnx
+    │   └── ViT.onnx
     └── ...
 ```
 
 ### Load Files from S3 Bucket
 
-Once files is loaded into S3 bucket we can access the file using a helper function from the tt-forge-models repo:
+Once files is loaded into S3 bucket we can access the file using a helper function from the [tt-forge-models repo](https://github.com/tenstorrent/tt-forge-models/blob/main/tools/utils.py#L14):
 ```
 def get_file(path):
 ```
@@ -337,13 +337,17 @@ class ThisTester(ModelTester):
 
 ```
 
-The `path` arg should be the full path of the file in the S3 bucket.
+The `path` arg should be the full path of the file in the S3 bucket. **DO NOT use the S3 URL**
 
 #### Loading Files Locally
 
-Locally `get_file()` will pull files directly from an IRD LFS cache. The IRD LFS cache is set up to sync up with S3 bucket every 5-10 minutes. You will need to set the `IRD_LF_CACHE` environment variable to the appropriate address. **Contact tt-torch community leader for IRD LF cache address.**
+Locally `get_file(path)` will pull files directly from an IRD LFS cache. The IRD LFS cache is set up to sync up with S3 bucket every 5-10 minutes. You will need to set the `IRD_LF_CACHE` environment variable to the appropriate address. **Contact tt-torch community leader for IRD LF cache address.**
 
-The file/s will be downloaded into a local cache so next time you want to access the same file we won't have to access the IRD cache. The default location for the local cache is `~/.cache/`. If you want to redirect files to a custom cache path set the `LOCAL_LF_CACHE` env variable to the desired path.
+File/s will be downloaded into a local cache so next time you want to access the same file we won't have to load from the IRD cache or download it again. The default location for the local cache is `~/.cache/lfcache/`. If you want to redirect files to a custom cache path set the `LOCAL_LF_CACHE` env variable to the desired path.
+
+If you can't be granted access to the IRD LF cache you have two options:
+1. We can use `path=url` to download files. **DO NOT use the S3 URL.**
+2. We can use `path=<local_path>` where local path is a relative path of the file in your local cache (`~/.cache/lfcache/<local_path>` or `LOCAL_LF_CACHE/<local_path>`).
 
 #### Loading Files from CI
 
