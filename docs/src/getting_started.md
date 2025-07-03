@@ -1,5 +1,5 @@
 # Getting Started
-This document walks you through how to set up TT-Torch. TT-Torch is TT-Forge's front end for converting PyTorch models to TT-Forge's Intermediate Representation (IR). This is the main Getting Started page. There are two additional Getting Started pages depending on what you want to do. They are all described here, with links provided to each.
+This document walks you through how to set up TT-Torch. TT-Torch is TT-Forge's front end for converting PyTorch models to different levels of Intermediate Representation (IR) all the way down to TTNN. This is the main Getting Started page. There are two additional Getting Started pages depending on what you want to do. They are all described here, with links provided to each.
 
 The following topics are covered:
 
@@ -41,22 +41,22 @@ You should see the Tenstorrent System Management Interface. It allows you to vie
 
 ## Installing a Wheel and Running an Example
 
-This section walks you through downloading and installing a wheel. You can install the wheel wherever you would like if it is for running a model.
+This section walks you through downloading and installing a wheel. You can install the wheel wherever you would like if it is for running a model. For this walkthrough, the **resnet50_demo.py** demo is used.
 
 1. Make sure you are in an active virtual environment. This walkthrough uses the same environment you activated to look at TT-SMI in the [Configuring Hardware](#configuring-hardware) section. If you are using multiple TT-Forge front ends to run models, you may want to set up a separate virtual environment instead. For example:
 
 ```bash
-python3 -m venv .torch-venv
-source .torch-venv/bin/activate
+python3 -m venv .tt-torch-venv
+source .tt-torch-venv/bin/activate
 ```
 
-2. Download the wheel in your active virtual environment:
+2. Download and install the wheel in your active virtual environment:
 
 ```bash
 pip install tt-torch --pre --extra-index-url https://pypi.eng.aws.tenstorrent.com/
 ```
 
-3. For this walkthrough, the **resnet50_demo.py** demo is used. Before you run it, download and install the **MPI implementation**:
+3. Before you run a model, download and install the **MPI implementation**:
 
 ```bash
 wget -q https://github.com/dmakoviichuk-tt/mpi-ulfm/releases/download/v5.0.7-ulfm/openmpi-ulfm_5.0.7-1_amd64.deb -O /tmp/openmpi-ulfm.deb && \

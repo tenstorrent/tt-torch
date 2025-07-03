@@ -1,8 +1,8 @@
 # Getting Started
 
-This document describes how to build the TT-XLA project on your local machine. You must build from source if you want to develop for TT-Torch. If you only want to run models, please choose one of the following sets of instructions instead:
+This document describes how to build the TT-Torch project on your local machine. You must build from source if you want to develop for TT-Torch. If you only want to run models, please choose one of the following sets of instructions instead:
 * [Installing a Wheel and Running an Example](getting_started.md) - You should choose this option if you want to run models.
-* [Using a Docker Container to Run an Example](getting_started_docker.md) - Choose this option if you want to keep the environment for running models separate from your existing environment.
+* [Using a Docker Container to Run an Example](getting_started_docker.md) - Choose this option if you want to keep the environment separate from your existing environment.
 
 The following topics are covered:
 
