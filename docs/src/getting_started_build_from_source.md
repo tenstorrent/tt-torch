@@ -1,11 +1,18 @@
 # Getting Started
 
-This document walks you through how to build from source so you can develop the TT-Torch frontend. The following topics are covered:
+This document describes how to build the TT-XLA project on your local machine. You must build from source if you want to develop for TT-Torch. If you only want to run models, please choose one of the following sets of instructions instead:
+* [Installing a Wheel and Running an Example](getting_started.md) - You should choose this option if you want to run models.
+* [Using a Docker Container to Run an Example](getting_started_docker.md) - Choose this option if you want to keep the environment for running models separate from your existing environment.
+
+The following topics are covered:
 
 * [Configuring Hardware](#configuring-hardware)
 * [System Dependencies](#system-dependencies)
 * [Installing Dependencies](#installing-dependencies)
 * [Running a Test Model](#running-a-test-model)
+
+> **NOTE:** If you encounter issues, please request assistance on the
+>[TT-Torch Issues](https://github.com/tenstorrent/tt-torch/issues) page.
 
 ## Configuring Hardware
 Before setup can happen, you must configure your hardware. You can skip this section if you already completed the configuration steps. Otherwise, this section of the walkthrough shows you how to do a quick setup using TT-Installer.
