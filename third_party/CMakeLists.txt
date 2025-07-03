@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-set(TT_MLIR_VERSION "83be68784772c8b61e8b51d043e742a4de147f51")
+set(TT_MLIR_VERSION "2382e5e27c85c2fc2253f7b232118c7b8fe3e3e0")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
@@ -117,7 +117,7 @@ else()
     install(DIRECTORY ${TORCH_MLIR_INSTALL_PREFIX}/python_packages/torch_mlir/torch_mlir DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
 
     # tt-forge-models - Python-only project, no need to build.
-    set(TT_FORGE_MODELS_VERSION "00993ec6823f68f0a2a50ad82868cd4fa40fa67a")
+    set(TT_FORGE_MODELS_VERSION "7c28702b0be94ac5cbdd561abc55f2d1e4f546e7")
     ExternalProject_Add(
         tt_forge_models
         SOURCE_DIR ${TTTORCH_SOURCE_DIR}/third_party/tt_forge_models

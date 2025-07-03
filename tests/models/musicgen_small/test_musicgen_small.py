@@ -2,47 +2,20 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/facebook/musicgen-small
-
-from transformers import AutoProcessor, MusicgenForConditionalGeneration
 import pytest
-import torch
+
+# Load model directly
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.musicgen_small.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model = MusicgenForConditionalGeneration.from_pretrained(
-            "facebook/musicgen-small"
-        )
-        return model
+        return self.loader.load_model()
 
     def _load_inputs(self):
-        processor = AutoProcessor.from_pretrained("facebook/musicgen-small")
-        inputs = processor(
-            text=[
-                "80s pop track with bassy drums and synth",
-                "90s rock song with loud guitars and heavy drums",
-            ],
-            padding=True,
-            return_tensors="pt",
-        )
-        pad_token_id = self.framework_model.generation_config.pad_token_id
-        decoder_input_ids = (
-            torch.ones(
-                (
-                    inputs.input_ids.shape[0]
-                    * self.framework_model.decoder.num_codebooks,
-                    1,
-                ),
-                dtype=torch.long,
-            )
-            * pad_token_id
-        )
-
-        inputs["max_new_tokens"] = 1
-        inputs["decoder_input_ids"] = decoder_input_ids
-        return inputs
+        return self.loader.load_inputs(batch_size=2)
 
 
 @pytest.mark.parametrize(
@@ -58,7 +31,6 @@ class ThisTester(ModelTester):
     "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
 )
 def test_musicgen_small(record_property, mode, op_by_op, data_parallel_mode):
-    model_name = "musicgen_small"
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
@@ -69,9 +41,14 @@ def test_musicgen_small(record_property, mode, op_by_op, data_parallel_mode):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
+        model_info=model_info,
         compiler_config=cc,
         assert_atol=False,
         assert_pcc=False,

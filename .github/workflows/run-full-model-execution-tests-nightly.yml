@@ -154,7 +154,7 @@ jobs:
           {
             # Approximately 70 minutes.
             wh-runner: wormhole_b0, bh-runner: p150, name: "eval_5", tests: "
-                  tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[full-Qwen/Qwen2.5-1.5B-eval]
+                  tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[full-eval]
                   tests/models/opt/test_opt.py::test_opt[full-eval]
                   tests/models/t5/test_t5.py::test_t5[full-t5-small-eval]
                   tests/models/t5/test_t5.py::test_t5[full-t5-base-eval]
@@ -399,7 +399,7 @@ jobs:
 
     - name: Upload Test Report Models
       uses: actions/upload-artifact@v4
-      if: ${{ success() || failure() && env.RUN_TEST != 'skip' }}
+      if: ${{ (success() || failure()) && env.RUN_TEST != 'skip' }}
       with:
         name: test-reports-models-${{ matrix.runner }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: ${{ steps.strings.outputs.test_report_path_models }}
