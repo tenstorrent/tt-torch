@@ -161,6 +161,12 @@ jobs:
               "
           },
           {
+            # only testing 4k variant as they're identical aside from token size
+            runs-on: wormhole_b0, name: "phi3", tests: "
+              tests/models/phi/test_phi_3.py::test_phi_3[op_by_op_torch-microsoft/Phi-3-mini-4k-instruct-eval]
+            "
+          },
+          {
             runs-on: wormhole_b0, name: "phi3p5_moe", tests: "
             tests/models/phi/test_phi_3p5_moe.py::test_phi_3p5_moe[op_by_op_torch-phi3p5_moe-eval]
             "
@@ -175,6 +181,11 @@ jobs:
           {
             runs-on: wormhole_b0, name: "phi3p5_vision", tests: "
               tests/models/phi/test_phi_3p5_vision.py::test_phi_3p5_vision[op_by_op_torch-microsoft/Phi-3.5-vision-instruct-eval]
+            "
+          },
+          {
+            runs-on: wormhole_b0, name: "phi4", tests: "
+              tests/models/phi/test_phi_4.py::test_phi_4[op_by_op_torch-microsoft/phi-4-eval]
             "
           },
         ]
