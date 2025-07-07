@@ -20,6 +20,7 @@ class ThisTester(ModelTester):
             dim=512,
             depth=12,
             num_classes=1000,
+            expansion_factor_token=1,  # see mlpmixer package issue #17 https://github.com/lucidrains/mlp-mixer-pytorch/issues/17
         )
         model = model.to(torch.bfloat16)
         return model
