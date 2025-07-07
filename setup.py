@@ -126,8 +126,8 @@ class install_metal_libs(install_lib):
         lib_dest_dir = os.path.join(self.install_dir)
         os.makedirs(lib_dest_dir, exist_ok=True)
 
-        # Find the skbuild cmake-install directory
-        skbuild_lib_pattern = "_skbuild/*/cmake-install/lib/*.so"
+        # Find the skbuild cmake-install directory - include versioned libraries
+        skbuild_lib_pattern = "_skbuild/*/cmake-install/lib/lib*.so*"
         so_files = glob.glob(skbuild_lib_pattern)
 
         if not so_files:
