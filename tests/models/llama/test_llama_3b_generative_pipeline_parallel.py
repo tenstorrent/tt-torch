@@ -10,17 +10,22 @@ from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
     StaticCache,
+    LlamaConfig,
 )
 from tests.utils import clear_dynamo_cache
-from accelerate import infer_auto_device_map
 
 
 def load_model(model_name):
-    # set up the model and tokenizer
+    # Create a custom config with only 2 layers (one for each device)
+    config = LlamaConfig.from_pretrained(model_name)
+    config.num_hidden_layers = 2
+
+    # Load model with custom config (remove use_cache from here)
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         torch_dtype=torch.bfloat16,
-        use_cache=True,
+        config=config,
+        ignore_mismatched_sizes=True,
     )
 
     tokenizer = AutoTokenizer.from_pretrained(model_name, torch_dtype=torch.bfloat16)
@@ -67,17 +72,7 @@ def test_llama_3b_generative_pipeline_parallel(record_property):
     cc.dump_debug = True
     cc.dump_info = True
 
-    # mode = "eval"
     model_name = "meta-llama/Llama-3.2-3B"
-
-    # tester = PrefillTester(
-    #     model_name,
-    #     mode,
-    #     compiler_config=cc,
-    #     assert_atol=False,
-    #     assert_pcc=False,
-    #     record_property_handle=record_property,
-    # )
 
     model, tokenizer = load_model(model_name)
     input_args = load_inputs(model, tokenizer)
@@ -90,12 +85,14 @@ def test_llama_3b_generative_pipeline_parallel(record_property):
     device1 = DeviceManager.create_sub_mesh_device(parent_device, (0, 0))
     device2 = DeviceManager.create_sub_mesh_device(parent_device, (0, 1))
 
-    dont_split = (
-        model._no_split_modules if hasattr(model, "_no_split_modules") else None
-    )
-    device_map = infer_auto_device_map(
-        model, max_memory={0: "5GiB", 1: "5GiB"}, no_split_module_classes=dont_split
-    )
+    # Create a custom device map to test split of kv cache attributes across devices
+    device_map = {
+        "model.embed_tokens": 0,
+        "model.layers.0": 0,  # one layer on device 0
+        "model.layers.1": 1,  # one layer on device 1
+        "model.norm": 1,
+        "lm_head": 1,
+    }
 
     options = BackendOptions()
     options.compiler_config = cc
