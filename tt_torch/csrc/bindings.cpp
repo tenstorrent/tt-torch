@@ -445,7 +445,14 @@ PYBIND11_MODULE(tt_mlir, m) {
                           value.cast<tt::runtime::DispatchCoreType>());
           });
   py::class_<tt::runtime::Device>(m, "Device");
-  py::class_<tt::runtime::Tensor>(m, "Tensor");
+  py::class_<tt::runtime::Tensor>(m, "Tensor")
+      .def(
+          "get_data_type",
+          [](const tt::runtime::Tensor &tensor) {
+            return dt_to_torch_scalar_type(
+                tt::runtime::getTensorDataType(tensor));
+          },
+          "Returns the data type of the tensor as a torch.ScalarType.");
   m.def("compile_ttir_to_bytestream", &compile_ttir_to_bytestream,
         py::arg("ttir"), py::arg("system_desc_path"),
         py::arg("len_activations") = 0, py::arg("len_graph_constants") = 0,
