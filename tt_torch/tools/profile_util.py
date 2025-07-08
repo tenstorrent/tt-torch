@@ -7,7 +7,6 @@ import time
 import socket
 import sys
 import csv
-import re
 from tt_torch.tools.filemanager import FileManager
 
 
@@ -238,60 +237,108 @@ class Profiler:
         process_ops(None, None, False, False)
 
     def post_process_ops(self):
-        # Add post-processing steps to insert location data into the ops_perf data file
+        def get_mlir_analysis_results(key):
+            call_count_mapping = {}
 
-        loc_pattern = r'loc\(fused\[.*?, "([^"]+)"\]\)'
+            with open(self.tracy_ops_data_file_path, "r") as file:
+                lines = iter(file)
+                buffer = None
 
-        with open(self.profiler_report_csv_path, "r") as perf_file:
-            perf_reader = csv.DictReader(perf_file)
-            headers = ["LOC"] + list(perf_reader.fieldnames) + ["Raw LOC"]
-            perf_data = list(perf_reader)
+                while True:
+                    # Use buffered line if available, otherwise get next
+                    line = buffer if buffer else next(lines, None)
+                    buffer = None
 
-        with open(self.profiler_report_csv_path, "w+") as perf_file, open(
-            self.tracy_ops_data_file_path, "r"
-        ) as message_file:
-            message_reader = csv.reader(message_file, delimiter=";")
-            ops_index = 0
-            prev = None
-            for message in message_reader:
-                message = message[0]  # Don't need timestamp information
-                if message.startswith("`"):
-                    # This is a TTNN Message
-                    # The location data is now in the previous message
-                    # The order of data is maintained in perf_data so as the messages are received, they update the id last encountered.
-                    # Now that we have a new message, we can update the location data from the previous message
-                    if prev:
-                        # Get the location data from the previous message and add it as new data for the perf_data (as a new col)
-                        if len(perf_data) > ops_index:
-                            perf_data[ops_index]["Raw LOC"] = prev
+                    if line is None:
+                        break  # End of file
 
-                            loc_match = re.search(loc_pattern, prev)
-                            perf_data[ops_index]["LOC"] = (
-                                loc_match.group(1) if loc_match else "Unknown"
-                            )
-                            ops_index += 1
-                else:
-                    prev = message
-            perf_writer = csv.DictWriter(perf_file, fieldnames=headers)
-            perf_writer.writeheader()
+                    # Find all the TT_DNN_DEVICE_OP under this LOC and record their global call counts
+                    line = line.strip()
+                    if key in line:
+                        # Format of line is
+                        # MLIR_OP_LOCATION;loc("/code/tt-mlir/build/test/ttmlir/Silicon/TTNN/n150/const-eval/Output/const-eval.mlir.tmp.mlir":17:14);5420869271
+                        # MLIR_CONST_EVAL_OP;true;6449925338
+                        parts = line.split(";")
+                        data = parts[1]
+                        block = []
+                        for next_line in lines:
+                            next_line = next_line.strip()
+                            if key in next_line:
+                                buffer = next_line  # Save for next outer loop
+                                break
+                            elif "TT_DNN_DEVICE_OP" in next_line:
+                                block.append(next_line)
 
-            for row in perf_data:
-                perf_writer.writerow(row)
+                        # Process the collected block. Find it's global call count and add it to the loc
+                        for bline in block:
+                            parts = bline.split(",")
+                            # Strip and split part[3] on semicolon or space, and grab the number
+                            num_part = parts[3].strip()
+                            digits = ""
+                            for c in num_part:
+                                if c.isdigit():
+                                    digits += c
+                                else:
+                                    break
+                            global_call_count = int(digits) if digits else None
+                            call_count_mapping[global_call_count] = data
 
+            return call_count_mapping
+
+        global_call_count_loc_mapping = get_mlir_analysis_results("MLIR_OP_LOCATION")
+        global_call_count_const_eval_op_mapping = get_mlir_analysis_results(
+            "MLIR_CONST_EVAL_OP"
+        )
+        global_call_count_program_metadata_op_mapping = get_mlir_analysis_results(
+            "MLIR_PROGRAM_METADATA"
+        )
+
+        # Add location data, const_eval_op data and program metadata to profiler csv file
         FileManager.create_file(self.profile_ops_perf_report)
 
-        # Trim out non-loc associated ops (And other post processing)
-        with open(self.profiler_report_csv_path, "r") as perf_file, open(
-            self.profile_ops_perf_report, "w+"
-        ) as report_file:
-            perf_reader = csv.DictReader(perf_file)
-            headers = perf_reader.fieldnames
+        with open(self.profiler_report_csv_path, mode="r", newline="") as infile, open(
+            self.profile_ops_perf_report, mode="w", newline=""
+        ) as outfile:
+            reader = csv.DictReader(infile)
+            fieldnames = reader.fieldnames + [
+                "LOC",
+                "CONST_EVAL_OP",
+                "PROGRAM_METADATA",
+            ]
+            writer = csv.DictWriter(outfile, fieldnames=fieldnames)
+            writer.writeheader()
 
-            ops_writer = csv.DictWriter(report_file, headers)
-            ops_writer.writeheader()
-            for row in perf_reader:
-                if "loc" in row["Raw LOC"]:
-                    ops_writer.writerow(row)
+            for row in reader:
+                # Access the value at "GLOBAL CALL COUNT"
+                local_call_count = row.get("GLOBAL CALL COUNT")
+                local_call_count = int(local_call_count.strip())
+
+                # Append the location column with its location data
+                if local_call_count in global_call_count_loc_mapping.keys():
+                    row["LOC"] = global_call_count_loc_mapping[local_call_count]
+                else:
+                    row["LOC"] = "loc(unknown)"
+
+                # Append the const_eval_op column with its const_eval_op data
+                if local_call_count in global_call_count_const_eval_op_mapping.keys():
+                    row["CONST_EVAL_OP"] = global_call_count_const_eval_op_mapping[
+                        local_call_count
+                    ]
+                else:
+                    row["CONST_EVAL_OP"] = "false"
+
+                # Append the program metadata column with its metadata
+                if (
+                    local_call_count
+                    in global_call_count_program_metadata_op_mapping.keys()
+                ):
+                    row[
+                        "PROGRAM_METADATA"
+                    ] = global_call_count_program_metadata_op_mapping[local_call_count]
+                else:
+                    row["PROGRAM_METADATA"] = "{}"
+
+                writer.writerow(row)
 
         print(f"Wrote report to {self.profile_ops_perf_report}")
 

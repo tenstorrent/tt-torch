@@ -12,6 +12,11 @@ Note: Paths in this document are given relative to the repo root.
 
 In the tt-torch building step ([Getting Started](https://docs.tenstorrent.com/tt-torch/getting_started.html#building-tt-torch)), it is required to configure your cmake build with the additional cmake directive `TT_RUNTIME_ENABLE_PERF_TRACE=ON` (i.e. run: `cmake -G Ninja -B build -DTT_RUNTIME_ENABLE_PERF_TRACE=ON`).
 
+
+For a wheel install of tt-torch, some additional dependencies are needed on top of those required by tt-torch:
+`pip install pyyaml click loguru pandas seaborn`
+
+
 ## Usage
 
 The `tt_profile.py` tool is the recommended entrypoint for profiling workloads in tt-torch.
