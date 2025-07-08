@@ -69,8 +69,6 @@ def test_llama_3b_generative_pipeline_parallel(record_property):
     cc = CompilerConfig()
     cc.enable_consteval = False
     cc.consteval_parameters = False
-    cc.dump_debug = True
-    cc.dump_info = True
 
     model_name = "meta-llama/Llama-3.2-3B"
 
@@ -88,10 +86,11 @@ def test_llama_3b_generative_pipeline_parallel(record_property):
     # Create a custom device map to test split of kv cache attributes across devices
     device_map = {
         "model.embed_tokens": 0,
+        "model.rotary_emb": 0,
         "model.layers.0": 0,  # one layer on device 0
         "model.layers.1": 1,  # one layer on device 1
         "model.norm": 1,
-        "lm_head": 1,
+        "lm_head": 0,
     }
 
     options = BackendOptions()
@@ -107,9 +106,7 @@ def test_llama_3b_generative_pipeline_parallel(record_property):
     constant_cache = {}
     options.constant_cache = constant_cache
 
-    compiled_model = torch.compile(
-        model, backend=backend, dynamic=False, options=options
-    )
+    compiled_model = torch.compile(model, backend="tt", dynamic=False, options=options)
 
     # up to _global_max_cache_len - input_args["input_ids"].shape[1]
     tokens_to_generate = 32

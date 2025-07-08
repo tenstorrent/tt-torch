@@ -402,7 +402,9 @@ def split_onto_devices(gm, compiler_config):
                 assert prev_device_idx is not None
                 devices = [prev_device_idx]
             for device_idx in devices:
-                prev_device_idx = device_idx
+                if device_idx == devices[0]:
+                    # prev_device_idx should be set to the earliest device
+                    prev_device_idx = device_idx
                 inp_node = (
                     mcg.device_graphs[device_idx].placeholder(node.target)
                     if is_placeholder
@@ -420,7 +422,9 @@ def split_onto_devices(gm, compiler_config):
                     )
                     mcg.graph_inputs[device_idx].append(mci)
                     consumer_input_indices[device_idx] += 1
-                    user_input_index += 1
+                    if device_idx == devices[-1]:
+                        # user_input_index should only increment once per node
+                        user_input_index += 1
             # TODO Assert on graphs that feed each other
 
         elif (
@@ -649,7 +653,6 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
                 ), f"Producer index mapping error: input expects {expected_shape} but producer_index {inp.producer_index} provides {actual_shape}"
 
                 sub_example_inputs.append(example_inputs[inp.producer_index])
-                # print(f"Added USER input {len(sub_example_inputs)-1}: producer_index={inp.producer_index}")
             else:
                 meta = inp.meta
                 if "tensor_meta" in meta:
@@ -658,7 +661,6 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
                             dtype=meta["tensor_meta"].dtype
                         )
                     )
-                    # print(f"Added INTER_DEVICE input {len(sub_example_inputs)-1}: tensor_meta shape")
                 else:
                     assert "example_value" in meta
                     sub_example_inputs.append(
@@ -666,8 +668,6 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
                             dtype=meta["example_value"].dtype
                         )
                     )
-                    # print(f"Added INTER_DEVICE input {len(sub_example_inputs)-1}: example_value shape")
-        # breakpoint()
 
         program, constant_inputs, buffers = run_pass_pipeline_for_single_gm(
             gm, graph, compiler_config, decompositions, sub_example_inputs, idx
