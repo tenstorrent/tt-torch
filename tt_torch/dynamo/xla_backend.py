@@ -223,7 +223,7 @@ class XLAOpByOpExecutor:
         for inp in inputs:
             if isinstance(inp, torch.Tensor):
                 input_shapes_and_constants.append(inp.shape)
-            elif isinstance(inp, (list, tuple)):
+            elif isinstance(inp, (list, tuple, torch.nn.ParameterList)):
                 sub = []
                 for sub_inp in inp:
                     if isinstance(sub_inp, torch.Tensor):
