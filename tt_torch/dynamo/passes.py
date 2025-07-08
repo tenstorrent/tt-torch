@@ -373,7 +373,6 @@ def split_onto_devices(gm, compiler_config):
 
     device_map = sort_device_map(gm, compiler_config)
     compiler_config.device_map = device_map
-
     node_to_new_nodes = {}
     user_input_index = 0
     consumer_input_indices = [0] * len(device_indices)
@@ -521,7 +520,6 @@ def split_onto_devices(gm, compiler_config):
 
     for graph in mcg.device_graphs.values():
         graph.lint()
-
     return mcg
 
 
@@ -644,7 +642,14 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         sub_example_inputs = []
         for inp in mcg.graph_inputs[idx]:
             if inp.io_type == IOType.USER:
+                expected_shape = inp.meta["example_value"].shape
+                actual_shape = example_inputs[inp.producer_index].shape
+                assert (
+                    actual_shape == expected_shape
+                ), f"Producer index mapping error: input expects {expected_shape} but producer_index {inp.producer_index} provides {actual_shape}"
+
                 sub_example_inputs.append(example_inputs[inp.producer_index])
+                # print(f"Added USER input {len(sub_example_inputs)-1}: producer_index={inp.producer_index}")
             else:
                 meta = inp.meta
                 if "tensor_meta" in meta:
@@ -653,6 +658,7 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
                             dtype=meta["tensor_meta"].dtype
                         )
                     )
+                    # print(f"Added INTER_DEVICE input {len(sub_example_inputs)-1}: tensor_meta shape")
                 else:
                     assert "example_value" in meta
                     sub_example_inputs.append(
@@ -660,6 +666,9 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
                             dtype=meta["example_value"].dtype
                         )
                     )
+                    # print(f"Added INTER_DEVICE input {len(sub_example_inputs)-1}: example_value shape")
+        # breakpoint()
+
         program, constant_inputs, buffers = run_pass_pipeline_for_single_gm(
             gm, graph, compiler_config, decompositions, sub_example_inputs, idx
         )
