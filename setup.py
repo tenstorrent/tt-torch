@@ -204,6 +204,9 @@ setup(
     entry_points={
         "torch_dynamo_backends": [
             "tt = tt_torch.dynamo.backend:backend",
-        ]
+        ],
+        "console_scripts": [
+            "tt_profile = tt_torch.tools.tt_profile:main",
+        ],
     },
 )

@@ -55,7 +55,7 @@ def tt_profile(
     profiler.cleanup()
 
 
-if __name__ == "__main__":
+def main():
     """
     This script is used to wrap pytests and generate Tracy profiling data for the tests,
     gathering device-side performance data associated with individual torchfx ops.
@@ -89,3 +89,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     tt_profile(args.test_command, args.output_path, args.port)
+
+
+if __name__ == "__main__":
+    main()
