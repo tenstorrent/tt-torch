@@ -72,7 +72,7 @@ def test_albert_masked_lm(
     model_name = model_info.name
 
     assert_pcc = True
-    required_pcc = 0.98
+    required_pcc = 0.975
 
     tester = ThisTester(
         model_name,

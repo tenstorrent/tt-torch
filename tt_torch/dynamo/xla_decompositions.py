@@ -357,6 +357,12 @@ def masked_fill_tensor(input, mask, value):
     return NotImplemented
 
 
+def squeeze(input, dims):
+    shape = input.shape
+    newshape = [s for i, s in enumerate(shape) if i not in dims]
+    return input.reshape(newshape)
+
+
 # TODO: DO we ever need this?
 def _get_default_decomposition_ops() -> DecompositionOpsList:
     aten = torch.ops.aten
@@ -430,6 +436,7 @@ def _get_custom_decopositions() -> DecompositionTable:
         aten.gelu.default: gelu,
         aten.erf.default: erf,
         aten.masked_fill.Tensor: masked_fill_tensor,
+        torch.ops.prims.squeeze.default: squeeze,
     }
 
 
