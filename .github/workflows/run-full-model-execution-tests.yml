@@ -184,6 +184,12 @@ jobs:
         name: install-artifacts
         path: install
 
+    - name: Install GDB
+      if: ${{ env.RUN_TEST != 'skip' }}
+      shell: bash
+      run: |
+        apt-get update && apt-get install -y gdb
+
     - name: install tt-torch
       if: ${{ env.RUN_TEST != 'skip' }}
       shell: bash
@@ -204,7 +210,7 @@ jobs:
         source env/activate
 
         # Run pytest under GDB to get backtrace on failure
-        env TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN gdb --batch --ex run --ex bt --ex quit --args python -m pytest --durations=0 -v -rf ${{matrix.build.tests}} \
+        env TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN gdb --batch --ex run --ex bt --ex quit --args python -m pytest -svv --durations=0 -v -rf ${{matrix.build.tests}} \
            --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
            --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append 2>&1 | tee pytest.log
 
