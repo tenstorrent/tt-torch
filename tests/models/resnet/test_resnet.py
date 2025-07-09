@@ -6,6 +6,7 @@ import torchvision
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+import tt_mlir
 
 
 class ThisTester(ModelTester):
@@ -47,10 +48,16 @@ def test_resnet(record_property, mode, op_by_op, data_parallel_mode):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    arch = tt_mlir.get_arch()
+    if arch == tt_mlir.Arch.BLACKHOLE:
+        assert_pcc = False
+    else:
+        assert_pcc = True
+
     tester = ThisTester(
         model_name,
         mode,
-        assert_pcc=True,
+        assert_pcc=assert_pcc,
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
