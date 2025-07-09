@@ -531,7 +531,6 @@ class XLAOpByOpExecutor:
                 # test_this_op = str(node.target) == "aten.convolution.default"
 
                 if test_this_op:
-                    # breakpoint()
                     try:
                         start = time.time()
                         gm, op = self.get_single_op_graph_module(node, args)
@@ -644,9 +643,8 @@ from functorch.compile import make_boxed_func
 def xla_pass_pipeline(gm, example_inputs, compiler_config):
     decompositions = torch._decomp.core_aten_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
-
     compiled_graph = (
-        torch.export.export(gm, tuple(example_inputs), strict=False)
+        torch.export.export_for_training(gm, tuple(example_inputs), strict=False)
         .run_decompositions(decompositions)
         .module()
     )
@@ -664,10 +662,11 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
     compiled_graph = rectify_buffer_inplace_copy(compiled_graph)
     # compiled_graph = bridge.extract_compiled_graph(compiled_graph, args)
     program = torch.export.export(compiled_graph, tuple(example_inputs), strict=False)
-    prune_inputs(program, [], [])
-    program._graph_module = torch.fx.GraphModule(
-        program.graph_module, program.graph, "inputs_pruned"
-    )
+    # prune_inputs(program, [], [])
+    # program._graph_module = torch.fx.GraphModule(
+    #     program.graph_module, program.graph, "inputs_pruned"
+    # )
+    # run_shape_prop(program._graph_module, example_inputs)
     return program
 
 
@@ -684,8 +683,6 @@ class XLAExecutor:
                 self.user_input_indices.append(idx)
             else:
                 self.inputs.append(self.program.state_dict[input_spec.target].to("xla"))
-
-        self.arg_type_map_str = None
 
     def push_tensors_to_device(self, inputs, device):
         if hasattr(inputs, "to"):
@@ -707,45 +704,13 @@ class XLAExecutor:
         else:
             return inputs
 
-    def generate_arg_type_map_str(self, output_object):
-        hlo_input_ids, _ = torch_xla._XLAC._get_tensors_xla_device_data_node(
-            output_object
-        )
-        hlo_input_positions = [id - 1 for id in hlo_input_ids]
-
-        def get_kind_str(kind):
-            if kind == InputKind.USER_INPUT:
-                return "input"
-            elif kind == InputKind.PARAMETER:
-                return "parameter"
-            else:
-                return "constant"
-
-        arg_types = []
-        for idx in range(len(hlo_input_positions)):
-            if hlo_input_positions[idx] < len(self.program.graph_signature.input_specs):
-                arg_types.append(
-                    get_kind_str(
-                        self.program.graph_signature.input_specs[
-                            hlo_input_positions[idx]
-                        ].kind
-                    )
-                )
-            else:
-                arg_types.append("constant")
-
-        self.arg_type_map_str = "main=" + ",".join(arg_types)
-
     def __call__(self, *args):
         args = self.push_tensors_to_device(args, "xla")
         inputs = self.inputs
         for idx in range(len(args)):
             inputs[self.user_input_indices[idx]] = args[idx]
-        output = self.program.graph_module(*inputs)
-        if self.arg_type_map_str is None:
-            self.generate_arg_type_map_str(output)
-            os.environ["ARG_TYPE_MAP_OVERRIDE"] = self.arg_type_map_str
 
+        output = self.program.graph_module(*inputs)
         return self.push_tensors_to_device(output, "cpu")
 
 

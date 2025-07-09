@@ -56,6 +56,8 @@ def test_mistral(record_property, model_info, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    cc.enable_consteval = True
+
     skip_full_eval_test(
         record_property,
         cc,

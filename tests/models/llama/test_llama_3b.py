@@ -48,6 +48,8 @@ def test_llama_3b(record_property, model_name, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    cc.enable_consteval = True
+
     tester = ThisTester(
         model_name,
         mode,

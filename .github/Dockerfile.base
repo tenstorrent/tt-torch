@@ -37,7 +37,8 @@ RUN apt-get update && apt-get install -y \
     libgl1 \
     libglx-mesa0 \
     unzip \
-    ffmpeg
+    ffmpeg \
+    protobuf-compiler
 
 # Install python3.10 packages
 RUN python3.10 -m pip install \
