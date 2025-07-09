@@ -298,7 +298,7 @@ def _base_backend(
 @tt_torch_error_message
 @register_backend(name="tt")
 def backend(gm, example_inputs, options: BackendOptions = None):
-    if os.environ.get("TT_TORCH_USE_XLA", False):
+    if int(os.environ.get("TT_TORCH_USE_XLA", False)):
         from tt_torch.dynamo.xla_backend import xla_backend
 
         return xla_backend(gm, example_inputs, options)

@@ -17,8 +17,15 @@ import re
 import pickle
 import sys
 import faulthandler
+import torch_xla
 from torch.func import functionalize
-from .passes import bypass_redundant_getitem
+import collections
+from .passes import (
+    bypass_redundant_getitem,
+    bypass_dtype_promotion,
+    bypass_redundant_cast,
+)
+from torch.export.graph_signature import InputKind
 
 from tt_torch.tools.utils import (
     CompilerConfig,
@@ -462,6 +469,7 @@ class XLAOpByOpExecutor:
 
     def run_gm_op_by_op(self, *user_inputs):
         node_to_tensor = {}
+        node_to_tensor_golden = {}
         inputs = user_inputs
         input_index = 0
         outputs = []
@@ -474,17 +482,24 @@ class XLAOpByOpExecutor:
             out_degree[node] = len(node.users)
             if node.op == "placeholder":
                 node_to_tensor[node] = inputs[input_index]
+                node_to_tensor_golden[node] = inputs[input_index]
                 input_index += 1
             elif node.op == "get_attr":
                 if node.target in self.gm.state_dict():
                     node_to_tensor[node] = self.gm.state_dict()[node.target]
+                    node_to_tensor_golden[node] = self.gm.state_dict()[node.target]
                 elif hasattr(self.gm, node.target):
                     node_to_tensor[node] = getattr(self.gm, node.target)
+                    node_to_tensor_golden[node] = getattr(self.gm, node.target)
             elif node.op == "call_function":
-                args = []
+                args, args_golden = [], []
                 for arg in node.args:
                     if isinstance(arg, torch.fx.node.Node):
                         args.append(node_to_tensor[arg])
+                        if arg in node_to_tensor_golden:
+                            args_golden.append(node_to_tensor_golden[arg])
+                        else:
+                            args_golden.append(node_to_tensor[arg])
                     elif isinstance(arg, list):
                         args.append(
                             [
@@ -494,8 +509,19 @@ class XLAOpByOpExecutor:
                                 for a in arg
                             ]
                         )
+                        arg_list = []
+                        for a in arg:
+                            if isinstance(a, torch.fx.node.Node):
+                                if a in node_to_tensor_golden:
+                                    arg_list.append(node_to_tensor_golden[a])
+                                else:
+                                    arg_list.append(node_to_tensor[a])
+                            else:
+                                arg_list.append(a)
+                        args_golden.append(arg_list)
                     else:
                         args.append(arg)
+                        args_golden.append(arg)
 
                 binary = None
                 op = None
@@ -505,6 +531,7 @@ class XLAOpByOpExecutor:
                 # test_this_op = str(node.target) == "aten.convolution.default"
 
                 if test_this_op:
+                    # breakpoint()
                     try:
                         start = time.time()
                         gm, op = self.get_single_op_graph_module(node, args)
@@ -523,12 +550,13 @@ class XLAOpByOpExecutor:
                             "Failed to compile", idx, num_nodes, node.target, e_msg
                         )
                 start = time.time()
-                golden = cast_ios_and_run(node, args, node.kwargs)
+                golden = cast_ios_and_run(node, args_golden, node.kwargs)
                 end = time.time()
                 self.print_marker(
                     "Golden", idx, num_nodes, node.target, time=(end - start)
                 )
                 XLAOpByOpExecutor.golden_time += end - start
+                calculated = None
                 if (
                     self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
                     and test_this_op
@@ -564,7 +592,8 @@ class XLAOpByOpExecutor:
                             "Failed to execute", idx, num_nodes, node.target, e_msg
                         )
 
-                node_to_tensor[node] = golden
+                node_to_tensor[node] = calculated if calculated is not None else golden
+                node_to_tensor_golden[node] = golden
             elif node.op == "output":
                 args = node.args[0]
                 output_tensors = [node_to_tensor[arg] for arg in args]
@@ -602,30 +631,122 @@ class XLAOpByOpExecutor:
 
 import gc
 from torch.fx.experimental import const_fold
+from tt_torch.dynamo.passes import (
+    rectify_buffer_inplace_copy,
+    run_shape_prop,
+    prune_inputs,
+    constant_fold,
+)
+
+from functorch.compile import make_boxed_func
 
 
 def xla_pass_pipeline(gm, example_inputs, compiler_config):
     decompositions = torch._decomp.core_aten_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
 
-    # gm = make_fx(gm, decomposition_table=decompositions, tracing_mode="real")(
-    #     *example_inputs
-    # )
-
-    gm = (
+    compiled_graph = (
         torch.export.export(gm, tuple(example_inputs), strict=False)
         .run_decompositions(decompositions)
         .module()
     )
 
-    gm = bridge.extract_compiled_graph(gm, example_inputs)
-    gm = const_fold.split_const_subgraphs(gm)
-    gc.collect()
-    gm.run_folding()
+    compiled_graph = bypass_dtype_promotion(compiled_graph, compiler_config)
+    run_shape_prop(compiled_graph, example_inputs)
+    compiled_graph = bypass_redundant_cast(compiled_graph)
 
-    gm.graph.eliminate_dead_code()
-    gm = bypass_redundant_getitem(gm)
-    return gm
+    if compiler_config.enable_consteval:
+        compiled_graph = constant_fold(compiled_graph)
+    elif compiler_config.consteval_parameters:
+        raise Exception("consteval_parameters is enabled but enable_consteval is not")
+
+    compiled_graph = bypass_redundant_getitem(compiled_graph)
+    compiled_graph = rectify_buffer_inplace_copy(compiled_graph)
+    # compiled_graph = bridge.extract_compiled_graph(compiled_graph, args)
+    program = torch.export.export(compiled_graph, tuple(example_inputs), strict=False)
+    prune_inputs(program, [], [])
+    program._graph_module = torch.fx.GraphModule(
+        program.graph_module, program.graph, "inputs_pruned"
+    )
+    return program
+
+
+class XLAExecutor:
+    def __init__(self, program, compiler_config):
+        self.program = program
+        self.compiler_config = compiler_config
+
+        self.inputs = []
+        self.user_input_indices = []
+        for idx, input_spec in enumerate(self.program._graph_signature.input_specs):
+            if input_spec.kind == InputKind.USER_INPUT:
+                self.inputs.append(None)
+                self.user_input_indices.append(idx)
+            else:
+                self.inputs.append(self.program.state_dict[input_spec.target].to("xla"))
+
+        self.arg_type_map_str = None
+
+    def push_tensors_to_device(self, inputs, device):
+        if hasattr(inputs, "to"):
+            return inputs.to(device)
+        elif isinstance(
+            inputs, dict
+        ):  # transformers input/output objects are subclasses of dict, however we still wish to return the same wrapper object
+            return type(inputs)(
+                **{k: self.push_tensors_to_device(v, device) for k, v in inputs.items()}
+            )
+        elif isinstance(inputs, collections.abc.Sequence):
+            return type(inputs)(
+                [self.push_tensors_to_device(i, device) for i in inputs]
+            )
+        elif isinstance(inputs, Cache):
+            inputs.key_cache = self.push_tensors_to_device(inputs.key_cache, device)
+            inputs.value_cache = self.push_tensors_to_device(inputs.value_cache, device)
+            return inputs
+        else:
+            return inputs
+
+    def generate_arg_type_map_str(self, output_object):
+        hlo_input_ids, _ = torch_xla._XLAC._get_tensors_xla_device_data_node(
+            output_object
+        )
+        hlo_input_positions = [id - 1 for id in hlo_input_ids]
+
+        def get_kind_str(kind):
+            if kind == InputKind.USER_INPUT:
+                return "input"
+            elif kind == InputKind.PARAMETER:
+                return "parameter"
+            else:
+                return "constant"
+
+        arg_types = []
+        for idx in range(len(hlo_input_positions)):
+            if hlo_input_positions[idx] < len(self.program.graph_signature.input_specs):
+                arg_types.append(
+                    get_kind_str(
+                        self.program.graph_signature.input_specs[
+                            hlo_input_positions[idx]
+                        ].kind
+                    )
+                )
+            else:
+                arg_types.append("constant")
+
+        self.arg_type_map_str = "main=" + ",".join(arg_types)
+
+    def __call__(self, *args):
+        args = self.push_tensors_to_device(args, "xla")
+        inputs = self.inputs
+        for idx in range(len(args)):
+            inputs[self.user_input_indices[idx]] = args[idx]
+        output = self.program.graph_module(*inputs)
+        if self.arg_type_map_str is None:
+            self.generate_arg_type_map_str(output)
+            os.environ["ARG_TYPE_MAP_OVERRIDE"] = self.arg_type_map_str
+
+        return self.push_tensors_to_device(output, "cpu")
 
 
 def xla_backend(gm, example_inputs, options: BackendOptions = None):
@@ -637,17 +758,15 @@ def xla_backend(gm, example_inputs, options: BackendOptions = None):
         cc = options.compiler_config
         devices = options.devices
         async_mode = options.async_mode
-    device = example_inputs[0].device if len(example_inputs) > 0 else None
-    assert cc.compile_depth != CompileDepth.EXECUTE or (
-        device is None or device.type == "xla"
-    ), "Sanity check failed, the xla_backend should not be called with inputs not on an xla device when using compile depth EXECUTE"
 
-    assert cc.compile_depth != CompileDepth.EXECUTE_OP_BY_OP or (
-        device is None or device.type != "xla"
-    ), "Sanity check failed, the xla_backend should not be called with inputs not on an xla device when using compile depth EXECUTE_OP_BY_OP"
-
-    gm = xla_pass_pipeline(gm, example_inputs, cc)
+    program = xla_pass_pipeline(gm, example_inputs, cc)
 
     if cc.compile_depth == CompileDepth.EXECUTE_OP_BY_OP:
-        return XLAOpByOpExecutor(gm, cc)
-    return gm
+        return XLAOpByOpExecutor(program.module(), cc)
+    return XLAExecutor(program, cc)
+
+
+from torch._dynamo.backends.common import aot_autograd
+from torch._dynamo.backends.registry import register_backend
+
+register_backend(name="tt-xla", compiler_fn=xla_backend)
