@@ -341,12 +341,15 @@ class ModelTester:
         options.devices = [device]
         options.async_mode = data_parallel_mode
         # compile forward pass for generative models, the model itself for discriminative
+        backend = "tt"
         if self.run_generate:
             model.forward = torch.compile(
-                model.forward, backend="tt", dynamic=False, options=options
+                model.forward, backend=backend, dynamic=False, options=options
             )
         else:
-            model = torch.compile(model, backend="tt", dynamic=False, options=options)
+            model = torch.compile(
+                model, backend=backend, dynamic=False, options=options
+            )
         self.compiled_models.append(model)
         return model
 
@@ -603,18 +606,9 @@ class ModelTester:
         golden = self.get_golden_outputs(model, self.inputs)
 
         if on_device == True:
-            if os.environ.get("TT_TORCH_USE_XLA", False):
-                model = model.to(xm.xla_device())
             model = self.compile_model(model, self.compiler_config)
 
-        inputs = self.inputs
-        if os.environ.get("TT_TORCH_USE_XLA", False):
-            inputs = self.push_tensors_to_device(inputs, xm.xla_device())
-
-        outputs = self.run_model(model, inputs)
-
-        if os.environ.get("TT_TORCH_USE_XLA", False):
-            outputs = self.push_tensors_to_device(outputs, "cpu")
+        outputs = self.run_model(model, self.inputs)
 
         self.record_property("achieved_compile_depth", "EXECUTE")
 
