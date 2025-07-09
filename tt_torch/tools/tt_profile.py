@@ -64,7 +64,7 @@ def main():
         python tt_profile.py test_command -o output_name
 
     Examples:
-        python tt_torch/tools/tt_profile.py "pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval-single_device]"
+        python tt_torch/tools/tt_profile.py "pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[single_device-full-eval]"
 
     Notes:
         Providing an output name is optional and defaults to 'device_ops_perf_trace.csv'."""
