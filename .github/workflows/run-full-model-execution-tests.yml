@@ -203,9 +203,10 @@ jobs:
       run: |
         source env/activate
 
-        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN pytest --durations=0 -v -rf ${{matrix.build.tests}} \
+        # Run pytest under GDB to get backtrace on failure
+        env TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN gdb --batch --ex run --ex bt --ex quit --args python -m pytest --durations=0 -v -rf ${{matrix.build.tests}} \
            --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
-           --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append | tee pytest.log
+           --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append 2>&1 | tee pytest.log
 
     - name: Upload Test Log
       uses: actions/upload-artifact@v4
