@@ -38,7 +38,7 @@ jobs:
         runner: [wormhole, blackhole]
         build: [
           {
-            wh-runner: wormhole_b0, bh-runner: p150, name: "eval_1", tests: "
+            wh-runner: torch-n300-4, name: "eval_1", tests: "
                   tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval]
                   tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval]
                   tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval]
@@ -48,7 +48,7 @@ jobs:
             "
           },
           {
-            wh-runner: wormhole_b0, bh-runner: p150, name: "eval_2", tests: "
+            wh-runner: torch-n300-4, name: "eval_2", tests: "
                   tests/models/mnist/test_mnist.py::test_mnist_train[single_device-full-eval]
                   tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval]
                   tests/models/openpose/test_openpose_v2.py::test_openpose_v2[full-eval]
@@ -62,7 +62,7 @@ jobs:
             "
           },
           {
-            wh-runner: wormhole_b0, bh-runner: p150, name: "eval_3", tests: "
+            wh-runner: torch-n300-4, name: "eval_3", tests: "
                   tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[single_device-full-albert-xxlarge-v2-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_y_400mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_y_800mf]
@@ -74,7 +74,7 @@ jobs:
             "
           },
           {
-            wh-runner: wormhole_b0, bh-runner: p150, name: "eval_4", tests: "
+            wh-runner: torch-n300-4, name: "eval_4", tests: "
                   tests/models/llama/test_llama_3b.py::test_llama_3b[full-meta-llama/Llama-3.2-3B-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_x_400mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_x_800mf]
@@ -87,7 +87,7 @@ jobs:
             "
           },
           {
-            wh-runner: wormhole_b0, bh-runner: p150, name: "eval_5", tests: "
+            wh-runner: torch-n300-5, name: "eval_5", tests: "
                 tests/models/perceiver_io/test_perceiver_io.py::test_perceiver_io[full-eval]
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-mobilenet_v2]
                 tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-mobilenet_v3_small]
@@ -106,7 +106,7 @@ jobs:
           },
           # This test group needs to be moved. This will be done once multichip tests are refactored: #780
           {
-            wh-runner: n300, name: "eval_6", tests: "
+            wh-runner: torch-n300-5, name: "eval_6", tests: "
                 tests/torch/test_basic_async.py
                 tests/torch/test_basic_multichip.py
                 tests/models/mnist/test_mnist.py::test_mnist_train[data_parallel-full-eval]
@@ -123,7 +123,7 @@ jobs:
             "
           },
           {
-            wh-runner: high-memory-n300, name: "eval_6_highmem_quarantine", tests: "
+            wh-runner: torch-n300-5, name: "eval_6_highmem_quarantine", tests: "
               tests/models/llama/test_llama_7b_pipeline_parallel.py::test_llama_7b_pipeline_parallel[huggyllama/llama-7b-eval]
               tests/models/falcon/test_falcon3_7b_10b_pipeline_parallel.py::test_falcon_pipeline_parallel[full-tiiuae/Falcon3-7B-Base-eval]
               tests/models/falcon/test_falcon3_7b_10b_pipeline_parallel.py::test_falcon_pipeline_parallel[full-tiiuae/Falcon3-10B-Base-eval]
