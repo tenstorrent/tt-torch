@@ -320,14 +320,47 @@ def sort_device_map(gm, compiler_config):
     device_map = compiler_config.device_map.copy()
     device_map_was_modified = False
 
+    def find_highest_input_device_and_key(node, visited=None):
+        """Recursively find the highest device among input nodes and return both device and key."""
+        if visited is None:
+            visited = set()
+
+        if node in visited:
+            return None, None
+        visited.add(node)
+
+        highest_device = None
+        highest_key = None
+        for input_node in node.all_input_nodes:
+            input_device, input_key = node_to_device(input_node, device_map)
+            if input_device is not None:
+                if highest_device is None or input_device > highest_device:
+                    highest_device = input_device
+                    highest_key = input_key
+            else:
+                # Recursively check this input node's inputs
+                recursive_device, recursive_key = find_highest_input_device_and_key(
+                    input_node, visited
+                )
+                if recursive_device is not None:
+                    if highest_device is None or recursive_device > highest_device:
+                        highest_device = recursive_device
+                        highest_key = recursive_key
+
+        return highest_device, highest_key
+
     for node in gm.graph.nodes:
         node_device, _ = node_to_device(node, device_map)
         for input_node in node.all_input_nodes:
             input_device, input_key = node_to_device(input_node, device_map)
+            if input_device is None:
+                input_device, input_key = find_highest_input_device_and_key(input_node)
+
             if (
                 node_device is not None
                 and input_device is not None
                 and input_device > node_device
+                and input_key is not None
             ):
                 device_map = move_device_map_key(gm, input_key, node_device, device_map)
                 device_map_was_modified = True
@@ -411,7 +444,9 @@ def split_onto_devices(gm, compiler_config):
                     else mcg.device_graphs[device_idx].get_attr(node.target)
                 )
                 inp_node.meta = node.meta
-                node_to_new_nodes[node] = {device_idx: inp_node}
+                if node not in node_to_new_nodes:
+                    node_to_new_nodes[node] = {}
+                node_to_new_nodes[node][device_idx] = inp_node
                 if is_placeholder:
                     mci = MultiChipInput(
                         device_idx,
@@ -501,7 +536,9 @@ def split_onto_devices(gm, compiler_config):
             new_node = node_creator(node.target, tuple(rebuilt_args), rebuilt_kwargs)
             new_node.meta = node.meta
             new_node.name = node.name
-            node_to_new_nodes[node] = {device_idx: new_node}
+            if node not in node_to_new_nodes:
+                node_to_new_nodes[node] = {}
+            node_to_new_nodes[node][device_idx] = new_node
 
         elif node.op == "output":
             # Final outputs
