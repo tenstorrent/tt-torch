@@ -4,16 +4,34 @@
 import pytest
 import os
 import sys
-from tests.utils import ModelTester
+from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 import importlib.util
 import torch
 import inspect
+import json
 
-# breakpoint()
+
+def get_models_root(project_root: str) -> str:
+    """Return the filesystem path to the given module, supporting both installed and source-tree use cases."""
+    module_name = "third_party.tt_forge_models"
+    spec = importlib.util.find_spec(module_name)
+    if spec:
+        if spec.submodule_search_locations:
+            return spec.submodule_search_locations[0]
+        elif spec.origin:
+            return os.path.dirname(os.path.abspath(spec.origin))
+
+    # Derive filesystem path from module name
+    rel_path = os.path.join(*module_name.split("."))
+    fallback = os.path.join(project_root, rel_path)
+    print(f"No installed {module_name}; falling back to {fallback}")
+    return fallback
+
+
 TEST_DIR = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.abspath(os.path.join(TEST_DIR, "..", ".."))
-MODELS_ROOT = os.path.join(PROJECT_ROOT, "third_party", "tt_forge_models")
+MODELS_ROOT = get_models_root(PROJECT_ROOT)
 
 # Add the models root to sys.path so relative imports work
 if MODELS_ROOT not in sys.path:
@@ -38,9 +56,10 @@ def import_model_loader(loader_path):
 
     # Get the relative path from MODELS_ROOT to construct proper module name
     rel_path = os.path.relpath(loader_path, MODELS_ROOT)
-    module_path = "tt_forge_models." + rel_path.replace(os.sep, ".").replace(".py", "")
+    rel_path_without_ext = rel_path.replace(".py", "")
+    module_path = "tt-forge-models." + rel_path_without_ext.replace(os.sep, ".")
 
-    spec = importlib.util.spec_from_file_location(module_path, loader_path)
+    spec = importlib.util.spec_from_file_location(module_path, location=loader_path)
     mod = importlib.util.module_from_spec(spec)
 
     # Set the module's __package__ for relative imports to work
@@ -53,7 +72,6 @@ def import_model_loader(loader_path):
 
     # Add the module to sys.modules to support relative imports
     sys.modules[module_path] = mod
-
     spec.loader.exec_module(mod)
     return mod.ModelLoader
 
@@ -65,8 +83,8 @@ def get_model_variants(loader_path):
         for variant in variants.keys():
             loader_paths[loader_path].append(variant)
 
-    except:
-        print(f"Cannor import path: {loader_path}")
+    except Exception as e:
+        print(f"Cannot import path: {loader_path}: {e}")
 
 
 for path in loader_paths.keys():
@@ -91,6 +109,42 @@ def generate_test_id(test_entry):
         return model_path
 
 
+def skip_test(test_entry, config):
+    skip_reason = None
+    if test_entry in config:
+        if "skip" in config[test_entry]:
+            skip_reason = config[test_entry]["skip"]
+    return skip_reason
+
+
+def get_tester_params(test_entry, config):
+    def handle_pcc_atol(config, args):
+        if "pcc" in config:
+            if isinstance(config["pcc"], bool):
+                args["assert_pcc"] = config["pcc"]
+            elif isinstance(config["pcc"], (int, float)):
+                args["required_pcc"] = config["pcc"]
+                args["assert_pcc"] = True
+        if "atol" in config:
+            if isinstance(config["atol"], bool):
+                args["assert_atol"] = config["atol"]
+            elif isinstance(config["atol"], (int, float)):
+                args["relative_atol"] = config["atol"]
+                args["assert_atol"] = True
+        if "relative_atol" in config:
+            args["relative_atol"] = config["relative_atol"]
+        return args
+
+    args = {
+        "assert_pcc": True,
+        "assert_atol": False,
+    }
+
+    if test_entry in config:
+        args = handle_pcc_atol(config[test_entry], args)
+    return args
+
+
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
@@ -110,7 +164,6 @@ def generate_test_id(test_entry):
 def test_all_models(test_entry, mode, op_by_op, record_property):
     loader_path = test_entry["path"]
     variant = test_entry["variant"]
-
     ModelLoader = import_model_loader(loader_path)
 
     class DynamicTester(ModelTester):
@@ -145,14 +198,37 @@ def test_all_models(test_entry, mode, op_by_op, record_property):
     model_info = ModelLoader.get_model_info(variant=variant)
     model_name = model_info.name
 
+    # Load config file
+    config_path = os.path.join(TEST_DIR, "config.json")
+    config = {}
+    if os.path.exists(config_path):
+        with open(config_path, "r") as f:
+            config = json.load(f)
+
+    rel_path = os.path.relpath(loader_path, MODELS_ROOT)
+    model_rel_path = os.path.dirname(rel_path)
+    model_entry = model_rel_path + "-" + variant if variant else model_rel_path
+
+    skip_test_msg = skip_test(model_entry, config["skip_models"])
+    if skip_test_msg:
+        skip_full_eval_test(
+            record_property,
+            cc,
+            model_info.name,
+            bringup_status="FAILED_RUNTIME",
+            reason=skip_test_msg,
+            model_group=model_info.group,
+        )
+
+    args = get_tester_params(model_entry, config["test_params"])
+
     tester = DynamicTester(
         model_name,
         mode,
         loader=loader,
         compiler_config=cc,
-        assert_atol=False,
-        assert_pcc=True,
         record_property_handle=record_property,
+        **args,
     )
     results = tester.test_model()
     tester.finalize()
