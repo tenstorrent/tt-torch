@@ -9,7 +9,6 @@ from tt_torch.tools.tt_profile import tt_profile
 from tt_torch.tools.profile_util import Profiler
 import csv
 
-test_command_mnist = "pytest -svv tests/models/mnist/test_mnist.py::test_mnist_train[full-eval-single_device]"
 test_command_add = "pytest -svv tests/torch/test_basic.py::test_add"
 expected_report_path = f"results/perf/{Profiler.DEFAULT_OUTPUT_FILENAME}"
 
