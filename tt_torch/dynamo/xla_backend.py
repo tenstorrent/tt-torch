@@ -469,7 +469,6 @@ class XLAOpByOpExecutor:
 
     def run_gm_op_by_op(self, *user_inputs):
         node_to_tensor = {}
-        node_to_tensor_golden = {}
         inputs = user_inputs
         input_index = 0
         outputs = []
@@ -482,24 +481,17 @@ class XLAOpByOpExecutor:
             out_degree[node] = len(node.users)
             if node.op == "placeholder":
                 node_to_tensor[node] = inputs[input_index]
-                node_to_tensor_golden[node] = inputs[input_index]
                 input_index += 1
             elif node.op == "get_attr":
                 if node.target in self.gm.state_dict():
                     node_to_tensor[node] = self.gm.state_dict()[node.target]
-                    node_to_tensor_golden[node] = self.gm.state_dict()[node.target]
                 elif hasattr(self.gm, node.target):
                     node_to_tensor[node] = getattr(self.gm, node.target)
-                    node_to_tensor_golden[node] = getattr(self.gm, node.target)
             elif node.op == "call_function":
-                args, args_golden = [], []
+                args = []
                 for arg in node.args:
                     if isinstance(arg, torch.fx.node.Node):
                         args.append(node_to_tensor[arg])
-                        if arg in node_to_tensor_golden:
-                            args_golden.append(node_to_tensor_golden[arg])
-                        else:
-                            args_golden.append(node_to_tensor[arg])
                     elif isinstance(arg, list):
                         args.append(
                             [
@@ -509,19 +501,8 @@ class XLAOpByOpExecutor:
                                 for a in arg
                             ]
                         )
-                        arg_list = []
-                        for a in arg:
-                            if isinstance(a, torch.fx.node.Node):
-                                if a in node_to_tensor_golden:
-                                    arg_list.append(node_to_tensor_golden[a])
-                                else:
-                                    arg_list.append(node_to_tensor[a])
-                            else:
-                                arg_list.append(a)
-                        args_golden.append(arg_list)
                     else:
                         args.append(arg)
-                        args_golden.append(arg)
 
                 binary = None
                 op = None
@@ -549,7 +530,7 @@ class XLAOpByOpExecutor:
                             "Failed to compile", idx, num_nodes, node.target, e_msg
                         )
                 start = time.time()
-                golden = cast_ios_and_run(node, args_golden, node.kwargs)
+                golden = cast_ios_and_run(node, args, node.kwargs)
                 end = time.time()
                 self.print_marker(
                     "Golden", idx, num_nodes, node.target, time=(end - start)
@@ -591,8 +572,8 @@ class XLAOpByOpExecutor:
                             "Failed to execute", idx, num_nodes, node.target, e_msg
                         )
 
-                node_to_tensor[node] = calculated if calculated is not None else golden
-                node_to_tensor_golden[node] = golden
+                if out_degree[node] > 0:
+                    node_to_tensor[node] = golden
             elif node.op == "output":
                 args = node.args[0]
                 output_tensors = [node_to_tensor[arg] for arg in args]
