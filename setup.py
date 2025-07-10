@@ -142,6 +142,15 @@ class install_metal_libs(install_lib):
 # Compile time env vars
 os.environ["DONT_OVERRIDE_INSTALL_PATH"] = "1"
 
+install_requires = [
+    "torch@https://download.pytorch.org/whl/cpu/torch-2.7.0%2Bcpu-cp310-cp310-manylinux_2_28_x86_64.whl",
+    "stablehlo@https://github.com/openxla/stablehlo/releases/download/v1.0.0/stablehlo-1.0.0.1715728102%2B6051bcdf-cp310-cp310-linux_x86_64.whl",
+    "numpy",
+    "onnx==1.17.0",
+    "onnxruntime",
+    "ml_dtypes",
+]
+
 cmake_args = [
     "-GNinja",
     "-DBUILD_TTRT=OFF",
@@ -152,10 +161,15 @@ if "--code_coverage" in sys.argv:
     ]
     sys.argv.remove("--code_coverage")
 
-if "--build_perf" in sys.argv:
+build_perf = "--build_perf" in sys.argv
+if build_perf:
     cmake_args += [
         "-DTT_RUNTIME_ENABLE_PERF_TRACE=ON",
     ]
+
+    # Additional python dependencies are required for profiling
+    # and perf analysis tools provided by metal process_ops
+    install_requires.extend(["pyyaml", "click", "loguru", "pandas", "seaborn"])
     sys.argv.remove("--build_perf")
 
 if "--build_runtime_debug" in sys.argv:
@@ -175,6 +189,7 @@ if "--include-models" in sys.argv:
 with open("README.md", "r") as f:
     long_description = f.read()
 
+
 setup(
     name="tt_torch",
     version="0.1",
@@ -192,14 +207,7 @@ setup(
         "install_lib": install_metal_libs,
     },
     zip_safe=False,
-    install_requires=[
-        "torch@https://download.pytorch.org/whl/cpu/torch-2.7.0%2Bcpu-cp310-cp310-manylinux_2_28_x86_64.whl",
-        "stablehlo@https://github.com/openxla/stablehlo/releases/download/v1.0.0/stablehlo-1.0.0.1715728102%2B6051bcdf-cp310-cp310-linux_x86_64.whl",
-        "numpy",
-        "onnx==1.17.0",
-        "onnxruntime",
-        "ml_dtypes",
-    ],
+    install_requires=install_requires,
     include_package_data=True,
     entry_points={
         "torch_dynamo_backends": [
