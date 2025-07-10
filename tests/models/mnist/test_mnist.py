@@ -4,8 +4,6 @@
 import torch
 import pytest
 
-import torch.nn as nn
-import torch.nn.functional as F
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from third_party.tt_forge_models.mnist.pytorch.loader import ModelLoader
