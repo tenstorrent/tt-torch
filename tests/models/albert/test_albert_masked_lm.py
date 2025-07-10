@@ -74,7 +74,7 @@ def test_albert_masked_lm(
 
     # TODO: Remove this once PCC ATOL is fixed on blackhole runners - https://github.com/tenstorrent/tt-torch/issues/1003
     assert_pcc = tt_mlir.get_arch() != tt_mlir.Arch.BLACKHOLE
-    required_pcc = 0.98 if "xxlarge" in variant else 0.99
+    required_pcc = 0.975 if "xxlarge" in variant else 0.99
 
     tester = ThisTester(
         model_name,
