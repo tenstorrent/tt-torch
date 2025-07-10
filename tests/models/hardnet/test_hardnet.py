@@ -10,7 +10,6 @@ import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from third_party.tt_forge_models.hardnet.pytorch import ModelLoader
-import tt_mlir
 
 
 class ThisTester(ModelTester):
@@ -50,9 +49,6 @@ def test_hardnet(record_property, mode, op_by_op, data_parallel_mode):
     loader = ModelLoader(variant=None)
     model_info = loader.get_model_info(variant=None)
 
-    # TODO: Remove this once PCC ATOL is fixed on blackhole runners - https://github.com/tenstorrent/tt-torch/issues/1003
-    assert_pcc = tt_mlir.get_arch() != tt_mlir.Arch.BLACKHOLE
-
     tester = ThisTester(
         model_info.name,
         mode,
@@ -63,7 +59,7 @@ def test_hardnet(record_property, mode, op_by_op, data_parallel_mode):
         compiler_config=cc,
         record_property_handle=record_property,
         # TODO Enable checking - https://github.com/tenstorrent/tt-torch/issues/488
-        assert_pcc=assert_pcc,
+        assert_pcc=True,
         assert_atol=False,
         data_parallel_mode=data_parallel_mode,
     )
