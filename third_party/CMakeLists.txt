@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-set(TT_MLIR_VERSION "fd4d52187d7a1f75010f586f3304e58d550caa36")
+set(TT_MLIR_VERSION "52098da6d7a32f86831bfb1d5cc0869a9742301e")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
@@ -60,6 +60,7 @@ else()
           -DTTMLIR_ENABLE_BINDINGS_PYTHON=OFF
           -DTT_RUNTIME_DEBUG=${TT_RUNTIME_DEBUG}
           -DCMAKE_INSTALL_PREFIX=${TTMLIR_INSTALL_PREFIX}
+        PATCH_COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/../../patch.diff
         GIT_REPOSITORY https://github.com/tenstorrent/tt-mlir.git
         GIT_TAG ${TT_MLIR_VERSION}
         GIT_PROGRESS ON
