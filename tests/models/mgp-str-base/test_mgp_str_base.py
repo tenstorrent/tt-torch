@@ -3,10 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # From: https://huggingface.co/alibaba-damo/mgp-str-base
 
-from PIL import Image
-import requests
 import torch
-from transformers import MgpstrProcessor, MgpstrForSceneTextRecognition
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
