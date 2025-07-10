@@ -85,6 +85,7 @@ def test_llama_3b_generative_pipeline_parallel(record_property):
     device2 = DeviceManager.create_sub_mesh_device(parent_device, (0, 1))
 
     # Create a custom device map to test split of kv cache attributes across devices
+    # Uncomment the lines at the start of load_model to test this device map.
     # device_map = {
     #     "model.embed_tokens": 0,
     #     "model.rotary_emb": 0,
@@ -97,11 +98,19 @@ def test_llama_3b_generative_pipeline_parallel(record_property):
     dont_split = (
         model._no_split_modules if hasattr(model, "_no_split_modules") else None
     )
-    # The devices have 12GB of memory each, but we set it to 11GB to ensure
-    # there's enough room for activation tensors and other overhead.
+    # Use 4GiB to split the graph evenly for this model. The model can fit on one 12 GiB device, but we want to test
+    # the pipeline parallelism.
     device_map = infer_auto_device_map(
         model, max_memory={0: "4GiB", 1: "4GiB"}, no_split_module_classes=dont_split
     )
+
+    # This device map assigns the last module to the first device. Since sort_device_map doesn't handle the case where
+    # input_device and input_key are None, it won't catch the device_map not being in topological order and there will
+    # be an issue with the first device receiving an INTER_DEVICE input.
+    # TODO: Fix sort_device_map to handle input_device = None
+
+    # Once the above issue is fixed, the entire model will run on the first device which is not good.
+    # TODO: Adjust sort_device_map to ensure that some modules remain on later devices.
 
     options = BackendOptions()
     options.compiler_config = cc
