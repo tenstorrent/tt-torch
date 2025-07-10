@@ -1,0 +1,136 @@
+name: Run E2E Tests
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      docker-image:
+        description: 'Docker image to use for build'
+        required: true
+        type: string
+      run-dump-mlir:
+        description: 'Dump MLIR files'
+        required: false
+        type: string
+        default: 'true'
+  workflow_run:
+    workflows: [Build]
+    types: [completed]
+
+env:
+  DOCKER_CACHE_ROOT: /mnt/dockercache
+
+permissions:
+  packages: write
+  checks: write
+
+jobs:
+  tests:
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      matrix:
+        build: [
+
+        ]
+    runs-on:
+      - ${{ matrix.build.runs-on }}
+
+    name: "test compile (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
+
+    container:
+      image: ${{ inputs.docker-image }}
+      options: --user root --device /dev/tenstorrent/0 --shm-size=4gb
+      volumes:
+        - /dev/hugepages:/dev/hugepages
+        - /dev/hugepages-1G:/dev/hugepages-1G
+        - /etc/udev/rules.d:/etc/udev/rules.d
+        - /lib/modules:/lib/modules
+        - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
+        - /mnt/dockercache:/mnt/dockercache
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Fetch job id
+      id: fetch-job-id
+      uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
+      with:
+        job_name: "test compile (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})" # reference above tests.name
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      env:
+        JOB_ID: ${{ steps.fetch-job-id.outputs.job_id }}
+      run: |
+        echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
+        echo "install-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
+        echo "dist-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
+        echo "test_report_path_torch=report_torch_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+        echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+        echo "test_report_path_onnx=report_onnx_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+        echo "mlir_dir=$(pwd)/model_mlir" >> "$GITHUB_OUTPUT" # Define the model_mlir directory
+
+    - name: Git safe dir
+      run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
+
+    - name: Use build artifacts
+      uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
+      with:
+        name: install-artifacts
+        path: install
+
+    - name: install tt-torch
+      shell: bash
+      run: |
+        source env/activate
+        mkdir -p ${{ steps.strings.outputs.dist-dir }}
+        mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
+        pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
+
+    - name: Compile Supported Models
+      env:
+        HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
+        TORCH_HOME: ${{ env.DOCKER_CACHE_ROOT }}/torch
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      shell: bash
+      run: |
+        source env/activate
+
+        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN TT_TORCH_COMPILE_DEPTH=TTNN_IR pytest --durations=50 -v -rf ${{matrix.build.tests}} \
+          --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
+          2>&1 | tee pytest.log
+
+    - name: Upload Test Log
+      uses: actions/upload-artifact@v4
+      if: success() || failure()
+      with:
+        name: test-log-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        path: pytest.log
+
+    - name: Upload Test Report Models
+      uses: actions/upload-artifact@v4
+      if: success() || failure()
+      with:
+        name: test-reports-models-${{ matrix.build.runs-on }}-${{ matrix.build.name }}
+        path: ${{ steps.strings.outputs.test_report_path_models }}
+
+    - name: Upload MLIR files
+      uses: actions/upload-artifact@v4
+      if: ${{ (success() || failure()) && inputs.run-dump-mlir == 'true' }}
+      with:
+        name: model-mlir-compile-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        path: ${{ steps.strings.outputs.mlir_dir }}
+
+  merge_mlir_artifacts:
+    needs: [tests]
+    if: ${{ always() && inputs.run-dump-mlir == 'true' }}  # Runs always if MLIR dump is enabled
+    runs-on: ubuntu-latest
+    name: Merge MLIR Artifacts
+    steps:
+      - name: Merge Artifacts
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: model-mlir-compile
+          pattern: model-mlir-compile-*
+          delete-merged: true
