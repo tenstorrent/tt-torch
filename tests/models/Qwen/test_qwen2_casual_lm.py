@@ -38,6 +38,8 @@ def test_qwen2_casual_lm(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    cc.enable_consteval = True
+
     # TODO: Remove this once PCC ATOL is fixed on blackhole runners - https://github.com/tenstorrent/tt-torch/issues/1003
     assert_pcc = tt_mlir.get_arch() != tt_mlir.Arch.BLACKHOLE
 
