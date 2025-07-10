@@ -9,28 +9,36 @@ import pytest
 from tests.utils import ModelTester
 import torch
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.tools.utils import get_file
+from third_party.tt_forge_models.vilt.pytorch.loader import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.processor = ViltProcessor.from_pretrained(
-            "dandelin/vilt-b32-finetuned-vqa"
-        )
-        model = ViltForQuestionAnswering.from_pretrained(
-            "dandelin/vilt-b32-finetuned-vqa", torch_dtype=torch.bfloat16
-        )
-        return model
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        # prepare image + question
-        image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
-        image = Image.open(str(image_file))
-        text = "How many cats are there?"
-        # prepare inputs
-        encoding = self.processor(image, text, return_tensors="pt")
-        encoding["pixel_values"] = encoding["pixel_values"].to(torch.bfloat16)
-        return encoding
+        return self.loader.load_inputs()
+
+
+# class ThisTester(ModelTester):
+#     def _load_model(self):
+#         self.processor = ViltProcessor.from_pretrained(
+#             "dandelin/vilt-b32-finetuned-vqa"
+#         )
+#         model = ViltForQuestionAnswering.from_pretrained(
+#             "dandelin/vilt-b32-finetuned-vqa", torch_dtype=torch.bfloat16
+#         )
+#         return model
+
+#     def _load_inputs(self):
+#         # prepare image + question
+#         image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
+#         image = Image.open(str(image_file))
+#         text = "How many cats are there?"
+#         # prepare inputs
+#         encoding = self.processor(image, text, return_tensors="pt")
+#         encoding["pixel_values"] = encoding["pixel_values"].to(torch.bfloat16)
+#         return encoding
 
 
 @pytest.mark.parametrize(
@@ -53,9 +61,14 @@ def test_vilt(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
+        model_info=model_info,
         compiler_config=cc,
         assert_atol=False,
         record_property_handle=record_property,
