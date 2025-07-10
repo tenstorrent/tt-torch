@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/state-spaces/mamba-2.8b-hf
 
-from transformers import GenerationConfig
+# from transformers import GenerationConfig
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
@@ -15,23 +15,23 @@ class ThisTester(ModelTester):
     def _load_model(self):
         model = self.loader.load_model(dtype_override=torch.bfloat16)
 
-        model.generate = lambda **kwargs: type(model).generate(
-            model, **{**kwargs, "use_cache": False}
-        )
+        # model.generate = lambda **kwargs: type(model).generate(
+        #     model, **{**kwargs, "use_cache": False}
+        # )
 
         self.tokenizer = self.loader.tokenizer
 
         return model
 
     def _load_inputs(self):
-        input_ids = self.loader.load_inputs()["input_ids"]
-        generation_config = GenerationConfig(max_new_tokens=10, use_cache=False)
-        arguments = {
-            "input_ids": input_ids,
-            "generation_config": generation_config,
-            "use_cache": False,
-        }
-        return arguments
+        input_ids = self.loader.load_inputs()  # ["input_ids"]
+        # generation_config = GenerationConfig(max_new_tokens=10, use_cache=False)
+        # arguments = {
+        #     "input_ids": input_ids,
+        #     "generation_config": generation_config,
+        #     "use_cache": False,
+        # }
+        return input_ids
 
 
 # Print available variants for reference
