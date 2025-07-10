@@ -8,21 +8,15 @@ import torch
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.squeezebert.pytorch.loader import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            "squeezebert/squeezebert-mnli", torch_dtype=torch.bfloat16
-        )
-        model = AutoModelForSequenceClassification.from_pretrained(
-            "squeezebert/squeezebert-mnli", torch_dtype=torch.bfloat16
-        )
-        return model
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        inputs = self.tokenizer("Hello, my dog is cute", return_tensors="pt")
-        return inputs
+        return self.loader.load_inputs()
 
 
 @pytest.mark.parametrize(
@@ -38,7 +32,6 @@ class ThisTester(ModelTester):
     "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
 )
 def test_squeeze_bert(record_property, mode, op_by_op, data_parallel_mode):
-    model_name = "SqueezeBERT"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -50,9 +43,14 @@ def test_squeeze_bert(record_property, mode, op_by_op, data_parallel_mode):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
+        model_info=model_info,
         compiler_config=cc,
         record_property_handle=record_property,
         required_atol=0.1,
@@ -61,9 +59,7 @@ def test_squeeze_bert(record_property, mode, op_by_op, data_parallel_mode):
     results = tester.test_model()
 
     def print_result(result):
-        logits = result.logits
-        predicted_class_id = logits.argmax().item()
-        print(f"Predicted class ID: {predicted_class_id}")
+        loader.decode_output(result)
 
     if mode == "eval":
         ModelTester.print_outputs(results, data_parallel_mode, print_result)
