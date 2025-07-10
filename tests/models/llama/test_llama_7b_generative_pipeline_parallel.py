@@ -4,7 +4,7 @@
 import torch
 from tt_torch.tools.utils import CompilerConfig
 from tt_torch.tools.device_manager import DeviceManager
-from tt_torch.dynamo.backend import backend, BackendOptions
+from tt_torch.dynamo.backend import BackendOptions
 from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
