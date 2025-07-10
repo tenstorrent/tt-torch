@@ -30,7 +30,11 @@ jobs:
       fail-fast: false
       matrix:
         build: [
+          {
+            runs-on: wormhole_b0, name: "qwen", tests: "
 
+            "
+          },
         ]
     runs-on:
       - ${{ matrix.build.sh-run && format('tt-beta-ubuntu-2204-{0}-large-stable', matrix.build.runs-on) ||  matrix.build.runs-on }}

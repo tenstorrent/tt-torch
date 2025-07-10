@@ -37,7 +37,10 @@ jobs:
       matrix:
         runner: [wormhole, blackhole]
         build: [
-
+          {
+            wh-runner: wormhole_b0, bh-runner: p150, name: "eval_1", tests: "
+            "
+          },
         ]
     runs-on: ${{ matrix.runner == 'wormhole' && matrix.build.wh-runner || matrix.runner == 'blackhole' && matrix.build.bh-runner  || 'wormhole_b0'}}
     name: "test execution on ${{ matrix.runner }} (${{ matrix.build.name }})"

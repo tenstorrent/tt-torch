@@ -26,7 +26,11 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-
+          {
+            runs-on: wormhole_b0, name: "qwen", tests: "
+              tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[op_by_op_torch-eval]
+              "
+          },
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}

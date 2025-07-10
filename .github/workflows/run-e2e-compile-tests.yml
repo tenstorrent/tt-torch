@@ -31,7 +31,11 @@ jobs:
       fail-fast: false
       matrix:
         build: [
+          {
+            runs-on: wormhole_b0, name: "compile_1", tests: "
 
+            "
+          },
         ]
     runs-on:
       - ${{ matrix.build.runs-on }}
