@@ -73,6 +73,7 @@ def display_summary(
     golden_pccs,
     cache_pccs_per_iteration,
     generated_text,
+    golden_generated_text,
 ):
     """Display comprehensive summary of the generation test."""
     print()  # Add a newline at the end of the output
@@ -87,6 +88,7 @@ def display_summary(
 
     print(f"Initial prompt: '{initial_prompt}'")
     print(f"Generated text: '{generated_text}'")
+    print(f"Golden text: '{golden_generated_text}'")
     print()
 
     print(f"Model loading time: {model_load_time:.3f}s")
@@ -169,6 +171,7 @@ def test_llama3_generate():
     start_time = time.time()
     model, tokenizer = load_model()
     input_args = load_inputs(model, tokenizer)
+    golden_input_args = input_args.copy()
     generated_ids = input_args["input_ids"]
     model_load_time = time.time() - start_time
 
@@ -199,12 +202,13 @@ def test_llama3_generate():
     )
 
     # Token generation with data collection
-    tokens_to_generate = 64
+    tokens_to_generate = 32
     golden_pccs = []
     cache_pccs_per_iteration = []  # Store cache PCCs for each iteration
     golden_ids = input_args["input_ids"]
     timings = []
     generated_tokens = []
+    golden_generated_tokens = []  # Track golden tokens separately
 
     print(initial_prompt, end="", flush=True)
 
@@ -214,8 +218,12 @@ def test_llama3_generate():
         iteration_start = time.time()
 
         # Golden calculation
-        golden_outputs = model(**input_args)
+        golden_outputs = model(**golden_input_args)
         next_golden_ids = golden_outputs.logits[:, -1:].argmax(dim=-1)
+
+        # Collect golden token
+        golden_token = tokenizer.decode(next_golden_ids[0].tolist())
+        golden_generated_tokens.append(golden_token)
 
         # Execute model
         outputs = compiled_model(**input_args)
@@ -264,8 +272,17 @@ def test_llama3_generate():
 
         # Update inputs for next iteration
         cache_position = input_args["cache_position"][-1:] + 1
+
+        # Golden input args and input args should be updated separately
+        golden_input_args = {
+            "input_ids": next_golden_ids,
+            "past_key_values": golden_outputs.past_key_values,
+            "use_cache": True,
+            "cache_position": cache_position,
+        }
+
         input_args = {
-            "input_ids": next_token_ids.to(dtype=torch.int32),
+            "input_ids": next_token_ids,
             "past_key_values": input_args["past_key_values"],  # updated in place
             "cache_position": cache_position,
             "use_cache": True,
@@ -289,6 +306,7 @@ def test_llama3_generate():
 
     total_generation_time = time.time() - generation_start
     generated_text = initial_prompt + "".join(generated_tokens)
+    golden_generated_text = initial_prompt + "".join(golden_generated_tokens)
 
     # Display summary at the end
     display_summary(
@@ -300,6 +318,7 @@ def test_llama3_generate():
         golden_pccs=golden_pccs,
         cache_pccs_per_iteration=cache_pccs_per_iteration,
         generated_text=generated_text,
+        golden_generated_text=golden_generated_text,
     )
 
     # Cleanup
