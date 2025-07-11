@@ -96,19 +96,11 @@ jobs:
             echo "> Build is required."
           fi
   quick-test:
-    runs-on: torch-n300-5
-    run: |
-      echo "[James] validaton of vladimir test"
-      mkdir test
-      cd test
-      python3 -m venv venv
-      source venv/bin/activate
-      pip install pytest
-      pip install https://pypi.eng.aws.tenstorrent.com/tt-torch/tt_torch-0.1.0-cp310-cp310-linux_x86_64.whl
-      git clone git@github.com:tenstorrent/tt-torch.git
-      pytest -svv tt-torch/tests/torch/test_basic.py::test_add
-      cd ..
-      rm -rf test
+    needs: [docker-build]
+    uses: ./.github/workflows/quick-validation-test.yml
+    secrets: inherit
+    with:
+      docker-image: ${{ needs.docker-build.outputs.docker-image }}
 
   build:
     needs: [pre-commit, spdx, docker-build, check-files]

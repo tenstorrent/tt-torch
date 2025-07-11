@@ -1,0 +1,48 @@
+name: Quick Validation Test
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      docker-image:
+        description: 'Docker image to use for test'
+        required: false
+        type: string
+        default: 'ghcr.io/tenstorrent/tt-torch:latest'
+
+jobs:
+  quick-test:
+    runs-on: torch-n300-5
+    name: "Quick validation test"
+
+    container:
+      image: ${{ inputs.docker-image }}
+      options: --user root --device /dev/tenstorrent/0 --shm-size=4gb
+      volumes:
+        - /dev/hugepages:/dev/hugepages
+        - /dev/hugepages-1G:/dev/hugepages-1G
+        - /etc/udev/rules.d:/etc/udev/rules.d
+        - /lib/modules:/lib/modules
+        - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
+        - /mnt/dockercache:/mnt/dockercache
+
+    steps:
+    - name: Checkout tt-torch repository
+      uses: actions/checkout@v4
+      with:
+        repository: tenstorrent/tt-torch
+        path: test/tt-torch
+
+    - name: Quick validation test
+      shell: bash
+      run: |
+        echo "[James] validation of vladimir test"
+        mkdir -p test
+        cd test
+        python3 -m venv venv
+        source venv/bin/activate
+        pip install pytest
+        pip install https://pypi.eng.aws.tenstorrent.com/tt-torch/tt_torch-0.1.0-cp310-cp310-linux_x86_64.whl
+        pytest -svv tt-torch/tests/torch/test_basic.py::test_add
+        cd ..
+        rm -rf test
