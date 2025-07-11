@@ -12,6 +12,7 @@ Note: Paths in this document are given relative to the repo root.
 
 In the tt-torch building step ([Getting Started](https://docs.tenstorrent.com/tt-torch/getting_started.html#building-tt-torch)), it is required to configure your cmake build with the additional cmake directive `TT_RUNTIME_ENABLE_PERF_TRACE=ON` (i.e. run: `cmake -G Ninja -B build -DTT_RUNTIME_ENABLE_PERF_TRACE=ON`).
 
+
 ## Usage
 
 The `tt_profile.py` tool is the recommended entrypoint for profiling workloads in tt-torch.
@@ -29,6 +30,7 @@ python tt_torch/tools/tt_profile.py "pytest -svv tests/models/mnist/test_mnist.p
 
 The report is created at `results/perf/device_ops_perf_trace.csv` by default, unless an output path is specified.
 
+If tt-torch is installed using a wheel, the `tt_profile` command will be registered in the environment in which tt-torch is installed. Users can simply run `tt_profile "<pytest or other command>"` without providing a path to the profiler source file.
 
 ## Limitations
 
