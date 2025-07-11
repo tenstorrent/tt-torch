@@ -34,7 +34,8 @@ def load_model(model_name="meta-llama/Llama-3.2-3B"):
 def load_inputs(
     model,
     tokenizer,
-    test_input="This is a sample text from ",
+    # test_input="This is a sample text from ",
+    test_input="I like taking walks in the",
     max_cache_len=_global_max_cache_len,
 ):
     batch_size = 1
@@ -74,8 +75,9 @@ def display_summary(
     cache_pccs_per_iteration,
     generated_text,
     golden_generated_text,
+    enable_golden=True,
 ):
-    """Display comprehensive summary of the generation test."""
+    """Display summary of the generation loop timing."""
     print()  # Add a newline at the end of the output
     print("=" * 80)
     print("GENERATION SUMMARY")
@@ -84,11 +86,11 @@ def display_summary(
     # Calculate statistics
     prefill_times = [t["total_time"] for t in timings if t["phase"] == "prefill"]
     decode_times = [t["total_time"] for t in timings if t["phase"] == "decode"]
-    inference_times = [t["inference_time"] for t in timings]
 
     print(f"Initial prompt: '{initial_prompt}'")
     print(f"Generated text: '{generated_text}'")
-    print(f"Golden text: '{golden_generated_text}'")
+    if enable_golden:
+        print(f"Golden text: '{golden_generated_text}'")
     print()
 
     print(f"Model loading time: {model_load_time:.3f}s")
@@ -100,8 +102,6 @@ def display_summary(
     if prefill_times:
         print(f"PREFILL (first token):")
         print(f"  Time: {prefill_times[0]:.3f}s")
-        print(f"  Inference: {timings[0]['inference_time']:.3f}s")
-        print(f"  Post-process: {timings[0]['post_process_time']:.3f}s")
         print()
 
     if decode_times:
@@ -113,26 +113,24 @@ def display_summary(
         print(f"  Average tokens/second: {len(decode_times) / sum(decode_times):.2f}")
         print()
 
-    print(f"INFERENCE TIMING:")
-    print(
-        f"  Average inference time: {sum(inference_times) / len(inference_times):.3f}s"
-    )
-    print(f"  Min inference time: {min(inference_times):.3f}s")
-    print(f"  Max inference time: {max(inference_times):.3f}s")
-    print()
-
-    print(f"ACCURACY:")
-    print(f"  Average PCC: {sum(golden_pccs) / len(golden_pccs):.6f}")
-    print(f"  Min PCC: {min(golden_pccs):.6f}")
-    print(f"  Max PCC: {max(golden_pccs):.6f}")
-    print()
+    if enable_golden and golden_pccs and any(pcc > 0 for pcc in golden_pccs):
+        print(f"ACCURACY:")
+        print(f"  Average PCC: {sum(golden_pccs) / len(golden_pccs):.6f}")
+        print(f"  Min PCC: {min(golden_pccs):.6f}")
+        print(f"  Max PCC: {max(golden_pccs):.6f}")
+        print()
 
     # Show timing progression for all iterations with cache PCCs
     print("DETAILED TIMING (all iterations):")
-    print(
-        "Iter | Phase   | Inference | Post-Proc | Total   | PCC      | Cache PCCs                    | Token"
-    )
-    print("-" * 100)
+    if enable_golden:
+        print(
+            "Iter | Phase   | Total   | PCC      | Cache PCCs                    | Token"
+        )
+    else:
+        print(
+            "Iter | Phase   | Total   | Token"
+        )
+    print("-" * (80 if enable_golden else 50))
 
     def color_pcc(pcc):
         if pcc < 0.9:
@@ -150,19 +148,25 @@ def display_summary(
             if len(repr(timing["token"])) > 11
             else repr(timing["token"])
         )
-        pcc = golden_pccs[i] if i < len(golden_pccs) else 0.0
+        
+        if enable_golden:
+            pcc = golden_pccs[i] if i < len(golden_pccs) else 0.0
 
-        # Format cache PCCs with colors
-        cache_pccs_str = ""
-        if i < len(cache_pccs_per_iteration) and cache_pccs_per_iteration[i]:
-            colored_cache_pccs = [color_pcc(pcc) for pcc in cache_pccs_per_iteration[i]]
-            cache_pccs_str = "[" + ",".join(colored_cache_pccs) + "]"
+            # Format cache PCCs with colors
+            cache_pccs_str = ""
+            if i < len(cache_pccs_per_iteration) and cache_pccs_per_iteration[i]:
+                colored_cache_pccs = [color_pcc(pcc) for pcc in cache_pccs_per_iteration[i]]
+                cache_pccs_str = "[" + ",".join(colored_cache_pccs) + "]"
+            else:
+                cache_pccs_str = "[]"
+
+            print(
+                f"{i:4d} | {timing['phase']:7s} | {timing['total_time']:6.3f}s | {pcc:.6f} | {cache_pccs_str:29s} | {token_repr}"
+            )
         else:
-            cache_pccs_str = "[]"
-
-        print(
-            f"{i:4d} | {timing['phase']:7s} | {timing['inference_time']:8.3f}s | {timing['post_process_time']:8.3f}s | {timing['total_time']:6.3f}s | {pcc:.6f} | {cache_pccs_str:29s} | {token_repr}"
-        )
+            print(
+                f"{i:4d} | {timing['phase']:7s} | {timing['total_time']:6.3f}s | {token_repr}"
+            )
 
 
 @torch.inference_mode()
@@ -217,51 +221,53 @@ def test_llama3_generate():
     for i in range(tokens_to_generate):
         iteration_start = time.time()
 
-        # Golden calculation
-        golden_outputs = model(**golden_input_args)
-        next_golden_ids = golden_outputs.logits[:, -1:].argmax(dim=-1)
+        # Golden calculation (only if enabled)
+        if enable_golden:
+            golden_outputs = model(**golden_input_args)
+            next_golden_ids = golden_outputs.logits[:, -1:].argmax(dim=-1)
 
-        # Collect golden token
-        golden_token = tokenizer.decode(next_golden_ids[0].tolist())
-        golden_generated_tokens.append(golden_token)
+            # Collect golden token
+            golden_token = tokenizer.decode(next_golden_ids[0].tolist())
+            golden_generated_tokens.append(golden_token)
 
         # Execute model
         outputs = compiled_model(**input_args)
-        inference_time = time.time() - iteration_start
 
-        # Calculate golden PCCs
-        golden_pcc = calculate_pcc(golden_outputs.logits, outputs.logits)
-        golden_pccs.append(golden_pcc)
+        # Calculate golden PCCs (only if enabled)
+        if enable_golden:
+            golden_pcc = calculate_pcc(golden_outputs.logits, outputs.logits)
+            golden_pccs.append(golden_pcc)
 
-        # Calculate golden PCCs from static cache internals
-        flat_static_cache = []
-        static_cache_pccs = []
-        for kcache, vcache in zip(
-            golden_outputs.past_key_values.key_cache,
-            golden_outputs.past_key_values.value_cache,
-        ):
-            flat_static_cache.extend(kcache)
-            flat_static_cache.extend(vcache)
+            # Calculate golden PCCs from static cache internals
+            flat_static_cache = []
+            static_cache_pccs = []
+            for kcache, vcache in zip(
+                golden_outputs.past_key_values.key_cache,
+                golden_outputs.past_key_values.value_cache,
+            ):
+                flat_static_cache.extend(kcache)
+                flat_static_cache.extend(vcache)
 
-        for torch_to_runtime_tensors in buffer_cache.values():
-            for i, runtime_buffer in enumerate(torch_to_runtime_tensors.values()):
-                runtime_static_cache = tt_mlir.to_host(
-                    runtime_buffer, deallocate_tensor=False
-                )[
-                    0
-                ]  # one element tuple
+            for torch_to_runtime_tensors in buffer_cache.values():
+                for j, runtime_buffer in enumerate(torch_to_runtime_tensors.values()):
+                    runtime_static_cache = tt_mlir.to_host(
+                        runtime_buffer, deallocate_tensor=False
+                    )[0]  
 
-                # Calculate PCC between golden and runtime static cache
-                static_cache_pcc = calculate_pcc(
-                    flat_static_cache[i], runtime_static_cache
-                )
-                static_cache_pccs.append(static_cache_pcc)
+                    # Calculate PCC between golden and runtime static cache
+                    static_cache_pcc = calculate_pcc(
+                        flat_static_cache[j], runtime_static_cache
+                    )
+                    static_cache_pccs.append(static_cache_pcc)
 
-        # Store cache PCCs for this iteration
-        cache_pccs_per_iteration.append(static_cache_pccs.copy())
+            # Store cache PCCs for this iteration
+            cache_pccs_per_iteration.append(static_cache_pccs.copy())
+        else:
+            # Add empty entries when golden verification is disabled
+            golden_pccs.append(0.0)
+            cache_pccs_per_iteration.append([])
 
         # Post-processing
-        post_process_start = time.time()
         next_token_ids = outputs.logits[:, -1:].argmax(dim=-1)
         generated_ids = torch.cat([generated_ids, next_token_ids], dim=-1)
 
@@ -273,13 +279,14 @@ def test_llama3_generate():
         # Update inputs for next iteration
         cache_position = input_args["cache_position"][-1:] + 1
 
-        # Golden input args and input args should be updated separately
-        golden_input_args = {
-            "input_ids": next_golden_ids,
-            "past_key_values": golden_outputs.past_key_values,
-            "use_cache": True,
-            "cache_position": cache_position,
-        }
+        # Update golden input args only if golden verification is enabled
+        if enable_golden:
+            golden_input_args = {
+                "input_ids": next_golden_ids,
+                "past_key_values": golden_outputs.past_key_values,
+                "use_cache": True,
+                "cache_position": cache_position,
+            }
 
         input_args = {
             "input_ids": next_token_ids,
@@ -288,7 +295,6 @@ def test_llama3_generate():
             "use_cache": True,
         }
 
-        post_process_time = time.time() - post_process_start
         total_iteration_time = time.time() - iteration_start
 
         # Store timing information
@@ -297,8 +303,6 @@ def test_llama3_generate():
             {
                 "iteration": i,
                 "phase": phase,
-                "inference_time": inference_time,
-                "post_process_time": post_process_time,
                 "total_time": total_iteration_time,
                 "token": new_token,
             }
@@ -306,7 +310,7 @@ def test_llama3_generate():
 
     total_generation_time = time.time() - generation_start
     generated_text = initial_prompt + "".join(generated_tokens)
-    golden_generated_text = initial_prompt + "".join(golden_generated_tokens)
+    golden_generated_text = initial_prompt + "".join(golden_generated_tokens) if enable_golden else ""
 
     # Display summary at the end
     display_summary(
@@ -319,6 +323,7 @@ def test_llama3_generate():
         cache_pccs_per_iteration=cache_pccs_per_iteration,
         generated_text=generated_text,
         golden_generated_text=golden_generated_text,
+        enable_golden=enable_golden,
     )
 
     # Cleanup
