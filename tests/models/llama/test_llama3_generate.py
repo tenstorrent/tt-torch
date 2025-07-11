@@ -13,6 +13,7 @@ from transformers import (
     StaticCache,
 )
 from tests.utils import clear_dynamo_cache
+import tt_mlir
 
 _global_max_cache_len = 64 + 64
 
@@ -70,6 +71,7 @@ def display_summary(
     tokens_to_generate,
     timings,
     golden_pccs,
+    cache_pccs_per_iteration,
     generated_text,
 ):
     """Display comprehensive summary of the generation test."""
@@ -123,33 +125,46 @@ def display_summary(
     print(f"  Max PCC: {max(golden_pccs):.6f}")
     print()
 
-    # Show timing progression for first 10 iterations
-    print("DETAILED TIMING (first 10 iterations):")
-    print("Iter | Phase   | Inference | Post-Proc | Total   | PCC      | Token")
-    print("-" * 70)
-    for i, timing in enumerate(timings[:10]):
+    # Show timing progression for all iterations with cache PCCs
+    print("DETAILED TIMING (all iterations):")
+    print(
+        "Iter | Phase   | Inference | Post-Proc | Total   | PCC      | Cache PCCs                    | Token"
+    )
+    print("-" * 100)
+
+    def color_pcc(pcc):
+        if pcc < 0.9:
+            return f"\033[91m{pcc:.3f}\033[0m"  # Red
+        elif pcc < 0.95:
+            return f"\033[93m{pcc:.3f}\033[0m"  # Yellow
+        elif pcc < 0.99:
+            return f"\033[93m{pcc:.3f}\033[0m"  # Yellow
+        else:
+            return f"\033[92m{pcc:.3f}\033[0m"  # Green
+
+    for i, timing in enumerate(timings):
         token_repr = (
             repr(timing["token"])[:8] + "..."
             if len(repr(timing["token"])) > 11
             else repr(timing["token"])
         )
         pcc = golden_pccs[i] if i < len(golden_pccs) else 0.0
+
+        # Format cache PCCs with colors
+        cache_pccs_str = ""
+        if i < len(cache_pccs_per_iteration) and cache_pccs_per_iteration[i]:
+            colored_cache_pccs = [color_pcc(pcc) for pcc in cache_pccs_per_iteration[i]]
+            cache_pccs_str = "[" + ",".join(colored_cache_pccs) + "]"
+        else:
+            cache_pccs_str = "[]"
+
         print(
-            f"{i:4d} | {timing['phase']:7s} | {timing['inference_time']:8.3f}s | {timing['post_process_time']:8.3f}s | {timing['total_time']:6.3f}s | {pcc:.6f} | {token_repr}"
+            f"{i:4d} | {timing['phase']:7s} | {timing['inference_time']:8.3f}s | {timing['post_process_time']:8.3f}s | {timing['total_time']:6.3f}s | {pcc:.6f} | {cache_pccs_str:29s} | {token_repr}"
         )
-
-    if len(timings) > 10:
-        print("...")
-
-    print("=" * 80)
 
 
 @torch.inference_mode()
 def test_llama3_generate():
-    print("=" * 80)
-    print("Starting Llama 3.2 Generation Test")
-    print("=" * 80)
-
     # Initialize model and inputs
     start_time = time.time()
     model, tokenizer = load_model()
@@ -159,11 +174,9 @@ def test_llama3_generate():
 
     initial_prompt = tokenizer.decode(generated_ids[0].tolist())
     print(f"Initial prompt: '{initial_prompt}'")
-    print(f"Model loading time: {model_load_time:.3f}s")
-    print("-" * 80)
+    enable_golden = True
 
     # Setup compilation
-    compilation_start = time.time()
     clear_dynamo_cache()
     cc = CompilerConfig()
     cc.enable_consteval = False
@@ -186,8 +199,9 @@ def test_llama3_generate():
     )
 
     # Token generation with data collection
-    tokens_to_generate = 32
+    tokens_to_generate = 64
     golden_pccs = []
+    cache_pccs_per_iteration = []  # Store cache PCCs for each iteration
     golden_ids = input_args["input_ids"]
     timings = []
     generated_tokens = []
@@ -207,8 +221,36 @@ def test_llama3_generate():
         outputs = compiled_model(**input_args)
         inference_time = time.time() - iteration_start
 
+        # Calculate golden PCCs
         golden_pcc = calculate_pcc(golden_outputs.logits, outputs.logits)
         golden_pccs.append(golden_pcc)
+
+        # Calculate golden PCCs from static cache internals
+        flat_static_cache = []
+        static_cache_pccs = []
+        for kcache, vcache in zip(
+            golden_outputs.past_key_values.key_cache,
+            golden_outputs.past_key_values.value_cache,
+        ):
+            flat_static_cache.extend(kcache)
+            flat_static_cache.extend(vcache)
+
+        for torch_to_runtime_tensors in buffer_cache.values():
+            for i, runtime_buffer in enumerate(torch_to_runtime_tensors.values()):
+                runtime_static_cache = tt_mlir.to_host(
+                    runtime_buffer, deallocate_tensor=False
+                )[
+                    0
+                ]  # one element tuple
+
+                # Calculate PCC between golden and runtime static cache
+                static_cache_pcc = calculate_pcc(
+                    flat_static_cache[i], runtime_static_cache
+                )
+                static_cache_pccs.append(static_cache_pcc)
+
+        # Store cache PCCs for this iteration
+        cache_pccs_per_iteration.append(static_cache_pccs.copy())
 
         # Post-processing
         post_process_start = time.time()
@@ -256,11 +298,10 @@ def test_llama3_generate():
         tokens_to_generate=tokens_to_generate,
         timings=timings,
         golden_pccs=golden_pccs,
+        cache_pccs_per_iteration=cache_pccs_per_iteration,
         generated_text=generated_text,
     )
 
     # Cleanup
     DeviceManager.release_parent_device(device)
     clear_dynamo_cache()
-
-    print("Test completed successfully!")
