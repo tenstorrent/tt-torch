@@ -635,6 +635,7 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
     compiled_graph = bypass_redundant_cast(compiled_graph)
 
     if compiler_config.enable_consteval:
+        assert False
         compiled_graph = constant_fold(compiled_graph)
     elif compiler_config.consteval_parameters:
         raise Exception("consteval_parameters is enabled but enable_consteval is not")
@@ -709,6 +710,7 @@ def xla_backend(gm, example_inputs, options: BackendOptions = None):
 
     if cc.compile_depth == CompileDepth.EXECUTE_OP_BY_OP:
         return XLAOpByOpExecutor(program.module(), cc)
+    return gm
     return XLAExecutor(program, cc)
 
 

@@ -96,30 +96,30 @@ std::string stableHLOAutomaticParallelization(std::string_view code,
           // instead of DenseArray. We rectify that below and verify after.
           mlir::ParserConfig{&context, /*verifyAfterParse=*/true});
 
-  mlir::PassManager automatic_sharding_pipeline_pm(
+  mlir::PassManager stablehlo_pipeline_pm(
       mlir_module.get()->getName(), mlir::PassManager::Nesting::Implicit);
   const char *enable_printing = std::getenv("TT_TORCH_IR_LOG_LEVEL");
   if (enable_printing && std::string(enable_printing) == "DEBUG") {
-    automatic_sharding_pipeline_pm.getContext()->disableMultithreading();
-    automatic_sharding_pipeline_pm.enableIRPrinting();
+    stablehlo_pipeline_pm.getContext()->disableMultithreading();
+    stablehlo_pipeline_pm.enableIRPrinting();
   }
 
-  mlir::tt::stablehlo::AutomaticShardingPipelineOptions
-      automatic_sharding_pipeline_options;
-  automatic_sharding_pipeline_options.meshShape = mesh_shape;
+  mlir::tt::stablehlo::StableHLOPipelineOptions
+      stablehlo_pipeline_options;
+  stablehlo_pipeline_options.meshShape = mesh_shape;
 
   // Set argument types.
   if (len_activations > 0 || len_graph_constants > 0) {
-    automatic_sharding_pipeline_options.argumentTypeMap =
+    stablehlo_pipeline_options.argumentTypeMap =
         tt::torch::setArgumentTypes(len_activations, len_graph_constants);
   }
 
-  mlir::tt::stablehlo::createAutomaticShardingPipeline(
-      automatic_sharding_pipeline_pm, automatic_sharding_pipeline_options);
+  mlir::tt::stablehlo::createStableHLOPipeline(
+      stablehlo_pipeline_pm, stablehlo_pipeline_options);
 
   // Run the pass manager.
-  if (mlir::failed(automatic_sharding_pipeline_pm.run(mlir_module.get()))) {
-    throw std::runtime_error("Failed to run automatic sharding pipeline.");
+  if (mlir::failed(stablehlo_pipeline_pm.run(mlir_module.get()))) {
+    throw std::runtime_error("Failed to run stablehlo pipeline.");
   }
 
   std::string buffer;
