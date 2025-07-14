@@ -133,7 +133,7 @@ jobs:
           }
         ]
     runs-on: ${{ matrix.runner == 'wormhole' && matrix.build.wh-runner || matrix.runner == 'blackhole' && matrix.build.bh-runner  || 'wormhole_b0'}}
-    name: "test execution on ${{ matrix.runner }} (${{ matrix.build.name }})"
+    name: "test exec ${{ matrix.runner == 'wormhole' && 'wh' || matrix.runner == 'blackhole' && 'bh' || 'unk' }} (${{ matrix.build.name }})"
 
     container:
       image: ${{ inputs.docker-image }}
@@ -163,7 +163,7 @@ jobs:
       if: ${{ env.RUN_TEST != 'skip' }}
       uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
       with:
-        job_name: "test execution on ${{ matrix.runner }} (${{ matrix.build.name }})" # reference above tests.name
+        job_name: "test exec ${{ matrix.runner == 'wormhole' && 'wh' || matrix.runner == 'blackhole' && 'bh' || 'unk' }} (${{ matrix.build.name }})" # reference above tests.name
 
     - name: Set reusable strings
       if: ${{ env.RUN_TEST != 'skip' }}
