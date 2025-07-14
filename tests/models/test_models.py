@@ -10,10 +10,28 @@ import importlib.util
 import torch
 import inspect
 
+
+def get_models_root(project_root: str) -> str:
+    """Return the filesystem path to the given module, supporting both installed and source-tree use cases."""
+    module_name = "third_party.tt_forge_models"
+    spec = importlib.util.find_spec(module_name)
+    if spec:
+        if spec.submodule_search_locations:
+            return spec.submodule_search_locations[0]
+        elif spec.origin:
+            return os.path.dirname(os.path.abspath(spec.origin))
+
+    # Derive filesystem path from module name
+    rel_path = os.path.join(*module_name.split("."))
+    fallback = os.path.join(project_root, rel_path)
+    print(f"No installed {module_name}; falling back to {fallback}")
+    return fallback
+
+
 # breakpoint()
 TEST_DIR = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.abspath(os.path.join(TEST_DIR, "..", ".."))
-MODELS_ROOT = os.path.join(PROJECT_ROOT, "third_party", "tt_forge_models")
+MODELS_ROOT = get_models_root(PROJECT_ROOT)
 
 # Add the models root to sys.path so relative imports work
 if MODELS_ROOT not in sys.path:
