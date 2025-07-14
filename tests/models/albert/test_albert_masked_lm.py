@@ -8,7 +8,6 @@ import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from third_party.tt_forge_models.albert.masked_lm.pytorch import ModelLoader
-import tt_mlir
 
 
 class ThisTester(ModelTester):
@@ -72,9 +71,8 @@ def test_albert_masked_lm(
     model_info = loader.get_model_info(variant=variant)
     model_name = model_info.name
 
-    # TODO: Remove this once PCC ATOL is fixed on blackhole runners - https://github.com/tenstorrent/tt-torch/issues/1003
-    assert_pcc = tt_mlir.get_arch() != tt_mlir.Arch.BLACKHOLE
-    required_pcc = 0.98 if "xxlarge" in variant else 0.99
+    assert_pcc = True
+    required_pcc = 0.98
 
     tester = ThisTester(
         model_name,
