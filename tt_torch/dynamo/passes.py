@@ -324,6 +324,7 @@ def sort_device_map(gm, compiler_config):
         node_device, _ = node_to_device(node, device_map)
         for input_node in node.all_input_nodes:
             input_device, input_key = node_to_device(input_node, device_map)
+
             if (
                 node_device is not None
                 and input_device is not None
@@ -373,7 +374,6 @@ def split_onto_devices(gm, compiler_config):
 
     device_map = sort_device_map(gm, compiler_config)
     compiler_config.device_map = device_map
-
     node_to_new_nodes = {}
     user_input_index = 0
     consumer_input_indices = [0] * len(device_indices)
@@ -403,14 +403,18 @@ def split_onto_devices(gm, compiler_config):
                 assert prev_device_idx is not None
                 devices = [prev_device_idx]
             for device_idx in devices:
-                prev_device_idx = device_idx
+                if device_idx == devices[0]:
+                    # prev_device_idx should be set to the earliest device
+                    prev_device_idx = device_idx
                 inp_node = (
                     mcg.device_graphs[device_idx].placeholder(node.target)
                     if is_placeholder
                     else mcg.device_graphs[device_idx].get_attr(node.target)
                 )
                 inp_node.meta = node.meta
-                node_to_new_nodes[node] = {device_idx: inp_node}
+                if node not in node_to_new_nodes:
+                    node_to_new_nodes[node] = {}
+                node_to_new_nodes[node][device_idx] = inp_node
                 if is_placeholder:
                     mci = MultiChipInput(
                         device_idx,
@@ -421,7 +425,9 @@ def split_onto_devices(gm, compiler_config):
                     )
                     mcg.graph_inputs[device_idx].append(mci)
                     consumer_input_indices[device_idx] += 1
-                    user_input_index += 1
+                    if device_idx == devices[-1]:
+                        # user_input_index should only increment once per node
+                        user_input_index += 1
             # TODO Assert on graphs that feed each other
 
         elif (
@@ -498,7 +504,9 @@ def split_onto_devices(gm, compiler_config):
             new_node = node_creator(node.target, tuple(rebuilt_args), rebuilt_kwargs)
             new_node.meta = node.meta
             new_node.name = node.name
-            node_to_new_nodes[node] = {device_idx: new_node}
+            if node not in node_to_new_nodes:
+                node_to_new_nodes[node] = {}
+            node_to_new_nodes[node][device_idx] = new_node
 
         elif node.op == "output":
             # Final outputs
@@ -521,7 +529,6 @@ def split_onto_devices(gm, compiler_config):
 
     for graph in mcg.device_graphs.values():
         graph.lint()
-
     return mcg
 
 
@@ -644,6 +651,12 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
         sub_example_inputs = []
         for inp in mcg.graph_inputs[idx]:
             if inp.io_type == IOType.USER:
+                expected_shape = inp.meta["example_value"].shape
+                actual_shape = example_inputs[inp.producer_index].shape
+                assert (
+                    actual_shape == expected_shape
+                ), f"Producer index mapping error: input expects {expected_shape} but producer_index {inp.producer_index} provides {actual_shape}"
+
                 sub_example_inputs.append(example_inputs[inp.producer_index])
             else:
                 meta = inp.meta
@@ -660,6 +673,7 @@ def pass_pipeline(gm: torch.fx.GraphModule, example_inputs, compiler_config):
                             dtype=meta["example_value"].dtype
                         )
                     )
+
         program, constant_inputs, buffers = run_pass_pipeline_for_single_gm(
             gm, graph, compiler_config, decompositions, sub_example_inputs, idx
         )
