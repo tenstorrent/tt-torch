@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-set(TT_MLIR_VERSION "1c19d9cb0371b1ee04fa3ae8febc2532cf38b61d")
+set(TT_MLIR_VERSION "1c6763dda4f7452aee1ec0a0ef69fb7687484191")
 set(TTXLA_VERSION "aknezevic/auto-shard")
 
 if (BUILD_TOOLCHAIN)
@@ -57,11 +57,11 @@ else()
             chmod -R +x ${TTXLA_INSTALL_PREFIX}
         CMAKE_GENERATOR Ninja
         CMAKE_ARGS
-            -DCMAKE_BUILD_TYPE=Release
+            -DCMAKE_BUILD_TYPE=Debug
             -DCMAKE_C_COMPILER=clang-17
             -DCMAKE_CXX_COMPILER=clang++-17
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-            -DUSE_CUSTOM_TT_MLIR_VERSION=OFF
+            -DUSE_CUSTOM_TT_MLIR_VERSION=ON
             -DTT_MLIR_VERSION=${TT_MLIR_VERSION}
             -DCMAKE_INSTALL_PREFIX=${TTXLA_INSTALL_PREFIX}
         GIT_REPOSITORY https://github.com/tenstorrent/tt-xla.git

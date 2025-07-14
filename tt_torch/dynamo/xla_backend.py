@@ -39,7 +39,7 @@ from tt_torch.tools.utils import (
 )
 
 import torch_xla.core.xla_model as xm
-
+import torch_xla.distributed.spmd as xs
 
 def get_tensor_size(tensor):
     """Calculate the memory size of a tensor in bytes."""
@@ -616,6 +616,7 @@ from tt_torch.dynamo.passes import (
     run_shape_prop,
     prune_inputs,
     constant_fold,
+    bypass_assert_tensor_metadata,
 )
 
 from functorch.compile import make_boxed_func
@@ -633,9 +634,10 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
     compiled_graph = bypass_dtype_promotion(compiled_graph, compiler_config)
     run_shape_prop(compiled_graph, example_inputs)
     compiled_graph = bypass_redundant_cast(compiled_graph)
+    compiled_graph = bypass_assert_tensor_metadata(compiled_graph)
 
     if compiler_config.enable_consteval:
-        assert False
+        
         compiled_graph = constant_fold(compiled_graph)
     elif compiler_config.consteval_parameters:
         raise Exception("consteval_parameters is enabled but enable_consteval is not")
@@ -664,11 +666,19 @@ class XLAExecutor:
                 self.inputs.append(None)
                 self.user_input_indices.append(idx)
             else:
-                self.inputs.append(self.program.state_dict[input_spec.target].to("xla"))
+                shard_spec = getattr(self.program.state_dict[input_spec.target], "shard_spec", None)
+                inp = self.program.state_dict[input_spec.target].to("xla")
+                if shard_spec is not None:
+                    xs.mark_sharding(inp, self.compiler_config.mesh, shard_spec)
+                self.inputs.append(inp)
 
     def push_tensors_to_device(self, inputs, device):
         if hasattr(inputs, "to"):
-            return inputs.to(device)
+            shard_spec = getattr(inputs, "shard_spec", None)
+            inp = inputs.to(device)
+            if shard_spec is not None:
+                xs.mark_sharding(inp, self.compiler_config.mesh, shard_spec)
+            return inp
         elif isinstance(
             inputs, dict
         ):  # transformers input/output objects are subclasses of dict, however we still wish to return the same wrapper object
@@ -692,6 +702,7 @@ class XLAExecutor:
         for idx in range(len(args)):
             inputs[self.user_input_indices[idx]] = args[idx]
 
+        self.program.graph_module.graph.print_tabular()
         output = self.program.graph_module(*inputs)
         return self.push_tensors_to_device(output, "cpu")
 
@@ -710,7 +721,6 @@ def xla_backend(gm, example_inputs, options: BackendOptions = None):
 
     if cc.compile_depth == CompileDepth.EXECUTE_OP_BY_OP:
         return XLAOpByOpExecutor(program.module(), cc)
-    return gm
     return XLAExecutor(program, cc)
 
 

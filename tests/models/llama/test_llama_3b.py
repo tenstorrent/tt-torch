@@ -74,6 +74,7 @@ from transformers import StaticCache
 from tt_torch.tools.utils import calculate_pcc
 import os
 import torch_xla
+import torch_xla.core.xla_model as xm
 
 os.environ["DISABLE_NUMERIC_CC_TOKEN"] = "1"
 def setup_tt_environment():
@@ -103,44 +104,62 @@ def test_multichip():
     config = LlamaConfig.from_pretrained("meta-llama/Llama-3.2-3B")
     # config = LlamaConfig.from_pretrained("meta-llama/Meta-Llama-3-70B")
     config.num_hidden_layers = 1
-    llama = LlamaModel(config)
+    llama = LlamaModel(config).eval()
 
     input_ids = torch.randint(0, config.vocab_size, (B, S))
     out_cpu = llama(input_ids=input_ids, attention_mask=None)
 
     cc = CompilerConfig()
-    cc.enable_consteval = False
+    cc.enable_consteval = True
     cc.consteval_parameters = False
+    cc.mesh = mesh
 
     options = BackendOptions()
     options.compiler_config = cc
     llama = torch.compile(llama, backend="tt", options=options)
     llama = llama.to(torch.bfloat16)
-    input_ids = input_ids.to("xla")
-    llama = llama.to("xla")
+    # input_ids = input_ids.to("xla")
+    # llama = llama.to("xla")
 
     static_cache = StaticCache(
         config=config,
         max_batch_size=B,
         max_cache_len=S,
-        device="xla",
+        device="cpu",
         dtype=torch.bfloat16,
     )
     cache_position = torch.arange(0, S)
-    cache_position = cache_position.to("xla")
-    for key, value in zip(static_cache.key_cache, static_cache.value_cache):
-        xs.mark_sharding(key, mesh, (None, "model", None, None))
-        xs.mark_sharding(value, mesh, (None, "model", None, None))
+    # cache_position = cache_position.to("xla")
+
+    for i, (key, value) in enumerate(zip(static_cache.key_cache, static_cache.value_cache)):
+        static_cache.key_cache[i].shard_spec = (None, "model", None, None)
+        static_cache.value_cache[i].shard_spec = (None, "model", None, None)
 
     for layer in llama.layers:
-        xs.mark_sharding(layer.mlp.up_proj.weight, mesh, ("model", None))
-        xs.mark_sharding(layer.mlp.gate_proj.weight, mesh, ("model", None))
-        xs.mark_sharding(layer.mlp.down_proj.weight, mesh, (None, "model"))
+        layer.mlp.up_proj.weight.shard_spec = ("model", None)
+        layer.mlp.gate_proj.weight.shard_spec = ("model", None)
+        layer.mlp.down_proj.weight.shard_spec = (None, "model")
 
-        xs.mark_sharding(layer.self_attn.q_proj.weight, mesh, ("model", None))
-        xs.mark_sharding(layer.self_attn.k_proj.weight, mesh, ("model", None))
-        xs.mark_sharding(layer.self_attn.v_proj.weight, mesh, ("model", None))
-        xs.mark_sharding(layer.self_attn.o_proj.weight, mesh, (None, "model"))
+        layer.self_attn.q_proj.weight.shard_spec = ("model", None)
+        layer.self_attn.k_proj.weight.shard_spec = ("model", None)
+        layer.self_attn.v_proj.weight.shard_spec = ("model", None)
+        layer.self_attn.o_proj.weight.shard_spec = (None, "model")
+
+    # for i, (key, value) in enumerate(zip(static_cache.key_cache, static_cache.value_cache)):
+    #     static_cache.key_cache[i] = key.to("xla")
+    #     static_cache.value_cache[i] = value.to("xla")
+    #     xs.mark_sharding(static_cache.key_cache[i], mesh, (None, "model", None, None))
+    #     xs.mark_sharding(static_cache.value_cache[i], mesh, (None, "model", None, None))
+
+    # for layer in llama.layers:
+    #     xs.mark_sharding(layer.mlp.up_proj.weight, mesh, ("model", None))
+    #     xs.mark_sharding(layer.mlp.gate_proj.weight, mesh, ("model", None))
+    #     xs.mark_sharding(layer.mlp.down_proj.weight, mesh, (None, "model"))
+
+    #     xs.mark_sharding(layer.self_attn.q_proj.weight, mesh, ("model", None))
+    #     xs.mark_sharding(layer.self_attn.k_proj.weight, mesh, ("model", None))
+    #     xs.mark_sharding(layer.self_attn.v_proj.weight, mesh, ("model", None))
+    #     xs.mark_sharding(layer.self_attn.o_proj.weight, mesh, (None, "model"))
 
     out = llama(input_ids=input_ids, attention_mask=None, past_key_values=static_cache, cache_position=cache_position, use_cache=True)
     out = out.last_hidden_state.cpu().float()

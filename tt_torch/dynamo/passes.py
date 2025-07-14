@@ -88,6 +88,12 @@ def bypass_redundant_cast(gm):
 
     return gm
 
+def bypass_assert_tensor_metadata(gm):
+    for node in gm.graph.nodes:
+        if node.op == "call_function" and node.target == torch.ops.aten._assert_tensor_metadata.default:
+            gm.graph.erase_node(node)
+    return gm
+
 
 def bypass_dtype_promotion(gm, compiler_config):
     # Removes casting of nodes to float32 unless they were explicitly cast by the user.
