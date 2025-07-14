@@ -39,6 +39,7 @@ jobs:
         build: [
           {
             wh-runner: wormhole_b0, bh-runner: p150, name: "eval_1", tests: "
+                  tests/models/whisper/test_whisper.py::test_whisper[single_device-full-eval]
                   tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval]
                   tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval]
                   tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval]
