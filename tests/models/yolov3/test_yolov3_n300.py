@@ -7,9 +7,6 @@ import torch
 from third_party.tt_forge_models.yolov3.pytorch import ModelLoader
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from PIL import Image
-from torchvision import transforms
-from third_party.tt_forge_models.tools.utils import get_file
 
 
 class ThisTester(ModelTester):
@@ -17,23 +14,7 @@ class ThisTester(ModelTester):
         return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        image_file = get_file(
-            "https://raw.githubusercontent.com/pytorch/hub/master/images/dog.jpg"
-        )
-        image = Image.open(str(image_file))
-
-        # Preprocess the image
-        transform = transforms.Compose(
-            [
-                transforms.Resize((512, 512)),
-                transforms.ToTensor(),
-            ]
-        )
-
-        batch_tensor = torch.stack([transform(image)] * 4)
-        batch_tensor = batch_tensor.to(torch.bfloat16)
-
-        return batch_tensor
+        return self.loader.load_inputs(dtype_override=torch.bfloat16, batch_size=4)
 
 
 @pytest.mark.parametrize(
