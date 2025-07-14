@@ -117,7 +117,8 @@ jobs:
                 tests/models/MobileNetV2/test_MobileNetV2_n300.py::test_MobileNetV2[full-eval]
                 tests/models/EfficientNet/test_EfficientNet_n300.py::test_EfficientNet[full-efficientnet-b0-eval]
                 tests/models/yolov4/test_yolov4_n300.py::test_yolov4[full-eval]
-                tests/models/vit/test_vit_n300.py::test_vit[full-eval]
+                tests/models/vit/test_vit_n300.py::test_vit[full-base-eval]
+                tests/models/vit/test_vit_n300.py::test_vit[full-large-eval]
                 tests/models/segformer/test_segformer_n300.py::test_segformer[full-eval]
                 tests/models/hardnet/test_hardnet_n300.py::test_hardnet[full-eval]
             "
