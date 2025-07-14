@@ -97,7 +97,6 @@ jobs:
       uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
       with:
         job_name: "test exec nightly ${{ matrix.runner == 'wormhole' && 'wh' || matrix.runner == 'blackhole' && 'bh' || 'unk' }} (${{ matrix.build.name }})" # reference above tests.name
-
     - name: Set reusable strings
       id: strings
       if: ${{ env.RUN_TEST != 'skip' }}
