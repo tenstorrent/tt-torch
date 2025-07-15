@@ -63,6 +63,7 @@ else()
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
             -DUSE_CUSTOM_TT_MLIR_VERSION=ON
             -DTT_MLIR_VERSION=${TT_MLIR_VERSION}
+            -DTT_RUNTIME_DEBUG=${TT_RUNTIME_DEBUG}
             -DCMAKE_INSTALL_PREFIX=${TTXLA_INSTALL_PREFIX}
         GIT_REPOSITORY https://github.com/tenstorrent/tt-xla.git
         GIT_TAG ${TTXLA_VERSION}
