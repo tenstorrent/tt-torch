@@ -65,6 +65,168 @@ def load_inputs(
     return args
 
 
+@torch.inference_mode()
+def test_llama3_generate():
+    # Initialize model and inputs
+    start_time = time.time()
+    model, tokenizer = load_model()
+    input_args = load_inputs(model, tokenizer)
+    golden_input_args = input_args.copy()
+    generated_ids = input_args["input_ids"]
+    model_load_time = time.time() - start_time
+
+    initial_prompt = tokenizer.decode(generated_ids[0].tolist())
+    print(f"Initial prompt: '{initial_prompt}'")
+    enable_golden = False
+
+    # Setup compilation
+    clear_dynamo_cache()
+    cc = CompilerConfig()
+    
+    # Consteval disabled due to 4D Causal Attention Mask evaluation getting constant folded in torchfx
+    #   due to incorrect tracing of static cache and malformed output missing static cache tensors  
+    cc.enable_consteval = False
+    cc.consteval_parameters = False
+
+    options = BackendOptions()
+    options.compiler_config = cc
+
+    device = DeviceManager.create_parent_mesh_device(mesh_shape=[1, 1])
+    options.devices = [device]
+
+    buffer_cache = {}
+    options.buffer_cache = buffer_cache
+
+    constant_cache = {}
+    options.constant_cache = constant_cache
+
+    compiled_model = torch.compile(
+        model, backend=backend, dynamic=False, options=options
+    )
+
+    # Token generation with data collection
+    tokens_to_generate = 32
+    golden_pccs = []
+    cache_pccs_per_iteration = []  # Store cache PCCs for each iteration
+    golden_ids = input_args["input_ids"]
+    timings = []
+    generated_tokens = []
+    golden_generated_tokens = []  # Track golden tokens separately
+
+    print(initial_prompt, end="", flush=True)
+
+    generation_start = time.time()
+
+    for i in range(tokens_to_generate):
+        iteration_start = time.time()
+        
+        # Execute model
+        outputs = compiled_model(**input_args)
+        
+        # Update inputs for next iteration
+        cache_position = input_args["cache_position"][-1:] + 1
+        
+        # Golden calculation - Adds execution time to transfer static caches to host.
+        if enable_golden:
+            golden_outputs = model(**golden_input_args)
+            next_golden_ids = golden_outputs.logits[:, -1:].argmax(dim=-1)
+
+            # Collect golden token
+            golden_token = tokenizer.decode(next_golden_ids[0].tolist())
+            golden_generated_tokens.append(golden_token)
+
+            # Calculate golden PCCs (only if enabled)
+            golden_pcc = calculate_pcc(golden_outputs.logits, outputs.logits)
+            golden_pccs.append(golden_pcc)
+
+            # Calculate golden PCCs from static cache internals
+            flat_static_cache = []
+            static_cache_pccs = []
+            for kcache, vcache in zip(
+                golden_outputs.past_key_values.key_cache,
+                golden_outputs.past_key_values.value_cache,
+            ):
+                flat_static_cache.extend(kcache)
+                flat_static_cache.extend(vcache)
+
+            for torch_to_runtime_tensors in buffer_cache.values():
+                for j, runtime_buffer in enumerate(torch_to_runtime_tensors.values()):
+                    runtime_static_cache = tt_mlir.to_host(
+                        runtime_buffer, deallocate_tensor=False
+                    )[0]  
+
+                    # Calculate PCC between golden and runtime static cache
+                    static_cache_pcc = calculate_pcc(
+                        flat_static_cache[j], runtime_static_cache
+                    )
+                    static_cache_pccs.append(static_cache_pcc)
+
+            # Store cache PCCs for this iteration
+            cache_pccs_per_iteration.append(static_cache_pccs.copy())
+            
+            golden_input_args = {
+                "input_ids": next_golden_ids,
+                "past_key_values": golden_outputs.past_key_values,
+                "use_cache": True,
+                "cache_position": cache_position,
+            }
+        else:
+            # Add empty entries when golden verification is disabled
+            golden_pccs.append(0.0)
+            cache_pccs_per_iteration.append([])
+
+        # Post-processing
+        next_token_ids = outputs.logits[:, -1:].argmax(dim=-1)
+        generated_ids = torch.cat([generated_ids, next_token_ids], dim=-1)
+
+        # Decode and collect token
+        new_token = tokenizer.decode(next_token_ids[0].tolist())
+        generated_tokens.append(new_token)
+        print(new_token, end="", flush=True)
+
+        input_args = {
+            "input_ids": next_token_ids,
+            "past_key_values": input_args["past_key_values"],  # updated in place
+            "cache_position": cache_position,
+            "use_cache": True,
+        }
+
+        total_iteration_time = time.time() - iteration_start
+
+        # Store timing information
+        phase = "prefill" if i == 0 else "decode"
+        timings.append(
+            {
+                "iteration": i,
+                "phase": phase,
+                "total_time": total_iteration_time,
+                "token": new_token,
+            }
+        )
+
+    total_generation_time = time.time() - generation_start
+    generated_text = initial_prompt + "".join(generated_tokens)
+    golden_generated_text = initial_prompt + "".join(golden_generated_tokens) if enable_golden else ""
+
+    # Display summary at the end
+    display_summary(
+        initial_prompt=initial_prompt,
+        model_load_time=model_load_time,
+        total_generation_time=total_generation_time,
+        tokens_to_generate=tokens_to_generate,
+        timings=timings,
+        golden_pccs=golden_pccs,
+        cache_pccs_per_iteration=cache_pccs_per_iteration,
+        generated_text=generated_text,
+        golden_generated_text=golden_generated_text,
+        enable_golden=enable_golden,
+    )
+
+    # Cleanup
+    DeviceManager.release_parent_device(device)
+    clear_dynamo_cache()
+
+
 def display_summary(
     initial_prompt,
     model_load_time,
@@ -77,7 +239,7 @@ def display_summary(
     golden_generated_text,
     enable_golden=True,
 ):
-    """Display summary of the generation loop timing."""
+    """Display summary of the generation loop timing and accuracy."""
     print()  # Add a newline at the end of the output
     print("=" * 80)
     print("GENERATION SUMMARY")
@@ -167,165 +329,3 @@ def display_summary(
             print(
                 f"{i:4d} | {timing['phase']:7s} | {timing['total_time']:6.3f}s | {token_repr}"
             )
-
-
-@torch.inference_mode()
-def test_llama3_generate():
-    # Initialize model and inputs
-    start_time = time.time()
-    model, tokenizer = load_model()
-    input_args = load_inputs(model, tokenizer)
-    golden_input_args = input_args.copy()
-    generated_ids = input_args["input_ids"]
-    model_load_time = time.time() - start_time
-
-    initial_prompt = tokenizer.decode(generated_ids[0].tolist())
-    print(f"Initial prompt: '{initial_prompt}'")
-    enable_golden = True
-
-    # Setup compilation
-    clear_dynamo_cache()
-    cc = CompilerConfig()
-    cc.enable_consteval = False
-    cc.consteval_parameters = False
-
-    options = BackendOptions()
-    options.compiler_config = cc
-
-    device = DeviceManager.create_parent_mesh_device(mesh_shape=[1, 1])
-    options.devices = [device]
-
-    buffer_cache = {}
-    options.buffer_cache = buffer_cache
-
-    constant_cache = {}
-    options.constant_cache = constant_cache
-
-    compiled_model = torch.compile(
-        model, backend=backend, dynamic=False, options=options
-    )
-
-    # Token generation with data collection
-    tokens_to_generate = 32
-    golden_pccs = []
-    cache_pccs_per_iteration = []  # Store cache PCCs for each iteration
-    golden_ids = input_args["input_ids"]
-    timings = []
-    generated_tokens = []
-    golden_generated_tokens = []  # Track golden tokens separately
-
-    print(initial_prompt, end="", flush=True)
-
-    generation_start = time.time()
-
-    for i in range(tokens_to_generate):
-        iteration_start = time.time()
-
-        # Golden calculation (only if enabled)
-        if enable_golden:
-            golden_outputs = model(**golden_input_args)
-            next_golden_ids = golden_outputs.logits[:, -1:].argmax(dim=-1)
-
-            # Collect golden token
-            golden_token = tokenizer.decode(next_golden_ids[0].tolist())
-            golden_generated_tokens.append(golden_token)
-
-        # Execute model
-        outputs = compiled_model(**input_args)
-
-        # Calculate golden PCCs (only if enabled)
-        if enable_golden:
-            golden_pcc = calculate_pcc(golden_outputs.logits, outputs.logits)
-            golden_pccs.append(golden_pcc)
-
-            # Calculate golden PCCs from static cache internals
-            flat_static_cache = []
-            static_cache_pccs = []
-            for kcache, vcache in zip(
-                golden_outputs.past_key_values.key_cache,
-                golden_outputs.past_key_values.value_cache,
-            ):
-                flat_static_cache.extend(kcache)
-                flat_static_cache.extend(vcache)
-
-            for torch_to_runtime_tensors in buffer_cache.values():
-                for j, runtime_buffer in enumerate(torch_to_runtime_tensors.values()):
-                    runtime_static_cache = tt_mlir.to_host(
-                        runtime_buffer, deallocate_tensor=False
-                    )[0]  
-
-                    # Calculate PCC between golden and runtime static cache
-                    static_cache_pcc = calculate_pcc(
-                        flat_static_cache[j], runtime_static_cache
-                    )
-                    static_cache_pccs.append(static_cache_pcc)
-
-            # Store cache PCCs for this iteration
-            cache_pccs_per_iteration.append(static_cache_pccs.copy())
-        else:
-            # Add empty entries when golden verification is disabled
-            golden_pccs.append(0.0)
-            cache_pccs_per_iteration.append([])
-
-        # Post-processing
-        next_token_ids = outputs.logits[:, -1:].argmax(dim=-1)
-        generated_ids = torch.cat([generated_ids, next_token_ids], dim=-1)
-
-        # Decode and collect token
-        new_token = tokenizer.decode(next_token_ids[0].tolist())
-        generated_tokens.append(new_token)
-        print(new_token, end="", flush=True)
-
-        # Update inputs for next iteration
-        cache_position = input_args["cache_position"][-1:] + 1
-
-        # Update golden input args only if golden verification is enabled
-        if enable_golden:
-            golden_input_args = {
-                "input_ids": next_golden_ids,
-                "past_key_values": golden_outputs.past_key_values,
-                "use_cache": True,
-                "cache_position": cache_position,
-            }
-
-        input_args = {
-            "input_ids": next_token_ids,
-            "past_key_values": input_args["past_key_values"],  # updated in place
-            "cache_position": cache_position,
-            "use_cache": True,
-        }
-
-        total_iteration_time = time.time() - iteration_start
-
-        # Store timing information
-        phase = "prefill" if i == 0 else "decode"
-        timings.append(
-            {
-                "iteration": i,
-                "phase": phase,
-                "total_time": total_iteration_time,
-                "token": new_token,
-            }
-        )
-
-    total_generation_time = time.time() - generation_start
-    generated_text = initial_prompt + "".join(generated_tokens)
-    golden_generated_text = initial_prompt + "".join(golden_generated_tokens) if enable_golden else ""
-
-    # Display summary at the end
-    display_summary(
-        initial_prompt=initial_prompt,
-        model_load_time=model_load_time,
-        total_generation_time=total_generation_time,
-        tokens_to_generate=tokens_to_generate,
-        timings=timings,
-        golden_pccs=golden_pccs,
-        cache_pccs_per_iteration=cache_pccs_per_iteration,
-        generated_text=generated_text,
-        golden_generated_text=golden_generated_text,
-        enable_golden=enable_golden,
-    )
-
-    # Cleanup
-    DeviceManager.release_parent_device(device)
-    clear_dynamo_cache()
