@@ -4,7 +4,6 @@
 from tt_torch.tools.verify import verify_against_golden
 import torch
 import torch_xla.core.xla_model as xm
-import os
 from tt_torch.tools.utils import CompilerConfig
 from tt_torch.dynamo.backend import BackendOptions
 
@@ -13,8 +12,6 @@ import pytest
 
 @pytest.mark.parametrize("bias", [True, False])
 def test_simple_mm(bias):
-    os.environ["TT_TORCH_EXPERIMENTAL_USE_XLA"] = "1"
-
     class MM(torch.nn.Module):
         def __init__(self):
             super().__init__()
@@ -28,7 +25,7 @@ def test_simple_mm(bias):
     model = MM()
     golden = model(input_x)
 
-    model = torch.compile(model, backend="tt")
+    model = torch.compile(model, backend="tt-experimental")
 
     output = model(input_x)
 
@@ -44,9 +41,6 @@ def test_simple_mm(bias):
 
 @pytest.mark.parametrize("bias", [True, False])
 def test_simple_mm_eager(bias):
-    # Eager mode does not require toggling the experimental path
-    # as this will use no torch.compile infrastructure and directly
-    # interacts with PJRT
     class MM(torch.nn.Module):
         def __init__(self):
             super().__init__()
@@ -86,8 +80,6 @@ def test_simple_mm_eager(bias):
 def test_conv2d(
     in_channels, out_channels, kernel_size, stride, padding, dilation, bias
 ):
-    os.environ["TT_TORCH_EXPERIMENTAL_USE_XLA"] = "1"
-
     class Conv(torch.nn.Module):
         def __init__(self):
             super().__init__()
@@ -111,7 +103,7 @@ def test_conv2d(
     model = Conv()
     golden = model(input_x)
 
-    model = torch.compile(model, backend="tt")
+    model = torch.compile(model, backend="tt-experimental")
 
     output = model(input_x)
 
@@ -135,9 +127,6 @@ def test_conv2d(
 def test_conv2d_eager(
     in_channels, out_channels, kernel_size, stride, padding, dilation, bias
 ):
-    # Eager mode does not require toggling the experimental path
-    # as this will use no torch.compile infrastructure and directly
-    # interacts with PJRT
     class Conv(torch.nn.Module):
         def __init__(self):
             super().__init__()
@@ -236,8 +225,6 @@ eltwise_unary_ops = [
 
 @pytest.mark.parametrize("op", eltwise_unary_ops)
 def test_eltwise_unary(op):
-    os.environ["TT_TORCH_EXPERIMENTAL_USE_XLA"] = "1"
-
     input_x = (
         torch.randn(32, 32, dtype=torch.bfloat16)
         if op is not torch.bitwise_not
@@ -255,7 +242,7 @@ def test_eltwise_unary(op):
     cc.enable_consteval = True
 
     model = torch.compile(
-        model, backend="tt", options=BackendOptions(compiler_config=cc)
+        model, backend="tt-experimental", options=BackendOptions(compiler_config=cc)
     )
 
     output = model(input_x)
@@ -354,8 +341,6 @@ eltwise_binary_ops = [
 
 @pytest.mark.parametrize("op", eltwise_binary_ops)
 def test_eltwise_binary(op):
-    os.environ["TT_TORCH_EXPERIMENTAL_USE_XLA"] = "1"
-
     if op in [
         torch.bitwise_and,
         torch.bitwise_or,
@@ -376,7 +361,7 @@ def test_eltwise_binary(op):
     model = Binary()
     golden = model(input_x, input_y)
 
-    model = torch.compile(model, backend="tt")
+    model = torch.compile(model, backend="tt-experimental")
 
     output = model(input_x, input_y)
 
