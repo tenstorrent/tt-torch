@@ -34,8 +34,8 @@ def load_model(model_name="meta-llama/Llama-3.2-3B"):
 def load_inputs(
     model,
     tokenizer,
-    # test_input="This is a sample text from ",
-    test_input="I like taking walks in the",
+    test_input="This is a sample text from ",
+    # test_input="I like taking walks in the",
     max_cache_len=_global_max_cache_len,
 ):
     batch_size = 1
@@ -77,14 +77,17 @@ def test_llama3_generate():
 
     initial_prompt = tokenizer.decode(generated_ids[0].tolist())
     print(f"Initial prompt: '{initial_prompt}'")
-    enable_golden = False
+
+    # Allow local disablement of golden verification to accelerate tests
+    # by avoiding dev2host transfer of static cache
+    enable_golden = True
 
     # Setup compilation
     clear_dynamo_cache()
     cc = CompilerConfig()
-    
+
     # Consteval disabled due to 4D Causal Attention Mask evaluation getting constant folded in torchfx
-    #   due to incorrect tracing of static cache and malformed output missing static cache tensors  
+    #   due to incorrect tracing of static cache and malformed output missing static cache tensors
     cc.enable_consteval = False
     cc.consteval_parameters = False
 
@@ -119,13 +122,13 @@ def test_llama3_generate():
 
     for i in range(tokens_to_generate):
         iteration_start = time.time()
-        
+
         # Execute model
         outputs = compiled_model(**input_args)
-        
+
         # Update inputs for next iteration
         cache_position = input_args["cache_position"][-1:] + 1
-        
+
         # Golden calculation - Adds execution time to transfer static caches to host.
         if enable_golden:
             golden_outputs = model(**golden_input_args)
@@ -153,7 +156,7 @@ def test_llama3_generate():
                 for j, runtime_buffer in enumerate(torch_to_runtime_tensors.values()):
                     runtime_static_cache = tt_mlir.to_host(
                         runtime_buffer, deallocate_tensor=False
-                    )[0]  
+                    )[0]
 
                     # Calculate PCC between golden and runtime static cache
                     static_cache_pcc = calculate_pcc(
@@ -163,7 +166,7 @@ def test_llama3_generate():
 
             # Store cache PCCs for this iteration
             cache_pccs_per_iteration.append(static_cache_pccs.copy())
-            
+
             golden_input_args = {
                 "input_ids": next_golden_ids,
                 "past_key_values": golden_outputs.past_key_values,
@@ -206,7 +209,9 @@ def test_llama3_generate():
 
     total_generation_time = time.time() - generation_start
     generated_text = initial_prompt + "".join(generated_tokens)
-    golden_generated_text = initial_prompt + "".join(golden_generated_tokens) if enable_golden else ""
+    golden_generated_text = (
+        initial_prompt + "".join(golden_generated_tokens) if enable_golden else ""
+    )
 
     # Display summary at the end
     display_summary(
@@ -289,9 +294,7 @@ def display_summary(
             "Iter | Phase   | Total   | PCC      | Cache PCCs                    | Token"
         )
     else:
-        print(
-            "Iter | Phase   | Total   | Token"
-        )
+        print("Iter | Phase   | Total   | Token")
     print("-" * (80 if enable_golden else 50))
 
     def color_pcc(pcc):
@@ -310,14 +313,16 @@ def display_summary(
             if len(repr(timing["token"])) > 11
             else repr(timing["token"])
         )
-        
+
         if enable_golden:
             pcc = golden_pccs[i] if i < len(golden_pccs) else 0.0
 
             # Format cache PCCs with colors
             cache_pccs_str = ""
             if i < len(cache_pccs_per_iteration) and cache_pccs_per_iteration[i]:
-                colored_cache_pccs = [color_pcc(pcc) for pcc in cache_pccs_per_iteration[i]]
+                colored_cache_pccs = [
+                    color_pcc(pcc) for pcc in cache_pccs_per_iteration[i]
+                ]
                 cache_pccs_str = "[" + ",".join(colored_cache_pccs) + "]"
             else:
                 cache_pccs_str = "[]"
