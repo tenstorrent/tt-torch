@@ -333,6 +333,7 @@ class CompilerConfig:
         self.post_init()
         self.automatic_parallelization = False
         self.mesh_shape = [1, 1]
+        self.push_outputs_to_cpu = True
 
         if os.environ.get("TT_TORCH_USE_XLA", False):
             if self.compile_depth not in [

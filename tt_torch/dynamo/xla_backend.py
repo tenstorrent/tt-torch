@@ -679,7 +679,10 @@ class XLAExecutor:
 
     def push_tensors_to_device(self, inputs, device):
         if hasattr(inputs, "to"):
-            return inputs.to(device)
+            if device not in [inputs.device, inputs.device.type]:
+                return inputs.to(device)
+            else:
+                return inputs
         elif isinstance(
             inputs, dict
         ):  # transformers input/output objects are subclasses of dict, however we still wish to return the same wrapper object
@@ -704,7 +707,9 @@ class XLAExecutor:
             inputs[self.user_input_indices[idx]] = args[idx]
 
         output = self.program.graph_module(*inputs)
-        return self.push_tensors_to_device(output, "cpu")
+        if self.compiler_config.push_outputs_to_cpu:
+            return self.push_tensors_to_device(output, "cpu")
+        return output
 
 
 def xla_backend(gm, example_inputs, options: BackendOptions = None):
