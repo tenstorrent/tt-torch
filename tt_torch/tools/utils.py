@@ -335,7 +335,7 @@ class CompilerConfig:
         self.mesh_shape = [1, 1]
         self.push_outputs_to_cpu = True
 
-        if os.environ.get("TT_TORCH_USE_XLA", False):
+        if os.environ.get("TT_TORCH_EXPERIMENTAL_USE_XLA", False):
             if self.compile_depth not in [
                 CompileDepth.EXECUTE,
                 CompileDepth.EXECUTE_OP_BY_OP,
