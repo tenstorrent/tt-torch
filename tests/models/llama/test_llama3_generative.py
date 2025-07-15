@@ -34,8 +34,8 @@ def load_model(model_name="meta-llama/Llama-3.2-3B"):
 def load_inputs(
     model,
     tokenizer,
-    test_input="This is a sample text from ",
-    # test_input="I like taking walks in the",
+    # test_input="This is a sample text from ",
+    test_input="I like taking walks in the",
     max_cache_len=_global_max_cache_len,
 ):
     batch_size = 1
@@ -282,7 +282,13 @@ def display_summary(
 
     if enable_golden and golden_pccs and any(pcc > 0 for pcc in golden_pccs):
         print(f"ACCURACY:")
-        print(f"  Average PCC: {sum(golden_pccs) / len(golden_pccs):.6f}")
+        average_pcc = sum(golden_pccs) / len(golden_pccs)
+
+        assert (
+            average_pcc >= 0.6
+        ), "Average PCC for all logit vectors at all decode steps generated for this prompt should be at least 0.6."
+
+        print(f"  Average PCC: {average_pcc:.6f}")
         print(f"  Min PCC: {min(golden_pccs):.6f}")
         print(f"  Max PCC: {max(golden_pccs):.6f}")
         print()
