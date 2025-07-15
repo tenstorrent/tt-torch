@@ -3,10 +3,9 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import time
-from .backend import BackendOptions, CompilerConfig
+from ..backend import BackendOptions, CompilerConfig
 from torch.fx.experimental.proxy_tensor import make_fx
 
-import torch_xla.core.dynamo_bridge as bridge
 from .xla_decompositions import (
     CUSTOM_DECOMPOSITION_TABLE,
 )
@@ -17,14 +16,16 @@ import re
 import pickle
 import sys
 import faulthandler
-import torch_xla
-from torch.func import functionalize
 import collections
-from .passes import (
+from ..passes import (
     bypass_redundant_getitem,
     bypass_dtype_promotion,
     bypass_redundant_cast,
+    rectify_buffer_inplace_copy,
+    run_shape_prop,
+    constant_fold,
 )
+
 from torch.export.graph_signature import InputKind
 
 from tt_torch.tools.utils import (
@@ -609,16 +610,6 @@ class XLAOpByOpExecutor:
         return self.run_gm_op_by_op(*inputs)
 
 
-import gc
-from torch.fx.experimental import const_fold
-from tt_torch.dynamo.passes import (
-    rectify_buffer_inplace_copy,
-    run_shape_prop,
-    prune_inputs,
-    constant_fold,
-)
-
-
 def bypass_assert_tensor_metadata(gm):
     for node in gm.graph.nodes:
         if (
@@ -653,13 +644,8 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
     compiled_graph = bypass_redundant_getitem(compiled_graph)
     compiled_graph = rectify_buffer_inplace_copy(compiled_graph)
     compiled_graph = bypass_assert_tensor_metadata(compiled_graph)
-    # compiled_graph = bridge.extract_compiled_graph(compiled_graph, args)
     program = torch.export.export(compiled_graph, tuple(example_inputs), strict=False)
-    # prune_inputs(program, [], [])
-    # program._graph_module = torch.fx.GraphModule(
-    #     program.graph_module, program.graph, "inputs_pruned"
-    # )
-    # run_shape_prop(program._graph_module, example_inputs)
+
     return program
 
 

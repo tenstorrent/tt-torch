@@ -87,7 +87,7 @@ def test_distilbert_multiloop(record_property, model_name, mode, op_by_op, num_l
 
     device = (
         DeviceManager.create_parent_mesh_device(mesh_shape=[1, 1])
-        if not os.environ.get("TT_TORCH_USE_XLA", False)
+        if not os.environ.get("TT_TORCH_EXPERIMENTAL_USE_XLA", False)
         else xm.xla_device()
     )
 
@@ -102,19 +102,19 @@ def test_distilbert_multiloop(record_property, model_name, mode, op_by_op, num_l
         devices=[device],
     )
     model = tester.get_framework_model()
-    if os.environ.get("TT_TORCH_USE_XLA", False):
+    if os.environ.get("TT_TORCH_EXPERIMENTAL_USE_XLA", False):
         model = model.to(device)
 
     model = tester.compile_model(model, tester.compiler_config)
     inputs = copy.deepcopy(tester.inputs)
-    if os.environ.get("TT_TORCH_USE_XLA", False):
+    if os.environ.get("TT_TORCH_EXPERIMENTAL_USE_XLA", False):
         inputs = tester.push_tensors_to_device(inputs, device)
 
     with torch.no_grad():
         start_time = time.time()
         for _ in range(num_loops):
             results = tester.run_model(model, inputs)
-            if os.environ.get("TT_TORCH_USE_XLA", False):
+            if os.environ.get("TT_TORCH_EXPERIMENTAL_USE_XLA", False):
                 results = tester.push_tensors_to_device(results, "cpu")
         end_time = time.time()
 
@@ -122,5 +122,5 @@ def test_distilbert_multiloop(record_property, model_name, mode, op_by_op, num_l
         print(f"{num_loops} iterations took {(end_time - start_time)} seconds")
 
     tester.finalize()
-    if not os.environ.get("TT_TORCH_USE_XLA", False):
+    if not os.environ.get("TT_TORCH_EXPERIMENTAL_USE_XLA", False):
         DeviceManager.release_parent_device(device)
