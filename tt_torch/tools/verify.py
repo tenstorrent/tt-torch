@@ -21,7 +21,6 @@ from tt_torch.tools.utils import (
     CompilerConfig,
 )
 from tt_torch.tools.device_manager import DeviceManager
-import torch_xla.core.xla_model as xm
 
 
 def compile_model(model, compiler_config, device, async_mode):
