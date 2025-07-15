@@ -32,8 +32,6 @@ import io
 import csv
 import tt_mlir
 
-import torch_xla.core.xla_model as xm
-
 
 def skip_full_eval_test(
     record_property,

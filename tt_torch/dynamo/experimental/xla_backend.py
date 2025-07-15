@@ -3,8 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import time
-from ..backend import BackendOptions, CompilerConfig
-from torch.fx.experimental.proxy_tensor import make_fx
+import operator
+import transformers
 
 from .xla_decompositions import (
     CUSTOM_DECOMPOSITION_TABLE,
@@ -28,11 +28,10 @@ from ..passes import (
 
 from torch.export.graph_signature import InputKind
 
+from ..backend import BackendOptions
 from tt_torch.tools.utils import (
     CompilerConfig,
     CompileDepth,
-    tt_torch_error_message,
-    sanitize_filename,
     Op,
     OpCompilationStatus,
     calculate_atol,
@@ -217,8 +216,8 @@ class XLAOpByOpExecutor:
 
     def is_node_valid(self, node):
         if not isinstance(node.target, torch._ops.OpOverload):
-            if "getitem" not in name:
-                raise ValueError(f"Node target is not an OpOverload: {name}")
+            if "getitem" not in node.name:
+                raise ValueError(f"Node target is not an OpOverload: {node.name}")
             return False
         return True
 
@@ -505,7 +504,6 @@ class XLAOpByOpExecutor:
                     else:
                         args.append(arg)
 
-                binary = None
                 op = None
 
                 test_this_op = self.should_test_op()
@@ -620,9 +618,6 @@ def bypass_assert_tensor_metadata(gm):
     return gm
 
 
-from functorch.compile import make_boxed_func
-
-
 def xla_pass_pipeline(gm, example_inputs, compiler_config):
     decompositions = torch._decomp.core_aten_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
@@ -679,7 +674,7 @@ class XLAExecutor:
             return type(inputs)(
                 [self.push_tensors_to_device(i, device) for i in inputs]
             )
-        elif isinstance(inputs, Cache):
+        elif isinstance(inputs, transformers.cache_utils.Cache):
             inputs.key_cache = self.push_tensors_to_device(inputs.key_cache, device)
             inputs.value_cache = self.push_tensors_to_device(inputs.value_cache, device)
             return inputs
@@ -701,21 +696,11 @@ class XLAExecutor:
 def xla_backend(gm, example_inputs, options: BackendOptions = None):
     if options is None:
         cc = CompilerConfig()
-        devices = None
-        async_mode = False
     else:
         cc = options.compiler_config
-        devices = options.devices
-        async_mode = options.async_mode
 
     program = xla_pass_pipeline(gm, example_inputs, cc)
 
     if cc.compile_depth == CompileDepth.EXECUTE_OP_BY_OP:
         return XLAOpByOpExecutor(program.module(), cc)
     return XLAExecutor(program, cc)
-
-
-from torch._dynamo.backends.common import aot_autograd
-from torch._dynamo.backends.registry import register_backend
-
-register_backend(name="tt-xla", compiler_fn=xla_backend)
