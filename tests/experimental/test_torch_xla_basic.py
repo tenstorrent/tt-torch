@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-import tt_torch
 from tt_torch.tools.verify import verify_against_golden
 import torch
 import torch_xla.core.xla_model as xm

@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import torchvision.models as models
-from torchvision import transforms
 from PIL import Image
 
 import pytest
