@@ -27,6 +27,7 @@ from ..passes import (
 )
 
 from torch.export.graph_signature import InputKind
+from torch._dynamo import register_backend
 
 from ..backend import BackendOptions
 from tt_torch.tools.utils import (
@@ -693,6 +694,7 @@ class XLAExecutor:
         return output
 
 
+@register_backend(name="tt-experimental")
 def xla_backend(gm, example_inputs, options: BackendOptions = None):
     if options is None:
         cc = CompilerConfig()

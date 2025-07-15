@@ -9,7 +9,6 @@ import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from third_party.tt_forge_models.tools.utils import get_file
-import os
 
 from tt_torch.tools.utils import (
     calculate_pcc,
@@ -43,7 +42,6 @@ class ThisTester(ModelTester):
     ids=["op_by_op_torch", "full"],
 )
 def test_resnet(record_property, op_by_op):
-    os.environ["TT_TORCH_EXPERIMENTAL_USE_XLA"] = "1"
     model_name = "ResNet50"
 
     cc = CompilerConfig()
@@ -65,6 +63,7 @@ def test_resnet(record_property, op_by_op):
         assert_atol=False,
         record_property_handle=record_property,
         data_parallel_mode=False,
+        backend="tt-experimental",
     )
 
     results = tester.test_model()
