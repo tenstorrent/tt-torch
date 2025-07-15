@@ -3,7 +3,12 @@
 # SPDX-License-Identifier: Apache-2.0
 import pytest
 from tests.utils import ModelTester, skip_full_eval_test
-from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from tt_torch.tools.utils import (
+    CompilerConfig,
+    CompileDepth,
+    ModelMetadata,
+)
+from tt_torch.tools.utils import construct_metadata_from_variants
 from third_party.tt_forge_models.oft.pytorch import ModelLoader
 
 
@@ -15,26 +20,47 @@ class ThisTester(ModelTester):
         return self.loader.load_inputs()
 
 
+OVERRIDE_VARIANTS = {
+    "base": {
+        ModelMetadata(
+            variant_name="base",
+            assert_atol=False,
+        )
+    }
+}
+
+variant_metadata_list, variant_ids = construct_metadata_from_variants(
+    ModelLoader, OVERRIDE_VARIANTS
+)
+
+
+@pytest.mark.parametrize(
+    "variant_info",
+    variant_metadata_list,
+    ids=variant_ids,
+)
 @pytest.mark.parametrize(
     "mode",
     ["train", "eval"],
 )
 @pytest.mark.parametrize(
-    "op_by_op",
-    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
-    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+    "execute_mode",
+    [CompileDepth.EXECUTE_OP_BY_OP, CompileDepth.EXECUTE],
+    ids=["op_by_op", "full"],
 )
-def test_oft(record_property, mode, op_by_op):
+def test_oft(record_property, mode, execute_mode, variant_info):
     if mode == "train":
         pytest.skip()
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if op_by_op:
-        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-        if op_by_op == OpByOpBackend.STABLEHLO:
-            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+
+    cc.op_by_op_backend = variant_info.op_by_op_backend
+    if execute_mode == CompileDepth.EXECUTE_OP_BY_OP:
+        cc.compile_depth = execute_mode
+    else:
+        cc.compile_depth = variant_info.compile_depth
 
     loader = ModelLoader(variant=None)
     model_info = loader.get_model_info(variant=None)
@@ -49,12 +75,12 @@ def test_oft(record_property, mode, op_by_op):
     )
 
     tester = ThisTester(
-        model_info.name,
+        model_info.name,  # name of model
         mode,
         loader=loader,
         model_info=model_info,
         compiler_config=cc,
-        assert_atol=False,
+        assert_atol=variant_info.assert_atol,
         record_property_handle=record_property,
     )
 
