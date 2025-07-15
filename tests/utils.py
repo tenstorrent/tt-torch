@@ -507,11 +507,11 @@ class ModelTester:
             self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP
             or self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
         ):
-            # assert not os.environ.get("TT_TORCH_USE_XLA", False), "Op-by-op mode is not supported with XLA currently"
+            # assert not os.environ.get("TT_TORCH_EXPERIMENTAL_USE_XLA", False), "Op-by-op mode is not supported with XLA currently"
             return self._test_model_eval_op_by_op(on_device)
         if self.data_parallel_mode:
             assert not os.environ.get(
-                "TT_TORCH_USE_XLA", False
+                "TT_TORCH_EXPERIMENTAL_USE_XLA", False
             ), "Data parallel mode is not supported with XLA currently"
             outputs = self._test_model_eval_data_parallel(assert_eval_token_mismatch)
             assert len(outputs) == len(self.devices), "Num outputs != num devices"
