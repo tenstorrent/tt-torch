@@ -64,6 +64,17 @@ jobs:
                   tests/models/hardnet/test_hardnet.py::test_hardnet[single_device-full-eval]
             "
           },
+          {
+            # test set with rerun to confirm/deny flaky tests
+            wh-runner: , bh-runner: tt-beta-ubuntu-2204-p150b-large-stable, name: "eval_1_shared_p150", tests: "
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg19]
+                  tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[single_device-full-eval]
+                  tests/models/hardnet/test_hardnet.py::test_hardnet[single_device-full-eval]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg19]
+                  tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[single_device-full-eval]
+                  tests/models/hardnet/test_hardnet.py::test_hardnet[single_device-full-eval]
+            "
+          },
         ]
     runs-on: ${{ matrix.runner == 'wormhole' && matrix.build.wh-runner || matrix.runner == 'blackhole' && matrix.build.bh-runner  || 'wormhole_b0'}}
     name: "test exec nightly ${{ matrix.runner == 'wormhole' && 'wh' || matrix.runner == 'blackhole' && 'bh' || 'unk' }} (${{ matrix.build.name }})"
