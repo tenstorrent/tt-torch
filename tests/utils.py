@@ -114,6 +114,7 @@ class ModelTester:
         model_name_suffix="",
         devices=None,
         data_parallel_mode=False,
+        backend="tt",
     ):
         """
         Initializes the ModelTester.
@@ -161,6 +162,13 @@ class ModelTester:
         model_group = str(model_group)
 
         self.data_parallel_mode = data_parallel_mode
+        if int(
+            os.environ.get("TT_TORCH_MODEL_TESTER_FORCE_EXPERIMENTAL_BACKEND", False)
+        ):
+            self.backend = "tt-experimental"
+        else:
+            self.backend = backend
+
         self.framework_model = self._load_model()
         self.is_token_output = is_token_output
         if is_token_output and not hasattr(self, "tokenizer"):
@@ -339,14 +347,13 @@ class ModelTester:
         options.devices = [device]
         options.async_mode = data_parallel_mode
         # compile forward pass for generative models, the model itself for discriminative
-        backend = "tt"
         if self.run_generate:
             model.forward = torch.compile(
-                model.forward, backend=backend, dynamic=False, options=options
+                model.forward, backend=self.backend, dynamic=False, options=options
             )
         else:
             model = torch.compile(
-                model, backend=backend, dynamic=False, options=options
+                model, backend=self.backend, dynamic=False, options=options
             )
         self.compiled_models.append(model)
         return model
@@ -505,11 +512,10 @@ class ModelTester:
             self.compiler_config.compile_depth == CompileDepth.COMPILE_OP_BY_OP
             or self.compiler_config.compile_depth == CompileDepth.EXECUTE_OP_BY_OP
         ):
-            # assert not os.environ.get("TT_TORCH_EXPERIMENTAL_USE_XLA", False), "Op-by-op mode is not supported with XLA currently"
             return self._test_model_eval_op_by_op(on_device)
         if self.data_parallel_mode:
-            assert not os.environ.get(
-                "TT_TORCH_EXPERIMENTAL_USE_XLA", False
+            assert (
+                self.backend == "tt"
             ), "Data parallel mode is not supported with XLA currently"
             outputs = self._test_model_eval_data_parallel(assert_eval_token_mismatch)
             assert len(outputs) == len(self.devices), "Num outputs != num devices"

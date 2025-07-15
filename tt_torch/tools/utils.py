@@ -335,18 +335,6 @@ class CompilerConfig:
         self.mesh_shape = [1, 1]
         self.push_outputs_to_cpu = True
 
-        if os.environ.get("TT_TORCH_EXPERIMENTAL_USE_XLA", False):
-            if self.compile_depth not in [
-                CompileDepth.EXECUTE,
-                CompileDepth.EXECUTE_OP_BY_OP,
-            ]:
-                pytest.skip(
-                    "XLA backend only supports EXECUTE and EXECUTE_OP_BY_OP compile depth"
-                )
-
-            if self.op_by_op_backend != OpByOpBackend.TORCH:
-                pytest.skip("XLA backend only supports TORCH op-by-op backend")
-
     @property
     def model_name(self):
         return self._model_name

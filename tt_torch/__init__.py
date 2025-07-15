@@ -21,7 +21,9 @@ if spec is not None:
     tt_metal_home = os.path.abspath(spec.submodule_search_locations[0])
     os.environ["TT_METAL_HOME"] = tt_metal_home
 
+# Import these modules so backends are registered ("tt", and "tt-experimental")
 import tt_torch.dynamo.backend
+import tt_torch.dynamo.experimental.xla_backend
 
 from torch_xla.experimental import plugins
 
