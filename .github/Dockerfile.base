@@ -5,6 +5,7 @@ SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies
+# ffmpeg required for torchcodec, required for Whisper tests
 RUN apt-get update && apt-get install -y \
     software-properties-common \
     build-essential \
@@ -35,7 +36,8 @@ RUN apt-get update && apt-get install -y \
     lcov \
     libgl1 \
     libglx-mesa0 \
-    unzip
+    unzip \
+    ffmpeg
 
 # Install python3.10 packages
 RUN python3.10 -m pip install \
