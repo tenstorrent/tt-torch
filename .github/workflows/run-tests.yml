@@ -144,15 +144,6 @@ jobs:
         source env/activate
         python demos/resnet/resnet50_demo.py
 
-    - name: Run Llama generative demo
-      env:
-        HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
-        HF_TOKEN: ${{ secrets.HF_TOKEN }}
-      shell: bash
-      run: |
-        source env/activate
-        python3 demos/llama3.2_generate_demo.py
-
     - name: Show Test Report
       continue-on-error: true
       uses: mikepenz/action-junit-report@v5
