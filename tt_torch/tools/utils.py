@@ -19,8 +19,6 @@ import onnx
 from onnxruntime import SessionOptions, InferenceSession
 import tt_mlir
 
-import pytest
-
 
 """
 The CompileDepth's below represent the different stages of the compilation
