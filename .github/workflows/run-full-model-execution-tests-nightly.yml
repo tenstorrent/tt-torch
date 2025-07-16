@@ -48,9 +48,6 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg19]
                   tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[single_device-full-eval]
                   tests/models/hardnet/test_hardnet.py::test_hardnet[single_device-full-eval]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg19]
-                  tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[single_device-full-eval]
-                  tests/models/hardnet/test_hardnet.py::test_hardnet[single_device-full-eval]
             "
           },
             {
@@ -59,17 +56,11 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg19]
                   tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[single_device-full-eval]
                   tests/models/hardnet/test_hardnet.py::test_hardnet[single_device-full-eval]
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg19]
-                  tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[single_device-full-eval]
-                  tests/models/hardnet/test_hardnet.py::test_hardnet[single_device-full-eval]
             "
           },
           {
             # test set with rerun to confirm/deny flaky tests
             wh-runner: , bh-runner: tt-beta-ubuntu-2204-p150b-large-stable, name: "eval_1_shared_p150", tests: "
-                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg19]
-                  tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[single_device-full-eval]
-                  tests/models/hardnet/test_hardnet.py::test_hardnet[single_device-full-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg19]
                   tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[single_device-full-eval]
                   tests/models/hardnet/test_hardnet.py::test_hardnet[single_device-full-eval]
@@ -138,7 +129,7 @@ jobs:
         mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
-    - name: Run Full Model Execution Tests
+    - name: Run Full Model Execution Tests 1
       if: ${{ env.RUN_TEST != 'skip' }}
       env:
         HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
@@ -149,7 +140,35 @@ jobs:
       run: |
         source env/activate
 
-        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN pytest --durations=0 -v -rf ${{matrix.build.tests}} \
+        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN pytest --durations=0 -svv -rf ${{matrix.build.tests}} \
+           --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
+           --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append | tee pytest.log
+
+    - name: Run Full Model Execution Tests 2
+      if: ${{ env.RUN_TEST != 'skip' }}
+      env:
+        HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
+        TORCH_HOME: ${{ env.DOCKER_CACHE_ROOT }}/torch
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      shell: bash
+      run: |
+        source env/activate
+
+        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN pytest --durations=0 -svv -rf ${{matrix.build.tests}} \
+           --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
+           --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append | tee pytest.log
+
+    - name: Run Full Model Execution Tests 3
+      if: ${{ env.RUN_TEST != 'skip' }}
+      env:
+        HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
+        TORCH_HOME: ${{ env.DOCKER_CACHE_ROOT }}/torch
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      shell: bash
+      run: |
+        source env/activate
+
+        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN pytest --durations=0 -svv -rf ${{matrix.build.tests}} \
            --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
            --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append | tee pytest.log
 
