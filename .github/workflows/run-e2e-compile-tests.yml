@@ -34,8 +34,8 @@ jobs:
           {
             # Approximately 60 minutes.
             runs-on: wormhole_b0, name: "compile_1", tests: "
-              tests/models/xglm/test_xglm.py::test_xglm[full-small-eval]
-              tests/models/xglm/test_xglm.py::test_xglm[full-base-eval]
+              tests/models/xglm/test_xglm.py::test_xglm[full-xglm-564M-eval]
+              tests/models/xglm/test_xglm.py::test_xglm[full-xglm-1.7B-eval]
             "
           },
         ]
