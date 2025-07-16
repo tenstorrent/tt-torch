@@ -146,6 +146,13 @@ static torch::Tensor create_torch_tensor(const tt::runtime::Tensor &tensor) {
   return torch_tensor;
 }
 
+bool is_op_model_enabled() {
+#if defined(TTMLIR_ENABLE_OPMODEL) && TTMLIR_ENABLE_OPMODEL == 1
+  return true;
+#endif
+  return false;
+}
+
 std::string stable_hlo_automatic_parallelization(
     std::string_view code, std::vector<int64_t> mesh_shape,
     size_t len_activations, size_t len_graph_constants) {
@@ -159,14 +166,19 @@ std::string compile_stable_hlo_to_ttir(std::string_view code) {
   return ret;
 }
 
-std::tuple<py::bytes, std::string>
-compile_ttir_to_bytestream(std::string_view code,
-                           std::string_view sys_desc_path,
-                           size_t len_activations, size_t len_graph_constants,
-                           bool enable_consteval = true) {
-  auto [binary_ptr, ttnn] =
-      tt::torch::compileTTIRToTTNN(code, sys_desc_path, len_activations,
-                                   len_graph_constants, enable_consteval);
+std::tuple<py::bytes, std::string> compile_ttir_to_bytestream(
+    std::string_view code, std::string_view sys_desc_path,
+    size_t len_activations, size_t len_graph_constants,
+    bool enable_consteval = true, bool enable_optimizer = false) {
+
+  if (enable_optimizer) {
+    assert(is_op_model_enabled() && "Optimizer requires project to be built "
+                                    "with -DTTMLIR_ENABLE_OPMODEL=ON");
+  }
+
+  auto [binary_ptr, ttnn] = tt::torch::compileTTIRToTTNN(
+      code, sys_desc_path, len_activations, len_graph_constants,
+      enable_consteval, enable_optimizer);
   auto size = ::flatbuffers::GetSizePrefixedBufferLength(
       static_cast<const uint8_t *>(binary_ptr->get()));
   tt::runtime::Binary binary = tt::runtime::Binary(*binary_ptr);
@@ -449,7 +461,7 @@ PYBIND11_MODULE(tt_mlir, m) {
   m.def("compile_ttir_to_bytestream", &compile_ttir_to_bytestream,
         py::arg("ttir"), py::arg("system_desc_path"),
         py::arg("len_activations") = 0, py::arg("len_graph_constants") = 0,
-        py::arg("enable_consteval") = true,
+        py::arg("enable_consteval") = true, py::arg("enable_optimizer") = false,
         "A function that compiles TTIR to a bytestream");
   m.def("stable_hlo_automatic_parallelization",
         &stable_hlo_automatic_parallelization,
@@ -509,6 +521,7 @@ PYBIND11_MODULE(tt_mlir, m) {
       .value("QUASAR", tt::runtime::Arch::QUASAR);
   m.def("get_arch", &tt::runtime::getArch,
         "Get the architecture of the device");
+  m.def("is_op_model_enabled", &is_op_model_enabled);
 
 #if defined(TT_RUNTIME_DEBUG) && TT_RUNTIME_DEBUG == 1
   py::class_<tt::runtime::CallbackContext>(m, "CallbackContext");

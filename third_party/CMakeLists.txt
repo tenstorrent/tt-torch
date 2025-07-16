@@ -34,6 +34,9 @@ else()
     set(TT_RUNTIME_ENABLE_PERF_TRACE OFF CACHE BOOL "Enable runtime Tracy perf tracing")
     message(STATUS "TT_RUNTIME_ENABLE_PERF_TRACE is set to: ${TT_RUNTIME_ENABLE_PERF_TRACE}")
 
+    set(TTMLIR_ENABLE_OPMODEL OFF CACHE BOOL "Enable op model for optimized compile")
+    message(STATUS "TTMLIR_ENABLE_OPMODEL is set to: ${TTMLIR_ENABLE_OPMODEL}")
+
     include(ExternalProject)
     set(TTMLIR_PREFIX ${TTTORCH_SOURCE_DIR}/third_party/tt-mlir)
     set(TTMLIR_INSTALL_PREFIX ${TTMLIR_PREFIX}/install)
@@ -58,6 +61,7 @@ else()
           -DTTMLIR_ENABLE_STABLEHLO=ON
           -DTTMLIR_ENABLE_RUNTIME=ON
           -DTTMLIR_ENABLE_BINDINGS_PYTHON=OFF
+          -DTTMLIR_ENABLE_OPMODEL=${TTMLIR_ENABLE_OPMODEL}
           -DTT_RUNTIME_DEBUG=${TT_RUNTIME_DEBUG}
           -DCMAKE_INSTALL_PREFIX=${TTMLIR_INSTALL_PREFIX}
         GIT_REPOSITORY https://github.com/tenstorrent/tt-mlir.git

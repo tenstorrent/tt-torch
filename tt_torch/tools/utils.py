@@ -311,6 +311,7 @@ class CompilerConfig:
         self.single_op_timeout = 30
         self.op_by_op_backend = OpByOpBackend.TORCH
         self.enable_consteval = False
+        self.enable_optimizer = False
         self._consteval_parameters = False
         self._enable_intermediate_verification = False
         self.dump_debug = False
@@ -417,6 +418,9 @@ class CompilerConfig:
         enable_consteval = os.environ.get("TT_TORCH_CONSTEVAL")
         if enable_consteval and int(enable_consteval):
             self.enable_consteval = True
+        enable_optimizer = os.environ.get("TT_TORCH_OPTIMIZER")
+        if enable_optimizer and int(enable_optimizer):
+            self.enable_optimizer = True
         consteval_parameters = os.environ.get("TT_TORCH_CONSTEVAL_PARAMETERS")
         if consteval_parameters and int(consteval_parameters):
             self.consteval_parameters = True
@@ -541,6 +545,7 @@ class CompilerConfig:
             "results_path": self.results_path,
             "single_op_timeout": self.single_op_timeout,
             "enable_consteval": self.enable_consteval,
+            "enable_optimizer": self.enable_optimizer,
             "_consteval_parameters": self._consteval_parameters,
             "_enable_intermediate_verification": self._enable_intermediate_verification,
             "_verify_op_by_op": self._verify_op_by_op,

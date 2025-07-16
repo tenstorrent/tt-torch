@@ -178,6 +178,10 @@ if "--build_runtime_debug" in sys.argv:
     ]
     sys.argv.remove("--build_runtime_debug")
 
+if "--build_op_model" in sys.argv:
+    cmake_args += ["-DTTMLIR_ENABLE_OPMODEL=ON"]
+    sys.argv.remove("--build_op_model")
+
 
 # Include Models, for CI only - not for release.
 include_models = False

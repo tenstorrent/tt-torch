@@ -250,6 +250,7 @@ def shlo_to_flatbuffer(
         len_activations,
         len_graph_constants,
         compiler_config.enable_consteval,
+        compiler_config.enable_optimizer,
     )
     dump_module(module=ttnn, name="TTNN", compiler_config=compiler_config)
 
