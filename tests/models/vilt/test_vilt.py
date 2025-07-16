@@ -75,7 +75,10 @@ def test_vilt(record_property, mode, op_by_op):
     )
     results = tester.test_model()
     if mode == "eval":
-        logits = results.logits
+        if isinstance(results, tuple):
+            logits = results[0]  # Assuming logits are the first element
+        else:
+            logits = results.logits
         idx = logits.argmax(-1).item()
         print("Predicted answer:", tester.framework_model.config.id2label[idx])
 
