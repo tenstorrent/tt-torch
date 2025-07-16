@@ -45,7 +45,7 @@ def test_bloom(record_property, mode, op_by_op):
         loader=loader,
         model_info=model_info,
         relative_atol=0.01,
-        assert_pcc=False,  # Bloom PCC regression tracked in https://github.com/tenstorrent/tt-torch/issues/1071
+        assert_pcc=True,
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,

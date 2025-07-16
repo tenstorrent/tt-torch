@@ -7,10 +7,7 @@ import torch
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.albert.masked_lm.pytorch import (
-    ModelLoader,
-    ModelVariant,
-)
+from third_party.tt_forge_models.albert.masked_lm.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
@@ -36,7 +33,7 @@ class ThisTester(ModelTester):
 
 # Print available variants for reference
 available_variants = ModelLoader.query_available_variants()
-print("Available variants: ", [str(k) for k in available_variants.keys()])
+print("Available variants:", available_variants)
 
 
 @pytest.mark.parametrize(
@@ -44,9 +41,9 @@ print("Available variants: ", [str(k) for k in available_variants.keys()])
     ["eval"],
 )
 @pytest.mark.parametrize(
-    "variant,variant_config",
+    "variant_info",
     available_variants.items(),
-    ids=[str(k) for k in available_variants.keys()],
+    ids=list(available_variants.keys()),
 )
 @pytest.mark.parametrize(
     "op_by_op",
@@ -57,7 +54,7 @@ print("Available variants: ", [str(k) for k in available_variants.keys()])
     "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
 )
 def test_albert_masked_lm(
-    record_property, variant, variant_config, mode, op_by_op, data_parallel_mode
+    record_property, variant_info, mode, op_by_op, data_parallel_mode
 ):
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -69,6 +66,7 @@ def test_albert_masked_lm(
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    variant, variant_config = variant_info
     loader = ModelLoader(variant=variant)
     model_info = loader.get_model_info(variant=variant)
     model_name = model_info.name
