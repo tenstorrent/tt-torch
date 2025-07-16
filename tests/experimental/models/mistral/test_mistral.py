@@ -4,7 +4,7 @@
 import torch
 import pytest
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from tests.utils import ModelTester, skip_full_eval_test
+from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 import torch_xla.core.xla_model as xm
 
@@ -64,7 +64,7 @@ def test_mistral(record_property, model_info, op_by_op):
         model_group=model_group,
         backend="tt-experimental",
     )
-    results = tester.test_model()
+    tester.test_model()
     tester.finalize()
 
 
