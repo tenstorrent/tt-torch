@@ -78,8 +78,8 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "xglm", tests: "
-              tests/models/xglm/test_xglm.py::test_xglm[op_by_op_torch-small-eval]
-              tests/models/xglm/test_xglm.py::test_xglm[op_by_op_torch-base-eval]
+              tests/models/xglm/test_xglm.py::test_xglm[op_by_op_torch-xglm-564M-eval]
+              tests/models/xglm/test_xglm.py::test_xglm[op_by_op_torch-xglm-1.7B-eval]
               "
           },
           {

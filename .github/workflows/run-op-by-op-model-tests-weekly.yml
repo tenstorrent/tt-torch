@@ -80,7 +80,7 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "mamba", tests: "
-              tests/models/mamba/test_mamba.py::test_mamba[op_by_op_torch-base-eval]
+              tests/models/mamba/test_mamba.py::test_mamba[op_by_op_torch-mamba-790m-hf-eval]
               "
           },
           {

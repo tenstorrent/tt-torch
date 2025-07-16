@@ -40,8 +40,8 @@ jobs:
               tests/models/autoencoder_conv/test_autoencoder_conv_v2.py::test_autoencoder_conv_v2[full-eval]
               tests/models/flux/test_flux.py::test_flux[full-flux_schnell-eval]
               tests/models/flux/test_flux.py::test_flux[full-flux_dev-eval]
-              tests/models/xglm/test_xglm.py::test_xglm[full-small-eval]
-              tests/models/xglm/test_xglm.py::test_xglm[full-base-eval]
+              tests/models/xglm/test_xglm.py::test_xglm[full-xglm-564M-eval]
+              tests/models/xglm/test_xglm.py::test_xglm[full-xglm-1.7B-eval]
             "
           },
           {
