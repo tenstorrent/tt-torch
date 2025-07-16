@@ -6,6 +6,9 @@ import pytest
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+import torch_xla.core.xla_model as xm
+
+from tt_torch.tools.utils import calculate_pcc
 
 
 class ThisTester(ModelTester):
@@ -26,16 +29,10 @@ class ThisTester(ModelTester):
 
 
 model_info_list = [
-    ("mistral7b", "mistralai/Mistral-7B-v0.1"),
-    ("ministral8b", "mistralai/Ministral-8B-Instruct-2410"),
     ("ministral3b", "ministral/Ministral-3b-instruct"),
 ]
 
 
-@pytest.mark.parametrize(
-    "mode",
-    ["eval"],
-)
 @pytest.mark.parametrize(
     "model_info",
     model_info_list,
@@ -43,41 +40,55 @@ model_info_list = [
 )
 @pytest.mark.parametrize(
     "op_by_op",
-    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
-    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+    [OpByOpBackend.TORCH, None],
+    ids=["op_by_op_torch", "full"],
 )
-def test_mistral(record_property, model_info, mode, op_by_op):
+def test_mistral(record_property, model_info, op_by_op):
     __, model_name = model_info
     model_group = "red"
 
     cc = CompilerConfig()
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-        if op_by_op == OpByOpBackend.STABLEHLO:
-            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    skip_full_eval_test(
-        record_property,
-        cc,
-        model_name,
-        bringup_status="FAILED_RUNTIME",
-        reason="Model is too large to fit on single device during execution.",
-        model_group=model_group,
-        model_name_filter=[
-            "mistralai/Mistral-7B-v0.1",
-            "mistralai/Ministral-8B-Instruct-2410",
-        ],
-    )
+    cc.enable_consteval = True
 
     # TODO Enable PCC/ATOL/Checking - https://github.com/tenstorrent/tt-torch/issues/689
     tester = ThisTester(
         model_name,
-        mode,
+        "eval",
         compiler_config=cc,
         record_property_handle=record_property,
         assert_atol=False,
         assert_pcc=False,
         model_group=model_group,
+        backend="tt-experimental",
     )
     results = tester.test_model()
     tester.finalize()
+
+
+def test_mistral3b_eager():
+    tokenizer = AutoTokenizer.from_pretrained(
+        "ministral/Ministral-3b-instruct",
+        padding_side="left",
+        torch_dtype=torch.bfloat16,
+    )
+    model = AutoModelForCausalLM.from_pretrained(
+        "ministral/Ministral-3b-instruct", torch_dtype=torch.bfloat16
+    ).eval()
+
+    test_input = "How often does the letter r occur in Mistral?"
+    inputs = tokenizer.encode_plus(test_input, return_tensors="pt")
+
+    cpu_outputs = model(**inputs).logits
+
+    device = xm.xla_device()
+
+    model = model.to(device)
+    inputs = inputs.to(device)
+
+    tt_outputs = model(**inputs).logits.to("cpu")
+
+    pcc = calculate_pcc(tt_outputs, cpu_outputs)
+    print(f"PCC: {pcc}")
