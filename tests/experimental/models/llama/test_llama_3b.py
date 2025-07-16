@@ -57,6 +57,7 @@ def test_llama_3b(record_property, model_name, op_by_op):
         assert_pcc=True,
         required_pcc=0.96,
         record_property_handle=record_property,
+        backend="tt-experimental",
     )
     results = tester.test_model()
     tester.finalize()
@@ -78,7 +79,6 @@ def test_llama_3b_eager():
         padding="max_length",
         truncation=True,
     )
-    breakpoint()
     cpu_outputs = model(**inputs).logits
 
     device = xm.xla_device()
