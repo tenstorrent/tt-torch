@@ -11,7 +11,6 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 import tt_mlir
 from third_party.tt_forge_models.qwen.casual_lm.pytorch import ModelLoader
 import torch_xla.core.xla_model as xm
-from torch.utils._pytree import tree_flatten
 
 from tt_torch.tools.utils import (
     calculate_pcc,
@@ -70,7 +69,7 @@ def test_qwen2_causal_lm(record_property, op_by_op):
 def test_qwen2_causal_lm_eager():
     loader = ModelLoader(variant=None)
 
-    model = loader.load_model(dtype_override=torch.bfloat16)
+    model = loader.load_model(dtype_override=torch.bfloat16).eval()
     inputs = loader.load_inputs(dtype_override=torch.bfloat16)
 
     cpu_outputs = model(**inputs).logits
@@ -86,4 +85,8 @@ def test_qwen2_causal_lm_eager():
 
     print(f'CPU Decoded Text: "{gen_text_cpu}"')
     print(f'TT Decoded Text: "{gen_text_tt}"')
-    print(f"PCC: {calculate_pcc(tt_outputs, cpu_outputs)}")
+
+    pcc = calculate_pcc(tt_outputs, cpu_outputs)
+    print(f"PCC: {pcc}")
+
+    assert pcc >= 0.85
