@@ -584,26 +584,6 @@ class ModelTester:
                 )
         return final_outputs
 
-    def push_tensors_to_device(self, inputs, device):
-        if hasattr(inputs, "to"):
-            return inputs.to(device)
-        elif isinstance(
-            inputs, dict
-        ):  # transformers input/output objects are subclasses of dict, however we still wish to return the same wrapper object
-            return type(inputs)(
-                **{k: self.push_tensors_to_device(v, device) for k, v in inputs.items()}
-            )
-        elif isinstance(inputs, collections.abc.Sequence):
-            return type(inputs)(
-                [self.push_tensors_to_device(i, device) for i in inputs]
-            )
-        elif isinstance(inputs, Cache):
-            inputs.key_cache = self.push_tensors_to_device(inputs.key_cache, device)
-            inputs.value_cache = self.push_tensors_to_device(inputs.value_cache, device)
-            return inputs
-        else:
-            return inputs
-
     @torch.inference_mode()
     def _test_model_eval_base(self, on_device, assert_eval_token_mismatch):
         model = self.get_framework_model()
@@ -613,7 +593,6 @@ class ModelTester:
             model = self.compile_model(model, self.compiler_config)
 
         outputs = self.run_model(model, self.inputs)
-
         self.record_property("achieved_compile_depth", "EXECUTE")
 
         if self.compiler_config._enable_intermediate_verification:
