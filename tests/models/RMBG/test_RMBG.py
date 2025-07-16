@@ -15,7 +15,7 @@ from third_party.tt_forge_models.tools.utils import get_file
 class ThisTester(ModelTester):
     def _load_model(self):
         model = AutoModelForImageSegmentation.from_pretrained(
-            "briaai/RMBG-2.0", trust_remote_code=True
+            "briaai/RMBG-2.0", torch_dtype=torch.bfloat16, trust_remote_code=True
         )
         torch.set_float32_matmul_precision(["high", "highest"][0])
         image_size = (1024, 1024)
@@ -31,7 +31,7 @@ class ThisTester(ModelTester):
     def _load_inputs(self):
         image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
         self.image = Image.open(str(image_file))
-        inputs = self.transform_image(self.image).unsqueeze(0)
+        inputs = self.transform_image(self.image).unsqueeze(0).to(dtype=torch.bfloat16)
         return inputs
 
 
