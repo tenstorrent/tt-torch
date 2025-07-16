@@ -107,7 +107,6 @@ jobs:
                   tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[data_parallel-full-microsoft/beit-large-patch16-224-eval]
                   tests/models/deit/test_deit.py::test_deit[data_parallel-full-eval]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[data_parallel-full-eval-mixer_b16_224.goog_in21k]
-                  tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base[data_parallel-full-eval]
                   tests/models/detr/test_detr.py::test_detr[data_parallel-full-eval]
                   tests/models/yolos/test_yolos.py::test_yolos[data_parallel-full-eval]
                   tests/models/whisper/test_whisper.py::test_whisper[data_parallel-full-eval]

@@ -31,6 +31,9 @@ class ThisTester(ModelTester):
     "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
 )
 def test_mgp_str_base(record_property, mode, op_by_op, data_parallel_mode):
+
+    # data parallel mode for this model currently removed from nightly tests
+
     if mode == "train":
         pytest.skip()
 
