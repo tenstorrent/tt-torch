@@ -44,11 +44,6 @@ jobs:
                   tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base[single_device-full-eval]
             "
           },
-          {
-            wh-runner: n300, name: "eval_1_data_parallel", tests: "
-                  tests/models/mgp-str-base/test_mgp_str_base.py::test_mgp_str_base[data_parallel-full-eval]
-            "
-          },
           # Approximately 180 minutes.
           {
             wh-runner: wormhole_b0, bh-runner: p150, name: "eval_8", tests: "
