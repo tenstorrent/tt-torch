@@ -5,7 +5,7 @@ import torch
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from transformers import AutoTokenizer, AutoModelForCausalLM, GenerationConfig
+from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch_xla.core.xla_model as xm
 
 from tt_torch.tools.utils import (
@@ -59,7 +59,7 @@ def test_llama_3b(record_property, model_name, op_by_op):
         record_property_handle=record_property,
         backend="tt-experimental",
     )
-    results = tester.test_model()
+    tester.test_model()
     tester.finalize()
 
 
