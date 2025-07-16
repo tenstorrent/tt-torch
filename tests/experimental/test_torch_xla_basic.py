@@ -260,10 +260,6 @@ def test_eltwise_unary(op):
 
 @pytest.mark.parametrize("op", eltwise_unary_ops)
 def test_eltwise_unary_eager(op):
-    # Eager mode does not require toggling the experimental path
-    # as this will use no torch.compile infrastructure and directly
-    # interacts with PJRT
-
     if op is torch.erf:
         pytest.skip(
             "erf not decomposed in eager execution. Becomes `stablehlo.custom_call(@mhlo.erf)` which we do not yet lower to ttir"
@@ -364,6 +360,46 @@ def test_eltwise_binary(op):
     model = torch.compile(model, backend="tt-experimental")
 
     output = model(input_x, input_y)
+
+    # Not verifying data as many are wrong. Simply testing compile and execute
+    verify_against_golden(
+        (golden,),
+        (output,),
+        assert_pcc=False,
+        assert_atol=False,
+        required_pcc=0.99,
+        required_atol=0.02,
+    )
+
+
+@pytest.mark.parametrize("op", eltwise_binary_ops)
+def test_eltwise_binary_eager(op):
+    if op in [
+        torch.bitwise_and,
+        torch.bitwise_or,
+        torch.bitwise_xor,
+        torch.bitwise_left_shift,
+        torch.bitwise_right_shift,
+    ]:
+        input_x = torch.randint(-100, 100, (32, 32))
+        input_y = torch.randint(-100, 100, (32, 32))
+    else:
+        input_x = torch.randn(32, 32, dtype=torch.bfloat16)
+        input_y = torch.randn(32, 32, dtype=torch.bfloat16)
+
+    class Binary(torch.nn.Module):
+        def forward(self, x, y):
+            return op(x, y)
+
+    model = Binary()
+    golden = model(input_x, input_y)
+
+    device = xm.xla_device()
+    model = model.to(device)
+    input_x = input_x.to(device)
+    input_y = input_y.to(device)
+
+    output = model(input_x, input_y).to("cpu")
 
     # Not verifying data as many are wrong. Simply testing compile and execute
     verify_against_golden(
