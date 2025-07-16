@@ -52,6 +52,14 @@ jobs:
       with:
         job_name: "tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
 
+    - name: Tree the dockercache
+      run: |
+        apt update && apt install -y tree
+        ls -la /mnt/dockercache
+        df -h /mnt/dockercache
+        echo "tree /mnt/dockercache:"
+        tree /mnt/dockercache
+
     - name: Set reusable strings
       id: strings
       shell: bash
@@ -143,15 +151,6 @@ jobs:
       run: |
         source env/activate
         python demos/resnet/resnet50_demo.py
-
-    - name: Run Llama generative demo
-      env:
-        HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
-        HF_TOKEN: ${{ secrets.HF_TOKEN }}
-      shell: bash
-      run: |
-        source env/activate
-        python3 demos/llama3.2_generate_demo.py
 
     - name: Show Test Report
       continue-on-error: true

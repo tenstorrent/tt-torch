@@ -44,6 +44,7 @@ jobs:
                   tests/models/yolov3/test_yolov3.py::test_yolov3[full-eval]
                   tests/models/yolov4/test_yolov4.py::test_yolov4[full-eval]
                   tests/models/vovnet/test_vovnet_onnx.py::test_vovnet_onnx[full-eval]
+                  tests/models/llama/test_llama3_generative.py::test_llama3_generate
             "
           },
           {
