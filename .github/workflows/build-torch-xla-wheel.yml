@@ -1,0 +1,80 @@
+name: Build Torch and Torch/XLA Wheels
+
+on:
+  workflow_dispatch:
+    inputs:
+      torch_version:
+        description: 'Torch version to build (default: 2.7.0)'
+        required: false
+        type: string
+        default: '2.7.0'
+      docker-image:
+        description: 'Docker image to use for build'
+        required: true
+        type: string
+    outputs:
+      artifact_name:
+        description: 'Name of uploaded wheels artifact'
+        value: ${{ jobs.build-wheels.outputs.artifact_name }}
+
+jobs:
+  build-wheels:
+    runs-on: wormhole_b0
+    container:
+      image: us-central1-docker.pkg.dev/tpu-pytorch-releases/docker/development:tpu
+      options: --user root
+      volumes:
+        - /mnt/dockercache:/mnt/dockercache
+    outputs:
+      artifact_name: ${{ steps.upload.outputs.artifact_name }}
+    steps:
+      - name: "Build Torch and Torch/XLA Wheels"
+        id: build_wheels
+        run: |
+          cmake --version
+          apt-get update && apt-get install -y curl git build-essential
+
+          # Clean up any existing pyenv installation
+          rm -rf $HOME/.pyenv
+
+          curl https://pyenv.run | bash
+          export PATH="$HOME/.pyenv/bin:$PATH"
+          eval "$(pyenv init -)"
+          pyenv install 3.10.12
+          pyenv global 3.10.12
+          ln -sf $HOME/.pyenv/versions/3.10.12/bin/python3.10 /usr/local/bin/python3.10
+
+          # Install essential packages for Python 3.10
+          python3.10 -m pip install --upgrade pip
+          python3.10 -m pip install pyyaml setuptools wheel numpy typing_extensions requests
+
+          cd /tmp
+          git clone --recursive --branch v${{ inputs.torch_version }} https://github.com/pytorch/pytorch.git
+          cd pytorch/
+          git clone --recursive https://github.com/tenstorrent/pytorch-xla.git xla
+
+          # copy pre-built wheels from cache
+          mkdir -p ./dist
+          if [ -d /mnt/dockercache/models/tt-ci-models-private/wheels ]; then
+            echo "Using pre-built wheels from cache"
+            cp -r /mnt/dockercache/models/tt-ci-models-private/wheels/torch-2.7.0*cp310*.whl ./dist/
+          fi
+          python3.10 setup.py develop
+
+          # Build PyTorch/XLA
+          cd xla/
+          python3.10 setup.py bdist_wheel
+
+          # Collect wheels
+          mkdir -p /dist
+          cp dist/*.whl /dist/
+
+          # Clean up any existing pyenv installation
+          rm -rf $HOME/.pyenv
+
+      - name: "Upload Wheels Artifact"
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: install-artifact-torch-xla-release
+          path: /dist/*.whl
