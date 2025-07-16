@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-set(TT_MLIR_VERSION "2a010ddcf317e3efedb9d7dc4bfadd1b4b3ab717")
+set(TT_MLIR_VERSION "b94f89d53951f817509d678bca7c11ef1db3981f") # from brata https://github.com/tenstorrent/tt-mlir/compare/main...achoudhury/up_bisect_2025_07_16_4p
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
