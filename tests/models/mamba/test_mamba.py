@@ -72,7 +72,7 @@ def test_mamba(record_property, variant_info, mode, op_by_op):
         model_info=model_info,
         compiler_config=cc,
         record_property_handle=record_property,
-        run_generate=False,
+        run_generate=False,  # Uncomment the code in the load model/inputs methods to enable generation
         required_pcc=0.95,
         assert_atol=False,
     )

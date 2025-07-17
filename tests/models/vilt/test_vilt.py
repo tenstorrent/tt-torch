@@ -20,27 +20,6 @@ class ThisTester(ModelTester):
         return self.loader.load_inputs()
 
 
-# class ThisTester(ModelTester):
-#     def _load_model(self):
-#         self.processor = ViltProcessor.from_pretrained(
-#             "dandelin/vilt-b32-finetuned-vqa"
-#         )
-#         model = ViltForQuestionAnswering.from_pretrained(
-#             "dandelin/vilt-b32-finetuned-vqa", torch_dtype=torch.bfloat16
-#         )
-#         return model
-
-#     def _load_inputs(self):
-#         # prepare image + question
-#         image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
-#         image = Image.open(str(image_file))
-#         text = "How many cats are there?"
-#         # prepare inputs
-#         encoding = self.processor(image, text, return_tensors="pt")
-#         encoding["pixel_values"] = encoding["pixel_values"].to(torch.bfloat16)
-#         return encoding
-
-
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
@@ -76,7 +55,7 @@ def test_vilt(record_property, mode, op_by_op):
     results = tester.test_model()
     if mode == "eval":
         if isinstance(results, tuple):
-            logits = results[0]  # Assuming logits are the first element
+            logits = results[0]  # logits are the first element
         else:
             logits = results.logits
         idx = logits.argmax(-1).item()
