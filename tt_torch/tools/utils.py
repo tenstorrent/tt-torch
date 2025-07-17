@@ -1040,7 +1040,29 @@ def construct_metadata_from_variants(model_loader_class, override_variants=None)
 
     # Call class methods on the CLASS, not an instance
     available_variants = model_loader_class.query_available_variants()
+
     metadata_list = []
+
+    # No available variants means only base variant exists
+    if not available_variants:
+        if "base" in override_variants:
+            # If base variant is overridden, return it
+            metadata = override_variants["base"]
+            # metadata.variant_config = None
+            metadata.loader = model_loader_class(variant=None)
+            metadata.model_info = model_loader_class.get_model_info(variant=None)
+            metadata_list.append(metadata)
+        else:
+            model_info = model_loader_class.get_model_info(variant=None)
+            metadata = ModelMetadata(
+                variant_name="base",
+                # variant_config=None,
+                model_info=model_info,
+                loader=model_loader_class(variant=None),  # Create instance
+            )
+            metadata_list.append(metadata)
+
+        return metadata_list, ["base"]
 
     for variant_name, variant_config in available_variants.items():
         if variant_name in override_variants:

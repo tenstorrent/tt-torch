@@ -213,7 +213,7 @@ jobs:
             wh-runner: wormhole_b0, bh-runner: p150, name: "skip_tests_red_models", tests: "
                 tests/models/bi_lstm_crf/test_bi_lstm_crf.py::test_bi_lstm_crf[full-eval-lstm]
                 tests/models/bi_lstm_crf/test_bi_lstm_crf.py::test_bi_lstm_crf[full-eval-gru]
-                tests/models/oft/test_oft.py::test_oft[full-eval]
+                tests/models/oft/test_oft.py::test_oft[full-eval-base]
                 tests/models/vgg19_unet/test_vgg19_unet.py::test_vgg19_unet[full-eval]
                 tests/models/yolov10/test_yolov10.py::test_yolov10[full-eval]
                 tests/models/flux/test_flux.py::test_flux[full-flux_schnell-eval]

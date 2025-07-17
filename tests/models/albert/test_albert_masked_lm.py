@@ -79,20 +79,19 @@ def test_albert_masked_lm(
     variant = variant_info.variant_name
     variant_config = variant_info.variant_config
 
-    # loader = ModelLoader(variant=variant)
     model_info = variant_info.loader.get_model_info(variant=variant)
     model_name = model_info.name
 
-    assert_pcc = True
-    required_pcc = 0.98
+    variant_info.assert_pcc = True
+    variant_info.required_pcc = 0.98
 
     tester = ThisTester(
         model_name,
         mode,
         loader=variant_info.loader,
-        required_pcc=required_pcc,
-        assert_pcc=assert_pcc,
-        assert_atol=False,
+        required_pcc=variant_info.required_pcc,
+        assert_pcc=variant_info.assert_pcc,
+        assert_atol=variant_info.assert_atol,
         compiler_config=cc,
         record_property_handle=record_property,
         data_parallel_mode=data_parallel_mode,

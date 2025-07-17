@@ -21,12 +21,10 @@ class ThisTester(ModelTester):
 
 
 OVERRIDE_VARIANTS = {
-    "base": {
-        ModelMetadata(
-            variant_name="base",
-            assert_atol=False,
-        )
-    }
+    "base": ModelMetadata(
+        variant_name="base",
+        assert_atol=False,
+    )
 }
 
 variant_metadata_list, variant_ids = construct_metadata_from_variants(
@@ -62,22 +60,25 @@ def test_oft(record_property, mode, execute_mode, variant_info):
     else:
         cc.compile_depth = variant_info.compile_depth
 
-    loader = ModelLoader(variant=None)
-    model_info = loader.get_model_info(variant=None)
+    variant = variant_info.variant_name
+    variant_config = variant_info.variant_config
+
+    model_info = variant_info.loader.get_model_info(variant=variant)
+    model_name = model_info.name
 
     skip_full_eval_test(
         record_property,
         cc,
-        model_info.name,
+        model_name,
         bringup_status="FAILED_RUNTIME",
         reason="Out of Memory: Not enough space to allocate 2902982656 B DRAM buffer across 12 banks - https://github.com/tenstorrent/tt-torch/issues/727",
         model_group=model_info.group,
     )
 
     tester = ThisTester(
-        model_info.name,  # name of model
+        model_name,  # name of model
         mode,
-        loader=loader,
+        loader=variant_info.loader,
         model_info=model_info,
         compiler_config=cc,
         assert_atol=variant_info.assert_atol,
