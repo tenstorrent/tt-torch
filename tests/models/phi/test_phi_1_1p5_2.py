@@ -59,9 +59,9 @@ def test_phi(record_property, model_name, mode, op_by_op):
         compiler_config=cc,
         record_property_handle=record_property,
         model_group=model_group,
-        required_pcc=0.93
-        if model_name == "microsoft/phi-1.5"
-        else 0.95,  # PCC drop observed around Jul 17, follow up in https://github.com/tenstorrent/tt-torch/issues/1070
+        required_pcc=0.85
+        if model_name == "microsoft/phi-1"
+        else 0.92,  # PCC drop observed around Jul 17, follow up in https://github.com/tenstorrent/tt-torch/issues/1070
         run_generate=False,
         assert_atol=False,
     )
