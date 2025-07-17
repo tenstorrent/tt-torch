@@ -6,6 +6,12 @@ on:
   schedule:
     - cron: '0 4 * * *'  # Runs at 04:00 UTC every day
   workflow_dispatch:  # Manual trigger
+    inputs:
+      use-shared-runners:
+        description: 'Use shared runners instead of custom runners'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   packages: write
@@ -34,7 +40,7 @@ jobs:
     uses: ./.github/workflows/run-op-by-op-model-tests-nightly.yml
     secrets: inherit
     with:
-      use-shared-runners: true
+      use-shared-runners: ${{ inputs.use-shared-runners }}
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
   # test_e2e_compile:
   #   needs: [docker-build, build]

@@ -35,10 +35,10 @@ jobs:
         run: |
           # Set runner name format based on use-shared-runners
           if [[ "${{ inputs.use-shared-runners }}" == "true" ]]; then
-            echo "runner_name_format={0}" >> $GITHUB_OUTPUT
+            echo "runner_name_format=tt-beta-ubuntu-2204-{0}-large-stable" >> $GITHUB_OUTPUT
             echo "container_image=harbor.ci.tenstorrent.net/${{ inputs.docker-image }}" >> $GITHUB_OUTPUT
           else
-            echo "runner_name_format=tt-beta-ubuntu-2204-{0}-large-stable" >> $GITHUB_OUTPUT
+            echo "runner_name_format={0}" >> $GITHUB_OUTPUT
             echo "container_image=${{ inputs.docker-image }}" >> $GITHUB_OUTPUT
           fi
 
