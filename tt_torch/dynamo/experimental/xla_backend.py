@@ -39,6 +39,7 @@ from tt_torch.tools.utils import (
     calculate_pcc,
 )
 
+import torch_xla
 import torch_xla.core.xla_model as xm
 
 
@@ -649,6 +650,7 @@ class XLAExecutor:
     def __init__(self, program, compiler_config):
         self.program = program
         self.compiler_config = compiler_config
+        self.arg_type_map_str = None
 
         self.inputs = []
         self.user_input_indices = []
@@ -682,6 +684,38 @@ class XLAExecutor:
         else:
             return inputs
 
+    def generate_arg_type_map_str(self, output_object):
+        hlo_input_ids, _ = torch_xla._XLAC._get_tensors_xla_device_data_node(
+            output_object
+        )
+
+        # xm.get_stablehlo(output_object) gives a graph with just as many inputs as in hlo_input_ids
+
+        hlo_input_positions = [id - 1 for id in hlo_input_ids]
+
+        def get_kind_str(kind):
+            if kind == InputKind.USER_INPUT:
+                return "input"
+            elif kind == InputKind.PARAMETER:
+                return "parameter"
+            else:
+                return "constant"
+
+        arg_types = []
+        for idx in range(len(hlo_input_positions)):
+            if hlo_input_positions[idx] < len(self.program.graph_signature.input_specs):
+                arg_types.append(
+                    get_kind_str(
+                        self.program.graph_signature.input_specs[
+                            hlo_input_positions[idx]
+                        ].kind
+                    )
+                )
+            else:
+                arg_types.append("constant")
+
+        self.arg_type_map_str = "main=" + ",".join(arg_types)
+
     def __call__(self, *args):
         args = self.push_tensors_to_device(args, "xla")
         inputs = self.inputs
@@ -689,6 +723,14 @@ class XLAExecutor:
             inputs[self.user_input_indices[idx]] = args[idx]
 
         output = self.program.graph_module(*inputs)
+
+        if self.arg_type_map_str is None:
+            self.generate_arg_type_map_str(output)
+            os.environ["ARG_TYPE_MAP_OVERRIDE"] = self.arg_type_map_str
+
+        xm.mark_step(
+            True
+        )  # wait = True will wait until the model completes execution before continuing
         if self.compiler_config.push_outputs_to_cpu:
             return self.push_tensors_to_device(output, "cpu")
         return output

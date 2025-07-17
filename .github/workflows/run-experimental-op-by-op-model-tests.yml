@@ -31,7 +31,7 @@ jobs:
       matrix:
         build: [
           {
-            runs-on: wormhole_b0, name: "qwen", tests: "
+            runs-on: wormhole_b0, name: "experimental_op_by_op", tests: "
                   tests/experimental/models/Qwen/test_qwen2_causal_lm.py::test_qwen2_causal_lm[op_by_op_torch]
                   tests/experimental/models/llama/test_llama_3b.py::test_llama_3b[op_by_op_torch-meta-llama/Llama-3.2-3B]
                   tests/experimental/models/mistral/test_mistral.py::test_mistral[op_by_op_torch-ministral3b]
