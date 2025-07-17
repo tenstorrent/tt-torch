@@ -18,16 +18,32 @@ on:
 
 env:
   DOCKER_CACHE_ROOT: /mnt/dockercache
-  USE_SHARED_RUNNERS: ${{ inputs.use-shared-runners || false }}
-  RUNNER_NAME_FORMAT: ${{ inputs.use-shared-runners && 'ubuntu-latest' || 'tt-beta-ubuntu-2204-{0}-large-stable' }}
-  CONTAINER_IMAGE: ${{ inputs.use-shared-runners && format('harbor.ci.tenstorrent.net/{0}', inputs.docker-image) || inputs.docker-image }}
 
 permissions:
   packages: write
   checks: write
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      runner_name_format: ${{ steps.set-config.outputs.runner_name_format }}
+      container_image: ${{ steps.set-config.outputs.container_image }}
+    steps:
+      - name: Set configuration
+        id: set-config
+        run: |
+          # Set runner name format based on use-shared-runners
+          if [[ "${{ inputs.use-shared-runners }}" == "true" ]]; then
+            echo "runner_name_format={0}" >> $GITHUB_OUTPUT
+            echo "container_image=harbor.ci.tenstorrent.net/${{ inputs.docker-image }}" >> $GITHUB_OUTPUT
+          else
+            echo "runner_name_format=tt-beta-ubuntu-2204-{0}-large-stable" >> $GITHUB_OUTPUT
+            echo "container_image=${{ inputs.docker-image }}" >> $GITHUB_OUTPUT
+          fi
+
   tests:
+    needs: setup
     timeout-minutes: 360
     strategy:
       fail-fast: false
@@ -193,13 +209,14 @@ jobs:
           },
         ]
     runs-on:
-      - ${{ format(env.RUNNER_NAME_FORMAT, matrix.build.runs-on) }}
+      # Use the runner name format from the setup job
+      - ${{ format(needs.setup.outputs.runner_name_format, matrix.build.runs-on) }}
 
     name: "tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
 
     container:
-      # Use container image from environment variables based on runner type
-      image: ${{ env.CONTAINER_IMAGE }}
+      # Use container image from the setup job
+      image: ${{ needs.setup.outputs.container_image }}
       options: --user root --device /dev/tenstorrent --shm-size=4gb --pid=host
       volumes:
         - /dev/hugepages:/dev/hugepages
