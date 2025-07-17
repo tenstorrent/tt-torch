@@ -134,41 +134,77 @@ def constant_fold(gm):
     return gm
 
 
-def node_to_device(node, device_map, node_device_map, verbose=False):
-    if node in node_device_map:
-        # If the node is already in the device map, return its device and key
-        return node_device_map[node]["device_idx"], node_device_map[node]["map_key"]
-
+def node_to_device(node, device_map, node_device_map, verbose=False, input_path=False):
     # If key is True, output both the node's device and the key used in the device map.
     # If key is False, output only the node's device.
+
+    # If the node is already in the device map, return its device and key
+    if node in node_device_map:
+        return node_device_map[node]["device_idx"], node_device_map[node]["map_key"]
+
+    # If the node has meta information, check if it's in the device map
     if (
-        not hasattr(node, "meta")
-        or "nn_module_stack" not in node.meta
-        or len(node.meta["nn_module_stack"]) == 0
+        hasattr(node, "meta")
+        and "nn_module_stack" in node.meta
+        and len(node.meta["nn_module_stack"]) != 0
     ):
-        return (None, None)
+        # The last stack contains the most information, only relevent fields will be used
+        # Contains string like: "L['self']._modules['model']._modules['layers']._modules['30'].mlp.up_proj"
+        # or like "L['self'].model.embed_tokens"
+        module_stack = list(node.meta["nn_module_stack"].values())[-1][0]
 
-    # The last stack contains the most information, only relevent fields will be used
-    # Contains string like: "L['self']._modules['model']._modules['layers']._modules['30'].mlp.up_proj"
-    # or like "L['self'].model.embed_tokens"
-    module_stack = list(node.meta["nn_module_stack"].values())[-1][0]
+        vals = module_stack.rsplit(".")[1:]
+        parsed_vals = []
+        for val in vals:
+            if val.startswith("_modules['"):
+                parsed_vals.append(val[10:-2])
+            else:
+                parsed_vals.append(val)
 
-    vals = module_stack.rsplit(".")[1:]
-    parsed_vals = []
-    for val in vals:
-        if val.startswith("_modules['"):
-            parsed_vals.append(val[10:-2])
-        else:
-            parsed_vals.append(val)
+        # append layers to each other until we find something in the device map. This needs to be done because
+        # the model can be split at model.layers.1 or model.layers.1.mlp
+        for i in range(1, len(parsed_vals) + 1):
+            layer = ".".join(parsed_vals[:i])
+            if layer in device_map:
+                node_device_map[node] = {
+                    "device_idx": device_map[layer],
+                    "map_key": layer,
+                }
+                return (device_map[layer], layer)
+    else:
+        if verbose:
+            print(f"Warning: Node {node} has no meta information or nn_module_stack")
 
-    # append layers to each other until we find something in the device map. This needs to be done because
-    # the model can be split at model.layers.1 or model.layers.1.mlp
-    for i in range(1, len(parsed_vals) + 1):
-        layer = ".".join(parsed_vals[:i])
-        if layer in device_map:
-            node_device_map[node] = {"device_idx": device_map[layer], "map_key": layer}
-            return (device_map[layer], layer)
+    if node.op == "placeholder" or node.op == "get_attr" or input_path == True:
+        # Check node_to_device of each user and return the one with the lowest device index
+        users = set()
+        for user in node.users:
+            user_device, user_key = node_to_device(
+                user, device_map, node_device_map, verbose=verbose, input_path=True
+            )
+            if user_device is not None:
+                users.add((user_device, user_key))
+        if len(users) > 0:
+            # Return the device with the lowest index
+            device, key = min(users, key=lambda x: x[0])
+            node_device_map[node] = {"device_idx": device, "map_key": key}
+            return (device, key)
 
+    # Check inputs of the node and return the one with the highest device index
+    # inputs = set()
+    # for input_node in node.all_input_nodes:
+    #     input_device, input_key = node_to_device(
+    #         input_node, device_map, node_device_map, verbose=verbose
+    #     )
+    #     if input_device is not None:
+    #         inputs.add((input_device, input_key))
+    # if len(inputs) > 0:
+    #     # Return the device with the highest index
+    #     device, key = max(inputs, key=lambda x: x[0])
+    #     node_device_map[node] = {"device_idx": device, "map_key": key}
+    #     return (device, key)
+
+    # If the node is not in the device map, return None
     if verbose:
         print(f"Warning: No device found for node {node}")
     return (None, None)
