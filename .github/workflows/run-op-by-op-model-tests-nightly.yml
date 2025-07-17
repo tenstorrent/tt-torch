@@ -1,23 +1,26 @@
 name: Run Op-By-Op Model Tests (Nightly)
 
 on:
-  workflow_dispatch:
   workflow_call:
     inputs:
       docker-image:
         description: 'Docker image to use for build'
         required: true
         type: string
-      docker-image-harbor:
-        description: 'Shared infra Docker image to use for build'
-        required: true
-        type: string
+      use-shared-runners:
+        description: 'Use shared runners instead of custom runners'
+        required: false
+        default: false
+        type: boolean
   workflow_run:
     workflows: [Build]
     types: [completed]
 
 env:
   DOCKER_CACHE_ROOT: /mnt/dockercache
+  USE_SHARED_RUNNERS: ${{ inputs.use-shared-runners || false }}
+  RUNNER_NAME_FORMAT: ${{ inputs.use-shared-runners && 'ubuntu-latest' || 'tt-beta-ubuntu-2204-{0}-large-stable' }}
+  CONTAINER_IMAGE: ${{ inputs.use-shared-runners && format('harbor.ci.tenstorrent.net/{0}', inputs.docker-image) || inputs.docker-image }}
 
 permissions:
   packages: write
@@ -190,12 +193,13 @@ jobs:
           },
         ]
     runs-on:
-      - ${{ matrix.build.sh-run && format('tt-beta-ubuntu-2204-{0}-large-stable', matrix.build.runs-on) ||  matrix.build.runs-on }}
+      - ${{ format(env.RUNNER_NAME_FORMAT, matrix.build.runs-on) }}
 
     name: "tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
 
     container:
-      image: ${{ matrix.build.sh-run && inputs.docker-image-harbor || inputs.docker-image }}
+      # Use container image from environment variables based on runner type
+      image: ${{ env.CONTAINER_IMAGE }}
       options: --user root --device /dev/tenstorrent --shm-size=4gb --pid=host
       volumes:
         - /dev/hugepages:/dev/hugepages
