@@ -47,6 +47,14 @@ jobs:
           },
             {
             # test set with rerun to confirm/deny flaky tests
+            wh-runner: , bh-runner: torch-p150-2, name: "eval_1_p150_2", tests: "
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg19]
+                  tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[single_device-full-eval]
+                  tests/models/hardnet/test_hardnet.py::test_hardnet[single_device-full-eval]
+            "
+          },
+          {
+            # test set with rerun to confirm/deny flaky tests
             wh-runner: , bh-runner: torch-p150-5, name: "eval_1_p150_5", tests: "
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg19]
                   tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[single_device-full-eval]
@@ -55,7 +63,7 @@ jobs:
           },
           {
             # test set with rerun to confirm/deny flaky tests
-            wh-runner: , bh-runner: tt-beta-ubuntu-2204-p150b-large-stable, name: "eval_1_shared_p150", tests: "
+            wh-runner: , bh-runner: torch-p150-4, name: "eval_1_p150_4", tests: "
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg19]
                   tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[single_device-full-eval]
                   tests/models/hardnet/test_hardnet.py::test_hardnet[single_device-full-eval]
@@ -124,7 +132,7 @@ jobs:
         mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
-    - name: Run Full Model Execution Tests 1
+    - name: Run Full Model Execution Tests 1 (with CPU monitoring)
       if: ${{ env.RUN_TEST != 'skip' }}
       env:
         HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
@@ -133,87 +141,4 @@ jobs:
       shell: bash
       run: |
         source env/activate
-
-        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN pytest --durations=0 -svv -rf ${{matrix.build.tests}} \
-           --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
-           --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append | tee pytest.log
-
-    - name: Run Full Model Execution Tests 2
-      if: ${{ env.RUN_TEST != 'skip' }}
-      env:
-        HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
-        TORCH_HOME: ${{ env.DOCKER_CACHE_ROOT }}/torch
-        HF_TOKEN: ${{ secrets.HF_TOKEN }}
-      shell: bash
-      run: |
-        source env/activate
-
-        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN pytest --durations=0 -svv -rf ${{matrix.build.tests}} \
-           --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
-           --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append | tee pytest.log
-
-    - name: Run Full Model Execution Tests 3
-      if: ${{ env.RUN_TEST != 'skip' }}
-      env:
-        HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
-        TORCH_HOME: ${{ env.DOCKER_CACHE_ROOT }}/torch
-        HF_TOKEN: ${{ secrets.HF_TOKEN }}
-      shell: bash
-      run: |
-        source env/activate
-
-        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN pytest --durations=0 -svv -rf ${{matrix.build.tests}} \
-           --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
-           --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append | tee pytest.log
-
-    - name: Upload Test Log
-      uses: actions/upload-artifact@v4
-      if: ${{ (success() || failure()) && env.RUN_TEST != 'skip' }}
-      with:
-        name: test-log-${{ matrix.runner }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
-        path: pytest.log
-
-    - name: Upload Test Report Models
-      uses: actions/upload-artifact@v4
-      if: ${{ (success() || failure()) && env.RUN_TEST != 'skip' }}
-      with:
-        name: test-reports-models-${{ matrix.runner }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
-        path: ${{ steps.strings.outputs.test_report_path_models }}
-
-    - name: Upload coverage reports to Codecov
-      if: ${{ (success() || failure()) && inputs.run-codecov == 'true' && env.RUN_TEST != 'skip' }}
-      continue-on-error: true
-      uses: codecov/codecov-action@v5
-      with:
-        files: coverage.info,.coverage,coverage.xml
-        # disable_search: true
-        token: ${{ secrets.CODECOV_TOKEN }}
-
-    - name: Upload test results to Codecov
-      if: ${{ (success() || failure()) && inputs.run-codecov == 'true' && env.RUN_TEST != 'skip' }}
-      continue-on-error: true
-      uses: codecov/test-results-action@v1
-      with:
-        files: ${{ steps.strings.outputs.test_report_path_models }}
-        disable_search: true
-        token: ${{ secrets.CODECOV_TOKEN }}
-
-    - name: Upload MLIR files
-      uses: actions/upload-artifact@v4
-      if: ${{ (success() || failure()) && inputs.run-dump-mlir == 'true' && env.RUN_TEST != 'skip' }}
-      with:
-        name: model-mlir-execute-nightly-${{ matrix.runner }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
-        path: ${{ steps.strings.outputs.mlir_dir }}
-
-  merge_mlir_artifacts:
-    needs: [tests]
-    if: ${{ always() && inputs.run-dump-mlir == 'true' }}  # Runs always if MLIR dump is enabled
-    runs-on: ubuntu-latest
-    name: Merge MLIR Artifacts
-    steps:
-      - name: Merge Artifacts
-        uses: actions/upload-artifact/merge@v4
-        with:
-          name: model-mlir-execute-nightly
-          pattern: model-mlir-execute-nightly-*
-          delete-merged: true
+        python3 cpumon.py
