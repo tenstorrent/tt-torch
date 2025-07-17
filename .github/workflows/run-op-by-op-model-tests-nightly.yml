@@ -48,7 +48,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runs-on: n150
+        runs-on: [n150]
         build: [
           {
             name: "qwen", tests: "
