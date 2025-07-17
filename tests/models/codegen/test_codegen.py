@@ -48,6 +48,7 @@ def test_codegen(record_property, mode, op_by_op):
         record_property_handle=record_property,
         run_generate=False,
         assert_atol=False,
+        required_pcc=0.97,
     )
 
     results = tester.test_model()

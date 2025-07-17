@@ -127,15 +127,6 @@ def test_torchvision_image_classification(
 
     model_group = "red" if model_name == "swin_v2_s" else "generality"
 
-    # Out of Memory: Not enough space to allocate 336691200 B DRAM buffer across 12 banks, where each bank needs to store 28057600 B
-    if model_name == "vit_h_14" and cc.compile_depth == CompileDepth.EXECUTE:
-        request.node.add_marker(
-            pytest.mark.xfail(
-                reason="Out of Memory: Not enough space to allocate in DRAM error - https://github.com/tenstorrent/tt-torch/issues/793",
-                strict=True,
-            )
-        )
-
     tester = ThisTester(
         model_info,
         mode,
