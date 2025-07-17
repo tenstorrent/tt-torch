@@ -33,7 +33,7 @@ jobs:
     needs: [docker-build, build]
     uses: ./.github/workflows/run-full-model-execution-tests.yml
     env:
-      TT_TORCH_MODEL_TESTER_FORCE_EXPERIMENTAL_BACKEND: 1
+      TT_TORCH_FORCE_EXPERIMENTAL_BACKEND: 1
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
@@ -41,7 +41,7 @@ jobs:
     needs: [docker-build, build]
     uses: ./.github/workflows/run-full-model-execution-tests-nightly.yml
     env:
-      TT_TORCH_MODEL_TESTER_FORCE_EXPERIMENTAL_BACKEND: 1
+      TT_TORCH_FORCE_EXPERIMENTAL_BACKEND: 1
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
