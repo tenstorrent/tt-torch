@@ -43,6 +43,7 @@ class CPUBenchmarker:
             f"Starting CPU benchmark: {self.total_samples} samples, {self.iterations_per_sample} iterations each"
         )
         print("=" * 60)
+        sys.stdout.flush()
 
         for i in range(self.total_samples):
             execution_time = self.measure_execution_time()
@@ -69,11 +70,13 @@ class CPUBenchmarker:
                 print(
                     f"Completed {i + 1}/{self.total_samples} samples - Avg runtime last {len(recent_times)}: {avg_time:.6f}s"
                 )
+                sys.stdout.flush()
 
             # Small delay to allow other processes to potentially interfere
             time.sleep(self.sample_interval)
 
         print("Benchmark completed!")
+        sys.stdout.flush()
         return self.results
 
     def analyze_results(self):
@@ -181,7 +184,7 @@ class CPUBenchmarker:
 def main():
     # Configuration
     iterations_per_sample = int(os.getenv("ITERATIONS_PER_SAMPLE", "1000"))
-    total_samples = int(os.getenv("TOTAL_SAMPLES", "5000"))
+    total_samples = int(os.getenv("TOTAL_SAMPLES", "20000"))
     sample_interval = float(os.getenv("SAMPLE_INTERVAL", "0.1"))
 
     print(f"CPU Benchmark Configuration:")
@@ -189,6 +192,7 @@ def main():
     print(f"- Total samples: {total_samples}")
     print(f"- Sample interval: {sample_interval}s")
     print(f"- Estimated runtime: {total_samples * sample_interval / 60:.1f} minutes")
+    sys.stdout.flush()
 
     # Run benchmark
     benchmarker = CPUBenchmarker(
