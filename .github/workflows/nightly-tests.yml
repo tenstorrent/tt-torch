@@ -34,7 +34,7 @@ jobs:
     uses: ./.github/workflows/run-op-by-op-model-tests-nightly.yml
     secrets: inherit
     with:
-      use-shared-runners: false
+      use-shared-runners: true
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
   # test_e2e_compile:
   #   needs: [docker-build, build]
