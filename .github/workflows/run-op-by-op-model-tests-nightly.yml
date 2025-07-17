@@ -17,7 +17,7 @@ on:
     types: [completed]
 
 env:
-  DOCKER_CACHE_ROOT: /mnt/dockercache
+  IRD_LF_CACHE: http://large-file-cache.large-file-cache.svc.cluster.local/
 
 permissions:
   packages: write
