@@ -163,7 +163,7 @@ class ModelTester:
 
         self.data_parallel_mode = data_parallel_mode
         if int(
-            os.environ.get("TT_TORCH_MODEL_TESTER_FORCE_EXPERIMENTAL_BACKEND", False)
+            os.environ.get("TT_TORCH_FORCE_EXPERIMENTAL_BACKEND", False)
         ):
             self.backend = "tt-experimental"
         else:
