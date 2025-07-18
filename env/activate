@@ -31,6 +31,7 @@ else
 
 fi
 export TTTORCH_ENV_ACTIVATED=1
+export TTXLA_ENV_ACTIVATED=1
 export TTMLIR_ENV_ACTIVATED=1
 export PATH=$TT_TORCH_HOME/third_party/tt-mlir/src/tt-mlir-build/bin:$TT_TORCH_HOME/env/venv/lib/python3.10/site-packages/tt_mlir:$TTMLIR_TOOLCHAIN_DIR/bin:$PATH
 export TOKENIZERS_PARALLELISM=false

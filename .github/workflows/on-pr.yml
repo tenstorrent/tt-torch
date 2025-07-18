@@ -127,6 +127,15 @@ jobs:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       run-codecov: 'false'
       run-dump-mlir: 'false'
+  experimental-full-model-test:
+    needs: [build, docker-build]
+    if: github.event.pull_request.draft == false
+    uses: ./.github/workflows/run-experimental-full-model-execution-tests.yml
+    secrets: inherit
+    with:
+      docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      run-codecov: 'false'
+      run-dump-mlir: 'false'
   check-all-green:
     if: always()
     needs:
@@ -135,6 +144,7 @@ jobs:
       - build
       - test
       - full-model-test
+      - experimental-full-model-test
     runs-on: Ubuntu-latest
     steps:
     - name: Check if the needed jobs succeeded or failed

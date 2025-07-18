@@ -1,0 +1,181 @@
+name: Run Op-By-Op Model Tests (Nightly)
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      docker-image:
+        description: 'Docker image to use for build'
+        required: true
+        type: string
+      docker-image-harbor:
+        description: 'Shared infra Docker image to use for build'
+        required: true
+        type: string
+  workflow_run:
+    workflows: [Build]
+    types: [completed]
+
+env:
+  DOCKER_CACHE_ROOT: /mnt/dockercache
+
+permissions:
+  packages: write
+  checks: write
+
+jobs:
+  tests:
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        build: [
+          {
+            runs-on: wormhole_b0, name: "experimental_op_by_op", tests: "
+                  tests/experimental/models/Qwen/test_qwen2_causal_lm.py::test_qwen2_causal_lm[op_by_op_torch]
+                  tests/experimental/models/llama/test_llama_3b.py::test_llama_3b[op_by_op_torch-meta-llama/Llama-3.2-3B]
+                  tests/experimental/models/mistral/test_mistral.py::test_mistral[op_by_op_torch-ministral3b]
+                  tests/experimental/models/resnet50/test_resnet50.py::test_resnet[op_by_op_torch]
+              "
+          },
+        ]
+    runs-on:
+      - ${{ matrix.build.sh-run && format('tt-beta-ubuntu-2204-{0}-large-stable', matrix.build.runs-on) ||  matrix.build.runs-on }}
+
+    name: "tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
+
+    container:
+      image: ${{ matrix.build.sh-run && inputs.docker-image-harbor || inputs.docker-image }}
+      options: --user root --device /dev/tenstorrent --shm-size=4gb --pid=host
+      volumes:
+        - /dev/hugepages:/dev/hugepages
+        - /dev/hugepages-1G:/dev/hugepages-1G
+        - /etc/udev/rules.d:/etc/udev/rules.d
+        - /lib/modules:/lib/modules
+        - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
+        - /mnt/dockercache:/mnt/dockercache
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Fetch job id
+      id: fetch-job-id
+      uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
+      with:
+        job_name: "tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})" # reference above tests.name
+
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      env:
+        JOB_ID: ${{ steps.fetch-job-id.outputs.job_id }}
+      run: |
+        echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
+        echo "install-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
+        echo "dist-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
+        echo "test-output-dir=$(pwd)/results/models/tests/" >> "$GITHUB_OUTPUT"
+
+    - name: Sample memory
+      shell: bash
+      run: |
+        echo "Memory sample at $(date)"
+        ps -aux --sort -%mem | head -n 10
+
+    - name: Git safe dir
+      run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
+
+    - name: Use build artifacts
+      uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
+      with:
+        name: install-artifacts
+        path: install
+
+    - name: install tt-torch
+      shell: bash
+      run: |
+        source env/activate
+        mkdir -p ${{ steps.strings.outputs.dist-dir }}
+        mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
+        pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
+
+    - name: Run Model Tests
+      env:
+        HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
+        TORCH_HOME: ${{ env.DOCKER_CACHE_ROOT }}/torch
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      shell: bash
+      run: |
+        source env/activate
+
+        # Make sure we don't stop on first failure
+        set +e
+
+        tests_list=$(echo "${{ matrix.build.tests }}" | xargs -n1 echo)
+        total_tests=$(echo "$tests_list" | wc -l)
+
+        failures=0
+        counter=0
+        rm -f pytest.log
+        rm -f full_job_output.log
+
+        for test_case in $tests_list; do
+          counter=$((counter + 1))
+
+          echo "====== BEGIN LOG: $test_case ======" >> full_job_output.log
+          pytest -svv -rf "$test_case" > test.log 2>&1
+          exit_code=$?
+          cat test.log >> full_job_output.log
+          sed -n '/=========================== short test summary info ============================/,$p' test.log >>pytest.log
+
+
+          echo "====== END LOG: $test_case ========" >> full_job_output.log
+          echo >> full_job_output.log
+
+          if [ $exit_code -eq 0 ]; then
+            echo "[ $counter / $total_tests ] $test_case PASSED"
+          else
+            echo "[ $counter / $total_tests ] $test_case FAILED"
+            failures=$((failures + 1))
+          fi
+        done
+
+        # If any test failed, exit nonzero to mark the job as failed
+        if [ $failures -ne 0 ]; then
+          echo "Total failures: $failures"
+          exit 1
+        fi
+
+    - name: Tar results
+      if: success() || failure()
+      shell: bash
+      run: |
+        TEST_DIR="${{ steps.strings.outputs.test-output-dir }}"
+        OUTPUT_TAR="${{ matrix.build.name }}_${{ steps.fetch-job-id.outputs.job_id }}.tar"
+
+        if [ ! -d "$TEST_DIR" ]; then
+          echo "WARNING: Test output dir '$TEST_DIR' does not exist. Please check if test ran properly. Skipping tar."
+        else
+          cd "$TEST_DIR"
+          tar cvf "$OUTPUT_TAR" .
+        fi
+
+    - name: Upload test folder to archive
+      if: success() || failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-reports-nightly-${{ matrix.build.name }}.tar
+        path: ${{ steps.strings.outputs.test-output-dir }}/${{ matrix.build.name }}_${{ steps.fetch-job-id.outputs.job_id }}.tar
+
+    - name: Upload full logs
+      if: success() || failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: full-logs-nightly-${{ matrix.build.name }}
+        path: full_job_output.log
+
+    - name: Upload logs for bisect
+      if: success() || failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-log-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        path: pytest.log
