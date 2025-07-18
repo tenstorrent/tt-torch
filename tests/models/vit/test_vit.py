@@ -20,7 +20,7 @@ class ThisTester(ModelTester):
 
 # Print available variants for reference
 available_variants = ModelLoader.query_available_variants()
-print("Available variants:", available_variants)
+print("Available variants: ", [str(k) for k in available_variants.keys()])
 
 
 @pytest.mark.parametrize(
@@ -28,17 +28,16 @@ print("Available variants:", available_variants)
     ["eval"],
 )
 @pytest.mark.parametrize(
-    "variant_info",
+    "variant,variant_config",
     available_variants.items(),
-    ids=list(available_variants.keys()),
+    ids=[str(k) for k in available_variants.keys()],
 )
 @pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_vit(record_property, mode, variant_info, op_by_op):
-    model_name = "ViT"
+def test_vit(record_property, mode, variant, variant_config, op_by_op):
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -48,7 +47,6 @@ def test_vit(record_property, mode, variant_info, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    variant, variant_config = variant_info
     loader = ModelLoader(variant=variant)
     model_info = loader.get_model_info(variant=variant)
 
