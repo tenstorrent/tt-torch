@@ -46,6 +46,7 @@ jobs:
             echo "container_image=${{ inputs.docker-image }}" >> $GITHUB_OUTPUT
             echo "DOCKER_CACHE_ROOT=/mnt/dockercache" >> $GITHUB_ENV
           fi
+
   tests:
     needs: setup
     timeout-minutes: 240
@@ -107,7 +108,7 @@ jobs:
       id: fetch-job-id
       uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
       with:
-        name: "test compile (${{ matrix.runs-on }}, ${{ matrix.build.name }})" # reference above tests.name
+        job_name: "test compile (${{ matrix.runs-on }}, ${{ matrix.build.name }})" # reference above tests.name
 
     - name: Set reusable strings
       id: strings
