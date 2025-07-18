@@ -43,7 +43,6 @@ jobs:
                   tests/experimental/models/llama/test_llama_3b.py::test_llama_3b[full-meta-llama/Llama-3.2-3B]
                   tests/experimental/models/mistral/test_mistral.py::test_mistral[full-ministral3b]
                   tests/experimental/models/resnet50/test_resnet50.py::test_resnet[full]
-
             "
           },
           {
