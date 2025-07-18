@@ -19,7 +19,7 @@ class ThisTester(ModelTester):
         return model
 
     def _load_inputs(self):
-        input_ids = self.loader.load_inputs()  # ["input_ids"]
+        input_ids = self.loader.load_inputs()
         return input_ids
 
 
@@ -60,7 +60,7 @@ def test_mamba(record_property, variant, variant_config, mode, op_by_op):
         model_info=model_info,
         compiler_config=cc,
         record_property_handle=record_property,
-        run_generate=False,  # Uncomment the code in the load model/inputs methods to enable generation
+        run_generate=False,
         required_pcc=0.95,
         assert_atol=False,
     )
