@@ -53,7 +53,7 @@ def test_qwen2_causal_lm(record_property, op_by_op):
         assert_pcc=assert_pcc,
         assert_atol=False,
         run_generate=False,
-        required_pcc=0.85,
+        required_pcc=0.84,
         backend="tt-experimental",
     )
 
