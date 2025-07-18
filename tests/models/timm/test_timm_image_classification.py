@@ -4,12 +4,12 @@
 # Reference: https://huggingface.co/timm
 # PyTorch Image Models (timm) is a collection of image models, layers, utilities, optimizers, schedulers, data-loaders / augmentations, and reference training / validation scripts that aim to pull together a wide variety of SOTA models with ability to reproduce ImageNet training results.
 
-from urllib.request import urlopen
 from PIL import Image
 import torch
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.tools.utils import get_file
 
 dependencies = ["timm==1.0.9"]
 
@@ -26,10 +26,11 @@ class ThisTester(ModelTester):
         import timm
 
         img = Image.open(
-            urlopen(
+            get_file(
                 "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/beignets-task-guide.png"
             )
         )
+
         # get model specific transforms (normalization, resize)
         data_config = timm.data.resolve_model_data_config(self.framework_model)
         transforms = timm.data.create_transform(**data_config, is_training=False)

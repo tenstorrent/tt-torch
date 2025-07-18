@@ -39,6 +39,9 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
+@pytest.mark.skip(
+    reason="MLPMixer DRAM crash - Out of Memory: Not enough space to allocate 2147483648 B DRAM buffer across 12 banks, where each bank needs to store 178958336 B. Tracked in https://github.com/tenstorrent/tt-torch/issues/1055"
+)
 def test_mlpmixer(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
