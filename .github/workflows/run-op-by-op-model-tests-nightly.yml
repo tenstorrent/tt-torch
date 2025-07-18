@@ -10,14 +10,11 @@ on:
       use-shared-runners:
         description: 'Use shared runners instead of custom runners'
         required: false
-        default: false
+        default: true
         type: boolean
   workflow_run:
     workflows: [Build]
     types: [completed]
-
-env:
-  IRD_LF_CACHE: http://large-file-cache.large-file-cache.svc.cluster.local/
 
 permissions:
   packages: write
@@ -37,9 +34,11 @@ jobs:
           if [[ "${{ inputs.use-shared-runners }}" == "true" ]]; then
             echo "runner_name_format=tt-beta-ubuntu-2204-{0}-large-stable" >> $GITHUB_OUTPUT
             echo "container_image=harbor.ci.tenstorrent.net/${{ inputs.docker-image }}" >> $GITHUB_OUTPUT
+            echo "IRD_LF_CACHE=http://large-file-cache.large-file-cache.svc.cluster.local/" >> $GITHUB_ENV
           else
             echo "runner_name_format={0}" >> $GITHUB_OUTPUT
             echo "container_image=${{ inputs.docker-image }}" >> $GITHUB_OUTPUT
+            echo "DOCKER_CACHE_ROOT=/mnt/dockercache" >> $GITHUB_ENV
           fi
 
   tests:
@@ -209,9 +208,7 @@ jobs:
             "
           },
         ]
-    runs-on:
-      # Use the runner name format from the setup job
-      - ${{ format(needs.setup.outputs.runner_name_format, matrix.runs-on) }}
+    runs-on: ${{ format(needs.setup.outputs.runner_name_format, matrix.runs-on) }}
 
     name: "tests (${{ matrix.runs-on }}, ${{ matrix.build.name }})"
 
