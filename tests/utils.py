@@ -591,8 +591,23 @@ class ModelTester:
 
         if on_device == True:
             model = self.compile_model(model, self.compiler_config)
+        import time
+        import copy
 
+        # Time the first inference
+        start_time = time.time()
         outputs = self.run_model(model, self.inputs)
+        first_inference_time = time.time() - start_time
+        print(f"First inference time (sec): {first_inference_time}")
+
+        # Time the next 10 inferences
+        inference_times = []
+        for _ in range(10):
+            start_time = time.time()
+            self.run_model(model, copy.deepcopy(self.inputs))
+            inference_times.append(time.time() - start_time)
+        print(f"Next 10 inference times (sec): {inference_times}")
+
         self.record_property("achieved_compile_depth", "EXECUTE")
 
         if self.compiler_config._enable_intermediate_verification:

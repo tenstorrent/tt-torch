@@ -632,6 +632,7 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
     compiled_graph = bypass_dtype_promotion(compiled_graph, compiler_config)
     run_shape_prop(compiled_graph, example_inputs)
     compiled_graph = bypass_redundant_cast(compiled_graph)
+    compiled_graph.graph.eliminate_dead_code()
 
     if compiler_config.enable_consteval:
         compiled_graph = constant_fold(compiled_graph)
@@ -729,8 +730,8 @@ class XLAExecutor:
             os.environ["ARG_TYPE_MAP_OVERRIDE"] = self.arg_type_map_str
 
         xm.mark_step(
-            True
-        )  # wait = True will wait until the model completes execution before continuing
+            False
+        )  # wait = False will not wait until the model completes execution before continuing
         if self.compiler_config.push_outputs_to_cpu:
             return self.push_tensors_to_device(output, "cpu")
         return output

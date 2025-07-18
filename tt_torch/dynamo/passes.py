@@ -104,6 +104,7 @@ def bypass_dtype_promotion(gm, compiler_config):
                 and node.args[1] == torch.float32
             ):
                 node.replace_all_uses_with(node.args[0])
+                gm.graph.erase_node(node)
 
     return gm
 
