@@ -691,7 +691,7 @@ class XLAExecutor:
 
         # xm.get_stablehlo(output_object) gives a graph with just as many inputs as in hlo_input_ids
 
-        hlo_input_positions = [id - 1 for id in hlo_input_ids]
+        hlo_input_positions = [id - min(hlo_input_ids) for id in hlo_input_ids]
 
         def get_kind_str(kind):
             if kind == InputKind.USER_INPUT:
@@ -702,15 +702,19 @@ class XLAExecutor:
                 return "constant"
 
         arg_types = []
+        output_args = [o.arg for o in self.program.graph_signature.output_specs]
         for idx in range(len(hlo_input_positions)):
             if hlo_input_positions[idx] < len(self.program.graph_signature.input_specs):
-                arg_types.append(
-                    get_kind_str(
-                        self.program.graph_signature.input_specs[
-                            hlo_input_positions[idx]
-                        ].kind
-                    )
-                )
+                in_spec = self.program.graph_signature.input_specs[
+                    hlo_input_positions[idx]
+                ]
+
+                # If an input is passed right through to the output, it will not be
+                # captured as an argument
+                if in_spec.arg in output_args:
+                    continue
+
+                arg_types.append(get_kind_str(in_spec.kind))
             else:
                 arg_types.append("constant")
 
@@ -723,9 +727,9 @@ class XLAExecutor:
             inputs[self.user_input_indices[idx]] = args[idx]
 
         output = self.program.graph_module(*inputs)
-
         if self.arg_type_map_str is None:
             self.generate_arg_type_map_str(output)
+        if os.environ.get("ARG_TYPE_MAP_OVERRIDE") != self.arg_type_map_str:
             os.environ["ARG_TYPE_MAP_OVERRIDE"] = self.arg_type_map_str
 
         xm.mark_step(
@@ -734,6 +738,10 @@ class XLAExecutor:
         if self.compiler_config.push_outputs_to_cpu:
             return self.push_tensors_to_device(output, "cpu")
         return output
+
+    def __del__(self):
+        # Remove the arg type map override environment variable
+        os.environ.pop("ARG_TYPE_MAP_OVERRIDE", None)
 
 
 @register_backend(name="tt-experimental")
