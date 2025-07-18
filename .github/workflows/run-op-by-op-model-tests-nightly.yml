@@ -34,11 +34,9 @@ jobs:
           if [[ "${{ inputs.use-shared-runners }}" == "true" ]]; then
             echo "runner_name_format=tt-beta-ubuntu-2204-{0}-large-stable" >> $GITHUB_OUTPUT
             echo "container_image=harbor.ci.tenstorrent.net/${{ inputs.docker-image }}" >> $GITHUB_OUTPUT
-            echo "IRD_LF_CACHE=http://large-file-cache.large-file-cache.svc.cluster.local/" >> $GITHUB_ENV
           else
             echo "runner_name_format={0}" >> $GITHUB_OUTPUT
             echo "container_image=${{ inputs.docker-image }}" >> $GITHUB_OUTPUT
-            echo "DOCKER_CACHE_ROOT=/mnt/dockercache" >> $GITHUB_ENV
           fi
 
   tests:
@@ -243,6 +241,13 @@ jobs:
         echo "install-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
         echo "dist-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
         echo "test-output-dir=$(pwd)/results/models/tests/" >> "$GITHUB_OUTPUT"
+
+        # Set cache root based on use-shared-runners
+        if [[ "${{ inputs.use-shared-runners }}" == "true" ]]; then
+            echo "IRD_LF_CACHE=http://large-file-cache.large-file-cache.svc.cluster.local/" >> $GITHUB_ENV
+        else
+            echo "DOCKER_CACHE_ROOT=/mnt/dockercache" >> $GITHUB_ENV
+        fi
 
     - name: Sample memory
       shell: bash

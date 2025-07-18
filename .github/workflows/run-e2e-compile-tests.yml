@@ -40,11 +40,9 @@ jobs:
           if [[ "${{ inputs.use-shared-runners }}" == "true" ]]; then
             echo "runner_name_format=tt-beta-ubuntu-2204-{0}-large-stable" >> $GITHUB_OUTPUT
             echo "container_image=harbor.ci.tenstorrent.net/${{ inputs.docker-image }}" >> $GITHUB_OUTPUT
-            echo "IRD_LF_CACHE=http://large-file-cache.large-file-cache.svc.cluster.local/" >> $GITHUB_ENV
           else
             echo "runner_name_format={0}" >> $GITHUB_OUTPUT
             echo "container_image=${{ inputs.docker-image }}" >> $GITHUB_OUTPUT
-            echo "DOCKER_CACHE_ROOT=/mnt/dockercache" >> $GITHUB_ENV
           fi
 
   tests:
@@ -123,6 +121,13 @@ jobs:
         echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
         echo "test_report_path_onnx=report_onnx_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
         echo "mlir_dir=$(pwd)/model_mlir" >> "$GITHUB_OUTPUT" # Define the model_mlir directory
+
+        # Set cache root based on use-shared-runners
+        if [[ "${{ inputs.use-shared-runners }}" == "true" ]]; then
+            echo "IRD_LF_CACHE=http://large-file-cache.large-file-cache.svc.cluster.local/" >> $GITHUB_ENV
+        else
+            echo "DOCKER_CACHE_ROOT=/mnt/dockercache" >> $GITHUB_ENV
+        fi
 
     - name: Git safe dir
       run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
