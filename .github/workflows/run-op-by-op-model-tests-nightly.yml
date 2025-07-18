@@ -119,7 +119,7 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "OFT", tests: "
-              tests/models/oft/test_oft.py::test_oft[op_by_op_torch-eval]
+              tests/models/oft/test_oft.py::test_oft[op_by_op-eval-base]
               "
           },
           {
