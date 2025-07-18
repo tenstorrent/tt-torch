@@ -28,9 +28,7 @@ def compile_model(model, compiler_config, device, async_mode):
     torch_options.devices = [device]
     torch_options.async_mode = async_mode
 
-    if int(
-        os.environ.get("TT_TORCH_FORCE_EXPERIMENTAL_BACKEND", False)
-    ):
+    if int(os.environ.get("TT_TORCH_FORCE_EXPERIMENTAL_BACKEND", False)):
         backend = "tt-experimental"
     else:
         backend = "tt"
