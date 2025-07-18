@@ -8,7 +8,7 @@ jobs:
   check-spdx-headers:
 
     timeout-minutes: 10
-    runs-on: ubuntu-latest
+    runs-on: wormhole_b0
     steps:
     - name: checkout
       uses: actions/checkout@v4
@@ -17,3 +17,59 @@ jobs:
         licenses: |-
           Apache-2.0
           MIT
+
+    - name: Dump ultralytics yolov5 hub information
+      run: |
+        echo "=== Checking ultralytics yolov5 hub directory ==="
+        YOLOV5_HUB_DIR="/mnt/dockercache/torch/hub/ultralytics_yolov5_master"
+
+        if [ -d "$YOLOV5_HUB_DIR" ]; then
+          echo "Directory exists: $YOLOV5_HUB_DIR"
+
+          echo "=== Directory listing ==="
+          ls -la "$YOLOV5_HUB_DIR"
+
+          echo "=== Contents of hubconf.py ==="
+          if [ -f "$YOLOV5_HUB_DIR/hubconf.py" ]; then
+            cat "$YOLOV5_HUB_DIR/hubconf.py"
+          else
+            echo "hubconf.py not found"
+          fi
+
+          echo "=== Contents of pyproject.toml ==="
+          if [ -f "$YOLOV5_HUB_DIR/pyproject.toml" ]; then
+            cat "$YOLOV5_HUB_DIR/pyproject.toml"
+          else
+            echo "pyproject.toml not found"
+          fi
+
+          echo "=== Contents of requirements.txt ==="
+          if [ -f "$YOLOV5_HUB_DIR/requirements.txt" ]; then
+            cat "$YOLOV5_HUB_DIR/requirements.txt"
+          else
+            echo "requirements.txt not found"
+          fi
+        else
+          echo "Directory does not exist: $YOLOV5_HUB_DIR"
+        fi
+
+    - name: Copy ultralytics yolov5 hub directory
+      run: |
+        YOLOV5_HUB_DIR="/mnt/dockercache/torch/hub/ultralytics_yolov5_master"
+        COPY_DIR="ultralytics_yolov5_master_copy"
+
+        if [ -d "$YOLOV5_HUB_DIR" ]; then
+          echo "Copying $YOLOV5_HUB_DIR to $COPY_DIR"
+          cp -r "$YOLOV5_HUB_DIR" "$COPY_DIR"
+          echo "Copy completed"
+        else
+          echo "Source directory does not exist: $YOLOV5_HUB_DIR"
+          mkdir -p "$COPY_DIR"
+          echo "Directory not found" > "$COPY_DIR/NOT_FOUND.txt"
+        fi
+
+    - name: Upload ultralytics yolov5 hub directory
+      uses: actions/upload-artifact@v4
+      with:
+        name: ultralytics-yolov5-hub-directory
+        path: ultralytics_yolov5_master_copy

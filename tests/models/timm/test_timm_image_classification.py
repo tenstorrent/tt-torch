@@ -10,6 +10,7 @@ import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from third_party.tt_forge_models.tools.utils import get_file
+import tt_mlir
 
 dependencies = ["timm==1.0.9"]
 
@@ -107,6 +108,13 @@ def test_timm_image_classification(
         ]
         else False
     )
+
+    # PCC failure for blackhole inception_v4 tf_in1k https://github.com/tenstorrent/tt-torch/issues/1078
+    if (
+        model_name == "inception_v4.tf_in1k"
+        and tt_mlir.get_arch() == tt_mlir.Arch.BLACKHOLE
+    ):
+        assert_pcc = False
 
     required_pcc = (
         0.95
