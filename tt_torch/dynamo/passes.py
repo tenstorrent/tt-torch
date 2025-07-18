@@ -191,22 +191,25 @@ def node_to_device(node, device_map, node_device_map, verbose=False, input_path=
             return (device, key)
 
     # Check inputs of the node and return the one with the highest device index
-    # inputs = set()
-    # for input_node in node.all_input_nodes:
-    #     input_device, input_key = node_to_device(
-    #         input_node, device_map, node_device_map, verbose=verbose
-    #     )
-    #     if input_device is not None:
-    #         inputs.add((input_device, input_key))
-    # if len(inputs) > 0:
-    #     # Return the device with the highest index
-    #     device, key = max(inputs, key=lambda x: x[0])
-    #     node_device_map[node] = {"device_idx": device, "map_key": key}
-    #     return (device, key)
+    else:
+        inputs = set()
+        for input_node in node.all_input_nodes:
+            input_device, input_key = node_to_device(
+                input_node, device_map, node_device_map, verbose=verbose
+            )
+            if input_device is not None:
+                inputs.add((input_device, input_key))
+        if len(inputs) > 0:
+            # Return the device with the highest index
+            device, key = max(inputs, key=lambda x: x[0])
+            node_device_map[node] = {"device_idx": device, "map_key": key}
+            return (device, key)
 
     # If the node is not in the device map, return None
-    if verbose:
-        print(f"Warning: No device found for node {node}")
+
+    print(f"Warning: No device found for node {node}")
+    breakpoint()
+    node_device_map[node] = {"device_idx": None, "map_key": None}
     return (None, None)
 
 
