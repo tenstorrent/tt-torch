@@ -732,9 +732,7 @@ class XLAExecutor:
         if os.environ.get("ARG_TYPE_MAP_OVERRIDE") != self.arg_type_map_str:
             os.environ["ARG_TYPE_MAP_OVERRIDE"] = self.arg_type_map_str
 
-        xm.mark_step(
-            True
-        )  # wait = True will wait until the model completes execution before continuing
+        xm.mark_step()
         if self.compiler_config.push_outputs_to_cpu:
             return self.push_tensors_to_device(output, "cpu")
         return output
