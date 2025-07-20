@@ -68,6 +68,7 @@ else()
             -DTT_MLIR_VERSION=${TT_MLIR_VERSION}
             -DTT_RUNTIME_DEBUG=${TT_RUNTIME_DEBUG}
             -DCMAKE_INSTALL_PREFIX=${TTXLA_INSTALL_PREFIX}
+            -DTTMLIR_ENABLE_PERF_TRACE=${TT_RUNTIME_ENABLE_PERF_TRACE}
         GIT_REPOSITORY https://github.com/tenstorrent/tt-xla.git
         GIT_TAG ${TTXLA_VERSION}
         GIT_PROGRESS ON
