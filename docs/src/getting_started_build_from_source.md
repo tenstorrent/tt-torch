@@ -126,7 +126,8 @@ sudo apt-get install -y \
     libyaml-cpp-dev \
     libboost-all-dev \
     lcov \
-    libgl
+    libgl \
+    protobuf-compiler
 ```
 
 Install OpenMPI:
