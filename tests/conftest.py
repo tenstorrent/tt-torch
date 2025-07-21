@@ -31,18 +31,10 @@ def manage_model_requirements(request):
     req_file = os.path.join(test_dir, "requirements.txt")
 
     if os.path.exists(req_file):
-        print(
-            f"Installing requirements for {request.node.name} from {req_file}",
-            flush=True,
-        )
         subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", req_file])
 
         yield
 
-        print(
-            f"Uninstalling requirements for {request.node.name} from {req_file}",
-            flush=True,
-        )
         with open(req_file, "r") as f:
             pkgs = [
                 line.strip().split("==")[0]
