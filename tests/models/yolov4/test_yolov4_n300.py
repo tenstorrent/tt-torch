@@ -60,6 +60,9 @@ def test_yolov4(record_property, mode, op_by_op):
         loader=loader,
         model_info=model_info,
         compiler_config=cc,
+        required_pcc=0.98,
+        assert_pcc=True,
+        assert_atol=False,
         record_property_handle=record_property,
         model_group="red",
     )
