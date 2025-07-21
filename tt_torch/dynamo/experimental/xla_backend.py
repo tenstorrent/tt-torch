@@ -42,41 +42,7 @@ from tt_torch.tools.utils import (
 import torch_xla
 import torch_xla.core.xla_model as xm
 
-
-def get_tensor_size(tensor):
-    """Calculate the memory size of a tensor in bytes."""
-    if isinstance(tensor, torch.Tensor):
-        return tensor.element_size() * tensor.nelement()
-    return 0
-
-
-def get_inputs_size(inputs):
-    """Calculate the total memory size of inputs in bytes."""
-    total_size = 0
-
-    if isinstance(inputs, torch.Tensor):
-        total_size += get_tensor_size(inputs)
-    elif isinstance(inputs, (list, tuple)):
-        for item in inputs:
-            total_size += get_inputs_size(item)
-    elif isinstance(inputs, dict):
-        for item in inputs.values():
-            total_size += get_inputs_size(item)
-    elif isinstance(inputs, (int, float)):
-        return 8
-    elif isinstance(inputs, bool):
-        return 1
-    elif isinstance(inputs, torch.dtype):
-        return 8
-    elif inputs is None:
-        return 0
-    else:
-        assert False, f"Unexpected input type: {type(inputs)}"
-    return total_size
-
-
-def gb_to_bytes(gb):
-    return gb * 1024 * 1024 * 1024
+from ..executor import get_inputs_size, gb_to_bytes
 
 
 def cast_ios_and_run(node, args, kwargs):
