@@ -150,5 +150,5 @@ jobs:
     - name: Check if the needed jobs succeeded or failed
       uses: re-actors/alls-green@release/v1
       with:
-        allowed-skips: pre-commit,spdx,docker-build,check-files,build,test,full-model-test
+        allowed-skips: pre-commit,spdx,docker-build,check-files,build,test,full-model-test,experimental-full-model-test
         jobs: ${{ toJSON(needs) }}
