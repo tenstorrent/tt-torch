@@ -1,0 +1,64 @@
+# This workflow automates running model tests.
+
+name: Nightly Experimental Tests
+
+on:
+  schedule:
+    - cron: '0 4 * * *'  # Runs at 04:00 UTC every day
+  workflow_dispatch:  # Manual trigger
+
+permissions:
+  packages: write
+  checks: write
+
+
+jobs:
+  pre-commit:
+    uses: ./.github/workflows/pre-commit.yml
+    secrets: inherit
+  spdx:
+    uses: ./.github/workflows/spdx.yml
+    secrets: inherit
+  docker-build:
+    uses: ./.github/workflows/build-image.yml
+    secrets: inherit
+  build:
+    needs: [pre-commit, spdx, docker-build]
+    uses: ./.github/workflows/run-build.yml
+    secrets: inherit
+    with:
+      docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      setup-args: "--code_coverage --include-models"
+  test_full_model:
+    needs: [docker-build, build]
+    uses: ./.github/workflows/run-full-model-execution-tests.yml
+    env:
+      TT_TORCH_FORCE_EXPERIMENTAL_BACKEND: 1
+    secrets: inherit
+    with:
+      docker-image: ${{ needs.docker-build.outputs.docker-image }}
+  test_full_model_nightly:
+    needs: [docker-build, build]
+    uses: ./.github/workflows/run-full-model-execution-tests-nightly.yml
+    env:
+      TT_TORCH_FORCE_EXPERIMENTAL_BACKEND: 1
+    secrets: inherit
+    with:
+      docker-image: ${{ needs.docker-build.outputs.docker-image }}
+
+  # runtime intermediate tests require build-debug artifact
+  build-debug:
+    needs: [pre-commit, spdx, docker-build]
+    uses: ./.github/workflows/run-build.yml
+    secrets: inherit
+    with:
+      docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      setup-args: "--code_coverage --build_runtime_debug --include-models"
+      artifact-key: "-debug" # avoid name collision for generated artifact
+  test-tools:
+    needs: [docker-build, build-debug]
+    uses: ./.github/workflows/run-tools-tests.yml
+    secrets: inherit
+    with:
+      docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      build-artifact-key: "-debug" # reference above artifact key

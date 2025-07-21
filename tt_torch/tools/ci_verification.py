@@ -77,7 +77,6 @@ def scan_workflow_test_matrices():
                         child_tests = enumerate_all_tests(
                             filter_full_eval=False,
                             test_dir=unparameterized_test,
-                            dry_run=False,
                         )
 
                         if child_tests:

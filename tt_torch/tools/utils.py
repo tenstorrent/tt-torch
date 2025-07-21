@@ -332,6 +332,7 @@ class CompilerConfig:
         self.post_init()
         self.automatic_parallelization = False
         self.mesh_shape = [1, 1]
+        self.push_outputs_to_cpu = True
 
     @property
     def model_name(self):
