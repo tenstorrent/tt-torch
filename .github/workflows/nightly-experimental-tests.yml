@@ -1,6 +1,6 @@
 # This workflow automates running model tests.
 
-name: Nightly Tests
+name: Nightly Experimental Tests
 
 on:
   schedule:

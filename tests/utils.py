@@ -167,6 +167,7 @@ class ModelTester:
         else:
             self.backend = backend
 
+        self.record_tag_cache["backend"] = self.backend
         self.framework_model = self._load_model()
         self.is_token_output = is_token_output
         if is_token_output and not hasattr(self, "tokenizer"):
