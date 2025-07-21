@@ -142,8 +142,6 @@ def execute_pjrt_process(receiver, sender, exec_event):
         sender.put({"outputs": outputs})
         exec_event.wait()
 
-    sys.exit(0)
-
 
 class XLAOpByOpExecutor:
 
@@ -341,7 +339,6 @@ class XLAOpByOpExecutor:
         return f"{type(e).__name__}: {e} in {filename.split('/')[-1]}:{lineno} ({function})"
 
     def run_op(self, gm, *inputs):
-        inputs  # = self.pre_process_inputs(*inputs)
         if not self.stderror_redirected:
             self.file_stderr = tempfile.NamedTemporaryFile(mode="w+t", delete=False)
             self.stderror_redirected = True
