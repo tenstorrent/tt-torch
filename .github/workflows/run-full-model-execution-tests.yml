@@ -56,7 +56,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runs-on: [n150, p150]
+        runs-on: [n150, p150b]
         build: [
           {
             name: "eval_1",
