@@ -167,7 +167,6 @@ class ModelTester:
         else:
             self.backend = backend
 
-        self.record_tag_cache["backend"] = self.backend
         self.framework_model = self._load_model()
         self.is_token_output = is_token_output
         if is_token_output and not hasattr(self, "tokenizer"):
@@ -219,6 +218,7 @@ class ModelTester:
 
         self.record_tag_cache = {}  # Holds for tags to be written out at finalize()
 
+        self.record_tag_cache["backend"] = self.backend
         self.record_property("model_name", model_name + model_name_suffix)
         self.record_property("frontend", "tt-torch")
         self.record_property("owner", "tt-torch")
