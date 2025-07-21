@@ -63,6 +63,7 @@ class ThisTester(ModelTester):
             autoshape=False,
             device="cpu",
             trust_repo=True,
+            force_reload=True,
         )
 
         # Remove the downloaded pretrained weight file.

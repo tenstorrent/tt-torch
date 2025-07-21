@@ -1,0 +1,298 @@
+name: Run Generic Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      mlir_override:
+        description: 'Git SHA of commit in tenstorrent/tt-mlir'
+        required: false
+        type: string
+      setup_args:
+        description: 'Arguments to pass to setup.py'
+        required: false
+        type: string
+        default: "--code_coverage --include-models --build_perf"
+      tests:
+        description: 'Test command(s) to run (pytest format)'
+        required: true
+        type: string
+        default: "tests/models/mnist/test_mnist.py::test_mnist_train[single_device-full-eval]"
+      runner:
+        description: 'Runner type'
+        required: false
+        type: choice
+        options:
+          - wormhole_b0
+          - n300
+          - high-memory-n300
+          - p150
+        default: wormhole_b0
+      run_codecov:
+        description: 'Run code coverage reports'
+        required: false
+        type: boolean
+        default: false
+      run_dump_mlir:
+        description: 'Dump MLIR files'
+        required: false
+        type: boolean
+        default: false
+  workflow_call:
+    inputs:
+      mlir_override:
+        description: 'Git SHA of commit in tenstorrent/tt-mlir'
+        required: false
+        type: string
+      setup_args:
+        description: 'Arguments to pass to setup.py'
+        required: false
+        type: string
+        default: "--code_coverage --include-models --build_perf"
+      tests:
+        description: 'Test command(s) to run (pytest format)'
+        required: true
+        type: string
+      runner:
+        description: 'Runner type'
+        required: false
+        type: string
+        default: wormhole_b0
+      run_codecov:
+        description: 'Run code coverage reports'
+        required: false
+        type: string
+        default: 'false'
+      run_dump_mlir:
+        description: 'Dump MLIR files'
+        required: false
+        type: string
+        default: 'false'
+
+env:
+  DOCKER_CACHE_ROOT: /mnt/dockercache
+
+permissions:
+  packages: write
+  checks: write
+
+jobs:
+  # Job 1: Build Docker Image
+  docker-build:
+    runs-on: builder
+    outputs:
+      docker-image: ${{ steps.build.outputs.docker-image }}
+    steps:
+      - name: Fix permissions
+        shell: bash
+        run: |
+          sudo chmod 777 -R $GITHUB_WORKSPACE
+          sudo chown ubuntu:ubuntu -R $(pwd)
+          git config --global --add safe.directory $(pwd)
+
+      - uses: actions/checkout@v4
+        with:
+            fetch-depth: 0 # Fetch all history and tags
+
+      - name: Override tt-mlir SHA if mlir_override is set
+        if: ${{ inputs.mlir_override }}
+        shell: bash
+        run: |
+            # Update the CMakeLists.txt file with the new SHA
+            sed -i "s/set(TT_MLIR_VERSION \".*\")/set(TT_MLIR_VERSION \"${{ inputs.mlir_override }}\")/" third_party/CMakeLists.txt
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ github.token }}
+
+      - name: Build Docker images and output the image name
+        id: build
+        shell: bash
+        run: |
+          # Output the image name
+          set -o pipefail
+          .github/build-docker-images.sh | tee docker.log
+          DOCKER_CI_IMAGE=$(tail -n 1 docker.log)
+          echo "DOCKER_CI_IMAGE $DOCKER_CI_IMAGE"
+          echo "docker-image=$DOCKER_CI_IMAGE" >> "$GITHUB_OUTPUT"
+
+  # Job 2: Build Project
+  project-build:
+    needs: [docker-build]
+    timeout-minutes: 120
+    runs-on: ${{ inputs.runner || 'wormhole_b0' }}
+    container:
+      image: ${{ needs.docker-build.outputs.docker-image }}
+      options: --device /dev/tenstorrent/0
+      volumes:
+        - /dev/hugepages:/dev/hugepages
+        - /dev/hugepages-1G:/dev/hugepages-1G
+        - /etc/udev/rules.d:/etc/udev/rules.d
+        - /lib/modules:/lib/modules
+        - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
+        - /mnt/dockercache:/mnt/dockercache
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Override tt-mlir SHA if mlir_override is set
+      if: ${{ inputs.mlir_override }}
+      shell: bash
+      run: |
+          # Update the CMakeLists.txt file with the new SHA
+          sed -i "s/set(TT_MLIR_VERSION \".*\")/set(TT_MLIR_VERSION \"${{ inputs.mlir_override }}\")/" third_party/CMakeLists.txt
+
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: |
+        echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
+        echo "build-output-dir=$(pwd)/build" >> "$GITHUB_OUTPUT"
+
+    - name: Git safe dir
+      run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
+
+    - name: ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        create-symlink: true
+        key: build_cache
+
+    # Build project
+    - name: Build
+      shell: bash
+      run: |
+        source env/activate
+        python setup.py bdist_wheel ${{ inputs.setup_args }}
+
+    - name: Verify tt-mlir SHA override
+      if: ${{ inputs.mlir_override }}
+      continue-on-error: true
+      shell: bash
+      run: |
+          cd third_party/tt-mlir/src/tt-mlir
+          branch_name=$(git rev-parse --abbrev-ref HEAD)
+          commit_sha=$(git rev-parse HEAD)
+          commit_title=$(git log -1 --pretty=%s)
+          echo "Branch name: $branch_name"
+          echo "Commit SHA: $commit_sha"
+          echo "Commit title: $commit_title"
+          echo "::notice::Using tt-mlir: $branch_name, commit: $commit_sha, title: $commit_title"
+          cd ../../../..
+
+    - name: Copy wheel and env directories
+      shell: bash
+      run: |
+        mkdir artifacts
+        cd artifacts
+        mkdir wheels
+        cp ../dist/*.whl wheels
+        tar cvf artifact.tar .
+
+    - name: Upload artifacts to archive
+      uses: actions/upload-artifact@v4
+      with:
+        name: install-artifacts-generic
+        path: artifacts/artifact.tar
+
+  # Job 3: Run Tests
+  run-tests:
+    needs: [docker-build, project-build]
+    timeout-minutes: 120
+    runs-on: ${{ inputs.runner || 'wormhole_b0' }}
+    container:
+      image: ${{ needs.docker-build.outputs.docker-image }}
+      options: --user root --device /dev/tenstorrent/0 --shm-size=4gb
+      volumes:
+        - /dev/hugepages:/dev/hugepages
+        - /dev/hugepages-1G:/dev/hugepages-1G
+        - /etc/udev/rules.d:/etc/udev/rules.d
+        - /lib/modules:/lib/modules
+        - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
+        - /mnt/dockercache:/mnt/dockercache
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Fetch job id
+      id: fetch-job-id
+      uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
+      with:
+        job_name: "run-tests"
+
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      env:
+        JOB_ID: ${{ steps.fetch-job-id.outputs.job_id }}
+      run: |
+        echo "work-dir=$(pwd)" >> "$GITHUB_OUTPUT"
+        echo "install-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
+        echo "dist-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
+        echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
+        echo "mlir_dir=$(pwd)/model_mlir" >> "$GITHUB_OUTPUT"
+
+    - name: Use build artifacts
+      uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
+      with:
+        name: install-artifacts-generic
+        path: install
+
+    - name: install tt-torch
+      shell: bash
+      run: |
+        source env/activate
+        mkdir -p ${{ steps.strings.outputs.dist-dir }}
+        mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
+        pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
+
+    - name: Run Tests
+      env:
+        HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
+        TORCH_HOME: ${{ env.DOCKER_CACHE_ROOT }}/torch
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      shell: bash
+      run: |
+        source env/activate
+
+        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN pytest --durations=0 -v -rf ${{ inputs.tests }} \
+           --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
+           --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append | tee pytest.log
+
+    - name: Upload Test Log
+      uses: actions/upload-artifact@v4
+      if: ${{ success() || failure() }}
+      with:
+        name: test-log-generic-${{ steps.fetch-job-id.outputs.job_id }}
+        path: pytest.log
+
+    - name: Upload Test Report Models
+      uses: actions/upload-artifact@v4
+      if: ${{ success() || failure() }}
+      with:
+        name: test-reports-models-generic-${{ steps.fetch-job-id.outputs.job_id }}
+        path: ${{ steps.strings.outputs.test_report_path_models }}
+
+    - name: Upload coverage reports to Codecov
+      if: ${{ (success() || failure()) && (inputs.run_codecov == true || inputs.run_codecov == 'true') }}
+      continue-on-error: true
+      uses: codecov/codecov-action@v5
+      with:
+        files: coverage.info,.coverage,coverage.xml
+        token: ${{ secrets.CODECOV_TOKEN }}
+
+    - name: Upload test results to Codecov
+      if: ${{ (success() || failure()) && (inputs.run_codecov == true || inputs.run_codecov == 'true') }}
+      continue-on-error: true
+      uses: codecov/test-results-action@v1
+      with:
+        files: ${{ steps.strings.outputs.test_report_path_models }}
+        disable_search: true
+        token: ${{ secrets.CODECOV_TOKEN }}
+
+    - name: Upload MLIR files
+      uses: actions/upload-artifact@v4
+      if: ${{ (success() || failure()) && (inputs.run_dump_mlir == true || inputs.run_dump_mlir == 'true') }}
+      with:
+        name: model-mlir-generic-${{ steps.fetch-job-id.outputs.job_id }}
+        path: ${{ steps.strings.outputs.mlir_dir }}
