@@ -3,8 +3,10 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+# underlying tt-mlir version we will have tt-xla use
 set(TT_MLIR_VERSION "6266cbd70ea097cc56357b18babcdc648790f08a")
-set(TTXLA_VERSION "32acdb919e6315ff3ea47b2aa2003f66a63e18fe")
+# tt-xla version to use
+set(TTXLA_VERSION "f85fb3df7bed8f25efdf4e884f7289d71dd8264e")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
