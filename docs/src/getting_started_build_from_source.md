@@ -125,7 +125,8 @@ sudo apt-get install -y \
     patchelf \
     libyaml-cpp-dev \
     libboost-all-dev \
-    lcov
+    lcov \
+    libgl
 ```
 
 Install OpenMPI:
