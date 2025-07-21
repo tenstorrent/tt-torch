@@ -1,22 +1,37 @@
+# Core Dependencies
 --extra-index-url https://download.pytorch.org/whl/cpu
 torch==2.7.0
 torch-xla==2.7.0
-torchvision
-torchaudio
-black
-bi-lstm-crf
-mdutils
 ninja
-pre-commit
 pybind11
+protobuf
+setuptools==59.6.0 #  pinned torchvision wheel build in env/activate requires lower setuptools pinned version. tt-torch #589
+wheel
+onnx==1.17.0 # 1.18.0 fails with "Unsupported model IR version: 11, max supported IR version: 10"
+onnxruntime
+stablehlo@https://github.com/openxla/stablehlo/releases/download/v1.0.0/stablehlo-1.0.0.1715728102%2B6051bcdf-cp310-cp310-linux_x86_64.whl
+scikit-build
+nanobind
+loguru
+
+# Developer Dependencies
+black
+mdutils
+pre-commit
 pytest
 pytest-cov
 tabulate
+openpyxl
+seaborn
+xlsxwriter
+
+# Model Dependencies (Will move to model specific requirements.txt in future)
+torchvision
+torchaudio
+bi-lstm-crf
 transformers>=4.50.0,<4.53.0
-protobuf
 tiktoken
 sentencepiece
-setuptools==59.6.0 #  pinned torchvision wheel build in env/activate requires lower setuptools pinned version. tt-torch #589
 pytorchcv
 diffusers
 scipy
@@ -26,22 +41,12 @@ librosa
 soundfile
 matplotlib
 mlp_mixer_pytorch
-wheel
-xlsxwriter
-onnx==1.17.0 # 1.18.0 fails with "Unsupported model IR version: 11, max supported IR version: 10"
-onnxruntime
-openpyxl
 pillow
 kornia
 timm
 ml_dtypes
 opencv-contrib-python
-scikit-build
-nanobind
-loguru
-seaborn
 gliner
 ultralytics
 efficientnet_pytorch
-stablehlo@https://github.com/openxla/stablehlo/releases/download/v1.0.0/stablehlo-1.0.0.1715728102%2B6051bcdf-cp310-cp310-linux_x86_64.whl
 torchcodec # required for whisper test. Requires system dep ffmpeg.
