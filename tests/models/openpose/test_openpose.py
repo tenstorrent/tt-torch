@@ -9,8 +9,6 @@ import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
-dependencies = ["controlnet_aux==0.0.9"]
-
 
 class ThisTester(ModelTester):
     def _load_model(self):
@@ -32,7 +30,6 @@ class ThisTester(ModelTester):
     "mode",
     ["train", "eval"],
 )
-@pytest.mark.usefixtures("manage_dependencies")
 @pytest.mark.skip(reason="failing during torch run with bypass compilation")
 @pytest.mark.parametrize(
     "op_by_op",

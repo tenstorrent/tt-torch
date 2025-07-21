@@ -24,16 +24,35 @@ def run_around_tests():
     torch._dynamo.reset()
 
 
-@pytest.fixture(scope="module")
-def manage_dependencies(request):
-    dependencies = getattr(request.module, "dependencies", [])
-    # Install dependencies
-    subprocess.check_call([sys.executable, "-m", "pip", "install"] + dependencies)
-    yield
-    # Uninstall dependencies
-    subprocess.check_call(
-        [sys.executable, "-m", "pip", "uninstall", "-y"] + dependencies
-    )
+# Automatically install/uninstall model specific requirements.txt if they exist.
+@pytest.fixture(scope="module", autouse=True)
+def manage_model_requirements(request):
+    test_dir = os.path.dirname(request.module.__file__)
+    req_file = os.path.join(test_dir, "requirements.txt")
+
+    if os.path.exists(req_file):
+        print(
+            f"Installing requirements for {request.node.name} from {req_file}",
+            flush=True,
+        )
+        subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", req_file])
+
+        yield
+
+        print(
+            f"Uninstalling requirements for {request.node.name} from {req_file}",
+            flush=True,
+        )
+        with open(req_file, "r") as f:
+            pkgs = [
+                line.strip().split("==")[0]
+                for line in f
+                if line.strip() and not line.startswith("#")
+            ]
+        subprocess.check_call([sys.executable, "-m", "pip", "uninstall", "-y"] + pkgs)
+
+    else:
+        yield  # Nothing to install or uninstall
 
 
 def pytest_addoption(parser):
