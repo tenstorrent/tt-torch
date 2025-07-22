@@ -693,10 +693,12 @@ class XLAExecutor:
             inputs[self.user_input_indices[idx]] = args[idx]
 
         output = self.program.graph_module(*inputs)
-        if self.arg_type_map_str is None:
-            self.generate_arg_type_map_str(output)
-        if os.environ.get("ARG_TYPE_MAP_OVERRIDE") != self.arg_type_map_str:
-            os.environ["ARG_TYPE_MAP_OVERRIDE"] = self.arg_type_map_str
+
+        if self.compiler_config.arg_type_map_override:
+            if self.arg_type_map_str is None:
+                self.generate_arg_type_map_str(output)
+            if os.environ.get("ARG_TYPE_MAP_OVERRIDE") != self.arg_type_map_str:
+                os.environ["ARG_TYPE_MAP_OVERRIDE"] = self.arg_type_map_str
 
         xm.mark_step()
         if self.compiler_config.push_outputs_to_cpu:
