@@ -33,7 +33,7 @@ The tt-torch repository is a PyTorch-based front end compiler that lets develope
 -----
 # Important Notice: Future Direction
 
-**Note:** `tt-torch` is transitioning to an experimental `torch-xla` backend, which will become the primary path forward for this project instead of the current `torch-mlir` approach. This project will most likely be merged with [`tt-xla`](https://github.com/tenstorrent/tt-xla) in the near future. This strategic change is based on the following factors:
+**Note:** `tt-torch` is transitioning to an experimental `torch-xla` backend, which will become the primary path forward for this project instead of the current `torch-mlir` approach. This project will be merged with [`tt-xla`](https://github.com/tenstorrent/tt-xla) in the future. This strategic change is based on the following factors:
 
 1. `torch-xla` now supports custom PJRT devices (which we have already developed in `tt-xla`)
 2. We did not find a good way to implement SPMD using `torch-mlir`
