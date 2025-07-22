@@ -43,8 +43,11 @@
             "pcc": 0.97,
             "relative_atol": 0.015
         },
-        "yolov3/pytorch": {
+        "yolov3/pytorch-base": {
             "pcc": 0.97
+        },
+        "yolov4/pytorch-base": {
+            "pcc": 0.98
         },
         "flan_t5/pytorch": {
             "pcc": false
