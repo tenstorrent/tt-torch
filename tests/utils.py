@@ -101,7 +101,7 @@ class ModelTester:
         mode,
         loader=None,
         model_info=None,
-        required_pcc=0.99,
+        required_pcc=0.99999,
         required_atol=None,
         relative_atol=None,
         compiler_config=None,
