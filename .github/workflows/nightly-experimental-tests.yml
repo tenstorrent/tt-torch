@@ -11,6 +11,8 @@ permissions:
   packages: write
   checks: write
 
+env:
+  TT_TORCH_FORCE_EXPERIMENTAL_BACKEND: 1
 
 jobs:
   pre-commit:
@@ -32,16 +34,12 @@ jobs:
   test_full_model:
     needs: [docker-build, build]
     uses: ./.github/workflows/run-full-model-execution-tests.yml
-    env:
-      TT_TORCH_FORCE_EXPERIMENTAL_BACKEND: 1
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
   test_full_model_nightly:
     needs: [docker-build, build]
     uses: ./.github/workflows/run-full-model-execution-tests-nightly.yml
-    env:
-      TT_TORCH_FORCE_EXPERIMENTAL_BACKEND: 1
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
