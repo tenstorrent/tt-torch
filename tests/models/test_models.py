@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+# SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
 import pytest
@@ -10,6 +10,11 @@ import importlib.util
 import torch
 import inspect
 import json
+
+
+@pytest.fixture(autouse=True)
+def log_test_name(request):
+    print(f"\nRunning {request.node.nodeid}", flush=True)
 
 
 def get_models_root(project_root: str) -> str:
@@ -57,6 +62,8 @@ def import_model_loader_and_variant(loader_path):
     # Get the relative path from MODELS_ROOT to construct proper module name
     rel_path = os.path.relpath(loader_path, MODELS_ROOT)
     rel_path_without_ext = rel_path.replace(".py", "")
+
+    # Use different/dummy module name to avoid conflicts with real package name
     module_path = "tt-forge-models." + rel_path_without_ext.replace(os.sep, ".")
 
     spec = importlib.util.spec_from_file_location(module_path, location=loader_path)
