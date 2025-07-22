@@ -24,13 +24,19 @@
         "efficientnet/pytorch": {
             "pcc": false
         },
-        "xglm/pytorch": {
+        "bloom/pytorch": {
+            "pcc": false
+        },
+        "xglm/pytorch-xglm-564M": {
+            "pcc": false
+        },
+        "xglm/pytorch-xglm-1.7B": {
             "pcc": false
         },
         "resnet/pytorch": {
             "pcc": 0.97
         },
-        "mamba/pytorch": {
+        "mamba/pytorch-mamba-790m-hf": {
             "pcc": 0.95
         },
         "openpose/v2/pytorch": {
@@ -38,6 +44,9 @@
         },
         "albert/masked_lm/pytorch-albert-xxlarge-v2": {
             "pcc": 0.98
+        },
+        "albert/masked_lm/pytorch-albert-large-v2": {
+            "pcc": 0.97
         },
         "deit/pytorch": {
             "pcc": 0.97,
