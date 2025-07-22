@@ -154,11 +154,11 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "d-fine", tests: "
-              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-dfine-nano-eval]
-              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-dfine-small-eval]
-              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-dfine-medium-eval]
-              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-dfine-large-eval]
-              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-dfine-xlarge-eval]
+              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-nano-eval]
+              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-small-eval]
+              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-medium-eval]
+              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-large-eval]
+              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-xlarge-eval]
               "
           },
           {
