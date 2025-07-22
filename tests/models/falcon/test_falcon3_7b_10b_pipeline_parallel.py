@@ -79,7 +79,7 @@ def test_falcon_pipeline_parallel(record_property, model_name, mode, op_by_op):
     compiled_model = torch.compile(model, backend="tt", dynamic=False, options=options)
     out = compiled_model(**test_input)
     golden = model(**test_input)
-    pccs, atols, _, _ = verify_against_golden(
+    pccs, atols, _, _, _ = verify_against_golden(
         tuple([golden.logits]),
         tuple([out.logits]),
         assert_pcc=assert_pcc,

@@ -716,7 +716,7 @@ def test_verify_against_golden_low_atol_high_pcc(assert_pcc, assert_atol):
 
     golden_tensors = (torch.tensor([1.0, 2.0, 3.0]),)
     calculated_tensors = (torch.tensor([1.0, 2.0, 3.0]),)
-    pccs, atols, passed_pcc, passed_atol = verify_against_golden(
+    pccs, atols, passed_pcc, passed_atol, _ = verify_against_golden(
         golden_tensors,
         calculated_tensors,
         assert_pcc=assert_pcc,
@@ -743,7 +743,7 @@ def test_verify_against_golden_high_atol_high_pcc(assert_pcc, assert_atol):
         # Assert that an AssertionError is raised if we are asserting ATOL
         # when comparing tensors with a true high ATOL
         with pytest.raises(AssertionError) as e:
-            pccs, atols, passed_pcc, passed_atol = verify_against_golden(
+            pccs, atols, passed_pcc, passed_atol, _ = verify_against_golden(
                 golden_tensors,
                 calculated_tensors,
                 assert_pcc=assert_pcc,
@@ -751,7 +751,7 @@ def test_verify_against_golden_high_atol_high_pcc(assert_pcc, assert_atol):
                 required_atol=0.1,
             )
     else:
-        pccs, atols, passed_pcc, passed_atol = verify_against_golden(
+        pccs, atols, passed_pcc, passed_atol, _ = verify_against_golden(
             golden_tensors,
             calculated_tensors,
             assert_pcc=assert_pcc,
@@ -785,7 +785,7 @@ def test_verify_against_golden_low_atol_low_pcc(assert_pcc, assert_atol):
         # Assert that an AssertionError is raised if we are asserting PCC
         # when comparing tensors with a true low PCC
         with pytest.raises(AssertionError) as e:
-            pccs, atols, passed_pcc, passed_atol = verify_against_golden(
+            pccs, atols, passed_pcc, passed_atol, _ = verify_against_golden(
                 golden_tensors,
                 calculated_tensors,
                 assert_pcc=assert_pcc,
@@ -794,7 +794,7 @@ def test_verify_against_golden_low_atol_low_pcc(assert_pcc, assert_atol):
                 required_atol=0.25,
             )
     else:
-        pccs, atols, passed_pcc, passed_atol = verify_against_golden(
+        pccs, atols, passed_pcc, passed_atol, _ = verify_against_golden(
             golden_tensors,
             calculated_tensors,
             assert_pcc=assert_pcc,
@@ -823,7 +823,7 @@ def test_verify_against_golden_high_atol_low_pcc(assert_pcc, assert_atol):
         # In this case, both ATOL and PCC are truly bad, so asserting on either
         # should cause an AssertionError to be raised
         with pytest.raises(AssertionError) as e:
-            pccs, atols, passed_pcc, passed_atol = verify_against_golden(
+            pccs, atols, passed_pcc, passed_atol, _ = verify_against_golden(
                 golden_tensors,
                 calculated_tensors,
                 assert_pcc=assert_pcc,
@@ -832,7 +832,7 @@ def test_verify_against_golden_high_atol_low_pcc(assert_pcc, assert_atol):
                 required_atol=0.1,
             )
     else:
-        pccs, atols, passed_pcc, passed_atol = verify_against_golden(
+        pccs, atols, passed_pcc, passed_atol, _ = verify_against_golden(
             golden_tensors,
             calculated_tensors,
             assert_pcc=assert_pcc,

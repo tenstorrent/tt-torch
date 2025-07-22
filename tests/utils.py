@@ -478,10 +478,13 @@ class ModelTester:
             output_tensors = self._extract_outputs(outputs)
 
         # When defer_assertions=True, disable assertions in verify_against_golden
+        #   This is because an assertion hit in verify_against_golden will cause
+        #   the test to early exit before the record_tag_cache is flushed to xml
+        #   and no PCC or metadata will be reported
         assert_pcc = self.assert_pcc if not defer_assertions else False
         assert_atol = self.assert_atol if not defer_assertions else False
 
-        pccs, atols, passed_pcc, passed_atol = verify_against_golden(
+        pccs, atols, passed_pcc, passed_atol, atol_thresholds = verify_against_golden(
             golden_tensors,
             output_tensors,
             assert_pcc,
@@ -498,21 +501,36 @@ class ModelTester:
             (self.assert_pcc and not passed_pcc)
             or (self.assert_atol and not passed_atol)
         ):
+
+            required_or_relative_atol = (
+                (self.required_atol, "(ATOL)")
+                if self.required_atol is not None
+                else (self.relative_atol, "(RTOL)")
+            )
             err_parts = []
             if self.assert_pcc and not passed_pcc:
                 err_parts.append(
-                    f"PCC check failed. Required: {self.required_pcc}, Got lowest pcc {min(pccs) if pccs else 'N/A'}"
+                    f"PCC check failed. Required: {self.required_pcc}, Got lowest pcc {min(pccs) if pccs else 'N/A'}\nDetail:\n\t"
+                    + "\n\t".join(
+                        [
+                            f"output {i}:{pcc} [req > {self.required_pcc}]"
+                            for i, pcc in enumerate(pccs)
+                            if pcc < self.required_pcc
+                        ]
+                    )
                 )
             if self.assert_atol and not passed_atol:
-                atol_threshold = (
-                    self.required_atol
-                    if self.required_atol is not None
-                    else self.relative_atol
-                )
                 err_parts.append(
-                    f"ATOL check failed. Required: {atol_threshold}, Got highest atol {max(atols) if atols else 'N/A'}"
+                    f"ATOL check failed. Required: {required_or_relative_atol}, Got highest atol {max(atols) if atols else 'N/A'}\nDetail:\n\t"
+                    + "\n\t".join(
+                        [
+                            f"output {i}:{atol} [req < {atol_thresholds[i]}]"
+                            for i, atol in enumerate(atols)
+                            if atol > atol_thresholds[i]
+                        ]
+                    )
                 )
-            self.verification_failure_msg = "; ".join(err_parts)
+            self.verification_failure_msg = ";\n".join(err_parts)
 
         if passed_pcc and passed_atol:
             self.record_property("achieved_compile_depth", "PASSED")
