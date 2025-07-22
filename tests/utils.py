@@ -114,6 +114,7 @@ class ModelTester:
         model_name_suffix="",
         devices=None,
         data_parallel_mode=False,
+        backend="tt",
     ):
         """
         Initializes the ModelTester.
@@ -161,6 +162,11 @@ class ModelTester:
         model_group = str(model_group)
 
         self.data_parallel_mode = data_parallel_mode
+        if int(os.environ.get("TT_TORCH_FORCE_EXPERIMENTAL_BACKEND", False)):
+            self.backend = "tt-experimental"
+        else:
+            self.backend = backend
+
         self.framework_model = self._load_model()
         self.is_token_output = is_token_output
         if is_token_output and not hasattr(self, "tokenizer"):
@@ -212,6 +218,7 @@ class ModelTester:
 
         self.record_tag_cache = {}  # Holds for tags to be written out at finalize()
 
+        self.record_tag_cache["backend"] = self.backend
         self.record_property("model_name", model_name + model_name_suffix)
         self.record_property("frontend", "tt-torch")
         self.record_property("owner", "tt-torch")
@@ -341,10 +348,12 @@ class ModelTester:
         # compile forward pass for generative models, the model itself for discriminative
         if self.run_generate:
             model.forward = torch.compile(
-                model.forward, backend="tt", dynamic=False, options=options
+                model.forward, backend=self.backend, dynamic=False, options=options
             )
         else:
-            model = torch.compile(model, backend="tt", dynamic=False, options=options)
+            model = torch.compile(
+                model, backend=self.backend, dynamic=False, options=options
+            )
         self.compiled_models.append(model)
         return model
 
@@ -504,6 +513,9 @@ class ModelTester:
         ):
             return self._test_model_eval_op_by_op(on_device)
         if self.data_parallel_mode:
+            assert (
+                self.backend == "tt"
+            ), "Data parallel mode is not supported with XLA currently"
             outputs = self._test_model_eval_data_parallel(assert_eval_token_mismatch)
             assert len(outputs) == len(self.devices), "Num outputs != num devices"
             return outputs

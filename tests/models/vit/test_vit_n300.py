@@ -3,33 +3,25 @@
 # SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/google/vit-base-patch16-224
 
-from transformers import ViTImageProcessor, ViTForImageClassification
-from PIL import Image
+
 import pytest
 from tests.utils import ModelTester
 import torch
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.tools.utils import get_file
+from third_party.tt_forge_models.vit.pytorch.loader import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.processor = ViTImageProcessor.from_pretrained(
-            "google/vit-base-patch16-224", torch_dtype=torch.bfloat16
-        )
-        m = ViTForImageClassification.from_pretrained(
-            "google/vit-base-patch16-224", torch_dtype=torch.bfloat16
-        )
-        return m
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        # Load image
-        image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
-        image = Image.open(str(image_file))
-        # Prepare input
-        input = self.processor(images=([image] * 16), return_tensors="pt")
-        input["pixel_values"] = input["pixel_values"].to(torch.bfloat16)
-        return input
+        return self.loader.load_inputs(dtype_override=torch.bfloat16, batch_size=16)
+
+
+# Print available variants for reference
+available_variants = ModelLoader.query_available_variants()
+print("Available variants: ", [str(k) for k in available_variants.keys()])
 
 
 @pytest.mark.parametrize(
@@ -37,12 +29,16 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.parametrize(
+    "variant,variant_config",
+    available_variants.items(),
+    ids=[str(k) for k in available_variants.keys()],
+)
+@pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_vit(record_property, mode, op_by_op):
-    model_name = "ViT"
+def test_vit(record_property, mode, variant, variant_config, op_by_op):
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -55,9 +51,14 @@ def test_vit(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    loader = ModelLoader(variant=variant)
+    model_info = loader.get_model_info(variant=variant)
+
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
+        model_info=model_info,
         relative_atol=0.01,
         compiler_config=cc,
         record_property_handle=record_property,
@@ -68,13 +69,6 @@ def test_vit(record_property, mode, op_by_op):
 
     results = tester.test_model()
     if mode == "eval":
-        # Get the predicted class index
-        logits = results.logits
-        predicted_class_indicies = logits.argmax(-1)
-        predicted_class_list = predicted_class_indicies.tolist()
-
-        print("Predicted classes for the batch:")
-        for idx in predicted_class_list:
-            print(tester.framework_model.config.id2label[idx])
+        loader.post_processing(results)
 
     tester.finalize()

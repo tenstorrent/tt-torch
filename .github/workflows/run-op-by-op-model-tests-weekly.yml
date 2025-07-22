@@ -80,7 +80,7 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "mamba", tests: "
-              tests/models/mamba/test_mamba.py::test_mamba[op_by_op_torch-state-spaces/mamba-790m-hf-eval]
+              tests/models/mamba/test_mamba.py::test_mamba[op_by_op_torch-mamba-790m-hf-eval]
               "
           },
           {
@@ -214,7 +214,8 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "vit", tests: "
-              tests/models/vit/test_vit.py::test_vit[op_by_op_torch-eval]
+              tests/models/vit/test_vit.py::test_vit[op_by_op_torch-base-eval]
+              tests/models/vit/test_vit.py::test_vit[op_by_op_torch-large-eval]
               "
           },
           {

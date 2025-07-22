@@ -95,7 +95,8 @@ jobs:
           },
           {
             name: "xglm", tests: "
-              tests/models/xglm/test_xglm.py::test_xglm[op_by_op_torch-eval]
+              tests/models/xglm/test_xglm.py::test_xglm[op_by_op_torch-xglm-564M-eval]
+              tests/models/xglm/test_xglm.py::test_xglm[op_by_op_torch-xglm-1.7B-eval]
               "
           },
           {

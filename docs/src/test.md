@@ -90,6 +90,50 @@ y = torch.ones(5, 5)
 print(tt_model(x, y))
 ```
 
+# Testing With Experimental Flow
+
+We are experimenting with `torch-xla` as a method of capturing and executing PyTorch models. We plan to eventually use torch-xla as the main execution engine for tt-torch.
+
+### Experimental `torch.compile` Backend ("tt-experimental")
+
+```py
+import torch
+import tt_torch
+
+class AddTensors(torch.nn.Module):
+  def forward(self, x, y):
+    return x + y
+
+
+model = AddTensors()
+tt_model = torch.compile(model, backend="tt-experimental")
+
+x = torch.ones(5, 5)
+y = torch.ones(5, 5)
+print(tt_model(x, y))
+```
+
+### Experimental Eager Execution
+
+`torch-xla` allows us to execute PyTorch models eagerly using the `.to(device)` infrastructure.
+
+```py
+import torch
+import tt_torch
+
+class AddTensors(torch.nn.Module):
+  def forward(self, x, y):
+    return x + y
+
+
+model = AddTensors()
+model = model.to("xla")
+
+x = torch.ones(5, 5, device="xla")
+y = torch.ones(5, 5, device="xla")
+print(model(x, y).to("cpu"))
+```
+
 ## Model Zoo
 
 You can view our model zoo under [tests/models](https://github.com/tenstorrent/tt-torch/tree/main/tests/models)

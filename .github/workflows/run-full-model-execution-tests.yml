@@ -60,12 +60,12 @@ jobs:
           {
             name: "eval_1",
             tests: "
-              tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[full-eval]
               tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval]
               tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval]
               tests/models/yolov3/test_yolov3.py::test_yolov3[full-eval]
               tests/models/yolov4/test_yolov4.py::test_yolov4[full-eval]
               tests/models/vovnet/test_vovnet_onnx.py::test_vovnet_onnx[full-eval]
+              tests/models/llama/test_llama3_generative.py::test_llama3_generate
             "
           },
           {
@@ -146,7 +146,8 @@ jobs:
                 tests/models/MobileNetV2/test_MobileNetV2_n300.py::test_MobileNetV2[full-eval]
                 tests/models/EfficientNet/test_EfficientNet_n300.py::test_EfficientNet[full-efficientnet-b0-eval]
                 tests/models/yolov4/test_yolov4_n300.py::test_yolov4[full-eval]
-                tests/models/vit/test_vit_n300.py::test_vit[full-eval]
+                tests/models/vit/test_vit_n300.py::test_vit[full-base-eval]
+                tests/models/vit/test_vit_n300.py::test_vit[full-large-eval]
                 tests/models/segformer/test_segformer_n300.py::test_segformer[full-eval]
                 tests/models/hardnet/test_hardnet_n300.py::test_hardnet[full-eval]
               "

@@ -14,41 +14,93 @@ MAXIMUM_JOB_TIMEOUT_MINUTES = 500  # 500 minutes maximum per-job timeout
 DEFAULT_JOB_TIMEOUT_MINUTES = 120
 
 
-def enumerate_all_tests(filter_full_eval=True, test_dir="tests/models", dry_run=False):
-    print(f"Running pytest collect command: pytest {test_dir} --collect-only -q")
-    try:
-        # Run pytest with --collect-only and capture the output
-        # sudo apt install -y libgl1 libglx-mesa0 # (may be needed locally)
-        if dry_run:
-            return []
-        result = subprocess.run(
-            ["pytest", test_dir, "--collect-only", "-q"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-        )
-        # Check if pytest ran successfully
-        if result.returncode != 0:
-            raise RuntimeError(
-                f"pytest failed with\n\tstderr:\n{result.stderr}\n\tstdout:\n{result.stdout}"
+def enumerate_all_tests(filter_full_eval=True, test_dir="tests/models"):
+    # If test_dir is 'tests', collect from subdirectories to avoid test namespace conflicts
+    print("enumerating all tests in directory: ", test_dir)
+    if test_dir == "tests":
+        print(f"Collecting tests recursively from subdirectories of {test_dir}")
+        all_test_cases = []
+
+        try:
+            # Get all subdirectories in the test directory
+            subdirs = [
+                d
+                for d in os.listdir(test_dir)
+                if os.path.isdir(os.path.join(test_dir, d)) and not d.startswith(".")
+            ]
+            print("Collecting tests from subdirs")
+            for subdir in subdirs:
+                subdir_path = os.path.join(test_dir, subdir)
+                print(
+                    f"Running pytest collect command: pytest {subdir_path} --collect-only -q"
+                )
+
+                result = subprocess.run(
+                    ["pytest", subdir_path, "--collect-only", "-q"],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                )
+
+                # Check if pytest ran successfully for this subdirectory
+                if result.returncode != 0:
+                    print(f"Warning: pytest failed for {subdir_path}")
+                    print(f"stderr: {result.stderr}")
+                    print(f"stdout: {result.stdout}")
+                    continue
+
+                # Extract test names using a regex
+                test_cases = re.findall(r"(\S+::\S+)", result.stdout)
+                all_test_cases.extend(test_cases)
+                print(f"Found {len(test_cases)} tests in {subdir_path}")
+
+            print(f"Total tests found: {len(all_test_cases)}")
+
+            return (
+                [
+                    tc
+                    for tc in all_test_cases
+                    if "full" in tc and "eval" in tc and "data_parallel" not in tc
+                ]
+                if filter_full_eval
+                else all_test_cases
             )
 
-        # Extract test names using a regex
-        test_cases = re.findall(r"(\S+::\S+)", result.stdout)
+        except Exception as e:
+            print(f"Error during recursive collection: {e}")
+            return []
+    else:
+        # Original behavior for non-'tests' directories
+        print(f"Running pytest collect command: pytest {test_dir} --collect-only -q")
+        try:
+            result = subprocess.run(
+                ["pytest", test_dir, "--collect-only", "-q"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            # Check if pytest ran successfully
+            if result.returncode != 0:
+                raise RuntimeError(
+                    f"pytest failed with\n\tstderr:\n{result.stderr}\n\tstdout:\n{result.stdout}"
+                )
 
-        return (
-            [
-                tc
-                for tc in test_cases
-                if "full" in tc and "eval" in tc and "data_parallel" not in tc
-            ]
-            if filter_full_eval
-            else test_cases
-        )
+            # Extract test names using a regex
+            test_cases = re.findall(r"(\S+::\S+)", result.stdout)
 
-    except Exception as e:
-        print(f"Error: {e}")
-        return []
+            return (
+                [
+                    tc
+                    for tc in test_cases
+                    if "full" in tc and "eval" in tc and "data_parallel" not in tc
+                ]
+                if filter_full_eval
+                else test_cases
+            )
+
+        except Exception as e:
+            print(f"Error: {e}")
+            return []
 
 
 def generate_test_matrix(test_list):

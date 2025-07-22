@@ -51,6 +51,14 @@ def get_inputs_size(inputs):
     elif isinstance(inputs, dict):
         for item in inputs.values():
             total_size += get_inputs_size(item)
+    elif isinstance(inputs, (int, float)):
+        return 8
+    elif isinstance(inputs, bool):
+        return 1
+    elif isinstance(inputs, torch.dtype):
+        return 8
+    elif inputs is None:
+        return 0
     else:
         assert False, f"Unexpected input type: {type(inputs)}"
     return total_size

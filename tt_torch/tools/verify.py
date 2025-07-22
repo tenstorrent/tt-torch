@@ -3,8 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import onnx
-from onnxruntime import InferenceSession
-import numpy as np
+import os
 import tt_mlir
 from tt_torch.onnx_compile import compile_onnx
 from tt_torch.tools.utils import (
@@ -28,7 +27,13 @@ def compile_model(model, compiler_config, device, async_mode):
     torch_options.compiler_config = compiler_config
     torch_options.devices = [device]
     torch_options.async_mode = async_mode
-    return torch.compile(model, backend="tt", options=torch_options)
+
+    if int(os.environ.get("TT_TORCH_FORCE_EXPERIMENTAL_BACKEND", False)):
+        backend = "tt-experimental"
+    else:
+        backend = "tt"
+
+    return torch.compile(model, backend=backend, options=torch_options)
 
 
 def generate_inputs(input_shapes, input_data_types, input_range, input_range_int):
@@ -211,14 +216,15 @@ def _verify_torch_module(
 
     from tt_torch.dynamo.backend import backend  # avoid circular import
 
-    tt_mod = compile_model(mod, compiler_config, device, async_mode=False)
     if inputs is None:
         inputs = generate_inputs(
             input_shapes, input_data_types, input_range, input_range_int
         )
 
-    ret = tt_mod(*inputs)
     golden = mod(*inputs)
+    tt_mod = compile_model(mod, compiler_config, device, async_mode=False)
+
+    ret = tt_mod(*inputs)
 
     if isinstance(golden, torch.Tensor):
         golden = (golden,)
