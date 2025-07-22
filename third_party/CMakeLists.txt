@@ -121,7 +121,7 @@ else()
     install(DIRECTORY ${TORCH_MLIR_INSTALL_PREFIX}/python_packages/torch_mlir/torch_mlir DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
 
     # tt-forge-models - Python-only project, no need to build.
-    set(TT_FORGE_MODELS_VERSION "3c6a286193f2773b13024d4952aaa66f28ab6e52")
+    set(TT_FORGE_MODELS_VERSION "gengelage/issue-920-v4")
     ExternalProject_Add(
         tt_forge_models
         SOURCE_DIR ${TTTORCH_SOURCE_DIR}/third_party/tt_forge_models
