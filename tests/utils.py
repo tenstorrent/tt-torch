@@ -501,7 +501,7 @@ class ModelTester:
             err_parts = []
             if self.assert_pcc and not passed_pcc:
                 err_parts.append(
-                    f"PCC check failed. Required: {self.required_pcc}, Got: {min(pccs) if pccs else 'N/A'}"
+                    f"PCC check failed. Required: {self.required_pcc}, Got lowest pcc {min(pccs) if pccs else 'N/A'}"
                 )
             if self.assert_atol and not passed_atol:
                 atol_threshold = (
@@ -510,7 +510,7 @@ class ModelTester:
                     else self.relative_atol
                 )
                 err_parts.append(
-                    f"ATOL check failed. Required: {atol_threshold}, Got: {max(atols) if atols else 'N/A'}"
+                    f"ATOL check failed. Required: {atol_threshold}, Got highest atol {max(atols) if atols else 'N/A'}"
                 )
             self.verification_failure_msg = "; ".join(err_parts)
 
