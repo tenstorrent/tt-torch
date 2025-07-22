@@ -43,7 +43,7 @@ for root, dirs, files in os.walk(MODELS_ROOT):
         loader_paths[os.path.join(root, "loader.py")] = []
 
 
-def import_model_loader(loader_path):
+def import_model_loader_and_variant(loader_path):
     # Import the base module first to ensure it's available
     import sys
 
@@ -73,15 +73,25 @@ def import_model_loader(loader_path):
     # Add the module to sys.modules to support relative imports
     sys.modules[module_path] = mod
     spec.loader.exec_module(mod)
-    return mod.ModelLoader
+
+    # Find ModelVariant class in the module
+    ModelVariant = None
+    for name, obj in mod.__dict__.items():
+        if name == "ModelVariant":
+            ModelVariant = obj
+            break
+
+    return mod.ModelLoader, ModelVariant
 
 
 def get_model_variants(loader_path):
     try:
-        loader = import_model_loader(loader_path)
-        variants = loader.query_available_variants()
+        # Import both the ModelLoader and ModelVariant class from the same module
+        ModelLoader, ModelVariant = import_model_loader_and_variant(loader_path)
+        variants = ModelLoader.query_available_variants()
         for variant in variants.keys():
-            loader_paths[loader_path].append(variant)
+            # Store the variant, ModelLoader class, and ModelVariant class together
+            loader_paths[loader_path].append((variant, ModelLoader, ModelVariant))
 
     except Exception as e:
         print(f"Cannot import path: {loader_path}: {e}")
@@ -92,19 +102,25 @@ for path in loader_paths.keys():
 
 # Create test entries combining loader paths and variants
 test_entries = []
-for loader_path, variants in loader_paths.items():
-    if variants:  # Model has variants
-        for variant in variants:
-            test_entries.append({"path": loader_path, "variant": variant})
+
+# Store variant info along with the ModelLoader and ModelVariant classes
+for loader_path, variant_tuples in loader_paths.items():
+    if variant_tuples:  # Model has variants
+        for variant_tuple in variant_tuples:
+            # Each tuple contains (variant, ModelLoader, ModelVariant)
+            test_entries.append({"path": loader_path, "variant_info": variant_tuple})
     else:  # Model has no variants
-        test_entries.append({"path": loader_path, "variant": None})
+        test_entries.append({"path": loader_path, "variant_info": None})
 
 
 def generate_test_id(test_entry):
     """Generate test ID from test entry."""
     model_path = os.path.relpath(os.path.dirname(test_entry["path"]), MODELS_ROOT)
-    if test_entry["variant"]:
-        return f"{model_path}-{test_entry['variant']}"
+    variant_info = test_entry["variant_info"]
+
+    if variant_info:
+        variant, _, _ = variant_info  # Unpack the tuple to get just the variant
+        return f"{model_path}-{variant}"
     else:
         return model_path
 
@@ -163,8 +179,15 @@ def get_tester_params(test_entry, config):
 )
 def test_all_models(test_entry, mode, op_by_op, record_property):
     loader_path = test_entry["path"]
-    variant = test_entry["variant"]
-    ModelLoader = import_model_loader(loader_path)
+    variant_info = test_entry["variant_info"]
+
+    if variant_info:
+        # Unpack the tuple we stored earlier
+        variant, ModelLoader, ModelVariant = variant_info
+    else:
+        # For models without variants
+        ModelLoader, _ = import_model_loader_and_variant(loader_path)
+        variant = None
 
     class DynamicTester(ModelTester):
         def _load_model(self):
@@ -207,7 +230,13 @@ def test_all_models(test_entry, mode, op_by_op, record_property):
 
     rel_path = os.path.relpath(loader_path, MODELS_ROOT)
     model_rel_path = os.path.dirname(rel_path)
-    model_entry = model_rel_path + "-" + variant if variant else model_rel_path
+
+    # Convert variant enum to string before concatenation
+    variant_str = variant.value if variant else None
+    model_entry = model_rel_path + "-" + variant_str if variant_str else model_rel_path
+
+    print(f"Testing {model_entry}")
+    # pytest.skip("Early Exit")
 
     skip_test_msg = skip_test(model_entry, config["skip_models"])
     if skip_test_msg:
