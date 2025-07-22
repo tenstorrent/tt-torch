@@ -4,7 +4,6 @@
 import torch
 import time
 import operator
-import transformers
 
 from .xla_decompositions import (
     CUSTOM_DECOMPOSITION_TABLE,
@@ -640,9 +639,13 @@ class XLAExecutor:
             return type(inputs)(
                 [self.push_tensors_to_device(i, device) for i in inputs]
             )
-        elif isinstance(inputs, transformers.cache_utils.Cache):
-            inputs.key_cache = self.push_tensors_to_device(inputs.key_cache, device)
-            inputs.value_cache = self.push_tensors_to_device(inputs.value_cache, device)
+        elif hasattr(inputs, "key_cache") or hasattr(inputs, "value_cache"):
+            if hasattr(inputs, "key_cache"):
+                inputs.key_cache = self.push_tensors_to_device(inputs.key_cache, device)
+            if hasattr(inputs, "value_cache"):
+                inputs.value_cache = self.push_tensors_to_device(
+                    inputs.value_cache, device
+                )
             return inputs
         else:
             return inputs
