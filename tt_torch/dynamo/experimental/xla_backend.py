@@ -707,6 +707,8 @@ class XLAExecutor:
 
 @register_backend(name="tt-experimental")
 def xla_backend(gm, example_inputs, options: BackendOptions = None):
+    print("Note: Using experimental XLA backend.")
+
     if options is None:
         cc = CompilerConfig()
     else:
