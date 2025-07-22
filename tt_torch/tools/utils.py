@@ -325,7 +325,9 @@ class CompilerConfig:
         self.record_property = lambda *args, **kwargs: None  # Default to no-op
         self.runtime_intermediate_cache = None  # Do not serialize.
         self.save_mlir_override = None
+        self.dump_binary_json = False
         self.output_mlir_dir = "model_mlir"
+        self.output_json_dir = "model_json"
         self.valid_dialects = ["STABLEHLO", "TTIR", "TTNN"]
         self.device_map = {}
         self.apply_environment_overrides()
@@ -341,24 +343,33 @@ class CompilerConfig:
     @model_name.setter
     def model_name(self, value):
         self._model_name = value
-        if value and self.save_mlir_override:
-            self.cleanup_old_mlir_files()
+        if value and (self.save_mlir_override or self.dump_binary_json):
+            self.cleanup_old_files()
 
-    def cleanup_old_mlir_files(self):
+    def cleanup_old_files(self):
         try:
             sanitized_model_name = sanitize_filename(self._model_name)
             if not sanitized_model_name:
                 return
-            output_dir = self.output_mlir_dir
-            os.makedirs(output_dir, exist_ok=True)
-            for dialect in self.save_mlir_override:
+            if self.save_mlir_override:
+                output_dir = self.output_mlir_dir
+                os.makedirs(output_dir, exist_ok=True)
+                for dialect in self.save_mlir_override:
+                    filepath_to_remove = os.path.join(
+                        output_dir, f"{sanitized_model_name}_{dialect.lower()}.mlir"
+                    )
+                    if os.path.exists(filepath_to_remove):
+                        os.remove(filepath_to_remove)
+            if self.dump_binary_json:
+                output_dir = self.output_json_dir
+                os.makedirs(output_dir, exist_ok=True)
                 filepath_to_remove = os.path.join(
-                    output_dir, f"{sanitized_model_name}_{dialect.lower()}.mlir"
+                    output_dir, f"{sanitized_model_name}.json"
                 )
                 if os.path.exists(filepath_to_remove):
                     os.remove(filepath_to_remove)
         except Exception as e:
-            print(f"Error while cleaning up old MLIR files: {e}.")
+            print(f"Error while cleaning up old MLIR/ json files: {e}.")
 
     @property
     def verify_op_by_op(self):
@@ -448,6 +459,9 @@ class CompilerConfig:
                     print(
                         f"Warning: Invalid SAVE_MLIR value: {dialect}. Expected one or more of {valid_dialects} separated by commas."
                     )
+        dump_binary_json = os.environ.get("TT_TORCH_SAVE_BINARY_JSON")
+        if dump_binary_json and int(dump_binary_json):
+            self.dump_binary_json = True
 
     def post_init(self):
         if self.consteval_parameters:
