@@ -58,7 +58,7 @@ def test_bi_lstm_crf(record_property, variant, variant_config, mode, op_by_op):
         model_name,
         bringup_status="FAILED_FE_COMPILATION",
         reason="need 'aten::sort' torch-mlir -> stablehlo + mlir support: failed to legalize operation 'torch.constant.bool' - https://github.com/tenstorrent/tt-torch/issues/724",
-        model_group=model_info.model_group,
+        model_group=model_info.group.value,
     )
 
     tester = ThisTester(
@@ -69,7 +69,7 @@ def test_bi_lstm_crf(record_property, variant, variant_config, mode, op_by_op):
         relative_atol=0.01,
         compiler_config=cc,
         record_property_handle=record_property,
-        model_group=model_info.model_group,
+        model_group=model_info.group.value,
     )
 
     results = tester.test_model()
