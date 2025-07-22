@@ -65,7 +65,6 @@ def test_bi_lstm_crf(record_property, variant, variant_config, mode, op_by_op):
         model_name,
         mode,
         loader=loader,
-        rnn_type=rnn_type,
         relative_atol=0.01,
         compiler_config=cc,
         record_property_handle=record_property,
