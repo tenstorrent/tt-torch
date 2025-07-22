@@ -12,7 +12,9 @@ from third_party.tt_forge_models.d_fine.pytorch import ModelLoader
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        return self.loader.load_model(dtype_override=torch.bfloat16)
+        model = self.loader.load_model(dtype_override=torch.bfloat16)
+        self.processor = self.loader.processor
+        return model
 
     def _load_inputs(self):
         return self.loader.load_inputs(dtype_override=torch.bfloat16)
