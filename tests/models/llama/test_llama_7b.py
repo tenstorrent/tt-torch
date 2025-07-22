@@ -4,37 +4,22 @@
 import torch
 import pytest
 
-# Load model directly
-from transformers import AutoTokenizer, AutoModelForCausalLM
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.llama.llama_7b.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        # Download model from cloud
-        model_name = "huggyllama/llama-7b"
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            model_name, padding_side="left", torch_dtype=torch.bfloat16
-        )
-        self.tokenizer.pad_token = self.tokenizer.eos_token
-        m = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.bfloat16)
-        for param in m.parameters():
-            param.requires_grad = False
-        return m
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        # Set up sample input
-        self.test_input = "This is a sample text from "
-        inputs = self.tokenizer.encode_plus(
-            self.test_input,
-            return_tensors="pt",
-            max_length=32,
-            padding="max_length",
-            add_special_tokens=True,
-            truncation=True,
-        )
-        return inputs
+        return self.loader.load_inputs(dtype_override=torch.bfloat16)
+
+
+# Print available variants for reference
+available_variants = ModelLoader.query_available_variants()
+print("Available variants: ", [str(k) for k in available_variants.keys()])
 
 
 @pytest.mark.parametrize(
@@ -47,8 +32,6 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_llama_7b(record_property, mode, op_by_op):
-    model_name = "Llama"
-
     cc = CompilerConfig()
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
@@ -58,28 +41,31 @@ def test_llama_7b(record_property, mode, op_by_op):
     if op_by_op is None and cc.compile_depth == CompileDepth.EXECUTE:
         pytest.skip("Model is too large to fit on single device during execution.")
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
         assert_pcc=False,
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
     )
+
     results = tester.test_model()
     if mode == "eval":
-        # Helper function to decode output to human-readable text
-        def decode_output(outputs):
-            next_token_logits = outputs.logits[:, -1]
-            next_token = next_token_logits.softmax(dim=-1).argmax()
-            return tester.tokenizer.decode([next_token])
+        # Use loader's decode_output method
+        decoded_output = loader.decode_output(results, dtype_override=torch.bfloat16)
 
-        decoded_output = decode_output(results)
+        # Get test input from loader for display
+        test_input = "This is a sample text from "  # Same as loader default
 
         print(
             f"""
-        model_name: {model_name}
-        input: {tester.test_input}
+        model_name: {model_info.name}
+        input: {test_input}
         output before: {decoded_output}
         """
         )
