@@ -129,7 +129,7 @@ jobs:
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-full-eval-dla34.in1k]
                   tests/models/yolov5/test_yolov5.py::test_yolov5[full-eval]
                   tests/models/albert/test_albert_question_answering.py::test_albert_question_answering[full-twmkn9/albert-base-v2-squad2-eval]
-                  tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-1-eval]
+                  tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-1-eval]
                   tests/models/clip/test_clip.py::test_clip[full-eval]
                   tests/models/gpt2/test_gpt2.py::test_gpt2[full-eval]
                   tests/models/gpt_neo/test_gpt_neo.py::test_gpt_neo[full-eval]
@@ -150,7 +150,7 @@ jobs:
           {
             # Approximately 65 minutes.
             wh-runner: wormhole_b0, bh-runner: p150, name: "eval_3", tests: "
-                  tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-1.5-eval]
+                  tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-1_5-eval]
                   tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-1B-Base-eval]
                   tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-1B-Instruct-eval]
             "

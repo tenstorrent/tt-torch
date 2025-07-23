@@ -207,9 +207,9 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "phi", tests: "
-              tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-1-eval]
-              tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-1.5-eval]
-              tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-microsoft/phi-2-eval]
+              tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-1-eval]
+              tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-1_5-eval]
+              tests/models/phi/test_phi_1_1p5_2.py::test_phi[op_by_op_torch-2-eval]
               "
           },
           {
