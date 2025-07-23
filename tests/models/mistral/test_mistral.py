@@ -6,30 +6,20 @@ import pytest
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.mistral.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            self.model_name, padding_side="left", torch_dtype=torch.bfloat16
-        )
-        m = AutoModelForCausalLM.from_pretrained(
-            self.model_name, torch_dtype=torch.bfloat16
-        )
-        return m
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        # Set up sample input
-        self.test_input = "How often does the letter r occur in Mistral?"
-        inputs = self.tokenizer.encode_plus(self.test_input, return_tensors="pt")
-        return inputs
+        return self.loader.load_inputs()
 
 
-model_info_list = [
-    ("mistral7b", "mistralai/Mistral-7B-v0.1"),
-    ("ministral8b", "mistralai/Ministral-8B-Instruct-2410"),
-    ("ministral3b", "ministral/Ministral-3b-instruct"),
-]
+# Print available variants for reference
+available_variants = ModelLoader.query_available_variants()
+print("Available variants: ", [str(k) for k in available_variants.keys()])
 
 
 @pytest.mark.parametrize(
@@ -37,18 +27,20 @@ model_info_list = [
     ["eval"],
 )
 @pytest.mark.parametrize(
-    "model_info",
-    model_info_list,
-    ids=[model_info[0] for model_info in model_info_list],
+    "variant,variant_config",
+    available_variants.items(),
+    ids=[str(k) for k in available_variants.keys()],
 )
 @pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_mistral(record_property, model_info, mode, op_by_op):
-    __, model_name = model_info
-    model_group = "red"
+def test_mistral(record_property, variant, variant_config, mode, op_by_op):
+    loader = ModelLoader(variant=variant)
+    model_info = loader.get_model_info(variant=variant)
+    model_name = model_info.name
+    model_group = model_info.group.value
 
     cc = CompilerConfig()
     if op_by_op:
@@ -64,8 +56,8 @@ def test_mistral(record_property, model_info, mode, op_by_op):
         reason="Model is too large to fit on single device during execution.",
         model_group=model_group,
         model_name_filter=[
-            "mistralai/Mistral-7B-v0.1",
-            "mistralai/Ministral-8B-Instruct-2410",
+            "7b",
+            "ministral_8b_instruct",
         ],
     )
 
@@ -73,6 +65,7 @@ def test_mistral(record_property, model_info, mode, op_by_op):
     tester = ThisTester(
         model_name,
         mode,
+        loader=loader,
         compiler_config=cc,
         record_property_handle=record_property,
         assert_atol=False,

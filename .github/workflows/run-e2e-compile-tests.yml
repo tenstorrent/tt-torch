@@ -57,8 +57,8 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-googlenet]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-full-eval-ghostnetv2_100.in1k]
                   tests/models/mistral/test_pixtral.py::test_pixtral[full-eval]
-                  tests/models/mistral/test_mistral.py::test_mistral[full-mistral7b-eval]
-                  tests/models/mistral/test_mistral.py::test_mistral[full-ministral8b-eval]
+                  tests/models/mistral/test_mistral.py::test_mistral[full-7b-eval]
+                  tests/models/mistral/test_mistral.py::test_mistral[full-ministral_8b_instruct-eval]
             "
           },
         ]

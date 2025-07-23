@@ -230,7 +230,7 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "mistral", tests: "
-              tests/models/mistral/test_mistral.py::test_mistral[op_by_op_torch-ministral3b-eval]
+              tests/models/mistral/test_mistral.py::test_mistral[op_by_op_torch-ministral_3b_instruct-eval]
               "
           },
           {
