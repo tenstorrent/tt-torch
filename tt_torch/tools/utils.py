@@ -70,6 +70,28 @@ class OpByOpBackend(Enum):
     STABLEHLO = 2
 
 
+class ModelMetadata:
+    def __init__(
+        self,
+        variant_name=None,
+        model_info=None,
+        variant_config=None,
+        loader=None,
+        compile_depth=CompileDepth.EXECUTE,
+        op_by_op_backend=OpByOpBackend.TORCH,
+        assert_pcc=False,
+        assert_atol=False,
+    ):
+        self.variant_name = variant_name
+        self.model_info = model_info
+        self.variant_config = variant_config
+        self.loader = loader
+        self.compile_depth = compile_depth
+        self.op_by_op_backend = op_by_op_backend
+        self.assert_pcc = assert_pcc
+        self.assert_atol = assert_atol
+
+
 class IOType(Enum):
     INTER_DEVICE = 1
     USER = 2
@@ -1006,3 +1028,69 @@ def get_output_types_from_program(program):
                 _extract_tensor_metadata(node_arg, output_dtypes, output_shapes)
 
     return output_dtypes, output_shapes
+
+
+def construct_metadata_from_variants(model_loader_class, override_variants=None):
+    """
+    General utility to construct ModelMetadata objects from forge model variants.
+
+    Args:
+        model_loader_class: The ModelLoader CLASS (not instance)
+        override_variants: Dict mapping variant names to ModelMetadata objects with test-specific overrides
+
+    Returns:
+        tuple: (list of ModelMetadata objects, list of variant names)
+    """
+    if override_variants is None:
+        override_variants = {}
+
+    # Call class methods on the CLASS, not an instance
+    available_variants = model_loader_class.query_available_variants()
+
+    metadata_list = []
+
+    # No available variants means only base variant exists
+    if not available_variants:
+        if "base" in override_variants:
+            # If base variant is overridden, return it
+            metadata = override_variants["base"]
+            # metadata.variant_config = None
+            metadata.loader = model_loader_class(variant=None)
+            metadata.model_info = model_loader_class.get_model_info(variant=None)
+            metadata_list.append(metadata)
+        else:
+            model_info = model_loader_class.get_model_info(variant=None)
+            metadata = ModelMetadata(
+                variant_name="base",
+                # variant_config=None,
+                model_info=model_info,
+                loader=model_loader_class(variant=None),  # Create instance
+            )
+            metadata_list.append(metadata)
+
+        return metadata_list, ["base"]
+
+    for variant_name, variant_config in available_variants.items():
+        if variant_name in override_variants:
+            # Get the override metadata and embed the forge model info
+            metadata = override_variants[variant_name]
+            metadata.variant_config = variant_config
+            # Create an INSTANCE of ModelLoader the class for this variant
+            metadata.loader = model_loader_class(variant=variant_name)
+            # Call class method to get model info
+            metadata.model_info = model_loader_class.get_model_info(
+                variant=variant_name
+            )
+            metadata_list.append(metadata)
+        else:
+            # Create default metadata with forge model info embedded
+            model_info = model_loader_class.get_model_info(variant=variant_name)
+            metadata = ModelMetadata(
+                variant_name=variant_name,
+                variant_config=variant_config,
+                model_info=model_info,
+                loader=model_loader_class(variant=variant_name),  # Create instance
+            )
+            metadata_list.append(metadata)
+
+    return metadata_list, list(available_variants.keys())
