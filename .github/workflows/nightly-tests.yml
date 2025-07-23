@@ -9,7 +9,7 @@ on:
     inputs:
       use-shared-runners:
         description: 'Use shared runners instead of custom runners'
-        required: false
+        required: true
         default: true
         type: boolean
 
