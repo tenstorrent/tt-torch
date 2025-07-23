@@ -613,6 +613,7 @@ class XLAExecutor:
         self.program = program
         self.compiler_config = compiler_config
         self.arg_type_map_str = None
+        self.called_once = False
 
         self.inputs = []
         self.user_input_indices = []
@@ -623,10 +624,13 @@ class XLAExecutor:
             else:
                 self.inputs.append(self.program.state_dict[input_spec.target].to("xla"))
 
-    def push_tensors_to_device(self, inputs, device):
+    def push_tensors_to_device(self, inputs, device, dtype=None):
         if hasattr(inputs, "to"):
             if device not in [inputs.device, inputs.device.type]:
-                return inputs.to(device)
+                if dtype is not None:
+                    return inputs.to(device).to(dtype)
+                else:
+                    return inputs.to(device)
             else:
                 return inputs
         elif isinstance(
@@ -650,7 +654,7 @@ class XLAExecutor:
         else:
             return inputs
 
-    def generate_arg_type_map_str(self, output_object):
+    def generate_arg_type_map_str(self, output_object, _flat_input_args):
         hlo_input_ids, _ = torch_xla._XLAC._get_tensors_xla_device_data_node(
             output_object
         )
@@ -668,21 +672,39 @@ class XLAExecutor:
                 return "constant"
 
         arg_types = []
+
+        input_ids = {}
+        num_non_inputs = 0
+        for i, (tensor, input_spec) in enumerate(
+            zip(_flat_input_args, self.program.graph_signature.input_specs)
+        ):
+            tensor_id = torch_xla._XLAC._xla_get_tensor_id(tensor)
+            if input_spec.kind == InputKind.USER_INPUT:
+                input_position = i - num_non_inputs
+                input_ids[tensor_id] = input_position
+            else:
+                num_non_inputs += 1
+
         output_args = [o.arg for o in self.program.graph_signature.output_specs]
-        for idx in range(len(hlo_input_positions)):
-            if hlo_input_positions[idx] < len(self.program.graph_signature.input_specs):
-                in_spec = self.program.graph_signature.input_specs[
-                    hlo_input_positions[idx]
-                ]
-
-                # If an input is passed right through to the output, it will not be
-                # captured as an argument
-                if in_spec.arg in output_args:
-                    continue
-
-                arg_types.append(get_kind_str(in_spec.kind))
+        for idx, tensor_id in enumerate(hlo_input_ids):
+            if tensor_id in input_ids:
+                arg_types.append("input")
             else:
                 arg_types.append("constant")
+
+            # if hlo_input_positions[idx] < len(self.program.graph_signature.input_specs):
+            #     in_spec = self.program.graph_signature.input_specs[
+            #         hlo_input_positions[idx]
+            #     ]
+
+            #     # If an input is passed right through to the output, it will not be
+            #     # captured as an argument
+            #     if in_spec.arg in output_args:
+            #         continue
+
+            #     arg_types.append(get_kind_str(in_spec.kind))
+            # else:
+            #     arg_types.append("constant")
 
         self.arg_type_map_str = "main=" + ",".join(arg_types)
 
@@ -701,6 +723,7 @@ class XLAExecutor:
                 os.environ["ARG_TYPE_MAP_OVERRIDE"] = self.arg_type_map_str
 
         xm.mark_step()
+
         if self.compiler_config.push_outputs_to_cpu:
             return self.push_tensors_to_device(output, "cpu")
         return output

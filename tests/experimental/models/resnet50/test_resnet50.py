@@ -2,11 +2,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import torch
+import torch_xla
 import torchvision.models as models
 from PIL import Image
 
 import pytest
 from tests.utils import ModelTester
+from tt_torch.dynamo.backend import BackendOptions
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from third_party.tt_forge_models.tools.utils import get_file
 
@@ -47,6 +49,7 @@ def test_resnet(record_property, op_by_op):
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    cc.push_outputs_to_cpu = False
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
@@ -76,6 +79,68 @@ def test_resnet(record_property, op_by_op):
     ModelTester.print_outputs(results, False, print_result)
 
     tester.finalize()
+
+
+import time
+
+
+def test_resnet_perf():
+    weights = models.ResNet50_Weights.DEFAULT
+    model = models.resnet50(weights=weights)
+    model = model.to(torch.bfloat16).eval()
+
+    preprocess = weights.transforms()
+
+    # Load and preprocess the image
+    image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
+    image = Image.open(str(image_file))
+    img_t = preprocess(image)
+    batch_t = torch.unsqueeze(img_t, 0)
+    batch_t = batch_t.to(torch.bfloat16)
+
+    cpu_result = model(batch_t)
+
+    cc = CompilerConfig()
+    cc.enable_consteval = True
+    cc.consteval_parameters = True
+    cc.push_outputs_to_cpu = False
+    options = BackendOptions(compiler_config=cc)
+    # Push model and input to device
+    with torch.inference_mode():
+        model = torch.compile(model, backend="tt-experimental", options=options)
+        print("Beginning compile kernels (1st iteration)")
+        tt_result = model(batch_t)
+        tt_result = tt_result.to("cpu")  # Blocks
+
+        print("Finished compile kernels")
+
+        num_inference_calls = 500
+        results = [None] * num_inference_calls
+        print(f"Beginning {num_inference_calls} inference calls")
+        start = time.time()
+        for i in range(num_inference_calls):
+            results[i] = model(batch_t)
+
+        for i in range(num_inference_calls):
+            results[i] = results[i].to("cpu")
+        end = time.time()
+
+        print(
+            f"Time taken: {end - start} seconds. FPS: {num_inference_calls / (end - start)}"
+        )
+
+    # for tt_result in results:
+    _, tt_indices = torch.topk(results[-1], 5)
+    print(f"Top 5 predictions on TT device: {tt_indices[0].tolist()}")
+
+    _, cpu_indices = torch.topk(cpu_result, 5)
+    print(f"Top 5 predictions on CPU device: {cpu_indices[0].tolist()}")
+
+    # for i in range(num_inference_calls):
+    #     print(f"Time waiting for {i} = {time_waiting[i]}")
+
+    pcc = calculate_pcc(tt_result, cpu_result)
+    assert pcc >= 0.98, f"Failed with pcc {pcc}"
 
 
 def test_resnet_eager():
