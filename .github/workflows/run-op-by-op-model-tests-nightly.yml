@@ -126,8 +126,8 @@ jobs:
           {
 
             runs-on: wormhole_b0, name: "mistral", tests: "
-              tests/models/mistral/test_mistral.py::test_mistral[op_by_op_torch-mistral7b-eval]
-              tests/models/mistral/test_mistral.py::test_mistral[op_by_op_torch-ministral8b-eval]
+              tests/models/mistral/test_mistral.py::test_mistral[op_by_op_torch-7b-eval]
+              tests/models/mistral/test_mistral.py::test_mistral[op_by_op_torch-ministral_8b_instruct-eval]
               "
           },
           {
