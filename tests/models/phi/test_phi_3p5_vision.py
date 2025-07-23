@@ -3,49 +3,20 @@
 # SPDX-License-Identifier: Apache-2.0
 # Phi-3.5-vision: https://huggingface.co/microsoft/Phi-3.5-vision-instruct
 
+import torch
 import pytest
-import requests
 
-from transformers import AutoProcessor, AutoModelForCausalLM
 from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from PIL import Image
-from io import BytesIO
+from third_party.tt_forge_models.phi.phi_3_5_vision.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.processor = AutoProcessor.from_pretrained(
-            self.model_name, trust_remote_code=True
-        )
-        self.tokenizer = self.processor.tokenizer
-        self.model = AutoModelForCausalLM.from_pretrained(
-            self.model_name, trust_remote_code=True, _attn_implementation="eager"
-        )
-
-        return self.model
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        image_url = "https://cdn.britannica.com/61/93061-050-99147DCE/Statue-of-Liberty-Island-New-York-Bay.jpg"
-        image = Image.open(BytesIO(requests.get(image_url).content))
-        self.messages = [
-            {"role": "user", "content": "<|image_1|>\nWhat is this image about?"},
-        ]
-
-        prompt = self.tokenizer.apply_chat_template(
-            self.messages, tokenize=False, add_generation_prompt=True
-        )
-        self.inputs = self.processor(prompt, [image], return_tensors="pt").to(
-            self.model.device
-        )
-        arguments = {
-            **self.inputs,
-            "use_cache": False,
-            "max_new_tokens": 20,
-            "do_sample": False,
-            "pad_token_id": self.tokenizer.eos_token_id,
-        }
-        return arguments
+        return self.loader.load_inputs()
 
 
 @pytest.mark.parametrize(
@@ -53,18 +24,16 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.parametrize(
-    "model_name",
-    [
-        "microsoft/Phi-3.5-vision-instruct",
-    ],
-)
-@pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_phi_3p5_vision(record_property, model_name, mode, op_by_op):
-    model_group = "red"
+def test_phi_3p5_vision(record_property, mode, op_by_op):
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+    model_name = model_info.name
+    model_group = model_info.group.value
+
     cc = CompilerConfig()
     cc.enable_consteval = True
 
@@ -85,6 +54,8 @@ def test_phi_3p5_vision(record_property, model_name, mode, op_by_op):
     tester = ThisTester(
         model_name,
         mode,
+        loader=loader,
+        model_info=model_info,
         compiler_config=cc,
         record_property_handle=record_property,
         is_token_output=True,
@@ -95,13 +66,22 @@ def test_phi_3p5_vision(record_property, model_name, mode, op_by_op):
     results = tester.test_model(assert_eval_token_mismatch=False)
 
     if mode == "eval":
-        decoded_output = tester.processor.batch_decode(
-            results[:, tester.inputs["input_ids"].shape[1] :], skip_special_tokens=True
-        )[0]
+        # Get input length for proper slicing
+        test_inputs = loader.load_inputs()
+        input_length = test_inputs["input_ids"].shape[1]
+
+        # Use loader's decode_output method
+        decoded_output = loader.decode_output(results, input_length=input_length)
+
+        # Get test input from loader for display
+        test_input = [
+            {"role": "user", "content": "<|image_1|>\nWhat is this image about?"},
+        ]
+
         print(
             f"""
         model_name: {model_name}
-        input: {tester.messages}
+        input: {test_input}
         output: {decoded_output}
         """
         )
