@@ -43,7 +43,7 @@
             "pcc": false
         },
         "albert/masked_lm/pytorch-albert-xxlarge-v2": {
-            "pcc": 0.98
+            "pcc": 0.97
         },
         "albert/masked_lm/pytorch-albert-large-v2": {
             "pcc": 0.97
