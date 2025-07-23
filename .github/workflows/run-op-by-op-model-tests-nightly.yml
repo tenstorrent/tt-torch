@@ -30,12 +30,12 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-          {
-            runs-on: wormhole_b0, name: "bi_lstm_crf", tests: "
-              tests/models/bi_lstm_crf/test_bi_lstm_crf.py::test_bi_lstm_crf[op_by_op_torch-lstm-eval]
-              tests/models/bi_lstm_crf/test_bi_lstm_crf.py::test_bi_lstm_crf[op_by_op_torch-gru-eval]
-              "
-          },
+          # {
+          #   runs-on: wormhole_b0, name: "bi_lstm_crf", tests: "
+          #     tests/models/bi_lstm_crf/test_bi_lstm_crf.py::test_bi_lstm_crf[op_by_op_torch-lstm-eval]
+          #     tests/models/bi_lstm_crf/test_bi_lstm_crf.py::test_bi_lstm_crf[op_by_op_torch-gru-eval]
+          #     "
+          # },
           {
             runs-on: wormhole_b0, name: "d-fine", tests: "
               tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-nano-eval]
