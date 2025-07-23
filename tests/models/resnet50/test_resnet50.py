@@ -1,36 +1,21 @@
-# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+# SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-import torch
-import torchvision.models as models
-from torchvision import transforms
-from PIL import Image
 
+import torch
 import pytest
+
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.tools.utils import get_file
+from third_party.tt_forge_models.resnet.resnet_50_tv.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        # Load the ResNet-50 model with updated API
-        self.weights = models.ResNet50_Weights.DEFAULT
-        model = models.resnet50(weights=self.weights)
-        model = model.to(torch.bfloat16)
-        return model
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        # Define a transformation to preprocess the input image using the weights transforms
-        preprocess = self.weights.transforms()
-
-        # Load and preprocess the image
-        image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
-        image = Image.open(str(image_file))
-        img_t = preprocess(image)
-        batch_t = torch.unsqueeze(img_t, 0)
-        batch_t = batch_t.to(torch.bfloat16)
-        return batch_t
+        return self.loader.load_inputs(dtype_override=torch.bfloat16)
 
 
 @pytest.mark.parametrize(
@@ -48,7 +33,11 @@ class ThisTester(ModelTester):
 def test_resnet(record_property, mode, op_by_op, data_parallel_mode):
     if mode == "train":
         pytest.skip()
-    model_name = "ResNet50"
+
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+    model_name = model_info.name
+    model_group = model_info.group.value
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -66,6 +55,7 @@ def test_resnet(record_property, mode, op_by_op, data_parallel_mode):
     tester = ThisTester(
         model_name,
         mode,
+        loader=loader,
         required_atol=0.03,
         required_pcc=required_pcc,
         compiler_config=cc,
@@ -73,6 +63,7 @@ def test_resnet(record_property, mode, op_by_op, data_parallel_mode):
         assert_atol=False,
         record_property_handle=record_property,
         data_parallel_mode=data_parallel_mode,
+        model_group=model_group,
     )
 
     results = tester.test_model()
@@ -84,6 +75,10 @@ def test_resnet(record_property, mode, op_by_op, data_parallel_mode):
     if mode == "eval":
         ModelTester.print_outputs(results, data_parallel_mode, print_result)
 
+        # Use loader's decode_output method for additional info
+        decoded_output = loader.decode_output(results)
+        print(decoded_output)
+
     tester.finalize()
 
 
@@ -94,4 +89,6 @@ def empty_record_property(a, b):
 
 # Run pytorch implementation
 if __name__ == "__main__":
-    test_resnet(empty_record_property)
+    test_resnet(
+        empty_record_property, ModelLoader.ModelVariant.TV, {}, "eval", None, False
+    )
