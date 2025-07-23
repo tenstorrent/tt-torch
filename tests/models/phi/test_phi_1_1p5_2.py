@@ -8,29 +8,22 @@
 import torch
 import pytest
 
-from transformers import AutoTokenizer, AutoModelForCausalLM
 from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.phi.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            self.model_name, torch_dtype=torch.bfloat16
-        )
-        model = AutoModelForCausalLM.from_pretrained(self.model_name)
-        return model
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        input_str = '''def print_prime(n):
-                        """
-                        Print all primes between 1 and n
-                        """'''
-        self.test_input = input_str
-        inputs = self.tokenizer(
-            input_str, return_tensors="pt", return_attention_mask=False
-        )
-        return inputs
+        return self.loader.load_inputs()
+
+
+# Print available variants for reference
+available_variants = ModelLoader.query_available_variants()
+print("Available variants: ", [str(k) for k in available_variants.keys()])
 
 
 @pytest.mark.parametrize(
@@ -38,15 +31,21 @@ class ThisTester(ModelTester):
     ["eval"],
 )
 @pytest.mark.parametrize(
-    "model_name", ["microsoft/phi-1", "microsoft/phi-1.5", "microsoft/phi-2"]
+    "variant,variant_config",
+    available_variants.items(),
+    ids=[str(k) for k in available_variants.keys()],
 )
 @pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_phi(record_property, model_name, mode, op_by_op):
-    model_group = "red"
+def test_phi(record_property, variant, variant_config, mode, op_by_op):
+    loader = ModelLoader(variant=variant)
+    model_info = loader.get_model_info(variant=variant)
+    model_name = model_info.name
+    model_group = model_info.group.value
+
     cc = CompilerConfig()
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
@@ -56,11 +55,12 @@ def test_phi(record_property, model_name, mode, op_by_op):
     tester = ThisTester(
         model_name,
         mode,
+        loader=loader,
         compiler_config=cc,
         record_property_handle=record_property,
         model_group=model_group,
         required_pcc=0.85
-        if model_name == "microsoft/phi-1"
+        if variant.value == "1"
         else 0.92,  # PCC drop observed around Jul 17, follow up in https://github.com/tenstorrent/tt-torch/issues/1070
         run_generate=False,
         assert_atol=False,
@@ -69,15 +69,19 @@ def test_phi(record_property, model_name, mode, op_by_op):
     results = tester.test_model()
 
     if mode == "eval":
-        logits = results.logits if hasattr(results, "logits") else results[0]
-        next_token_id = torch.argmax(logits[:, -1, :], dim=-1)
-        input_ids = tester._load_inputs()["input_ids"]
-        output_ids = torch.cat([input_ids, next_token_id.unsqueeze(-1)], dim=-1)
-        decoded_output = tester.tokenizer.decode(output_ids[0])
+        # Use loader's decode_output method
+        decoded_output = loader.decode_output(results, dtype_override=torch.bfloat16)
+
+        # Get test input from loader for display
+        test_input = '''def print_prime(n):
+                        """
+                        Print all primes between 1 and n
+                        """'''
+
         print(
             f"""
         model_name: {model_name}
-        input: {tester.test_input}
+        input: {test_input}
         output: {decoded_output}
         """
         )
