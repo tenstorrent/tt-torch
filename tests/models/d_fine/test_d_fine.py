@@ -12,9 +12,7 @@ from third_party.tt_forge_models.d_fine.pytorch import ModelLoader
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model = self.loader.load_model(dtype_override=torch.bfloat16)
-        self.processor = self.loader.processor
-        return model
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
         return self.loader.load_inputs(dtype_override=torch.bfloat16)
@@ -71,17 +69,6 @@ def test_d_fine(record_property, variant, variant_config, mode, op_by_op):
     results = tester.test_model()
 
     if mode == "eval":
-        results = loader.processor.post_process_object_detection(
-            results,
-            target_sizes=[(loader.image.height, loader.image.width)],
-            threshold=0.5,
-        )
-        for result in results:
-            for score, label_id, box in zip(
-                result["scores"], result["labels"], result["boxes"]
-            ):
-                score, label = score.item(), label_id.item()
-                box = [round(i, 2) for i in box.tolist()]
-                print(f"{tester.model.config.id2label[label]}: {score:.2f} {box}")
+        loader.decode_output(results)
 
     tester.finalize()
