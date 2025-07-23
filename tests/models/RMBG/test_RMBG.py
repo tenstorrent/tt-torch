@@ -1,38 +1,21 @@
-# SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
+# SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from PIL import Image
 import torch
 import pytest
-from torchvision import transforms
-from transformers import AutoModelForImageSegmentation
+
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.tools.utils import get_file
+from third_party.tt_forge_models.rmbg.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model = AutoModelForImageSegmentation.from_pretrained(
-            "briaai/RMBG-2.0", torch_dtype=torch.bfloat16, trust_remote_code=True
-        )
-        torch.set_float32_matmul_precision(["high", "highest"][0])
-        image_size = (1024, 1024)
-        self.transform_image = transforms.Compose(
-            [
-                transforms.Resize(image_size),
-                transforms.ToTensor(),
-                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-            ]
-        )
-        return model
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
-        self.image = Image.open(str(image_file))
-        inputs = self.transform_image(self.image).unsqueeze(0).to(dtype=torch.bfloat16)
-        return inputs
+        return self.loader.load_inputs(dtype_override=torch.bfloat16)
 
 
 @pytest.mark.parametrize(
@@ -47,7 +30,11 @@ class ThisTester(ModelTester):
 def test_RMBG(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
-    model_name = "RMBG"
+
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+    model_name = model_info.name
+    model_group = model_info.group.value
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -58,18 +45,29 @@ def test_RMBG(record_property, mode, op_by_op):
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     tester = ThisTester(
-        model_name, mode, compiler_config=cc, record_property_handle=record_property
+        model_name,
+        mode,
+        loader=loader,
+        model_info=model_info,
+        compiler_config=cc,
+        record_property_handle=record_property,
+        model_group=model_group,
     )
 
     with torch.no_grad():
         results = tester.test_model()
+
     if mode == "eval":
-        predictions = results[-1].sigmoid()
-        pred = predictions[0].squeeze()
-        pred = pred.to(torch.float32)
-        pred_pil = transforms.ToPILImage()(pred)
-        mask = pred_pil.resize(tester.image.size)
-        tester.image.putalpha(mask)
-        tester.image.save("no_bg_image.png")
+        # Use loader's decode_output method to process and save result
+        decoded_output = loader.decode_output(
+            results, save_image=True, output_path="rmbg_output_image.png"
+        )
+
+        print(
+            f"""
+        model_name: {model_name}
+        {decoded_output}
+        """
+        )
 
     tester.finalize()
