@@ -11,8 +11,6 @@ from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from third_party.tt_forge_models.tools.utils import get_file
 
-dependencies = ["timm==1.0.9"]
-
 
 class ThisTester(ModelTester):
     def _load_model(self):
@@ -60,7 +58,6 @@ model_list = [
 ]
 
 
-@pytest.mark.usefixtures("manage_dependencies")
 @pytest.mark.parametrize("model_name", model_list)
 @pytest.mark.parametrize("mode", ["train", "eval"])
 @pytest.mark.parametrize(
