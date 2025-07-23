@@ -71,9 +71,9 @@ def test_d_fine(record_property, variant, variant_config, mode, op_by_op):
     results = tester.test_model()
 
     if mode == "eval":
-        results = tester.processor.post_process_object_detection(
+        results = loader.processor.post_process_object_detection(
             results,
-            target_sizes=[(tester.image.height, tester.image.width)],
+            target_sizes=[(loader.image.height, loader.image.width)],
             threshold=0.5,
         )
         for result in results:
