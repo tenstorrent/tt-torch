@@ -8,6 +8,9 @@ from huggingface_hub import snapshot_download, hf_hub_download
 import torch
 from transformers import AutoConfig, AutoTokenizer, AutoModel, AutoModelForCausalLM, AutoModelForSequenceClassification
 from loguru import logger
+import requests
+from PIL import Image
+from torchvision import transforms
 
 from forge_agent.test_pipeline.models import TestConfig, FailureReason, TestStatus
 
@@ -103,6 +106,52 @@ class ModelDownloader:
             logger.error(f"Error downloading model {model_id}: {str(e)}")
             return False, None, FailureReason.DOWNLOAD_ERROR, f"Download failed: {str(e)}"
     
+    def _create_real_image_input(self, model_id: str) -> Dict[str, torch.Tensor]:
+        """
+        Create real image input for vision models (like ResNet) using actual images.
+        Uses the same approach as the ResNet demo.
+        
+        Args:
+            model_id: Hugging Face model ID
+            
+        Returns:
+            Dictionary with real image tensor
+        """
+        try:
+            # Use the same default image as the ResNet demo
+            DEFAULT_URL = "http://images.cocodataset.org/val2017/000000039769.jpg"
+            
+            logger.info(f"Downloading real image for {model_id} from COCO dataset")
+            logger.info(f"Image URL: {DEFAULT_URL}")
+            
+            # Download and open the image
+            response = requests.get(DEFAULT_URL, stream=True, timeout=10)
+            response.raise_for_status()
+            img = Image.open(response.raw)
+            
+            # Create standard ImageNet preprocessing transforms
+            preprocess = transforms.Compose([
+                transforms.Resize(256),
+                transforms.CenterCrop(224),
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+            ])
+            
+            # Preprocess the image
+            img_tensor = preprocess(img)
+            img_tensor = torch.unsqueeze(img_tensor, 0)  # Add batch dimension
+            
+            logger.info(f"Real image processed for {model_id}: shape {img_tensor.shape}")
+            logger.info(f"Image contains: Two cats on a couch (COCO dataset)")
+            
+            return {"pixel_values": img_tensor}
+            
+        except Exception as e:
+            logger.warning(f"Failed to download real image for {model_id}: {str(e)}")
+            logger.warning(f"Falling back to random tensor")
+            # Fallback to random tensor if image download fails
+            return {"pixel_values": torch.rand(1, 3, 224, 224)}
+    
     def _create_sample_inputs(self, model: Any, tokenizer: Any, test_config: TestConfig) -> Dict[str, torch.Tensor]:
         """
         Create sample inputs for model testing.
@@ -133,8 +182,9 @@ class ModelDownloader:
                     sample_inputs = inputs
                     return sample_inputs
             
-            # For other model types, try to infer from config
+            # For other model types, try to infer from config and model type
             config = model.config if hasattr(model, "config") else None
+            model_class_name = model.__class__.__name__.lower()
             
             if config:
                 if hasattr(config, "hidden_size"):
@@ -149,13 +199,33 @@ class ModelDownloader:
                     sample_inputs["input_ids"] = torch.randint(0, config.vocab_size, (batch_size, seq_len))
                     sample_inputs["attention_mask"] = torch.ones(batch_size, seq_len, dtype=torch.long)
             
-            # If we couldn't create any inputs, use a generic input
+            # If we couldn't create any inputs, use model-specific defaults
             if not sample_inputs:
-                sample_inputs["input"] = torch.rand(1, 3, 224, 224)  # Common image input shape
+                # Check model type for appropriate input parameter names
+                if "resnet" in model_class_name or "vit" in model_class_name or "efficientnet" in model_class_name:
+                    # For ResNet models, use real images like the demo
+                    if "resnet" in model_class_name:
+                        logger.info(f"Creating REAL IMAGE input for ResNet model: {model_class_name}")
+                        sample_inputs = self._create_real_image_input(test_config.model_id)
+                        logger.debug(f"Created real image inputs for {model_class_name}: {list(sample_inputs.keys())}")
+                    else:
+                        # For other vision models, use random tensors
+                        sample_inputs["pixel_values"] = torch.rand(1, 3, 224, 224)
+                        logger.debug(f"Created random vision model inputs for {model_class_name}: pixel_values")
+                elif "gpt" in model_class_name or "llama" in model_class_name or "bert" in model_class_name:
+                    # Language models typically use "input_ids"
+                    sample_inputs["input_ids"] = torch.randint(0, 1000, (1, 16))
+                    sample_inputs["attention_mask"] = torch.ones(1, 16, dtype=torch.long)
+                    logger.debug(f"Created language model inputs for {model_class_name}: input_ids, attention_mask")
+                else:
+                    # Generic fallback - try both common parameter names
+                    sample_inputs["pixel_values"] = torch.rand(1, 3, 224, 224)
+                    logger.debug(f"Created generic vision inputs for {model_class_name}: pixel_values")
                 
+            logger.info(f"Sample inputs created for {test_config.model_id}: {list(sample_inputs.keys())}")
             return sample_inputs
                 
         except Exception as e:
             logger.warning(f"Failed to create sample inputs: {str(e)}")
-            # Return a generic input as fallback
-            return {"input": torch.rand(1, 3, 224, 224)}  # Common image input shape
+            # Return a generic input as fallback - use pixel_values for vision models
+            return {"pixel_values": torch.rand(1, 3, 224, 224)}  # Common image input shape

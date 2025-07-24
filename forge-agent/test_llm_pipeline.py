@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test script to run ResNet and other vision models through the full forge agent pipeline.
+Test script to run Large Language Models through the full forge agent pipeline.
 This includes model loading, adaptation, compilation, and execution testing.
 """
 
@@ -49,13 +49,13 @@ def display_comprehensive_results(test_record, model_id: str, total_time: float)
     print(f"   Status: {test_record.status}")
     print(f"   Adaptation Level: {test_record.adaptation_level if test_record.adaptation_level else 'N/A'}")
     
-    # Image Processing Information (for vision models)
-    print(f"\n📸 IMAGE PROCESSING:")
-    print(f"   Image Source: COCO Dataset")
-    print(f"   Image Content: Two cats on a couch")
-    print(f"   Image URL: http://images.cocodataset.org/val2017/000000039769.jpg")
-    print(f"   Input Shape: [1, 3, 224, 224] (ImageNet format)")
-    print(f"   Preprocessing: Resize(256) → CenterCrop(224) → Normalize")
+    # Text Processing Information
+    print(f"\n📝 TEXT PROCESSING:")
+    print(f"   Input Type: Text sequence")
+    print(f"   Sample Text: 'This is a sample input for testing the model.'")
+    print(f"   Tokenization: Automatic via model tokenizer")
+    print(f"   Input Format: input_ids + attention_mask")
+    print(f"   Max Length: Dynamic based on model configuration")
     
     # Compilation Information
     print(f"\n🔥 TT-TORCH COMPILATION:")
@@ -81,24 +81,28 @@ def display_comprehensive_results(test_record, model_id: str, total_time: float)
     if test_record.memory_usage_mb:
         print(f"   Memory Usage: {test_record.memory_usage_mb:.2f} MB")
     
-    # Results Interpretation (for vision models)
+    # Results Interpretation
     print(f"\n🎯 RESULTS INTERPRETATION:")
-    if "resnet" in model_id.lower():
-        print(f"   Model Type: HuggingFace ResNet (Feature Extractor)")
-        print(f"   Output: Feature vectors for transfer learning")
-        print(f"   Feature Shape: [1, 2048, 1, 1] (ResNet-50 features)")
-        print(f"   Use Case: Feature extraction for downstream tasks")
-        print(f"   ✅ Successfully extracted semantic features from real image!")
-    elif "vit" in model_id.lower():
-        print(f"   Model Type: Vision Transformer (ViT)")
-        print(f"   Output: Patch-based image embeddings")
-        print(f"   Use Case: Image classification and feature extraction")
-        print(f"   ✅ Successfully processed image through transformer!")
-    elif "efficientnet" in model_id.lower():
-        print(f"   Model Type: EfficientNet (Efficient CNN)")
-        print(f"   Output: Efficient feature representations")
-        print(f"   Use Case: Mobile/edge computer vision")
-        print(f"   ✅ Successfully extracted features with efficient architecture!")
+    if "gpt" in model_id.lower():
+        print(f"   Model Type: GPT Language Model (Generative)")
+        print(f"   Output: Token probabilities for next token prediction")
+        print(f"   Use Case: Text generation, completion, and understanding")
+        print(f"   ✅ Successfully processed text input through transformer!")
+    elif "bert" in model_id.lower():
+        print(f"   Model Type: BERT Encoder (Bidirectional)")
+        print(f"   Output: Contextualized token embeddings")
+        print(f"   Use Case: Text classification, feature extraction, Q&A")
+        print(f"   ✅ Successfully encoded text into semantic representations!")
+    elif "t5" in model_id.lower():
+        print(f"   Model Type: T5 Text-to-Text Transfer Transformer")
+        print(f"   Output: Generated text sequences")
+        print(f"   Use Case: Translation, summarization, text-to-text tasks")
+        print(f"   ✅ Successfully processed text-to-text transformation!")
+    elif "distilbert" in model_id.lower():
+        print(f"   Model Type: DistilBERT (Efficient BERT)")
+        print(f"   Output: Contextualized token embeddings (smaller model)")
+        print(f"   Use Case: Fast text classification and feature extraction")
+        print(f"   ✅ Successfully processed text with efficient transformer!")
     else:
         print(f"   Model Type: {model_id.split('/')[-1] if '/' in model_id else model_id}")
         print(f"   Output: Model-specific tensor outputs")
@@ -119,10 +123,10 @@ def display_comprehensive_results(test_record, model_id: str, total_time: float)
     status_str = str(test_record.status).lower()
     if "completed" in status_str or test_record.status == "completed":
         print(f"   ✅ SUCCESS: Model completed the full tt-torch pipeline!")
-        print(f"   ✅ Real image processing: Working")
+        print(f"   ✅ Text processing: Working")
         print(f"   ✅ Tenstorrent compilation: Working") 
         print(f"   ✅ Hardware execution: Working")
-        print(f"   ✅ Feature extraction: Working")
+        print(f"   ✅ Model inference: Working")
     else:
         print(f"   ❌ FAILED: {test_record.status}")
         if test_record.failure_reason:
@@ -164,9 +168,9 @@ def display_database_statistics(pipeline):
         print(f"❌ Error getting database statistics: {str(e)}")
         print("="*80)
 
-def test_single_resnet_model(model_id: str):
-    """Test a single ResNet/vision model through the full pipeline."""
-    logger.info(f"Testing ResNet/vision model through full pipeline: {model_id}")
+def test_single_llm_model(model_id: str):
+    """Test a single LLM model through the full pipeline."""
+    logger.info(f"Testing LLM model through full pipeline: {model_id}")
     
     # Initialize the full pipeline
     pipeline = ModelCompatibilityPipeline(
@@ -229,12 +233,12 @@ def test_single_resnet_model(model_id: str):
     return test_record
 
 def main():
-    """Main function to test ResNet/vision models through the pipeline."""
-    logger.info("Starting ResNet/vision pipeline test")
+    """Main function to test LLM models through the pipeline."""
+    logger.info("Starting LLM pipeline test")
     
-    print("🔥 RESNET/VISION MODEL PIPELINE TESTING (SINGLE MODEL MODE)")
+    print("🔥 LLM MODEL PIPELINE TESTING (SINGLE MODEL MODE)")
     print("=" * 70)
-    print("This will test ResNet and vision models through the complete forge agent pipeline:")
+    print("This will test Large Language Models through the complete forge agent pipeline:")
     print("  1. Model Loading & Validation")
     print("  2. Model Adaptation (if needed)")
     print("  3. tt-torch Compilation")
@@ -242,16 +246,16 @@ def main():
     print("  5. Result Validation")
     print()
     
-    # Test a single vision model (avoiding resource cleanup issues)
-    print("🎯 SINGLE VISION MODEL TEST")
+    # Test a single LLM model (avoiding resource cleanup issues)
+    print("🎯 SINGLE LLM MODEL TEST")
     print("-" * 30)
     
-    # Test ResNet-50 - the classic vision model
-    single_result = test_single_resnet_model("microsoft/resnet-50")
+    # Test GPT-2 small model - good for testing LLM pipeline
+    single_result = test_single_llm_model("gpt2")
     
-    print(f"\n🎉 SINGLE VISION MODEL PIPELINE TESTING COMPLETE!")
+    print(f"\n🎉 SINGLE LLM MODEL PIPELINE TESTING COMPLETE!")
     print("Single model test focused on avoiding resource cleanup issues between runs")
-    print("Check the results above to see how ResNet performs with tt-torch")
+    print("Check the results above to see how LLM performs with tt-torch")
     
     # Display overall database statistics
     print(f"\n📊 Fetching overall statistics from database...")
@@ -266,14 +270,14 @@ def main():
         print(f"❌ Error accessing database statistics: {str(e)}")
     
     # Disabled multiple model testing to avoid segfault issues
-    print(f"\n💡 SUGGESTED VISION MODELS TO TEST:")
+    print(f"\n💡 SUGGESTED LLM MODELS TO TEST:")
     print("   Run the script multiple times manually to test different models")
-    print("   python test_resnet_pipeline.py  # Default: microsoft/resnet-50")
-    print("   Try these vision models:")
-    print("   - 'microsoft/resnet-18'           # Smaller ResNet")
-    print("   - 'google/vit-base-patch16-224'   # Vision Transformer")
-    print("   - 'microsoft/beit-base-patch16-224'  # BEiT model")
-    print("   - 'facebook/deit-base-patch16-224'   # DeiT model")
+    print("   python test_llm_pipeline.py  # Default: gpt2")
+    print("   Try these LLM models:")
+    print("   - 'distilbert-base-uncased'   # Fast BERT variant")
+    print("   - 'bert-base-uncased'         # Classic BERT")
+    print("   - 't5-small'                  # Text-to-text model")
+    print("   - 'microsoft/DialoGPT-small'  # Conversational AI")
     print("   All results are stored in the database for analysis")
 
 if __name__ == "__main__":
