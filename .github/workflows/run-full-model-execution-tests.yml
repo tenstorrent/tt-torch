@@ -18,6 +18,11 @@ on:
         required: false
         type: string
         default: 'true'
+      force-experimental-backend:
+        description: 'Force experimental backend'
+        required: false
+        type: boolean
+        default: false
   workflow_run:
     workflows: [Build] # backref to run-build as dependency
     types: [completed]
@@ -201,6 +206,7 @@ jobs:
         HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
         TORCH_HOME: ${{ env.DOCKER_CACHE_ROOT }}/torch
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        TT_TORCH_FORCE_EXPERIMENTAL_BACKEND: ${{ inputs.force-experimental-backend && '1' || '0' }}
       shell: bash
       run: |
         source env/activate
