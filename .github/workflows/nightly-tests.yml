@@ -54,6 +54,14 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
+  experimental-full-model-test:
+    needs: [docker-build, build]
+    uses: ./.github/workflows/run-experimental-full-model-execution-tests.yml
+    secrets: inherit
+    with:
+      docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      run-codecov: 'false'
+      run-dump-mlir: 'false'
   download-report:
     if: success() || failure()
     needs: test_op_by_op

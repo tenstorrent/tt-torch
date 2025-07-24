@@ -55,6 +55,7 @@ def test_qwen2_causal_lm(record_property, op_by_op):
         run_generate=False,
         required_pcc=0.84,
         backend="tt-experimental",
+        model_name_suffix="_tt_xla",
     )
 
     results = tester.test_model()

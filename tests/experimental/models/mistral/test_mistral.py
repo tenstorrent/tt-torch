@@ -63,6 +63,7 @@ def test_mistral(record_property, model_info, op_by_op):
         assert_pcc=False,
         model_group=model_group,
         backend="tt-experimental",
+        model_name_suffix="_tt_xla",
     )
     tester.test_model()
     tester.finalize()
