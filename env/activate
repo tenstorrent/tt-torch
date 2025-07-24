@@ -30,6 +30,40 @@ else
   python3.10 -m pip install -r requirements.txt
 
 fi
+
+
+# Local Hack for CI testing before the custom torch-xla wheel is available normally.
+# Get from S3 Bucket cache either on CI or for local users.
+TORCH_XLA_WHEEL_NAME="torch_xla-2.9.0+git62e9704-cp310-cp310-linux_x86_64.whl"
+
+if [ -n "$IRD_LF_CACHE" ]; then
+    echo "Found IRD_LF_CACHE, downloading torch-xla wheel from URL..."
+    pip uninstall -y torch-xla 2>/dev/null || true
+    mkdir -p ./dist
+    wget -O "./dist/${TORCH_XLA_WHEEL_NAME}" "${IRD_LF_CACHE}/wheels/${TORCH_XLA_WHEEL_NAME}" 2>/dev/null
+    if [ -f "./dist/${TORCH_XLA_WHEEL_NAME}" ]; then
+        pip install "./dist/${TORCH_XLA_WHEEL_NAME}"
+        echo "Installed torch-xla wheel from ${IRD_LF_CACHE}/wheels/"
+    else
+        echo "Failed to download ${TORCH_XLA_WHEEL_NAME} from ${IRD_LF_CACHE}/wheels/"
+    fi
+elif [ -n "$DOCKER_CACHE_ROOT" ]; then
+    echo "Found cached torch-xla wheel, updating installation..."
+    pip uninstall -y torch-xla 2>/dev/null || true
+    mkdir -p ./dist
+    if [ -f "$DOCKER_CACHE_ROOT/models/tt-ci-models-private/wheels/${TORCH_XLA_WHEEL_NAME}" ]; then
+        cp "$DOCKER_CACHE_ROOT/models/tt-ci-models-private/wheels/${TORCH_XLA_WHEEL_NAME}" ./dist/
+        if [ -f "./dist/${TORCH_XLA_WHEEL_NAME}" ]; then
+            pip install "./dist/${TORCH_XLA_WHEEL_NAME}"
+            echo "Installed cached torch-xla wheel from $DOCKER_CACHE_ROOT"
+        else
+            echo "Failed to copy ${TORCH_XLA_WHEEL_NAME} to ./dist/"
+        fi
+    else
+        echo "torch-xla wheel not found at $DOCKER_CACHE_ROOT/models/tt-ci-models-private/wheels/${TORCH_XLA_WHEEL_NAME}"
+    fi
+fi
+
 export TTTORCH_ENV_ACTIVATED=1
 export TTXLA_ENV_ACTIVATED=1
 export TTMLIR_ENV_ACTIVATED=1
