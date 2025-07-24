@@ -44,20 +44,22 @@ jobs:
         build: [
           {
             # test set with rerun to confirm/deny flaky tests
+                  # tests/models/mnist/test_mnist.py::test_mnist_train[single_device-full-eval]
+
             bh-runner: torch-p150-1, name: "eval_1_p150_1", tests: "
-                  tests/models/mnist/test_mnist.py::test_mnist_train[single_device-full-eval]
+                  tests/models/resnet50/test_resnet50.py::test_resnet[single_device-full-eval]
             "
           },
             {
             # test set with rerun to confirm/deny flaky tests
             bh-runner: torch-p150-5, name: "eval_1_p150_5", tests: "
-                  tests/models/mnist/test_mnist.py::test_mnist_train[single_device-full-eval]
+                  tests/models/resnet50/test_resnet50.py::test_resnet[single_device-full-eval]
             "
           },
           {
             # test set with rerun to confirm/deny flaky tests
-            wh-runner: , bh-runner: tt-beta-ubuntu-2204-p150b-large-stable, name: "eval_1_shared_p150", tests: "
-                  tests/models/mnist/test_mnist.py::test_mnist_train[single_device-full-eval]
+            wh-runner: , bh-runner: torch-p150-4, name: "eval_1_p150_4", tests: "
+                  tests/models/resnet50/test_resnet50.py::test_resnet[single_device-full-eval]
             "
           },
         ]
