@@ -189,20 +189,23 @@ class ModelCompatibilityPipeline:
                 model = adapted_model.get("model")
                 sample_inputs = adapted_model.get("sample_inputs")
                 
-                # Create a simple compiler configuration
+                # Create tt-torch compiler configuration (like in resnet50_demo.py)
                 cc = CompilerConfig()
-                cc.tt_backend_options = BackendOptions()
-                cc.tt_backend_options.buda_max_timer = 60000  # 60 seconds timeout
+                cc.enable_consteval = True
+                cc.consteval_parameters = True
                 
-                # Attempt compilation
-                logger.info(f"Attempting compilation for {model_id}")
+                # Set backend options
+                options = BackendOptions()
+                options.compiler_config = cc
+                
+                # Attempt actual tt-torch compilation
+                logger.info(f"Attempting tt-torch compilation for {model_id}")
                 
                 # Record memory usage before compilation
                 memory_before = torch.cuda.memory_allocated() if torch.cuda.is_available() else 0
                 
-                # Example compilation code (would be replaced with actual tt-torch compilation)
-                # In a real implementation, this would use the tt-torch API
-                compiled_model = model  # Placeholder, real implementation would compile the model
+                # REAL tt-torch compilation using torch.compile with "tt" backend
+                compiled_model = torch.compile(model, backend="tt", dynamic=False, options=options)
                 
                 # Record memory usage after compilation
                 memory_after = torch.cuda.memory_allocated() if torch.cuda.is_available() else 0
@@ -236,17 +239,14 @@ class ModelCompatibilityPipeline:
             execution_start_time = time.time()
             
             try:
-                # Try to import tt-torch (which may not be installed in all environments)
-                try:
-                    # In a real implementation, this would execute inference with the compiled model
-                    # outputs = compiled_model(**sample_inputs)
-                    
-                    # For now, just simulate execution
-                    time.sleep(1)
-                    
-                except ImportError:
-                    logger.warning("tt-torch not installed, skipping actual execution")
-                    # Simulate execution for testing without tt-torch
+                # Execute inference with the compiled tt-torch model
+                if 'compiled_model' in locals() and sample_inputs:
+                    logger.info(f"Running inference with compiled tt-torch model for {model_id}")
+                    # REAL inference execution with the compiled model
+                    outputs = compiled_model(**sample_inputs)
+                    logger.info(f"Inference completed successfully, output shape: {outputs.shape if hasattr(outputs, 'shape') else type(outputs)}")
+                else:
+                    logger.warning("No compiled model or sample inputs available, simulating execution")
                     time.sleep(1)
                 
                 # Record execution time

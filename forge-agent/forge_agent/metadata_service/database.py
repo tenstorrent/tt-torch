@@ -3,6 +3,7 @@ Database service for storing and querying model metadata.
 """
 from typing import List, Optional, Dict, Any
 from contextlib import contextmanager
+import os
 
 import pandas as pd
 from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean, JSON
@@ -34,13 +35,20 @@ class ModelMetadataTable(Base):
 class MetadataDatabase:
     """Database service for model metadata."""
 
-    def __init__(self, db_url: str = "sqlite:///model_metadata.db"):
+    def __init__(self, db_url: Optional[str] = None):
         """
         Initialize the metadata database.
 
         Args:
-            db_url: SQLAlchemy database URL
+            db_url: SQLAlchemy database URL. If None, uses a default SQLite database.
         """
+        if db_url is None:
+            # Default to SQLite database in the package directory
+            package_dir = os.path.dirname(os.path.abspath(__file__))
+            db_path = os.path.join(package_dir, "..", "..", "data", "model_metadata.db")
+            os.makedirs(os.path.dirname(db_path), exist_ok=True)
+            db_url = f"sqlite:///{db_path}"
+            
         self.engine = create_engine(db_url)
         self.Session = sessionmaker(bind=self.engine)
         
