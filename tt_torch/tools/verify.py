@@ -171,8 +171,12 @@ def verify_against_golden(
                 msg = msg + f"{check_mark}\n"
             msg = msg + f"{check_mark}\n"
         else:
+            if atol_ != SKIPPED_NON_TENSOR_ITEM:
+                msg = (
+                    msg
+                    + f"  ATOL: {atol_:0,.4f}, threshold: {atol_threshold}{f' (calculated using relative_atol: {relative_atol})' if relative_atol is not None else ''} "
+                )
             msg = msg + f"{red_x if assert_atol else atol_warning}\n"
-
             err_msg = (
                 err_msg
                 + f"ATOL of output {i}: {atol_:0,.4f}, threshold: {atol_threshold}{f' (calculated using relative_atol: {relative_atol})' if relative_atol is not None else ''} {red_x if assert_atol else atol_warning}\n"
@@ -193,7 +197,8 @@ def verify_against_golden(
             assert False, err_msg
     if not disable_print:
         print(msg)
-    return pccs, atols, passed_pcc, passed_atol
+
+    return pccs, atols, passed_pcc, passed_atol, atol_thresholds
 
 
 def _verify_torch_module(

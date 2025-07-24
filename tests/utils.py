@@ -217,6 +217,9 @@ class ModelTester:
                 ) = DeviceManager.acquire_available_devices()
 
         self.record_tag_cache = {}  # Holds for tags to be written out at finalize()
+        self.verification_failure_msg = (
+            None  # Store failure message for deferred assertion
+        )
 
         self.record_tag_cache["backend"] = self.backend
         self.record_property("model_name", model_name + model_name_suffix)
@@ -441,7 +444,7 @@ class ModelTester:
         results = self.get_results_train(model, inputs, outputs)
         return results
 
-    def verify_outputs(self, golden, outputs):
+    def verify_outputs(self, golden, outputs, defer_assertions=False):
 
         # Only do golden check if running EXECUTE. Limited value comparing in other situations.
         if self.compiler_config.compile_depth != CompileDepth.EXECUTE:
@@ -474,17 +477,61 @@ class ModelTester:
             golden_tensors = self._extract_outputs(golden)
             output_tensors = self._extract_outputs(outputs)
 
-        pccs, atols, passed_pcc, passed_atol = verify_against_golden(
+        # When defer_assertions=True, disable assertions in verify_against_golden
+        #   This is because an assertion hit in verify_against_golden will cause
+        #   the test to early exit before the record_tag_cache is flushed to xml
+        #   and no PCC or metadata will be reported
+        assert_pcc = self.assert_pcc if not defer_assertions else False
+        assert_atol = self.assert_atol if not defer_assertions else False
+
+        pccs, atols, passed_pcc, passed_atol, atol_thresholds = verify_against_golden(
             golden_tensors,
             output_tensors,
-            self.assert_pcc,
-            self.assert_atol,
+            assert_pcc,
+            assert_atol,
             self.required_pcc,
             self.required_atol,
             self.relative_atol,
         )
         self.record_tag_cache["pccs"] = pccs
         self.record_tag_cache["atols"] = atols
+
+        # Store verification failure for deferred assertion
+        if defer_assertions and (
+            (self.assert_pcc and not passed_pcc)
+            or (self.assert_atol and not passed_atol)
+        ):
+
+            required_or_relative_atol = (
+                (self.required_atol, "(ATOL)")
+                if self.required_atol is not None
+                else (self.relative_atol, "(RTOL)")
+            )
+            err_parts = []
+            if self.assert_pcc and not passed_pcc:
+                err_parts.append(
+                    f"PCC check failed. Required: {self.required_pcc}, Got lowest pcc {min(pccs) if pccs else 'N/A'}\nDetail:\n\t"
+                    + "\n\t".join(
+                        [
+                            f"output {i}:{pcc} [req > {self.required_pcc}]"
+                            for i, pcc in enumerate(pccs)
+                            if pcc < self.required_pcc
+                        ]
+                    )
+                )
+            if self.assert_atol and not passed_atol:
+                err_parts.append(
+                    f"ATOL check failed. Required: {required_or_relative_atol}, Got highest atol {max(atols) if atols else 'N/A'}\nDetail:\n\t"
+                    + "\n\t".join(
+                        [
+                            f"output {i}:{atol} [req < {atol_thresholds[i]}]"
+                            for i, atol in enumerate(atols)
+                            if atol > atol_thresholds[i]
+                        ]
+                    )
+                )
+            self.verification_failure_msg = ";\n".join(err_parts)
+
         if passed_pcc and passed_atol:
             self.record_property("achieved_compile_depth", "PASSED")
 
@@ -522,7 +569,11 @@ class ModelTester:
         return self._test_model_eval_base(on_device, assert_eval_token_mismatch)
 
     def _verify_full_execution_output(
-        self, device_output, golden_output, assert_eval_token_mismatch
+        self,
+        device_output,
+        golden_output,
+        assert_eval_token_mismatch,
+        defer_assertions=False,
     ):
         """
         This function verifies a single device's output tensors against the golden tensors
@@ -536,12 +587,18 @@ class ModelTester:
             decoded_golden = self.tokenizer.batch_decode(
                 golden_output, skip_special_tokens=True
             )
-            if assert_eval_token_mismatch:
+            if assert_eval_token_mismatch and not defer_assertions:
                 assert (
                     decoded_outputs == decoded_golden
                 ), f'Output mismatch: calculated: "{decoded_outputs} vs golden: "{decoded_golden}"'
+            elif (
+                defer_assertions
+                and assert_eval_token_mismatch
+                and decoded_outputs != decoded_golden
+            ):
+                self.verification_failure_msg = f'Token output mismatch: calculated: "{decoded_outputs}" vs golden: "{decoded_golden}"'
         else:
-            self.verify_outputs(golden_output, device_output)
+            self.verify_outputs(golden_output, device_output, defer_assertions)
 
     @torch.inference_mode()
     def _test_model_eval_data_parallel(self, assert_eval_token_mismatch):
@@ -573,7 +630,7 @@ class ModelTester:
         try:
             for outputs in final_outputs:
                 self._verify_full_execution_output(
-                    outputs, golden, assert_eval_token_mismatch
+                    outputs, golden, assert_eval_token_mismatch, defer_assertions=True
                 )
         finally:
             if self.parent_device is not None:
@@ -597,7 +654,9 @@ class ModelTester:
         if self.compiler_config._enable_intermediate_verification:
             self.verify_intermediates_after_execution()
 
-        self._verify_full_execution_output(outputs, golden, assert_eval_token_mismatch)
+        self._verify_full_execution_output(
+            outputs, golden, assert_eval_token_mismatch, defer_assertions=True
+        )
         return outputs
 
     @torch.inference_mode()
@@ -705,6 +764,11 @@ class ModelTester:
             self.required_pcc,
         )
         self.record_property("tags", self.record_tag_cache)
+
+        # Assert any deferred verification failures after all reporting is complete
+        # This allows pytest to write junitxml during teardown even if the test fails
+        if self.verification_failure_msg:
+            assert False, self.verification_failure_msg
 
     def verify_intermediates_after_execution(self):
         # Prepare CSV output

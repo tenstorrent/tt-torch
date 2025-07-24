@@ -920,7 +920,7 @@ class RuntimeIntermediate:
 
         # Get PCCs from raw tensors, which may not work due to TTNN reshaping (eg. channels last. Ignore as tensor shape mismatch assertionErrors for now.)
         try:
-            (self.pcc, self.atol, _, _) = verify_against_golden(
+            (self.pcc, self.atol, _, _, _) = verify_against_golden(
                 self.golden,
                 final_decomposed_output,
                 assert_pcc=False,
@@ -942,7 +942,7 @@ class RuntimeIntermediate:
             if isinstance(final_decomposed_output[0], torch.Tensor):
                 flat_intermediate = (torch.flatten(final_decomposed_output[0]),)
 
-            (self.flattened_pcc, self.flattened_atol, _, _) = verify_against_golden(
+            (self.flattened_pcc, self.flattened_atol, _, _, _) = verify_against_golden(
                 flat_golden,
                 flat_intermediate,
                 assert_pcc=False,
