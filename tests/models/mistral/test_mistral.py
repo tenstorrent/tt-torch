@@ -51,18 +51,15 @@ def test_mistral(record_property, variant, variant_config, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    skip_full_eval_test(
-        record_property,
-        cc,
-        model_name,
-        bringup_status="FAILED_RUNTIME",
-        reason="Model is too large to fit on single device during execution.",
-        model_group=model_group,
-        model_name_filter=[
-            "7b",
-            "ministral_8b_instruct",
-        ],
-    )
+    if variant.value == "7b" or variant.value == "ministral_8b_instruct":
+        skip_full_eval_test(
+            record_property,
+            cc,
+            model_name,
+            bringup_status="FAILED_RUNTIME",
+            reason="Model is too large to fit on single device during execution.",
+            model_group=model_group,
+        )
 
     # TODO Enable PCC/ATOL/Checking - https://github.com/tenstorrent/tt-torch/issues/689
     tester = ThisTester(
