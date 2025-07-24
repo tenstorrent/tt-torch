@@ -6,7 +6,7 @@ import pytest
 
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.llama.llama_7b.pytorch import ModelLoader
+from third_party.tt_forge_models.huggyllama.llama_7b.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
@@ -15,11 +15,6 @@ class ThisTester(ModelTester):
 
     def _load_inputs(self):
         return self.loader.load_inputs(dtype_override=torch.bfloat16)
-
-
-# Print available variants for reference
-available_variants = ModelLoader.query_available_variants()
-print("Available variants: ", [str(k) for k in available_variants.keys()])
 
 
 @pytest.mark.parametrize(
