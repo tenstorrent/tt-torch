@@ -27,7 +27,7 @@ jobs:
       matrix:
         build: [
           {
-            runs-on: wormhole_b0, name: "mistral", tests: "
+            runs-on: wormhole_b0, name: "mistral_weekly", tests: "
               tests/models/mistral/test_mistral.py::test_mistral[op_by_op_torch-ministral_3b_instruct-eval]
               "
           },
