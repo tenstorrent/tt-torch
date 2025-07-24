@@ -62,7 +62,7 @@ class DashboardDataProvider:
                 "model_id": result.model_id,
                 "status": result.status.value,
                 "timestamp": result.timestamp.isoformat(),
-                "adaptation_level": result.adaptation_level.value if result.adaptation_level else None,
+                "adaptation_level": result.adaptation_level.value if (result.adaptation_level and hasattr(result.adaptation_level, 'value')) else str(result.adaptation_level) if result.adaptation_level else None,
                 "failure_reason": result.failure_reason.value if result.failure_reason else None
             }
             for result in recent_results

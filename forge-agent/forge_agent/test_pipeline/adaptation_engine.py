@@ -432,18 +432,18 @@ from typing import Dict, Any
 import torch
 
 def adapt(model_data: Dict[str, Any], test_config: Dict[str, Any]) -> Dict[str, Any]:
-    """Adapt the model for tt-torch compatibility."""
+    '''Adapt the model for tt-torch compatibility.'''
     # Get the model and other data
     model = model_data.get("model")
     if model is None:
         return model_data
     
     # Make a copy of the input data
-    adapted_data = {**model_data}
+    adapted_data = {{**model_data}}
     
     # Apply adaptations
     try:
-{}
+{{}}
     except Exception as e:
         print(f"Error in adaptation: {{str(e)}}")
     
