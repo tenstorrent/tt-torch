@@ -13,7 +13,9 @@ from third_party.tt_forge_models.phi.phi_3_5_vision.pytorch import ModelLoader
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        return self.loader.load_model(dtype_override=torch.bfloat16)
+        model = self.loader.load_model(dtype_override=torch.bfloat16)
+        self.tokenizer = self.loader.tokenizer
+        return model
 
     def _load_inputs(self):
         return self.loader.load_inputs()
