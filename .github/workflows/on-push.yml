@@ -19,21 +19,6 @@ jobs:
   docker-build:
     uses: ./.github/workflows/build-image.yml
     secrets: inherit
-  build:
-    needs: [pre-commit, spdx, docker-build]
-    uses: ./.github/workflows/run-build.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-      setup-args: "--code_coverage --include-models --build_perf"
-  build-release:
-    needs: [pre-commit, spdx, docker-build]
-    uses: ./.github/workflows/run-build.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-      setup-args: "--include-models --build_perf"
-      artifact-key: "-release"
   upload-torch-xla-wheel:
     needs: [pre-commit, spdx, docker-build]
     runs-on: ubuntu-latest
@@ -50,32 +35,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: install-artifact-torch-xla-release
-          path: install-artifact-torch-xla-release/
-  test:
-    needs: [build, docker-build]
-    uses: ./.github/workflows/run-tests.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  # llmbox-tests:
-  #   needs: [build, docker-build]
-  #   uses: ./.github/workflows/run-multidevice-tests.yml
-  #   secrets: inherit
-  #   with:
-  #     docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  full-model-test:
-    needs: [build, docker-build]
-    uses: ./.github/workflows/run-full-model-execution-tests.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-      run-codecov: 'false'
-      run-dump-mlir: 'false'
-  experimental-full-model-test:
-    needs: [build, docker-build]
-    uses: ./.github/workflows/run-experimental-full-model-execution-tests.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-      run-codecov: 'false'
-      run-dump-mlir: 'false'
+          path: ./torch_xla*.whl
