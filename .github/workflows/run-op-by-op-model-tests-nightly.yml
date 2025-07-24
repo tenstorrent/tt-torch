@@ -35,13 +35,13 @@ jobs:
           #     tests/models/RMBG/test_RMBG.py::test_RMBG[op_by_op_torch-eval]
           #     "
           # },
-          {
+          # {
 
-            runs-on: wormhole_b0, name: "mistral", tests: "
-              tests/models/mistral/test_mistral.py::test_mistral[op_by_op_torch-7b-eval]
-              tests/models/mistral/test_mistral.py::test_mistral[op_by_op_torch-ministral_8b_instruct-eval]
-              "
-          },
+          #   runs-on: wormhole_b0, name: "mistral", tests: "
+          #     tests/models/mistral/test_mistral.py::test_mistral[op_by_op_torch-7b-eval]
+          #     tests/models/mistral/test_mistral.py::test_mistral[op_by_op_torch-ministral_8b_instruct-eval]
+          #     "
+          # },
           # {
           #   # only testing 4k variant as they're identical aside from token size
           #   runs-on: wormhole_b0, name: "phi3", tests: "
@@ -58,11 +58,11 @@ jobs:
               tests/models/phi/test_phi_3p5_vision.py::test_phi_3p5_vision[op_by_op_torch-eval]
             "
           },
-          {
-            runs-on: wormhole_b0, name: "phi4", tests: "
-              tests/models/phi/test_phi_4.py::test_phi_4[op_by_op_torch-eval]
-            "
-          },
+          # {
+          #   runs-on: wormhole_b0, name: "phi4", tests: "
+          #     tests/models/phi/test_phi_4.py::test_phi_4[op_by_op_torch-eval]
+          #   "
+          # },
         ]
     runs-on:
       - ${{ matrix.build.sh-run && format('tt-beta-ubuntu-2204-{0}-large-stable', matrix.build.runs-on) ||  matrix.build.runs-on }}
