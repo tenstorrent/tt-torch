@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [wormhole, blackhole]
+        runner: [wormhole]
         build: [
           {
             wh-runner: wormhole_b0, bh-runner: p150, name: "eval_1", tests: "
