@@ -47,19 +47,23 @@ jobs:
                   # tests/models/mnist/test_mnist.py::test_mnist_train[single_device-full-eval]
 
             bh-runner: torch-p150-1, name: "eval_1_p150_1", tests: "
-                  tests/models/resnet50/test_resnet50.py::test_resnet[single_device-full-eval]
-            "
+                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg19]
+                tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[single_device-full-eval]
+                tests/models/hardnet/test_hardnet.py::test_hardnet[single_device-full-eval]            "
           },
             {
             # test set with rerun to confirm/deny flaky tests
             bh-runner: torch-p150-5, name: "eval_1_p150_5", tests: "
-                  tests/models/resnet50/test_resnet50.py::test_resnet[single_device-full-eval]
-            "
+                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg19]
+                tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[single_device-full-eval]
+                tests/models/hardnet/test_hardnet.py::test_hardnet[single_device-full-eval]            "
           },
           {
             # test set with rerun to confirm/deny flaky tests
             wh-runner: , bh-runner: torch-p150-4, name: "eval_1_p150_4", tests: "
-                  tests/models/resnet50/test_resnet50.py::test_resnet[single_device-full-eval]
+                tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg19]
+                tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[single_device-full-eval]
+                tests/models/hardnet/test_hardnet.py::test_hardnet[single_device-full-eval]
             "
           },
         ]
