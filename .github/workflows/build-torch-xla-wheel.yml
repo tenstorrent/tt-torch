@@ -8,14 +8,6 @@ on:
         required: false
         type: string
         default: '2.7.0'
-      docker-image:
-        description: 'Docker image to use for build'
-        required: true
-        type: string
-    outputs:
-      artifact_name:
-        description: 'Name of uploaded wheels artifact'
-        value: ${{ jobs.build-wheels.outputs.artifact_name }}
 
 jobs:
   build-wheels:
