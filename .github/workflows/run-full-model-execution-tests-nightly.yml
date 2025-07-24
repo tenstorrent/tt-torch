@@ -44,7 +44,8 @@ jobs:
         build: [
           {
             # test set with rerun to confirm/deny flaky tests
-            wh-runner: , bh-runner: torch-p150-1, name: "eval_1_p150_1", tests: "
+            bh-runner: torch-p150-1, name: "eval_1_p150_1", tests: "
+                  tests/models/mnist/test_mnist.py::test_mnist_train[single_device-full-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg19]
                   tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[single_device-full-eval]
                   tests/models/hardnet/test_hardnet.py::test_hardnet[single_device-full-eval]
@@ -52,7 +53,8 @@ jobs:
           },
             {
             # test set with rerun to confirm/deny flaky tests
-            wh-runner: , bh-runner: torch-p150-5, name: "eval_1_p150_5", tests: "
+            bh-runner: torch-p150-5, name: "eval_1_p150_5", tests: "
+                  tests/models/mnist/test_mnist.py::test_mnist_train[single_device-full-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg19]
                   tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[single_device-full-eval]
                   tests/models/hardnet/test_hardnet.py::test_hardnet[single_device-full-eval]
@@ -61,6 +63,7 @@ jobs:
           {
             # test set with rerun to confirm/deny flaky tests
             wh-runner: , bh-runner: tt-beta-ubuntu-2204-p150b-large-stable, name: "eval_1_shared_p150", tests: "
+                  tests/models/mnist/test_mnist.py::test_mnist_train[single_device-full-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg19]
                   tests/models/mobilenet_ssd/test_mobilenet_ssd.py::test_mobilenet_ssd[single_device-full-eval]
                   tests/models/hardnet/test_hardnet.py::test_hardnet[single_device-full-eval]
@@ -127,9 +130,9 @@ jobs:
         source env/activate
         mkdir -p ${{ steps.strings.outputs.dist-dir }}
         mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
-        pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
+        pip install -v ${{ steps.strings.outputs.dist-dir }}/*.whl
 
-    - name: Run Full Model Execution Tests 1
+    - name: Run Full Model Execution Tests first time
       if: ${{ env.RUN_TEST != 'skip' }}
       env:
         HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
@@ -140,11 +143,18 @@ jobs:
       run: |
         source env/activate
 
-        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN pytest --durations=0 -svv -rf ${{matrix.build.tests}} \
+        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN python -m cProfile -o profile1.txt -m pytest --durations=0 -svv -rf ${{matrix.build.tests}} \
            --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
            --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append | tee pytest.log
 
-    - name: Run Full Model Execution Tests 2
+    - name: Upload Profile File
+      uses: actions/upload-artifact@v4
+      if: ${{ (success() || failure()) && env.RUN_TEST != 'skip' }}
+      with:
+        name: profile-first-run-${{ matrix.runner }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        path: profile1.txt
+
+    - name: Run Full Model Execution Tests second time
       if: ${{ env.RUN_TEST != 'skip' }}
       env:
         HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
@@ -154,11 +164,18 @@ jobs:
       run: |
         source env/activate
 
-        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN pytest --durations=0 -svv -rf ${{matrix.build.tests}} \
+        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN python -m cProfile -o profile2.txt -m pytest --durations=0 -svv -rf ${{matrix.build.tests}} \
            --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
            --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append | tee pytest.log
 
-    - name: Run Full Model Execution Tests 3
+    - name: Upload Profile File 2
+      uses: actions/upload-artifact@v4
+      if: ${{ (success() || failure()) && env.RUN_TEST != 'skip' }}
+      with:
+        name: profile-second-run-${{ matrix.runner }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        path: profile2.txt
+
+    - name: Run Full Model Execution Tests third time
       if: ${{ env.RUN_TEST != 'skip' }}
       env:
         HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
@@ -168,9 +185,16 @@ jobs:
       run: |
         source env/activate
 
-        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN pytest --durations=0 -svv -rf ${{matrix.build.tests}} \
+        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN python -m cProfile -o profile3.txt -m pytest --durations=0 -svv -rf ${{matrix.build.tests}} \
            --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
            --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append | tee pytest.log
+
+    - name: Upload Profile File 3
+      uses: actions/upload-artifact@v4
+      if: ${{ (success() || failure()) && env.RUN_TEST != 'skip' }}
+      with:
+        name: profile-third-run-${{ matrix.runner }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        path: profile3.txt
 
     - name: Upload Test Log
       uses: actions/upload-artifact@v4

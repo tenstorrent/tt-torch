@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import os
+import time
 import torch
 import pytest
 import requests
@@ -167,7 +168,14 @@ class ModelTester:
         else:
             self.backend = backend
 
+
+        # Time model loading
+        print(f"[TIMING] Loading model '{model_name}'...")
+        model_start_time = time.time()
         self.framework_model = self._load_model()
+        model_load_time = time.time() - model_start_time
+        print(f"[TIMING] Model loading completed in {model_load_time:.3f}s")
+
         self.is_token_output = is_token_output
         if is_token_output and not hasattr(self, "tokenizer"):
             raise ValueError(
@@ -175,7 +183,19 @@ class ModelTester:
             )
         self.compiled_models = []
         self.devices = devices
+
+        # Time inputs loading
+        print(f"[TIMING] Loading inputs for '{model_name}'...")
+        inputs_start_time = time.time()
         self.inputs = self._load_inputs()
+        inputs_load_time = time.time() - inputs_start_time
+        print(f"[TIMING] Inputs loading completed in {inputs_load_time:.3f}s")
+
+        # Print total initialization time
+        total_init_time = model_load_time + inputs_load_time
+        print(
+            f"[TIMING] Total ModelTester initialization time: {total_init_time:.3f}s (model: {model_load_time:.3f}s, inputs: {inputs_load_time:.3f}s)"
+        )
 
         self.required_pcc = required_pcc
         self.assert_pcc = assert_pcc
