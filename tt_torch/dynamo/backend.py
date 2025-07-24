@@ -251,6 +251,7 @@ def shlo_to_flatbuffer(
         len_graph_constants,
         compiler_config.enable_consteval,
         compiler_config.enable_optimizer,
+        compiler_config.enable_trace,
     )
     dump_module(module=ttnn, name="TTNN", compiler_config=compiler_config)
 
@@ -282,6 +283,7 @@ def _base_backend(
         return executor
 
     for i, shlo in mcg.shlo_modules.items():
+        print(f"Compiling shlo to flatbuffer")
         binary_bytestream = shlo_to_flatbuffer(
             executor,
             executor.system_desc_paths[i],

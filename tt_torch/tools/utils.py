@@ -312,6 +312,7 @@ class CompilerConfig:
         self.op_by_op_backend = OpByOpBackend.TORCH
         self.enable_consteval = False
         self.enable_optimizer = False
+        self.enable_trace = False
         self._consteval_parameters = False
         self._enable_intermediate_verification = False
         self.dump_debug = False
@@ -332,6 +333,8 @@ class CompilerConfig:
         self.post_init()
         self.automatic_parallelization = False
         self.mesh_shape = [1, 1]
+        self.enable_program_cache = False
+        self.trace_region_size = 0
         self.push_outputs_to_cpu = True
 
     @property
@@ -422,6 +425,9 @@ class CompilerConfig:
         enable_optimizer = os.environ.get("TT_TORCH_OPTIMIZER")
         if enable_optimizer and int(enable_optimizer):
             self.enable_optimizer = True
+        enable_trace = os.environ.get("TT_TORCH_TRACE")
+        if enable_trace and int(enable_trace):
+            self.enable_trace = True
         consteval_parameters = os.environ.get("TT_TORCH_CONSTEVAL_PARAMETERS")
         if consteval_parameters and int(consteval_parameters):
             self.consteval_parameters = True

@@ -193,7 +193,8 @@ void create_system_desc(tt::runtime::Device device,
 std::tuple<std::shared_ptr<void> *, std::string>
 compileTTIRToTTNN(std::string_view code, std::string_view system_desc_path,
                   size_t len_activations, size_t len_graph_constants,
-                  bool enable_consteval, bool enable_optimizer) {
+                  bool enable_consteval, bool enable_optimizer,
+                  bool enable_trace) {
 
   mlir::MLIRContext context;
   mlir::DialectRegistry registry;
@@ -232,6 +233,7 @@ compileTTIRToTTNN(std::string_view code, std::string_view system_desc_path,
   options.enableFusing = true;
   options.enableConstEval = enable_consteval;
   options.optimizerPassEnabled = enable_optimizer;
+  options.enableTrace = enable_trace;
 
   if (len_activations > 0 || len_graph_constants > 0) {
     llvm::SmallVector<mlir::tt::ttcore::ArgumentType> argTypes;

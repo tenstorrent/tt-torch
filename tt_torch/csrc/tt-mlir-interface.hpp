@@ -18,7 +18,8 @@ std::string compileStableHLOToTTIR(std::string_view code);
 std::tuple<std::shared_ptr<void> *, std::string>
 compileTTIRToTTNN(std::string_view code, std::string_view system_desc_path,
                   size_t len_activations = 0, size_t len_graph_constants = 0,
-                  bool enable_consteval = true, bool enable_optimizer = false);
+                  bool enable_consteval = true, bool enable_optimizer = false,
+                  bool enable_trace = false);
 void create_system_desc(tt::runtime::Device device,
                         std::string_view descriptor_path);
 } // namespace tt::torch

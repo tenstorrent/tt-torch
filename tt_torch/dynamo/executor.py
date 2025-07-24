@@ -172,6 +172,8 @@ class Executor:
 
         self._validate_executor()
         self.system_desc_paths = self._create_system_descriptors()
+        self.runtime_activations = None
+        self.runtime_weights = None
 
     def initialize_caches(self, buffer_cache=None, constant_cache=None):
         """
@@ -269,6 +271,8 @@ class Executor:
             return self.devices[device_idx]
         # Return a default parent mesh
         mesh_options = tt_mlir.MeshDeviceOptions()
+        mesh_options.enable_program_cache = self.compiler_config.enable_program_cache
+        mesh_options.trace_region_size = self.compiler_config.trace_region_size
         if len(self.compiler_config.mesh_shape) == 32:
             mesh_options.dispatch_core_type = tt_mlir.DispatchCoreType.WORKER
         device = tt_mlir.open_mesh_device(self.compiler_config.mesh_shape, mesh_options)
@@ -524,6 +528,16 @@ class Executor:
 
             device_inputs = list(device_inputs)
             device = self._get_device(device_idx)
+
+            if self.runtime_activations is None:
+                self.runtime_activations = preprocessed_activations
+            else:
+                preprocessed_activations = self.runtime_activations
+
+            if self.runtime_weights is None:
+                self.runtime_weights = preprocessed_weights
+            else:
+                preprocessed_weights = self.runtime_weights
 
             # if any output is intermediate we can run in async, since tt-mlir runtime will eventually block on final outputs
             # TODO: Enable this when device to device movement is supported. In the mean time we fall back to host: #748

@@ -4,9 +4,9 @@
 #
 
 # underlying tt-mlir version we will have tt-xla use
-set(TT_MLIR_VERSION "bcc6c92b437f1ce7a31fdee5a760397ff4889ead")
+set(TT_MLIR_VERSION "4c8c67542399f6b7fe0a22f67059d03997658bac")
 # tt-xla version to use
-set(TTXLA_VERSION "7e554cec849f37e7326beab1d7ba9880b2a4581b")
+set(TTXLA_VERSION "10061a261faf8008c781c3282bee9ba58bdeab52")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
@@ -69,6 +69,7 @@ else()
             -DUSE_CUSTOM_TT_MLIR_VERSION=ON
             -DTT_MLIR_VERSION=${TT_MLIR_VERSION}
             -DTT_RUNTIME_DEBUG=${TT_RUNTIME_DEBUG}
+            -DTTMLIR_ENABLE_OPMODEL=${TTMLIR_ENABLE_OPMODEL}
             -DCMAKE_INSTALL_PREFIX=${TTXLA_INSTALL_PREFIX}
             -DTTMLIR_ENABLE_PERF_TRACE=${TT_RUNTIME_ENABLE_PERF_TRACE}
         GIT_REPOSITORY https://github.com/tenstorrent/tt-xla.git

@@ -5,6 +5,7 @@
 // c++ standard library includes
 #include <ATen/core/TensorBody.h>
 #include <algorithm>
+#include <chrono>
 #include <cstdint>
 #include <optional>
 #include <variant>
@@ -169,7 +170,8 @@ std::string compile_stable_hlo_to_ttir(std::string_view code) {
 std::tuple<py::bytes, std::string> compile_ttir_to_bytestream(
     std::string_view code, std::string_view sys_desc_path,
     size_t len_activations, size_t len_graph_constants,
-    bool enable_consteval = true, bool enable_optimizer = false) {
+    bool enable_consteval = true, bool enable_optimizer = false,
+    bool enable_trace = false) {
 
   if (enable_optimizer) {
     assert(is_op_model_enabled() && "Optimizer requires project to be built "
@@ -178,7 +180,7 @@ std::tuple<py::bytes, std::string> compile_ttir_to_bytestream(
 
   auto [binary_ptr, ttnn] = tt::torch::compileTTIRToTTNN(
       code, sys_desc_path, len_activations, len_graph_constants,
-      enable_consteval, enable_optimizer);
+      enable_consteval, enable_optimizer, enable_trace);
   auto size = ::flatbuffers::GetSizePrefixedBufferLength(
       static_cast<const uint8_t *>(binary_ptr->get()));
   tt::runtime::Binary binary = tt::runtime::Binary(*binary_ptr);
@@ -356,18 +358,37 @@ HostReturnType to_host(py::args args, bool deallocate_tensor = true) {
 std::vector<at::Tensor> run(tt::runtime::Device device,
                             tt::runtime::Binary &binary, uint32_t program_idx,
                             std::vector<tt::runtime::Tensor> &rt_inputs) {
+
+  auto start_submit = std::chrono::high_resolution_clock::now();
   std::vector<tt::runtime::Tensor> rt_outputs =
       tt::runtime::submit(device, binary, program_idx, rt_inputs);
+
+  auto end_submit = std::chrono::high_resolution_clock::now();
+  auto duration_submit = std::chrono::duration_cast<std::chrono::milliseconds>(
+      end_submit - start_submit);
+  std::cout << "Time elapsed for program dispatch/submit: "
+            << duration_submit.count() << " ms" << std::endl;
 
   // Create all torch tensors first before deallocating any runtime tensors
   // This handles cases where the same tensor is returned multiple times
   std::vector<at::Tensor> outputs;
   outputs.reserve(rt_outputs.size());
 
+  auto start_readback_tensors = std::chrono::high_resolution_clock::now();
   for (size_t i = 0; i < rt_outputs.size(); ++i) {
     auto &rt_output = rt_outputs.at(i);
     outputs.emplace_back(create_torch_tensor(rt_output));
   }
+  auto end_readback_tensors = std::chrono::high_resolution_clock::now();
+  auto duration_readback_tensors =
+      std::chrono::duration_cast<std::chrono::milliseconds>(
+          end_readback_tensors - start_readback_tensors);
+  std::cout << "Time elapsed for readback tensors: "
+            << duration_readback_tensors.count() << " ms" << std::endl;
+
+  std::cout << "Total time elapsed: "
+            << (duration_submit.count() + duration_readback_tensors.count())
+            << " ms" << std::endl;
 
   for (size_t i = 0; i < rt_outputs.size(); ++i) {
     auto &rt_output = rt_outputs.at(i);
@@ -443,6 +464,18 @@ PYBIND11_MODULE(tt_mlir, m) {
                                 : std::make_optional(value.cast<size_t>());
           })
       .def_property(
+          "trace_region_size",
+          [](const tt::runtime::MeshDeviceOptions &o) {
+            return o.traceRegionSize.has_value()
+                       ? py::cast(o.traceRegionSize.value())
+                       : py::none();
+          },
+          [](tt::runtime::MeshDeviceOptions &o, py::handle value) {
+            o.traceRegionSize = py::none().is(value)
+                                    ? std::nullopt
+                                    : std::make_optional(value.cast<size_t>());
+          })
+      .def_property(
           "dispatch_core_type",
           [](const tt::runtime::MeshDeviceOptions &o) {
             return o.dispatchCoreType.has_value()
@@ -462,6 +495,7 @@ PYBIND11_MODULE(tt_mlir, m) {
         py::arg("ttir"), py::arg("system_desc_path"),
         py::arg("len_activations") = 0, py::arg("len_graph_constants") = 0,
         py::arg("enable_consteval") = true, py::arg("enable_optimizer") = false,
+        py::arg("enable_trace") = false,
         "A function that compiles TTIR to a bytestream");
   m.def("stable_hlo_automatic_parallelization",
         &stable_hlo_automatic_parallelization,
@@ -522,6 +556,12 @@ PYBIND11_MODULE(tt_mlir, m) {
   m.def("get_arch", &tt::runtime::getArch,
         "Get the architecture of the device");
   m.def("is_op_model_enabled", &is_op_model_enabled);
+  m.def("enable_persistent_kernel_cache",
+        &tt::runtime::enablePersistentKernelCache,
+        "Enable persistent kernel cache");
+  m.def("disable_persistent_kernel_cache",
+        &tt::runtime::disablePersistentKernelCache,
+        "Disable persistent kernel cache");
 
 #if defined(TT_RUNTIME_DEBUG) && TT_RUNTIME_DEBUG == 1
   py::class_<tt::runtime::CallbackContext>(m, "CallbackContext");

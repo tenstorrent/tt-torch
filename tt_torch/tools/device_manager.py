@@ -20,6 +20,7 @@ class DeviceManager:
         num_hw_cqs=None,
         enable_program_cache=None,
         l1_small_size=None,
+        trace_region_size=None,
         dispatch_core_type=None,
     ) -> tt_mlir.MeshDeviceOptions:
         options = tt_mlir.MeshDeviceOptions()
@@ -31,6 +32,8 @@ class DeviceManager:
             options.enable_program_cache = enable_program_cache
         if l1_small_size is not None:
             options.l1_small_size = l1_small_size
+        if trace_region_size is not None:
+            options.trace_region_size = trace_region_size
         if dispatch_core_type is not None:
             options.dispatch_core_type = dispatch_core_type
         return options
@@ -50,6 +53,7 @@ class DeviceManager:
         num_hw_cqs=None,
         enable_program_cache=None,
         l1_small_size=None,
+        trace_region_size=None,
         dispatch_core_type=None,
     ) -> tt_mlir.Device:
         """
@@ -67,6 +71,7 @@ class DeviceManager:
             num_hw_cqs,
             enable_program_cache,
             l1_small_size,
+            trace_region_size,
             dispatch_core_type,
         )
         parent_mesh = tt_mlir.open_mesh_device(mesh_shape=mesh_shape, options=options)
