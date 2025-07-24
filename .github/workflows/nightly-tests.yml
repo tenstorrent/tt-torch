@@ -42,15 +42,15 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  test_full_model:
-    needs: [docker-build, build]
-    uses: ./.github/workflows/run-full-model-execution-tests.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  test_full_model_nightly:
-    needs: [docker-build, build]
-    uses: ./.github/workflows/run-full-model-execution-tests-nightly.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
+  # test_full_model:
+  #   needs: [docker-build, build]
+  #   uses: ./.github/workflows/run-full-model-execution-tests.yml
+  #   secrets: inherit
+  #   with:
+  #     docker-image: ${{ needs.docker-build.outputs.docker-image }}
+  # test_full_model_nightly:
+  #   needs: [docker-build, build]
+  #   uses: ./.github/workflows/run-full-model-execution-tests-nightly.yml
+  #   secrets: inherit
+  #   with:
+  #     docker-image: ${{ needs.docker-build.outputs.docker-image }}

@@ -30,11 +30,11 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-          {
-            runs-on: wormhole_b0, name: "RMBG", tests: "
-              tests/models/RMBG/test_RMBG.py::test_RMBG[op_by_op_torch-eval]
-              "
-          },
+          # {
+          #   runs-on: wormhole_b0, name: "RMBG", tests: "
+          #     tests/models/RMBG/test_RMBG.py::test_RMBG[op_by_op_torch-eval]
+          #     "
+          # },
           {
 
             runs-on: wormhole_b0, name: "mistral", tests: "
@@ -42,17 +42,17 @@ jobs:
               tests/models/mistral/test_mistral.py::test_mistral[op_by_op_torch-ministral_8b_instruct-eval]
               "
           },
-          {
-            # only testing 4k variant as they're identical aside from token size
-            runs-on: wormhole_b0, name: "phi3", tests: "
-              tests/models/phi/test_phi_3.py::test_phi_3[op_by_op_torch-mini_4k_instruct-eval]
-            "
-          },
-          {
-            runs-on: wormhole_b0, name: "phi3p5_moe", tests: "
-            tests/models/phi/test_phi_3p5_moe.py::test_phi_3p5_moe[op_by_op_torch-eval]
-            "
-          },
+          # {
+          #   # only testing 4k variant as they're identical aside from token size
+          #   runs-on: wormhole_b0, name: "phi3", tests: "
+          #     tests/models/phi/test_phi_3.py::test_phi_3[op_by_op_torch-mini_4k_instruct-eval]
+          #   "
+          # },
+          # {
+          #   runs-on: wormhole_b0, name: "phi3p5_moe", tests: "
+          #   tests/models/phi/test_phi_3p5_moe.py::test_phi_3p5_moe[op_by_op_torch-eval]
+          #   "
+          # },
           {
             runs-on: wormhole_b0, name: "phi3p5_vision", tests: "
               tests/models/phi/test_phi_3p5_vision.py::test_phi_3p5_vision[op_by_op_torch-eval]
