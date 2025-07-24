@@ -27,10 +27,18 @@ jobs:
       fail-fast: false
 
     runs-on:
-      - ubuntu-latest
+      - tt-beta-ubuntu-2204-n150-large-stable
 
     container:
       image: ${{ inputs.docker-image }}
+      options: --user root --device /dev/tenstorrent/0 --shm-size=2gb
+      volumes:
+        - /dev/hugepages:/dev/hugepages
+        - /dev/hugepages-1G:/dev/hugepages-1G
+        - /etc/udev/rules.d:/etc/udev/rules.d
+        - /lib/modules:/lib/modules
+        - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
+        - /mnt/dockercache:/mnt/dockercache
 
     steps:
     - uses: actions/checkout@v4

@@ -9,7 +9,6 @@ on:
     inputs:
       run-on:
         description: 'Run on'
-        required: true
         default: 'Civ2'
         type: choice
         options:
@@ -19,7 +18,6 @@ on:
 permissions:
   packages: write
   checks: write
-
 
 jobs:
   pre-commit:
@@ -43,28 +41,28 @@ jobs:
     uses: ./.github/workflows/run-op-by-op-model-tests-nightly.yml
     secrets: inherit
     with:
-      use-shared-runners: ${{ inputs.run-on != 'Civ1' }}
+      use-shared-runners: ${{ inputs.run-on == 'Civ2' }}
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
   test_e2e_compile:
     needs: [docker-build, build]
     uses: ./.github/workflows/run-e2e-compile-tests.yml
     secrets: inherit
     with:
-      use-shared-runners: ${{ inputs.run-on != 'Civ1' }}
+      use-shared-runners: ${{ inputs.run-on == 'Civ2' }}
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
   test_full_model:
     needs: [docker-build, build]
     uses: ./.github/workflows/run-full-model-execution-tests.yml
     secrets: inherit
     with:
-      use-shared-runners: ${{ inputs.run-on != 'Civ1' }}
+      use-shared-runners: ${{ inputs.run-on == 'Civ2' }}
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
   test_full_model_nightly:
     needs: [docker-build, build]
     uses: ./.github/workflows/run-full-model-execution-tests-nightly.yml
     secrets: inherit
     with:
-      use-shared-runners: ${{ inputs.run-on != 'Civ1' }}
+      use-shared-runners: ${{ inputs.run-on == 'Civ2' }}
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
   download-report:
     if: success() || failure()
