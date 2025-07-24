@@ -33,6 +33,8 @@ def test_qwen2_casual_lm(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
     cc = CompilerConfig()
+    cc.enable_consteval = True
+    cc.consteval_parameters = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
