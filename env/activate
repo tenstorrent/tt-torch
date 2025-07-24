@@ -30,6 +30,16 @@ else
   python3.10 -m pip install -r requirements.txt
 
 fi
+
+if [ -n "$DOCKER_CACHE_ROOT" ]; then
+    echo "Found cached torch-xla wheel, updating installation..."
+    pip uninstall -y torch-xla 2>/dev/null || true
+    mkdir -p ./dist
+    cp "$DOCKER_CACHE_ROOT/models/tt-ci-models-private/wheels/torch_xla-*.whl" ./dist/
+    pip install ./dist/torch_xla-*.whl
+    echo "Installed cached torch-xla wheel from $DOCKER_CACHE_ROOT"
+fi
+
 export TTTORCH_ENV_ACTIVATED=1
 export TTXLA_ENV_ACTIVATED=1
 export TTMLIR_ENV_ACTIVATED=1
