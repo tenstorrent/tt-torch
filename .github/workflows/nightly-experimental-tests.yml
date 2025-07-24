@@ -45,6 +45,25 @@ jobs:
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       force-experimental-backend: true
+  test_op_by_op:
+    needs: [docker-build, build]
+    uses: ./.github/workflows/run-experimental-op-by-op-model-tests.yml
+    secrets: inherit
+    with:
+      docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      docker-image-harbor: ${{ needs.docker-build.outputs.docker-image-harbor }}
+  download-report:
+    if: success() || failure()
+    needs: test_op_by_op
+    uses: ./.github/workflows/generate-model-report.yml
+    secrets: inherit
+  generate-ttnn-md:
+    if: success() || failure()
+    needs: [download-report]
+    uses: ./.github/workflows/generate-ttnn-md.yml
+    secrets: inherit
+    with:
+      spreadsheet_name: ${{ needs.download-report.outputs.spreadsheet_name }}
 
   # runtime intermediate tests require build-debug artifact
   build-debug:
