@@ -58,6 +58,7 @@ def test_llama_3b(record_property, model_name, op_by_op):
         required_pcc=0.96,
         record_property_handle=record_property,
         backend="tt-experimental",
+        model_name_suffix="_tt_xla",
     )
     tester.test_model()
     tester.finalize()

@@ -64,6 +64,7 @@ def test_resnet(record_property, op_by_op):
         record_property_handle=record_property,
         data_parallel_mode=False,
         backend="tt-experimental",
+        model_name_suffix="_tt_xla",
     )
 
     results = tester.test_model()

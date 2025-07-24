@@ -54,3 +54,11 @@ jobs:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       run-codecov: 'false'
       run-dump-mlir: 'false'
+  experimental-full-model-test:
+    needs: [build, docker-build]
+    uses: ./.github/workflows/run-experimental-full-model-execution-tests.yml
+    secrets: inherit
+    with:
+      docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      run-codecov: 'false'
+      run-dump-mlir: 'false'

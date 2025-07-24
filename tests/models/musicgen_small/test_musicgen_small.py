@@ -30,10 +30,6 @@ class ThisTester(ModelTester):
 @pytest.mark.parametrize(
     "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
 )
-@pytest.mark.xfail(
-    reason="MusicGen model sees RuntimeError: dimensionality of sizes (0) must match dimensionality of strides (1), follow up in issue https://github.com/tenstorrent/tt-torch/issues/1073",
-    strict=True,
-)
 def test_musicgen_small(record_property, mode, op_by_op, data_parallel_mode):
     cc = CompilerConfig()
     cc.enable_consteval = True
