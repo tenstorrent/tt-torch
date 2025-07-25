@@ -72,6 +72,8 @@ def test_deit(record_property, mode, op_by_op):
         record_property_handle=record_property,
         assert_pcc=True,
         assert_atol=False,
+        # FIXME fails with tt-experimental - https://github.com/tenstorrent/tt-torch/issues/1105
+        backend="tt",
     )
     results = tester.test_model()
 
