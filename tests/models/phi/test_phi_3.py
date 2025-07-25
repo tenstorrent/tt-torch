@@ -9,7 +9,7 @@ import pytest
 
 from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.phi.phi_3.pytorch import ModelLoader
+from third_party.tt_forge_models.phi3.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
