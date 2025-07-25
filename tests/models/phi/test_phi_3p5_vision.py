@@ -13,7 +13,7 @@ from third_party.tt_forge_models.phi3.phi_3_5_vision.pytorch import ModelLoader
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model = self.loader.load_model(dtype_override=torch.bfloat16)
+        model = self.loader.load_model()
         self.tokenizer = self.loader.tokenizer
         return model
 
