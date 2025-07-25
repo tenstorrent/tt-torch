@@ -169,6 +169,14 @@ class ModelTester:
         else:
             self.backend = backend
 
+        # FIXME - https://github.com/tenstorrent/tt-torch/issues/1105
+        # AssertionError: Data parallel mode is not supported with XLA currently
+        if self.backend == "tt-experimental" and self.data_parallel_mode:
+            print(
+                "Data parallel mode is not supported with XLA currently - reverting to legacy"
+            )
+            self.backend = "tt"
+
         self.framework_model = self._load_model()
         self.is_token_output = is_token_output
         if is_token_output and not hasattr(self, "tokenizer"):
