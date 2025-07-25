@@ -61,6 +61,8 @@ def test_MobileNetV2(record_property, mode, op_by_op):
         compiler_config=cc,
         record_property_handle=record_property,
         model_group="red",
+        # FIXME fails with tt-experimental - https://github.com/tenstorrent/tt-torch/issues/1105
+        backend="tt",
     )
     results = tester.test_model()
     if mode == "eval":
