@@ -123,6 +123,9 @@ def test_torchvision_image_classification(
     assert_pcc = False if model_name in ["vit_h_14"] else True
     assert_atol = False
 
+    # FIXME fails with tt-experimental - https://github.com/tenstorrent/tt-torch/issues/1105
+    backend = "tt" if model_name in ["regnet_x_32gf"] else "tt-experimental"
+
     model_group = "red" if model_name == "swin_v2_s" else "generality"
 
     # Out of Memory: Not enough space to allocate 336691200 B DRAM buffer across 12 banks, where each bank needs to store 28057600 B
@@ -143,6 +146,7 @@ def test_torchvision_image_classification(
         compiler_config=cc,
         record_property_handle=record_property,
         model_group=model_group,
+        backend=backend,
     )
     results = tester.test_model()
 

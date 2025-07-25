@@ -48,10 +48,16 @@ class ThisTester(ModelTester):
 def test_phi(record_property, model_name, mode, op_by_op):
     model_group = "red"
     cc = CompilerConfig()
+    cc.enable_consteval = True
+    cc.consteval_parameters = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+
+    # FIXME 44GB memory usage w/ experimental backend and consteval in phi2
+    # fails with tt-experimental - https://github.com/tenstorrent/tt-torch/issues/1108
+    backend = "tt" if model_name == "microsoft/phi-2" else "tt-experimental"
 
     tester = ThisTester(
         model_name,
@@ -64,6 +70,7 @@ def test_phi(record_property, model_name, mode, op_by_op):
         else 0.92,  # PCC drop observed around Jul 17, follow up in https://github.com/tenstorrent/tt-torch/issues/1070
         run_generate=False,
         assert_atol=False,
+        backend=backend,
     )
 
     results = tester.test_model()

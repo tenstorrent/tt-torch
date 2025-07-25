@@ -9,7 +9,6 @@ on:
       - "Nightly Tests"
       - "Run Model Tests"
       - "Run Tests"
-      - "Nightly Experimental Tests"
     types:
       - completed
   workflow_dispatch:

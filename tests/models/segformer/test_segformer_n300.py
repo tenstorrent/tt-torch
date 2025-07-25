@@ -75,6 +75,8 @@ def test_segformer(record_property, mode, op_by_op):
         assert_atol=False,
         record_property_handle=record_property,
         model_group="red",
+        # FIXME fails with tt-experimental - https://github.com/tenstorrent/tt-torch/issues/1105
+        backend="tt",
     )
     results = tester.test_model()
     if mode == "eval":

@@ -69,6 +69,10 @@ def test_torchvision_object_detection(
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+
+    if model_name == "ssd300_vgg16" or model_name == "ssdlite320_mobilenet_v3_large":
+        cc.arg_type_map_override = True
+
     if op_by_op:
         if data_parallel_mode:
             pytest.skip("Op-by-op not supported in data parallel mode")
