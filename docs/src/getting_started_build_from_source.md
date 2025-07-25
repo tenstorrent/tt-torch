@@ -74,33 +74,43 @@ cmake --version
 
 If you see ```cmake version 4.0.3``` you are ready for the next section.
 
-### Installing Clang 17
-This section walks you through installing Clang 17.
+### Installing LLVM 17 Toolchain
+This section walks you through installing LLVM 17 Toolchain.
 
-1. Install Clang 17:
+1. Download LLVM 17 Toolchain Installation Script:
 
 ```bash
 wget https://apt.llvm.org/llvm.sh
 chmod u+x llvm.sh
 sudo ./llvm.sh 17
+```
+
+2. Install C++ Standard Library (libc++) Development Files for LLVM 17:
+
+```bash
 sudo apt install -y libc++-17-dev libc++abi-17-dev
+```
+
+3. Symlink Clang:
+
+```bash
 sudo ln -s /usr/bin/clang-17 /usr/bin/clang
 sudo ln -s /usr/bin/clang++-17 /usr/bin/clang++
 ```
 
-2. Check that the selected GCC candidate using Clang 17 is using 11:
+4. Check that the selected GCC candidate using Clang 17 is using 11:
 
 ```bash
 clang -v
 ```
 
-3. Look for the line that starts with: `Selected GCC installation:`. If it is something other than GCC 11, and you do not see GCC 11 listed as an option, please install GCC 11 using:
+5. Look for the line that starts with: `Selected GCC installation:`. If it is something other than GCC 11, and you do not see GCC 11 listed as an option, please install GCC 11 using:
 
 ```bash
 sudo apt-get install gcc-11 lib32stdc++-11-dev lib32gcc-11-dev
 ```
 
-4. If you see GCC 12 listed as installed and listed as the default choice, uninstall it with:
+6. If you see GCC 12 listed as installed and listed as the default choice, uninstall it with:
 
 ```bash
 sudo rm -rf /usr/bin/../lib/gcc/x86_64-linux-gnu/12
@@ -126,7 +136,6 @@ sudo apt-get install -y \
     libyaml-cpp-dev \
     libboost-all-dev \
     lcov \
-    libgl \
     protobuf-compiler
 ```
 
@@ -135,6 +144,9 @@ Install OpenMPI:
 ```bash
 sudo wget -q https://github.com/dmakoviichuk-tt/mpi-ulfm/releases/download/v5.0.7-ulfm/openmpi-ulfm_5.0.7-1_amd64.deb -O /tmp/openmpi-ulfm.deb && sudo apt install /tmp/openmpi-ulfm.deb
 ```
+
+>**NOTE:** If you want to run a test which uses `cv2` (i.e. YOLOv10), please install libgl.
+
 
 ### How to Build From Source
 This section describes how to build TT-Torch. You need to build TT-Torch whether you plan to do development work, or run models.
