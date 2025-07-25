@@ -104,7 +104,8 @@ std::string stableHLOAutomaticParallelization(std::string_view code,
     automatic_sharding_pipeline_pm.enableIRPrinting();
   }
 
-  mlir::tt::stablehlo::StableHLOPipelineOptions automatic_sharding_pipeline_options;
+  mlir::tt::stablehlo::StableHLOPipelineOptions
+      automatic_sharding_pipeline_options;
   automatic_sharding_pipeline_options.meshShape = mesh_shape;
 
   // Set argument types.
