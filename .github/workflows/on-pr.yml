@@ -141,6 +141,7 @@ jobs:
     needs:
       - pre-commit
       - spdx
+      - docker-build
       - build
       - test
       - full-model-test
