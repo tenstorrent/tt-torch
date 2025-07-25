@@ -127,6 +127,12 @@ def test_timm_image_classification(
         else 0.99
     )
 
+    # FIXME - Issue https://github.com/tenstorrent/tt-torch/issues/1104
+    if model_name == "inception_v4.tf_in1k":
+        backend = "tt"
+    else:
+        backend = "tt-experimental"
+
     model_group = "generality"
     tester = ThisTester(
         model_name,
@@ -138,6 +144,7 @@ def test_timm_image_classification(
         record_property_handle=record_property,
         model_group=model_group,
         data_parallel_mode=data_parallel_mode,
+        backend=backend,
     )
     results = tester.test_model()
 
