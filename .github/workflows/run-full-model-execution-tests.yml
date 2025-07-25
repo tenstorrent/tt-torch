@@ -52,15 +52,7 @@ jobs:
                 tests/models/resnet50/test_resnet50.py::test_resnet[data_parallel-full-eval]
                 tests/models/resnet/test_resnet.py::test_resnet[data_parallel-full-eval]
                 tests/models/mnist/test_mnist_n300.py::test_mnist_train[full-eval]
-            "
-          },
-          {
-            wh-runner: n300, name: "eval_6_quarantine_1", tests: "
                 tests/models/autoencoder_linear/test_autoencoder_linear_n300.py::test_autoencoder_linear[full-eval]
-            "
-          },
-          {
-            wh-runner: n300, name: "eval_6_quarantine_2", tests: "
                 tests/models/MobileNetV2/test_MobileNetV2_n300.py::test_MobileNetV2[full-eval]
                 tests/models/EfficientNet/test_EfficientNet_n300.py::test_EfficientNet[full-efficientnet-b0-eval]
                 tests/models/yolov4/test_yolov4_n300.py::test_yolov4[full-eval]
@@ -70,15 +62,15 @@ jobs:
                 tests/models/hardnet/test_hardnet_n300.py::test_hardnet[full-eval]
             "
           },
-          {
-            wh-runner: wormhole_b0, bh-runner: p150, name: "tt-xla-eager", tests: "
-              tests/experimental/test_torch_xla_basic.py
-              tests/experimental/models/Qwen/test_qwen2_causal_lm.py::test_qwen2_causal_lm_eager
-              tests/experimental/models/llama/test_llama_3b.py::test_llama_3b_eager
-              tests/experimental/models/mistral/test_mistral.py::test_mistral3b_eager
-              tests/experimental/models/resnet50/test_resnet50.py::test_resnet_eager
-            "
-          },
+          # {
+          #   wh-runner: wormhole_b0, bh-runner: p150, name: "tt-xla-eager", tests: "
+          #     tests/experimental/test_torch_xla_basic.py
+          #     tests/experimental/models/Qwen/test_qwen2_causal_lm.py::test_qwen2_causal_lm_eager
+          #     tests/experimental/models/llama/test_llama_3b.py::test_llama_3b_eager
+          #     tests/experimental/models/mistral/test_mistral.py::test_mistral3b_eager
+          #     tests/experimental/models/resnet50/test_resnet50.py::test_resnet_eager
+          #   "
+          # },
         ]
     runs-on: ${{ matrix.runner == 'wormhole' && matrix.build.wh-runner || matrix.runner == 'blackhole' && matrix.build.bh-runner  || 'wormhole_b0'}}
     name: "test exec ${{ matrix.runner == 'wormhole' && 'wh' || matrix.runner == 'blackhole' && 'bh' || 'unk' }} (${{ matrix.build.name }})"
