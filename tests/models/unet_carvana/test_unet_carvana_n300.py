@@ -49,7 +49,12 @@ def test_unet_carvana(record_property, mode, op_by_op):
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     tester = ThisTester(
-        model_name, mode, compiler_config=cc, record_property_handle=record_property
+        model_name,
+        mode,
+        compiler_config=cc,
+        record_property_handle=record_property,
+        # FIXME fails with tt-experimental - https://github.com/tenstorrent/tt-torch/issues/1105
+        backend="tt",
     )
     tester.test_model()
     tester.finalize()

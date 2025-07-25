@@ -52,6 +52,8 @@ def test_yolov3(record_property, mode, op_by_op):
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
+        # FIXME fails with tt-experimental - https://github.com/tenstorrent/tt-torch/issues/1105
+        backend="tt",
     )
     tester.test_model()
     tester.finalize()
