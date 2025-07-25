@@ -168,7 +168,6 @@ class ModelTester:
         else:
             self.backend = backend
 
-
         # Time model loading
         print(f"[TIMING] Loading model '{model_name}'...")
         model_start_time = time.time()
