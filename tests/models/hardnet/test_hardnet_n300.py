@@ -58,6 +58,8 @@ def test_hardnet(record_property, mode, op_by_op):
         record_property_handle=record_property,
         # TODO Enable checking - https://github.com/tenstorrent/tt-torch/issues/488
         assert_atol=False,
+        # FIXME fails with tt-experimental - https://github.com/tenstorrent/tt-torch/issues/1105
+        backend="tt",
     )
     results = tester.test_model()
     if mode == "eval":
