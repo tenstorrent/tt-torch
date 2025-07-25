@@ -18,8 +18,8 @@ on:
         required: false
         type: string
         default: 'true'
-      force-experimental-backend:
-        description: 'Force experimental backend'
+      force-legacy-backend:
+        description: 'Force legacy backend'
         required: false
         type: boolean
         default: false
@@ -389,7 +389,7 @@ jobs:
         HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
         TORCH_HOME: ${{ env.DOCKER_CACHE_ROOT }}/torch
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        TT_TORCH_FORCE_EXPERIMENTAL_BACKEND: ${{ inputs.force-experimental-backend && '1' || '0' }}
+        TT_TORCH_FORCE_LEGACY_BACKEND: ${{ inputs.force-legacy-backend && '1' || '0' }}
       shell: bash
       run: |
         source env/activate
