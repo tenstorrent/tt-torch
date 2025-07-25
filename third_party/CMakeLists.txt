@@ -4,7 +4,7 @@
 #
 
 # underlying tt-mlir version we will have tt-xla use
-set(TT_MLIR_VERSION "c41a3ecb04a93a187cc511245cd66aff0e09c4d6")
+set(TT_MLIR_VERSION "168a6e161e935568618b6b532518ad4ee0ebce6f")
 # tt-xla version to use
 set(TTXLA_VERSION "7e554cec849f37e7326beab1d7ba9880b2a4581b")
 
