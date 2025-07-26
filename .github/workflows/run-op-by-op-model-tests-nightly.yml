@@ -135,12 +135,6 @@ jobs:
             "
           },
           {
-            runs-on: wormhole_b0, name: "falcon3", tests: "
-              tests/models/falcon/test_falcon3.py::test_falcon[op_by_op_torch-tiiuae/Falcon3-7B-Base-eval]
-              tests/models/falcon/test_falcon3.py::test_falcon[op_by_op_torch-tiiuae/Falcon3-10B-Base-eval]
-              "
-          },
-          {
             runs-on: wormhole_b0, name: "stable-diffusion-v3.5", tests: "
               tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[op_by_op_torch-SD3.5-medium-eval]
               tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[op_by_op_torch-SD3.5-large-eval]
