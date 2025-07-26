@@ -32,13 +32,13 @@ jobs:
         build: [
           {
             runs-on: wormhole_b0, name: "llama", tests: "
-                  tests/models/llama/test_llama_7b.py::test_llama_7b[full-eval]
+                  tests/models/llama/test_llama_7b.py::test_llama_7b[op_by_op_torch-eval]
               "
           },
           {
             runs-on: wormhole_b0, name: "flux", tests: "
-              tests/models/flux/test_flux.py::test_flux[full-schnell-eval]
-              tests/models/flux/test_flux.py::test_flux[full-dev-eval]
+              tests/models/flux/test_flux.py::test_flux[op_by_op_torch-schnell-eval]
+              tests/models/flux/test_flux.py::test_flux[op_by_op_torch-dev-eval]
               "
           },
         ]
