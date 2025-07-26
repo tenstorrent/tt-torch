@@ -1,28 +1,19 @@
 # SPDX-FileCopyrightText: (c) 2024 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-from transformers import BeitImageProcessor, BeitForImageClassification
-from PIL import Image
 import pytest
 import torch
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.tools.utils import get_file
+from third_party.tt_forge_models.beit.pytorch import ModelLoader, ModelVariant
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model = BeitForImageClassification.from_pretrained(self.model_name)
-        model = model.to(torch.bfloat16)
-        return model
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
-        image = Image.open(str(image_file))
-        processor = BeitImageProcessor.from_pretrained(self.model_name)
-        inputs = processor(images=image, return_tensors="pt")
-        inputs["pixel_values"] = inputs["pixel_values"].to(torch.bfloat16)
-        return inputs
+        return self.loader.load_inputs(dtype_override=torch.bfloat16)
 
     def set_inputs_train(self, inputs):
         inputs["pixel_values"].requires_grad_(True)
@@ -35,13 +26,19 @@ class ThisTester(ModelTester):
         return inputs["pixel_values"].grad
 
 
+# Print available variants for reference
+available_variants = ModelLoader.query_available_variants()
+print("Available variants: ", [str(k) for k in available_variants.keys()])
+
+
 @pytest.mark.parametrize(
     "mode",
     ["train", "eval"],
 )
 @pytest.mark.parametrize(
-    "model_name",
-    ["microsoft/beit-base-patch16-224", "microsoft/beit-large-patch16-224"],
+    "variant,variant_config",
+    available_variants.items(),
+    ids=[str(k) for k in available_variants.keys()],
 )
 @pytest.mark.parametrize(
     "op_by_op",
@@ -52,7 +49,7 @@ class ThisTester(ModelTester):
     "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
 )
 def test_beit_image_classification(
-    record_property, model_name, mode, op_by_op, data_parallel_mode
+    record_property, variant, variant_config, mode, op_by_op, data_parallel_mode
 ):
     if mode == "train":
         pytest.skip()
@@ -67,15 +64,20 @@ def test_beit_image_classification(
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    required_atol = 0.032 if model_name == "microsoft/beit-base-patch16-224" else 0.065
-    do_assert = True
+    loader = ModelLoader(variant=variant)
+    model_info = loader.get_model_info(variant=variant)
+    model_name = model_info.name
+
+    required_atol = 0.032 if variant == "base" else 0.065
+
     tester = ThisTester(
         model_name,
         mode,
+        loader=loader,
         required_atol=required_atol,
         compiler_config=cc,
         record_property_handle=record_property,
-        assert_pcc=do_assert,
+        assert_pcc=True,
         assert_atol=False,
         data_parallel_mode=data_parallel_mode,
     )

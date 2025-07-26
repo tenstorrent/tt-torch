@@ -7,63 +7,37 @@ import pytest
 from bi_lstm_crf import BiRnnCrf
 from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.bi_rnn_crf.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
-    def __init__(self, *args, rnn_type="lstm", **kwargs):
-
-        # Some arbitrary sanity test values, and configurable rnn.
-        self.model_config = {
-            "rnn_type": rnn_type.lower(),
-            "vocab_size": 30000,
-            "tagset_size": 20,
-            "embedding_dim": 256,
-            "hidden_dim": 512,
-            "num_rnn_layers": 2,
-        }
-
-        super(ThisTester, self).__init__(*args, **kwargs)
-
     def _load_model(self):
-        # Create the model with random weights
-        model = BiRnnCrf(
-            vocab_size=self.model_config["vocab_size"],
-            tagset_size=self.model_config["tagset_size"],
-            embedding_dim=self.model_config["embedding_dim"],
-            hidden_dim=self.model_config["hidden_dim"],
-            num_rnn_layers=self.model_config["num_rnn_layers"],
-            rnn=self.model_config["rnn_type"],
-        )
-
-        return model
+        return self.loader.load_model()
 
     def _load_inputs(self):
-        # Generate random token ids within vocabulary range
-        batch_size = 4
-        seq_length = 16
-        input_ids = torch.randint(
-            0, self.model_config["vocab_size"], (batch_size, seq_length)
-        )
-        return input_ids
+        return self.loader.load_inputs()
 
 
-@pytest.mark.parametrize(
-    "rnn_type",
-    ["lstm", "gru"],
-    ids=["lstm", "gru"],
-)
+# Print available variants for reference
+available_variants = ModelLoader.query_available_variants()
+print("Available variants: ", [str(k) for k in available_variants.keys()])
+
+
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
+)
+@pytest.mark.parametrize(
+    "variant,variant_config",
+    available_variants.items(),
+    ids=[str(k) for k in available_variants.keys()],
 )
 @pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_bi_lstm_crf(record_property, rnn_type, mode, op_by_op):
-    model_name = f"BiRnnCrf-{rnn_type.upper()}"
-    model_group = "red"
+def test_bi_lstm_crf(record_property, variant, variant_config, mode, op_by_op):
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -73,23 +47,28 @@ def test_bi_lstm_crf(record_property, rnn_type, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    loader = ModelLoader(variant=variant)
+    model_info = loader.get_model_info(variant=variant)
+    model_name = model_info.name
+    rnn_type = loader.rnn_type
+
     skip_full_eval_test(
         record_property,
         cc,
         model_name,
         bringup_status="FAILED_FE_COMPILATION",
         reason="need 'aten::sort' torch-mlir -> stablehlo + mlir support: failed to legalize operation 'torch.constant.bool' - https://github.com/tenstorrent/tt-torch/issues/724",
-        model_group=model_group,
+        model_group=model_info.group.value,
     )
 
     tester = ThisTester(
         model_name,
         mode,
-        rnn_type=rnn_type,
+        loader=loader,
         relative_atol=0.01,
         compiler_config=cc,
         record_property_handle=record_property,
-        model_group=model_group,
+        model_group=model_info.group.value,
     )
 
     results = tester.test_model()
