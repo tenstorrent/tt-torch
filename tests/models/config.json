@@ -119,6 +119,12 @@
         },
         "mistral/pixtral/pytorch": {
             "skip": "Fix KILLED"
+        },
+        "bi_rnn_crf/pytorch-lstm": {
+            "skip": "need 'aten::sort' torch-mlir -> stablehlo + mlir support: failed to legalize operation 'torch.constant.bool' - https://github.com/tenstorrent/tt-torch/issues/724"
+        },
+        "bi_rnn_crf/pytorch-gru": {
+            "skip": "need 'aten::sort' torch-mlir -> stablehlo + mlir support: failed to legalize operation 'torch.constant.bool' - https://github.com/tenstorrent/tt-torch/issues/724"
         }
     }
 }
