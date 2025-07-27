@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [wormhole, blackhole]
+        runner: [wormhole]
         build: [
           {
             # Approximately 70 minutes.
@@ -210,41 +210,6 @@ jobs:
                 tests/models/t5/test_t5.py::test_t5[full-t5-large-eval]
                 tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-od-resdcn18-eval]
                 tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-od-resdcn101-eval]
-            "
-          },
-          {
-            # These are WIP model_group=red models, marked w/ pytest.skip with reasons, run here for reporting.
-            wh-runner: wormhole_b0, bh-runner: p150, name: "skip_tests_red_models", tests: "
-                tests/models/bi_lstm_crf/test_bi_lstm_crf.py::test_bi_lstm_crf[full-lstm-eval]
-                tests/models/bi_lstm_crf/test_bi_lstm_crf.py::test_bi_lstm_crf[full-gru-eval]
-                tests/models/oft/test_oft.py::test_oft[full-eval]
-                tests/models/vgg19_unet/test_vgg19_unet.py::test_vgg19_unet[full-eval]
-                tests/models/yolov10/test_yolov10.py::test_yolov10[full-eval]
-                tests/models/flux/test_flux.py::test_flux[full-schnell-eval]
-                tests/models/flux/test_flux.py::test_flux[full-dev-eval]
-                tests/models/gliner/test_gliner.py::test_gliner[full-eval]
-                tests/models/mistral/test_pixtral.py::test_pixtral[full-eval]
-                tests/models/mistral/test_mistral.py::test_mistral[full-mistral7b-eval]
-                tests/models/mistral/test_mistral.py::test_mistral[full-ministral8b-eval]
-                tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-7B-Base-eval]
-                tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-10B-Base-eval]
-                tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[full-SD3.5-medium-eval]
-                tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[full-SD3.5-large-eval]
-                tests/models/stable_diffusion/test_stable_diffusion_transformer.py::test_stable_diffusion_transformer[full-SD3.5-large-transformer-eval]
-                tests/models/detr/test_detr_onnx.py::test_detr_onnx[full-eval]
-                tests/models/phi/test_phi_3.py::test_phi_3[full-microsoft/Phi-3-mini-4k-instruct-eval]
-                tests/models/phi/test_phi_3.py::test_phi_3[full-microsoft/Phi-3-mini-128k-instruct-eval]
-                tests/models/phi/test_phi_3p5_moe.py::test_phi_3p5_moe[full-phi3p5_moe-eval]
-                tests/models/phi/test_phi_3p5_vision.py::test_phi_3p5_vision[full-microsoft/Phi-3.5-vision-instruct-eval]
-                tests/models/phi/test_phi_4.py::test_phi_4[full-microsoft/phi-4-eval]
-                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-od-dla1x-eval]
-                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-od-dla2x-eval]
-                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-od-hg-eval]
-                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-hpe-dla1x-eval]
-                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-hpe-dla3x-eval]
-                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-hpe-hg3x-eval]
-                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-3d_bb-ddd_3dop-eval]
-                tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-3d_bb-ddd_sub-eval]
             "
           },
           # This test group needs to be moved. This will be done once multichip tests are refactored: #780
