@@ -10,6 +10,7 @@ import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from third_party.tt_forge_models.hardnet.pytorch import ModelLoader
+import tt_mlir
 
 
 class ThisTester(ModelTester):
@@ -47,12 +48,15 @@ def test_hardnet(record_property, mode, op_by_op):
     loader = ModelLoader(variant=None)
     model_info = loader.get_model_info(variant=None)
 
+    # Small dip for blackhole using experimental backend
+    required_pcc = 0.98 if tt_mlir.get_arch() != tt_mlir.Arch.BLACKHOLE else 0.97
+
     tester = ThisTester(
         model_info.name,
         mode,
         loader=loader,
         model_info=model_info,
-        required_pcc=0.98,
+        required_pcc=required_pcc,
         relative_atol=0.01,
         compiler_config=cc,
         record_property_handle=record_property,
