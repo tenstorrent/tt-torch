@@ -190,3 +190,20 @@ def pytest_configure(config):
         root = ET.Element("testsuites")
         tree = ET.ElementTree(root)
         tree.write(property_file)
+
+
+# Memory Profiling
+def get_peak_rss_gb():
+    with open("/proc/self/status") as f:
+        for line in f:
+            if line.startswith("VmHWM:"):
+                kb = int(line.split()[1])
+                return kb / 1024 / 1024
+    return 0
+
+
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_call(item):
+    yield
+    peak_rss = get_peak_rss_gb()
+    print(f"\n[PEAK MEMORY] {item.nodeid}: {peak_rss:.2f} GB")
