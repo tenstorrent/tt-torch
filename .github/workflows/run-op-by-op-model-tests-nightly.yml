@@ -33,6 +33,7 @@ jobs:
           {
             runs-on: wormhole_b0, name: "llama", tests: "
                   tests/models/llama/test_llama_7b.py::test_llama_7b[op_by_op_torch-eval]
+                  tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op_torch-eval-regnet_y_128gf]
               "
           },
           {
