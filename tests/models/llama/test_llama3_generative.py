@@ -94,8 +94,8 @@ def test_llama3_generate():
     options = BackendOptions()
     options.compiler_config = cc
 
-    device = DeviceManager.create_parent_mesh_device(mesh_shape=[1, 1])
-    options.devices = [device]
+    # device = DeviceManager.create_parent_mesh_device(mesh_shape=[1, 1])
+    # options.devices = [device]
 
     buffer_cache = {}
     options.buffer_cache = buffer_cache
@@ -228,7 +228,7 @@ def test_llama3_generate():
     )
 
     # Cleanup
-    DeviceManager.release_parent_device(device)
+    # DeviceManager.release_parent_device(device)
     clear_dynamo_cache()
 
 
