@@ -29,7 +29,7 @@ permissions:
 jobs:
 
   build-image:
-    runs-on: ubuntu-latest
+    runs-on: tt-beta-ubuntu-2204-large
     outputs:
       docker-image: ${{ steps.build.outputs.docker-image }}
       docker-image-harbor: ${{ steps.build.outputs.docker-image-harbor }}
