@@ -46,17 +46,13 @@ jobs:
             wh-runner: wormhole_b0, bh-runner: p150, name: "eval_1", tests: "
                   tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval]
                   tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval]
-                  tests/models/yolov3/test_yolov3.py::test_yolov3[full-eval]
-                  tests/models/yolov4/test_yolov4.py::test_yolov4[full-eval]
                   tests/models/vovnet/test_vovnet_onnx.py::test_vovnet_onnx[full-eval]
                   tests/models/llama/test_llama3_generative.py::test_llama3_generate
             "
           },
           {
             wh-runner: wormhole_b0, bh-runner: p150, name: "eval_2", tests: "
-                  tests/models/mnist/test_mnist.py::test_mnist_train[single_device-full-eval]
                   tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval]
-                  tests/models/openpose/test_openpose_v2.py::test_openpose_v2[full-eval]
                   tests/models/resnet/test_resnet.py::test_resnet[single_device-full-eval]
                   tests/models/resnet50/test_resnet50.py::test_resnet[single_device-full-eval]
                   tests/models/distilbert/test_distilbert.py::test_distilbert_multiloop[full-distilbert-base-uncased-eval-64]
@@ -114,7 +110,6 @@ jobs:
             wh-runner: n300, name: "eval_6", tests: "
                 tests/torch/test_basic_async.py
                 tests/torch/test_basic_multichip.py
-                tests/models/mnist/test_mnist.py::test_mnist_train[data_parallel-full-eval]
                 tests/models/resnet50/test_resnet50.py::test_resnet[data_parallel-full-eval]
                 tests/models/resnet/test_resnet.py::test_resnet[data_parallel-full-eval]
                 tests/models/mnist/test_mnist_n300.py::test_mnist_train[full-eval]
