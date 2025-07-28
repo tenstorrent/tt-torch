@@ -19,23 +19,21 @@ on:
         description: 'Key to use for artifact upload'
         required: false
         type: string
+      sh-runner:
+        description: 'Use shared runners'
+        required: false
+        type: boolean
+        default: true
 
 jobs:
   build:
     timeout-minutes: 120
-    strategy:
-      fail-fast: false
-      matrix:
-        build: [
-          {runs-on: wormhole_b0, name: "run"},
-        ]
 
-    runs-on:
-      - ${{ matrix.build.runs-on }}
+    runs-on: ${{ inputs.sh-runner && 'tt-beta-ubuntu-2204-large' || fromJson('["wormhole_b0", "in-service"]') }}
 
     container:
-      image: ${{ inputs.docker-image }}
-      options: --device /dev/tenstorrent/0
+      image: ${{ inputs.sh-runner && format('harbor.ci.tenstorrent.net/{0}', inputs.docker-image) || inputs.docker-image }}
+      options: --device /dev/tenstorrent
       volumes:
         - /dev/hugepages:/dev/hugepages
         - /dev/hugepages-1G:/dev/hugepages-1G
@@ -46,6 +44,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        repository: 'tenstorrent/tt-torch'
 
     - name: Override tt-mlir SHA mlir_override is set
       if: ${{ inputs.mlir_override }}
