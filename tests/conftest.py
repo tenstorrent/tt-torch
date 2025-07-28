@@ -190,3 +190,45 @@ def pytest_configure(config):
         root = ET.Element("testsuites")
         tree = ET.ElementTree(root)
         tree.write(property_file)
+
+
+import tempfile
+import uuid
+
+# Use unique file per run
+SUMMARY_FILE = os.path.join(
+    tempfile.gettempdir(), f"pytest_failures_{uuid.uuid4().hex}.txt"
+)
+
+
+def _extract_message(report):
+    if hasattr(report.longrepr, "reprcrash"):
+        return report.longrepr.reprcrash.message
+    elif isinstance(report.longrepr, str):
+        lines = report.longrepr.splitlines()
+        return next(
+            (line.strip() for line in reversed(lines) if line.strip()), "Unknown error"
+        )
+    elif hasattr(report.longrepr, "text"):
+        return report.longrepr.text
+    return "Unknown error"
+
+
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+    if report.when == "call" and report.failed:
+        msg = _extract_message(report)
+        with open(SUMMARY_FILE, "a", encoding="utf-8") as f:
+            f.write(f"{item.nodeid}|||{msg}\n")
+
+
+def pytest_terminal_summary(terminalreporter, exitstatus, config):
+    if os.path.exists(SUMMARY_FILE):
+        terminalreporter.write_sep("=", "Failure Summary")
+        with open(SUMMARY_FILE, "r", encoding="utf-8") as f:
+            for line in f:
+                test, msg = line.strip().split("|||", 1)
+                terminalreporter.write_line(f"FAILED {test} - {msg}")
+        os.remove(SUMMARY_FILE)
