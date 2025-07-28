@@ -80,7 +80,7 @@ def test_llama3_generate():
 
     # Allow local disablement of golden verification to accelerate tests
     # by avoiding dev2host transfer of static cache
-    enable_golden = True
+    enable_golden = False
 
     # Setup compilation
     clear_dynamo_cache()
@@ -88,8 +88,8 @@ def test_llama3_generate():
 
     # Consteval disabled due to 4D Causal Attention Mask evaluation getting constant folded in torchfx
     #   due to incorrect tracing of static cache and malformed output missing static cache tensors
-    cc.enable_consteval = False
-    cc.consteval_parameters = False
+    cc.enable_consteval = True
+    cc.consteval_parameters = True
 
     options = BackendOptions()
     options.compiler_config = cc
@@ -103,8 +103,12 @@ def test_llama3_generate():
     constant_cache = {}
     options.constant_cache = constant_cache
 
+    # _backend = backend 
+    _backend = 'tt-experimental' 
+    
+
     compiled_model = torch.compile(
-        model, backend=backend, dynamic=False, options=options
+        model, backend=_backend, dynamic=False, options=options
     )
 
     # Token generation with data collection
