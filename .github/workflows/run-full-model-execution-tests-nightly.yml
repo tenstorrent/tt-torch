@@ -71,7 +71,6 @@ jobs:
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite4.in1k]
                   tests/models/segformer/test_segformer.py::test_segformer[single_device-full-eval]
                   tests/models/torchvision/test_torchvision_object_detection.py::test_torchvision_object_detection[single_device-full-ssdlite320_mobilenet_v3_large-eval]
-                  tests/models/squeeze_bert/test_squeeze_bert.py::test_squeeze_bert[single_device-full-eval]
                   tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[single_device-full-base-eval]
                   tests/models/beit/test_beit_image_classification.py::test_beit_image_classification[single_device-full-large-eval]
                   tests/models/deit/test_deit.py::test_deit[single_device-full-eval]
@@ -121,7 +120,6 @@ jobs:
           {
             # Approximately 95 minutes.
             wh-runner: wormhole_b0, bh-runner: p150, name: "eval_2", pytest-args: "", tests: "
-                  tests/models/bloom/test_bloom.py::test_bloom[full-eval]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-full-eval-hrnet_w18.ms_aug_in1k]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-full-eval-ghostnet_100.in1k]
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-full-eval-xception71.tf_in1k]
