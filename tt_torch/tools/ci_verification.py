@@ -230,8 +230,12 @@ def dissect_runtime_verification_report(log_folder, output_xlsx):
             continue
 
         # Parse CSV data
-        header = csv_data[0].split(",")
-        for row in csv_data[1:]:
+        csv_data_start_line = 0
+        csv_data_start_line = next(
+            i for i, line in enumerate(csv_data) if line.startswith("NodeName")
+        )
+        header = csv_data[csv_data_start_line].split(",")
+        for row in csv_data[csv_data_start_line + 1 :]:
             values = row.split(",")
             if len(values) != len(header):
                 continue
