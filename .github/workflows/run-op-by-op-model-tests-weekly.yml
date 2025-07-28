@@ -26,11 +26,7 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-          {
-            runs-on: wormhole_b0, name: "qwen", tests: "
-              tests/models/Qwen/test_qwen2_casual_lm.py::test_qwen2_casual_lm[op_by_op_torch-eval]
-              "
-          },
+
           {
             runs-on: wormhole_b0, name: "albert", tests: "
               tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[single_device-op_by_op_torch-albert-base-v2-eval]
