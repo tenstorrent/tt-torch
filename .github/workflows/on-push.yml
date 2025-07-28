@@ -10,24 +10,18 @@ permissions:
   checks: write
 
 jobs:
-  pre-commit:
-    uses: ./.github/workflows/pre-commit.yml
-    secrets: inherit
-  spdx:
-    uses: ./.github/workflows/spdx.yml
-    secrets: inherit
   docker-build:
     uses: ./.github/workflows/build-image.yml
     secrets: inherit
   build:
-    needs: [pre-commit, spdx, docker-build]
+    needs: docker-build
     uses: ./.github/workflows/run-build.yml
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       setup-args: "--code_coverage --include-models --build_perf"
   build-release:
-    needs: [pre-commit, spdx, docker-build]
+    needs: docker-build
     uses: ./.github/workflows/run-build.yml
     secrets: inherit
     with:

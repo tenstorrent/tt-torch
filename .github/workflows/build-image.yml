@@ -29,7 +29,7 @@ permissions:
 jobs:
 
   build-image:
-    runs-on: builder
+    runs-on: tt-beta-ubuntu-2204-large
     outputs:
       docker-image: ${{ steps.build.outputs.docker-image }}
       docker-image-harbor: ${{ steps.build.outputs.docker-image-harbor }}
@@ -44,6 +44,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
             fetch-depth: 0 # Fetch all history and tags
+            repository: 'tenstorrent/tt-torch'
 
       - name: Override tt-mlir SHA mlir_override is set
         if: ${{ inputs.mlir_override }}
