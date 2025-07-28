@@ -4,53 +4,24 @@
 import torch
 import pytest
 from tests.utils import ModelTester, skip_full_eval_test
-from diffusers import StableDiffusion3Pipeline, AutoencoderTiny
-
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.stable_diffusion.stable_diffusion_3p5 import (
+    ModelLoader,
+    ModelVariant,
+)
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model_dict = dict(model_info_list)
-        model_path = model_dict[self.model_name]
-        pipe = StableDiffusion3Pipeline.from_pretrained(
-            model_path,
-            text_encoder_3=None,
-            tokenizer_3=None,
-            torch_dtype=torch.bfloat16,
-            low_cpu_mem_usage=True,
-        )
-        # memory optimization recommended by: https://huggingface.co/docs/diffusers/en/api/pipelines/stable_diffusion/stable_diffusion_3#tiny-autoencoder-for-stable-diffusion-3
-        pipe.vae = AutoencoderTiny.from_pretrained(
-            "madebyollin/taesd3", torch_dtype=torch.bfloat16, low_cpu_mem_usage=True
-        )
-        pipe.enable_attention_slicing()
-        return pipe
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        prompt = [
-            "a photo of an astronaut riding a horse on mars",
-        ]
-
-        negative_prompt = ""
-        height = 512
-        width = 512
-        guidance_scale = 7.0
-        arguments = {
-            "prompt": prompt,
-            "negative_prompt": negative_prompt,
-            "height": height,
-            "width": width,
-            "guidance_scale": guidance_scale,
-        }
-
-        return arguments
+        return self.loader.load_inputs(dtype_override=torch.bfloat16)
 
 
-model_info_list = [
-    ("SD3.5-medium", "stabilityai/stable-diffusion-3.5-medium"),
-    ("SD3.5-large", "stabilityai/stable-diffusion-3.5-large"),
-]
+# Print available variants for reference
+available_variants = ModelLoader.query_available_variants()
+print("Available variants: ", [str(k) for k in available_variants.keys()])
 
 
 @pytest.mark.parametrize(
@@ -58,18 +29,20 @@ model_info_list = [
     ["eval"],
 )
 @pytest.mark.parametrize(
-    "model_info",
-    model_info_list,
-    ids=[model_info[0] for model_info in model_info_list],
-)
-@pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_stable_diffusion_3_5(record_property, model_info, mode, op_by_op):
-    model_group = "red"
-    model_name, model_path = model_info
+@pytest.mark.parametrize(
+    "variant,variant_config",
+    available_variants.items(),
+    ids=[str(k) for k in available_variants.keys()],
+)
+def test_stable_diffusion_3_5(record_property, mode, op_by_op, variant, variant_config):
+
+    loader = ModelLoader(variant=variant)
+    model_info = loader.get_model_info(variant=variant)
+    model_name = model_info.name
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -85,17 +58,17 @@ def test_stable_diffusion_3_5(record_property, model_info, mode, op_by_op):
         model_name,
         bringup_status="FAILED_RUNTIME",
         reason="Cannot lower StableHLO --> TTIR : results/mlir_tests/stable_hlo/aten::round.decimals_0.mlir:3:10: error: failed to legalize operation 'stablehlo.round_nearest_even' - https://github.com/tenstorrent/tt-torch/issues/769",
-        model_group=model_group,
     )
 
     tester = ThisTester(
         model_name,
         mode,
+        loader=loader,
+        model_info=model_info,
         compiler_config=cc,
         record_property_handle=record_property,
         assert_atol=False,
         assert_pcc=False,
-        model_group="red",
     )
     results = tester.test_model()
     if mode == "eval":
