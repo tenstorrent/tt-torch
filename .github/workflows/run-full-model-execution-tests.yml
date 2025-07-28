@@ -220,7 +220,7 @@ jobs:
       run: |
         source env/activate
 
-        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN pytest --durations=0 -v -rf ${{matrix.build.tests}} \
+        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN pytest --forked --durations=0 -v -rf ${{matrix.build.tests}} \
            --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
            --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append | tee pytest.log
 

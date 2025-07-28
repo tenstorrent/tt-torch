@@ -177,12 +177,13 @@ jobs:
                   tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-full-eval-inception_v4.tf_in1k]
                   tests/models/vovnet/test_vovnet_onnx.py::test_vovnet_onnx[full-eval]
                   tests/models/seamless_m4t/test_seamless_m4t.py::test_seamless_m4t[full-eval]
+                  tests/models/bert/test_bert.py::test_bert[large-full-eval]
             "
           },
           {
             # Approximately 5 minutes.
-            wh-runner: wormhole_b0, bh-runner: p150, name: "eval_7_bert_qrtn", tests: "
-                  tests/models/bert/test_bert.py::test_bert[large-full-eval]
+            wh-runner: high-memory-wormhole, bh-runner: p150, name: "eval_7_high_mem", tests: "
+                  tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-2-eval]
             "
           },
           # Approximately 180 minutes.
@@ -204,7 +205,6 @@ jobs:
                 tests/models/EfficientNet/test_EfficientNet.py::test_EfficientNet[full-efficientnet-b7-eval]
                 tests/models/codegen/test_codegen.py::test_codegen[full-eval]
                 tests/models/codegen/test_codegen_generate.py::test_codegen_generate[full-eval]
-                tests/models/phi/test_phi_1_1p5_2.py::test_phi[full-microsoft/phi-2-eval]
                 tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-3B-Base-eval]
                 tests/models/falcon/test_falcon3.py::test_falcon[full-tiiuae/Falcon3-3B-Instruct-eval]
                 tests/models/t5/test_t5.py::test_t5[full-t5-large-eval]
@@ -394,7 +394,7 @@ jobs:
       run: |
         source env/activate
 
-        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN pytest --durations=0 -v -rf ${{matrix.build.tests}} \
+        TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN pytest --forked --durations=0 -v -rf ${{matrix.build.tests}} \
            --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
            --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append | tee pytest.log
 
