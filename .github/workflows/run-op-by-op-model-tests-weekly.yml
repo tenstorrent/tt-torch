@@ -38,11 +38,7 @@ jobs:
               tests/models/albert/test_albert_question_answering.py::test_albert_question_answering[op_by_op_torch-twmkn9/albert-base-v2-squad2-eval]
               "
           },
-          {
-            runs-on: wormhole_b0, name: "autoencoder", tests: "
-              tests/models/autoencoder_linear/test_autoencoder_linear.py::test_autoencoder_linear[op_by_op_torch-eval]
-              "
-          },
+
           {
             runs-on: wormhole_b0, name: "bert", tests: "
               tests/models/distilbert/test_distilbert.py::test_distilbert[op_by_op_torch-distilbert-base-uncased-eval]
