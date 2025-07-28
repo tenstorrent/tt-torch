@@ -5,28 +5,21 @@
 # Hugging Face version: https://huggingface.co/facebook/sam2-hiera-tiny
 
 import torch
-from PIL import Image
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.tools.utils import get_file
+from third_party.tt_forge_models.segment_anything.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        from sam2.sam2_image_predictor import SAM2ImagePredictor
-
-        predictor = SAM2ImagePredictor.from_pretrained("facebook/sam2-hiera-small")
-        image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
-        image = Image.open(str(image_file))
-        predictor.set_image(image)
-        return predictor
+        return self.loader.load_model()
 
     def _load_inputs(self):
-        prompt = "Beautiful thing"
-        return prompt
+        return self.loader.load_inputs()
 
     def run_model(self, model, inputs):
+        # Custom model runner for SAM2 prediction
         outputs = model.predict(inputs)
         return outputs
 
@@ -44,7 +37,9 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_segment_anything(record_property, mode, op_by_op):
-    model_name = "segment-anything"
+
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -55,7 +50,12 @@ def test_segment_anything(record_property, mode, op_by_op):
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     tester = ThisTester(
-        model_name, mode, compiler_config=cc, record_property_handle=record_property
+        model_info.name,
+        mode,
+        loader=loader,
+        model_info=model_info,
+        compiler_config=cc,
+        record_property_handle=record_property,
     )
     tester.test_model()
 
