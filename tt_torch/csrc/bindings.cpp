@@ -111,9 +111,19 @@ static tt::runtime::Tensor create_tensor(const torch::Tensor &tensor) {
   // stride for it.
   std::vector<uint32_t> stride = tt::runtime::utils::calculateStride(shape);
 
-  return tt::runtime::createBorrowedHostTensor(
-      tensor.data_ptr(), shape, stride, tensor.element_size(),
-      torch_scalar_type_to_dt(tensor.scalar_type()));
+  // Check if a tensor is empty using its shape.
+  bool isEmptyTensor = std::any_of(shape.begin(), shape.end(),
+                                   [](uint32_t x) { return x == 0; });
+
+  // Return a host owned tensor if tensor is empty; otherwise return host
+  // borrowed tensor.
+  return isEmptyTensor
+             ? tt::runtime::createOwnedHostTensor(
+                   tensor.data_ptr(), shape, stride, tensor.element_size(),
+                   torch_scalar_type_to_dt(tensor.scalar_type()))
+             : tt::runtime::createBorrowedHostTensor(
+                   tensor.data_ptr(), shape, stride, tensor.element_size(),
+                   torch_scalar_type_to_dt(tensor.scalar_type()));
 }
 
 template <typename T>
