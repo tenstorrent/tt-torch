@@ -77,6 +77,10 @@ def test_torchvision_object_detection(
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    # Add this back to cause some fails
+    if model_name == "ssd300_vgg16" or model_name == "ssdlite320_mobilenet_v3_large":
+        cc.arg_type_map_override = True
+
     # TODO - Enable checking - https://github.com/tenstorrent/tt-torch/issues/525
     if model_name == "ssd300_vgg16" or model_name == "ssdlite320_mobilenet_v3_large":
         assert_pcc = False

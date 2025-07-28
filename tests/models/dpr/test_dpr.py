@@ -4,6 +4,7 @@
 # Reference: https://huggingface.co/facebook/dpr-reader-single-nq-base
 import torch
 import pytest
+import numpy as np
 
 
 # Load model directly
@@ -45,6 +46,20 @@ def test_dpr(record_property, mode, op_by_op, data_parallel_mode):
 
     loader = ModelLoader(variant=None)
     model_info = loader.get_model_info(variant=None)
+
+    def allocate_ram_gb(gb):
+        # Each float64 takes 8 bytes, so 1 GB = (1e9 / 8) elements
+        num_elements = int(gb * 1e9 / 8)
+        arr = np.empty(num_elements, dtype=np.float64)
+        arr.fill(1.0)  # force memory pages to be committed
+        return arr
+
+    blocks = []
+    print("Attempting to allocate ~100GB of RAM...")
+    for i in range(100):
+        print(f"Allocating {i + 1} GB...", flush=True)
+        blocks.append(allocate_ram_gb(1))
+    print("Finished allocation without OOM (unexpected)")
 
     tester = ThisTester(
         model_info.name,

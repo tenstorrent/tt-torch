@@ -52,6 +52,8 @@ def test_hardnet(record_property, mode, op_by_op, data_parallel_mode):
 
     # Small dip for blackhole using experimental backend
     required_pcc = 0.98 if tt_mlir.get_arch() != tt_mlir.Arch.BLACKHOLE else 0.97
+    # Trigger PCC failure.
+    required_pcc = 0.999
 
     tester = ThisTester(
         model_info.name,
