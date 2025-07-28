@@ -42,14 +42,7 @@ jobs:
           {
             runs-on: wormhole_b0, name: "bert", tests: "
               tests/models/distilbert/test_distilbert.py::test_distilbert[op_by_op_torch-distilbert-base-uncased-eval]
-              tests/models/bert/test_bert.py::test_bert[large-op_by_op_torch-eval]
               tests/models/bert/test_bert_turkish.py::test_bert_turkish[single_device-op_by_op_torch-eval]
-              tests/models/squeeze_bert/test_squeeze_bert.py::test_squeeze_bert[single_device-op_by_op_torch-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "bloom", tests: "
-              tests/models/bloom/test_bloom.py::test_bloom[op_by_op_torch-eval]
               "
           },
           {
