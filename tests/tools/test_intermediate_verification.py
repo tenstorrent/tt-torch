@@ -26,10 +26,13 @@ def test_intermediate_verification():
 
     log_dir = "results/intermediate_verification_logs"
     xlsx_report_path = f"{log_dir}/intermediate_verification_results.xlsx"
+    env = os.environ.copy()
+    env["TT_TORCH_VERIFY_INTERMEDIATES"] = "1"
+    env["TT_TORCH_FORCE_LEGACY_BACKEND"] = "1"
+
     try:
         FileManager.create_directory(log_dir, exist_ok=True)
-        env = os.environ.copy()
-        env["TT_TORCH_VERIFY_INTERMEDIATES"] = "1"
+
         for i, model in enumerate(model_list):
             log_file = f"{log_dir}/test_intermediate_verification_{i}.log"
             test_command = ["pytest", "-svv", model]
