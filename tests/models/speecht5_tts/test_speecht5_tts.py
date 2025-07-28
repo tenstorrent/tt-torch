@@ -3,35 +3,19 @@
 # SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/microsoft/speecht5_tts
 
-from transformers import SpeechT5Processor, SpeechT5ForTextToSpeech, SpeechT5HifiGan
-from datasets import load_dataset
 import torch
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.speecht5_tts.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.processor = SpeechT5Processor.from_pretrained("microsoft/speecht5_tts")
-        model = SpeechT5ForTextToSpeech.from_pretrained(
-            "microsoft/speecht5_tts", torch_dtype=torch.bfloat16
-        )
-        return model.generate_speech
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        inputs = self.processor(text="Hello, my dog is cute.", return_tensors="pt")
-        # load xvector containing speaker's voice characteristics from a dataset
-        speaker_embeddings = torch.zeros((1, 512)).to(torch.bfloat16)
-        vocoder = SpeechT5HifiGan.from_pretrained(
-            "microsoft/speecht5_hifigan", torch_dtype=torch.bfloat16
-        )
-        arguments = {
-            "input_ids": inputs["input_ids"],
-            "speaker_embeddings": speaker_embeddings,
-            "vocoder": vocoder,
-        }
-        return arguments
+        return self.loader.load_inputs(dtype_override=torch.bfloat16)
 
 
 @pytest.mark.parametrize(
@@ -44,7 +28,9 @@ class ThisTester(ModelTester):
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 def test_speecht5_tts(record_property, mode, op_by_op):
-    model_name = "speecht5-tts"
+
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -55,8 +41,10 @@ def test_speecht5_tts(record_property, mode, op_by_op):
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
+        model_info=model_info,
         compiler_config=cc,
         record_property_handle=record_property,
         assert_atol=False,
