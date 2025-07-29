@@ -26,15 +26,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        runner: [wormhole, blackhole]
         build: [
-          { runs-on: wormhole_b0, name: "grp_1", group: 1 },
-          { runs-on: wormhole_b0, name: "grp_2", group: 2 },
-          { runs-on: wormhole_b0, name: "grp_3", group: 3 },
-          { runs-on: wormhole_b0, name: "grp_4", group: 4 },
+          { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_1", group: 1 },
+          { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_2", group: 2 },
+          { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_3", group: 3 },
+          { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_4", group: 4 },
         ]
-    name: tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})
-    runs-on:
-      - ${{ matrix.build.runs-on }}
+    name: "test exec models ${{ matrix.runner == 'wormhole' && 'wh' || matrix.runner == 'blackhole' && 'bh' || 'unk' }} (${{ matrix.build.name }})"
+    runs-on: ${{ matrix.runner == 'wormhole' && matrix.build.wh-runner || matrix.runner == 'blackhole' && matrix.build.bh-runner || 'wormhole_b0'}}
     container:
       image: ${{ inputs.docker-image }}
       options: --user root --device /dev/tenstorrent/0 --shm-size=2gb
@@ -49,14 +49,26 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Check for runner # Check if we need to skip testing when a wh-runner is not set for wormhole run or a bh-runner on blackhole run
+      run: |
+        if [ "${{ matrix.runner }}" = "wormhole" ] && [ -n "${{ matrix.build.wh-runner }}" ]; then
+          echo "RUN_TEST=wormhole" >> $GITHUB_ENV
+        elif [ "${{ matrix.runner }}" = "blackhole" ] && [ -n "${{ matrix.build.bh-runner }}" ]; then
+          echo "RUN_TEST=blackhole" >> $GITHUB_ENV
+        else
+          echo "RUN_TEST=skip" >> $GITHUB_ENV
+        fi
+
     - name: Fetch job id
       id: fetch-job-id
+      if: ${{ env.RUN_TEST != 'skip' }}
       uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
       with:
-        job_name: "tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
+        job_name: "test exec models ${{ matrix.runner == 'wormhole' && 'wh' || matrix.runner == 'blackhole' && 'bh' || 'unk' }} (${{ matrix.build.name }})"
 
     - name: Set reusable strings
       id: strings
+      if: ${{ env.RUN_TEST != 'skip' }}
       shell: bash
       env:
         JOB_ID: ${{ steps.fetch-job-id.outputs.job_id }}
@@ -67,15 +79,18 @@ jobs:
         echo "job-id=$JOB_ID" >> "$GITHUB_OUTPUT"
         echo "test_report_path_models=report_models_$JOB_ID.xml" >> "$GITHUB_OUTPUT"
     - name: Git safe dir
+      if: ${{ env.RUN_TEST != 'skip' }}
       run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
 
     - name: Use build artifacts
       uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
+      if: ${{ env.RUN_TEST != 'skip' }}
       with:
         name: install-artifacts
         path: install
 
     - name: install tt-torch
+      if: ${{ env.RUN_TEST != 'skip' }}
       shell: bash
       run: |
         source env/activate
@@ -83,13 +98,14 @@ jobs:
         mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
     - name: Run Model Test
+      if: ${{ env.RUN_TEST != 'skip' }}
       shell: bash
       run: |
         source env/activate
         pytest -svv tests/models/test_models.py --splits 4 --group ${{ matrix.build.group }} --splitting-algorithm least_duration --durations-path .test_durations | tee pytest.log
     - name: Upload Test Log
       uses: actions/upload-artifact@v4
-      if: ${{ (success() || failure()) }}
+      if: ${{ (success() || failure()) && env.RUN_TEST != 'skip' }}
       with:
-        name: test-log-${{ matrix.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        name: test-log-${{ matrix.runner }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: pytest.log
