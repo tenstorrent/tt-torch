@@ -381,7 +381,6 @@ def _get_default_decomposition_ops() -> DecompositionOpsList:
         aten.addmm,
         # decompositions that aid us in handling nn.BatchNorm2d
         aten._native_batch_norm_legit_functional,
-        # aten._native_batch_norm_legit_no_training,
         aten._native_batch_norm_legit,
         aten._native_batch_norm_legit.no_stats,
         aten.squeeze.dims,
