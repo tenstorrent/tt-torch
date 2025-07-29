@@ -80,7 +80,7 @@ jobs:
           },
           {
             wh-runner: wormhole_b0, bh-runner: p150, name: "eval_4", tests: "
-                  tests/models/llama/test_llama_3b.py::test_llama_3b[full-meta-llama/Llama-3.2-3B-eval]
+                  tests/models/llama/test_llama_3b.py::test_llama_3b[full-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_x_400mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_x_800mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_x_1_6gf]
