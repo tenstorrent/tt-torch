@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # Phi-3.5-vision: https://huggingface.co/microsoft/Phi-3.5-vision-instruct
 
-import torch
 import pytest
 
 from tests.utils import ModelTester, skip_full_eval_test
