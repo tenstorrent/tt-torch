@@ -2,32 +2,18 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import torch
-from mlp_mixer_pytorch import MLPMixer
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.mlp_mixer.lucidrains.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        """
-        https://github.com/lucidrains/mlp-mixer-pytorch
-        """
-        model = MLPMixer(
-            image_size=256,
-            channels=3,
-            patch_size=16,
-            dim=512,
-            depth=12,
-            num_classes=1000,
-        )
-        model = model.to(torch.bfloat16)
-        return model
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        img = torch.randn(32, 3, 256, 256)
-        img = img.to(torch.bfloat16)
-        return img
+        return self.loader.load_inputs(dtype_override=torch.bfloat16, batch_size=32)
 
 
 @pytest.mark.parametrize(
@@ -52,15 +38,18 @@ def test_mlpmixer(record_property, mode, op_by_op):
     cc.consteval_parameters = True
     cc.automatic_parallelization = True
     cc.mesh_shape = [1, 2]
-    cc.dump_debug = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
         assert_pcc=True,
         assert_atol=False,
         compiler_config=cc,

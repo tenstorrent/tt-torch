@@ -3,44 +3,19 @@
 # SPDX-License-Identifier: Apache-2.0
 # Reference: https://pytorch.org/hub/mateuszbuda_brain-segmentation-pytorch_unet/
 
-import numpy as np
-from PIL import Image
-from torchvision import transforms
-import requests
 import torch
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.unet.torch_hub.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        torch.hub._validate_not_a_forked_repo = lambda a, b, c: True
-        model = torch.hub.load(
-            "mateuszbuda/brain-segmentation-pytorch",
-            "unet",
-            in_channels=3,
-            out_channels=1,
-            init_features=32,
-            pretrained=True,
-        )
-        model = model.to(torch.bfloat16)
-        return model
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        url = "https://github.com/mateuszbuda/brain-segmentation-pytorch/raw/master/assets/TCGA_CS_4944.png"
-        input_image = Image.open(requests.get(url, stream=True).raw)
-        m, s = np.mean(input_image, axis=(0, 1)), np.std(input_image, axis=(0, 1))
-        preprocess = transforms.Compose(
-            [
-                transforms.ToTensor(),
-                transforms.Normalize(mean=m, std=s),
-            ]
-        )
-        input_tensor = preprocess(input_image)
-        input_batch = input_tensor.unsqueeze(0)
-        input_batch = input_batch.to(torch.bfloat16)
-        return input_batch
+        return self.loader.load_inputs(dtype_override=torch.bfloat16)
 
 
 @pytest.mark.parametrize(
@@ -55,7 +30,6 @@ class ThisTester(ModelTester):
 def test_unet(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
-    model_name = "U-Net"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -65,8 +39,15 @@ def test_unet(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     tester = ThisTester(
-        model_name, mode, compiler_config=cc, record_property_handle=record_property
+        model_info.name,
+        mode,
+        loader=loader,
+        compiler_config=cc,
+        record_property_handle=record_property,
     )
     results = tester.test_model()
     if mode == "eval":
