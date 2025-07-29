@@ -45,6 +45,8 @@ jobs:
           {
             # Approximately 70 minutes.
             wh-runner: wormhole_b0, bh-runner: p150, name: "eval_1", tests: "
+                  tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small[single_device-full-eval]
+                  tests/models/bert/test_bert_turkish.py::test_bert_turkish[single_device-full-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg19]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg19_bn]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vgg16]
@@ -78,14 +80,13 @@ jobs:
                   tests/models/detr/test_detr.py::test_detr[single_device-full-eval]
                   tests/models/vit/test_vit_onnx.py::test_vit_onnx[single_device-full-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-vit_h_14]
-                  tests/models/musicgen_small/test_musicgen_small.py::test_musicgen_small[single_device-full-eval]
                   tests/models/yolos/test_yolos.py::test_yolos[single_device-full-eval]
                   tests/models/whisper/test_whisper.py::test_whisper[single_device-full-eval]
-                  tests/models/bert/test_bert_turkish.py::test_bert_turkish[single_device-full-eval]
             "
           },
           {
             wh-runner: n300, name: "eval_1_data_parallel", tests: "
+                  tests/models/bert/test_bert_turkish.py::test_bert_turkish[data_parallel-full-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-vgg19]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-vgg19_bn]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[data_parallel-full-eval-vgg16]
@@ -115,7 +116,6 @@ jobs:
                   tests/models/detr/test_detr.py::test_detr[data_parallel-full-eval]
                   tests/models/yolos/test_yolos.py::test_yolos[data_parallel-full-eval]
                   tests/models/whisper/test_whisper.py::test_whisper[data_parallel-full-eval]
-                  tests/models/bert/test_bert_turkish.py::test_bert_turkish[data_parallel-full-eval]
             "
           },
           {
