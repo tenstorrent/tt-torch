@@ -285,6 +285,22 @@ def test_div_zero():
     verify_module(Basic(), inputs=[input1, input2])
 
 
+# ConcatOp returns non-empty tensor as output (without performing actual operation).
+# However, the stablehlo graph contains both function arguments (empty and non-empty tensor).
+def test_empty():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+
+        def forward(self, x, y):
+            return torch.cat([x, y], dim=-1)
+
+    # Empty tensor
+    input1 = torch.randn((1, 2, 2, 0), dtype=torch.float32)
+    input2 = torch.randn((1, 2, 2, 2), dtype=torch.float32)
+    verify_module(Basic(), inputs=[input1, input2])
+
+
 def test_exp():
     class Basic(nn.Module):
         def __init__(self):
