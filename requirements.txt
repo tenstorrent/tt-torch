@@ -20,6 +20,7 @@ mdutils
 pre-commit
 pytest
 pytest-cov
+pytest-split
 tabulate
 openpyxl
 seaborn
