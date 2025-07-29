@@ -14,7 +14,9 @@ jobs:
     uses: ./.github/workflows/build-image.yml
     secrets: inherit
   build:
-    needs: docker-build
+    # HACK - Only run build on main branch
+    if: github.ref == 'refs/heads/main'
+    needs: [docker-build]
     uses: ./.github/workflows/run-build.yml
     secrets: inherit
     with:
@@ -27,7 +29,8 @@ jobs:
   #   with:
   #     docker-image: ${{ needs.docker-build.outputs.docker-image }}
   test-models-discovery:
-    needs: [docker-build, build]
+    # Remove dependency on build since we'll download from main
+    needs: [docker-build]
     uses: ./.github/workflows/run-models-discovery.yml
     secrets: inherit
     with:
