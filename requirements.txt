@@ -22,6 +22,7 @@ pytest
 pytest-cov
 pytest-xdist
 pytest-forked
+pytest-split
 tabulate
 openpyxl
 seaborn
