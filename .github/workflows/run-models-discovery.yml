@@ -111,6 +111,20 @@ jobs:
         run-id: ${{ steps.get-main-run.outputs.run-id }}
         github-token: ${{ github.token }}
 
+    - name: Extract build artifacts
+      if: ${{ env.RUN_TEST != 'skip' }}
+      shell: bash
+      run: |
+        cd install
+        if [ -f artifact.tar ]; then
+          echo "Extracting artifact.tar..."
+          tar -xf artifact.tar
+          ls -la
+        else
+          echo "artifact.tar not found, listing contents:"
+          ls -la
+        fi
+
     - name: install tt-torch
       if: ${{ env.RUN_TEST != 'skip' }}
       shell: bash
