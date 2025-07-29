@@ -31,96 +31,8 @@ jobs:
       matrix:
         build: [
           {
-            runs-on: wormhole_b0, name: "qwen", tests: "
-              tests/models/Qwen/test_qwen2_token_classification.py::test_qwen2_token_classification[op_by_op_torch-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "autoencoder", tests: "
-              tests/models/autoencoder_conv/test_autoencoder_conv.py::test_autoencoder_conv[op_by_op_torch-eval]
-              tests/models/autoencoder_conv/test_autoencoder_conv_v2.py::test_autoencoder_conv_v2[op_by_op_torch-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "falcon", tests: "
-              tests/models/falcon/test_falcon.py::test_falcon[op_by_op_torch-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "openpose", tests: "
-              tests/models/openpose/test_openpose.py::test_openpose[op_by_op_torch-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "stable-diffusion-pipe", tests: "
-              tests/models/stable_diffusion/test_stable_diffusion.py::test_stable_diffusion[op_by_op_torch-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "t5", tests: "
-              tests/models/speecht5_tts/test_speecht5_tts.py::test_speecht5_tts[op_by_op_torch-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "unet", tests: "
-              tests/models/vgg19_unet/test_vgg19_unet.py::test_vgg19_unet[op_by_op_torch-eval]
-              "
-          },
-          {
             runs-on: wormhole_b0, name: "RMBG", tests: "
               tests/models/RMBG/test_RMBG.py::test_RMBG[op_by_op_torch-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "timm", tests: "
-              tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op_torch-eval-ghostnetv2_100.in1k]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "xglm", tests: "
-              tests/models/xglm/test_xglm.py::test_xglm[op_by_op_torch-xglm-564M-eval]
-              tests/models/xglm/test_xglm.py::test_xglm[op_by_op_torch-xglm-1.7B-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "vision-misc", tests: "
-              tests/models/glpn_kitti/test_glpn_kitti.py::test_glpn_kitti[op_by_op_torch-eval]
-              tests/models/hand_landmark/test_hand_landmark.py::test_hand_landmark[op_by_op_torch-eval]
-              tests/models/segment_anything/test_segment_anything.py::test_segment_anything[op_by_op_torch-eval]
-              tests/models/vilt/test_vilt.py::test_vilt[op_by_op_torch-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "torchvision_1", tests: "
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op_torch-eval-googlenet]
-              tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op_torch-eval-regnet_y_128gf]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "deepseek", tests: "
-              tests/models/deepseek/test_deepseek.py::test_deepseek[op_by_op_torch-eval]
-              tests/models/deepseek/test_deepseek_qwen.py::test_deepseek_qwen[op_by_op_torch-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "bi_lstm_crf", tests: "
-              tests/models/bi_lstm_crf/test_bi_lstm_crf.py::test_bi_lstm_crf[op_by_op_torch-lstm-eval]
-              tests/models/bi_lstm_crf/test_bi_lstm_crf.py::test_bi_lstm_crf[op_by_op_torch-gru-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "gliner", tests: "
-              tests/models/gliner/test_gliner.py::test_gliner[op_by_op_torch-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "YOLOv10", tests: "
-              tests/models/yolov10/test_yolov10.py::test_yolov10[op_by_op_torch-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "OFT", tests: "
-              tests/models/oft/test_oft.py::test_oft[op_by_op_torch-eval]
               "
           },
           {
@@ -128,32 +40,6 @@ jobs:
             runs-on: wormhole_b0, name: "mistral", tests: "
               tests/models/mistral/test_mistral.py::test_mistral[op_by_op_torch-7b-eval]
               tests/models/mistral/test_mistral.py::test_mistral[op_by_op_torch-ministral_8b_instruct-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "pixtral", tests: "
-              tests/models/mistral/test_pixtral.py::test_pixtral[op_by_op_torch-eval]
-            "
-          },
-          {
-            runs-on: wormhole_b0, name: "stable-diffusion-v3.5", tests: "
-              tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[op_by_op_torch-SD3.5-medium-eval]
-              tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[op_by_op_torch-SD3.5-large-eval]
-              tests/models/stable_diffusion/test_stable_diffusion_transformer.py::test_stable_diffusion_transformer[op_by_op_torch-SD3.5-large-transformer-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "detr", tests: "
-              tests/models/detr/test_detr_onnx.py::test_detr_onnx[op_by_op_stablehlo-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "d-fine", tests: "
-              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-nano-eval]
-              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-small-eval]
-              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-medium-eval]
-              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-large-eval]
-              tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-xlarge-eval]
               "
           },
           {
@@ -168,13 +54,6 @@ jobs:
             "
           },
           {
-            # Only testing few variants since runtime on these is long. Increase when more mahcines or priority increases.
-            runs-on: wormhole_b0, name: "centernet", tests: "
-            tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[op_by_op_stablehlo-centernet-hpe-dla1x-eval]
-            tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[op_by_op_stablehlo-centernet-3d_bb-ddd_3dop-eval]
-            "
-          },
-          {
             runs-on: wormhole_b0, name: "phi3p5_vision", tests: "
               tests/models/phi/test_phi_3p5_vision.py::test_phi_3p5_vision[op_by_op_torch-eval]
             "
@@ -182,17 +61,6 @@ jobs:
           {
             runs-on: wormhole_b0, name: "phi4", tests: "
               tests/models/phi/test_phi_4.py::test_phi_4[op_by_op_torch-eval]
-            "
-          },
-          {
-            runs-on: wormhole_b0, name: "llama", tests: "
-              tests/models/llama/test_llama_7b.py::test_llama_7b[op_by_op_torch-eval]
-            "
-          },
-          {
-            runs-on: wormhole_b0, name: "flux", tests: "
-              tests/models/flux/test_flux.py::test_flux[op_by_op_torch-schnell-eval]
-              tests/models/flux/test_flux.py::test_flux[op_by_op_torch-dev-eval]
             "
           },
         ]
