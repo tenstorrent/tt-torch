@@ -7,7 +7,6 @@ from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from third_party.tt_forge_models.stable_diffusion.stable_diffusion_3p5.pytorch import (
     ModelLoader,
-    ModelVariant,
 )
 
 
@@ -29,16 +28,21 @@ print("Available variants: ", [str(k) for k in available_variants.keys()])
     ["eval"],
 )
 @pytest.mark.parametrize(
+    "variant",
+    available_variants.items(),
+    ids=[str(k) for k in available_variants.keys()],
+)
+@pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-@pytest.mark.parametrize(
-    "variant,variant_config",
-    available_variants.items(),
-    ids=[str(k) for k in available_variants.keys()],
-)
-def test_stable_diffusion_3_5(record_property, mode, op_by_op, variant, variant_config):
+def test_stable_diffusion_3_5(
+    record_property,
+    mode,
+    variant,
+    op_by_op,
+):
 
     loader = ModelLoader(variant=variant)
     model_info = loader.get_model_info(variant=variant)
