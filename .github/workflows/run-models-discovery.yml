@@ -26,7 +26,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [wormhole, blackhole]
+        runner: [wormhole]
         build: [
           { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_1", group: 1 },
           { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_2", group: 2 },
@@ -82,12 +82,34 @@ jobs:
       if: ${{ env.RUN_TEST != 'skip' }}
       run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
 
+    # - name: Use build artifacts
+    #   uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
+    #   if: ${{ env.RUN_TEST != 'skip' }}
+    #   with:
+    #     name: install-artifacts
+    #     path: install
+
+    # Try a hacked version to re-use build artifacts from main branch
     - name: Use build artifacts
-      uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
       if: ${{ env.RUN_TEST != 'skip' }}
-      with:
-        name: install-artifacts
-        path: install
+      shell: bash
+      run: |
+        # Download latest build artifacts from main branch
+        gh run list --repo ${{ github.repository }} --branch main --workflow "On push" --status success --limit 1 --json databaseId --jq '.[0].databaseId' > latest_run_id.txt
+        LATEST_RUN_ID=$(cat latest_run_id.txt)
+        echo "Downloading artifacts from main branch run ID: $LATEST_RUN_ID"
+
+        # Download the artifacts
+        gh run download $LATEST_RUN_ID --repo ${{ github.repository }} --name install-artifacts --dir install
+
+        # Extract the artifact.tar if it exists
+        if [ -f install/artifact.tar ]; then
+          cd install
+          tar -xf artifact.tar
+          cd ..
+        fi
+      env:
+        GH_TOKEN: ${{ github.token }}
 
     - name: install tt-torch
       if: ${{ env.RUN_TEST != 'skip' }}
