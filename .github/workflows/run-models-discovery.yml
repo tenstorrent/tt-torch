@@ -124,7 +124,7 @@ jobs:
       shell: bash
       run: |
         source env/activate
-        pytest -svv tests/models/test_models.py --splits 2 --group ${{ matrix.build.group }} --splitting-algorithm least_duration --durations-path .test_durations -k bert| tee pytest.log
+        pytest -vv tests/models/test_models.py --splits 2 --group ${{ matrix.build.group }} --splitting-algorithm least_duration --durations-path .test_durations -k bert| tee pytest.log
     - name: Upload Test Log
       uses: actions/upload-artifact@v4
       if: ${{ (success() || failure()) && env.RUN_TEST != 'skip' }}
