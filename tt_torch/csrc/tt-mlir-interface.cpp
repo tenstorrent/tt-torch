@@ -104,7 +104,7 @@ std::string stableHLOAutomaticParallelization(std::string_view code,
     automatic_sharding_pipeline_pm.enableIRPrinting();
   }
 
-  mlir::tt::stablehlo::StableHLOPipelineOptions
+  mlir::tt::stablehlo::AutomaticShardingPipelineOptions
       automatic_sharding_pipeline_options;
   automatic_sharding_pipeline_options.meshShape = mesh_shape;
 
@@ -114,7 +114,7 @@ std::string stableHLOAutomaticParallelization(std::string_view code,
         tt::torch::setArgumentTypes(len_activations, len_graph_constants);
   }
 
-  mlir::tt::stablehlo::createStableHLOPipeline(
+  mlir::tt::stablehlo::createAutomaticShardingPipeline(
       automatic_sharding_pipeline_pm, automatic_sharding_pipeline_options);
 
   // Run the pass manager.
