@@ -13,6 +13,9 @@ from transformers import (
     StaticCache,
 )
 from tests.utils import clear_dynamo_cache
+from transformers.models.llama.modeling_llama import LlamaModel
+
+
 import tt_mlir
 
 _global_max_cache_len = 64 + 64
@@ -55,12 +58,22 @@ def load_inputs(
     )
 
     cache_position = torch.arange(0, inputs.input_ids.shape[1])
-
+    print("[James] Manually forwarding attention mask")
+    #  Experiment - Generate attention mask using the LlamaModel method
+    attention_mask = LlamaModel._prepare_4d_causal_attention_mask_with_cache_position(
+        attention_mask=None,  # No initial attention mask
+        sequence_length=inputs.input_ids.shape[1],
+        target_length=max_cache_len,
+        dtype=model.dtype,
+        cache_position=cache_position,
+        batch_size=batch_size,
+    )
     args = {
         "input_ids": inputs.input_ids,
         "past_key_values": static_cache,
         "use_cache": True,
         "cache_position": cache_position,
+        "attention_mask": attention_mask
     }
     return args
 
@@ -196,6 +209,14 @@ def test_llama3_generate():
             "past_key_values": input_args["past_key_values"],  # updated in place
             "cache_position": cache_position,
             "use_cache": True,
+            "attention_mask": LlamaModel._prepare_4d_causal_attention_mask_with_cache_position(
+                attention_mask=None,
+                sequence_length=1,  # Just one new token
+                target_length=_global_max_cache_len,
+                dtype=model.dtype,
+                cache_position=cache_position,
+                batch_size=1,
+            ),
         }
 
         total_iteration_time = time.time() - iteration_start

@@ -4,7 +4,7 @@
 #
 
 # underlying tt-mlir version we will have tt-xla use
-set(TT_MLIR_VERSION "1af8e1686bf64bc1d694fff396f7fd49cc11a29e")
+set(TT_MLIR_VERSION "c0d279c596b46b4cf91d88ad3b52b8cd3e591587") # jzx/xla_fusion with 2 cherry picked fusion commits, based on tt-xla current 5e3fbbe2a69d62103b7775d7d842407e1c9c6fc8 + debugging de9700ef3
 # tt-xla version to use
 set(TTXLA_VERSION "e11a4e14fab86fa8695957ac1df663572b80c19c")
 
