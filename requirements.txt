@@ -26,6 +26,8 @@ tabulate
 openpyxl
 seaborn
 xlsxwriter
+pytest-xdist
+pytest-forked
 
 # Model Dependencies (Will move to model specific requirements.txt in future)
 torchvision

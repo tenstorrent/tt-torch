@@ -229,6 +229,9 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
         terminalreporter.write_sep("=", "Failure Summary")
         with open(SUMMARY_FILE, "r", encoding="utf-8") as f:
             for line in f:
-                test, msg = line.strip().split("|||", 1)
+                parts = line.strip().split("|||", 1)
+                if len(parts) != 2:
+                    continue  # skip bad or partial lines
+                test, msg = parts
                 terminalreporter.write_line(f"FAILED {test} - {msg}")
         os.remove(SUMMARY_FILE)

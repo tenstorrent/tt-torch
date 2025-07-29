@@ -316,7 +316,7 @@ def verify_module(
     inputs=None,
     input_shapes=None,
     input_data_types=None,
-    required_pcc=0.99,
+    required_pcc=1.0,
     required_atol=1e-2,
     input_range=(-0.5, 0.5),
     input_range_int=(0, 1000),

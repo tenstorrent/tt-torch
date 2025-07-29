@@ -46,6 +46,8 @@ def test_mnist_train(record_property, mode, op_by_op, data_parallel_mode):
     loader = ModelLoader(variant=None)
     model_info = loader.get_model_info(variant=None)
 
+    assert False, "Failed!"
+
     tester = ThisTester(
         model_info.name,
         mode,
