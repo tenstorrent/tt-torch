@@ -331,23 +331,6 @@ def erf(x):
     return sign * y
 
 
-def gelu(x, approximate="none"):
-    """
-    GELU activation using the error function
-    Formula: 0.5 * x * (1 + erf(x / sqrt(2)))
-    """
-    if approximate == "none":
-        return 0.5 * x * (1.0 + torch.erf(x / 1.4142135623730951))
-    elif approximate == "tanh":
-        return (
-            0.5
-            * x
-            * (1.0 + torch.tanh(0.7978845608028654 * (x + 0.044715 * torch.pow(x, 3))))
-        )
-    else:
-        raise ValueError(f"Unknown approximate method: {approximate}")
-
-
 def masked_fill_tensor(input, mask, value):
     if value.device != input.device:
         value = value.to(input.device)
@@ -430,7 +413,6 @@ def _get_custom_decopositions() -> DecompositionTable:
         aten.adaptive_avg_pool2d.default: aten._adaptive_avg_pool2d,
         aten.avg_pool2d.default: avg_pool2d,
         aten.split_with_sizes.default: split_with_sizes,
-        aten.gelu.default: gelu,
         aten.erf.default: erf,
         aten.masked_fill.Tensor: masked_fill_tensor,
         torch.ops.prims.squeeze.default: squeeze,
