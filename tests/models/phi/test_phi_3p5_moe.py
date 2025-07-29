@@ -6,54 +6,17 @@
 import torch
 import pytest
 
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.phi3.phi_3_5_moe.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model_dict = dict(model_info_list)
-        model_path = model_dict[self.model_name]
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            model_path, torch_dtype=torch.bfloat16
-        )
-
-        if self.tokenizer.pad_token_id is None:
-            self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
-
-        self.model = AutoModelForCausalLM.from_pretrained(
-            model_path,
-            return_dict=True,
-            torch_dtype=torch.bfloat16,
-        )
-        self.model.eval()
-        return self.model
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        self.prompt = """
-        Write a short story about a cat:
-        """
-        inputs = self.tokenizer(
-            self.prompt,
-            return_tensors="pt",
-            padding=True,
-            truncation=True,
-            max_length=self.tokenizer.model_max_length,
-        )
-        arguments = {
-            "input_ids": inputs.input_ids,
-            "attention_mask": inputs.attention_mask,
-            "max_new_tokens": 120,
-            "do_sample": True,
-            "pad_token_id": self.tokenizer.pad_token_id,
-        }
-        return arguments
-
-
-model_info_list = [
-    ("phi3p5_moe", "microsoft/Phi-3.5-MoE-instruct"),
-]
+        return self.loader.load_inputs()
 
 
 @pytest.mark.parametrize(
@@ -61,18 +24,15 @@ model_info_list = [
     ["eval"],
 )
 @pytest.mark.parametrize(
-    "model_info",
-    model_info_list,
-    ids=[model_info[0] for model_info in model_info_list],
-)
-@pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_phi_3p5_moe(record_property, model_info, mode, op_by_op):
-    model_group = "red"
-    model_name, model_path = model_info
+def test_phi_3p5_moe(record_property, mode, op_by_op):
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+    model_name = model_info.name
+    model_group = model_info.group.value
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -95,6 +55,8 @@ def test_phi_3p5_moe(record_property, model_info, mode, op_by_op):
     tester = ThisTester(
         model_name,
         mode,
+        loader=loader,
+        model_info=model_info,
         compiler_config=cc,
         record_property_handle=record_property,
         model_group=model_group,
@@ -104,11 +66,18 @@ def test_phi_3p5_moe(record_property, model_info, mode, op_by_op):
     results = tester.test_model(assert_eval_token_mismatch=False)
 
     if mode == "eval":
-        decoded_output = tester.tokenizer.decode(results[0])
+        # Use loader's decode_output method
+        decoded_output = loader.decode_output(results[0], dtype_override=torch.bfloat16)
+
+        # Get test input from loader for display
+        test_input = """
+        Write a short story about a cat:
+        """
+
         print(
             f"""
         model_name: {model_name}
-        input: {tester.prompt}
+        input: {test_input}
         output: {decoded_output}
         """
         )

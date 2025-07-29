@@ -2,54 +2,40 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 # Phi-4: https://huggingface.co/microsoft/phi-4
+
 import torch
 import pytest
 
-from transformers import AutoTokenizer, AutoModelForCausalLM
 from tests.utils import ModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.phi4.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.tokenizer = AutoTokenizer.from_pretrained(
-            self.model_name, torch_dtype=torch.bfloat16
-        )
-        model = AutoModelForCausalLM.from_pretrained(self.model_name)
+        model = self.loader.load_model(dtype_override=torch.bfloat16)
+        self.tokenizer = self.loader.tokenizer
         return model
 
     def _load_inputs(self):
-        messages = [
-            {"role": "system", "content": "You are a helpful AI assistant."},
-            {
-                "role": "user",
-                "content": "Can you provide ways to eat combinations of bananas and dragonfruits?",
-            },
-        ]
-
-        self.test_input = messages
-        inputs = self.tokenizer.apply_chat_template(
-            messages,
-            tokenize=True,
-            add_generation_prompt=True,
-            return_tensors="pt",
-            # return_attention_mask=True,
-        )
-        return inputs
+        return self.loader.load_inputs()
 
 
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
 )
-@pytest.mark.parametrize("model_name", ["microsoft/phi-4"])
 @pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_phi_4(record_property, model_name, mode, op_by_op):
-    model_group = "red"
+def test_phi_4(record_property, mode, op_by_op):
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+    model_name = model_info.name
+    model_group = model_info.group.value
+
     cc = CompilerConfig()
     cc.enable_consteval = True
     if op_by_op:
@@ -69,6 +55,7 @@ def test_phi_4(record_property, model_name, mode, op_by_op):
     tester = ThisTester(
         model_name,
         mode,
+        loader=loader,
         compiler_config=cc,
         record_property_handle=record_property,
         is_token_output=True,
@@ -79,11 +66,22 @@ def test_phi_4(record_property, model_name, mode, op_by_op):
     results = tester.test_model(assert_eval_token_mismatch=False)
 
     if mode == "eval":
-        decoded_output = tester.tokenizer.decode(results[0])
+        # Use loader's decode_output method
+        decoded_output = loader.decode_output(results[0], dtype_override=torch.bfloat16)
+
+        # Get test input from loader for display
+        test_input = [
+            {"role": "system", "content": "You are a helpful AI assistant."},
+            {
+                "role": "user",
+                "content": "Can you provide ways to eat combinations of bananas and dragonfruits?",
+            },
+        ]
+
         print(
             f"""
         model_name: {model_name}
-        input: {tester.test_input}
+        input: {test_input}
         output: {decoded_output}
         """
         )
