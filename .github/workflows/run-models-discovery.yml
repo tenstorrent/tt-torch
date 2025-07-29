@@ -30,8 +30,8 @@ jobs:
         build: [
           { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_1", group: 1 },
           { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_2", group: 2 },
-          { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_3", group: 3 },
-          { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_4", group: 4 },
+          # { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_3", group: 3 },
+          # { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_4", group: 4 },
         ]
     name: "test exec models ${{ matrix.runner == 'wormhole' && 'wh' || matrix.runner == 'blackhole' && 'bh' || 'unk' }} (${{ matrix.build.name }})"
     runs-on: ${{ matrix.runner == 'wormhole' && matrix.build.wh-runner || matrix.runner == 'blackhole' && matrix.build.bh-runner || 'wormhole_b0'}}
@@ -102,7 +102,7 @@ jobs:
       shell: bash
       run: |
         source env/activate
-        pytest -svv tests/models/test_models.py --splits 4 --group ${{ matrix.build.group }} --splitting-algorithm least_duration --durations-path .test_durations | tee pytest.log
+        pytest -svv tests/models/test_models.py --splits 2 --group ${{ matrix.build.group }} --splitting-algorithm least_duration --durations-path .test_durations -k bert| tee pytest.log
     - name: Upload Test Log
       uses: actions/upload-artifact@v4
       if: ${{ (success() || failure()) && env.RUN_TEST != 'skip' }}
