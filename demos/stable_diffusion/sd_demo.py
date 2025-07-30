@@ -6,10 +6,8 @@ import argparse
 import tt_torch
 from pathlib import Path
 from tt_torch.tools.utils import CompilerConfig
-from tt_torch.dynamo.backend import backend, BackendOptions
-from diffusers import StableDiffusion3Pipeline, AutoencoderTiny
-from transformers import CLIPTextModel, CLIPTokenizer
-from tt_torch.tools.device_manager import DeviceManager
+from tt_torch.dynamo.backend import BackendOptions
+from diffusers import StableDiffusion3Pipeline
 
 pipe = StableDiffusion3Pipeline.from_pretrained(
     "stabilityai/stable-diffusion-3.5-medium",
@@ -30,7 +28,6 @@ def main(run_interactive):
     options.compiler_config = cc
 
     pipe.enable_attention_slicing()
-    import torch_xla.core.xla_model as xm
 
     pipe.transformer = pipe.transformer.eval().to(torch.bfloat16)
 
