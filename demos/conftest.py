@@ -5,26 +5,34 @@
 import pytest
 import difflib
 import demos.test_config as test_config_module
+from enum import Enum
 
 
 class TestMeta:
     def __init__(self, data):
         self.data = data or {}
+        self.status = self._parse_status()
 
-    def get(self, key, default=None):
-        return self.data.get(key, default)
+    def _parse_status(self):
+        status_value = self.data.get("status", "expected_passing")
+        try:
+            return TestStatus(status_value)
+        except ValueError:
+            raise ValueError(f"Invalid status '{status_value}' in test_config.py")
 
     @property
-    def batch_size(self):
+    def batch_size(self) -> int:
         return self.data.get("batch_size", 1)
 
     @property
-    def pcc(self):
+    def pcc(self) -> float:
         return self.data.get("pcc", 0.98)
 
-    @property
-    def status(self):
-        return self.data.get("status", "unknown")
+
+class TestStatus(Enum):
+    EXPECTED_PASSING = "expected_passing"
+    KNOWN_FAILURE = "known_failure"
+    TO_DEBUG = "to_debug"
 
 
 # 👇 Store items here for later access in terminal summary
@@ -36,8 +44,7 @@ test_config = test_config_module.test_config
 # Define a test metadata fixture to get the test config for each test
 @pytest.fixture
 def test_metadata(request):
-    nodeid = request.node.nodeid.split("::")[-1]
-    return TestMeta(test_config.get(nodeid))
+    return getattr(request.node, "_test_meta", TestMeta({}))
 
 
 def pytest_addoption(parser):
@@ -51,18 +58,22 @@ def pytest_addoption(parser):
 
 def pytest_collection_modifyitems(config, items):
     global collected_items
-    collected_items = items  # store for later
+    collected_items = items
 
     for item in items:
         nodeid = item.nodeid.split("::")[-1]
-        meta = test_config.get(nodeid)
-        if meta:
-            status = meta.get("status")
-            if status == "known_failure":
-                item.add_marker(pytest.mark.known_failure)
-                item.add_marker(pytest.mark.xfail(strict=True, reason="Known failure"))
-            elif status == "expected_passing":
-                item.add_marker(pytest.mark.expected_passing)
+        meta = TestMeta(test_config.get(nodeid))
+
+        if meta.status == TestStatus.KNOWN_FAILURE:
+            item.add_marker(pytest.mark.known_failure)
+            item.add_marker(pytest.mark.xfail(strict=True, reason="Known failure"))
+        elif meta.status == TestStatus.EXPECTED_PASSING:
+            item.add_marker(pytest.mark.expected_passing)
+        elif meta.status == TestStatus.TO_DEBUG:
+            item.add_marker(pytest.mark.to_debug)
+
+        # Attach TestMeta to the item so the test can access it
+        item._test_meta = meta
 
 
 def pytest_terminal_summary(terminalreporter):
