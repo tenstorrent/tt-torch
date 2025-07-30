@@ -9,7 +9,7 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 import importlib.util
 import torch
 import inspect
-from tests.runner.test_config import TestStatus
+from tests.runner.test_config import ModelStatus
 
 
 @pytest.fixture(autouse=True)
@@ -247,9 +247,9 @@ def test_all_models(test_entry, mode, op_by_op, record_property, test_metadata):
     print(f"KCM test_id: {test_id}")
 
     # Handle xfail based on test_config status
-    if test_metadata.status == TestStatus.KNOWN_FAILURE:
+    if test_metadata.status == ModelStatus.KNOWN_FAILURE:
         pytest.xfail("Known failure (from test_config)")
-    elif test_metadata.status == TestStatus.TO_DEBUG:
+    elif test_metadata.status == ModelStatus.TO_DEBUG:
         pytest.xfail("Marked as TO_DEBUG (from test_config)")
 
     print(f"Testing {model_entry}")
