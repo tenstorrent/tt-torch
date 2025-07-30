@@ -1,12 +1,17 @@
 # SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
+
 import pytest
-import demos.test_config as test_config  # adjust path if needed
+import difflib
+import demos.test_config as test_config_module
 
 
 # 👇 Store items here for later access in terminal summary
 collected_items = []
+
+# 👇 Use dict of dicts now
+test_config = test_config_module.test_config
 
 
 def pytest_addoption(parser):
@@ -24,11 +29,14 @@ def pytest_collection_modifyitems(config, items):
 
     for item in items:
         nodeid = item.nodeid.split("::")[-1]
-        if nodeid in test_config.known_failures:
-            item.add_marker(pytest.mark.known_failure)
-            item.add_marker(pytest.mark.xfail(strict=True, reason="Known failure"))
-        elif nodeid in test_config.expected_passing:
-            item.add_marker(pytest.mark.expected_passing)
+        meta = test_config.get(nodeid)
+        if meta:
+            status = meta.get("status")
+            if status == "known_failure":
+                item.add_marker(pytest.mark.known_failure)
+                item.add_marker(pytest.mark.xfail(strict=True, reason="Known failure"))
+            elif status == "expected_passing":
+                item.add_marker(pytest.mark.expected_passing)
 
 
 def pytest_terminal_summary(terminalreporter):
@@ -38,13 +46,12 @@ def pytest_terminal_summary(terminalreporter):
             print(f'    "{item.nodeid.split("::")[-1]}",')
 
 
-# Validate config file to report on unexpected or new model tests
 def pytest_sessionfinish(session, exitstatus):
     actual_nodeids = {item.nodeid.split("::")[-1] for item in collected_items}
-    declared = set(test_config.expected_passing) | set(test_config.known_failures)
+    declared_nodeids = set(test_config.keys())
 
-    unknown = declared - actual_nodeids
-    unlisted = actual_nodeids - declared
+    unknown = declared_nodeids - actual_nodeids
+    unlisted = actual_nodeids - declared_nodeids
 
     if unknown:
         print(
@@ -52,6 +59,9 @@ def pytest_sessionfinish(session, exitstatus):
         )
         for test_name in sorted(unknown):
             print(f"  - {test_name}")
+            suggestion = difflib.get_close_matches(test_name, actual_nodeids, n=1)
+            if suggestion:
+                print(f"    Did you mean: {suggestion[0]}?")
         session.exitstatus = 1  # fail
 
     if unlisted:
@@ -60,5 +70,5 @@ def pytest_sessionfinish(session, exitstatus):
         )
         for test_name in sorted(unlisted):
             print(f"  - {test_name}")
-        # Optional: uncomment the next line to treat unlisted as an error
+        # Optional: treat as error
         # session.exitstatus = 1
