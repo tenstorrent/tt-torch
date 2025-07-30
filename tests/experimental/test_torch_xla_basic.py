@@ -9,6 +9,93 @@ from tt_torch.dynamo.backend import BackendOptions
 
 import pytest
 
+# If ceil_mode = True, count_include_pad = True
+#     If the ceil is actually applied (that is ceil(output_size) != output_size)
+#         The padding will be [top, bottom + 1, left, right + 1]
+#         The constant tensor we will pool, then divide by will be:
+#             A tensor which is full of ones, except for the bottommost row and the rightmost column, which will be zeros
+#     If the ceil is not applied (that is ceil(output_size) == output_size)
+#         The padding will be [top, bottom, left, right]
+#         The constant tensor we will pool, then divide by will be:
+#             Full of ones
+#
+# If ceil_mode = False, count_include_pad = True
+#     The constant tensor we will pool, then divide by will be:
+#         Full of ones
+#
+# If ceil_mode = True, count_include_pad = False
+#     IF the ceil is actually applied (that is ceil(output_size) != output_size)
+#         The padding will be [top, bottom + 1, left, right + 1]
+#         The constant tensor we will pool, then divide by will be:
+#             A tensor of ones, padded with zeros around the padding ring [top, bottom, left, right] PLUS an additional row of zeros on the bottom and a column of zeros on the right
+#     If the ceil is not applied (that is ceil(output_size) == output_size)
+#         The padding will be [top, bottom, left, right]
+#         The constant tensor we will pool, then divide by will be:
+#             A tensor of ones, padded with zeros around the padding ring [top, bottom, left, right]
+#
+# If ceil_mode = False, count_include_pad = False
+#     The constant tensor we will pool, then divide by will be:
+#         A tensor of ones, padded with zeros around the padding ring [top, bottom, left, right]
+
+
+@pytest.mark.parametrize("tensor_h", [32, 33])
+@pytest.mark.parametrize("tensor_w", [32, 33])
+@pytest.mark.parametrize("kernel_size", [2, 3, 4, 5])
+@pytest.mark.parametrize("stride", [1, 2, 3])
+@pytest.mark.parametrize("padding_h", [0, 1, 2])
+@pytest.mark.parametrize("padding_w", [0, 1, 2])
+@pytest.mark.parametrize("ceil_mode", [True, False])
+@pytest.mark.parametrize("count_include_pad", [True, False])
+def test_pool(
+    tensor_h,
+    tensor_w,
+    kernel_size,
+    stride,
+    padding_h,
+    padding_w,
+    ceil_mode,
+    count_include_pad,
+):
+    if padding_h > stride / 2:
+        pytest.skip("Padding is too large for the stride")
+    if padding_w > stride / 2:
+        pytest.skip("Padding is too large for the stride")
+
+    class Pool(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.avg_pool = torch.nn.AvgPool2d(
+                kernel_size=kernel_size,
+                stride=stride,
+                padding=(padding_h, padding_w),
+                ceil_mode=ceil_mode,
+                count_include_pad=count_include_pad,
+            )
+            self.max_pool = torch.nn.MaxPool2d(
+                kernel_size=kernel_size,
+                stride=stride,
+                padding=(padding_h, padding_w),
+                ceil_mode=ceil_mode,
+            )
+
+        def forward(self, x):
+            return self.avg_pool(x), self.max_pool(x)
+
+    input_x = torch.randn(1, 32, tensor_h, tensor_w, dtype=torch.bfloat16)
+    model = Pool()
+    golden_avg, golden_max = model(input_x)
+
+    model = torch.compile(model, backend="tt-experimental")
+    output_avg, output_max = model(input_x)
+    verify_against_golden(
+        (golden_avg, golden_max),
+        (output_avg, output_max),
+        assert_pcc=True,
+        assert_atol=True,
+        required_pcc=0.99,
+        required_atol=0.02,
+    )
+
 
 @pytest.mark.parametrize("bias", [True, False])
 def test_simple_mm(bias):
