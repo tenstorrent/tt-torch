@@ -7,6 +7,26 @@ import difflib
 import demos.test_config as test_config_module
 
 
+class TestMeta:
+    def __init__(self, data):
+        self.data = data or {}
+
+    def get(self, key, default=None):
+        return self.data.get(key, default)
+
+    @property
+    def batch_size(self):
+        return self.data.get("batch_size", 1)
+
+    @property
+    def pcc(self):
+        return self.data.get("pcc", 0.98)
+
+    @property
+    def status(self):
+        return self.data.get("status", "unknown")
+
+
 # 👇 Store items here for later access in terminal summary
 collected_items = []
 
@@ -17,7 +37,7 @@ test_config = test_config_module.test_config
 @pytest.fixture
 def test_metadata(request):
     nodeid = request.node.nodeid.split("::")[-1]
-    return test_config.get(nodeid, {})
+    return TestMeta(test_config.get(nodeid))
 
 
 def pytest_addoption(parser):
