@@ -3,24 +3,19 @@
 # SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/docs/transformers/en/model_doc/xlm-roberta#transformers.XLMRobertaForMaskedLM
 
-from transformers import AutoTokenizer, XLMRobertaForMaskedLM
 import torch
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.roberta.masked_lm.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.tokenizer = AutoTokenizer.from_pretrained("FacebookAI/xlm-roberta-base")
-        model = XLMRobertaForMaskedLM.from_pretrained(
-            "FacebookAI/xlm-roberta-base", torch_dtype=torch.bfloat16
-        )
-        return model
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        inputs = self.tokenizer("The capital of France is <mask>.", return_tensors="pt")
-        return inputs
+        return self.loader.load_inputs(dtype_override=torch.bfloat16)
 
 
 @pytest.mark.parametrize(
@@ -36,7 +31,6 @@ class ThisTester(ModelTester):
     "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
 )
 def test_roberta(record_property, mode, op_by_op, data_parallel_mode):
-    model_name = "RoBERTa"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -48,9 +42,13 @@ def test_roberta(record_property, mode, op_by_op, data_parallel_mode):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
         relative_atol=0.012,
         compiler_config=cc,
         record_property_handle=record_property,
@@ -61,15 +59,8 @@ def test_roberta(record_property, mode, op_by_op, data_parallel_mode):
     results = tester.test_model()
 
     def print_result(result):
-        logits = result.logits
-        # retrieve index of <mask>
-        mask_token_index = (tester.inputs.input_ids == tester.tokenizer.mask_token_id)[
-            0
-        ].nonzero(as_tuple=True)[0]
-
-        predicted_token_id = logits[0, mask_token_index].argmax(axis=-1)
-        output = tester.tokenizer.decode(predicted_token_id)
-        print(f"Output: {output}")
+        decoded_output = loader.decode_output(result)
+        print(decoded_output)
 
     if mode == "eval":
         ModelTester.print_outputs(results, data_parallel_mode, print_result)
