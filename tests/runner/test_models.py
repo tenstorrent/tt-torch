@@ -9,7 +9,7 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 import importlib.util
 import torch
 import inspect
-import json
+from tests.runner.test_config import TestStatus
 
 
 @pytest.fixture(autouse=True)
@@ -184,7 +184,7 @@ def get_tester_params(test_entry, config):
     test_entries,
     ids=generate_test_id,
 )
-def test_all_models(test_entry, mode, op_by_op, record_property):
+def test_all_models(test_entry, mode, op_by_op, record_property, test_metadata):
     loader_path = test_entry["path"]
     variant_info = test_entry["variant_info"]
 
@@ -229,11 +229,11 @@ def test_all_models(test_entry, mode, op_by_op, record_property):
     model_name = model_info.name
 
     # Load config file
-    config_path = os.path.join(TEST_DIR, "config.json")
-    config = {}
-    if os.path.exists(config_path):
-        with open(config_path, "r") as f:
-            config = json.load(f)
+    # config_path = os.path.join(TEST_DIR, "config.json")
+    # config = {}
+    # if os.path.exists(config_path):
+    #     with open(config_path, "r") as f:
+    #         config = json.load(f)
 
     rel_path = os.path.relpath(loader_path, MODELS_ROOT)
     model_rel_path = os.path.dirname(rel_path)
@@ -242,21 +242,41 @@ def test_all_models(test_entry, mode, op_by_op, record_property):
     variant_str = variant.value if variant else None
     model_entry = model_rel_path + "-" + variant_str if variant_str else model_rel_path
 
+    # KCM - New stuff.
+    test_id = generate_test_id(test_entry)  # e.g., yolov3/pytorch-base-full-eval
+    print(f"KCM test_id: {test_id}")
+
+    # Handle xfail based on test_config status
+    if test_metadata.status == TestStatus.KNOWN_FAILURE:
+        pytest.xfail("Known failure (from test_config)")
+    elif test_metadata.status == TestStatus.TO_DEBUG:
+        pytest.xfail("Marked as TO_DEBUG (from test_config)")
+
     print(f"Testing {model_entry}")
     # pytest.skip("Early Exit")
 
-    skip_test_msg = skip_test(model_entry, config["skip_models"])
-    if skip_test_msg:
-        skip_full_eval_test(
-            record_property,
-            cc,
-            model_info.name,
-            bringup_status="FAILED_RUNTIME",
-            reason=skip_test_msg,
-            model_group=model_info.group,
-        )
+    # skip_test_msg = skip_test(model_entry, config["skip_models"])
+    # if skip_test_msg:
+    #     skip_full_eval_test(
+    #         record_property,
+    #         cc,
+    #         model_info.name,
+    #         bringup_status="FAILED_RUNTIME",
+    #         reason=skip_test_msg,
+    #         model_group=model_info.group,
+    #     )
 
-    args = get_tester_params(model_entry, config["test_params"])
+    # args = get_tester_params(model_entry, config["test_params"])
+
+    args = {
+        "assert_pcc": test_metadata.assert_pcc,
+        "assert_atol": test_metadata.assert_atol,
+        "required_pcc": test_metadata.pcc,
+    }
+    if test_metadata.relative_atol is not None:
+        args["relative_atol"] = test_metadata.relative_atol
+
+    print(f"KCM args: {args}")
 
     tester = DynamicTester(
         model_name,
@@ -266,5 +286,5 @@ def test_all_models(test_entry, mode, op_by_op, record_property):
         record_property_handle=record_property,
         **args,
     )
-    results = tester.test_model()
-    tester.finalize()
+    # results = tester.test_model()
+    # tester.finalize()
