@@ -22,7 +22,7 @@ permissions:
 
 jobs:
   tests:
-    timeout-minutes: 120
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       matrix:
@@ -111,15 +111,26 @@ jobs:
         mkdir -p ${{ steps.strings.outputs.dist-dir }}
         mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
+
     - name: Run Model Test
       if: ${{ env.RUN_TEST != 'skip' }}
       shell: bash
       run: |
         source env/activate
-        pytest -vv tests/models/test_models.py --splits 4 --group ${{ matrix.build.group }} --splitting-algorithm least_duration --durations-path .test_durations | tee pytest.log
+        pytest --forked --durations=0 -v -rA tests/models/test_models.py \
+        --splits 4 --group ${{ matrix.build.group }} --splitting-algorithm least_duration --durations-path .test_durations \
+        --junit-xml=${{ steps.strings.outputs.test_report_path_models }} | tee pytest.log
+
     - name: Upload Test Log
       uses: actions/upload-artifact@v4
       if: ${{ (success() || failure()) && env.RUN_TEST != 'skip' }}
       with:
         name: test-log-${{ matrix.runner }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: pytest.log
+
+    - name: Upload Test Report Models
+      uses: actions/upload-artifact@v4
+      if: ${{ (success() || failure()) && env.RUN_TEST != 'skip' }}
+      with:
+        name: test-reports-models-${{ matrix.runner }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        path: ${{ steps.strings.outputs.test_report_path_models }}
