@@ -19,27 +19,13 @@ on:
         description: 'Key to use for artifact upload'
         required: false
         type: string
-      sh-runner:
-        description: 'Use shared runners'
-        required: false
-        type: boolean
-        default: true
 
 jobs:
   build:
     timeout-minutes: 120
-
-    runs-on: ${{ inputs.sh-runner && 'tt-beta-ubuntu-2204-large' || fromJson('["wormhole_b0", "in-service"]') }}
-
+    runs-on: tt-beta-ubuntu-2204-large
     container:
-      image: ${{ inputs.sh-runner && format('harbor.ci.tenstorrent.net/{0}', inputs.docker-image) || inputs.docker-image }}
-      volumes:
-        - /dev/hugepages:/dev/hugepages
-        - /dev/hugepages-1G:/dev/hugepages-1G
-        - /etc/udev/rules.d:/etc/udev/rules.d
-        - /lib/modules:/lib/modules
-        - /opt/tt_metal_infra/provisioning/provisioning_env:/opt/tt_metal_infra/provisioning/provisioning_env
-        - /mnt/dockercache:/mnt/dockercache
+      image: harbor.ci.tenstorrent.net/${{ inputs.docker-image }}
 
     steps:
     - uses: actions/checkout@v4
