@@ -5,34 +5,7 @@
 import pytest
 import difflib
 import demos.test_config as test_config_module
-from enum import Enum
-
-
-class TestMeta:
-    def __init__(self, data):
-        self.data = data or {}
-        self.status = self._parse_status()
-
-    def _parse_status(self):
-        status_value = self.data.get("status", "expected_passing")
-        try:
-            return TestStatus(status_value)
-        except ValueError:
-            raise ValueError(f"Invalid status '{status_value}' in test_config.py")
-
-    @property
-    def batch_size(self) -> int:
-        return self.data.get("batch_size", 1)
-
-    @property
-    def pcc(self) -> float:
-        return self.data.get("pcc", 0.98)
-
-
-class TestStatus(Enum):
-    EXPECTED_PASSING = "expected_passing"
-    KNOWN_FAILURE = "known_failure"
-    TO_DEBUG = "to_debug"
+from demos.utils import TestStatus, TestMeta
 
 
 # 👇 Store items here for later access in terminal summary
