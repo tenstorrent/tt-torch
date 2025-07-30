@@ -13,6 +13,12 @@ collected_items = []
 # 👇 Use dict of dicts now
 test_config = test_config_module.test_config
 
+# Define a test metadata fixture to get the test config for each test
+@pytest.fixture
+def test_metadata(request):
+    nodeid = request.node.nodeid.split("::")[-1]
+    return test_config.get(nodeid, {})
+
 
 def pytest_addoption(parser):
     parser.addoption(
