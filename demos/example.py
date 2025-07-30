@@ -11,6 +11,7 @@ import pytest
         (1, 2, 3),
         (2, 2, 5),  # This is a known failure
         (3, 3, 6),
+        (3, 5, 8),
         (4, 5, 10),  # Another known failure
     ],
 )
