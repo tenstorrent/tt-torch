@@ -17,9 +17,16 @@ import pytest
 )
 def test_add(a, b, expected, test_metadata):
 
-    status = test_metadata.status
-    batch_size = test_metadata.batch_size
-    pcc = test_metadata.pcc
-    print(f"[INFO] status={status}, batch_size={batch_size}, pcc={pcc}")
+    print(
+        f"[INFO] status={test_metadata.status}, "
+        f"batch_size={test_metadata.batch_size}, "
+        f"pcc={test_metadata.pcc}"
+    )
+
+    # Illustrative example for accessing enum
+    from conftest import TestStatus
+
+    if test_metadata.status == TestStatus.KNOWN_FAILURE:
+        print(f"[INFO] Known failure")
 
     assert a + b == expected
