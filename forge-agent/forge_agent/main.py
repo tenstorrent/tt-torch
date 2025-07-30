@@ -14,17 +14,36 @@ from forge_agent.dashboard.api import app as dashboard_app
 
 
 def setup_logging():
-    """Set up logging configuration."""
+    """Set up logging configuration with human-readable formatting."""
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "logs")
     os.makedirs(log_dir, exist_ok=True)
     
+    # Create subdirectories for different log types
+    adaptation_log_dir = os.path.join(log_dir, "adaptations")
+    os.makedirs(adaptation_log_dir, exist_ok=True)
+    
     log_file = os.path.join(log_dir, "forge_agent.log")
     
-    logger.remove()  # Remove default handler
-    logger.add(sys.stderr, level="INFO")  # Add stderr handler
-    logger.add(log_file, rotation="10 MB", level="DEBUG")  # Add file handler
+    # Human-readable format for console
+    console_format = (
+        "<green>{time:HH:mm:ss}</green> | "
+        "<level>{level: <8}</level> | "
+        "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | "
+        "<level>{message}</level>"
+    )
     
-    logger.info(f"Logging initialized. Log file: {log_file}")
+    # Detailed format for file
+    file_format = (
+        "{time:YYYY-MM-DD HH:mm:ss.SSS} | {level: <8} | {name}:{function}:{line} | {message}"
+    )
+    
+    logger.remove()  # Remove default handler
+    logger.add(sys.stderr, level="INFO", format=console_format)  # Add console handler
+    logger.add(log_file, rotation="10 MB", level="DEBUG", format=file_format)  # Add file handler
+    
+    logger.info(f"🚀 Forge Agent Pipeline Initialized")
+    logger.info(f"📁 Main log file: {log_file}")
+    logger.info(f"📂 Adaptation logs: {adaptation_log_dir}")
 
 
 def run_pipeline(args):

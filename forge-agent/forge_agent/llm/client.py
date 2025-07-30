@@ -11,7 +11,7 @@ from loguru import logger
 class LLMClient:
     """Client for interacting with language model APIs."""
     
-    def __init__(self, api_key: Optional[str] = None, provider: str = "openai"):
+    def __init__(self, api_key: Optional[str] = None, provider: str = "anthropic"):
         """
         Initialize the LLM client.
         
