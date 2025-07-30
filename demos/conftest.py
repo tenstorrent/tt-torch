@@ -36,3 +36,29 @@ def pytest_terminal_summary(terminalreporter):
         print("\n📋 Collected test nodeids (use in test_config.py):")
         for item in collected_items:
             print(f'    "{item.nodeid.split("::")[-1]}",')
+
+
+# Validate config file to report on unexpected or new model tests
+def pytest_sessionfinish(session, exitstatus):
+    actual_nodeids = {item.nodeid.split("::")[-1] for item in collected_items}
+    declared = set(test_config.expected_passing) | set(test_config.known_failures)
+
+    unknown = declared - actual_nodeids
+    unlisted = actual_nodeids - declared
+
+    if unknown:
+        print(
+            "\nERROR: Unknown test entries in test_config.py (not found in collected tests):"
+        )
+        for test_name in sorted(unknown):
+            print(f"  - {test_name}")
+        session.exitstatus = 1  # fail
+
+    if unlisted:
+        print(
+            "\nWARNING: The following tests are collected but missing from test_config.py:"
+        )
+        for test_name in sorted(unlisted):
+            print(f"  - {test_name}")
+        # Optional: uncomment the next line to treat unlisted as an error
+        # session.exitstatus = 1
