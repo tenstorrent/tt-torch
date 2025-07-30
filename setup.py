@@ -151,7 +151,7 @@ os.environ["DONT_OVERRIDE_INSTALL_PATH"] = "1"
 
 install_requires = [
     "torch==2.7.0",
-    "torch-xla==2.7.0",
+    "torch-xla@https://pypi.eng.aws.tenstorrent.com/torch-xla/torch_xla-2.9.0%2Bgitb87262d-cp310-cp310-linux_x86_64.whl",
     "stablehlo@https://github.com/openxla/stablehlo/releases/download/v1.0.0/stablehlo-1.0.0.1715728102%2B6051bcdf-cp310-cp310-linux_x86_64.whl",
     "numpy",
     "onnx==1.17.0",
