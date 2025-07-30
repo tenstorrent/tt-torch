@@ -15,5 +15,12 @@ import pytest
         (4, 5, 10),  # Another known failure
     ],
 )
-def test_add(a, b, expected):
+def test_add(a, b, expected, test_metadata):
+
+    batch_size = test_metadata.get("batch_size", "default")
+    pcc = test_metadata.get("pcc", "N/A")
+    status = test_metadata.get("status", "undefined")
+
+    print(f"[INFO] status={status}, batch_size={batch_size}, pcc={pcc}")
+
     assert a + b == expected
