@@ -4,7 +4,7 @@
 #
 
 # underlying tt-mlir version we will have tt-xla use
-set(TT_MLIR_VERSION "tpatel/issue-4047")
+set(TT_MLIR_VERSION "main")
 # tt-xla version to use
 set(TTXLA_VERSION "ajakovljevic/taps_uplift")
 
