@@ -2,6 +2,7 @@
 Client for interacting with the Hugging Face API to fetch model data.
 """
 import os
+from datetime import datetime
 from typing import Dict, List, Optional, Any
 
 import requests
@@ -103,8 +104,9 @@ class HuggingFaceClient:
             # Extract size in MB (if available)
             size_mb = None
             if hasattr(model_info, 'siblings') and model_info.siblings:
-                total_size = sum(s.size for s in model_info.siblings if hasattr(s, 'size'))
-                size_mb = total_size / (1024 * 1024)  # Convert to MB
+                total_size = sum(s.size for s in model_info.siblings if hasattr(s, 'size') and s.size is not None)
+                if total_size > 0:
+                    size_mb = total_size / (1024 * 1024)  # Convert to MB
             
             # Create and return model metadata
             metadata = ModelMetadata(
@@ -115,10 +117,7 @@ class HuggingFaceClient:
                 tags=getattr(model_info, 'tags', []),
                 size_mb=size_mb,
                 last_modified=str(getattr(model_info, 'last_modified', None)),
-                raw_metadata={
-                    key: value for key, value in model_info.__dict__.items()
-                    if not key.startswith('_') and key != 'siblings'  # Exclude large attributes
-                }
+                raw_metadata=self._serialize_raw_metadata(model_info)
             )
             return metadata
             
@@ -175,3 +174,32 @@ class HuggingFaceClient:
                     return arch
         
         return ModelArchitecture.OTHER
+    
+    def _serialize_raw_metadata(self, model_info: Any) -> Dict[str, Any]:
+        """
+        Serialize raw metadata, handling datetime and other non-JSON-serializable objects.
+        
+        Args:
+            model_info: The model info object from Hugging Face API
+            
+        Returns:
+            Dictionary with JSON-serializable values
+        """
+        serialized = {}
+        
+        for key, value in model_info.__dict__.items():
+            # Skip private attributes and large objects
+            if key.startswith('_') or key == 'siblings':
+                continue
+                
+            # Handle datetime objects
+            if isinstance(value, datetime):
+                serialized[key] = value.isoformat()
+            # Handle other basic types that are JSON serializable
+            elif isinstance(value, (str, int, float, bool, list, dict, type(None))):
+                serialized[key] = value
+            # For other types, convert to string representation
+            else:
+                serialized[key] = str(value)
+                
+        return serialized

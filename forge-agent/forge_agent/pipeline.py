@@ -21,6 +21,30 @@ from forge_agent.result_tracking.database import ResultTrackingDatabase
 from forge_agent.result_tracking.models import TestRecord
 
 
+def create_model_logger(model_id: str):
+    """Create a dedicated logger for a specific model's adaptation process."""
+    # Clean up model ID for filename
+    clean_model_id = model_id.replace("/", "_").replace("\\", "_")
+    
+    log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "logs", "adaptations")
+    os.makedirs(log_dir, exist_ok=True)
+    
+    log_file = os.path.join(log_dir, f"{clean_model_id}_adaptation.log")
+    
+    # Create a logger specifically for this model
+    model_logger = logger.bind(model_id=model_id)
+    
+    # Add file handler for this model
+    adaptation_format = (
+        "=== {time:YYYY-MM-DD HH:mm:ss} ===\n"
+        "{level: <8} | {message}\n"
+    )
+    
+    model_logger.add(log_file, level="DEBUG", format=adaptation_format)
+    
+    return model_logger, log_file
+
+
 class ModelCompatibilityPipeline:
     """
     Main pipeline for testing Hugging Face model compatibility with tt-torch.
@@ -227,7 +251,14 @@ class ModelCompatibilityPipeline:
         Returns:
             TestRecord with test results
         """
-        logger.info(f"Testing model: {model_id}")
+        logger.info(f"🧪 Testing model: {model_id}")
+        
+        # Create model-specific logger for detailed adaptation tracking
+        model_logger, adaptation_log_file = create_model_logger(model_id)
+        model_logger.info(f"🚀 STARTING TEST SESSION FOR: {model_id}")
+        model_logger.info(f"📝 Adaptation log: {adaptation_log_file}")
+        model_logger.info(f"🤖 LLM adaptation enabled: {use_llm_adaptation}")
+        model_logger.info("=" * 80)
         
         # Create test record
         test_record = TestRecord(
@@ -238,6 +269,7 @@ class ModelCompatibilityPipeline:
         
         # Store initial record
         record_id = self.result_db.store_test_result(test_record)
+        model_logger.info(f"📋 Test record created with ID: {record_id}")
         
         try:
             # Create test configuration
@@ -249,6 +281,7 @@ class ModelCompatibilityPipeline:
             # Step 1: Download model
             test_record.status = TestStatus.DOWNLOADING
             self.result_db.store_test_result(test_record)
+            model_logger.info("📥 PHASE 1: MODEL DOWNLOAD")
             
             download_success, model_data, failure_reason, error_message = self.downloader.download_model(test_config)
             
@@ -262,9 +295,10 @@ class ModelCompatibilityPipeline:
             # Step 2: Apply adaptation
             test_record.status = TestStatus.ADAPTING
             self.result_db.store_test_result(test_record)
+            model_logger.info("🔧 PHASE 2: MODEL ADAPTATION")
             
             adaptation_success, adapted_model, adaptation_level, failure_reason, error_message = \
-                self.adaptation_engine.adapt_model(model_data, test_config)
+                self.adaptation_engine.adapt_model(model_data, test_config, model_logger)
             
             test_record.adaptation_level = adaptation_level
             
@@ -573,6 +607,15 @@ class ModelCompatibilityPipeline:
                 test_record.status = TestStatus.COMPLETED
                 self.result_db.store_test_result(test_record)
                 
+                # Log final success
+                model_logger.info("=" * 80)
+                model_logger.info("🎉 TEST COMPLETED SUCCESSFULLY!")
+                model_logger.info(f"✅ Status: {test_record.status}")
+                model_logger.info(f"📈 Adaptation Level: {test_record.adaptation_level.value if hasattr(test_record.adaptation_level, 'value') else test_record.adaptation_level}")
+                model_logger.info(f"⏱️  Compilation Time: {test_record.compilation_time_seconds:.2f}s")
+                model_logger.info(f"🚀 Execution Time: {test_record.execution_time_seconds:.2f}s")
+                model_logger.info("=" * 80)
+                
             except Exception as e:
                 logger.error(f"Execution error: {str(e)}")
                 test_record.status = TestStatus.FAILED
@@ -580,6 +623,13 @@ class ModelCompatibilityPipeline:
                 test_record.error_message = f"Execution error: {str(e)}"
                 test_record.stack_trace = traceback.format_exc()
                 self.result_db.store_test_result(test_record)
+                
+                # Log execution failure
+                model_logger.error("=" * 80)
+                model_logger.error("💥 TEST FAILED - EXECUTION ERROR")
+                model_logger.error(f"❌ Status: {test_record.status}")
+                model_logger.error(f"🚨 Error: {test_record.error_message}")
+                model_logger.error("=" * 80)
             
             return test_record
             
@@ -590,6 +640,14 @@ class ModelCompatibilityPipeline:
             test_record.error_message = f"Unknown error: {str(e)}"
             test_record.stack_trace = traceback.format_exc()
             self.result_db.store_test_result(test_record)
+            
+            # Log unknown failure
+            model_logger.error("=" * 80)
+            model_logger.error("💥 TEST FAILED - UNKNOWN ERROR")
+            model_logger.error(f"❌ Status: {test_record.status}")
+            model_logger.error(f"🚨 Error: {test_record.error_message}")
+            model_logger.error("=" * 80)
+            
             return test_record
     
     def run_pipeline(self, model_selection_criteria: ModelSelectionCriteria, max_concurrent: int = 1) -> Dict[str, Any]:
@@ -603,19 +661,19 @@ class ModelCompatibilityPipeline:
         Returns:
             Dictionary with results summary
         """
-        logger.info(f"Running pipeline with criteria: {model_selection_criteria}")
+        logger.info(f"🚀 Running pipeline with criteria: {model_selection_criteria}")
         
         # Step 1: Model Selection
         selected_models = self.select_models(model_selection_criteria)
         
         if not selected_models:
-            logger.warning("No models selected for testing")
+            logger.warning("⚠️  No models selected for testing")
             return {"error": "No models selected for testing"}
         
         # Step 2: Testing Lifecycle
         results = []
         for i, model_metadata in enumerate(selected_models):
-            logger.info(f"Testing model {i+1}/{len(selected_models)}: {model_metadata.model_id}")
+            logger.info(f"🧪 Testing model {i+1}/{len(selected_models)}: {model_metadata.model_id}")
             
             # Test the model
             test_record = self.test_model(model_metadata.model_id)

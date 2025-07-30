@@ -53,7 +53,8 @@ class AdaptationEngine:
     def adapt_model(
         self, 
         model_data: Dict[str, Any], 
-        test_config: TestConfig
+        test_config: TestConfig,
+        model_logger=None
     ) -> Tuple[bool, Optional[Dict[str, Any]], AdaptationLevel, Optional[FailureReason], Optional[str]]:
         """
         Adapt a model for tt-torch compatibility.
@@ -61,6 +62,7 @@ class AdaptationEngine:
         Args:
             model_data: Dictionary containing model, config, and other model data
             test_config: Configuration for the model test
+            model_logger: Optional logger for model-specific adaptation logs
             
         Returns:
             Tuple containing:
@@ -71,31 +73,58 @@ class AdaptationEngine:
             - Error message if failed
         """
         model_id = test_config.model_id
-        logger.info(f"Adapting model: {model_id}")
+        adaptation_logger = model_logger or logger
+        
+        # Log adaptation start
+        adaptation_logger.info(f"🔧 STARTING ADAPTATION FOR MODEL: {model_id}")
+        adaptation_logger.info(f"📊 Model Data Keys: {list(model_data.keys())}")
+        
+        model = model_data.get("model")
+        if model:
+            adaptation_logger.info(f"🧠 Model Type: {type(model).__name__}")
+            adaptation_logger.info(f"🏗️  Model Architecture: {model.__class__.__module__}.{model.__class__.__name__}")
+            
+        config = model_data.get("config")
+        if config:
+            adaptation_logger.info(f"⚙️  Model Config Type: {type(config).__name__}")
+            
+        logger.info(f"🔧 Adapting model: {model_id}")
         
         # Try standard adaptation templates first
+        adaptation_logger.info("📝 STEP 1: Attempting Standard Template Adaptation")
         success, adapted_model, adaptation_level, failure_reason, error_message = self._apply_standard_templates(
-            model_data, test_config
+            model_data, test_config, adaptation_logger
         )
         
         # If standard adaptation failed and LLM adaptation is enabled, try that
         if not success and test_config.use_llm_adaptation:
+            adaptation_logger.info("🤖 STEP 2: Attempting LLM-Guided Adaptation")
             logger.info(f"Standard adaptation failed for {model_id}, trying LLM-guided adaptation")
             success, adapted_model, adaptation_level, failure_reason, error_message = self._apply_llm_adaptation(
-                model_data, test_config, error_message
+                model_data, test_config, error_message, adaptation_logger
             )
+        elif not success:
+            adaptation_logger.warning("❌ LLM adaptation disabled - skipping intelligent adaptation")
         
+        # Log final results
         if success:
-            logger.info(f"Successfully adapted model {model_id} with adaptation level {adaptation_level}")
+            adaptation_logger.info(f"✅ ADAPTATION SUCCESSFUL!")
+            adaptation_logger.info(f"📈 Adaptation Level: {adaptation_level.value if hasattr(adaptation_level, 'value') else adaptation_level}")
+            adaptation_logger.info(f"🎯 Adapted Model Type: {type(adapted_model.get('model', 'Unknown')).__name__}")
+            logger.info(f"✅ Successfully adapted model {model_id} with adaptation level {adaptation_level}")
         else:
-            logger.error(f"Failed to adapt model {model_id}: {error_message}")
+            adaptation_logger.error(f"❌ ADAPTATION FAILED!")
+            adaptation_logger.error(f"💥 Failure Reason: {failure_reason}")
+            adaptation_logger.error(f"🚨 Error Message: {error_message}")
+            logger.error(f"❌ Failed to adapt model {model_id}: {error_message}")
             
         return success, adapted_model, adaptation_level, failure_reason, error_message
     
     def _apply_standard_templates(
         self, 
         model_data: Dict[str, Any], 
-        test_config: TestConfig
+        test_config: TestConfig,
+        adaptation_logger=None
     ) -> Tuple[bool, Optional[Dict[str, Any]], AdaptationLevel, Optional[FailureReason], Optional[str]]:
         """
         Apply standard adaptation templates based on model architecture.
@@ -116,37 +145,68 @@ class AdaptationEngine:
         model = model_data.get("model")
         config = model_data.get("config")
         
+        adaptation_log = adaptation_logger or logger
+        
+        adaptation_log.info("🔍 Analyzing model for standard template adaptation...")
+        
         if model is None:
+            adaptation_log.error("❌ No model provided in model_data")
             return False, None, AdaptationLevel.BEYOND, FailureReason.ADAPTATION_ERROR, "No model provided"
         
         # Identify model architecture
         architecture_type = self._identify_architecture(model, model_id, config)
+        adaptation_log.info(f"🏛️  Identified Architecture: {architecture_type}")
         
         # Try to find a matching template
         template_path = self._find_template_for_architecture(architecture_type)
         
         if template_path:
+            adaptation_log.info(f"📋 Found matching template: {template_path}")
             try:
                 # Load the template module
                 spec = importlib.util.spec_from_file_location("template", template_path)
                 template_module = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(template_module)
                 
+                adaptation_log.info("📦 Template module loaded successfully")
+                
                 # Apply the adaptation
                 if hasattr(template_module, "adapt"):
+                    adaptation_log.info("🔄 Applying template adaptation...")
                     adapted_model_data = template_module.adapt(model_data, test_config)
                     
                     # Determine adaptation level
                     adaptation_level = getattr(template_module, "ADAPTATION_LEVEL", AdaptationLevel.LEVEL_1)
+                    adaptation_log.info(f"✅ Template adaptation successful! Level: {adaptation_level}")
+                    
+                    # Log what was changed
+                    original_keys = set(model_data.keys())
+                    adapted_keys = set(adapted_model_data.keys())
+                    if adapted_keys != original_keys:
+                        added_keys = adapted_keys - original_keys
+                        removed_keys = original_keys - adapted_keys
+                        if added_keys:
+                            adaptation_log.info(f"➕ Added keys: {list(added_keys)}")
+                        if removed_keys:
+                            adaptation_log.info(f"➖ Removed keys: {list(removed_keys)}")
                     
                     return True, adapted_model_data, adaptation_level, None, None
                 else:
+                    adaptation_log.error("❌ Template does not have 'adapt' function")
                     return False, None, AdaptationLevel.LEVEL_1, FailureReason.ADAPTATION_ERROR, "Template does not have adapt function"
             except Exception as e:
+                adaptation_log.error(f"💥 Error applying template {template_path}: {str(e)}")
                 logger.error(f"Error applying template {template_path}: {str(e)}")
                 return False, None, AdaptationLevel.LEVEL_1, FailureReason.ADAPTATION_ERROR, f"Template error: {str(e)}"
         else:
             # No matching template found
+            adaptation_log.warning(f"🔍 No matching template found for architecture: {architecture_type}")
+            adaptation_log.info("💡 Available templates:")
+            template_dir = os.path.join(self.templates_dir)
+            if os.path.exists(template_dir):
+                for file in os.listdir(template_dir):
+                    if file.endswith('.py') and not file.startswith('__'):
+                        adaptation_log.info(f"   📄 {file}")
             logger.warning(f"No matching template found for architecture {architecture_type}")
             return False, None, AdaptationLevel.LEVEL_2, FailureReason.UNSUPPORTED_ARCHITECTURE, f"No template for {architecture_type}"
     
@@ -214,7 +274,8 @@ class AdaptationEngine:
         self, 
         model_data: Dict[str, Any], 
         test_config: TestConfig,
-        error_message: Optional[str]
+        error_message: Optional[str],
+        adaptation_logger=None
     ) -> Tuple[bool, Optional[Dict[str, Any]], AdaptationLevel, Optional[FailureReason], Optional[str]]:
         """
         Apply LLM-guided adaptation.
@@ -232,27 +293,43 @@ class AdaptationEngine:
             - Failure reason enum if failed
             - Error message if failed
         """
+        adaptation_log = adaptation_logger or logger
+        
+        adaptation_log.info(f"🤖 Applying LLM-guided adaptation for {test_config.model_id}")
         logger.info(f"Applying LLM-guided adaptation for {test_config.model_id}")
         
         try:
             # Extract model and other important information
             model = model_data.get("model")
             if model is None:
+                adaptation_log.error("❌ Model not available for LLM adaptation")
                 return False, None, AdaptationLevel.LEVEL_3, FailureReason.ADAPTATION_ERROR, "Model not available for LLM adaptation"
                 
+            adaptation_log.info("🔍 Extracting model information for LLM...")
+            
             # Extract model structure information
             model_info = self._extract_model_info(model, test_config.model_id)
+            adaptation_log.info(f"📊 Model info extracted: {len(model_info)} properties")
             
             # Try to extract model source code if available
             model_code = None
             model_class_name = model.__class__.__name__
+            adaptation_log.info(f"🧬 Model class: {model_class_name}")
+            
             try:
                 model_source = inspect.getsource(model.__class__)
                 model_code = model_source
+                adaptation_log.info(f"✅ Successfully extracted source code ({len(model_code)} chars)")
             except Exception as e:
+                adaptation_log.warning(f"⚠️  Could not extract model source code: {str(e)}")
                 logger.warning(f"Could not extract model source code: {str(e)}")
             
+            # Log error context if available
+            if error_message:
+                adaptation_log.info(f"🚨 Previous error: {error_message}")
+            
             # Call LLM to generate adaptation code
+            adaptation_log.info("🧠 Calling LLM for adaptation code generation...")
             logger.info("Calling LLM for adaptation code generation")
             llm_result = self.llm_client.generate_adaptation_code(
                 model_info=model_info,
