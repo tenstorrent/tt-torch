@@ -40,11 +40,9 @@ test_config = {
         "assert_pcc": False,
     },
     "bloom/pytorch-full-eval": {
-        "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "xglm/pytorch-xglm-564M-full-eval": {
-        "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "xglm/pytorch-xglm-1.7B-full-eval": {
