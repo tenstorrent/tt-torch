@@ -81,5 +81,5 @@ def test_all_models(test_entry, mode, op_by_op, record_property, test_metadata):
         record_property_handle=record_property,
         **test_metadata.to_tester_args(),
     )
-    # results = tester.test_model()
-    # tester.finalize()
+    results = tester.test_model()
+    tester.finalize()
