@@ -343,21 +343,23 @@ class CompilerConfig:
 
     @model_name.setter
     def model_name(self, value):
-        self._model_name = value
-        if value and (self.save_mlir_override or self.dump_binary_json):
+        self._model_name = sanitize_filename(value)
+        os.environ[
+            "MODEL_NAME"
+        ] = self._model_name  # tt-xla uses MODEL_NAME env var to dump MLIR
+        if self._model_name and (self.save_mlir_override or self.dump_binary_json):
             self.cleanup_old_files()
 
     def cleanup_old_files(self):
         try:
-            sanitized_model_name = sanitize_filename(self._model_name)
-            if not sanitized_model_name:
+            if not self._model_name:
                 return
             if self.save_mlir_override:
                 output_dir = self.output_mlir_dir
                 os.makedirs(output_dir, exist_ok=True)
                 for dialect in self.save_mlir_override:
                     filepath_to_remove = os.path.join(
-                        output_dir, f"{sanitized_model_name}_{dialect.lower()}.mlir"
+                        output_dir, f"{self._model_name}_{dialect.lower()}.mlir"
                     )
                     if os.path.exists(filepath_to_remove):
                         os.remove(filepath_to_remove)
@@ -365,7 +367,7 @@ class CompilerConfig:
                 output_dir = self.output_json_dir
                 os.makedirs(output_dir, exist_ok=True)
                 filepath_to_remove = os.path.join(
-                    output_dir, f"{sanitized_model_name}.json"
+                    output_dir, f"{self._model_name}.json"
                 )
                 if os.path.exists(filepath_to_remove):
                     os.remove(filepath_to_remove)
@@ -446,6 +448,9 @@ class CompilerConfig:
             self.dump_info = self.dump_debug or dump_intermediates == "INFO"
         save_mlir_str = os.environ.get("TT_TORCH_SAVE_MLIR")
         if save_mlir_str:
+            os.environ[
+                "DUMP_MLIR"
+            ] = save_mlir_str  # save tt-xla env var for MLIR dumps
             self.save_mlir_override = []
             dialects = [
                 d.strip() for d in save_mlir_str.split(",")
