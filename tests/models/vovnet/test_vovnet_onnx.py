@@ -11,8 +11,6 @@ import pytest
 from tests.utils import OnnxModelTester, skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
-dependencies = ["timm==1.0.9"]
-
 
 class ThisTester(OnnxModelTester):
     def _load_model(self):
@@ -45,7 +43,6 @@ class ThisTester(OnnxModelTester):
         return (batch_t,)
 
 
-@pytest.mark.usefixtures("manage_dependencies")
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
