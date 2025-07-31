@@ -3,7 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import pytest
-from tests.runner.test_config import test_config, ModelTestConfig, ModelStatus
+from tests.runner.test_config import test_config
+from tests.runner.test_utils import ModelTestConfig, ModelStatus
 
 
 def pytest_addoption(parser):
