@@ -31,7 +31,7 @@ jobs:
       matrix:
         build: [
           {
-            runs-on: wormhole_b0, name: "stable-diffusion-pipe", tests: "
+            runs-on: wormhole_b0, name: "stable-diffusion", tests: "
               tests/models/stable_diffusion/test_stable_diffusion.py::test_stable_diffusion[op_by_op_torch-eval]
               "
           },
@@ -41,7 +41,7 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "vision-misc", tests: "
+            runs-on: wormhole_b0, name: "segment-anything", tests: "
               tests/models/segment_anything/test_segment_anything.py::test_segment_anything[op_by_op_torch-eval]
               "
           },
