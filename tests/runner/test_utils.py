@@ -158,3 +158,64 @@ class DynamicTester(ModelTester):
             return self.loader.load_inputs(dtype_override=torch.bfloat16)
         else:
             return self.loader.load_inputs()
+
+
+def setup_models_path(project_root):
+    """Setup models root path and add to sys.path for imports."""
+    models_root = get_models_root(project_root)
+
+    # Add the models root to sys.path so relative imports work
+    if models_root not in sys.path:
+        sys.path.insert(0, models_root)
+
+    return models_root
+
+
+def discover_loader_paths(models_root):
+    """Discover all loader.py files in the models directory."""
+    loader_paths = {}
+    for root, dirs, files in os.walk(models_root):
+        if os.path.basename(root) == "pytorch" and "loader.py" in files:
+            loader_paths[os.path.join(root, "loader.py")] = []
+
+    # Populate variants for each loader path
+    for path in loader_paths.keys():
+        get_model_variants(path, loader_paths, models_root)
+
+    return loader_paths
+
+
+def create_test_entries(loader_paths):
+    """Create test entries combining loader paths and variants."""
+    test_entries = []
+
+    # Store variant info along with the ModelLoader and ModelVariant classes
+    for loader_path, variant_tuples in loader_paths.items():
+        if variant_tuples:  # Model has variants
+            for variant_tuple in variant_tuples:
+                # Each tuple contains (variant, ModelLoader, ModelVariant)
+                test_entries.append(
+                    {"path": loader_path, "variant_info": variant_tuple}
+                )
+        else:  # Model has no variants
+            test_entries.append({"path": loader_path, "variant_info": None})
+
+    return test_entries
+
+
+def setup_test_discovery(project_root):
+    """Complete test discovery setup - combines all the setup steps."""
+    models_root = setup_models_path(project_root)
+    loader_paths = discover_loader_paths(models_root)
+    test_entries = create_test_entries(loader_paths)
+    return models_root, test_entries
+
+
+def create_test_id_generator(models_root):
+    """Create a function for generating test IDs."""
+
+    def _generate_test_id(test_entry):
+        """Generate test ID from test entry using the utility function."""
+        return generate_test_id(test_entry, models_root)
+
+    return _generate_test_id
