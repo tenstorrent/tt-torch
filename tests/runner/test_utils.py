@@ -29,9 +29,9 @@ class ModelTestConfig:
         self.arch = arch
         self.status = self._resolve("status", default=ModelStatus.UNSPECIFIED)
         self.pcc = self._resolve("pcc", default=0.98)
-        self.batch_size = self._resolve("batch_size", default=1)
-        self.assert_pcc = self._resolve("assert_pcc", default=True)
-        self.assert_atol = self._resolve("assert_atol", default=False)
+        self.batch_size = self._resolve("batch_size", default=None)
+        self.assert_pcc = self._resolve("assert_pcc", default=None)
+        self.assert_atol = self._resolve("assert_atol", default=None)
         self.relative_atol = self._resolve("relative_atol", default=None)
 
     def _resolve(self, key, default=None):
