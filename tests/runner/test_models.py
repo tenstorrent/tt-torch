@@ -57,7 +57,7 @@ def import_model_loader_and_variant(loader_path):
         sys.path.insert(0, models_parent)
 
     # Import the tt_forge_models module to make relative imports work
-    import tt_forge_models
+    # import tt_forge_models
 
     # Get the relative path from MODELS_ROOT to construct proper module name
     rel_path = os.path.relpath(loader_path, MODELS_ROOT)
@@ -132,39 +132,23 @@ def generate_test_id(test_entry):
         return model_path
 
 
-def skip_test(test_entry, config):
-    skip_reason = None
-    if test_entry in config:
-        if "skip" in config[test_entry]:
-            skip_reason = config[test_entry]["skip"]
-    return skip_reason
+def get_tester_args(test_metadata):
 
+    # FIXME - Do we even need to go throught these, why not more directly?
+    args = {}
 
-def get_tester_params(test_entry, config):
-    def handle_pcc_atol(config, args):
-        if "pcc" in config:
-            if isinstance(config["pcc"], bool):
-                args["assert_pcc"] = config["pcc"]
-            elif isinstance(config["pcc"], (int, float)):
-                args["required_pcc"] = config["pcc"]
-                args["assert_pcc"] = True
-        if "atol" in config:
-            if isinstance(config["atol"], bool):
-                args["assert_atol"] = config["atol"]
-            elif isinstance(config["atol"], (int, float)):
-                args["relative_atol"] = config["atol"]
-                args["assert_atol"] = True
-        if "relative_atol" in config:
-            args["relative_atol"] = config["relative_atol"]
-        return args
+    if test_metadata.assert_pcc is not None:
+        args["assert_pcc"] = test_metadata.assert_pcc
 
-    args = {
-        "assert_pcc": True,
-        "assert_atol": False,
-    }
+    if test_metadata.assert_atol is not None:
+        args["assert_atol"] = test_metadata.assert_atol
 
-    if test_entry in config:
-        args = handle_pcc_atol(config[test_entry], args)
+    if test_metadata.pcc is not None:
+        args["required_pcc"] = test_metadata.pcc
+
+    if test_metadata.relative_atol is not None:
+        args["relative_atol"] = test_metadata.relative_atol
+
     return args
 
 
@@ -188,6 +172,7 @@ def test_all_models(test_entry, mode, op_by_op, record_property, test_metadata):
     loader_path = test_entry["path"]
     variant_info = test_entry["variant_info"]
 
+    # FIXME - Consider cleaning this up, avoid call to import_model_loader_and_variant.
     if variant_info:
         # Unpack the tuple we stored earlier
         variant, ModelLoader, ModelVariant = variant_info
@@ -196,6 +181,7 @@ def test_all_models(test_entry, mode, op_by_op, record_property, test_metadata):
         ModelLoader, _ = import_model_loader_and_variant(loader_path)
         variant = None
 
+    # FIXME - Consider moving this.
     class DynamicTester(ModelTester):
         def _load_model(self):
             # Check if load_model method supports dtype_override parameter
@@ -226,60 +212,27 @@ def test_all_models(test_entry, mode, op_by_op, record_property, test_metadata):
 
     # Get model name from the ModelLoader's ModelInfo
     model_info = ModelLoader.get_model_info(variant=variant)
-    model_name = model_info.name
 
-    # Load config file
-    # config_path = os.path.join(TEST_DIR, "config.json")
-    # config = {}
-    # if os.path.exists(config_path):
-    #     with open(config_path, "r") as f:
-    #         config = json.load(f)
+    print(f"Running {model_info.name} status: {test_metadata.status}")
 
-    rel_path = os.path.relpath(loader_path, MODELS_ROOT)
-    model_rel_path = os.path.dirname(rel_path)
+    if test_metadata.status == ModelStatus.NOT_SUPPORTED_SKIP:
+        # FIXME - Add skip_msg and bringup_status to test_config.
+        skip_test_msg = "blah blah"
+        if skip_test_msg:
+            skip_full_eval_test(
+                record_property,
+                cc,
+                model_info.name,
+                bringup_status="FAILED_RUNTIME",
+                reason=skip_test_msg,
+                model_group=model_info.group,
+            )
 
-    # Convert variant enum to string before concatenation
-    variant_str = variant.value if variant else None
-    model_entry = model_rel_path + "-" + variant_str if variant_str else model_rel_path
-
-    # KCM - New stuff.
-    test_id = generate_test_id(test_entry)  # e.g., yolov3/pytorch-base-full-eval
-    print(f"KCM test_id: {test_id}")
-
-    # Handle xfail based on test_config status
-    if test_metadata.status == ModelStatus.KNOWN_FAILURE:
-        pytest.xfail("Known failure (from test_config)")
-    elif test_metadata.status == ModelStatus.TO_DEBUG:
-        pytest.xfail("Marked as TO_DEBUG (from test_config)")
-
-    print(f"Testing {model_entry}")
-    # pytest.skip("Early Exit")
-
-    # skip_test_msg = skip_test(model_entry, config["skip_models"])
-    # if skip_test_msg:
-    #     skip_full_eval_test(
-    #         record_property,
-    #         cc,
-    #         model_info.name,
-    #         bringup_status="FAILED_RUNTIME",
-    #         reason=skip_test_msg,
-    #         model_group=model_info.group,
-    #     )
-
-    # args = get_tester_params(model_entry, config["test_params"])
-
-    args = {
-        "assert_pcc": test_metadata.assert_pcc,
-        "assert_atol": test_metadata.assert_atol,
-        "required_pcc": test_metadata.pcc,
-    }
-    if test_metadata.relative_atol is not None:
-        args["relative_atol"] = test_metadata.relative_atol
-
-    print(f"KCM args: {args}")
+    # Extract args from test config file if present.
+    args = get_tester_args(test_metadata)
 
     tester = DynamicTester(
-        model_name,
+        model_info.name,
         mode,
         loader=loader,
         compiler_config=cc,
