@@ -28,7 +28,7 @@ print("Available variants: ", [str(k) for k in available_variants.keys()])
     ["eval"],
 )
 @pytest.mark.parametrize(
-    "variant",
+    "variant, variant_config",
     available_variants.items(),
     ids=[str(k) for k in available_variants.keys()],
 )
@@ -41,6 +41,7 @@ def test_stable_diffusion_3_5(
     record_property,
     mode,
     variant,
+    variant_config,
     op_by_op,
 ):
 
