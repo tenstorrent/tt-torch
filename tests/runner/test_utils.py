@@ -27,12 +27,24 @@ class ModelTestConfig:
     def __init__(self, data, arch):
         self.data = data or {}
         self.arch = arch
+
+        # For marking tests as expected passing, known failures, etc
         self.status = self._resolve("status", default=ModelStatus.UNSPECIFIED)
+
+        # Arguments to ModelTester
         self.pcc = self._resolve("pcc", default=0.98)
-        self.batch_size = self._resolve("batch_size", default=None)
         self.assert_pcc = self._resolve("assert_pcc", default=None)
         self.assert_atol = self._resolve("assert_atol", default=None)
         self.relative_atol = self._resolve("relative_atol", default=None)
+
+        # Misc arguments used in test
+        self.batch_size = self._resolve("batch_size", default=None)
+
+        # Arguments to skip_full_eval_test() for skipping tests
+        self.skip_reason = self._resolve("skip_reason", default="Unknown")
+        self.skip_bringup_status = self._resolve(
+            "skip_bringup_status", default="FAILED_RUNTIME"
+        )
 
     def _resolve(self, key, default=None):
         overrides = self.data.get("arch_overrides", {})
