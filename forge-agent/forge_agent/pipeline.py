@@ -400,14 +400,106 @@ class ModelCompatibilityPipeline:
                     
                     # First test the original model to make sure it works
                     logger.info(f"Testing original model before compilation for {model_id}")
-                    try:
-                        model.eval()
-                        with torch.no_grad():
-                            _ = model(**sample_inputs)
-                        logger.info(f"Original model test passed for {model_id}")
-                    except Exception as orig_e:
-                        logger.error(f"Original model failed, skipping tt-torch compilation for {model_id}: {str(orig_e)}")
-                        raise Exception(f"Original model validation failed: {str(orig_e)}")
+                    original_model_success = False
+                    max_input_fix_retries = 2
+                    
+                    for input_fix_attempt in range(max_input_fix_retries):
+                        try:
+                            model.eval()
+                            with torch.no_grad():
+                                _ = model(**sample_inputs)
+                            logger.info(f"Original model test passed for {model_id}")
+                            original_model_success = True
+                            break
+                            
+                        except Exception as orig_e:
+                            error_msg = str(orig_e)
+                            logger.error(f"Original model failed (attempt {input_fix_attempt + 1}/{max_input_fix_retries}) for {model_id}: {error_msg}")
+                            
+                            # Check if this is an input argument mismatch that LLM can fix
+                            is_input_mismatch = (
+                                "unexpected keyword argument" in error_msg.lower() or
+                                "got an unexpected keyword argument" in error_msg.lower() or
+                                "takes no arguments" in error_msg.lower() or
+                                "missing" in error_msg.lower() and "required positional argument" in error_msg.lower()
+                            )
+                            
+                            if is_input_mismatch and input_fix_attempt < max_input_fix_retries - 1 and use_llm_adaptation:
+                                logger.info(f"🤖 DETECTED INPUT MISMATCH - Attempting LLM input fix for {model_id}")
+                                logger.info(f"   - Error: {error_msg}")
+                                logger.info(f"   - Current inputs: {list(sample_inputs.keys())}")
+                                
+                                # Extract model info for LLM
+                                model_info = self.adaptation_engine._extract_model_info(model, model_id)
+                                
+                                # Call LLM to fix the inputs
+                                llm_result = self.adaptation_engine.llm_client.fix_input_arguments(
+                                    model_info=model_info,
+                                    error_message=error_msg,
+                                    current_inputs=sample_inputs,
+                                    model_class_name=type(model).__name__
+                                )
+                                
+                                if llm_result.get("success") and llm_result.get("inputs"):
+                                    logger.info(f"✅ LLM successfully generated fixed inputs for {model_id}")
+                                    
+                                    # Log detailed before/after comparison
+                                    old_inputs = sample_inputs
+                                    new_inputs = llm_result["inputs"]
+                                    
+                                    logger.info(f"🔄 INPUT CHANGES MADE BY LLM:")
+                                    logger.info(f"   📥 ORIGINAL INPUTS (that failed):")
+                                    for key, value in old_inputs.items():
+                                        shape_str = getattr(value, 'shape', 'unknown shape')
+                                        dtype_str = getattr(value, 'dtype', 'unknown dtype')
+                                        logger.info(f"      - {key}: {type(value).__name__} {shape_str} {dtype_str}")
+                                    
+                                    logger.info(f"   📤 NEW INPUTS (LLM-generated):")
+                                    for key, value in new_inputs.items():
+                                        shape_str = getattr(value, 'shape', 'unknown shape')
+                                        dtype_str = getattr(value, 'dtype', 'unknown dtype')
+                                        logger.info(f"      - {key}: {type(value).__name__} {shape_str} {dtype_str}")
+                                    
+                                    logger.info(f"   💡 LLM EXPLANATION: {llm_result.get('explanation', 'No explanation provided')}")
+                                    
+                                    # Show the key changes
+                                    old_keys = set(old_inputs.keys())
+                                    new_keys = set(new_inputs.keys())
+                                    
+                                    if old_keys != new_keys:
+                                        removed_keys = old_keys - new_keys
+                                        added_keys = new_keys - old_keys
+                                        
+                                        if removed_keys:
+                                            logger.info(f"   ❌ REMOVED PARAMETERS: {list(removed_keys)}")
+                                        if added_keys:
+                                            logger.info(f"   ✅ ADDED PARAMETERS: {list(added_keys)}")
+                                        
+                                        unchanged_keys = old_keys & new_keys
+                                        if unchanged_keys:
+                                            logger.info(f"   ↔️  UNCHANGED PARAMETERS: {list(unchanged_keys)}")
+                                    else:
+                                        logger.info(f"   ℹ️  PARAMETER NAMES UNCHANGED - likely shape/dtype fixes")
+                                    
+                                    # Update sample_inputs with the fixed inputs
+                                    sample_inputs = llm_result["inputs"]
+                                    
+                                    # Also update the adapted_model data for consistency
+                                    adapted_model["sample_inputs"] = sample_inputs
+                                    
+                                    logger.info(f"🔄 Retrying original model test with LLM-fixed inputs for {model_id}")
+                                    continue  # Retry with fixed inputs
+                                else:
+                                    logger.error(f"❌ LLM failed to fix inputs for {model_id}: {llm_result.get('explanation', 'Unknown error')}")
+                            
+                            # If we reach here, either it's not an input mismatch or LLM couldn't fix it
+                            if input_fix_attempt == max_input_fix_retries - 1:
+                                logger.error(f"Original model failed after all attempts for {model_id}, skipping tt-torch compilation")
+                                raise Exception(f"Original model validation failed: {error_msg}")
+                    
+                    if not original_model_success:
+                        logger.error(f"Original model validation failed for {model_id} after all retry attempts")
+                        raise Exception(f"Original model validation failed after {max_input_fix_retries} attempts")
                     
                     # REAL tt-torch compilation using torch.compile with "tt" backend
                     logger.info(f"Compiling model with tt-torch backend for {model_id}")
