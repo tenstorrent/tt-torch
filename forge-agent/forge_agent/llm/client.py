@@ -51,7 +51,16 @@ class LLMClient:
             - adaptation_level: Suggested adaptation level
             - explanation: Explanation of the adaptation
         """
+        logger.info(f"🤖 LLM ADAPTATION: Starting model adaptation")
+        logger.info(f"   - Model: {model_class_name or 'Unknown'}")
+        logger.info(f"   - Model type: {model_info.get('model_type', 'Unknown')}")
+        if error_message:
+            logger.info(f"   - Error: {error_message}")
+        if model_code:
+            logger.info(f"   - Original code length: {len(model_code)} characters")
+        
         if not self.api_key:
+            logger.warning(f"❌ LLM ADAPTATION: No API key available for {self.provider}")
             return {
                 "success": False,
                 "code": None,
@@ -64,15 +73,20 @@ class LLMClient:
             model_info, error_message, model_code, model_class_name
         )
         
+        logger.info(f"📝 LLM ADAPTATION: Sending prompt to {self.provider}")
+        logger.debug(f"   - Prompt length: {len(prompt)} characters")
+        
         # Call the appropriate provider's API
         for attempt in range(max_retries):
             try:
+                logger.info(f"📞 LLM ADAPTATION: API call attempt {attempt + 1}/{max_retries}")
+                
                 if self.provider == "openai":
                     result = self._call_openai_api(prompt)
                 elif self.provider == "anthropic":
                     result = self._call_anthropic_api(prompt)
                 else:
-                    logger.error(f"Unsupported LLM provider: {self.provider}")
+                    logger.error(f"❌ LLM ADAPTATION: Unsupported provider: {self.provider}")
                     return {
                         "success": False,
                         "code": None,
@@ -80,10 +94,19 @@ class LLMClient:
                         "explanation": f"Unsupported LLM provider: {self.provider}"
                     }
                 
+                if result.get("success"):
+                    logger.info(f"✅ LLM ADAPTATION: Successfully generated adaptation code")
+                    logger.info(f"   - Adaptation level: {result.get('adaptation_level', 'Unknown')}")
+                    
+                    # Log the adaptation details
+                    self._log_adaptation_details(result, model_code, model_class_name)
+                else:
+                    logger.warning(f"⚠️ LLM ADAPTATION: Failed - {result.get('explanation', 'Unknown error')}")
+                
                 return result
                 
             except Exception as e:
-                logger.error(f"Error calling LLM API (attempt {attempt+1}/{max_retries}): {str(e)}")
+                logger.error(f"❌ LLM ADAPTATION: API error (attempt {attempt+1}/{max_retries}): {str(e)}")
                 if attempt == max_retries - 1:
                     return {
                         "success": False,
@@ -702,3 +725,145 @@ Generate the corrected inputs now:
             "inputs": None,
             "explanation": f"Could not parse LLM response for input fixes"
         }
+
+    def _log_adaptation_details(
+        self,
+        result: Dict[str, Any],
+        original_code: Optional[str],
+        model_class_name: Optional[str]
+    ) -> None:
+        """
+        Log detailed information about what changes the LLM made during adaptation.
+        
+        Args:
+            result: The result dictionary from LLM adaptation
+            original_code: The original model code before adaptation
+            model_class_name: Name of the model class being adapted
+        """
+        logger.info(f"🔄 CODE ADAPTATION CHANGES MADE BY LLM:")
+        
+        adaptation_level = result.get('adaptation_level', 'Unknown')
+        explanation = result.get('explanation', 'No explanation provided')
+        generated_code = result.get('code', '')
+        
+        # Log adaptation level with emoji indicators
+        level_indicators = {
+            'level_1': '🟢 MINOR',
+            'level_2': '🟡 MODERATE', 
+            'level_3': '🔴 MAJOR'
+        }
+        level_indicator = level_indicators.get(adaptation_level, '⚪ UNKNOWN')
+        
+        logger.info(f"   📊 ADAPTATION LEVEL: {level_indicator} ({adaptation_level})")
+        logger.info(f"   🎯 MODEL: {model_class_name or 'Unknown'}")
+        
+        # Log explanation with proper formatting
+        logger.info(f"   💡 LLM EXPLANATION:")
+        for line in explanation.split('\n'):
+            if line.strip():
+                logger.info(f"      {line.strip()}")
+        
+        # Show original vs adapted code comparison
+        if original_code and generated_code:
+            logger.info(f"   📋 CODE CHANGES:")
+            logger.info(f"      📥 ORIGINAL CODE ({len(original_code)} chars):")
+            
+            # Show first few lines of original code
+            original_lines = original_code.split('\n')
+            for i, line in enumerate(original_lines[:10]):
+                logger.info(f"         {i+1:2d} | {line}")
+            if len(original_lines) > 10:
+                remaining_lines = len(original_lines) - 10
+                logger.info(f"         ... ({remaining_lines} more lines)")
+            
+            logger.info(f"      📤 ADAPTED CODE ({len(generated_code)} chars):")
+            
+            # Show first few lines of generated code
+            generated_lines = generated_code.split('\n')
+            for i, line in enumerate(generated_lines[:10]):
+                logger.info(f"         {i+1:2d} | {line}")
+            if len(generated_lines) > 10:
+                remaining_lines = len(generated_lines) - 10
+                logger.info(f"         ... ({remaining_lines} more lines)")
+                
+            # Highlight key differences
+            logger.info(f"   🔍 KEY CHANGES DETECTED:")
+            self._analyze_code_differences(original_code, generated_code)
+            
+        elif generated_code:
+            logger.info(f"   📤 GENERATED ADAPTATION CODE ({len(generated_code)} chars):")
+            
+            # Show the generated code
+            generated_lines = generated_code.split('\n')
+            for i, line in enumerate(generated_lines[:15]):
+                logger.info(f"         {i+1:2d} | {line}")
+            if len(generated_lines) > 15:
+                remaining_lines = len(generated_lines) - 15
+                logger.info(f"         ... ({remaining_lines} more lines)")
+        
+        logger.info(f"   ✅ ADAPTATION COMPLETE")
+
+    def _analyze_code_differences(self, original: str, adapted: str) -> None:
+        """
+        Analyze and log key differences between original and adapted code.
+        
+        Args:
+            original: Original model code
+            adapted: LLM-adapted model code
+        """
+        import re
+        
+        # Look for common adaptation patterns
+        patterns_to_check = [
+            (r'class\s+(\w+)', 'Class definitions'),
+            (r'def\s+(\w+)', 'Method definitions'),
+            (r'import\s+(.+)', 'Import statements'),
+            (r'torch\.(\w+)', 'PyTorch operations'),
+            (r'nn\.(\w+)', 'Neural network layers'),
+            (r'F\.(\w+)', 'Functional operations'),
+            (r'\.to\((.+?)\)', 'Device/dtype conversions'),
+            (r'\.view\((.+?)\)', 'Tensor reshaping'),
+            (r'\.reshape\((.+?)\)', 'Tensor reshaping'),
+        ]
+        
+        original_matches = {}
+        adapted_matches = {}
+        
+        for pattern, description in patterns_to_check:
+            original_matches[description] = set(re.findall(pattern, original, re.IGNORECASE))
+            adapted_matches[description] = set(re.findall(pattern, adapted, re.IGNORECASE))
+        
+        changes_found = False
+        
+        for description in original_matches:
+            orig_set = original_matches[description]
+            adapted_set = adapted_matches[description]
+            
+            added = adapted_set - orig_set
+            removed = orig_set - adapted_set
+            
+            if added or removed:
+                changes_found = True
+                logger.info(f"      🔧 {description}:")
+                
+                if removed:
+                    logger.info(f"         ❌ REMOVED: {', '.join(sorted(removed))}")
+                if added:
+                    logger.info(f"         ✅ ADDED: {', '.join(sorted(added))}")
+        
+        if not changes_found:
+            logger.info(f"      📝 Code structure appears similar - changes may be in logic/parameters")
+        
+        # Check for specific adaptation keywords
+        adaptation_keywords = [
+            'tt_torch', 'tenstorrent', 'compile', 'backend', 
+            'unsupported', 'replace', 'workaround', 'fallback'
+        ]
+        
+        found_keywords = []
+        for keyword in adaptation_keywords:
+            if keyword.lower() in adapted.lower() and keyword.lower() not in original.lower():
+                found_keywords.append(keyword)
+        
+        if found_keywords:
+            logger.info(f"      🎯 ADAPTATION KEYWORDS FOUND: {', '.join(found_keywords)}")
