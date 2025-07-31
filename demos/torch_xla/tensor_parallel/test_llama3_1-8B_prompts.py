@@ -15,6 +15,7 @@ from torch_xla.distributed.spmd import Mesh
 import numpy as np
 from typing import Tuple, Union
 from transformers import LlamaModel, LlamaConfig, LlamaForCausalLM, AutoTokenizer
+from transformers.generation import GenerationConfig
 
 PROMPT = "What is the name of the largest planet in our solar system?"
 
@@ -168,8 +169,7 @@ def run_text_generation(
     
     # Load tokenizer
     tokenizer = AutoTokenizer.from_pretrained(model_name)
-    if tokenizer.pad_token is None:
-        tokenizer.pad_token = tokenizer.eos_token
+    tokenizer.pad_token = tokenizer.eos_token
 
     # ========================================
     # Apply Tensor Parallelism to CausalLM Model
@@ -186,9 +186,10 @@ def run_text_generation(
     
     # Tokenize the prompt
     inputs = tokenizer(PROMPT, return_tensors="pt", padding=True, truncation=True)
-    print("HET DEBUG - inputs:", inputs)
     input_ids = inputs["input_ids"]
+    print(f"Input IDs: {input_ids}")
     attention_mask = inputs["attention_mask"]
+    print(f"Attention Mask: {attention_mask}")
     
     print(f"Input token length: {input_ids.shape[1]}")
     
@@ -203,8 +204,21 @@ def run_text_generation(
     # Generate Text
     # ========================================
     
-    with torch.no_grad():
-        outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+    # with torch.no_grad():
+    outputs = model.generate(
+        input_ids=input_ids,
+        attention_mask=attention_mask,
+        generation_config=GenerationConfig(
+            num_beams=1,
+            do_sample=False,
+            max_new_tokens=64,
+            pad_token_id = tokenizer.pad_token_id,
+            eos_token_id = tokenizer.eos_token_id,
+            temperature=0.0,
+            top_p=1.0
+        )
+    )
+        # outputs = model(input_ids=input_ids, attention_mask=attention_mask)
         # generated_ids = model.generate(
         #     input_ids=input_ids,
         #     attention_mask=attention_mask,
@@ -217,9 +231,11 @@ def run_text_generation(
     
     # Move back to CPU for decoding
     print("Outputs: ", outputs)
-    generated_logits = outputs.logits.to("cpu")
-    next_token_ids = generated_logits[0].argmax(dim=-1)
-    print("Predicted tokens: ", [tokenizer.decode(token_id) for token_id in next_token_ids])
+    generated_ids = outputs.to("cpu")
+    generated_texts = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)
+    # generated_logits = outputs.logits.to("cpu")
+    # next_token_ids = generated_logits[0].argmax(dim=-1)
+    print("Generated text: ", generated_texts[0])
     
     # # Decode the generated text
     # generated_text = tokenizer.decode(next_token_ids[0], skip_special_tokens=True)
