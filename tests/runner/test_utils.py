@@ -34,7 +34,8 @@ class ModelTestConfig:
         # Arguments to ModelTester
         self.pcc = self._resolve("pcc", default=0.98)
         self.assert_pcc = self._resolve("assert_pcc", default=None)
-        self.assert_atol = self._resolve("assert_atol", default=None)
+        # FIXME - Consider enabling atol checking.
+        self.assert_atol = self._resolve("assert_atol", default=False)
         self.relative_atol = self._resolve("relative_atol", default=None)
 
         # Misc arguments used in test
