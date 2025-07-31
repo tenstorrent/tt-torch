@@ -16,6 +16,11 @@ def pytest_addoption(parser):
     )
 
 
+@pytest.fixture(autouse=True)
+def log_test_name(request):
+    print(f"\nRunning {request.node.nodeid}", flush=True)
+
+
 @pytest.fixture
 def test_metadata(request) -> ModelTestConfig:
     meta = getattr(request.node, "_test_meta", None)
