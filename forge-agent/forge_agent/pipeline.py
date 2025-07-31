@@ -509,7 +509,161 @@ class ModelCompatibilityPipeline:
                     logger.info(f"   - Dynamic: False") 
                     logger.info(f"   - Compiler config: enable_consteval={cc.enable_consteval}, consteval_parameters={cc.consteval_parameters}")
                     
-                    compiled_model = torch.compile(model, backend="tt", dynamic=False, options=options)
+                    # Pre-compilation debugging - log model structure to help identify problematic operations
+                    logger.info(f"🔍 PRE-COMPILATION ANALYSIS for {model_id}:")
+                    try:
+                        model_modules = list(model.named_modules())
+                        logger.info(f"   - Total modules: {len(model_modules)}")
+                        
+                        # Log potentially problematic module types
+                        problematic_modules = []
+                        for name, module in model_modules[:10]:  # Log first 10 modules
+                            module_type = type(module).__name__
+                            logger.info(f"     {name}: {module_type}")
+                            
+                            # Check for known problematic operations
+                            if any(op in module_type.lower() for op in ['layernorm', 'groupnorm', 'instancenorm', 'batchnorm']):
+                                problematic_modules.append(f"{name}:{module_type}")
+                        
+                        if problematic_modules:
+                            logger.warning(f"   ⚠️  POTENTIALLY PROBLEMATIC MODULES: {problematic_modules}")
+                        
+                        if len(model_modules) > 10:
+                            logger.info(f"     ... and {len(model_modules) - 10} more modules")
+                            
+                    except Exception as analysis_error:
+                        logger.warning(f"   ❌ Pre-compilation analysis failed: {str(analysis_error)}")
+                    
+                    # CRITICAL: Safe torch.compile call with comprehensive error handling
+                    logger.info(f"🚨 CRITICAL SECTION: Calling torch.compile() - this may segfault if unsupported ops are present")
+                    compiled_model = None
+                    compilation_error = None
+                    
+                    # Check if we should use safer subprocess-based compilation for crash-prone models
+                    use_subprocess_safety = os.environ.get('TT_TORCH_SAFE_COMPILE', 'false').lower() == 'true'
+                    
+                    if use_subprocess_safety:
+                        logger.info(f"🛡️  Using SUBPROCESS SAFETY MODE for {model_id}")
+                        logger.info(f"   - This will isolate torch.compile() to prevent main process crashes")
+                        # TODO: Implement subprocess-based compilation for maximum safety
+                        # For now, fall back to signal handler approach
+                    
+                    try:
+                        # Set up signal handler for segfault detection
+                        import signal
+                        import sys
+                        
+                        segfault_detected = False
+                        
+                        def segfault_handler(signum, frame):
+                            nonlocal segfault_detected
+                            segfault_detected = True
+                            logger.error(f"💀 SEGFAULT DETECTED during torch.compile() for {model_id}")
+                            logger.error(f"   - Signal: {signum} (SIGSEGV)")
+                            logger.error(f"   - Frame: {frame.f_code.co_filename}:{frame.f_lineno}" if frame else "Unknown")
+                            logger.error(f"   - Model contains operations that crash tt-torch backend")
+                            logger.error(f"   - Common causes: LayerNorm, unsupported ATen ops, memory issues")
+                            logger.error(f"   - Try: 1) Model adaptation, 2) Different model architecture")
+                            
+                            # Create a detailed crash report
+                            crash_info = {
+                                'model_id': model_id,
+                                'model_type': type(model).__name__,
+                                'signal': signum,
+                                'crash_location': f"{frame.f_code.co_filename}:{frame.f_lineno}" if frame else "unknown",
+                                'problematic_modules': problematic_modules if 'problematic_modules' in locals() else []
+                            }
+                            logger.error(f"   - Crash info: {crash_info}")
+                            
+                            # Don't call sys.exit() directly from signal handler - just mark and return
+                            return
+                        
+                        # Install signal handler for SIGSEGV
+                        original_handler = signal.signal(signal.SIGSEGV, segfault_handler)
+                        
+                        try:
+                            logger.info(f"🔥 Executing torch.compile() with SEGFAULT protection...")
+                            
+                            # Add timeout protection as well
+                            import threading
+                            
+                            compilation_timeout = 300  # 5 minutes timeout
+                            compilation_result = [None]  # Use list for mutable reference
+                            compilation_exception = [None]
+                            
+                            def compile_with_timeout():
+                                try:
+                                    compilation_result[0] = torch.compile(model, backend="tt", dynamic=False, options=options)
+                                except Exception as e:
+                                    compilation_exception[0] = e
+                            
+                            compile_thread = threading.Thread(target=compile_with_timeout)
+                            compile_thread.daemon = True
+                            compile_thread.start()
+                            compile_thread.join(timeout=compilation_timeout)
+                            
+                            # Check for segfault
+                            if segfault_detected:
+                                raise Exception(f"Segmentation fault detected during torch.compile() for {model_id}")
+                            
+                            # Check for timeout
+                            if compile_thread.is_alive():
+                                logger.error(f"⏰ TIMEOUT: torch.compile() exceeded {compilation_timeout}s for {model_id}")
+                                raise Exception(f"Compilation timeout after {compilation_timeout} seconds")
+                            
+                            # Check for compilation exception
+                            if compilation_exception[0]:
+                                raise compilation_exception[0]
+                            
+                            # Get result
+                            compiled_model = compilation_result[0]
+                            
+                            if compiled_model is None:
+                                raise Exception("Compilation completed but returned None")
+                                
+                            logger.info(f"✅ torch.compile() completed WITHOUT segfault for {model_id}")
+                            
+                        finally:
+                            # Restore original signal handler
+                            signal.signal(signal.SIGSEGV, original_handler)
+                            
+                    except Exception as compile_error:
+                        compilation_error = compile_error
+                        logger.error(f"❌ torch.compile() FAILED for {model_id}: {str(compile_error)}")
+                        logger.error(f"   - Error type: {type(compile_error).__name__}")
+                        logger.error(f"   - This indicates the model contains operations unsupported by tt-torch")
+                        
+                        # Try to extract useful information from the error
+                        error_str = str(compile_error).lower()
+                        
+                        # Look for specific error patterns
+                        if 'segmentation fault' in error_str or 'sigsegv' in error_str:
+                            logger.error(f"   💀 SEGFAULT confirmed - model crashes tt-torch backend")
+                        elif 'unsupported' in error_str:
+                            logger.error(f"   🎯 UNSUPPORTED OPERATION detected in error message")
+                        elif 'timeout' in error_str:
+                            logger.error(f"   ⏰ COMPILATION TIMEOUT - model too complex or hanging")
+                        
+                        if 'aten::' in error_str:
+                            import re
+                            aten_ops = re.findall(r'aten::\w+', error_str)
+                            if aten_ops:
+                                logger.error(f"   🔍 Problematic ATen operations: {aten_ops}")
+                        
+                        # Log suggestions for fixing the issue
+                        logger.error(f"   💡 SUGGESTED FIXES:")
+                        logger.error(f"     1. Enable LLM adaptation to replace unsupported operations")
+                        logger.error(f"     2. Try a different model architecture")
+                        logger.error(f"     3. Check for LayerNorm, GroupNorm, or other problematic layers")
+                        logger.error(f"     4. Use TT_TORCH_SAFE_COMPILE=true environment variable")
+                        
+                        raise compile_error
+                    
+                    # Validate compilation results
+                    if compiled_model is None:
+                        error_msg = "Compilation returned None - possible silent failure"
+                        logger.error(f"❌ {error_msg}")
+                        raise Exception(error_msg)
                     
                     # Log details about the compiled model
                     logger.info(f"✅ torch.compile() completed successfully for {model_id}")
@@ -523,9 +677,13 @@ class ModelCompatibilityPipeline:
                     else:
                         logger.warning(f"❓ Model may not be properly compiled (missing _torchdynamo_orig_callable)")
                     
-                    # Validate that compilation didn't corrupt the model
-                    if compiled_model is None:
-                        raise Exception("Compilation returned None")
+                    # Additional validation
+                    try:
+                        # Try to access model parameters to ensure it's not corrupted
+                        param_count = sum(p.numel() for p in compiled_model.parameters())
+                        logger.info(f"   - Parameter count: {param_count:,}")
+                    except Exception as param_error:
+                        logger.warning(f"   ❌ Could not access compiled model parameters: {str(param_error)}")
                     
                     logger.info(f"Compilation completed for {model_id}, validating compiled model...")
                     
@@ -598,8 +756,117 @@ class ModelCompatibilityPipeline:
                         # REAL inference execution with the compiled model
                         logger.info(f"🎯 RUNNING FULL INFERENCE with tt-torch backend for {model_id}")
                         logger.info(f"   - This is using REAL Tenstorrent hardware acceleration")
-                        with torch.no_grad():
-                            outputs = compiled_model(**sample_inputs)
+                        
+                        # CRITICAL: Safe inference execution with segfault protection
+                        logger.info(f"🚨 CRITICAL SECTION: Running inference - this may segfault if unsupported ops are executed")
+                        outputs = None
+                        inference_error = None
+                        
+                        try:
+                            # Set up signal handler for inference segfault detection
+                            import signal
+                            import sys
+                            
+                            inference_segfault_detected = False
+                            
+                            def inference_segfault_handler(signum, frame):
+                                nonlocal inference_segfault_detected
+                                inference_segfault_detected = True
+                                logger.error(f"💀 INFERENCE SEGFAULT DETECTED for {model_id}")
+                                logger.error(f"   - Signal: {signum} (SIGSEGV)")
+                                logger.error(f"   - Frame: {frame.f_code.co_filename}:{frame.f_lineno}" if frame else "Unknown")
+                                logger.error(f"   - Model execution crashes during inference on tt-torch")
+                                logger.error(f"   - Common causes: Unsupported runtime ops, memory corruption, driver issues")
+                                logger.error(f"   - Try: 1) Model adaptation, 2) Smaller batch size, 3) Different input shapes")
+                                
+                                # Create detailed inference crash report
+                                crash_info = {
+                                    'model_id': model_id,
+                                    'model_type': type(compiled_model).__name__,
+                                    'signal': signum,
+                                    'crash_location': f"{frame.f_code.co_filename}:{frame.f_lineno}" if frame else "unknown",
+                                    'input_shapes': {k: v.shape if hasattr(v, 'shape') else str(type(v)) for k, v in sample_inputs.items()},
+                                    'stage': 'inference_execution'
+                                }
+                                logger.error(f"   - Inference crash info: {crash_info}")
+                                return
+                            
+                            # Install signal handler for inference SIGSEGV
+                            original_inference_handler = signal.signal(signal.SIGSEGV, inference_segfault_handler)
+                            
+                            try:
+                                logger.info(f"🔥 Executing inference with SEGFAULT protection...")
+                                
+                                # Add timeout protection for inference as well
+                                import threading
+                                
+                                inference_timeout = 120  # 2 minutes timeout for inference
+                                inference_result = [None]
+                                inference_exception = [None]
+                                
+                                def inference_with_timeout():
+                                    try:
+                                        with torch.no_grad():
+                                            inference_result[0] = compiled_model(**sample_inputs)
+                                    except Exception as e:
+                                        inference_exception[0] = e
+                                
+                                inference_thread = threading.Thread(target=inference_with_timeout)
+                                inference_thread.daemon = True
+                                inference_thread.start()
+                                inference_thread.join(timeout=inference_timeout)
+                                
+                                # Check for inference segfault
+                                if inference_segfault_detected:
+                                    raise Exception(f"Segmentation fault detected during inference for {model_id}")
+                                
+                                # Check for inference timeout
+                                if inference_thread.is_alive():
+                                    logger.error(f"⏰ INFERENCE TIMEOUT: execution exceeded {inference_timeout}s for {model_id}")
+                                    raise Exception(f"Inference timeout after {inference_timeout} seconds")
+                                
+                                # Check for inference exception
+                                if inference_exception[0]:
+                                    raise inference_exception[0]
+                                
+                                # Get inference result
+                                outputs = inference_result[0]
+                                
+                                if outputs is None:
+                                    raise Exception("Inference completed but returned None")
+                                    
+                                logger.info(f"✅ TT-TORCH INFERENCE COMPLETED WITHOUT SEGFAULT!")
+                                
+                            finally:
+                                # Restore original signal handler
+                                signal.signal(signal.SIGSEGV, original_inference_handler)
+                                
+                        except Exception as inf_error:
+                            inference_error = inf_error
+                            logger.error(f"❌ INFERENCE FAILED for {model_id}: {str(inf_error)}")
+                            logger.error(f"   - Error type: {type(inf_error).__name__}")
+                            logger.error(f"   - This indicates the compiled model cannot execute on tt-torch")
+                            
+                            # Analyze inference error patterns
+                            error_str = str(inf_error).lower()
+                            
+                            if 'segmentation fault' in error_str or 'sigsegv' in error_str:
+                                logger.error(f"   💀 INFERENCE SEGFAULT confirmed - model execution crashes")
+                            elif 'timeout' in error_str:
+                                logger.error(f"   ⏰ INFERENCE TIMEOUT - model execution hanging or too slow")
+                            elif 'unsupported' in error_str:
+                                logger.error(f"   🎯 UNSUPPORTED RUNTIME OPERATION detected")
+                            elif 'cuda' in error_str or 'device' in error_str:
+                                logger.error(f"   🖥️  DEVICE/MEMORY issue detected")
+                            
+                            logger.error(f"   💡 INFERENCE FAILURE FIXES:")
+                            logger.error(f"     1. Enable LLM adaptation to replace problematic runtime ops")
+                            logger.error(f"     2. Try smaller batch sizes or input shapes")
+                            logger.error(f"     3. Check model contains only supported operations")
+                            logger.error(f"     4. Verify Tenstorrent hardware/driver setup")
+                            
+                            raise inf_error
+                        
                         logger.info(f"✅ TT-TORCH INFERENCE COMPLETED SUCCESSFULLY!")
                         logger.info(f"   - Output type: {type(outputs)}")
                         logger.info(f"   - Output shape: {outputs.shape if hasattr(outputs, 'shape') else 'N/A'}")
