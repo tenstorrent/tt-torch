@@ -44,13 +44,20 @@ jobs:
         build: [
           {
             # Approximately 55 minutes.
-            wh-runner: wormhole_b0, bh-runner: p150, name: "eval_6", pytest-args: "", tests: "
+            wh-runner: wormhole_b0, bh-runner: p150, name: "stable_diffusion", tests: "
                   tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet[full-eval]
+                  tests/models/unet_brain/test_unet_brain.py::test_unet_brain[full-eval]
+            "
+          },
+          {
+            # Approximately 55 minutes.
+            wh-runner: wormhole_b0, bh-runner: p150, name: "unet_brain", tests: "
+                  tests/models/unet_brain/test_unet_brain.py::test_unet_brain[full-eval]
             "
           },
           {
             # These are WIP model_group=red models, marked w/ pytest.skip with reasons, run here for reporting.
-            wh-runner: wormhole_b0, bh-runner: p150, name: "skip_tests_red_models", tests: "
+            wh-runner: wormhole_b0, bh-runner: p150, name: "skip_tests_red_models - stable_diffusion_3_5", tests: "
                 tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[full-medium-eval]
                 tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[full-large-eval]
             "
