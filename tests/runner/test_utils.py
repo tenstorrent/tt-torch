@@ -40,6 +40,18 @@ class ModelTestConfig:
             return overrides[self.arch][key]
         return self.data.get(key, default)
 
+    def to_tester_args(self):
+        args = {}
+        if self.assert_pcc is not None:
+            args["assert_pcc"] = self.assert_pcc
+        if self.assert_atol is not None:
+            args["assert_atol"] = self.assert_atol
+        if self.pcc is not None:
+            args["required_pcc"] = self.pcc
+        if self.relative_atol is not None:
+            args["relative_atol"] = self.relative_atol
+        return args
+
 
 def get_models_root(project_root):
     """Return the filesystem path to the given module, supporting both installed and source-tree use cases."""
@@ -121,25 +133,6 @@ def generate_test_id(test_entry, models_root):
         return f"{model_path}-{variant}"
     else:
         return model_path
-
-
-def get_tester_args(test_metadata):
-    # FIXME - Do we even need to go throught these, why not more directly?
-    args = {}
-
-    if test_metadata.assert_pcc is not None:
-        args["assert_pcc"] = test_metadata.assert_pcc
-
-    if test_metadata.assert_atol is not None:
-        args["assert_atol"] = test_metadata.assert_atol
-
-    if test_metadata.pcc is not None:
-        args["required_pcc"] = test_metadata.pcc
-
-    if test_metadata.relative_atol is not None:
-        args["relative_atol"] = test_metadata.relative_atol
-
-    return args
 
 
 class DynamicTester(ModelTester):

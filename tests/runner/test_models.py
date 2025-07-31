@@ -8,7 +8,6 @@ from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from tests.runner.test_utils import (
     ModelStatus,
     import_model_loader_and_variant,
-    get_tester_args,
     DynamicTester,
     setup_test_discovery,
     create_test_id_generator,
@@ -78,16 +77,13 @@ def test_all_models(test_entry, mode, op_by_op, record_property, test_metadata):
                 model_group=model_info.group,
             )
 
-    # Extract args from test config file if present.
-    args = get_tester_args(test_metadata)
-
     tester = DynamicTester(
         model_info.name,
         mode,
         loader=loader,
         compiler_config=cc,
         record_property_handle=record_property,
-        **args,
+        **test_metadata.to_tester_args(),
     )
     # results = tester.test_model()
     # tester.finalize()
