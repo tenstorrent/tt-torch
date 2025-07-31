@@ -61,21 +61,17 @@ def test_all_models(test_entry, mode, op_by_op, record_property, test_metadata):
 
     # Get model name from the ModelLoader's ModelInfo
     model_info = ModelLoader.get_model_info(variant=variant)
-
     print(f"model_name: {model_info.name} status: {test_metadata.status}")
 
     if test_metadata.status == ModelStatus.NOT_SUPPORTED_SKIP:
-        # FIXME - Add skip_msg and bringup_status to test_config.
-        skip_test_msg = "blah blah"
-        if skip_test_msg:
-            skip_full_eval_test(
-                record_property,
-                cc,
-                model_info.name,
-                bringup_status="FAILED_RUNTIME",
-                reason=skip_test_msg,
-                model_group=model_info.group,
-            )
+        skip_full_eval_test(
+            record_property,
+            cc,
+            model_info.name,
+            bringup_status=test_metadata.skip_bringup_status,
+            reason=test_metadata.skip_reason,
+            model_group=model_info.group,
+        )
 
     tester = DynamicTester(
         model_info.name,

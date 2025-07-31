@@ -18,6 +18,8 @@ test_config = {
     "vovnet/pytorch-full-eval": {
         "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "pcc": False,
+        "skip_reason": "Model not supported on current arch",
+        "skip_bringup_status": "FAILED_RUNTIME",
     },
     "phi3/pytorch-mini_4k_instruct-full-eval": {
         "status": ModelStatus.KNOWN_FAILURE_XFAIL,
