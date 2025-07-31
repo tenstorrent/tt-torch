@@ -386,6 +386,49 @@ test_config = {
     "xception/pytorch-xception71.tf_in1k-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
+    "roberta/masked_lm/pytorch-xlm_base-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "llama/causal_lm/pytorch-3b-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "unet/torch_hub/pytorch-brain_segmentation-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mamba/pytorch-mamba-2.8b-hf-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+        "required_pcc": 0.98,
+    },
+    "deit/pytorch-base-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+        "required_pcc": 0.98,
+    },
+    "mlp_mixer/lucidrains/pytorch-base-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "phi2/token_classification/pytorch-microsoft/phi-2-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "phi2/token_classification/pytorch-microsoft/phi-2-pytdml-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "phi2/sequence_classification/pytorch-microsoft/phi-2-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "phi2/sequence_classification/pytorch-microsoft/phi-2-pytdml-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "phi1_5/token_classification/pytorch-microsoft/phi-1_5-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "phi1_5/causal_lm/pytorch-microsoft/phi-1_5-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "phi1_5/sequence_classification/pytorch-microsoft/phi-1_5-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
     "yolov10/pytorch-full-eval": {
         "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "skip_reason": "TorchMlirCompilerError: Lowering Torch Backend IR -> StableHLO Backend IR failed",
