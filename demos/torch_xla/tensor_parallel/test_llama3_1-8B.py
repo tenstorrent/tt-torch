@@ -77,14 +77,14 @@ def apply_tensor_parallel_sharding(model: LlamaModel, mesh: Mesh) -> None:
 
         # Column parallel: Split output dimension across devices
         # up_proj: [hidden_size, intermediate_size] -> shard dim 0
-        xs.mark_sharding(layer.mlp.up_proj.weight, mesh, ("model", None))
+        xs.mark_sharding(layer.mlp.up_proj.weight, mesh, ("model", "batch"))
 
         # gate_proj: [hidden_size, intermediate_size] -> shard dim 0
-        xs.mark_sharding(layer.mlp.gate_proj.weight, mesh, ("model", None))
+        xs.mark_sharding(layer.mlp.gate_proj.weight, mesh, ("model", "batch"))
 
         # Row parallel: Split input dimension across devices
         # down_proj: [intermediate_size, hidden_size] -> shard dim 1
-        xs.mark_sharding(layer.mlp.down_proj.weight, mesh, (None, "model"))
+        xs.mark_sharding(layer.mlp.down_proj.weight, mesh, ("batch", "model"))
 
         # ========================================
         # Self-Attention Layer Sharding
@@ -92,17 +92,17 @@ def apply_tensor_parallel_sharding(model: LlamaModel, mesh: Mesh) -> None:
 
         # Column parallel: Split attention heads across devices
         # q_proj: [hidden_size, num_heads * head_dim] -> shard dim 0
-        xs.mark_sharding(layer.self_attn.q_proj.weight, mesh, ("model", None))
+        xs.mark_sharding(layer.self_attn.q_proj.weight, mesh, ("model", "batch"))
 
         # k_proj: [hidden_size, num_kv_heads * head_dim] -> shard dim 0
-        xs.mark_sharding(layer.self_attn.k_proj.weight, mesh, ("model", None))
+        xs.mark_sharding(layer.self_attn.k_proj.weight, mesh, ("model", "batch"))
 
         # v_proj: [hidden_size, num_kv_heads * head_dim] -> shard dim 0
-        xs.mark_sharding(layer.self_attn.v_proj.weight, mesh, ("model", None))
+        xs.mark_sharding(layer.self_attn.v_proj.weight, mesh, ("model", "batch"))
 
         # Row parallel: Collect results from all devices
         # o_proj: [num_heads * head_dim, hidden_size] -> shard dim 1
-        xs.mark_sharding(layer.self_attn.o_proj.weight, mesh, (None, "model"))
+        xs.mark_sharding(layer.self_attn.o_proj.weight, mesh, ("batch", "model"))
 
         # Note: LayerNorm parameters are typically replicated (small memory footprint)
         # You could also shard them if needed:
