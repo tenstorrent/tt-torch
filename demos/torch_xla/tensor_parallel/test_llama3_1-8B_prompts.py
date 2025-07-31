@@ -11,6 +11,7 @@ import torch
 import torch_xla
 import torch_xla.runtime as xr
 import torch_xla.distributed.spmd as xs
+import torch_xla.core.xla_model as xm
 from torch_xla.distributed.spmd import Mesh
 import numpy as np
 from typing import Tuple, Union
@@ -18,7 +19,6 @@ from transformers import LlamaModel, LlamaConfig, LlamaForCausalLM, AutoTokenize
 from transformers.generation import GenerationConfig
 
 PROMPT = "What is the name of the largest planet in our solar system?"
-
 
 def setup_xla_environment():
     """Setup XLA environment for tensor parallelism."""
@@ -54,8 +54,7 @@ def create_device_mesh(
     return mesh
 
 
-def _apply_tensor_parallel_sharding(model: LlamaModel, mesh: Mesh) -> None:
-    # model = model.to(torch_xla.device())
+def _apply_tensor_parallel_sharding_to_base_model(model: LlamaModel, mesh: Mesh) -> None:
     for i, layer in enumerate(model.layers):
         print(f"Sharding layer {i+1}/{len(model.layers)}")
 
@@ -90,45 +89,19 @@ def apply_tensor_parallel_sharding(model: LlamaForCausalLM, mesh: Mesh) -> None:
     # print("Applying tensor parallel sharding to LlamaForCausalLM...")
     # _apply_tensor_parallel_sharding(model, mesh)
     print("Applying tensor parallel sharding to LlamaModel...")
-    _apply_tensor_parallel_sharding(model.model, mesh)
+    _apply_tensor_parallel_sharding_to_base_model(model.model, mesh)
 
     # Also shard the language modeling head
-    print("LM Head weight shape: ", model.lm_head.weight.shape)
+    # print("LM Head weight shape: ", model.lm_head.weight.shape)
     xs.mark_sharding(model.lm_head.weight, mesh, ("model", None))
 
     print("Tensor parallel sharding applied successfully!")
 
 
-def prepare_inputs(mesh: Mesh, input_ids: torch.Tensor) -> torch.Tensor:
-    """
-    Prepare input tensors with appropriate sharding.
-
-    Args:
-        config: Model configuration
-        mesh: Device mesh
-        batch_size: Batch size
-        seq_length: Sequence length
-
-    Returns:
-        Sharded input tensor
-    """
-    print(
-        f"Preparing inputs: batch_size={input_ids.shape[0]}, seq_length={input_ids.shape[1]}"
-    )
-
-    # Move to XLA device
-    input_ids = input_ids.to(torch_xla.device())
-
-    # Mark input sharding (typically replicated for inputs)
-    xs.mark_sharding(input_ids, mesh, (None, None))
-
-    return input_ids
-
-
 def run_text_generation_on_cpu(
     model_name: str = "meta-llama/Meta-Llama-3.1-8B"):
     llama = LlamaForCausalLM.from_pretrained(model_name)
-    # llama = llama.eval()
+    llama = llama.eval()
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
@@ -139,20 +112,18 @@ def run_text_generation_on_cpu(
     print("HET DEBUG - inputs:", inputs)
 
     with torch.no_grad():
-        outputs = llama(input_ids=input_ids, attention_mask=attention_mask)
+        outputs = llama(input_ids=input_ids, attention_mask=attention_mask, output_hidden_states=True)
     cpu_logits = outputs.logits
-    cpu_predictions = cpu_logits.argmax(dim=-1)
-    print("CPU Predictions: ", [tokenizer.decode(token_id) for token_id in cpu_predictions])
+    next_token_logits = cpu_logits[:, -1, :]  # Get logits for the last token
+    next_token_id = next_token_logits.argmax(dim=-1, keepdim=True)
+    print("Raw next token ID: ", next_token_id)
+    print("Decoded Next token ID: ", tokenizer.decode(next_token_id[0]))
+
+    return outputs.hidden_states[-1], next_token_id
 
 def run_text_generation(
     model_name: str = "meta-llama/Meta-Llama-3.1-8B",
 ):
-    """
-    Run text generation with the Llama model.
-
-    Args:
-        model_name: HuggingFace model name to load
-    """
     print(f"Running text generation for {model_name}")
 
     # Setup environment
@@ -161,180 +132,44 @@ def run_text_generation(
 
     # Load model for text generation (not just hidden states)
     print("Loading model for text generation...")
-    # config = LlamaConfig.from_pretrained(model_name)
-    model = LlamaForCausalLM.from_pretrained(
-        model_name
-    )
+    model = LlamaForCausalLM.from_pretrained(model_name)
     model = model.eval()
     
     # Load tokenizer
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     tokenizer.pad_token = tokenizer.eos_token
 
-    # ========================================
-    # Apply Tensor Parallelism to CausalLM Model
-    # ========================================
+
     print("Applying tensor parallel sharding to CausalLM model...")
-    
-    # Apply sharding to the base model (model.model is the LlamaModel inside LlamaForCausalLM)
     apply_tensor_parallel_sharding(model, mesh)
 
-    # ========================================
-    # Prepare Input
-    # ========================================
     print(f"\nInput prompt: {PROMPT}")
     
     # Tokenize the prompt
     inputs = tokenizer(PROMPT, return_tensors="pt", padding=True, truncation=True)
     input_ids = inputs["input_ids"]
-    print(f"Input IDs: {input_ids}")
     attention_mask = inputs["attention_mask"]
-    print(f"Attention Mask: {attention_mask}")
     
-    print(f"Input token length: {input_ids.shape[1]}")
-    
-    # Move to XLA device and mark sharding
+    # Move inputs to XLA device and mark sharding
     input_ids = input_ids.to(torch_xla.device())
     attention_mask = attention_mask.to(torch_xla.device())
     
     xs.mark_sharding(input_ids, mesh, (None, None))
     xs.mark_sharding(attention_mask, mesh, (None, None))
 
-    # ========================================
-    # Generate Text
-    # ========================================
-    
-    # with torch.no_grad():
-    outputs = model.generate(
-        input_ids=input_ids,
-        attention_mask=attention_mask,
-        generation_config=GenerationConfig(
-            num_beams=1,
-            do_sample=False,
-            max_new_tokens=64,
-            pad_token_id = tokenizer.pad_token_id,
-            eos_token_id = tokenizer.eos_token_id,
-            temperature=0.0,
-            top_p=1.0
-        )
-    )
-        # outputs = model(input_ids=input_ids, attention_mask=attention_mask)
-        # generated_ids = model.generate(
-        #     input_ids=input_ids,
-        #     attention_mask=attention_mask,
-        #     max_new_tokens=max_new_tokens,
-        #     temperature=temperature,
-        #     do_sample=do_sample,
-        #     pad_token_id=tokenizer.eos_token_id,
-        #     eos_token_id=tokenizer.eos_token_id,
-        # )
+    with torch.no_grad():
+        outputs = model(input_ids=input_ids, attention_mask=attention_mask, output_hidden_states=True)
     
     # Move back to CPU for decoding
-    print("Outputs: ", outputs)
-    generated_ids = outputs.to("cpu")
-    generated_texts = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)
-    # generated_logits = outputs.logits.to("cpu")
-    # next_token_ids = generated_logits[0].argmax(dim=-1)
-    print("Generated text: ", generated_texts[0])
-    
-    # # Decode the generated text
-    # generated_text = tokenizer.decode(next_token_ids[0], skip_special_tokens=True)
+    torch_xla.sync(True, True)
+    generated_logits = outputs.logits.to("cpu")
+    last_hidden_state = outputs.hidden_states[-1].to("cpu")
 
-    # # Extract only the newly generated part
-    # original_text = tokenizer.decode(input_ids[0].cpu(), skip_special_tokens=True)
-    # new_text = generated_text[len(original_text):].strip()
-    
-    # print(f"\n{'='*50}")
-    # print("GENERATED RESPONSE:")
-    # print(f"{'='*50}")
-    # print(new_text)
-    # print(f"{'='*50}")
-    # print(f"Total tokens generated: {generated_ids.shape[1] - input_ids.shape[1]}")
-    
-    # return generated_text, new_text
-
-
-def run_inference_comparison(model_name: str = "meta-llama/Meta-Llama-3.1-8B"):
-    """
-    Run a complete example comparing single-device vs tensor-parallel inference.
-
-    Args:
-        model_name: HuggingFace model name to load
-    """
-    print(f"Running inference comparison for {model_name}")
-
-    # Setup environment
-    setup_xla_environment()
-    mesh = create_device_mesh()
-
-    # Load model and configuration
-    print("Loading model...")
-    config = LlamaConfig.from_pretrained(model_name)
-    model = LlamaModel(config)
-
-    # ========================================
-    # Single Device Reference Run
-    # ========================================
-    print("\n=== Single Device Reference ===")
-
-    # Prepare inputs for CPU/single device
-    batch_size, seq_length = 1, 512
-    input_ids_cpu = torch.randint(0, config.vocab_size, (batch_size, seq_length))
-
-    # Run on CPU for reference
-    with torch.no_grad():
-        model_cpu = model.cpu()
-        outputs_cpu = model_cpu(input_ids=input_ids_cpu)
-        reference_output = outputs_cpu.last_hidden_state
-
-    print(f"CPU output shape: {reference_output.shape}")
-
-    # ========================================
-    # Tensor Parallel Run
-    # ========================================
-    print("\n=== Tensor Parallel Inference ===")
-
-    # Apply tensor parallelism
-    apply_tensor_parallel_sharding(model, mesh)
-
-    # Prepare inputs for tensor parallel execution
-    input_ids_tp = prepare_inputs(mesh, input_ids_cpu)
-
-    # Run tensor parallel inference
-    with torch.no_grad():
-        outputs_tp = model(input_ids=input_ids_tp)
-        tp_output = outputs_tp.last_hidden_state.cpu()
-
-    print(f"Tensor parallel output shape: {tp_output.shape}")
-
-    # ========================================
-    # Validation
-    # ========================================
-    print("\n=== Validation ===")
-
-    def compute_pcc(x: torch.Tensor, y: torch.Tensor) -> float:
-        """Compute Pearson Correlation Coefficient."""
-        assert x.shape == y.shape, "Input tensors must have the same shape"
-        x_flat, y_flat = x.flatten(), y.flatten()
-        vx, vy = x_flat - x_flat.mean(), y_flat - y_flat.mean()
-        denom = vx.norm() * vy.norm()
-        if denom == 0:
-            return float("nan")
-        return float((vx @ vy) / denom)
-
-    # Compare outputs
-    pcc = compute_pcc(reference_output, tp_output)
-    print(f"Pearson Correlation Coefficient: {pcc:.6f}")
-
-    # Check if outputs are sufficiently similar
-    if pcc > 0.90:
-        print("✅ Tensor parallel implementation is correct!")
-    else:
-        print("❌ Tensor parallel outputs differ significantly from reference")
-        print("This might indicate an implementation issue")
-
-    return pcc
-
+    next_token_logits = generated_logits[:, -1, :]  # Get logits for the last token
+    next_token_id = next_token_logits.argmax(dim=-1)  # Get the most probable next token ID
+    print("Raw next token ID: ", next_token_id)
+    print("Decoded Next token ID: ", tokenizer.decode(next_token_id[0]))
+    return last_hidden_state, next_token_id
 
 def main():
     """Main function demonstrating tensor parallelism setup."""
@@ -346,27 +181,24 @@ def main():
         print("\n🔤 TEXT GENERATION DEMO")
         print("-" * 30)
         
-        # You can adjust these parameters:
-        # MAX_NEW_TOKENS = 100  # Change this to control response length
-        # TEMPERATURE = 0.7     # Controls randomness (0.1 = more deterministic, 1.0 = more random)
-        
-        run_text_generation()
-        # run_text_generation_on_cpu()
-        
-        # print(f"\n✅ Text generation completed!")
-        # print(f"Generated {len(new_text.split())} words with max_new_tokens={MAX_NEW_TOKENS}")
+        cpu_hidden_state, cpu_token_id = run_text_generation_on_cpu()
+        tp_hidden_state, tp_token_id = run_text_generation()
+        # run_text_generation()
 
-        # Optional: Run the original inference comparison
-        # print(f"\n\n🔍 INFERENCE COMPARISON DEMO")
-        # print("-" * 30)
-        # print("(Comparing single-device vs tensor-parallel hidden state outputs)")
+        def compute_pcc(x: torch.Tensor, y: torch.Tensor) -> float:
+            """Compute Pearson Correlation Coefficient."""
+            assert x.shape == y.shape, "Input tensors must have the same shape"
+            x_flat, y_flat = x.flatten(), y.flatten()
+            vx, vy = x_flat - x_flat.mean(), y_flat - y_flat.mean()
+            denom = vx.norm() * vy.norm()
+            if denom == 0:
+                return float("nan")
+            return float((vx @ vy) / denom)
         
-        # pcc = run_inference_comparison()
-
-        # print("\n" + "=" * 50)
-        # print("All demonstrations completed successfully!")
-        # print(f"Text generation max tokens: {MAX_NEW_TOKENS}")
-        # print(f"Inference validation PCC: {pcc:.6f}")
+        pcc = compute_pcc(cpu_hidden_state, tp_hidden_state)
+        print(f"Pearson Correlation Coefficient: {pcc:.6f}")
+        print("CPU Next Token ID: ", cpu_token_id)
+        print("TP Next Token ID: ", tp_token_id)
 
     except Exception as e:
         print(f"Error during execution: {e}")
