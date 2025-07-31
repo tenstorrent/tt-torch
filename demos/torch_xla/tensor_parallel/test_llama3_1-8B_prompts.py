@@ -53,14 +53,10 @@ def create_device_mesh(
     return mesh
 
 
-def _apply_tensor_parallel_sharding(model: Union[LlamaModel, LlamaForCausalLM], mesh: Mesh) -> None:
-    model = model.to(torch_xla.device())
+def _apply_tensor_parallel_sharding(model: LlamaModel, mesh: Mesh) -> None:
+    # model = model.to(torch_xla.device())
     for i, layer in enumerate(model.layers):
         print(f"Sharding layer {i+1}/{len(model.layers)}")
-
-        # ========================================
-        # MLP (Feed-Forward) Layer Sharding
-        # ========================================
 
         # Column parallel: Split output dimension across devices
         # up_proj: [hidden_size, intermediate_size] -> shard dim 0
@@ -72,10 +68,6 @@ def _apply_tensor_parallel_sharding(model: Union[LlamaModel, LlamaForCausalLM], 
         # Row parallel: Split input dimension across devices
         # down_proj: [intermediate_size, hidden_size] -> shard dim 1
         xs.mark_sharding(layer.mlp.down_proj.weight, mesh, (None, "model"))
-
-        # ========================================
-        # Self-Attention Layer Sharding
-        # ========================================
 
         # Column parallel: Split attention heads across devices
         # q_proj: [hidden_size, num_heads * head_dim] -> shard dim 0
@@ -92,20 +84,16 @@ def _apply_tensor_parallel_sharding(model: Union[LlamaModel, LlamaForCausalLM], 
         xs.mark_sharding(layer.self_attn.o_proj.weight, mesh, (None, "model"))
 
 def apply_tensor_parallel_sharding(model: LlamaForCausalLM, mesh: Mesh) -> None:
-    """
-    Apply tensor parallel sharding to a Llama model.
-
-    This function modifies the model in-place to add sharding annotations
-    for tensor parallelism.
-
-    Args:
-        model: The Llama model to modify
-        mesh: Device mesh for sharding
-    """
-    print("Applying tensor parallel sharding to LlamaForCausalLM...")
-    _apply_tensor_parallel_sharding(model, mesh)
+    model = model.to(torch_xla.device())
+    print("LlamaForCausalLM Model: ", model)
+    # print("Applying tensor parallel sharding to LlamaForCausalLM...")
+    # _apply_tensor_parallel_sharding(model, mesh)
     print("Applying tensor parallel sharding to LlamaModel...")
     _apply_tensor_parallel_sharding(model.model, mesh)
+
+    # Also shard the language modeling head
+    print("LM Head weight shape: ", model.lm_head.weight.shape)
+    xs.mark_sharding(model.lm_head.weight, mesh, ("model", None))
 
     print("Tensor parallel sharding applied successfully!")
 
@@ -136,23 +124,35 @@ def prepare_inputs(mesh: Mesh, input_ids: torch.Tensor) -> torch.Tensor:
     return input_ids
 
 
+def run_text_generation_on_cpu(
+    model_name: str = "meta-llama/Meta-Llama-3.1-8B"):
+    llama = LlamaForCausalLM.from_pretrained(model_name)
+    # llama = llama.eval()
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+    
+    inputs = tokenizer(PROMPT, return_tensors="pt", padding=True, truncation=True)
+    input_ids = inputs["input_ids"]
+    attention_mask = inputs["attention_mask"]
+    print("HET DEBUG - inputs:", inputs)
+
+    with torch.no_grad():
+        outputs = llama(input_ids=input_ids, attention_mask=attention_mask)
+    cpu_logits = outputs.logits
+    cpu_predictions = cpu_logits.argmax(dim=-1)
+    print("CPU Predictions: ", [tokenizer.decode(token_id) for token_id in cpu_predictions])
+
 def run_text_generation(
     model_name: str = "meta-llama/Meta-Llama-3.1-8B",
-    max_new_tokens: int = 50,
-    temperature: float = 0.7,
-    do_sample: bool = False
 ):
     """
     Run text generation with the Llama model.
 
     Args:
         model_name: HuggingFace model name to load
-        max_new_tokens: Maximum number of new tokens to generate
-        temperature: Sampling temperature (higher = more random)
-        do_sample: Whether to use sampling or greedy decoding
     """
     print(f"Running text generation for {model_name}")
-    print(f"Max new tokens: {max_new_tokens}")
 
     # Setup environment
     setup_xla_environment()
@@ -160,19 +160,16 @@ def run_text_generation(
 
     # Load model for text generation (not just hidden states)
     print("Loading model for text generation...")
-    config = LlamaConfig.from_pretrained(model_name)
+    # config = LlamaConfig.from_pretrained(model_name)
     model = LlamaForCausalLM.from_pretrained(
-        model_name,
-        config=config,
-        torch_dtype=torch.float32,  # Adjust dtype as needed
-        device_map="cpu"  # Load on CPU first, then move to XLA
+        model_name
     )
+    model = model.eval()
     
     # Load tokenizer
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
-    print("HET DEBUG - Tokenizer pad token: ", tokenizer.pad_token)
 
     # ========================================
     # Apply Tensor Parallelism to CausalLM Model
@@ -181,9 +178,6 @@ def run_text_generation(
     
     # Apply sharding to the base model (model.model is the LlamaModel inside LlamaForCausalLM)
     apply_tensor_parallel_sharding(model, mesh)
-    
-    # Also shard the language modeling head
-    xs.mark_sharding(model.lm_head.weight, mesh, ("model", None))
 
     # ========================================
     # Prepare Input
@@ -208,37 +202,40 @@ def run_text_generation(
     # ========================================
     # Generate Text
     # ========================================
-    print(f"\nGenerating text with max_new_tokens={max_new_tokens}...")
     
     with torch.no_grad():
-        generated_ids = model.generate(
-            input_ids=input_ids,
-            attention_mask=attention_mask,
-            max_new_tokens=max_new_tokens,
-            temperature=temperature,
-            do_sample=do_sample,
-            pad_token_id=tokenizer.eos_token_id,
-            eos_token_id=tokenizer.eos_token_id,
-        )
+        outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+        # generated_ids = model.generate(
+        #     input_ids=input_ids,
+        #     attention_mask=attention_mask,
+        #     max_new_tokens=max_new_tokens,
+        #     temperature=temperature,
+        #     do_sample=do_sample,
+        #     pad_token_id=tokenizer.eos_token_id,
+        #     eos_token_id=tokenizer.eos_token_id,
+        # )
     
     # Move back to CPU for decoding
-    generated_ids = generated_ids.cpu()
+    print("Outputs: ", outputs)
+    generated_logits = outputs.logits.to("cpu")
+    next_token_ids = generated_logits[0].argmax(dim=-1)
+    print("Predicted tokens: ", [tokenizer.decode(token_id) for token_id in next_token_ids])
     
-    # Decode the generated text
-    generated_text = tokenizer.decode(generated_ids[0], skip_special_tokens=True)
+    # # Decode the generated text
+    # generated_text = tokenizer.decode(next_token_ids[0], skip_special_tokens=True)
+
+    # # Extract only the newly generated part
+    # original_text = tokenizer.decode(input_ids[0].cpu(), skip_special_tokens=True)
+    # new_text = generated_text[len(original_text):].strip()
     
-    # Extract only the newly generated part
-    original_text = tokenizer.decode(input_ids[0].cpu(), skip_special_tokens=True)
-    new_text = generated_text[len(original_text):].strip()
+    # print(f"\n{'='*50}")
+    # print("GENERATED RESPONSE:")
+    # print(f"{'='*50}")
+    # print(new_text)
+    # print(f"{'='*50}")
+    # print(f"Total tokens generated: {generated_ids.shape[1] - input_ids.shape[1]}")
     
-    print(f"\n{'='*50}")
-    print("GENERATED RESPONSE:")
-    print(f"{'='*50}")
-    print(new_text)
-    print(f"{'='*50}")
-    print(f"Total tokens generated: {generated_ids.shape[1] - input_ids.shape[1]}")
-    
-    return generated_text, new_text
+    # return generated_text, new_text
 
 
 def run_inference_comparison(model_name: str = "meta-llama/Meta-Llama-3.1-8B"):
@@ -334,29 +331,26 @@ def main():
         print("-" * 30)
         
         # You can adjust these parameters:
-        MAX_NEW_TOKENS = 100  # Change this to control response length
-        TEMPERATURE = 0.7     # Controls randomness (0.1 = more deterministic, 1.0 = more random)
+        # MAX_NEW_TOKENS = 100  # Change this to control response length
+        # TEMPERATURE = 0.7     # Controls randomness (0.1 = more deterministic, 1.0 = more random)
         
-        generated_text, new_text = run_text_generation(
-            max_new_tokens=MAX_NEW_TOKENS,
-            temperature=TEMPERATURE,
-            do_sample=False
-        )
+        run_text_generation()
+        # run_text_generation_on_cpu()
         
-        print(f"\n✅ Text generation completed!")
-        print(f"Generated {len(new_text.split())} words with max_new_tokens={MAX_NEW_TOKENS}")
+        # print(f"\n✅ Text generation completed!")
+        # print(f"Generated {len(new_text.split())} words with max_new_tokens={MAX_NEW_TOKENS}")
 
         # Optional: Run the original inference comparison
-        print(f"\n\n🔍 INFERENCE COMPARISON DEMO")
-        print("-" * 30)
-        print("(Comparing single-device vs tensor-parallel hidden state outputs)")
+        # print(f"\n\n🔍 INFERENCE COMPARISON DEMO")
+        # print("-" * 30)
+        # print("(Comparing single-device vs tensor-parallel hidden state outputs)")
         
-        pcc = run_inference_comparison()
+        # pcc = run_inference_comparison()
 
-        print("\n" + "=" * 50)
-        print("All demonstrations completed successfully!")
-        print(f"Text generation max tokens: {MAX_NEW_TOKENS}")
-        print(f"Inference validation PCC: {pcc:.6f}")
+        # print("\n" + "=" * 50)
+        # print("All demonstrations completed successfully!")
+        # print(f"Text generation max tokens: {MAX_NEW_TOKENS}")
+        # print(f"Inference validation PCC: {pcc:.6f}")
 
     except Exception as e:
         print(f"Error during execution: {e}")
