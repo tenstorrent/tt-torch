@@ -268,6 +268,10 @@ test_config = {
     "mlp_mixer/pytorch-mixer_s32_224-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
+    "mlp_mixer/pytorch-mixer_b16_224_miil_in21k-full-eval": {
+        "required_pcc": 0.97,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
     "mnist/pytorch-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
