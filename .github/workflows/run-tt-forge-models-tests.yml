@@ -1,7 +1,6 @@
 name: Run TT Forge Models Tests
 
 on:
-  workflow_dispatch:
   workflow_call:
     inputs:
       docker-image:
