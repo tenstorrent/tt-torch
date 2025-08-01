@@ -27,7 +27,7 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-          {runs-on: wormhole_b0, name: "run", container-options: "--device /dev/tenstorrent/0"},
+          {runs-on: torch-p150-4, name: "run", container-options: "--device /dev/tenstorrent/0"},
         ]
     name: tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})
     runs-on:
@@ -69,11 +69,120 @@ jobs:
     - name: Git safe dir
       run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
 
-    - name: Use build artifacts
+    - name: Use build artifacts (loop 1)
       uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
       with:
         name: install-artifacts
-        path: install
+        path: install-1
+
+    - name: Check SHA256 and reupload (loop 1)
+      shell: bash
+      run: |
+        echo "=== Loop 1 ==="
+        find install-1 -type f -exec sha256sum {} \; | sort
+        tar -czf install-artifacts-1.tar.gz -C install-1 .
+        sha256sum install-artifacts-1.tar.gz
+
+    - name: Upload artifacts (loop 1)
+      uses: actions/upload-artifact@v4
+      with:
+        name: artifact-loop-1
+        path: install-artifacts-1.tar.gz
+        retention-days: 5
+
+
+    - name: Use build artifacts (loop 2)
+      uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
+      with:
+        name: install-artifacts
+        path: install-2
+
+    - name: Check SHA256 and reupload (loop 2)
+      shell: bash
+      run: |
+        echo "=== Loop 2 ==="
+        find install-2 -type f -exec sha256sum {} \; | sort
+        tar -czf install-artifacts-2.tar.gz -C install-2 .
+        sha256sum install-artifacts-2.tar.gz
+
+    - name: Upload artifacts (loop 2)
+      uses: actions/upload-artifact@v4
+      with:
+        name: artifact-loop-2
+        path: install-artifacts-2.tar.gz
+        retention-days: 5
+
+
+    - name: Use build artifacts (loop 3)
+      uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
+      with:
+        name: install-artifacts
+        path: install-3
+
+    - name: Check SHA256 and reupload (loop 3)
+      shell: bash
+      run: |
+        echo "=== Loop 3 ==="
+        find install-3 -type f -exec sha256sum {} \; | sort
+        tar -czf install-artifacts-3.tar.gz -C install-3 .
+        sha256sum install-artifacts-3.tar.gz
+
+    - name: Upload artifacts (loop 3)
+      uses: actions/upload-artifact@v4
+      with:
+        name: artifact-loop-3
+        path: install-artifacts-3.tar.gz
+        retention-days: 5
+
+    - name: Use build artifacts (loop 4)
+      uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
+      with:
+        name: install-artifacts
+        path: install-4
+
+    - name: Check SHA256 and reupload (loop 4)
+      shell: bash
+      run: |
+        echo "=== Loop 4 ==="
+        find install-4 -type f -exec sha256sum {} \; | sort
+        tar -czf install-artifacts-4.tar.gz -C install-4 .
+        sha256sum install-artifacts-4.tar.gz
+
+    - name: Upload artifacts (loop 4)
+      uses: actions/upload-artifact@v4
+      with:
+        name: artifact-loop-4
+        path: install-artifacts-4.tar.gz
+        retention-days: 5
+
+
+    - name: Use build artifacts (loop 5)
+      uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
+      with:
+        name: install-artifacts
+        path: install-5
+
+    - name: Check SHA256 and reupload (loop 5)
+      shell: bash
+      run: |
+        echo "=== Loop 5 ==="
+        find install-5 -type f -exec sha256sum {} \; | sort
+        tar -czf install-artifacts-5.tar.gz -C install-5 .
+        sha256sum install-artifacts-5.tar.gz
+
+    - name: Upload artifacts (loop 5)
+      uses: actions/upload-artifact@v4
+      with:
+        name: artifact-loop-5
+        path: install-artifacts-5.tar.gz
+        retention-days: 5
+
+
+    - name: Use final build artifacts for install
+      shell: bash
+      run: |
+        # Use the last downloaded artifacts for the install step
+        cp -r install-5 install
 
     - name: install tt-torch
       shell: bash
