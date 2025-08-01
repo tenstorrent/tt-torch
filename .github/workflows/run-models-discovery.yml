@@ -129,6 +129,7 @@ jobs:
       run: |
         source env/activate
         pytest --durations=0 -v -rA tests/runner/test_models.py -m ${{ inputs.tests-filter }} \
+        --arch ${{ env.RUN_TEST }} \
         --splits 6 --group ${{ matrix.build.group }} --splitting-algorithm least_duration --durations-path .test_durations \
         --junit-xml=${{ steps.strings.outputs.test_report_path_models }} | tee pytest.log
 
