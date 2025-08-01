@@ -119,6 +119,27 @@ jobs:
         mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
+    - name: Set pytest command
+      if: ${{ env.RUN_TEST != 'skip' }}
+      shell: bash
+      run: |
+        BASE_PYTEST_CMD="tests/runner/test_models.py \
+          -m ${{ inputs.tests-filter }} \
+          --arch ${{ env.RUN_TEST }} \
+          --splits 6 \
+          --group ${{ matrix.build.group }} \
+          --splitting-algorithm least_duration \
+          --durations-path .test_durations"
+        echo "BASE_PYTEST_CMD=$BASE_PYTEST_CMD" >> $GITHUB_ENV
+
+    - name: Collect Tests
+      if: ${{ env.RUN_TEST != 'skip' }}
+      shell: bash
+      run: |
+        source env/activate
+        echo "Collecting tests for group ${{ matrix.build.group }}..."
+        pytest --collect-only -q ${{ env.BASE_PYTEST_CMD }}
+
     - name: Run Model Test
       if: ${{ env.RUN_TEST != 'skip' }}
       env:
@@ -128,10 +149,7 @@ jobs:
       shell: bash
       run: |
         source env/activate
-        pytest --durations=0 -v -rA tests/runner/test_models.py -m ${{ inputs.tests-filter }} \
-        --arch ${{ env.RUN_TEST }} \
-        --splits 6 --group ${{ matrix.build.group }} --splitting-algorithm least_duration --durations-path .test_durations \
-        --junit-xml=${{ steps.strings.outputs.test_report_path_models }} | tee pytest.log
+        pytest --durations=0 -v -rA ${{ env.BASE_PYTEST_CMD }} --junit-xml=${{ steps.strings.outputs.test_report_path_models }} | tee pytest.log
 
     - name: Upload Test Log
       uses: actions/upload-artifact@v4
