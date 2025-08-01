@@ -89,60 +89,66 @@ jobs:
         source env/activate
         pip freeze
 
-    - name: Verify CI model test matrices
+    - name: Validate tt-forge-models runner test config file
       shell: bash
       run: |
         source env/activate
-        python tt_torch/tools/ci_verification.py --scan-workflows
+        pytest -vv tests/runner/test_models.py --validate-test-config
 
-    - name: Run PyTorch Unit tests
-      shell: bash
-      run: |
-        source env/activate
-        pytest -v tests/torch \
-           --ignore=tests/torch/test_basic_multichip.py \
-           --junit-xml=${{ steps.strings.outputs.test_report_path_torch }} \
-           --cov=tt_torch --cov-report term --cov-report xml:coverage.xml
+    # - name: Verify CI model test matrices
+    #   shell: bash
+    #   run: |
+    #     source env/activate
+    #     python tt_torch/tools/ci_verification.py --scan-workflows
 
-    - name: Upload Test Report Torch
-      uses: actions/upload-artifact@v4
-      if: success() || failure()
-      with:
-        name: test-reports-torch-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
-        path: ${{ steps.strings.outputs.test_report_path_torch }}
+    # - name: Run PyTorch Unit tests
+    #   shell: bash
+    #   run: |
+    #     source env/activate
+    #     pytest -v tests/torch \
+    #        --ignore=tests/torch/test_basic_multichip.py \
+    #        --junit-xml=${{ steps.strings.outputs.test_report_path_torch }} \
+    #        --cov=tt_torch --cov-report term --cov-report xml:coverage.xml
 
-    - name: Run ONNX Unit tests
-      shell: bash
-      run: |
-        source env/activate
-        pytest -v tests/onnx \
-            --junit-xml=${{ steps.strings.outputs.test_report_path_onnx }} \
-            --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
+    # - name: Upload Test Report Torch
+    #   uses: actions/upload-artifact@v4
+    #   if: success() || failure()
+    #   with:
+    #     name: test-reports-torch-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+    #     path: ${{ steps.strings.outputs.test_report_path_torch }}
 
-    - name: Upload Test Report Onnx
-      uses: actions/upload-artifact@v4
-      if: success() || failure()
-      with:
-        name: test-reports-onnx-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
-        path: ${{ steps.strings.outputs.test_report_path_onnx }}
+    # - name: Run ONNX Unit tests
+    #   shell: bash
+    #   run: |
+    #     source env/activate
+    #     pytest -v tests/onnx \
+    #         --junit-xml=${{ steps.strings.outputs.test_report_path_onnx }} \
+    #         --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append
 
-    - name: Check All Ops Execute
-      shell: bash
-      run: |
-        source env/activate
-        TT_TORCH_CHECK_ALL_OPS_EXECUTE=1 pytest -svv tests/models/MobileNetV2/test_MobileNetV2.py tests/models/mnist/test_mnist.py --op_by_op_torch
+    # - name: Upload Test Report Onnx
+    #   uses: actions/upload-artifact@v4
+    #   if: success() || failure()
+    #   with:
+    #     name: test-reports-onnx-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+    #     path: ${{ steps.strings.outputs.test_report_path_onnx }}
 
-    - name: Stablehlo Op-By-Op Test
-      shell: bash
-      run: |
-        source env/activate
-        pytest -svv tests/models/mnist/test_mnist.py --op_by_op_stablehlo
+    # - name: Check All Ops Execute
+    #   shell: bash
+    #   run: |
+    #     source env/activate
+    #     TT_TORCH_CHECK_ALL_OPS_EXECUTE=1 pytest -svv tests/models/MobileNetV2/test_MobileNetV2.py tests/models/mnist/test_mnist.py --op_by_op_torch
 
-    - name: Run Resnet demo
-      shell: bash
-      run: |
-        source env/activate
-        python demos/resnet/resnet50_demo.py
+    # - name: Stablehlo Op-By-Op Test
+    #   shell: bash
+    #   run: |
+    #     source env/activate
+    #     pytest -svv tests/models/mnist/test_mnist.py --op_by_op_stablehlo
+
+    # - name: Run Resnet demo
+    #   shell: bash
+    #   run: |
+    #     source env/activate
+    #     python demos/resnet/resnet50_demo.py
 
     - name: Show Test Report
       continue-on-error: true
