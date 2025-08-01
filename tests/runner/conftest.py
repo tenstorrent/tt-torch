@@ -40,6 +40,7 @@ def test_metadata(request) -> ModelTestConfig:
 
 def pytest_collection_modifyitems(config, items):
     arch = config.getoption("--arch")
+    validate_config = config.getoption("--validate-test-config")
 
     for item in items:
         nodeid = item.nodeid
@@ -70,31 +71,47 @@ def pytest_collection_modifyitems(config, items):
                 )
             )
 
+    # If validating config, clear all items so no tests run
+    if validate_config:
+        items.clear()
+
 
 # Verify that the test_config.py file is valid.
 def pytest_sessionfinish(session, exitstatus):
     if not session.config.getoption("--validate-test-config"):
         return  # Skip check unless explicitly requested
 
-    declared_nodeids = set(test_config.keys())
+    print("\n" + "=" * 60)
+    print("VALIDATING TEST CONFIGURATIONS")
+    print("=" * 60 + "\n")
 
+    declared_nodeids = set(test_config.keys())
     unknown = declared_nodeids - _collected_nodeids
     unlisted = _collected_nodeids - declared_nodeids
-
-    if unknown:
-        print(
-            "\nERROR: test_config.py contains unknown entries (not found in collected tests):"
-        )
-        for test_name in sorted(unknown):
-            print(f"  - {test_name}")
-            suggestion = difflib.get_close_matches(test_name, _collected_nodeids, n=1)
-            if suggestion:
-                print(f"    Did you mean: {suggestion[0]}?")
-        raise pytest.UsageError(
-            "test_config.py contains entries not found in collected tests."
-        )
+    print(
+        f"Found {len(unknown)} unknown tests and {len(unlisted)} unlisted tests",
+        flush=True,
+    )
 
     if unlisted:
         print("\nWARNING: The following tests are missing from test_config.py:")
         for test_name in sorted(unlisted):
             print(f"  - {test_name}")
+    else:
+        print("\nAll collected tests are properly defined in test_config.py")
+
+    if unknown:
+        print("\nERROR: test_config.py contains entries not found in collected tests:")
+        for test_name in sorted(unknown):
+            print(f"  - {test_name}")
+            suggestion = difflib.get_close_matches(test_name, _collected_nodeids, n=1)
+            if suggestion:
+                print(f"    Did you mean: {suggestion[0]}?")
+        print("\n" + "=" * 60)
+
+    if not unknown and not unlisted:
+        print("Test configuration validation PASSED - all entries match!")
+    elif unknown:
+        raise pytest.UsageError(
+            "test_config.py contains entries not found in collected tests."
+        )
