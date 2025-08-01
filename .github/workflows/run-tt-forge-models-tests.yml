@@ -48,7 +48,7 @@ jobs:
               "name": ("grp_" + tostring),
               "group": .
             })')
-          echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
+          printf "matrix=%s\n" "$(echo "$MATRIX_JSON" | jq -c)" >> "$GITHUB_OUTPUT"
 
   tests:
     timeout-minutes: 340
