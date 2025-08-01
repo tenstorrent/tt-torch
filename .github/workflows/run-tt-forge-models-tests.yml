@@ -43,10 +43,10 @@ jobs:
           MATRIX_JSON=$(jq -n --argjson n "$NUM_GROUPS" '
             [range(1; $n + 1)] |
             map({
-              wh-runner: "wormhole_b0",
-              bh-runner: "p150",
-              name: "grp_" + tostring,
-              group: .
+              "wh-runner": "wormhole_b0",
+              "bh-runner": "p150",
+              "name": ("grp_" + tostring),
+              "group": .
             })')
           echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
 
