@@ -69,11 +69,6 @@ test_config = {
         "required_pcc": 0.97,
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    # FIXME - Old, not needed anymore? deit variants now, and passing...
-    "deit/pytorch-full-eval": {
-        "required_pcc": 0.97,
-        "relative_atol": 0.015,
-    },
     "yolov3/pytorch-base-full-eval": {
         "required_pcc": 0.97,
         "status": ModelStatus.EXPECTED_PASSING,
@@ -407,11 +402,11 @@ test_config = {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "phi2/token_classification/pytorch-microsoft/phi-2-full-eval": {
-        "required_pcc": 0.98,
+        "required_pcc": 0.97,  # PCC is ND https://github.com/tenstorrent/tt-torch/issues/1129
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "phi2/token_classification/pytorch-microsoft/phi-2-pytdml-full-eval": {
-        "required_pcc": 0.98,
+        "required_pcc": 0.97,  # PCC is ND https://github.com/tenstorrent/tt-torch/issues/1129
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "phi2/sequence_classification/pytorch-microsoft/phi-2-full-eval": {
