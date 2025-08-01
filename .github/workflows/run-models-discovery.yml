@@ -26,7 +26,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [wormhole]
+        runner: [wormhole, blackhole]
         build: [
           { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_1", group: 1 },
           { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_2", group: 2 },
@@ -116,6 +116,10 @@ jobs:
 
     - name: Run Model Test
       if: ${{ env.RUN_TEST != 'skip' }}
+      env:
+        HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
+        TORCH_HOME: ${{ env.DOCKER_CACHE_ROOT }}/torch
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
       shell: bash
       run: |
         source env/activate
