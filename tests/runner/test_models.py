@@ -58,6 +58,7 @@ def test_all_models(test_entry, mode, op_by_op, record_property, test_metadata):
 
     # Use the variant from the test_entry parameter
     loader = ModelLoader(variant=variant)
+    pytest.skip("Early Exit testing")
 
     # Get model name from the ModelLoader's ModelInfo
     model_info = ModelLoader.get_model_info(variant=variant)

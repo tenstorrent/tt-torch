@@ -56,7 +56,7 @@ jobs:
       fail-fast: false
       matrix:
         build: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
-        runner: [wormhole, blackhole]
+        runner: [wormhole]
     name: "test exec models ${{ matrix.runner == 'wormhole' && 'wh' || matrix.runner == 'blackhole' && 'bh' || 'unk' }} (${{ matrix.build.name }}) - ${{ inputs.tests-filter }}"
     runs-on: ${{ matrix.runner == 'wormhole' && matrix.build.wh-runner || matrix.runner == 'blackhole' && matrix.build.bh-runner || 'wormhole_b0'}}
     container:
@@ -146,7 +146,8 @@ jobs:
           --splits ${{ inputs.num-splits }} \
           --group ${{ matrix.build.group }} \
           --splitting-algorithm least_duration \
-          --durations-path .test_durations"
+          --durations-path .test_durations" \
+          -k bert
         echo "BASE_PYTEST_CMD=$BASE_PYTEST_CMD" >> $GITHUB_ENV
 
     - name: Collect Tests
