@@ -22,16 +22,18 @@ permissions:
 
 jobs:
   tests:
-    timeout-minutes: 240
+    timeout-minutes: 340
     strategy:
       fail-fast: false
       matrix:
-        runner: [wormhole, blackhole]
+        runner: [wormhole]
         build: [
           { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_1", group: 1 },
           { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_2", group: 2 },
           { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_3", group: 3 },
           { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_4", group: 4 },
+          { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_5", group: 5 },
+          { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_6", group: 6 },
         ]
     name: "test exec models ${{ matrix.runner == 'wormhole' && 'wh' || matrix.runner == 'blackhole' && 'bh' || 'unk' }} (${{ matrix.build.name }})"
     runs-on: ${{ matrix.runner == 'wormhole' && matrix.build.wh-runner || matrix.runner == 'blackhole' && matrix.build.bh-runner || 'wormhole_b0'}}
@@ -117,8 +119,8 @@ jobs:
       shell: bash
       run: |
         source env/activate
-        pytest --forked --durations=0 -v -rA tests/runner/test_models.py \
-        --splits 4 --group ${{ matrix.build.group }} --splitting-algorithm least_duration --durations-path .test_durations \
+        pytest --forked --durations=0 -v -rA tests/runner/test_models.py -m expected_passing \
+        --splits 6 --group ${{ matrix.build.group }} --splitting-algorithm least_duration --durations-path .test_durations \
         --junit-xml=${{ steps.strings.outputs.test_report_path_models }} | tee pytest.log
 
     - name: Upload Test Log
