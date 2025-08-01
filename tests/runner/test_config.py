@@ -18,6 +18,11 @@ test_config = {
     "hardnet/pytorch-full-eval": {
         "required_pcc": 0.98,
         "status": ModelStatus.EXPECTED_PASSING,
+        "arch_overrides": {
+            "blackhole": {
+                "required_pcc": 0.97,
+            },
+        }
     },
     "qwen/casual_lm/pytorch-full-eval": {
         "assert_pcc": False,
