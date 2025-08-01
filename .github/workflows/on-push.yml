@@ -26,9 +26,18 @@ jobs:
   #   secrets: inherit
   #   with:
   #     docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  test-models-discovery:
+  test-models-runner-passing:
     needs: [docker-build, build]
     uses: ./.github/workflows/run-models-discovery.yml
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      tests-filter: "expected_passing"
+
+  test-models-runner-xfailing:
+    needs: [docker-build, build]
+    uses: ./.github/workflows/run-models-discovery.yml
+    secrets: inherit
+    with:
+      docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      tests-filter: "not expected_passing"
