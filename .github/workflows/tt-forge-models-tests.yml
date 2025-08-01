@@ -1,0 +1,34 @@
+name: Run TT-Forge Model Tests Wrapper
+
+on:
+  workflow_dispatch:  # Manual trigger
+
+permissions:
+  packages: write
+  checks: write
+
+jobs:
+  docker-build:
+    uses: ./.github/workflows/build-image.yml
+    secrets: inherit
+  build:
+    needs: docker-build
+    uses: ./.github/workflows/run-build.yml
+    secrets: inherit
+    with:
+      docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      setup-args: "--code_coverage --include-models --build_perf"
+  test-passing-tt-forge-models:
+    needs: [docker-build, build]
+    uses: ./.github/workflows/run-tt-forge-models-tests.yml
+    secrets: inherit
+    with:
+      docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      tests-filter: "expected_passing"
+  test-xfail-tt-forge-models:
+    needs: [docker-build, build]
+    uses: ./.github/workflows/run-tt-forge-models-tests.yml
+    secrets: inherit
+    with:
+      docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      tests-filter: "not expected_passing"
