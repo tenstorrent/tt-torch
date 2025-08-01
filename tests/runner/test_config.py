@@ -401,6 +401,38 @@ test_config = {
     "mlp_mixer/lucidrains/pytorch-base-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
+    "mistral/pytorch-ministral_3b_instruct-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+        "assert_pcc": False,
+    },
+    "mlp_mixer/pytorch-mixer_b16_224-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+        "assert_pcc": False,
+    },
+    "mlp_mixer/pytorch-mixer_b16_224_in21k-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+        "assert_pcc": False,
+    },
+    "mlp_mixer/pytorch-mixer_l16_224-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+        "assert_pcc": False,
+    },
+    "mlp_mixer/pytorch-mixer_l16_224_in21k-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+        "assert_pcc": False,
+    },
+    "mlp_mixer/pytorch-mixer_b16_224.goog_in21k-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+        "assert_pcc": False,
+    },
+    "phi2/causal_lm/pytorch-microsoft/phi-2-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+        "assert_pcc": False,
+    },
+    "phi2/causal_lm/pytorch-microsoft/phi-2-pytdml-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+        "assert_pcc": False,
+    },
     "phi2/token_classification/pytorch-microsoft/phi-2-full-eval": {
         "required_pcc": 0.97,  # PCC is ND https://github.com/tenstorrent/tt-torch/issues/1129
         "status": ModelStatus.EXPECTED_PASSING,
