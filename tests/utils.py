@@ -329,30 +329,7 @@ class ModelTester:
             print("Reusing cached golden outputs instead of rerunning the model.")
             return self.golden_outputs
 
-        orig_dtpe = next(model.parameters()).dtype
-        all_same_dtype = all(p.dtype == orig_dtpe for p in model.parameters())
-        if all_same_dtype:
-            # Handle both list/tuple of tensors and dict of tensors
-            def cast_to_fp32(inp):
-                if isinstance(inp, torch.Tensor):
-                    return inp.to(torch.float32) if inp.is_floating_point() else inp
-                elif isinstance(inp, dict):
-                    return {
-                        k: v.to(torch.float32)
-                        if isinstance(v, torch.Tensor) and v.is_floating_point()
-                        else v
-                        for k, v in inp.items()
-                    }
-                elif isinstance(inp, (list, tuple)):
-                    return type(inp)(cast_to_fp32(item) for item in inp)
-                else:
-                    return inp
-
-            inputs = cast_to_fp32(inputs)
-            self.golden_outputs = self.run_model(model.to(torch.float32), inputs)
-            model = model.to(orig_dtpe)
-        else:
-            self.golden_outputs = self.run_model(model, inputs)
+        self.golden_outputs = self.run_model(model, inputs)
         return self.golden_outputs
 
     def compile_models_for_data_parallel(self, model, compiler_config):
