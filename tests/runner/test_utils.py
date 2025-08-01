@@ -32,7 +32,7 @@ class ModelTestConfig:
         self.status = self._resolve("status", default=ModelStatus.UNSPECIFIED)
 
         # Arguments to ModelTester
-        self.required_pcc = self._resolve("required_pcc", default=0.98)
+        self.required_pcc = self._resolve("required_pcc", default=None)
         self.assert_pcc = self._resolve("assert_pcc", default=None)
         # FIXME - Consider enabling atol checking.
         self.assert_atol = self._resolve("assert_atol", default=False)
