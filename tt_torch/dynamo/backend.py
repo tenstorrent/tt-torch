@@ -150,17 +150,16 @@ def dump_module(module, name, compiler_config):
             f.write("\n")
 
 
-def dump_binary_json(binary, compiler_config):
-    if compiler_config.dump_binary_json:
+def dump_binary(binary, compiler_config):
+    if compiler_config.dump_binary:
         assert (
-            compiler_config.output_json_dir
-        ), "Cannot dump binary json, no output directory provided"
-        output_dir = compiler_config.output_json_dir
+            compiler_config.output_binary_dir
+        ), "Cannot dump binary, no output directory provided"
+        output_dir = compiler_config.output_binary_dir
         sanitized_model_name = sanitize_filename(compiler_config.model_name)
-        filepath = os.path.join(output_dir, f"{sanitized_model_name}.json")
-        my_json = tt_mlir.bytestream_to_json(binary)
-        with open(filepath, "a") as f:
-            f.write(my_json)
+        filepath = os.path.join(output_dir, f"{sanitized_model_name}.ttnn")
+        with open(filepath, "ab") as f:
+            f.write(binary)
 
 
 def _shlo_backend(
@@ -266,7 +265,7 @@ def shlo_to_flatbuffer(
         compiler_config.enable_optimizer,
     )
     dump_module(module=ttnn, name="TTNN", compiler_config=compiler_config)
-    dump_binary_json(binary, compiler_config)
+    dump_binary(binary, compiler_config)
 
     return binary
 
