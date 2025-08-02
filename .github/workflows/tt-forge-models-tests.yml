@@ -1,6 +1,8 @@
 name: TT-Forge Model Tests Wrapper
 
 on:
+  push:  # Temporary: makes GitHub recognize this workflow
+    branches: ['**']  # Any branch
   workflow_dispatch:  # Manual trigger
     inputs:
       reuse-build-run-id:
