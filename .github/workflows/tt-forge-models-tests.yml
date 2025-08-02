@@ -40,7 +40,7 @@ jobs:
     uses: ./.github/workflows/build-image.yml
     secrets: inherit
   build:
-    if: ${{ !inputs.reuse-build-run-id }}  # Only run if not reusing artifacts
+    if: ${{ inputs.reuse-build-run-id == '' }}  # Only run if not reusing artifacts (empty string)
     needs: docker-build
     uses: ./.github/workflows/run-build.yml
     secrets: inherit
