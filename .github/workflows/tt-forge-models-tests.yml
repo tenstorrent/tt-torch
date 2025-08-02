@@ -19,7 +19,7 @@ jobs:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       setup-args: "--code_coverage --include-models --build_perf"
   test-passing-tt-forge-models:
-    needs: [docker-build, build]
+    needs: [docker-build]
     uses: ./.github/workflows/run-tt-forge-models-tests.yml
     secrets: inherit
     with:
