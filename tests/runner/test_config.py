@@ -5,7 +5,6 @@
 from tests.runner.test_utils import ModelStatus
 
 
-# TODO - Add a step that verifies configs are valid.
 test_config = {
     "gpt_neo/pytorch-full-eval": {
         "required_pcc": 0.98,
@@ -32,17 +31,12 @@ test_config = {
         "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    # FIXME - Renamed to yolox and failing lately...
     "yolo_x/pytorch-full-eval": {
         "assert_pcc": False,
     },
     "wide_resnet/pytorch-full-eval": {
         "required_pcc": 0.96,
         "status": ModelStatus.EXPECTED_PASSING,
-    },
-    # FIXME - Efficientnet variants are passing lately...
-    "efficientnet/pytorch-full-eval": {
-        "assert_pcc": False,
     },
     "bloom/pytorch-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
