@@ -25,7 +25,7 @@ jobs:
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       tests-filter: "expected_passing"
-      num-splits: 6
+      num-splits: 2
   test-xfail-tt-forge-models:
     needs: [docker-build]
     uses: ./.github/workflows/run-tt-forge-models-tests.yml
@@ -33,4 +33,4 @@ jobs:
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       tests-filter: "not expected_passing"
-      num-splits: 4
+      num-splits: 1
