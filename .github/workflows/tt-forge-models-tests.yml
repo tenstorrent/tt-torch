@@ -74,7 +74,7 @@ jobs:
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       tests-filter: ${{ inputs.tests-filter-passing }}
-      num-splits: ${{ inputs.num-splits-passing }}
+      num-splits: ${{ fromJSON(inputs.num-splits-passing) }}
       reuse-build-run-id: ${{ inputs.reuse-build-run-id }}
   test-xfail-tt-forge-models:
     needs: [docker-build, build]
@@ -84,5 +84,5 @@ jobs:
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       tests-filter: ${{ inputs.tests-filter-xfail }}
-      num-splits: ${{ inputs.num-splits-xfail }}
+      num-splits: ${{ fromJSON(inputs.num-splits-xfail) }}
       reuse-build-run-id: ${{ inputs.reuse-build-run-id }}
