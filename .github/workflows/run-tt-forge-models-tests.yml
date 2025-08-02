@@ -114,12 +114,27 @@ jobs:
       if: ${{ env.RUN_TEST != 'skip' }}
       run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
 
+    # Try a hacked version to re-use build artifacts from main branch
+    - name: Get latest main branch run ID
+      if: ${{ env.RUN_TEST != 'skip' }}
+      id: get-main-run
+      shell: bash
+      run: |
+        # Get the latest successful workflow run from main branch
+        LATEST_RUN_ID=$(curl -s -H "Authorization: Bearer ${{ github.token }}" \
+          "https://api.github.com/repos/${{ github.repository }}/actions/workflows/on-push.yml/runs?branch=main&status=success&per_page=1" \
+          | jq -r '.workflow_runs[0].id')
+        echo "Latest main branch run ID: $LATEST_RUN_ID"
+        echo "run-id=$LATEST_RUN_ID" >> "$GITHUB_OUTPUT"
+
     - name: Use build artifacts
-      uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
+      uses: actions/download-artifact@v4
       if: ${{ env.RUN_TEST != 'skip' }}
       with:
         name: install-artifacts
         path: install
+        run-id: ${{ steps.get-main-run.outputs.run-id }}
+        github-token: ${{ github.token }}
 
     - name: Extract build artifacts
       if: ${{ env.RUN_TEST != 'skip' }}
