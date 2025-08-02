@@ -143,12 +143,12 @@ jobs:
       run: |
         BASE_PYTEST_CMD="tests/runner/test_models.py \
           -m ${{ inputs.tests-filter }} \
+          -k bert \
           --arch ${{ env.RUN_TEST }} \
           --splits ${{ inputs.num-splits }} \
           --group ${{ matrix.build.group }} \
           --splitting-algorithm least_duration \
           --durations-path .test_durations" \
-          -k bert
         echo "BASE_PYTEST_CMD=$BASE_PYTEST_CMD" >> $GITHUB_ENV
 
     - name: Collect Tests
