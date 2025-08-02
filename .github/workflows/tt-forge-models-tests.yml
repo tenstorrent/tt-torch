@@ -36,6 +36,26 @@ permissions:
   checks: write
 
 jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug inputs
+        run: |
+          echo "=== GitHub Context ==="
+          echo "Event name: ${{ github.event_name }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo ""
+          echo "=== Input Debug ==="
+          echo "reuse-build-run-id: '${{ inputs.reuse-build-run-id }}'"
+          echo "Is empty check: ${{ inputs.reuse-build-run-id == '' }}"
+          echo "Is not empty check: ${{ inputs.reuse-build-run-id != '' }}"
+          if [ -z "${{ inputs.reuse-build-run-id }}" ]; then
+            echo "Input is empty (bash test)"
+          else
+            echo "Input is not empty (bash test)"
+          fi
+
   docker-build:
     uses: ./.github/workflows/build-image.yml
     secrets: inherit
@@ -49,7 +69,7 @@ jobs:
       setup-args: "--code_coverage --include-models --build_perf"
   test-passing-tt-forge-models:
     needs: [docker-build, build]
-    if: ${{ always() && (inputs.reuse-build-run-id || needs.build.result == 'success') }}
+    if: ${{ always() && (inputs.reuse-build-run-id != '' || needs.build.result == 'success') }}
     uses: ./.github/workflows/run-tt-forge-models-tests.yml
     secrets: inherit
     with:
@@ -59,7 +79,7 @@ jobs:
       reuse-build-run-id: ${{ inputs.reuse-build-run-id }}
   test-xfail-tt-forge-models:
     needs: [docker-build, build]
-    if: ${{ always() && (inputs.reuse-build-run-id || needs.build.result == 'success') }}
+    if: ${{ always() && (inputs.reuse-build-run-id != '' || needs.build.result == 'success') }}
     uses: ./.github/workflows/run-tt-forge-models-tests.yml
     secrets: inherit
     with:
