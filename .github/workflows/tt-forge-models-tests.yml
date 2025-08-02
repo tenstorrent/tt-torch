@@ -1,8 +1,6 @@
 name: TT-Forge Model Tests Wrapper
 
 on:
-  push:  # Temporary: makes GitHub recognize this workflow
-    branches: ['**']  # Any branch
   workflow_dispatch:  # Manual trigger
     inputs:
       reuse-build-run-id:
@@ -48,19 +46,20 @@ jobs:
           echo ""
           echo "=== Input Debug ==="
           echo "reuse-build-run-id: '${{ inputs.reuse-build-run-id }}'"
-          echo "Is empty check: ${{ inputs.reuse-build-run-id == '' }}"
-          echo "Is not empty check: ${{ inputs.reuse-build-run-id != '' }}"
+          echo "Truthiness check: ${{ !!inputs.reuse-build-run-id }}"
+          echo "Build job should run: ${{ !inputs.reuse-build-run-id }}"
+          echo "Test jobs should run: ${{ !!inputs.reuse-build-run-id }}"
           if [ -z "${{ inputs.reuse-build-run-id }}" ]; then
-            echo "Input is empty (bash test)"
+            echo "Input is empty (bash test) -> BUILD will run"
           else
-            echo "Input is not empty (bash test)"
+            echo "Input is not empty (bash test) -> BUILD will be SKIPPED"
           fi
 
   docker-build:
     uses: ./.github/workflows/build-image.yml
     secrets: inherit
   build:
-    if: ${{ inputs.reuse-build-run-id == '' }}  # Only run if not reusing artifacts (empty string)
+    if: ${{ !inputs.reuse-build-run-id }}  # Only run if not reusing artifacts
     needs: docker-build
     uses: ./.github/workflows/run-build.yml
     secrets: inherit
@@ -69,7 +68,7 @@ jobs:
       setup-args: "--code_coverage --include-models --build_perf"
   test-passing-tt-forge-models:
     needs: [docker-build, build]
-    if: ${{ always() && (inputs.reuse-build-run-id != '' || needs.build.result == 'success') }}
+    if: ${{ always() && (inputs.reuse-build-run-id || needs.build.result == 'success') }}
     uses: ./.github/workflows/run-tt-forge-models-tests.yml
     secrets: inherit
     with:
@@ -79,7 +78,7 @@ jobs:
       reuse-build-run-id: ${{ inputs.reuse-build-run-id }}
   test-xfail-tt-forge-models:
     needs: [docker-build, build]
-    if: ${{ always() && (inputs.reuse-build-run-id != '' || needs.build.result == 'success') }}
+    if: ${{ always() && (inputs.reuse-build-run-id || needs.build.result == 'success') }}
     uses: ./.github/workflows/run-tt-forge-models-tests.yml
     secrets: inherit
     with:
