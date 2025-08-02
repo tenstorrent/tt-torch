@@ -147,7 +147,7 @@ jobs:
           --splits ${{ inputs.num-splits }} \
           --group ${{ matrix.build.group }} \
           --splitting-algorithm least_duration \
-          --durations-path .test_durations" \
+          --durations-path .test_durations"
         echo "BASE_PYTEST_CMD=$BASE_PYTEST_CMD" >> $GITHUB_ENV
 
     - name: Collect Tests
