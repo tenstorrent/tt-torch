@@ -17,6 +17,10 @@ on:
         required: false
         type: number
         default: 4
+      reuse-build-run-id:
+        description: 'Reuse build artifacts from specific run ID'
+        required: false
+        type: string
   workflow_run:
     workflows: [Build]
     types: [completed]
@@ -107,27 +111,35 @@ jobs:
       if: ${{ env.RUN_TEST != 'skip' }}
       run: git config --global --add safe.directory ${{ steps.strings.outputs.work-dir }}
 
-    # Try a hacked version to re-use build artifacts from main branch
-    - name: Get latest main branch run ID
+    - name: Determine artifact source
       if: ${{ env.RUN_TEST != 'skip' }}
-      id: get-main-run
+      id: artifact-source
       shell: bash
       run: |
-        # Get the latest successful workflow run from main branch
-        LATEST_RUN_ID=$(curl -s -H "Authorization: Bearer ${{ github.token }}" \
-          "https://api.github.com/repos/${{ github.repository }}/actions/workflows/on-push.yml/runs?branch=main&status=success&per_page=1" \
-          | jq -r '.workflow_runs[0].id')
-        echo "Latest main branch run ID: $LATEST_RUN_ID"
-        echo "run-id=$LATEST_RUN_ID" >> "$GITHUB_OUTPUT"
+        if [ -n "${{ inputs.reuse-build-run-id }}" ]; then
+          echo "Using provided run ID: ${{ inputs.reuse-build-run-id }}"
+          echo "run-id=${{ inputs.reuse-build-run-id }}" >> "$GITHUB_OUTPUT"
+          echo "use-external=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "Using current workflow artifacts"
+          echo "use-external=false" >> "$GITHUB_OUTPUT"
+        fi
 
-    - name: Use build artifacts
+    - name: Use build artifacts (external run)
       uses: actions/download-artifact@v4
-      if: ${{ env.RUN_TEST != 'skip' }}
+      if: ${{ env.RUN_TEST != 'skip' && steps.artifact-source.outputs.use-external == 'true' }}
       with:
         name: install-artifacts
         path: install
-        run-id: ${{ steps.get-main-run.outputs.run-id }}
+        run-id: ${{ steps.artifact-source.outputs.run-id }}
         github-token: ${{ github.token }}
+
+    - name: Use build artifacts (current run)
+      uses: tenstorrent/tt-forge/.github/actions/download-artifact@main
+      if: ${{ env.RUN_TEST != 'skip' && steps.artifact-source.outputs.use-external == 'false' }}
+      with:
+        name: install-artifacts
+        path: install
 
     - name: Extract build artifacts
       if: ${{ env.RUN_TEST != 'skip' }}
