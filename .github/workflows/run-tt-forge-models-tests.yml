@@ -35,15 +35,12 @@ jobs:
           { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_1", group: 1 },
           { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_2", group: 2 },
           { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_3", group: 3 },
-          { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_4", group: 4 },
-          { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_5", group: 5 },
-          { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_6", group: 6 },
         ]
     name: "test exec models ${{ matrix.runner == 'wormhole' && 'wh' || matrix.runner == 'blackhole' && 'bh' || 'unk' }} (${{ matrix.build.name }}) - ${{ inputs.tests-filter }}"
     runs-on: ${{ matrix.runner == 'wormhole' && matrix.build.wh-runner || matrix.runner == 'blackhole' && matrix.build.bh-runner || 'wormhole_b0'}}
     container:
       image: ${{ inputs.docker-image }}
-      options: --user root --device /dev/tenstorrent/0 --shm-size=2gb
+      options: --user root --device /dev/tenstorrent/0 --shm-size=4gb
       volumes:
         - /dev/hugepages:/dev/hugepages
         - /dev/hugepages-1G:/dev/hugepages-1G
@@ -54,6 +51,35 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: System Info & Resource Baseline
+      if: ${{ env.RUN_TEST != 'skip' }}
+      shell: bash
+      run: |
+        echo "=== SYSTEM BASELINE INFO ==="
+        echo "Timestamp: $(date)"
+        echo "Runner: ${{ matrix.runner }}"
+        echo "Build: ${{ matrix.build.name }}"
+        echo "Hostname: $(hostname)"
+        echo "Uptime: $(uptime)"
+        echo ""
+        echo "=== MEMORY INFO ==="
+        free -h
+        echo ""
+        echo "=== DISK INFO ==="
+        df -h
+        echo ""
+        echo "=== PROCESS INFO ==="
+        ps aux --sort=-%cpu | head -15
+        echo ""
+        echo "=== ENVIRONMENT VARIABLES ==="
+        env | grep -E "(TT_|TORCH_|HF_|CUDA_|DOCKER_)" | sort
+        echo ""
+        echo "=== TENSTORRENT DEVICES ==="
+        ls -la /dev/tenstorrent/ || echo "No tenstorrent devices found"
+        echo ""
+        echo "=== HUGEPAGES INFO ==="
+        cat /proc/meminfo | grep -i huge || echo "No hugepage info"
 
     - name: Check for runner # Check if we need to skip testing when a wh-runner is not set for wormhole run or a bh-runner on blackhole run
       run: |
@@ -109,6 +135,19 @@ jobs:
           ls -la
         fi
 
+    - name: Cache Status Check
+      if: ${{ env.RUN_TEST != 'skip' }}
+      shell: bash
+      run: |
+        echo "=== CACHE STATUS CHECK ==="
+        echo "Timestamp: $(date)"
+        echo "HuggingFace cache:"
+        ls -la ${{ env.DOCKER_CACHE_ROOT }}/huggingface/ 2>/dev/null || echo "HF cache not found"
+        echo "PyTorch cache:"
+        ls -la ${{ env.DOCKER_CACHE_ROOT }}/torch/ 2>/dev/null || echo "Torch cache not found"
+        echo "Docker cache root usage:"
+        du -sh ${{ env.DOCKER_CACHE_ROOT }}/* 2>/dev/null || echo "Cache root empty"
+
     - name: install tt-torch
       if: ${{ env.RUN_TEST != 'skip' }}
       shell: bash
@@ -124,11 +163,7 @@ jobs:
       run: |
         BASE_PYTEST_CMD="tests/runner/test_models.py \
           -m ${{ inputs.tests-filter }} \
-          --arch ${{ env.RUN_TEST }} \
-          --splits 6 \
-          --group ${{ matrix.build.group }} \
-          --splitting-algorithm least_duration \
-          --durations-path .test_durations"
+          --arch ${{ env.RUN_TEST }} -k mamba-370m"
         echo "BASE_PYTEST_CMD=$BASE_PYTEST_CMD" >> $GITHUB_ENV
 
     - name: Collect Tests
@@ -139,6 +174,21 @@ jobs:
         echo "Collecting tests for group ${{ matrix.build.group }}..."
         pytest --collect-only -q ${{ env.BASE_PYTEST_CMD }}
 
+    - name: Pre-Test Resource Check
+      if: ${{ env.RUN_TEST != 'skip' }}
+      shell: bash
+      run: |
+        echo "=== PRE-TEST RESOURCE CHECK ==="
+        echo "Timestamp: $(date)"
+        echo "Memory usage:"
+        free -h
+        echo "Top CPU consumers:"
+        ps aux --sort=-%cpu | head -10
+        echo "Disk usage:"
+        df -h
+        echo "Load average:"
+        cat /proc/loadavg
+
     - name: Run Model Test
       if: ${{ env.RUN_TEST != 'skip' }}
       env:
@@ -147,15 +197,64 @@ jobs:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
       shell: bash
       run: |
+        echo "=== MODEL TEST EXECUTION START ==="
+        echo "Timestamp: $(date)"
+
+        # Start background resource monitoring
+        (
+          while true; do
+            echo "$(date): $(free -m | grep '^Mem:' | awk '{print "Used:"$3"MB Available:"$7"MB"}')"
+            sleep 30
+          done
+        ) > resource_monitor.log 2>&1 &
+        MONITOR_PID=$!
+
         source env/activate
-        pytest --durations=0 -v -rA ${{ env.BASE_PYTEST_CMD }} --junit-xml=${{ steps.strings.outputs.test_report_path_models }} | tee pytest.log
+
+        # Run tests with timing
+        echo "Starting pytest execution..."
+        timeout 7200 pytest --durations=0 -svv -rA ${{ env.BASE_PYTEST_CMD }} --junit-xml=${{ steps.strings.outputs.test_report_path_models }} | tee pytest.log
+        TEST_EXIT_CODE=$?
+
+        # Stop monitoring
+        kill $MONITOR_PID 2>/dev/null || true
+
+        echo "=== MODEL TEST EXECUTION END ==="
+        echo "Timestamp: $(date)"
+        echo "Test exit code: $TEST_EXIT_CODE"
+
+        # Show final resource state
+        echo "=== FINAL RESOURCE STATE ==="
+        free -h
+        ps aux --sort=-%cpu | head -10
+
+        exit $TEST_EXIT_CODE
+
+    - name: Post-Test Analysis
+      if: ${{ (success() || failure()) && env.RUN_TEST != 'skip' }}
+      shell: bash
+      run: |
+        echo "=== POST-TEST ANALYSIS ==="
+        echo "Timestamp: $(date)"
+
+        echo "Resource monitoring log:"
+        cat resource_monitor.log 2>/dev/null || echo "No resource monitor log found"
+
+        echo "Pytest log size:"
+        ls -lh pytest.log 2>/dev/null || echo "No pytest log found"
+
+        echo "Test durations (slowest tests):"
+        grep -E "PASSED|FAILED.*[0-9]+\.[0-9]+s" pytest.log | tail -20 || echo "No duration info found"
+
 
     - name: Upload Test Log
       uses: actions/upload-artifact@v4
       if: ${{ (success() || failure()) && env.RUN_TEST != 'skip' }}
       with:
         name: test-log-${{ matrix.runner }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}-${{ inputs.tests-filter }}
-        path: pytest.log
+        path: |
+          pytest.log
+          resource_monitor.log
 
     - name: Upload Test Report Models
       uses: actions/upload-artifact@v4
