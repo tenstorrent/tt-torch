@@ -52,6 +52,7 @@ jobs:
 
   tests:
     timeout-minutes: 340
+    needs: generate-matrix
     strategy:
       fail-fast: false
       matrix:
