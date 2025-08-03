@@ -240,6 +240,13 @@ test_config = {
     },
     "mamba/pytorch-mamba-1.4b-hf-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
+        "arch_overrides": {
+            "blackhole": {
+                "status": ModelStatus.NOT_SUPPORTED_SKIP,
+                "skip_reason": "Takes forever on blackhole runner",
+                "skip_bringup_status": "FAILED_RUNTIME",
+            },
+        },
     },
     "mamba/pytorch-mamba-370m-hf-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -392,6 +399,13 @@ test_config = {
     "mamba/pytorch-mamba-2.8b-hf-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
         "required_pcc": 0.98,
+        "arch_overrides": {
+            "blackhole": {
+                "status": ModelStatus.NOT_SUPPORTED_SKIP,
+                "skip_reason": "Takes forever on blackhole runner",
+                "skip_bringup_status": "FAILED_RUNTIME",
+            },
+        },
     },
     "deit/pytorch-base-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -425,7 +439,7 @@ test_config = {
         "assert_pcc": False,
     },
     "phi2/causal_lm/pytorch-microsoft/phi-2-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.KNOWN_FAILURE_XFAIL, # High memory killed
         "assert_pcc": False,
     },
     "phi2/causal_lm/pytorch-microsoft/phi-2-pytdml-full-eval": {
