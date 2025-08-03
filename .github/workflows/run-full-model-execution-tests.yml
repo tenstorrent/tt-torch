@@ -45,16 +45,16 @@ jobs:
           {
             wh-runner: wormhole_b0, bh-runner: p150, name: "eval_1", pytest-args: "", tests: "
                   tests/models/distilbert/test_distilbert.py::test_distilbert[full-distilbert-base-uncased-eval]
-                  tests/models/mlpmixer/test_mlpmixer.py::test_mlpmixer[full-eval]
-                  tests/models/yolov3/test_yolov3.py::test_yolov3[full-eval]
-                  tests/models/yolov4/test_yolov4.py::test_yolov4[full-eval]
+                  tests/runner/test_models.py::test_all_models[mlp_mixer/lucidrains/pytorch-base-full-eval]
+                  tests/runner/test_models.py::test_all_models[yolov3/pytorch-base-full-eval]
+                  tests/runner/test_models.py::test_all_models[yolov4/pytorch-base-full-eval]
                   tests/models/vovnet/test_vovnet_onnx.py::test_vovnet_onnx[full-eval]
                   tests/models/llama/test_llama3_generative.py::test_llama3_generate
             "
           },
           {
             wh-runner: wormhole_b0, bh-runner: p150, name: "eval_2", pytest-args: "", tests: "
-                  tests/models/mnist/test_mnist.py::test_mnist_train[single_device-full-eval]
+                  tests/runner/test_models.py::test_all_models[mnist/pytorch-full-eval]
                   tests/models/MobileNetV2/test_MobileNetV2.py::test_MobileNetV2[full-eval]
                   tests/models/openpose/test_openpose_v2.py::test_openpose_v2[full-eval]
                   tests/models/resnet/test_resnet.py::test_resnet[single_device-full-eval]
@@ -68,7 +68,7 @@ jobs:
           },
           {
             wh-runner: wormhole_b0, bh-runner: p150, name: "eval_3", pytest-args: "", tests: "
-                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[single_device-full-albert-xxlarge-v2-eval]
+                  tests/runner/test_models.py::test_all_models[albert/masked_lm/pytorch-albert-xxlarge-v2-full-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_y_400mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_y_800mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_y_1_6gf]
@@ -80,7 +80,7 @@ jobs:
           },
           {
             wh-runner: wormhole_b0, bh-runner: p150, name: "eval_4", pytest-args: "", tests: "
-                  tests/models/llama/test_llama_3b.py::test_llama_3b[full-eval]
+                  tests/runner/test_models.py::test_all_models[llama/causal_lm/pytorch-3b-full-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_x_400mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_x_800mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_x_1_6gf]
@@ -88,7 +88,7 @@ jobs:
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_x_8gf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_x_16gf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_x_32gf]
-                  tests/models/mistral/test_mistral.py::test_mistral[full-ministral_3b_instruct-eval]
+                  tests/runner/test_models.py::test_all_models[mistral/pytorch-ministral_3b_instruct-full-eval]
             "
           },
           {
