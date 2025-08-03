@@ -85,6 +85,7 @@ def test_all_models(test_entry, mode, op_by_op, record_property, test_metadata):
         model_info.name,
         mode,
         loader=loader,
+        model_info=model_info,
         compiler_config=cc,
         record_property_handle=record_property,
         **test_metadata.to_tester_args(),
