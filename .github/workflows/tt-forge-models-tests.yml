@@ -7,7 +7,6 @@ on:
         description: 'Reuse build artifacts from specific run ID (skips build job)'
         required: false
         type: string
-        default: "16697564498"
       tests-filter-passing:
         description: 'Filter for passing tests'
         required: false
