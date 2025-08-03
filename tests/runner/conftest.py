@@ -53,7 +53,7 @@ def pytest_collection_modifyitems(config, items):
         item._test_meta = meta  # attach for fixture access
 
         # Uncomment this to print info for each test.
-        # print(f"DEBUG nodeid: {nodeid} meta.status: {meta.status}")
+        print(f"DEBUG nodeid: {nodeid} meta.status: {meta.status}")
 
         if meta.status == ModelStatus.EXPECTED_PASSING:
             item.add_marker(pytest.mark.expected_passing)

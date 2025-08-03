@@ -197,6 +197,8 @@ def create_test_entries(loader_paths):
 
     # Store variant info along with the ModelLoader and ModelVariant classes
     for loader_path, variant_tuples in loader_paths.items():
+        print(f"KCM loader_path: {loader_path}", flush=True)
+        print(f"KCM variant_tuples: {variant_tuples}", flush=True)
         if variant_tuples:  # Model has variants
             for variant_tuple in variant_tuples:
                 # Each tuple contains (variant, ModelLoader, ModelVariant)

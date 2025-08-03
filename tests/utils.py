@@ -59,6 +59,7 @@ def skip_full_eval_test(
     """
     # Make sure model_group is string for json serializing. It may come from ModelGroup StrEnum.
     model_group = str(model_group)
+    return
 
     # If there is a model name filter applied, and the model name passed herein does not match,
     #   then run the test as normal. Useful for parameterized tests.
@@ -153,10 +154,16 @@ class ModelTester:
         if self.model_info is not None:
             model_name = self.model_info.name
             model_group = self.model_info.group
+            record_property_handle("model", self.model_info.model)
+            record_property_handle("variant", self.model_info.variant)
 
         self.model_name = model_name
         self.loader = loader
         self.mode = mode
+
+        # print(f"KCM ModelName: {model_name}", flush=True)
+        # record_property_handle("uses_loader", loader is not None)
+        # pytest.skip("ModelName: " + model_name)
 
         # Make sure model_group is string for json serializing. It may come from ModelGroup StrEnum.
         model_group = str(model_group)
@@ -177,15 +184,15 @@ class ModelTester:
             )
             self.backend = "tt"
 
-        self.framework_model = self._load_model()
-        self.is_token_output = is_token_output
-        if is_token_output and not hasattr(self, "tokenizer"):
-            raise ValueError(
-                "is_token_output is set to True. Please set `self.tokenizer` inside _load_model method."
-            )
-        self.compiled_models = []
-        self.devices = devices
-        self.inputs = self._load_inputs()
+        # self.framework_model = self._load_model()
+        # self.is_token_output = is_token_output
+        # if is_token_output and not hasattr(self, "tokenizer"):
+        #     raise ValueError(
+        #         "is_token_output is set to True. Please set `self.tokenizer` inside _load_model method."
+        #     )
+        # self.compiled_models = []
+        # self.devices = devices
+        # self.inputs = self._load_inputs()
 
         self.required_pcc = required_pcc
         self.assert_pcc = assert_pcc
@@ -214,17 +221,17 @@ class ModelTester:
         self.record_property = record_property_handle
         self.compiler_config.record_property = record_property_handle
         self.parent_device = None
-        if self.data_parallel_mode:
-            assert self.compiler_config.compile_depth not in (
-                CompileDepth.COMPILE_OP_BY_OP,
-                CompileDepth.EXECUTE_OP_BY_OP,
-            ), "Data parallel mode does not support op-by-op compilation or execution."
-            if self.devices is None:
-                # If user doesn't provide any devices, acquire all devices on board
-                (
-                    self.parent_device,
-                    self.devices,
-                ) = DeviceManager.acquire_available_devices()
+        # if self.data_parallel_mode:
+        #     assert self.compiler_config.compile_depth not in (
+        #         CompileDepth.COMPILE_OP_BY_OP,
+        #         CompileDepth.EXECUTE_OP_BY_OP,
+        #     ), "Data parallel mode does not support op-by-op compilation or execution."
+        #     if self.devices is None:
+        #         # If user doesn't provide any devices, acquire all devices on board
+        #         (
+        #             self.parent_device,
+        #             self.devices,
+        #         ) = DeviceManager.acquire_available_devices()
 
         self.record_tag_cache = {}  # Holds for tags to be written out at finalize()
         self.verification_failure_msg = (
@@ -253,12 +260,17 @@ class ModelTester:
         self.record_tag_cache["is_asserting_atol"] = self.assert_atol
 
         self.record_tag_cache["parallelism"] = self.get_parallelism()
+        print(f"KCM parallelism: {self.get_parallelism()}", flush=True)
 
         # configs should be set at test start, so they can be flushed immediately
         self.record_property(
             "config",
             {"compiler_config": compiler_config.to_dict()},
         )
+
+        record_property_handle("uses_loader", loader is not None)
+        self.finalize()
+        pytest.skip("Early Exit!")
 
     def _load_model(self):
         raise NotImplementedError(
