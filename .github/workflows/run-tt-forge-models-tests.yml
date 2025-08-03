@@ -169,7 +169,7 @@ jobs:
       shell: bash
       run: |
         BASE_PYTEST_CMD="tests/runner/test_models.py \
-          -m "${{ inputs.tests-filter }}" \
+          -m \"${{ inputs.tests-filter }}\" \
           --arch ${{ env.RUN_TEST }} \
           --splits ${{ inputs.num-splits }} \
           --group ${{ matrix.build.group }} \
