@@ -3,6 +3,10 @@ name: TT-Forge Model Tests Wrapper
 on:
   workflow_dispatch:  # Manual trigger
     inputs:
+      reuse-build-run-id:
+        description: 'Reuse build artifacts from specific run ID (skips build job)'
+        required: false
+        type: string
       tests-filter-passing:
         description: 'Filter for passing tests'
         required: false
@@ -33,6 +37,7 @@ jobs:
     uses: ./.github/workflows/build-image.yml
     secrets: inherit
   build:
+    if: ${{ !inputs.reuse-build-run-id }}  # Only run if not reusing artifacts
     needs: docker-build
     uses: ./.github/workflows/run-build.yml
     secrets: inherit
@@ -41,17 +46,21 @@ jobs:
       setup-args: "--code_coverage --include-models --build_perf"
   test-passing-tt-forge-models:
     needs: [docker-build, build]
+    if: ${{ always() && (inputs.reuse-build-run-id || needs.build.result == 'success') }}
     uses: ./.github/workflows/run-tt-forge-models-tests.yml
     secrets: inherit
     with:
+      reuse-build-run-id: ${{ inputs.reuse-build-run-id }}
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       tests-filter: ${{ inputs.tests-filter-passing }}
       num-splits: ${{ fromJSON(inputs.num-splits-passing) }}
   test-xfail-tt-forge-models:
     needs: [docker-build, build]
+    if: ${{ always() && (inputs.reuse-build-run-id || needs.build.result == 'success') }}
     uses: ./.github/workflows/run-tt-forge-models-tests.yml
     secrets: inherit
     with:
+      reuse-build-run-id: ${{ inputs.reuse-build-run-id }}
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       tests-filter: ${{ inputs.tests-filter-xfail }}
       num-splits: ${{ fromJSON(inputs.num-splits-xfail) }}
