@@ -11,27 +11,30 @@ if the model names exist in the new XML file.
 import sys
 import xml.etree.ElementTree as ET
 import re
-from typing import Set, List, Tuple
+from typing import Set, List, Tuple, Dict
 
 
-def extract_model_names_from_xml(xml_file_path: str) -> Set[str]:
+def extract_model_names_from_xml(xml_file_path: str) -> Tuple[Set[str], Dict[str, str]]:
     """
-    Extract all unique model names from an XML file.
+    Extract all unique model names and their corresponding test case names from an XML file.
 
     Args:
         xml_file_path: Path to the XML file
 
     Returns:
-        Set of unique model names found in the XML file
+        Tuple of (set of unique model names, dict mapping model names to test case names)
     """
     try:
         tree = ET.parse(xml_file_path)
         root = tree.getroot()
 
         model_names = set()
+        model_to_testcase = {}
 
         # Find all testcase elements
         for testcase in root.findall(".//testcase"):
+            testcase_name = testcase.get("name", "Unknown")
+
             # Look for properties within each testcase
             properties = testcase.find("properties")
             if properties is not None:
@@ -41,9 +44,10 @@ def extract_model_names_from_xml(xml_file_path: str) -> Set[str]:
                         model_name = prop.get("value")
                         if model_name:
                             model_names.add(model_name)
+                            model_to_testcase[model_name] = testcase_name
                         break
 
-        return model_names
+        return model_names, model_to_testcase
 
     except ET.ParseError as e:
         print(f"Error parsing XML file {xml_file_path}: {e}", file=sys.stderr)
@@ -126,7 +130,7 @@ def main():
     print()
 
     # Extract model names from the new XML file
-    new_model_names = extract_model_names_from_xml(new_xml_path)
+    new_model_names, new_model_to_testcase = extract_model_names_from_xml(new_xml_path)
 
     # Extract testcase information from the old XML file
     old_testcases = extract_testcases_from_old_xml(old_xml_path)
@@ -141,19 +145,25 @@ def main():
 
     # Print header
     print(
-        f"{'In New XML':<13} {'Parallelism':<22} {'Model Name':<90} {'Test Case Name':<50}"
+        f"{'In New XML':<13} {'Parallelism':<22} {'Model Name':<90} {'Old Test Case Name':<50} {'New Test Case Name':<50}"
     )
-    print("-" * 180)
+    print("-" * 230)
 
     # Compare and print results
     found_count = 0
     for model_name, testcase_name, parallelism in old_testcases:
         found_marker = "YES" if model_name in new_model_names else "NO"
+        new_testcase_name = (
+            new_model_to_testcase.get(model_name, "")
+            if model_name in new_model_names
+            else "N/A"
+        )
+
         if model_name in new_model_names:
             found_count += 1
 
         print(
-            f"{found_marker:<13} {parallelism:<22} {model_name:<90} {testcase_name:<50}"
+            f"{found_marker:<13} {parallelism:<22} {model_name:<90} {testcase_name:<50} {new_testcase_name:<50}"
         )
 
     print()
