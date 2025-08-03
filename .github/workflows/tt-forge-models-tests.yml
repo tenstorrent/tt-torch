@@ -21,12 +21,12 @@ on:
         description: 'Run xfail tests'
         required: false
         type: boolean
-        default: false        
+        default: false
       tests-filter-xfail:
         description: 'Filter for xfail tests'
         required: false
         type: string
-        default: "not expected_passing"        
+        default: "not expected_passing"
       num-splits-xfail:
         description: 'Number of splits for xfail tests'
         required: false
