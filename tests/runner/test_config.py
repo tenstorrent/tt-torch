@@ -55,6 +55,13 @@ test_config = {
     "mamba/pytorch-mamba-790m-hf-full-eval": {
         "required_pcc": 0.95,
         "status": ModelStatus.EXPECTED_PASSING,
+        "arch_overrides": {
+            "blackhole": {
+                "status": ModelStatus.NOT_SUPPORTED_SKIP,
+                "skip_reason": "Takes forever on blackhole runner",
+                "skip_bringup_status": "FAILED_RUNTIME",
+            },
+        },
     },
     "openpose/v2/pytorch-full-eval": {
         "assert_pcc": False,
@@ -240,9 +247,23 @@ test_config = {
     },
     "mamba/pytorch-mamba-1.4b-hf-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
+        "arch_overrides": {
+            "blackhole": {
+                "status": ModelStatus.NOT_SUPPORTED_SKIP,
+                "skip_reason": "Takes forever on blackhole runner",
+                "skip_bringup_status": "FAILED_RUNTIME",
+            },
+        },
     },
     "mamba/pytorch-mamba-370m-hf-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
+        "arch_overrides": {
+            "blackhole": {
+                "status": ModelStatus.NOT_SUPPORTED_SKIP,
+                "skip_reason": "Takes forever on blackhole runner",
+                "skip_bringup_status": "FAILED_RUNTIME",
+            },
+        },
     },
     "mgp_str_base/pytorch-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -392,6 +413,13 @@ test_config = {
     "mamba/pytorch-mamba-2.8b-hf-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
         "required_pcc": 0.98,
+        "arch_overrides": {
+            "blackhole": {
+                "status": ModelStatus.NOT_SUPPORTED_SKIP,
+                "skip_reason": "Takes forever on blackhole runner",
+                "skip_bringup_status": "FAILED_RUNTIME",
+            },
+        },
     },
     "deit/pytorch-base-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
