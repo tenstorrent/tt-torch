@@ -128,7 +128,7 @@ def main():
     print()
 
     # Print header
-    print(f"{'Model Name':<60} {'Test Case Name':<50} {'Found in New XML'}")
+    print(f"{'Found in New XML':<10} {'Model Name':<90} {'Test Case Name':<50}")
     print("-" * 120)
 
     # Compare and print results
@@ -138,7 +138,7 @@ def main():
         if model_name in new_model_names:
             found_count += 1
 
-        print(f"{model_name:<60} {testcase_name:<50} {found_marker}")
+        print(f"{found_marker:<10} {model_name:<90} {testcase_name:<50}")
 
     print()
     print(f"Summary: {found_count}/{len(old_testcases)} model names found in new XML")
