@@ -3,6 +3,10 @@ name: Run TT Forge Models Tests
 on:
   workflow_call:
     inputs:
+      reuse-build-run-id:
+        description: 'Reuse build artifacts from specific run ID (skips build job)'
+        required: false
+        type: string
       docker-image:
         description: 'Docker image to use for build'
         required: true
@@ -113,6 +117,7 @@ jobs:
       with:
         name: install-artifacts
         path: install
+        run_id: ${{ inputs.reuse-build-run-id || github.run_id }}
 
     - name: Extract build artifacts
       if: ${{ env.RUN_TEST != 'skip' }}
