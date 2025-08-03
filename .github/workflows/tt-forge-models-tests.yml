@@ -1,4 +1,4 @@
-name: Run TT-Forge Model Tests Wrapper
+name: TT-Forge Model Tests Wrapper
 
 on:
   workflow_dispatch:  # Manual trigger
