@@ -10,6 +10,7 @@ if the model names exist in the new XML file.
 
 import sys
 import xml.etree.ElementTree as ET
+import re
 from typing import Set, List, Tuple
 
 
@@ -52,15 +53,15 @@ def extract_model_names_from_xml(xml_file_path: str) -> Set[str]:
         sys.exit(1)
 
 
-def extract_testcases_from_old_xml(xml_file_path: str) -> List[Tuple[str, str]]:
+def extract_testcases_from_old_xml(xml_file_path: str) -> List[Tuple[str, str, str]]:
     """
-    Extract model names and test case names from the old XML file.
+    Extract model names, test case names, and parallelism from the old XML file.
 
     Args:
         xml_file_path: Path to the old XML file
 
     Returns:
-        List of tuples containing (model_name, testcase_name)
+        List of tuples containing (model_name, testcase_name, parallelism)
     """
     try:
         tree = ET.parse(xml_file_path)
@@ -75,17 +76,28 @@ def extract_testcases_from_old_xml(xml_file_path: str) -> List[Tuple[str, str]]:
             # Look for properties within each testcase
             properties = testcase.find("properties")
             model_name = None
+            parallelism = "Unknown"
 
             if properties is not None:
-                # Find the model_name property
+                # Find the model_name and tags properties
                 for prop in properties.findall("property"):
-                    if prop.get("name") == "model_name":
-                        model_name = prop.get("value")
-                        break
+                    prop_name = prop.get("name")
+                    prop_value = prop.get("value")
+
+                    if prop_name == "model_name":
+                        model_name = prop_value
+                    elif prop_name == "tags" and prop_value:
+                        # Extract parallelism from tags property
+                        # Tags property contains a string representation of a dict
+                        parallelism_match = re.search(
+                            r"'parallelism':\s*'([^']+)'", prop_value
+                        )
+                        if parallelism_match:
+                            parallelism = parallelism_match.group(1)
 
             # Only add if we found a model name
             if model_name:
-                testcases_info.append((model_name, testcase_name))
+                testcases_info.append((model_name, testcase_name, parallelism))
 
         return testcases_info
 
@@ -128,17 +140,21 @@ def main():
     print()
 
     # Print header
-    print(f"{'Found in New XML':<10} {'Model Name':<90} {'Test Case Name':<50}")
-    print("-" * 120)
+    print(
+        f"{'In New XML':<13} {'Parallelism':<22} {'Model Name':<90} {'Test Case Name':<50}"
+    )
+    print("-" * 180)
 
     # Compare and print results
     found_count = 0
-    for model_name, testcase_name in old_testcases:
+    for model_name, testcase_name, parallelism in old_testcases:
         found_marker = "YES" if model_name in new_model_names else "NO"
         if model_name in new_model_names:
             found_count += 1
 
-        print(f"{found_marker:<10} {model_name:<90} {testcase_name:<50}")
+        print(
+            f"{found_marker:<13} {parallelism:<22} {model_name:<90} {testcase_name:<50}"
+        )
 
     print()
     print(f"Summary: {found_count}/{len(old_testcases)} model names found in new XML")
