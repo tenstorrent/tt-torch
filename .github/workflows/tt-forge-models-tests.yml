@@ -2,6 +2,27 @@ name: Run TT-Forge Model Tests Wrapper
 
 on:
   workflow_dispatch:  # Manual trigger
+    inputs:
+      tests-filter-passing:
+        description: 'Filter for passing tests'
+        required: false
+        type: string
+        default: "expected_passing"
+      tests-filter-xfail:
+        description: 'Filter for xfail tests'
+        required: false
+        type: string
+        default: "not expected_passing"
+      num-splits-passing:
+        description: 'Number of splits for passing tests'
+        required: false
+        type: number
+        default: 6
+      num-splits-xfail:
+        description: 'Number of splits for xfail tests'
+        required: false
+        type: number
+        default: 3
 
 permissions:
   packages: write
@@ -24,11 +45,13 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-      tests-filter: "expected_passing"
+      tests-filter: ${{ inputs.tests-filter-passing }}
+      num-splits: ${{ fromJSON(inputs.num-splits-passing) }}
   test-xfail-tt-forge-models:
     needs: [docker-build, build]
     uses: ./.github/workflows/run-tt-forge-models-tests.yml
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-      tests-filter: "not expected_passing"
+      tests-filter: ${{ inputs.tests-filter-xfail }}
+      num-splits: ${{ fromJSON(inputs.num-splits-xfail) }}

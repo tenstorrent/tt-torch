@@ -12,6 +12,11 @@ on:
         required: false
         type: string
         default: "expected_passing"
+      num-splits:
+        description: 'Number of splits for pytest'
+        required: false
+        type: number
+        default: 4
   workflow_run:
     workflows: [Build]
     types: [completed]
@@ -25,20 +30,34 @@ permissions:
   checks: write
 
 jobs:
+
+  # Dynamically generate matrix based on number of groups
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - id: set-matrix
+        run: |
+          NUM_GROUPS=${{ inputs.num-splits }}
+          MATRIX_JSON=$(jq -n --argjson n "$NUM_GROUPS" '
+            [range(1; $n + 1)] |
+            map({
+              "wh-runner": "wormhole_b0",
+              "bh-runner": "p150",
+              "name": ("grp_" + tostring),
+              "group": .
+            })')
+          printf "matrix=%s\n" "$(echo "$MATRIX_JSON" | jq -c)" >> "$GITHUB_OUTPUT"
+
   tests:
     timeout-minutes: 340
+    needs: generate-matrix
     strategy:
       fail-fast: false
       matrix:
+        build: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
         runner: [wormhole, blackhole]
-        build: [
-          { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_1", group: 1 },
-          { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_2", group: 2 },
-          { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_3", group: 3 },
-          { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_4", group: 4 },
-          { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_5", group: 5 },
-          { wh-runner: wormhole_b0, bh-runner: p150, name: "grp_6", group: 6 },
-        ]
     name: "test exec models ${{ matrix.runner == 'wormhole' && 'wh' || matrix.runner == 'blackhole' && 'bh' || 'unk' }} (${{ matrix.build.name }}) - ${{ inputs.tests-filter }}"
     runs-on: ${{ matrix.runner == 'wormhole' && matrix.build.wh-runner || matrix.runner == 'blackhole' && matrix.build.bh-runner || 'wormhole_b0'}}
     container:
@@ -123,9 +142,9 @@ jobs:
       shell: bash
       run: |
         BASE_PYTEST_CMD="tests/runner/test_models.py \
-          -m ${{ inputs.tests-filter }} \
+          -m \"${{ inputs.tests-filter }}\" \
           --arch ${{ env.RUN_TEST }} \
-          --splits 6 \
+          --splits ${{ inputs.num-splits }} \
           --group ${{ matrix.build.group }} \
           --splitting-algorithm least_duration \
           --durations-path .test_durations"
