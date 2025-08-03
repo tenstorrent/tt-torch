@@ -19,6 +19,13 @@ PROJECT_ROOT = os.path.abspath(os.path.join(TEST_DIR, "..", ".."))
 MODELS_ROOT, test_entries = setup_test_discovery(PROJECT_ROOT)
 
 
+# Debug Code
+# print(f"KCM MODELS_ROOT: {MODELS_ROOT}", flush=True)
+# print(f"Number of tests: {len(test_entries)}", flush=True)
+# for test_entry in test_entries:
+#     print(f"KCM test_entry: {test_entry}", flush=True)
+
+
 @pytest.mark.parametrize(
     "mode",
     ["eval"],
