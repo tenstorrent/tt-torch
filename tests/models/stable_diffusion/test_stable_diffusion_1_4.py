@@ -29,7 +29,7 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_stable_diffusion(record_property, mode, op_by_op):
+def test_stable_diffusion_1_4(record_property, mode, op_by_op):
     model_name = "Stable Diffusion"
 
     cc = CompilerConfig()

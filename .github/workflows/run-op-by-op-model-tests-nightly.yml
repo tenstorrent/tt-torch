@@ -31,8 +31,8 @@ jobs:
       matrix:
         build: [
           {
-            runs-on: wormhole_b0, name: "stable-diffusion", tests: "
-              tests/models/stable_diffusion/test_stable_diffusion.py::test_stable_diffusion[op_by_op_torch-eval]
+            runs-on: wormhole_b0, name: "stable-diffusion-1-4", tests: "
+              tests/models/stable_diffusion/test_stable_diffusion_1_4.py::test_stable_diffusion_1_4[op_by_op_torch-eval]
               "
           },
           {
