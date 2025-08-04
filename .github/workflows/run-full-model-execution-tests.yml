@@ -68,7 +68,7 @@ jobs:
           },
           {
             wh-runner: wormhole_b0, bh-runner: p150, name: "eval_3", pytest-args: "", tests: "
-                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[single_device-full-albert-xxlarge-v2-eval]
+                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[single_device-full-xxlarge_v2-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_y_400mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_y_800mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_y_1_6gf]
