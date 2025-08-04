@@ -6,11 +6,39 @@ from tests.runner.test_utils import ModelStatus
 
 
 test_config = {
-    "gpt_neo/pytorch-full-eval": {
+    "gpt_neo/sequence_classification/pytorch-gpt_neo_125M-full-eval": {
         "required_pcc": 0.98,
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "vovnet/pytorch-full-eval": {
+    "gpt_neo/sequence_classification/pytorch-gpt_neo_1_3B-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "gpt_neo/sequence_classification/pytorch-gpt_neo_2_7B-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "gpt_neo/causal_lm/pytorch-gpt_neo_125M-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "gpt_neo/causal_lm/pytorch-gpt_neo_1_3B-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "gpt_neo/causal_lm/pytorch-gpt_neo_2_7B-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "vovnet/pytorch-vovnet27s-full-eval": {
+        "assert_pcc": False,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "vovnet/pytorch-vovnet39-full-eval": {
+        "assert_pcc": False,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "vovnet/pytorch-vovnet57-full-eval": {
         "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
@@ -27,7 +55,7 @@ test_config = {
         "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "clip/pytorch-full-eval": {
+    "clip/pytorch-openai/clip-vit-base-patch32-full-eval": {
         "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
@@ -36,7 +64,11 @@ test_config = {
         "skip_reason": "Import issue in tt-forge-models missing yolox package proably",
         "skip_bringup_status": "FAILED_RUNTIME",
     },
-    "wide_resnet/pytorch-full-eval": {
+    "wide_resnet/pytorch-wide_resnet50_2-full-eval": {
+        "required_pcc": 0.96,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "wide_resnet/pytorch-wide_resnet101_2-full-eval": {
         "required_pcc": 0.96,
         "status": ModelStatus.EXPECTED_PASSING,
     },
@@ -62,11 +94,11 @@ test_config = {
         "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "albert/masked_lm/pytorch-albert-xxlarge-v2-full-eval": {
+    "albert/masked_lm/pytorch-xxlarge_v2-full-eval": {
         "required_pcc": 0.97,
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "albert/masked_lm/pytorch-albert-large-v2-full-eval": {
+    "albert/masked_lm/pytorch-large_v2-full-eval": {
         "required_pcc": 0.97,
         "status": ModelStatus.EXPECTED_PASSING,
     },
@@ -78,7 +110,15 @@ test_config = {
         "required_pcc": 0.98,
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "flan_t5/pytorch-full-eval": {
+    "t5/pytorch-google/flan-t5-small-full-eval": {
+        "assert_pcc": False,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "t5/pytorch-google/flan-t5-base-full-eval": {
+        "assert_pcc": False,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "t5/pytorch-google/flan-t5-large-full-eval": {
         "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
@@ -86,17 +126,39 @@ test_config = {
         "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "falcon/pytorch-full-eval": {
+    "falcon/pytorch-tiiuae/Falcon3-1B-Base-full-eval": {
         "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "falcon/pytorch-tiiuae/Falcon3-3B-Base-full-eval": {
+        "assert_pcc": False,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "falcon/pytorch-tiiuae/Falcon3-7B-Base-full-eval": {
+        "assert_pcc": False,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "falcon/pytorch-tiiuae/Falcon3-10B-Base-full-eval": {
+        "assert_pcc": False,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "falcon/pytorch-tiiuae/Falcon3-Mamba-7B-Base-full-eval": {
+        "assert_pcc": False,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
     },
     "yolov5/pytorch-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "albert/masked_lm/pytorch-albert-base-v2-full-eval": {
+    "albert/masked_lm/pytorch-base_v2-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "albert/masked_lm/pytorch-albert-xlarge-v2-full-eval": {
+    "albert/masked_lm/pytorch-xlarge_v2-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "alexnet/pytorch-full-eval": {
@@ -108,13 +170,19 @@ test_config = {
     "bart/pytorch-large-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "bert/pytorch-base-full-eval": {
+    "bert/question_answering/pytorch-phiyodr/bert-large-finetuned-squad2-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "bert/pytorch-large-full-eval": {
+    "bert/question_answering/pytorch-bert-large-cased-whole-word-masking-finetuned-squad-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "codegen/pytorch-full-eval": {
+    "codegen/pytorch-Salesforce/codegen-350M-mono-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "codegen/pytorch-Salesforce/codegen-350M-multi-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "codegen/pytorch-Salesforce/codegen-350M-nl-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "deit/pytorch-base_distilled-full-eval": {
@@ -138,7 +206,22 @@ test_config = {
     "densenet/pytorch-densenet201-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "distilbert/pytorch-full-eval": {
+    "distilbert/question_answering/pytorch-distilbert-base-cased-distilled-squad-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "distilbert/masked_lm/pytorch-distilbert-base-cased-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "distilbert/masked_lm/pytorch-distilbert-base-uncased-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "distilbert/masked_lm/pytorch-distilbert-base-multilingual-cased-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "distilbert/sequence_classification/pytorch-distilbert-base-uncased-finetuned-sst-2-english-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "distilbert/token_classification/pytorch-Davlan/distilbert-base-multilingual-cased-ner-hrl-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "dla/pytorch-dla102-full-eval": {
@@ -171,10 +254,22 @@ test_config = {
     "dla/pytorch-dla60x-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "dpr/pytorch-full-eval": {
+    "dpr/question_encoder/pytorch-facebook/dpr-question_encoder-single-nq-base-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "dpr/reader/pytorch-full-eval": {
+    "dpr/question_encoder/pytorch-facebook/dpr-question_encoder-multiset-base-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "dpr/context_encoder/pytorch-facebook/dpr-ctx_encoder-single-nq-base-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "dpr/context_encoder/pytorch-facebook/dpr-ctx_encoder-multiset-base-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "dpr/reader/pytorch-facebook/dpr-reader-single-nq-base-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "dpr/reader/pytorch-facebook/dpr-reader-multiset-base-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "efficientnet/pytorch-efficientnet_b0-full-eval": {
@@ -284,7 +379,7 @@ test_config = {
     "mobilenetv2/pytorch-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "nanogpt/pytorch-full-eval": {
+    "nanogpt/pytorch-FinancialSupport/NanoGPT-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "regnet/pytorch-regnet_y_040-full-eval": {
@@ -335,10 +430,25 @@ test_config = {
     "segformer/pytorch-mit_b5-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "squeezebert/pytorch-full-eval": {
+    "squeezebert/pytorch-squeezebert-mnli-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "swin/pytorch-full-eval": {
+    "swin/pytorch-swin_t-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "swin/pytorch-swin_s-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "swin/pytorch-swin_b-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "swin/pytorch-swin_v2_t-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "swin/pytorch-swin_v2_s-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "swin/pytorch-swin_v2_b-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "unet/pytorch-full-eval": {
