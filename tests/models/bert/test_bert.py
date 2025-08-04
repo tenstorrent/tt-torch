@@ -5,7 +5,7 @@ import torch
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.bert.pytorch import ModelLoader, ModelVariant
+from third_party.tt_forge_models.bert.question_answering.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
