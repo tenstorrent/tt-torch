@@ -1,0 +1,2027 @@
+================================================================================
+MODEL COVERAGE ANALYSIS REPORT
+================================================================================
+
+SUMMARY STATISTICS:
+- Total models in all_models_expected_passing.xml: 125
+- Total models in all_tests.xml: 272
+- Already covered models (from models.covered): 26
+- Uncovered new models to analyze: 100
+
+UNCOVERED NEW MODELS (98 models to analyze):
+--------------------------------------------------
+  1. falcon/base -> pytorch_falcon_base_nlp_causal_lm_huggingface
+  2. alexnet/base -> pytorch_alexnet_base_cv_image_cls_torch_hub
+  3. phi1_5/microsoft/phi-1_5 -> pytorch_phi1_5_microsoft/phi-1_5_nlp_text_cls_huggingface
+  4. phi1_5/microsoft/phi-1_5 -> pytorch_phi1_5_microsoft/phi-1_5_nlp_causal_lm_huggingface
+  5. phi1_5/microsoft/phi-1_5 -> pytorch_phi1_5_microsoft/phi-1_5_nlp_token_cls_huggingface
+  6. regnet/regnet_y_040 -> pytorch_regnet_regnet_y_040_cv_image_cls_huggingface
+  7. regnet/regnet_y_064 -> pytorch_regnet_regnet_y_064_cv_image_cls_huggingface
+  8. regnet/regnet_y_080 -> pytorch_regnet_regnet_y_080_cv_image_cls_huggingface
+  9. regnet/regnet_y_120 -> pytorch_regnet_regnet_y_120_cv_image_cls_huggingface
+ 10. regnet/regnet_y_160 -> pytorch_regnet_regnet_y_160_cv_image_cls_huggingface
+ 11. regnet/regnet_y_320 -> pytorch_regnet_regnet_y_320_cv_image_cls_huggingface
+ 12. vit/base -> pytorch_vit_base_cv_image_cls_torch_hub
+ 13. vit/large -> pytorch_vit_large_cv_image_cls_torch_hub
+ 14. bert/base -> pytorch_bert_base_nlp_qa_huggingface
+ 15. wide_resnet/base -> pytorch_wide_resnet_base_cv_image_cls_torch_hub
+ 16. OpenPose V2/base -> pytorch_OpenPose V2_base_cv_keypoint_det_custom
+ 17. bart/large -> pytorch_bart_large_nlp_text_cls_huggingface
+ 18. mobilenetv2/base -> pytorch_mobilenetv2_base_cv_image_cls_torch_hub
+ 19. nanogpt/base -> pytorch_nanogpt_base_nlp_causal_lm_custom
+ 20. xglm/xglm-564M -> pytorch_xglm_xglm-564M_nlp_causal_lm_huggingface
+ 21. xglm/xglm-1.7B -> pytorch_xglm_xglm-1.7B_nlp_causal_lm_huggingface
+ 22. xception/xception41 -> pytorch_xception_xception41_cv_image_cls_timm
+ 23. xception/xception65 -> pytorch_xception_xception65_cv_image_cls_timm
+ 24. xception/xception71 -> pytorch_xception_xception71_cv_image_cls_timm
+ 25. xception/xception71.tf_in1k -> pytorch_xception_xception71.tf_in1k_cv_image_cls_timm
+ 26. resnext/resnext50_32x4d -> pytorch_resnext_resnext50_32x4d_cv_image_cls_torch_hub
+ 27. resnext/resnext101_32x8d -> pytorch_resnext_resnext101_32x8d_cv_image_cls_torch_hub
+ 28. resnext/resnext101_32x8d_wsl -> pytorch_resnext_resnext101_32x8d_wsl_cv_image_cls_torch_hub
+ 29. vovnet/base -> pytorch_vovnet_base_cv_image_cls_torch_hub
+ 30. dla/dla34 -> pytorch_dla_dla34_cv_image_cls_torch_hub
+ 31. dla/dla46_c -> pytorch_dla_dla46_c_cv_image_cls_torch_hub
+ 32. dla/dla46x_c -> pytorch_dla_dla46x_c_cv_image_cls_torch_hub
+ 33. dla/dla60 -> pytorch_dla_dla60_cv_image_cls_torch_hub
+ 34. dla/dla60x -> pytorch_dla_dla60x_cv_image_cls_torch_hub
+ 35. dla/dla60x_c -> pytorch_dla_dla60x_c_cv_image_cls_torch_hub
+ 36. dla/dla102 -> pytorch_dla_dla102_cv_image_cls_torch_hub
+ 37. dla/dla102x -> pytorch_dla_dla102x_cv_image_cls_torch_hub
+ 38. dla/dla102x2 -> pytorch_dla_dla102x2_cv_image_cls_torch_hub
+ 39. dla/dla169 -> pytorch_dla_dla169_cv_image_cls_torch_hub
+ 40. roberta/base -> pytorch_roberta_base_nlp_text_cls_huggingface
+ 41. ghostnet/ghostnet_100 -> pytorch_ghostnet_ghostnet_100_cv_image_cls_timm
+ 42. ghostnet/ghostnet_100.in1k -> pytorch_ghostnet_ghostnet_100.in1k_cv_image_cls_timm
+ 43. yolov5/base -> pytorch_yolov5_base_cv_object_det_custom
+ 44. llama/base -> pytorch_llama_base_nlp_causal_lm_huggingface
+ 45. autoencoder_linear/base -> pytorch_autoencoder_linear_base_cv_img_to_img_custom
+ 46. phi2/microsoft/phi-2 -> pytorch_phi2_microsoft/phi-2_nlp_text_cls_huggingface
+ 47. phi2/microsoft/phi-2-pytdml -> pytorch_phi2_microsoft/phi-2-pytdml_nlp_text_cls_huggingface
+ 48. phi2/microsoft/phi-2 -> pytorch_phi2_microsoft/phi-2_nlp_causal_lm_huggingface
+ 49. phi2/microsoft/phi-2-pytdml -> pytorch_phi2_microsoft/phi-2-pytdml_nlp_causal_lm_huggingface
+ 50. phi2/microsoft/phi-2 -> pytorch_phi2_microsoft/phi-2_nlp_token_cls_huggingface
+ 51. phi2/microsoft/phi-2-pytdml -> pytorch_phi2_microsoft/phi-2-pytdml_nlp_token_cls_huggingface
+ 52. dpr/base -> pytorch_dpr_base_nlp_qa_huggingface
+ 53. mlp_mixer/mixer_b16_224 -> pytorch_mlp_mixer_mixer_b16_224_cv_image_cls_timm
+ 54. mlp_mixer/mixer_b16_224_in21k -> pytorch_mlp_mixer_mixer_b16_224_in21k_cv_image_cls_timm
+ 55. mlp_mixer/mixer_b16_224_miil -> pytorch_mlp_mixer_mixer_b16_224_miil_cv_image_cls_timm
+ 56. mlp_mixer/mixer_b16_224_miil_in21k -> pytorch_mlp_mixer_mixer_b16_224_miil_in21k_cv_image_cls_timm
+ 57. mlp_mixer/mixer_b32_224 -> pytorch_mlp_mixer_mixer_b32_224_cv_image_cls_timm
+ 58. mlp_mixer/mixer_l16_224 -> pytorch_mlp_mixer_mixer_l16_224_cv_image_cls_timm
+ 59. mlp_mixer/mixer_l16_224_in21k -> pytorch_mlp_mixer_mixer_l16_224_in21k_cv_image_cls_timm
+ 60. mlp_mixer/mixer_l32_224 -> pytorch_mlp_mixer_mixer_l32_224_cv_image_cls_timm
+ 61. mlp_mixer/mixer_s16_224 -> pytorch_mlp_mixer_mixer_s16_224_cv_image_cls_timm
+ 62. mlp_mixer/mixer_s32_224 -> pytorch_mlp_mixer_mixer_s32_224_cv_image_cls_timm
+ 63. mlp_mixer/mixer_b16_224.goog_in21k -> pytorch_mlp_mixer_mixer_b16_224.goog_in21k_cv_image_cls_timm
+ 64. deit/base_distilled -> pytorch_deit_base_distilled_cv_image_cls_huggingface
+ 65. deit/small -> pytorch_deit_small_cv_image_cls_huggingface
+ 66. deit/tiny -> pytorch_deit_tiny_cv_image_cls_huggingface
+ 67. distilbert/base -> pytorch_distilbert_base_nlp_text_cls_huggingface
+ 68. densenet/densenet121 -> pytorch_densenet_densenet121_cv_image_cls_torch_hub
+ 69. densenet/densenet161 -> pytorch_densenet_densenet161_cv_image_cls_torch_hub
+ 70. densenet/densenet169 -> pytorch_densenet_densenet169_cv_image_cls_torch_hub
+ 71. densenet/densenet201 -> pytorch_densenet_densenet201_cv_image_cls_torch_hub
+ 72. resnet/base -> pytorch_resnet_base_cv_image_cls_torch_hub
+ 73. efficientnet/efficientnet_b0 -> pytorch_efficientnet_efficientnet_b0_cv_image_cls_torchvision
+ 74. efficientnet/efficientnet_b1 -> pytorch_efficientnet_efficientnet_b1_cv_image_cls_torchvision
+ 75. efficientnet/efficientnet_b2 -> pytorch_efficientnet_efficientnet_b2_cv_image_cls_torchvision
+ 76. efficientnet/efficientnet_b3 -> pytorch_efficientnet_efficientnet_b3_cv_image_cls_torchvision
+ 77. efficientnet/efficientnet_b4 -> pytorch_efficientnet_efficientnet_b4_cv_image_cls_torchvision
+ 78. efficientnet/efficientnet_b5 -> pytorch_efficientnet_efficientnet_b5_cv_image_cls_torchvision
+ 79. efficientnet/efficientnet_b6 -> pytorch_efficientnet_efficientnet_b6_cv_image_cls_torchvision
+ 80. efficientnet/efficientnet_b7 -> pytorch_efficientnet_efficientnet_b7_cv_image_cls_torchvision
+ 81. segformer/mit_b0 -> pytorch_segformer_mit_b0_cv_image_cls_huggingface
+ 82. segformer/mit_b1 -> pytorch_segformer_mit_b1_cv_image_cls_huggingface
+ 83. segformer/mit_b2 -> pytorch_segformer_mit_b2_cv_image_cls_huggingface
+ 84. segformer/mit_b3 -> pytorch_segformer_mit_b3_cv_image_cls_huggingface
+ 85. segformer/mit_b4 -> pytorch_segformer_mit_b4_cv_image_cls_huggingface
+ 86. segformer/mit_b5 -> pytorch_segformer_mit_b5_cv_image_cls_huggingface
+ 87. vgg/vgg19_bn -> pytorch_vgg_vgg19_bn_cv_image_cls_torch_hub
+ 88. unet/base -> pytorch_unet_base_cv_image_seg_custom
+ 89. swin/base -> pytorch_swin_base_cv_image_cls_torch_hub
+ 90. mobilenetv1/base -> pytorch_mobilenetv1_base_cv_image_cls_torch_hub
+ 91. hrnet/hrnet_w18_small -> pytorch_hrnet_hrnet_w18_small_cv_keypoint_det_timm
+ 92. hrnet/hrnet_w18_small_v2 -> pytorch_hrnet_hrnet_w18_small_v2_cv_keypoint_det_timm
+ 93. hrnet/hrnet_w18 -> pytorch_hrnet_hrnet_w18_cv_keypoint_det_timm
+ 94. hrnet/hrnet_w30 -> pytorch_hrnet_hrnet_w30_cv_keypoint_det_timm
+ 95. hrnet/hrnet_w32 -> pytorch_hrnet_hrnet_w32_cv_keypoint_det_timm
+ 96. hrnet/hrnet_w40 -> pytorch_hrnet_hrnet_w40_cv_keypoint_det_timm
+ 97. hrnet/hrnet_w44 -> pytorch_hrnet_hrnet_w44_cv_keypoint_det_timm
+ 98. hrnet/hrnet_w48 -> pytorch_hrnet_hrnet_w48_cv_keypoint_det_timm
+ 99. hrnet/hrnet_w64 -> pytorch_hrnet_hrnet_w64_cv_keypoint_det_timm
+100. hrnet/hrnet_w18.ms_aug_in1k -> pytorch_hrnet_hrnet_w18.ms_aug_in1k_cv_keypoint_det_timm
+
+MATCHING ANALYSIS:
+--------------------------------------------------
+
+✓ MATCH FOUND: falcon/base
+  New: pytorch_falcon_base_nlp_causal_lm_huggingface
+  Old matches:
+    - tiiuae/Falcon3-1B-Base (tests/models/falcon/test_falcon3.py)
+      Test: test_falcon[full-tiiuae/Falcon3-1B-Base-eval]
+      Parallelism: single_device
+    - tiiuae/Falcon3-1B-Instruct (tests/models/falcon/test_falcon3.py)
+      Test: test_falcon[full-tiiuae/Falcon3-1B-Instruct-eval]
+      Parallelism: single_device
+    - tiiuae/Falcon3-3B-Base (tests/models/falcon/test_falcon3.py)
+      Test: test_falcon[full-tiiuae/Falcon3-3B-Base-eval]
+      Parallelism: single_device
+    - tiiuae/Falcon3-3B-Instruct (tests/models/falcon/test_falcon3.py)
+      Test: test_falcon[full-tiiuae/Falcon3-3B-Instruct-eval]
+      Parallelism: single_device
+    - tiiuae/Falcon3-7B-Base (tests/models/falcon/test_falcon3.py)
+      Test: test_falcon[full-tiiuae/Falcon3-7B-Base-eval]
+      Parallelism: single_device
+    - tiiuae/Falcon3-10B-Base (tests/models/falcon/test_falcon3.py)
+      Test: test_falcon[full-tiiuae/Falcon3-10B-Base-eval]
+      Parallelism: single_device
+
+✗ NO MATCH: alexnet/base
+  New: pytorch_alexnet_base_cv_image_cls_torch_hub
+
+✓ MATCH FOUND: phi1_5/microsoft/phi-1_5
+  New: pytorch_phi1_5_microsoft/phi-1_5_nlp_text_cls_huggingface
+  Old matches:
+    - microsoft/phi-1 (tests/models/phi/test_phi_1_1p5_2.py)
+      Test: test_phi[full-microsoft/phi-1-eval]
+      Parallelism: single_device
+    - pytorch_oft_base_cv_object_det_custom (tests/models/oft/test_oft.py)
+      Test: test_oft[full-eval]
+      Parallelism: single_device
+
+✓ MATCH FOUND: phi1_5/microsoft/phi-1_5
+  New: pytorch_phi1_5_microsoft/phi-1_5_nlp_causal_lm_huggingface
+  Old matches:
+    - microsoft/phi-1 (tests/models/phi/test_phi_1_1p5_2.py)
+      Test: test_phi[full-microsoft/phi-1-eval]
+      Parallelism: single_device
+    - pytorch_oft_base_cv_object_det_custom (tests/models/oft/test_oft.py)
+      Test: test_oft[full-eval]
+      Parallelism: single_device
+
+✓ MATCH FOUND: phi1_5/microsoft/phi-1_5
+  New: pytorch_phi1_5_microsoft/phi-1_5_nlp_token_cls_huggingface
+  Old matches:
+    - microsoft/phi-1 (tests/models/phi/test_phi_1_1p5_2.py)
+      Test: test_phi[full-microsoft/phi-1-eval]
+      Parallelism: single_device
+    - pytorch_oft_base_cv_object_det_custom (tests/models/oft/test_oft.py)
+      Test: test_oft[full-eval]
+      Parallelism: single_device
+
+✗ NO MATCH: regnet/regnet_y_040
+  New: pytorch_regnet_regnet_y_040_cv_image_cls_huggingface
+
+✗ NO MATCH: regnet/regnet_y_064
+  New: pytorch_regnet_regnet_y_064_cv_image_cls_huggingface
+
+✗ NO MATCH: regnet/regnet_y_080
+  New: pytorch_regnet_regnet_y_080_cv_image_cls_huggingface
+
+✗ NO MATCH: regnet/regnet_y_120
+  New: pytorch_regnet_regnet_y_120_cv_image_cls_huggingface
+
+✗ NO MATCH: regnet/regnet_y_160
+  New: pytorch_regnet_regnet_y_160_cv_image_cls_huggingface
+
+✗ NO MATCH: regnet/regnet_y_320
+  New: pytorch_regnet_regnet_y_320_cv_image_cls_huggingface
+
+✓ MATCH FOUND: vit/base
+  New: pytorch_vit_base_cv_image_cls_torch_hub
+  Old matches:
+    - ViT (tests/models/vit/test_vit_onnx.py)
+      Test: test_vit_onnx[single_device-full-eval]
+      Parallelism: single_device
+    - vit_h_14 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-vit_h_14]
+      Parallelism: single_device
+    - vit_b_16 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-vit_b_16]
+      Parallelism: data_parallel
+    - vit_l_16 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-vit_l_16]
+      Parallelism: single_device
+    - vit_b_16 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-vit_b_16]
+      Parallelism: single_device
+    - vit_l_32 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-vit_l_32]
+      Parallelism: single_device
+    - vit_b_32 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-vit_b_32]
+      Parallelism: single_device
+    - pytorch_vit_base_cv_image_cls_torch_hub (tests/models/vit/test_vit_n300.py)
+      Test: test_vit[full-base-eval]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: vit/large
+  New: pytorch_vit_large_cv_image_cls_torch_hub
+  Old matches:
+    - pytorch_vit_large_cv_image_cls_torch_hub (tests/models/vit/test_vit_n300.py)
+      Test: test_vit[full-large-eval]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: bert/base
+  New: pytorch_bert_base_nlp_qa_huggingface
+  Old matches:
+    - BERT_Turkish (tests/models/bert/test_bert_turkish.py)
+      Test: test_bert_turkish[single_device-full-eval]
+      Parallelism: single_device
+    - pytorch_albert_v2_albert-xlarge-v2_nlp_masked_lm_huggingface (tests/models/albert/test_albert_masked_lm.py)
+      Test: test_albert_masked_lm[single_device-full-albert-xlarge-v2-eval]
+      Parallelism: single_device
+    - pytorch_albert_v2_albert-large-v2_nlp_masked_lm_huggingface (tests/models/albert/test_albert_masked_lm.py)
+      Test: test_albert_masked_lm[single_device-full-albert-large-v2-eval]
+      Parallelism: single_device
+    - pytorch_albert_v2_albert-base-v2_nlp_masked_lm_huggingface (tests/models/albert/test_albert_masked_lm.py)
+      Test: test_albert_masked_lm[single_device-full-albert-base-v2-eval]
+      Parallelism: single_device
+    - textattack/albert-base-v2-imdb (tests/models/albert/test_albert_sequence_classification.py)
+      Test: test_albert_sequence_classification[single_device-full-textattack/albert-base-v2-imdb-eval]
+      Parallelism: single_device
+    - albert/albert-base-v2-token-cls (tests/models/albert/test_albert_token_classification.py)
+      Test: test_albert_token_classification[single_device-full-albert/albert-base-v2-eval]
+      Parallelism: single_device
+    - pytorch_roberta_masked_lm_xlm_base_nlp_masked_lm_huggingface (tests/models/roberta/test_roberta.py)
+      Test: test_roberta[single_device-full-eval]
+      Parallelism: single_device
+    - pytorch_squeezebert_base_nlp_text_cls_huggingface (tests/models/squeeze_bert/test_squeeze_bert.py)
+      Test: test_squeeze_bert[single_device-full-eval]
+      Parallelism: single_device
+    - BERT_Turkish (tests/models/bert/test_bert_turkish.py)
+      Test: test_bert_turkish[data_parallel-full-eval]
+      Parallelism: runtime_data_parallel
+    - pytorch_albert_v2_albert-xlarge-v2_nlp_masked_lm_huggingface (tests/models/albert/test_albert_masked_lm.py)
+      Test: test_albert_masked_lm[data_parallel-full-albert-xlarge-v2-eval]
+      Parallelism: runtime_data_parallel
+    - pytorch_albert_v2_albert-large-v2_nlp_masked_lm_huggingface (tests/models/albert/test_albert_masked_lm.py)
+      Test: test_albert_masked_lm[data_parallel-full-albert-large-v2-eval]
+      Parallelism: runtime_data_parallel
+    - pytorch_albert_v2_albert-base-v2_nlp_masked_lm_huggingface (tests/models/albert/test_albert_masked_lm.py)
+      Test: test_albert_masked_lm[data_parallel-full-albert-base-v2-eval]
+      Parallelism: runtime_data_parallel
+    - textattack/albert-base-v2-imdb (tests/models/albert/test_albert_sequence_classification.py)
+      Test: test_albert_sequence_classification[data_parallel-full-textattack/albert-base-v2-imdb-eval]
+      Parallelism: runtime_data_parallel
+    - albert/albert-base-v2-token-cls (tests/models/albert/test_albert_token_classification.py)
+      Test: test_albert_token_classification[data_parallel-full-albert/albert-base-v2-eval]
+      Parallelism: runtime_data_parallel
+    - pytorch_roberta_masked_lm_xlm_base_nlp_masked_lm_huggingface (tests/models/roberta/test_roberta.py)
+      Test: test_roberta[data_parallel-full-eval]
+      Parallelism: runtime_data_parallel
+    - twmkn9/albert-base-v2-squad2 (tests/models/albert/test_albert_question_answering.py)
+      Test: test_albert_question_answering[full-twmkn9/albert-base-v2-squad2-eval]
+      Parallelism: single_device
+    - pytorch_bert_large_nlp_qa_huggingface (tests/models/bert/test_bert.py)
+      Test: test_bert[large-full-eval]
+      Parallelism: single_device
+    - distilbert-base-uncased (tests/models/distilbert/test_distilbert.py)
+      Test: test_distilbert[full-distilbert-base-uncased-eval]
+      Parallelism: single_device
+    - distilbert-base-uncased-multiloop (tests/models/distilbert/test_distilbert.py)
+      Test: test_distilbert_multiloop[full-distilbert-base-uncased-eval-64]
+      Parallelism: single_device
+    - pytorch_albert_v2_albert-xxlarge-v2_nlp_masked_lm_huggingface (tests/models/albert/test_albert_masked_lm.py)
+      Test: test_albert_masked_lm[single_device-full-albert-xxlarge-v2-eval]
+      Parallelism: single_device
+
+✓ MATCH FOUND: wide_resnet/base
+  New: pytorch_wide_resnet_base_cv_image_cls_torch_hub
+  Old matches:
+    - wide_resnet50_2 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-wide_resnet50_2]
+      Parallelism: data_parallel
+    - wide_resnet101_2 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-wide_resnet101_2]
+      Parallelism: data_parallel
+    - wide_resnet50_2 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-wide_resnet50_2]
+      Parallelism: single_device
+    - wide_resnet101_2 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-wide_resnet101_2]
+      Parallelism: single_device
+
+✓ MATCH FOUND: OpenPose V2/base
+  New: pytorch_OpenPose V2_base_cv_keypoint_det_custom
+  Old matches:
+    - pytorch_OpenPose V2_base_cv_keypoint_det_custom (tests/models/openpose/test_openpose_v2.py)
+      Test: test_openpose_v2[full-eval]
+      Parallelism: single_device
+
+✗ NO MATCH: bart/large
+  New: pytorch_bart_large_nlp_text_cls_huggingface
+
+✓ MATCH FOUND: mobilenetv2/base
+  New: pytorch_mobilenetv2_base_cv_image_cls_torch_hub
+  Old matches:
+    - MobileNetV2_onnx (tests/models/MobileNetV2/test_MobileNetV2_onnx.py)
+      Test: test_MobileNetV2_onnx[full-eval]
+      Parallelism: single_device
+    - mobilenet_v2 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-mobilenet_v2]
+      Parallelism: data_parallel
+    - mobilenet_v3_small (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-mobilenet_v3_small]
+      Parallelism: data_parallel
+    - mobilenet_v3_large (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-mobilenet_v3_large]
+      Parallelism: data_parallel
+    - MobileNetV2 (tests/models/MobileNetV2/test_MobileNetV2.py)
+      Test: test_MobileNetV2[full-eval]
+      Parallelism: single_device
+    - mobilenet_v2 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-mobilenet_v2]
+      Parallelism: single_device
+    - mobilenet_v3_small (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-mobilenet_v3_small]
+      Parallelism: single_device
+    - mobilenet_v3_large (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-mobilenet_v3_large]
+      Parallelism: single_device
+    - MobileNetV2 (tests/models/MobileNetV2/test_MobileNetV2_n300.py)
+      Test: test_MobileNetV2[full-eval]
+      Parallelism: data_parallel
+
+✗ NO MATCH: nanogpt/base
+  New: pytorch_nanogpt_base_nlp_causal_lm_custom
+
+✗ NO MATCH: xglm/xglm-564M
+  New: pytorch_xglm_xglm-564M_nlp_causal_lm_huggingface
+
+✗ NO MATCH: xglm/xglm-1.7B
+  New: pytorch_xglm_xglm-1.7B_nlp_causal_lm_huggingface
+
+✓ MATCH FOUND: xception/xception41
+  New: pytorch_xception_xception41_cv_image_cls_timm
+  Old matches:
+    - xception71.tf_in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-xception71.tf_in1k]
+      Parallelism: single_device
+
+✓ MATCH FOUND: xception/xception65
+  New: pytorch_xception_xception65_cv_image_cls_timm
+  Old matches:
+    - xception71.tf_in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-xception71.tf_in1k]
+      Parallelism: single_device
+
+✓ MATCH FOUND: xception/xception71
+  New: pytorch_xception_xception71_cv_image_cls_timm
+  Old matches:
+    - xception71.tf_in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-xception71.tf_in1k]
+      Parallelism: single_device
+
+✓ MATCH FOUND: xception/xception71.tf_in1k
+  New: pytorch_xception_xception71.tf_in1k_cv_image_cls_timm
+  Old matches:
+    - tf_efficientnet_lite0.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite0.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite1.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite1.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite2.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite2.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite3.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite3.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite0.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite0.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite1.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite1.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite2.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite2.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite3.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite3.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: runtime_data_parallel
+    - xception71.tf_in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-xception71.tf_in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification_n300.py)
+      Test: test_timm_image_classification[full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: resnext/resnext50_32x4d
+  New: pytorch_resnext_resnext50_32x4d_cv_image_cls_torch_hub
+  Old matches:
+    - resnext50_32x4d (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-resnext50_32x4d]
+      Parallelism: data_parallel
+    - resnext101_32x8d (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-resnext101_32x8d]
+      Parallelism: data_parallel
+    - resnext101_64x4d (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-resnext101_64x4d]
+      Parallelism: data_parallel
+    - resnext50_32x4d (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-resnext50_32x4d]
+      Parallelism: single_device
+    - resnext101_32x8d (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-resnext101_32x8d]
+      Parallelism: single_device
+    - resnext101_64x4d (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-resnext101_64x4d]
+      Parallelism: single_device
+
+✓ MATCH FOUND: resnext/resnext101_32x8d
+  New: pytorch_resnext_resnext101_32x8d_cv_image_cls_torch_hub
+  Old matches:
+    - resnext50_32x4d (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-resnext50_32x4d]
+      Parallelism: data_parallel
+    - resnext101_32x8d (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-resnext101_32x8d]
+      Parallelism: data_parallel
+    - resnext101_64x4d (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-resnext101_64x4d]
+      Parallelism: data_parallel
+    - resnext50_32x4d (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-resnext50_32x4d]
+      Parallelism: single_device
+    - resnext101_32x8d (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-resnext101_32x8d]
+      Parallelism: single_device
+    - resnext101_64x4d (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-resnext101_64x4d]
+      Parallelism: single_device
+
+✓ MATCH FOUND: resnext/resnext101_32x8d_wsl
+  New: pytorch_resnext_resnext101_32x8d_wsl_cv_image_cls_torch_hub
+  Old matches:
+    - resnext50_32x4d (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-resnext50_32x4d]
+      Parallelism: data_parallel
+    - resnext101_32x8d (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-resnext101_32x8d]
+      Parallelism: data_parallel
+    - resnext101_64x4d (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-resnext101_64x4d]
+      Parallelism: data_parallel
+    - resnext50_32x4d (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-resnext50_32x4d]
+      Parallelism: single_device
+    - resnext101_32x8d (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-resnext101_32x8d]
+      Parallelism: single_device
+    - resnext101_64x4d (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-resnext101_64x4d]
+      Parallelism: single_device
+
+✓ MATCH FOUND: vovnet/base
+  New: pytorch_vovnet_base_cv_image_cls_torch_hub
+  Old matches:
+    - ese_vovnet19b_dw.ra_in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-ese_vovnet19b_dw.ra_in1k]
+      Parallelism: single_device
+    - vovnet (tests/models/vovnet/test_vovnet_onnx.py)
+      Test: test_vovnet_onnx[full-eval]
+      Parallelism: single_device
+
+✓ MATCH FOUND: dla/dla34
+  New: pytorch_dla_dla34_cv_image_cls_torch_hub
+  Old matches:
+    - dla34.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-dla34.in1k]
+      Parallelism: single_device
+    - centernet-od-dla1x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-od-dla1x-eval]
+      Parallelism: single_device
+    - centernet-od-dla2x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-od-dla2x-eval]
+      Parallelism: single_device
+    - centernet-hpe-dla1x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-hpe-dla1x-eval]
+      Parallelism: single_device
+    - centernet-hpe-dla3x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-hpe-dla3x-eval]
+      Parallelism: single_device
+    - dla34.in1k (tests/models/timm/test_timm_image_classification_n300.py)
+      Test: test_timm_image_classification[full-eval-dla34.in1k]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: dla/dla46_c
+  New: pytorch_dla_dla46_c_cv_image_cls_torch_hub
+  Old matches:
+    - dla34.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-dla34.in1k]
+      Parallelism: single_device
+    - centernet-od-dla1x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-od-dla1x-eval]
+      Parallelism: single_device
+    - centernet-od-dla2x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-od-dla2x-eval]
+      Parallelism: single_device
+    - centernet-hpe-dla1x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-hpe-dla1x-eval]
+      Parallelism: single_device
+    - centernet-hpe-dla3x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-hpe-dla3x-eval]
+      Parallelism: single_device
+    - dla34.in1k (tests/models/timm/test_timm_image_classification_n300.py)
+      Test: test_timm_image_classification[full-eval-dla34.in1k]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: dla/dla46x_c
+  New: pytorch_dla_dla46x_c_cv_image_cls_torch_hub
+  Old matches:
+    - dla34.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-dla34.in1k]
+      Parallelism: single_device
+    - centernet-od-dla1x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-od-dla1x-eval]
+      Parallelism: single_device
+    - centernet-od-dla2x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-od-dla2x-eval]
+      Parallelism: single_device
+    - centernet-hpe-dla1x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-hpe-dla1x-eval]
+      Parallelism: single_device
+    - centernet-hpe-dla3x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-hpe-dla3x-eval]
+      Parallelism: single_device
+    - dla34.in1k (tests/models/timm/test_timm_image_classification_n300.py)
+      Test: test_timm_image_classification[full-eval-dla34.in1k]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: dla/dla60
+  New: pytorch_dla_dla60_cv_image_cls_torch_hub
+  Old matches:
+    - dla34.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-dla34.in1k]
+      Parallelism: single_device
+    - centernet-od-dla1x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-od-dla1x-eval]
+      Parallelism: single_device
+    - centernet-od-dla2x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-od-dla2x-eval]
+      Parallelism: single_device
+    - centernet-hpe-dla1x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-hpe-dla1x-eval]
+      Parallelism: single_device
+    - centernet-hpe-dla3x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-hpe-dla3x-eval]
+      Parallelism: single_device
+    - dla34.in1k (tests/models/timm/test_timm_image_classification_n300.py)
+      Test: test_timm_image_classification[full-eval-dla34.in1k]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: dla/dla60x
+  New: pytorch_dla_dla60x_cv_image_cls_torch_hub
+  Old matches:
+    - dla34.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-dla34.in1k]
+      Parallelism: single_device
+    - centernet-od-dla1x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-od-dla1x-eval]
+      Parallelism: single_device
+    - centernet-od-dla2x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-od-dla2x-eval]
+      Parallelism: single_device
+    - centernet-hpe-dla1x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-hpe-dla1x-eval]
+      Parallelism: single_device
+    - centernet-hpe-dla3x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-hpe-dla3x-eval]
+      Parallelism: single_device
+    - dla34.in1k (tests/models/timm/test_timm_image_classification_n300.py)
+      Test: test_timm_image_classification[full-eval-dla34.in1k]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: dla/dla60x_c
+  New: pytorch_dla_dla60x_c_cv_image_cls_torch_hub
+  Old matches:
+    - dla34.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-dla34.in1k]
+      Parallelism: single_device
+    - centernet-od-dla1x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-od-dla1x-eval]
+      Parallelism: single_device
+    - centernet-od-dla2x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-od-dla2x-eval]
+      Parallelism: single_device
+    - centernet-hpe-dla1x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-hpe-dla1x-eval]
+      Parallelism: single_device
+    - centernet-hpe-dla3x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-hpe-dla3x-eval]
+      Parallelism: single_device
+    - dla34.in1k (tests/models/timm/test_timm_image_classification_n300.py)
+      Test: test_timm_image_classification[full-eval-dla34.in1k]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: dla/dla102
+  New: pytorch_dla_dla102_cv_image_cls_torch_hub
+  Old matches:
+    - dla34.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-dla34.in1k]
+      Parallelism: single_device
+    - centernet-od-dla1x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-od-dla1x-eval]
+      Parallelism: single_device
+    - centernet-od-dla2x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-od-dla2x-eval]
+      Parallelism: single_device
+    - centernet-hpe-dla1x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-hpe-dla1x-eval]
+      Parallelism: single_device
+    - centernet-hpe-dla3x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-hpe-dla3x-eval]
+      Parallelism: single_device
+    - dla34.in1k (tests/models/timm/test_timm_image_classification_n300.py)
+      Test: test_timm_image_classification[full-eval-dla34.in1k]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: dla/dla102x
+  New: pytorch_dla_dla102x_cv_image_cls_torch_hub
+  Old matches:
+    - dla34.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-dla34.in1k]
+      Parallelism: single_device
+    - centernet-od-dla1x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-od-dla1x-eval]
+      Parallelism: single_device
+    - centernet-od-dla2x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-od-dla2x-eval]
+      Parallelism: single_device
+    - centernet-hpe-dla1x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-hpe-dla1x-eval]
+      Parallelism: single_device
+    - centernet-hpe-dla3x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-hpe-dla3x-eval]
+      Parallelism: single_device
+    - dla34.in1k (tests/models/timm/test_timm_image_classification_n300.py)
+      Test: test_timm_image_classification[full-eval-dla34.in1k]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: dla/dla102x2
+  New: pytorch_dla_dla102x2_cv_image_cls_torch_hub
+  Old matches:
+    - dla34.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-dla34.in1k]
+      Parallelism: single_device
+    - centernet-od-dla1x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-od-dla1x-eval]
+      Parallelism: single_device
+    - centernet-od-dla2x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-od-dla2x-eval]
+      Parallelism: single_device
+    - centernet-hpe-dla1x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-hpe-dla1x-eval]
+      Parallelism: single_device
+    - centernet-hpe-dla3x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-hpe-dla3x-eval]
+      Parallelism: single_device
+    - dla34.in1k (tests/models/timm/test_timm_image_classification_n300.py)
+      Test: test_timm_image_classification[full-eval-dla34.in1k]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: dla/dla169
+  New: pytorch_dla_dla169_cv_image_cls_torch_hub
+  Old matches:
+    - dla34.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-dla34.in1k]
+      Parallelism: single_device
+    - centernet-od-dla1x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-od-dla1x-eval]
+      Parallelism: single_device
+    - centernet-od-dla2x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-od-dla2x-eval]
+      Parallelism: single_device
+    - centernet-hpe-dla1x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-hpe-dla1x-eval]
+      Parallelism: single_device
+    - centernet-hpe-dla3x (tests/models/centernet/test_centernet_onnx.py)
+      Test: test_centernet_onnx[full-centernet-hpe-dla3x-eval]
+      Parallelism: single_device
+    - dla34.in1k (tests/models/timm/test_timm_image_classification_n300.py)
+      Test: test_timm_image_classification[full-eval-dla34.in1k]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: roberta/base
+  New: pytorch_roberta_base_nlp_text_cls_huggingface
+  Old matches:
+    - BERT_Turkish (tests/models/bert/test_bert_turkish.py)
+      Test: test_bert_turkish[single_device-full-eval]
+      Parallelism: single_device
+    - pytorch_roberta_masked_lm_xlm_base_nlp_masked_lm_huggingface (tests/models/roberta/test_roberta.py)
+      Test: test_roberta[single_device-full-eval]
+      Parallelism: single_device
+    - BERT_Turkish (tests/models/bert/test_bert_turkish.py)
+      Test: test_bert_turkish[data_parallel-full-eval]
+      Parallelism: runtime_data_parallel
+    - pytorch_roberta_masked_lm_xlm_base_nlp_masked_lm_huggingface (tests/models/roberta/test_roberta.py)
+      Test: test_roberta[data_parallel-full-eval]
+      Parallelism: runtime_data_parallel
+    - pytorch_bert_large_nlp_qa_huggingface (tests/models/bert/test_bert.py)
+      Test: test_bert[large-full-eval]
+      Parallelism: single_device
+
+✗ NO MATCH: ghostnet/ghostnet_100
+  New: pytorch_ghostnet_ghostnet_100_cv_image_cls_timm
+
+✗ NO MATCH: ghostnet/ghostnet_100.in1k
+  New: pytorch_ghostnet_ghostnet_100.in1k_cv_image_cls_timm
+
+✓ MATCH FOUND: yolov5/base
+  New: pytorch_yolov5_base_cv_object_det_custom
+  Old matches:
+    - YOLOv5 (tests/models/yolov5/test_yolov5.py)
+      Test: test_yolov5[full-eval]
+      Parallelism: single_device
+
+✓ MATCH FOUND: llama/base
+  New: pytorch_llama_base_nlp_causal_lm_huggingface
+  Old matches:
+    - pytorch_llama_causal_lm_3b_nlp_causal_lm_huggingface (tests/models/llama/test_llama_3b.py)
+      Test: test_llama_3b[full-eval]
+      Parallelism: single_device
+
+✓ MATCH FOUND: autoencoder_linear/base
+  New: pytorch_autoencoder_linear_base_cv_img_to_img_custom
+  Old matches:
+    - pytorch_autoencoder_linear_base_cv_img_to_img_custom (tests/models/autoencoder_linear/test_autoencoder_linear_n300.py)
+      Test: test_autoencoder_linear[full-eval]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: phi2/microsoft/phi-2
+  New: pytorch_phi2_microsoft/phi-2_nlp_text_cls_huggingface
+  Old matches:
+    - microsoft/phi-2 (tests/models/phi/test_phi_1_1p5_2.py)
+      Test: test_phi[full-microsoft/phi-2-eval]
+      Parallelism: single_device
+    - pytorch_oft_base_cv_object_det_custom (tests/models/oft/test_oft.py)
+      Test: test_oft[full-eval]
+      Parallelism: single_device
+
+✓ MATCH FOUND: phi2/microsoft/phi-2-pytdml
+  New: pytorch_phi2_microsoft/phi-2-pytdml_nlp_text_cls_huggingface
+  Old matches:
+    - microsoft/phi-2 (tests/models/phi/test_phi_1_1p5_2.py)
+      Test: test_phi[full-microsoft/phi-2-eval]
+      Parallelism: single_device
+    - pytorch_oft_base_cv_object_det_custom (tests/models/oft/test_oft.py)
+      Test: test_oft[full-eval]
+      Parallelism: single_device
+
+✓ MATCH FOUND: phi2/microsoft/phi-2
+  New: pytorch_phi2_microsoft/phi-2_nlp_causal_lm_huggingface
+  Old matches:
+    - microsoft/phi-2 (tests/models/phi/test_phi_1_1p5_2.py)
+      Test: test_phi[full-microsoft/phi-2-eval]
+      Parallelism: single_device
+    - pytorch_oft_base_cv_object_det_custom (tests/models/oft/test_oft.py)
+      Test: test_oft[full-eval]
+      Parallelism: single_device
+
+✓ MATCH FOUND: phi2/microsoft/phi-2-pytdml
+  New: pytorch_phi2_microsoft/phi-2-pytdml_nlp_causal_lm_huggingface
+  Old matches:
+    - microsoft/phi-2 (tests/models/phi/test_phi_1_1p5_2.py)
+      Test: test_phi[full-microsoft/phi-2-eval]
+      Parallelism: single_device
+    - pytorch_oft_base_cv_object_det_custom (tests/models/oft/test_oft.py)
+      Test: test_oft[full-eval]
+      Parallelism: single_device
+
+✓ MATCH FOUND: phi2/microsoft/phi-2
+  New: pytorch_phi2_microsoft/phi-2_nlp_token_cls_huggingface
+  Old matches:
+    - microsoft/phi-2 (tests/models/phi/test_phi_1_1p5_2.py)
+      Test: test_phi[full-microsoft/phi-2-eval]
+      Parallelism: single_device
+    - pytorch_oft_base_cv_object_det_custom (tests/models/oft/test_oft.py)
+      Test: test_oft[full-eval]
+      Parallelism: single_device
+
+✓ MATCH FOUND: phi2/microsoft/phi-2-pytdml
+  New: pytorch_phi2_microsoft/phi-2-pytdml_nlp_token_cls_huggingface
+  Old matches:
+    - microsoft/phi-2 (tests/models/phi/test_phi_1_1p5_2.py)
+      Test: test_phi[full-microsoft/phi-2-eval]
+      Parallelism: single_device
+    - pytorch_oft_base_cv_object_det_custom (tests/models/oft/test_oft.py)
+      Test: test_oft[full-eval]
+      Parallelism: single_device
+
+✓ MATCH FOUND: dpr/base
+  New: pytorch_dpr_base_nlp_qa_huggingface
+  Old matches:
+    - pytorch_DPR-Reader_base_nlp_qa_huggingface (tests/models/dpr/test_dpr.py)
+      Test: test_dpr[single_device-full-eval]
+      Parallelism: single_device
+    - pytorch_DPR-Reader_base_nlp_qa_huggingface (tests/models/dpr/test_dpr.py)
+      Test: test_dpr[data_parallel-full-eval]
+      Parallelism: runtime_data_parallel
+
+✓ MATCH FOUND: mlp_mixer/mixer_b16_224
+  New: pytorch_mlp_mixer_mixer_b16_224_cv_image_cls_timm
+  Old matches:
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: single_device
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: runtime_data_parallel
+
+✓ MATCH FOUND: mlp_mixer/mixer_b16_224_in21k
+  New: pytorch_mlp_mixer_mixer_b16_224_in21k_cv_image_cls_timm
+  Old matches:
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: single_device
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: runtime_data_parallel
+
+✓ MATCH FOUND: mlp_mixer/mixer_b16_224_miil
+  New: pytorch_mlp_mixer_mixer_b16_224_miil_cv_image_cls_timm
+  Old matches:
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: single_device
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: runtime_data_parallel
+
+✓ MATCH FOUND: mlp_mixer/mixer_b16_224_miil_in21k
+  New: pytorch_mlp_mixer_mixer_b16_224_miil_in21k_cv_image_cls_timm
+  Old matches:
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: single_device
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: runtime_data_parallel
+
+✓ MATCH FOUND: mlp_mixer/mixer_b32_224
+  New: pytorch_mlp_mixer_mixer_b32_224_cv_image_cls_timm
+  Old matches:
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: single_device
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: runtime_data_parallel
+
+✓ MATCH FOUND: mlp_mixer/mixer_l16_224
+  New: pytorch_mlp_mixer_mixer_l16_224_cv_image_cls_timm
+  Old matches:
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: single_device
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: runtime_data_parallel
+
+✓ MATCH FOUND: mlp_mixer/mixer_l16_224_in21k
+  New: pytorch_mlp_mixer_mixer_l16_224_in21k_cv_image_cls_timm
+  Old matches:
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: single_device
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: runtime_data_parallel
+
+✓ MATCH FOUND: mlp_mixer/mixer_l32_224
+  New: pytorch_mlp_mixer_mixer_l32_224_cv_image_cls_timm
+  Old matches:
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: single_device
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: runtime_data_parallel
+
+✓ MATCH FOUND: mlp_mixer/mixer_s16_224
+  New: pytorch_mlp_mixer_mixer_s16_224_cv_image_cls_timm
+  Old matches:
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: single_device
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: runtime_data_parallel
+
+✓ MATCH FOUND: mlp_mixer/mixer_s32_224
+  New: pytorch_mlp_mixer_mixer_s32_224_cv_image_cls_timm
+  Old matches:
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: single_device
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: runtime_data_parallel
+
+✓ MATCH FOUND: mlp_mixer/mixer_b16_224.goog_in21k
+  New: pytorch_mlp_mixer_mixer_b16_224.goog_in21k_cv_image_cls_timm
+  Old matches:
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: single_device
+    - mixer_b16_224.goog_in21k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-mixer_b16_224.goog_in21k]
+      Parallelism: runtime_data_parallel
+
+✗ NO MATCH: deit/base_distilled
+  New: pytorch_deit_base_distilled_cv_image_cls_huggingface
+
+✗ NO MATCH: deit/small
+  New: pytorch_deit_small_cv_image_cls_huggingface
+
+✗ NO MATCH: deit/tiny
+  New: pytorch_deit_tiny_cv_image_cls_huggingface
+
+✓ MATCH FOUND: distilbert/base
+  New: pytorch_distilbert_base_nlp_text_cls_huggingface
+  Old matches:
+    - BERT_Turkish (tests/models/bert/test_bert_turkish.py)
+      Test: test_bert_turkish[single_device-full-eval]
+      Parallelism: single_device
+    - BERT_Turkish (tests/models/bert/test_bert_turkish.py)
+      Test: test_bert_turkish[data_parallel-full-eval]
+      Parallelism: runtime_data_parallel
+    - pytorch_bert_large_nlp_qa_huggingface (tests/models/bert/test_bert.py)
+      Test: test_bert[large-full-eval]
+      Parallelism: single_device
+    - distilbert-base-uncased (tests/models/distilbert/test_distilbert.py)
+      Test: test_distilbert[full-distilbert-base-uncased-eval]
+      Parallelism: single_device
+    - distilbert-base-uncased-multiloop (tests/models/distilbert/test_distilbert.py)
+      Test: test_distilbert_multiloop[full-distilbert-base-uncased-eval-64]
+      Parallelism: single_device
+
+✓ MATCH FOUND: densenet/densenet121
+  New: pytorch_densenet_densenet121_cv_image_cls_torch_hub
+  Old matches:
+    - densenet201 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-densenet201]
+      Parallelism: single_device
+    - densenet161 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-densenet161]
+      Parallelism: single_device
+    - densenet121 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-densenet121]
+      Parallelism: single_device
+    - densenet169 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-densenet169]
+      Parallelism: single_device
+    - densenet121 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-densenet121]
+      Parallelism: data_parallel
+    - densenet161 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-densenet161]
+      Parallelism: data_parallel
+    - densenet169 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-densenet169]
+      Parallelism: data_parallel
+    - densenet201 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-densenet201]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: densenet/densenet161
+  New: pytorch_densenet_densenet161_cv_image_cls_torch_hub
+  Old matches:
+    - densenet201 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-densenet201]
+      Parallelism: single_device
+    - densenet161 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-densenet161]
+      Parallelism: single_device
+    - densenet121 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-densenet121]
+      Parallelism: single_device
+    - densenet169 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-densenet169]
+      Parallelism: single_device
+    - densenet121 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-densenet121]
+      Parallelism: data_parallel
+    - densenet161 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-densenet161]
+      Parallelism: data_parallel
+    - densenet169 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-densenet169]
+      Parallelism: data_parallel
+    - densenet201 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-densenet201]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: densenet/densenet169
+  New: pytorch_densenet_densenet169_cv_image_cls_torch_hub
+  Old matches:
+    - densenet201 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-densenet201]
+      Parallelism: single_device
+    - densenet161 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-densenet161]
+      Parallelism: single_device
+    - densenet121 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-densenet121]
+      Parallelism: single_device
+    - densenet169 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-densenet169]
+      Parallelism: single_device
+    - densenet121 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-densenet121]
+      Parallelism: data_parallel
+    - densenet161 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-densenet161]
+      Parallelism: data_parallel
+    - densenet169 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-densenet169]
+      Parallelism: data_parallel
+    - densenet201 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-densenet201]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: densenet/densenet201
+  New: pytorch_densenet_densenet201_cv_image_cls_torch_hub
+  Old matches:
+    - densenet201 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-densenet201]
+      Parallelism: single_device
+    - densenet161 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-densenet161]
+      Parallelism: single_device
+    - densenet121 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-densenet121]
+      Parallelism: single_device
+    - densenet169 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-densenet169]
+      Parallelism: single_device
+    - densenet121 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-densenet121]
+      Parallelism: data_parallel
+    - densenet161 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-densenet161]
+      Parallelism: data_parallel
+    - densenet169 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-densenet169]
+      Parallelism: data_parallel
+    - densenet201 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-densenet201]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: resnet/base
+  New: pytorch_resnet_base_cv_image_cls_torch_hub
+  Old matches:
+    - resnet18 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-resnet18]
+      Parallelism: data_parallel
+    - resnet34 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-resnet34]
+      Parallelism: data_parallel
+    - resnet50 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-resnet50]
+      Parallelism: data_parallel
+    - resnet101 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-resnet101]
+      Parallelism: data_parallel
+    - resnet152 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-resnet152]
+      Parallelism: data_parallel
+    - wide_resnet50_2 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-wide_resnet50_2]
+      Parallelism: data_parallel
+    - wide_resnet101_2 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-wide_resnet101_2]
+      Parallelism: data_parallel
+    - ResNet18 (tests/models/resnet/test_resnet.py)
+      Test: test_resnet[single_device-full-eval]
+      Parallelism: single_device
+    - ResNet50 (tests/models/resnet50/test_resnet50.py)
+      Test: test_resnet[single_device-full-eval]
+      Parallelism: single_device
+    - resnet18 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-resnet18]
+      Parallelism: single_device
+    - resnet34 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-resnet34]
+      Parallelism: single_device
+    - resnet50 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-resnet50]
+      Parallelism: single_device
+    - resnet101 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-resnet101]
+      Parallelism: single_device
+    - resnet152 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-resnet152]
+      Parallelism: single_device
+    - wide_resnet50_2 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-wide_resnet50_2]
+      Parallelism: single_device
+    - wide_resnet101_2 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-wide_resnet101_2]
+      Parallelism: single_device
+    - ResNet50 (tests/models/resnet50/test_resnet50.py)
+      Test: test_resnet[data_parallel-full-eval]
+      Parallelism: runtime_data_parallel
+    - ResNet18 (tests/models/resnet/test_resnet.py)
+      Test: test_resnet[data_parallel-full-eval]
+      Parallelism: runtime_data_parallel
+
+✓ MATCH FOUND: efficientnet/efficientnet_b0
+  New: pytorch_efficientnet_efficientnet_b0_cv_image_cls_torchvision
+  Old matches:
+    - tf_efficientnet_lite0.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite0.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite1.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite1.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite2.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite2.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite3.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite3.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite0.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite0.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite1.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite1.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite2.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite2.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite3.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite3.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: runtime_data_parallel
+    - efficientnet-b0 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b0-eval]
+      Parallelism: single_device
+    - efficientnet-b1 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b1-eval]
+      Parallelism: single_device
+    - efficientnet-b2 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b2-eval]
+      Parallelism: single_device
+    - efficientnet-b3 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b3-eval]
+      Parallelism: single_device
+    - efficientnet-b4 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b4-eval]
+      Parallelism: single_device
+    - efficientnet-b5 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b5-eval]
+      Parallelism: single_device
+    - efficientnet-b6 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b6-eval]
+      Parallelism: single_device
+    - efficientnet-b7 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b7-eval]
+      Parallelism: single_device
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification_n300.py)
+      Test: test_timm_image_classification[full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: data_parallel
+    - efficientnet-b1 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b1-eval]
+      Parallelism: data_parallel
+    - efficientnet-b2 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b2-eval]
+      Parallelism: data_parallel
+    - efficientnet-b3 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b3-eval]
+      Parallelism: data_parallel
+    - efficientnet-b4 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b4-eval]
+      Parallelism: data_parallel
+    - efficientnet-b5 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b5-eval]
+      Parallelism: data_parallel
+    - efficientnet-b6 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b6-eval]
+      Parallelism: data_parallel
+    - efficientnet-b7 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b7-eval]
+      Parallelism: data_parallel
+    - efficientnet-b0 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b0-eval]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: efficientnet/efficientnet_b1
+  New: pytorch_efficientnet_efficientnet_b1_cv_image_cls_torchvision
+  Old matches:
+    - tf_efficientnet_lite0.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite0.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite1.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite1.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite2.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite2.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite3.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite3.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite0.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite0.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite1.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite1.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite2.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite2.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite3.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite3.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: runtime_data_parallel
+    - efficientnet-b0 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b0-eval]
+      Parallelism: single_device
+    - efficientnet-b1 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b1-eval]
+      Parallelism: single_device
+    - efficientnet-b2 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b2-eval]
+      Parallelism: single_device
+    - efficientnet-b3 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b3-eval]
+      Parallelism: single_device
+    - efficientnet-b4 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b4-eval]
+      Parallelism: single_device
+    - efficientnet-b5 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b5-eval]
+      Parallelism: single_device
+    - efficientnet-b6 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b6-eval]
+      Parallelism: single_device
+    - efficientnet-b7 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b7-eval]
+      Parallelism: single_device
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification_n300.py)
+      Test: test_timm_image_classification[full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: data_parallel
+    - efficientnet-b1 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b1-eval]
+      Parallelism: data_parallel
+    - efficientnet-b2 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b2-eval]
+      Parallelism: data_parallel
+    - efficientnet-b3 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b3-eval]
+      Parallelism: data_parallel
+    - efficientnet-b4 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b4-eval]
+      Parallelism: data_parallel
+    - efficientnet-b5 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b5-eval]
+      Parallelism: data_parallel
+    - efficientnet-b6 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b6-eval]
+      Parallelism: data_parallel
+    - efficientnet-b7 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b7-eval]
+      Parallelism: data_parallel
+    - efficientnet-b0 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b0-eval]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: efficientnet/efficientnet_b2
+  New: pytorch_efficientnet_efficientnet_b2_cv_image_cls_torchvision
+  Old matches:
+    - tf_efficientnet_lite0.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite0.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite1.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite1.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite2.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite2.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite3.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite3.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite0.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite0.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite1.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite1.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite2.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite2.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite3.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite3.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: runtime_data_parallel
+    - efficientnet-b0 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b0-eval]
+      Parallelism: single_device
+    - efficientnet-b1 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b1-eval]
+      Parallelism: single_device
+    - efficientnet-b2 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b2-eval]
+      Parallelism: single_device
+    - efficientnet-b3 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b3-eval]
+      Parallelism: single_device
+    - efficientnet-b4 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b4-eval]
+      Parallelism: single_device
+    - efficientnet-b5 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b5-eval]
+      Parallelism: single_device
+    - efficientnet-b6 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b6-eval]
+      Parallelism: single_device
+    - efficientnet-b7 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b7-eval]
+      Parallelism: single_device
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification_n300.py)
+      Test: test_timm_image_classification[full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: data_parallel
+    - efficientnet-b1 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b1-eval]
+      Parallelism: data_parallel
+    - efficientnet-b2 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b2-eval]
+      Parallelism: data_parallel
+    - efficientnet-b3 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b3-eval]
+      Parallelism: data_parallel
+    - efficientnet-b4 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b4-eval]
+      Parallelism: data_parallel
+    - efficientnet-b5 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b5-eval]
+      Parallelism: data_parallel
+    - efficientnet-b6 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b6-eval]
+      Parallelism: data_parallel
+    - efficientnet-b7 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b7-eval]
+      Parallelism: data_parallel
+    - efficientnet-b0 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b0-eval]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: efficientnet/efficientnet_b3
+  New: pytorch_efficientnet_efficientnet_b3_cv_image_cls_torchvision
+  Old matches:
+    - tf_efficientnet_lite0.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite0.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite1.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite1.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite2.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite2.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite3.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite3.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite0.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite0.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite1.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite1.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite2.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite2.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite3.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite3.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: runtime_data_parallel
+    - efficientnet-b0 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b0-eval]
+      Parallelism: single_device
+    - efficientnet-b1 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b1-eval]
+      Parallelism: single_device
+    - efficientnet-b2 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b2-eval]
+      Parallelism: single_device
+    - efficientnet-b3 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b3-eval]
+      Parallelism: single_device
+    - efficientnet-b4 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b4-eval]
+      Parallelism: single_device
+    - efficientnet-b5 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b5-eval]
+      Parallelism: single_device
+    - efficientnet-b6 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b6-eval]
+      Parallelism: single_device
+    - efficientnet-b7 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b7-eval]
+      Parallelism: single_device
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification_n300.py)
+      Test: test_timm_image_classification[full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: data_parallel
+    - efficientnet-b1 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b1-eval]
+      Parallelism: data_parallel
+    - efficientnet-b2 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b2-eval]
+      Parallelism: data_parallel
+    - efficientnet-b3 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b3-eval]
+      Parallelism: data_parallel
+    - efficientnet-b4 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b4-eval]
+      Parallelism: data_parallel
+    - efficientnet-b5 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b5-eval]
+      Parallelism: data_parallel
+    - efficientnet-b6 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b6-eval]
+      Parallelism: data_parallel
+    - efficientnet-b7 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b7-eval]
+      Parallelism: data_parallel
+    - efficientnet-b0 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b0-eval]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: efficientnet/efficientnet_b4
+  New: pytorch_efficientnet_efficientnet_b4_cv_image_cls_torchvision
+  Old matches:
+    - tf_efficientnet_lite0.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite0.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite1.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite1.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite2.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite2.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite3.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite3.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite0.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite0.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite1.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite1.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite2.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite2.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite3.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite3.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: runtime_data_parallel
+    - efficientnet-b0 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b0-eval]
+      Parallelism: single_device
+    - efficientnet-b1 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b1-eval]
+      Parallelism: single_device
+    - efficientnet-b2 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b2-eval]
+      Parallelism: single_device
+    - efficientnet-b3 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b3-eval]
+      Parallelism: single_device
+    - efficientnet-b4 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b4-eval]
+      Parallelism: single_device
+    - efficientnet-b5 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b5-eval]
+      Parallelism: single_device
+    - efficientnet-b6 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b6-eval]
+      Parallelism: single_device
+    - efficientnet-b7 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b7-eval]
+      Parallelism: single_device
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification_n300.py)
+      Test: test_timm_image_classification[full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: data_parallel
+    - efficientnet-b1 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b1-eval]
+      Parallelism: data_parallel
+    - efficientnet-b2 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b2-eval]
+      Parallelism: data_parallel
+    - efficientnet-b3 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b3-eval]
+      Parallelism: data_parallel
+    - efficientnet-b4 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b4-eval]
+      Parallelism: data_parallel
+    - efficientnet-b5 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b5-eval]
+      Parallelism: data_parallel
+    - efficientnet-b6 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b6-eval]
+      Parallelism: data_parallel
+    - efficientnet-b7 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b7-eval]
+      Parallelism: data_parallel
+    - efficientnet-b0 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b0-eval]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: efficientnet/efficientnet_b5
+  New: pytorch_efficientnet_efficientnet_b5_cv_image_cls_torchvision
+  Old matches:
+    - tf_efficientnet_lite0.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite0.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite1.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite1.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite2.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite2.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite3.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite3.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite0.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite0.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite1.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite1.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite2.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite2.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite3.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite3.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: runtime_data_parallel
+    - efficientnet-b0 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b0-eval]
+      Parallelism: single_device
+    - efficientnet-b1 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b1-eval]
+      Parallelism: single_device
+    - efficientnet-b2 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b2-eval]
+      Parallelism: single_device
+    - efficientnet-b3 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b3-eval]
+      Parallelism: single_device
+    - efficientnet-b4 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b4-eval]
+      Parallelism: single_device
+    - efficientnet-b5 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b5-eval]
+      Parallelism: single_device
+    - efficientnet-b6 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b6-eval]
+      Parallelism: single_device
+    - efficientnet-b7 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b7-eval]
+      Parallelism: single_device
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification_n300.py)
+      Test: test_timm_image_classification[full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: data_parallel
+    - efficientnet-b1 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b1-eval]
+      Parallelism: data_parallel
+    - efficientnet-b2 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b2-eval]
+      Parallelism: data_parallel
+    - efficientnet-b3 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b3-eval]
+      Parallelism: data_parallel
+    - efficientnet-b4 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b4-eval]
+      Parallelism: data_parallel
+    - efficientnet-b5 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b5-eval]
+      Parallelism: data_parallel
+    - efficientnet-b6 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b6-eval]
+      Parallelism: data_parallel
+    - efficientnet-b7 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b7-eval]
+      Parallelism: data_parallel
+    - efficientnet-b0 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b0-eval]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: efficientnet/efficientnet_b6
+  New: pytorch_efficientnet_efficientnet_b6_cv_image_cls_torchvision
+  Old matches:
+    - tf_efficientnet_lite0.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite0.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite1.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite1.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite2.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite2.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite3.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite3.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite0.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite0.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite1.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite1.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite2.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite2.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite3.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite3.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: runtime_data_parallel
+    - efficientnet-b0 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b0-eval]
+      Parallelism: single_device
+    - efficientnet-b1 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b1-eval]
+      Parallelism: single_device
+    - efficientnet-b2 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b2-eval]
+      Parallelism: single_device
+    - efficientnet-b3 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b3-eval]
+      Parallelism: single_device
+    - efficientnet-b4 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b4-eval]
+      Parallelism: single_device
+    - efficientnet-b5 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b5-eval]
+      Parallelism: single_device
+    - efficientnet-b6 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b6-eval]
+      Parallelism: single_device
+    - efficientnet-b7 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b7-eval]
+      Parallelism: single_device
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification_n300.py)
+      Test: test_timm_image_classification[full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: data_parallel
+    - efficientnet-b1 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b1-eval]
+      Parallelism: data_parallel
+    - efficientnet-b2 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b2-eval]
+      Parallelism: data_parallel
+    - efficientnet-b3 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b3-eval]
+      Parallelism: data_parallel
+    - efficientnet-b4 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b4-eval]
+      Parallelism: data_parallel
+    - efficientnet-b5 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b5-eval]
+      Parallelism: data_parallel
+    - efficientnet-b6 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b6-eval]
+      Parallelism: data_parallel
+    - efficientnet-b7 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b7-eval]
+      Parallelism: data_parallel
+    - efficientnet-b0 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b0-eval]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: efficientnet/efficientnet_b7
+  New: pytorch_efficientnet_efficientnet_b7_cv_image_cls_torchvision
+  Old matches:
+    - tf_efficientnet_lite0.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite0.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite1.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite1.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite2.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite2.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite3.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite3.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: single_device
+    - tf_efficientnet_lite0.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite0.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite1.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite1.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite2.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite2.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite3.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite3.in1k]
+      Parallelism: runtime_data_parallel
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[data_parallel-full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: runtime_data_parallel
+    - efficientnet-b0 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b0-eval]
+      Parallelism: single_device
+    - efficientnet-b1 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b1-eval]
+      Parallelism: single_device
+    - efficientnet-b2 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b2-eval]
+      Parallelism: single_device
+    - efficientnet-b3 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b3-eval]
+      Parallelism: single_device
+    - efficientnet-b4 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b4-eval]
+      Parallelism: single_device
+    - efficientnet-b5 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b5-eval]
+      Parallelism: single_device
+    - efficientnet-b6 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b6-eval]
+      Parallelism: single_device
+    - efficientnet-b7 (tests/models/EfficientNet/test_EfficientNet.py)
+      Test: test_EfficientNet[full-efficientnet-b7-eval]
+      Parallelism: single_device
+    - tf_efficientnet_lite4.in1k (tests/models/timm/test_timm_image_classification_n300.py)
+      Test: test_timm_image_classification[full-eval-tf_efficientnet_lite4.in1k]
+      Parallelism: data_parallel
+    - efficientnet-b1 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b1-eval]
+      Parallelism: data_parallel
+    - efficientnet-b2 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b2-eval]
+      Parallelism: data_parallel
+    - efficientnet-b3 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b3-eval]
+      Parallelism: data_parallel
+    - efficientnet-b4 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b4-eval]
+      Parallelism: data_parallel
+    - efficientnet-b5 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b5-eval]
+      Parallelism: data_parallel
+    - efficientnet-b6 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b6-eval]
+      Parallelism: data_parallel
+    - efficientnet-b7 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b7-eval]
+      Parallelism: data_parallel
+    - efficientnet-b0 (tests/models/EfficientNet/test_EfficientNet_n300.py)
+      Test: test_EfficientNet[full-efficientnet-b0-eval]
+      Parallelism: data_parallel
+
+✗ NO MATCH: segformer/mit_b0
+  New: pytorch_segformer_mit_b0_cv_image_cls_huggingface
+
+✗ NO MATCH: segformer/mit_b1
+  New: pytorch_segformer_mit_b1_cv_image_cls_huggingface
+
+✗ NO MATCH: segformer/mit_b2
+  New: pytorch_segformer_mit_b2_cv_image_cls_huggingface
+
+✗ NO MATCH: segformer/mit_b3
+  New: pytorch_segformer_mit_b3_cv_image_cls_huggingface
+
+✗ NO MATCH: segformer/mit_b4
+  New: pytorch_segformer_mit_b4_cv_image_cls_huggingface
+
+✗ NO MATCH: segformer/mit_b5
+  New: pytorch_segformer_mit_b5_cv_image_cls_huggingface
+
+✓ MATCH FOUND: vgg/vgg19_bn
+  New: pytorch_vgg_vgg19_bn_cv_image_cls_torch_hub
+  Old matches:
+    - vgg19 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-vgg19]
+      Parallelism: single_device
+    - vgg19_bn (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-vgg19_bn]
+      Parallelism: single_device
+    - vgg16 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-vgg16]
+      Parallelism: single_device
+    - vgg16_bn (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-vgg16_bn]
+      Parallelism: single_device
+    - vgg13_bn (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-vgg13_bn]
+      Parallelism: single_device
+    - vgg11_bn (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-vgg11_bn]
+      Parallelism: single_device
+    - vgg11 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-vgg11]
+      Parallelism: single_device
+    - vgg13 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-vgg13]
+      Parallelism: single_device
+    - vgg19 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[data_parallel-full-eval-vgg19]
+      Parallelism: runtime_data_parallel
+    - vgg19_bn (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[data_parallel-full-eval-vgg19_bn]
+      Parallelism: runtime_data_parallel
+    - vgg16 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[data_parallel-full-eval-vgg16]
+      Parallelism: runtime_data_parallel
+    - vgg16_bn (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[data_parallel-full-eval-vgg16_bn]
+      Parallelism: runtime_data_parallel
+    - vgg13_bn (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[data_parallel-full-eval-vgg13_bn]
+      Parallelism: runtime_data_parallel
+    - vgg11_bn (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[data_parallel-full-eval-vgg11_bn]
+      Parallelism: runtime_data_parallel
+    - vgg11 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[data_parallel-full-eval-vgg11]
+      Parallelism: runtime_data_parallel
+    - vgg13 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[data_parallel-full-eval-vgg13]
+      Parallelism: runtime_data_parallel
+    - ssd300_vgg16 (tests/models/torchvision/test_torchvision_object_detection.py)
+      Test: test_torchvision_object_detection[single_device-full-ssd300_vgg16-eval]
+      Parallelism: single_device
+    - pytorch_vgg19_unet_base_cv_image_seg_custom (tests/models/vgg19_unet/test_vgg19_unet.py)
+      Test: test_vgg19_unet[full-eval]
+      Parallelism: single_device
+    - vgg11 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-vgg11]
+      Parallelism: data_parallel
+    - vgg11_bn (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-vgg11_bn]
+      Parallelism: data_parallel
+    - vgg13 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-vgg13]
+      Parallelism: data_parallel
+    - vgg13_bn (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-vgg13_bn]
+      Parallelism: data_parallel
+    - vgg16 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-vgg16]
+      Parallelism: data_parallel
+    - vgg16_bn (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-vgg16_bn]
+      Parallelism: data_parallel
+    - vgg19 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-vgg19]
+      Parallelism: data_parallel
+    - vgg19_bn (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-vgg19_bn]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: unet/base
+  New: pytorch_unet_base_cv_image_seg_custom
+  Old matches:
+    - Stable Diffusion UNET (tests/models/stable_diffusion/test_stable_diffusion_unet.py)
+      Test: test_stable_diffusion_unet[full-eval]
+      Parallelism: single_device
+    - pytorch_unet_brain_segmentation_cv_image_seg_torch_hub (tests/models/unet/test_unet.py)
+      Test: test_unet[full-eval]
+      Parallelism: single_device
+    - Unet-brain (tests/models/unet_brain/test_unet_brain.py)
+      Test: test_unet_brain[full-eval]
+      Parallelism: single_device
+    - Unet-carvana (tests/models/unet_carvana/test_unet_carvana.py)
+      Test: test_unet_carvana[full-eval]
+      Parallelism: single_device
+    - pytorch_vgg19_unet_base_cv_image_seg_custom (tests/models/vgg19_unet/test_vgg19_unet.py)
+      Test: test_vgg19_unet[full-eval]
+      Parallelism: single_device
+    - Stable Diffusion UNET (tests/models/stable_diffusion/test_stable_diffusion_unet_n300.py)
+      Test: test_stable_diffusion_unet[full-eval]
+      Parallelism: data_parallel
+    - pytorch_unet_brain_segmentation_cv_image_seg_torch_hub (tests/models/unet/test_unet_n300.py)
+      Test: test_unet[full-eval]
+      Parallelism: data_parallel
+    - Unet-brain (tests/models/unet_brain/test_unet_brain_n300.py)
+      Test: test_unet_brain[full-eval]
+      Parallelism: data_parallel
+    - Unet-carvana (tests/models/unet_carvana/test_unet_carvana_n300.py)
+      Test: test_unet_carvana[full-eval]
+      Parallelism: data_parallel
+
+✓ MATCH FOUND: swin/base
+  New: pytorch_swin_base_cv_image_cls_torch_hub
+  Old matches:
+    - swin_b (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-swin_b]
+      Parallelism: single_device
+    - swin_s (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-swin_s]
+      Parallelism: single_device
+    - swin_v2_t (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-swin_v2_t]
+      Parallelism: single_device
+    - swin_v2_b (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-swin_v2_b]
+      Parallelism: single_device
+    - swin_v2_s (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-swin_v2_s]
+      Parallelism: single_device
+    - swin_t (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-swin_t]
+      Parallelism: single_device
+
+✓ MATCH FOUND: mobilenetv1/base
+  New: pytorch_mobilenetv1_base_cv_image_cls_torch_hub
+  Old matches:
+    - mobilenetv1_100.ra4_e3600_r224_in1k (tests/models/timm/test_timm_image_classification.py)
+      Test: test_timm_image_classification[single_device-full-eval-mobilenetv1_100.ra4_e3600_r224_in1k]
+      Parallelism: single_device
+    - mobilenet_v2 (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-mobilenet_v2]
+      Parallelism: data_parallel
+    - mobilenet_v3_small (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-mobilenet_v3_small]
+      Parallelism: data_parallel
+    - mobilenet_v3_large (tests/models/torchvision/test_torchvision_image_classification_n300.py)
+      Test: test_torchvision_image_classification[full-eval-mobilenet_v3_large]
+      Parallelism: data_parallel
+    - mobilenet_v2 (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-mobilenet_v2]
+      Parallelism: single_device
+    - mobilenet_v3_small (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-mobilenet_v3_small]
+      Parallelism: single_device
+    - mobilenet_v3_large (tests/models/torchvision/test_torchvision_image_classification.py)
+      Test: test_torchvision_image_classification[single_device-full-eval-mobilenet_v3_large]
+      Parallelism: single_device
+
+✗ NO MATCH: hrnet/hrnet_w18_small
+  New: pytorch_hrnet_hrnet_w18_small_cv_keypoint_det_timm
+
+✗ NO MATCH: hrnet/hrnet_w18_small_v2
+  New: pytorch_hrnet_hrnet_w18_small_v2_cv_keypoint_det_timm
+
+✗ NO MATCH: hrnet/hrnet_w18
+  New: pytorch_hrnet_hrnet_w18_cv_keypoint_det_timm
+
+✗ NO MATCH: hrnet/hrnet_w30
+  New: pytorch_hrnet_hrnet_w30_cv_keypoint_det_timm
+
+✗ NO MATCH: hrnet/hrnet_w32
+  New: pytorch_hrnet_hrnet_w32_cv_keypoint_det_timm
+
+✗ NO MATCH: hrnet/hrnet_w40
+  New: pytorch_hrnet_hrnet_w40_cv_keypoint_det_timm
+
+✗ NO MATCH: hrnet/hrnet_w44
+  New: pytorch_hrnet_hrnet_w44_cv_keypoint_det_timm
+
+✗ NO MATCH: hrnet/hrnet_w48
+  New: pytorch_hrnet_hrnet_w48_cv_keypoint_det_timm
+
+✗ NO MATCH: hrnet/hrnet_w64
+  New: pytorch_hrnet_hrnet_w64_cv_keypoint_det_timm
+
+✗ NO MATCH: hrnet/hrnet_w18.ms_aug_in1k
+  New: pytorch_hrnet_hrnet_w18.ms_aug_in1k_cv_keypoint_det_timm
+
+SUMMARY OF MATCHES:
+- Models with old test matches: 68
+- Models without old test matches: 32
+- Coverage percentage: 68.0%
