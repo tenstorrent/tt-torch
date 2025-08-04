@@ -325,9 +325,9 @@ class CompilerConfig:
         self.record_property = lambda *args, **kwargs: None  # Default to no-op
         self.runtime_intermediate_cache = None  # Do not serialize.
         self.save_mlir_override = None
-        self.dump_binary_json = False
+        self.dump_binary = False
         self.output_mlir_dir = "model_mlir"
-        self.output_json_dir = "model_json"
+        self.output_binary_dir = "model_flatbuffer"
         self.valid_dialects = ["STABLEHLO", "TTIR", "TTNN"]
         self.device_map = {}
         self.apply_environment_overrides()
@@ -344,7 +344,7 @@ class CompilerConfig:
     @model_name.setter
     def model_name(self, value):
         self._model_name = value
-        if value and (self.save_mlir_override or self.dump_binary_json):
+        if value and (self.save_mlir_override or self.dump_binary):
             self.cleanup_old_files()
 
     def cleanup_old_files(self):
@@ -361,16 +361,16 @@ class CompilerConfig:
                     )
                     if os.path.exists(filepath_to_remove):
                         os.remove(filepath_to_remove)
-            if self.dump_binary_json:
-                output_dir = self.output_json_dir
+            if self.dump_binary:
+                output_dir = self.output_binary_dir
                 os.makedirs(output_dir, exist_ok=True)
                 filepath_to_remove = os.path.join(
-                    output_dir, f"{sanitized_model_name}.json"
+                    output_dir, f"{sanitized_model_name}.ttnn"
                 )
                 if os.path.exists(filepath_to_remove):
                     os.remove(filepath_to_remove)
         except Exception as e:
-            print(f"Error while cleaning up old MLIR/ json files: {e}.")
+            print(f"Error while cleaning up old MLIR/flatbuffer files: {e}.")
 
     @property
     def verify_op_by_op(self):
@@ -460,9 +460,9 @@ class CompilerConfig:
                     print(
                         f"Warning: Invalid SAVE_MLIR value: {dialect}. Expected one or more of {valid_dialects} separated by commas."
                     )
-        dump_binary_json = os.environ.get("TT_TORCH_SAVE_BINARY_JSON")
-        if dump_binary_json and int(dump_binary_json):
-            self.dump_binary_json = True
+        dump_binary = os.environ.get("TT_TORCH_SAVE_BINARY")
+        if dump_binary and int(dump_binary):
+            self.dump_binary = True
 
     def post_init(self):
         if self.consteval_parameters:

@@ -341,11 +341,14 @@ def test_eltwise_binary(op):
         torch.bitwise_and,
         torch.bitwise_or,
         torch.bitwise_xor,
-        torch.bitwise_left_shift,
-        torch.bitwise_right_shift,
     ]:
         input_x = torch.randint(-100, 100, (32, 32))
         input_y = torch.randint(-100, 100, (32, 32))
+    elif op in [torch.bitwise_left_shift, torch.bitwise_right_shift]:
+        # TODO: enable test for these ops once issues is resolved (https://github.com/tenstorrent/tt-torch/issues/1127)
+        pytest.skip(
+            f"{op} not supported in tt-experimental backend yet. Skipping test."
+        )
     else:
         input_x = torch.randn(32, 32, dtype=torch.bfloat16)
         input_y = torch.randn(32, 32, dtype=torch.bfloat16)
@@ -378,11 +381,14 @@ def test_eltwise_binary_eager(op):
         torch.bitwise_and,
         torch.bitwise_or,
         torch.bitwise_xor,
-        torch.bitwise_left_shift,
-        torch.bitwise_right_shift,
     ]:
         input_x = torch.randint(-100, 100, (32, 32))
         input_y = torch.randint(-100, 100, (32, 32))
+    elif op in [torch.bitwise_left_shift, torch.bitwise_right_shift]:
+        # TODO: enable test for these ops once issues is resolved (https://github.com/tenstorrent/tt-torch/issues/1127)
+        pytest.skip(
+            f"{op} not supported in tt-experimental backend yet. Skipping test."
+        )
     else:
         input_x = torch.randn(32, 32, dtype=torch.bfloat16)
         input_y = torch.randn(32, 32, dtype=torch.bfloat16)

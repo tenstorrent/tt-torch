@@ -1,7 +1,7 @@
 # Getting Started with Docker
 This document walks you through how to set up TT-Torch using a Docker image. There are two other available options for getting started:
 * [Installing a Wheel](getting_started.md) - if you do not want to use Docker, and prefer to use a virtual environment by itself instead, use this method.
-* [Building from Source](getting_started_build_from_source.md) - if you plan to develop TT-Torch further, you must build from source, and should use this method.
+* [Building From Source](getting_started_build_from_source.md) - if you plan to develop TT-Torch further, you must build from source, and should use this method.
 
 ## Configuring Hardware
 Before setup can happen, you must configure your hardware. You can skip this section if you already completed the configuration steps. Otherwise, this section of the walkthrough shows you how to do a quick setup using TT-Installer.
@@ -10,9 +10,16 @@ Before setup can happen, you must configure your hardware. You can skip this sec
 
 2. Reboot your machine.
 
-3. Please ensure that after you run this script, after you complete reboot, you activate the virtual environment it sets up - ```source ~/.tenstorrent-venv/bin/activate```.
+3. Make sure **hugepages** is enabled:
 
-4. When your environment is running, to check that everything is configured, type the following:
+```bash
+sudo systemctl enable --now 'dev-hugepages\x2d1G.mount'
+sudo systemctl enable --now tenstorrent-hugepages.service
+```
+
+4. Please ensure that after you run the TT-Installer script, after you complete reboot and set up hugepages, you activate the virtual environment it sets up - ```source ~/.tenstorrent-venv/bin/activate```.
+
+5. When your environment is running, to check that everything is configured, type the following:
 
 ```bash
 tt-smi
@@ -55,7 +62,7 @@ newgrp docker
 docker run -it --rm \
   --device /dev/tenstorrent \
   -v /dev/hugepages-1G:/dev/hugepages-1G \
-  ghcr.io/tenstorrent/tt-forge/tt-torch-slim:latest
+  ghcr.io/tenstorrent/tt-torch-slim:latest
 ```
 
 >**NOTE:** You cannot isolate devices in containers. You must pass through all devices even if you are only using one. You can do this by passing ```--device /dev/tenstorrent```. Do not try to pass ```--device /dev/tenstorrent/1``` or similar, as this type of device-in-container isolation will result in fatal errors later on during execution.
@@ -98,10 +105,10 @@ pip install tabulate
 pip install requests
 ```
 
-5. Run the model:
+5. Navigate into **tt-forge/demos/tt-torch** and run the model:
 
 ```bash
-python demos/tt-torch/resnet50_demo.py
+python resnet50_demo.py
 ```
 
 If all goes well, you should get a list of top five predictions for what the example image is, with the top one being a cat.

@@ -3,32 +3,21 @@
 # SPDX-License-Identifier: Apache-2.0
 # Reference: https://huggingface.co/nvidia/segformer-b0-finetuned-ade-512-512
 
-from transformers import SegformerImageProcessor, SegformerForSemanticSegmentation
-from PIL import Image
 import pytest
 from tests.utils import ModelTester
 import torch
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.tools.utils import get_file
+from third_party.tt_forge_models.segformer.semantic_segmentation.pytorch import (
+    ModelLoader,
+)
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        self.processor = SegformerImageProcessor.from_pretrained(
-            "nvidia/segformer-b0-finetuned-ade-512-512"
-        )
-        model = SegformerForSemanticSegmentation.from_pretrained(
-            "nvidia/segformer-b0-finetuned-ade-512-512"
-        )
-        model = model.to(torch.bfloat16)
-        return model
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
-        image = Image.open(str(image_file))
-        inputs = self.processor(images=([image] * 8), return_tensors="pt")
-        inputs["pixel_values"] = inputs["pixel_values"].to(torch.bfloat16)
-        return inputs
+        return self.loader.load_inputs(dtype_override=torch.bfloat16, batch_size=8)
 
     def set_inputs_train(self, inputs):
         inputs["pixel_values"] = inputs["pixel_values"].requires_grad_(True)
@@ -53,7 +42,6 @@ class ThisTester(ModelTester):
 def test_segformer(record_property, mode, op_by_op):
     if mode == "train":
         pytest.skip()
-    model_name = "SegFormer"
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -66,9 +54,13 @@ def test_segformer(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    loader = ModelLoader(variant=None)
+    model_info = loader.get_model_info(variant=None)
+
     tester = ThisTester(
-        model_name,
+        model_info.name,
         mode,
+        loader=loader,
         relative_atol=0.01,
         compiler_config=cc,
         # TODO - Enable checking - https://github.com/tenstorrent/tt-torch/issues/527
