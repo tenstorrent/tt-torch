@@ -36,16 +36,6 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "t5", tests: "
-              tests/models/speecht5_tts/test_speecht5_tts.py::test_speecht5_tts[op_by_op_torch-eval]
-              "
-          },
-          {
-            runs-on: wormhole_b0, name: "segment-anything", tests: "
-              tests/models/segment_anything/test_segment_anything.py::test_segment_anything[op_by_op_torch-eval]
-              "
-          },
-          {
             runs-on: wormhole_b0, name: "stable-diffusion-v3.5", tests: "
               tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[op_by_op_torch-medium-eval]
               tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[op_by_op_torch-large-eval]

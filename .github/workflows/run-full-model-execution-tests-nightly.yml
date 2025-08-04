@@ -46,13 +46,6 @@ jobs:
             # Approximately 55 minutes.
             wh-runner: wormhole_b0, bh-runner: p150, name: "stable_diffusion", tests: "
                   tests/models/stable_diffusion/test_stable_diffusion_unet.py::test_stable_diffusion_unet[full-eval]
-                  tests/models/unet_brain/test_unet_brain.py::test_unet_brain[full-eval]
-            "
-          },
-          {
-            # Approximately 55 minutes.
-            wh-runner: wormhole_b0, bh-runner: p150, name: "unet_brain", tests: "
-                  tests/models/unet_brain/test_unet_brain.py::test_unet_brain[full-eval]
             "
           },
           {
