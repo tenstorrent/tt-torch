@@ -454,33 +454,30 @@ test_config = {
     "unet/pytorch-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    # These 7 recently removed from tt-forge-models
-    # https://github.com/tenstorrent/tt-forge-models/pull/55
-    # May be added back in the future
-    # "vgg/pytorch-vgg11_bn-full-eval": {
-    #     "status": ModelStatus.EXPECTED_PASSING,
-    # },
-    # "vgg/pytorch-vgg11-full-eval": {
-    #     "status": ModelStatus.EXPECTED_PASSING,
-    # },
-    # "vgg/pytorch-vgg13_bn-full-eval": {
-    #     "status": ModelStatus.EXPECTED_PASSING,
-    # },
-    # "vgg/pytorch-vgg13-full-eval": {
-    #     "status": ModelStatus.EXPECTED_PASSING,
-    # },
-    # "vgg/pytorch-vgg16_bn-full-eval": {
-    #     "status": ModelStatus.EXPECTED_PASSING,
-    # },
-    # "vgg/pytorch-vgg16-full-eval": {
-    #     "status": ModelStatus.EXPECTED_PASSING,
-    # },
+    "vgg/pytorch-vgg11_bn-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "vgg/pytorch-vgg11-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "vgg/pytorch-vgg13_bn-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "vgg/pytorch-vgg13-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "vgg/pytorch-vgg16_bn-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "vgg/pytorch-vgg16-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
     "vgg/pytorch-vgg19_bn-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    # "vgg/pytorch-vgg19-full-eval": {
-    #     "status": ModelStatus.EXPECTED_PASSING,
-    # },
+    "vgg/pytorch-vgg19-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
     "vit/pytorch-base-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
