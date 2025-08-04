@@ -7,7 +7,9 @@ import torch
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.stable_diffusion.pytorch import ModelLoader
+from third_party.tt_forge_models.stable_diffusion.stable_diffusion_1_4.pytorch import (
+    ModelLoader,
+)
 
 
 class ThisTester(ModelTester):
