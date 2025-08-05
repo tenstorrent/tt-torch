@@ -66,7 +66,7 @@ def display_comprehensive_results(test_record, model_id: str, total_time: float)
         print(f"   Dynamic: False")
         print(f"   Consteval: Enabled")
     else:
-        print(f"   Compilation: Simulated (no real hardware)")
+        print(f"   Compilation: FAILED (tt-torch required)")
     
     # Execution Information
     print(f"\n🚀 INFERENCE EXECUTION:")
@@ -75,7 +75,7 @@ def display_comprehensive_results(test_record, model_id: str, total_time: float)
         print(f"   Hardware: Tenstorrent accelerator")
         print(f"   Mode: Real hardware execution")
     else:
-        print(f"   Execution: Simulated")
+        print(f"   Execution: FAILED (compiled model required)")
     
     # Memory Usage
     if test_record.memory_usage_mb:
