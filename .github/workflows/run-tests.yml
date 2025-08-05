@@ -8,6 +8,11 @@ on:
         description: 'Docker image to use for build'
         required: true
         type: string
+      use-shared-runners:
+        description: 'Use shared runners instead of custom runners'
+        required: false
+        default: false
+        type: boolean
   workflow_run:
     workflows: [Build]
     types: [completed]
@@ -21,13 +26,32 @@ permissions:
   checks: write
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      runner_name_format: ${{ steps.set-config.outputs.runner_name_format }}
+      container_image: ${{ steps.set-config.outputs.container_image }}
+    steps:
+    - name: Set configuration
+      id: set-config
+      run: |
+        # Set runner name format based on use-shared-runners
+        if [[ "${{ inputs.use-shared-runners }}" == "true" ]]; then
+          echo "runner_name_format=tt-beta-ubuntu-2204-{0}-large-stable" >> $GITHUB_OUTPUT
+          echo "container_image=harbor.ci.tenstorrent.net/${{ inputs.docker-image }}" >> $GITHUB_OUTPUT
+        else
+          echo "runner_name_format={0}" >> $GITHUB_OUTPUT
+          echo "container_image=${{ inputs.docker-image }}" >> $GITHUB_OUTPUT
+        fi
+
   tests:
+    needs: setup
     timeout-minutes: 120
     strategy:
       fail-fast: false
       matrix:
         build: [
-          {runs-on: wormhole_b0, name: "run", container-options: "--device /dev/tenstorrent/0"},
+          {runs-on: n150, name: "run", container-options: "--device /dev/tenstorrent/0"},
         ]
     name: tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})
     runs-on:

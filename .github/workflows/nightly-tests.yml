@@ -6,7 +6,6 @@ on:
   schedule:
     - cron: '0 4 * * *'  # Runs at 04:00 UTC every day
   workflow_dispatch:  # Manual trigger
-    # Manual trigger
     inputs:
       run-on:
         description: 'Run on'

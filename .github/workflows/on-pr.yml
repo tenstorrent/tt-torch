@@ -7,6 +7,13 @@ on:
         description: 'Git SHA of commit in tenstorrent/tt-mlir'
         required: false
         type: string
+      run-on:
+        description: 'Run on'
+        default: 'Civ2'
+        type: choice
+        options:
+        - 'Civ1'
+        - 'Civ2'
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
     branches: [ "main" ]
@@ -112,6 +119,7 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      use-shared-runners: ${{ inputs.run-on == 'Civ2' }}
   # llmbox-tests:
   #   needs: [build, docker-build]
   #   uses: ./.github/workflows/run-multidevice-tests.yml
@@ -125,6 +133,7 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      use-shared-runners: ${{ inputs.run-on == 'Civ2' }}
       run-codecov: 'false'
       run-dump-mlir: 'false'
   check-all-green:
