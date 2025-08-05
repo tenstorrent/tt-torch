@@ -321,7 +321,7 @@ class ModelCompatibilityPipeline:
             hardware_available = False
             compiled_model = None
             
-            # Prepare sample inputs early (needed for both real and simulated compilation)
+            # Prepare sample inputs early (needed for real compilation)
             model = adapted_model.get("model")
             sample_inputs = adapted_model.get("sample_inputs")
             
@@ -342,12 +342,7 @@ class ModelCompatibilityPipeline:
             else:
                 logger.debug(f"Using sample_inputs for {model_id}: {list(sample_inputs.keys())}")
             
-            # Check if we should force simulation mode
-            force_simulation = os.environ.get('FORGE_AGENT_FORCE_SIMULATION', 'false').lower() == 'true'
-            if force_simulation:
-                logger.info(f"FORGE_AGENT_FORCE_SIMULATION is set, skipping real compilation for {model_id}")
-                tt_torch_available = False
-                hardware_available = False
+            # Force real tt-torch execution - no simulation fallbacks
             
             try:
                 # Check if tt-torch is available
@@ -706,18 +701,15 @@ class ModelCompatibilityPipeline:
                     test_record.compilation_time_seconds = compilation_time_seconds
                     test_record.memory_usage_mb = memory_usage_mb
                 else:
-                    logger.warning(f"⚠️  FALLING BACK TO SIMULATED COMPILATION for {model_id}")
-                    logger.warning(f"   - tt_torch_available: {tt_torch_available}")
-                    logger.warning(f"   - hardware_available: {hardware_available}")
-                    logger.warning(f"   - This will NOT use real Tenstorrent hardware")
-                    logger.warning(f"   - Simulating 2-second compilation time")
-                    # Simulate compilation for testing without tt-torch or hardware
-                    time.sleep(2)  # Simulate compilation time
-                    compilation_time_seconds = 2.0
-                    test_record.compilation_time_seconds = compilation_time_seconds
-                    # Use the original model as "compiled" model for simulation
-                    compiled_model = model
-                    logger.warning(f"   - Using original model as 'compiled' model (simulation)")
+                    # Fail if tt-torch or hardware is not available - no simulation fallback
+                    error_msg = f"❌ REAL TT-TORCH REQUIRED but not available for {model_id}"
+                    if not tt_torch_available:
+                        error_msg += f"\n   - tt-torch module not available"
+                    if not hardware_available:
+                        error_msg += f"\n   - Tenstorrent hardware/toolchain not available"
+                    error_msg += f"\n   - SIMULATION DISABLED - must have working tt-torch setup"
+                    logger.error(error_msg)
+                    raise Exception(f"tt-torch not available: tt_torch={tt_torch_available}, hardware={hardware_available}")
                     
             except Exception as e:
                 logger.error(f"Compilation error: {str(e)}")
@@ -952,11 +944,15 @@ class ModelCompatibilityPipeline:
                             logger.error(f"Both compiled and original model execution failed for {model_id}: {str(fallback_e)}")
                             raise Exception(f"Model execution failed: compiled='{str(compiled_e)}', original='{str(fallback_e)}'")
                 else:
-                    logger.warning("No compiled model or sample inputs available, simulating execution")
-                    logger.warning("⚠️  RUNNING SIMULATED INFERENCE (not using tt-torch)")
-                    logger.warning("   - This is NOT using Tenstorrent hardware")
-                    logger.warning("   - Simulating 1-second execution time")
-                    time.sleep(1)
+                    # Fail if no compiled model is available - no simulation fallback
+                    error_msg = "❌ NO COMPILED MODEL AVAILABLE for inference"
+                    if compiled_model is None:
+                        error_msg += "\n   - Compilation failed or was skipped"
+                    if not sample_inputs:
+                        error_msg += "\n   - No sample inputs available"
+                    error_msg += "\n   - SIMULATION DISABLED - must have working compiled model"
+                    logger.error(error_msg)
+                    raise Exception("No compiled model available for inference - simulation disabled")
                 
                 # Record execution time
                 execution_time_seconds = time.time() - execution_start_time
