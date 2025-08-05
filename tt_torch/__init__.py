@@ -12,6 +12,7 @@ if mp.get_start_method() != "forkserver":
     mp.set_start_method("forkserver", force=True)
 
 import os
+import sys
 import importlib.util
 
 # find the tt-metal directory, it can either be in the venv if installed from a wheel or in the third_party source tree
@@ -42,12 +43,19 @@ class TTPjrtPlugin(plugins.DevicePlugin):
         if os.path.exists(env_path):
             return env_path
 
-        # This is where the pjrt plugin will be located if you've only built and installed the wheel - but you're running your code with the root of the source tree (CI does this)
+        # This is where the pjrt plugin will be located if you've only built and installed the wheel - but you're running your code with
+        # the root of the source tree in which an env was already activated (CI does this)
         source_path = os.path.join(
             os.path.dirname(__file__), "../env/venv/lib/pjrt_plugin_tt.so"
         )
         if os.path.exists(source_path):
             return source_path
+
+        # This is where the pjrt plugin will be located if you've installed the tt-torch wheel in a clean virtual environment
+        # Use sys.prefix to get the venv root instead of relative paths
+        venv_install_path = os.path.join(sys.prefix, "lib/pjrt_plugin_tt.so")
+        if os.path.exists(venv_install_path):
+            return venv_install_path
 
         assert False, "Could not find pjrt_plugin_tt.so"
 
