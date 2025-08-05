@@ -548,7 +548,8 @@ test_config = {
         "assert_pcc": False,
     },
     "phi2/causal_lm/pytorch-microsoft/phi-2-full-eval": {
-        "status": ModelStatus.KNOWN_FAILURE_XFAIL,  # High memory killed
+        "status": ModelStatus.KNOWN_FAILURE_XFAIL,
+        "xfail_reason": "High memory killed",
         "assert_pcc": False,
     },
     "phi2/causal_lm/pytorch-microsoft/phi-2-pytdml-full-eval": {

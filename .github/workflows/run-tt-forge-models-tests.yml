@@ -148,6 +148,7 @@ jobs:
       run: |
         BASE_PYTEST_CMD="tests/runner/test_models.py \
           -m \"${{ inputs.tests-filter }}\" \
+          --xfail-tb \
           --arch ${{ env.RUN_TEST }} \
           --splits ${{ inputs.num-splits }} \
           --group ${{ matrix.build.group }} \
