@@ -1,23 +1,15 @@
 # SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-import onnx
 import pytest
-import os
 from tests.utils import OnnxModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.oft import ModelLoader
-import torch
+from third_party.tt_forge_models.oft.onnx import ModelLoader
 
 
 class ThisTester(OnnxModelTester):
     def _load_model(self):
-        model = self.loader.load_model()
-        torch.onnx.export(model, self._load_torch_inputs(), f"{self.model_name}.onnx")
-        model = onnx.load(f"{self.model_name}.onnx")
-        onnx.checker.check_model(model)
-        os.remove(f"{self.model_name}.onnx")
-        return model
+        return self.loader.load_model()
 
     def _load_torch_inputs(self):
         return self.loader.load_inputs()
