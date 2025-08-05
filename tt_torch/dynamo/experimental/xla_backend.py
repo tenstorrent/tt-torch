@@ -13,7 +13,6 @@ import tempfile
 import multiprocessing as mp
 import re
 import pickle
-import sys
 import faulthandler
 import collections
 from ..passes import (
@@ -70,7 +69,6 @@ def execute_pjrt_process(receiver, sender, exec_event):
         obj = receiver.get()
         faulthandler.disable()
         gm = obj["gm"]
-        file_name = obj["dump_file"]
         large_input = obj["large_input"]
         inputs = None
 
@@ -87,11 +85,6 @@ def execute_pjrt_process(receiver, sender, exec_event):
         else:
             inputs = obj["inputs"]
 
-        file_stderr = open(file_name, "w")
-        old_stderr = sys.stderr
-        sys.stderr = file_stderr
-        old_stdout = sys.stdout
-        sys.stdout = file_stderr
         from typing import Union, List, Dict
 
         def push_tensors_to_device(
@@ -133,10 +126,6 @@ def execute_pjrt_process(receiver, sender, exec_event):
             outputs = gm(*inputs)
             xm.mark_step()
             outputs = push_tensors_to_device(outputs, device="cpu", detach=True)
-
-        sys.stderr = old_stderr
-        sys.stdout = old_stdout
-        file_stderr.close()
 
         sender.put({"outputs": outputs})
         exec_event.wait()
@@ -342,13 +331,18 @@ class XLAOpByOpExecutor:
             self.file_stderr = tempfile.NamedTemporaryFile(mode="w+t", delete=False)
             self.stderror_redirected = True
 
+        file_stderr = open(self.file_stderr.name, "w")
+        old_stdout = os.dup(1)  # Backup stdout descriptor.
+        old_stderr = os.dup(2)  # Backup stderr descriptor.
+        os.dup2(file_stderr.fileno(), 1)  # Redirect stdout (fd 1)
+        os.dup2(file_stderr.fileno(), 2)  # Redirect stderr (fd 2)
+
         inputs_size = get_inputs_size(inputs)
 
         large_input = inputs_size >= self.op_memory_limit
 
         obj = {
             "gm": gm,
-            "dump_file": self.file_stderr.name,
             "large_input": large_input,
         }
 
@@ -415,6 +409,11 @@ class XLAOpByOpExecutor:
 
         if len(outputs) == 1:
             outputs = outputs[0]
+
+        # Revert redirection of stdout/stderr.
+        os.dup2(old_stdout, 1)
+        os.dup2(old_stderr, 2)
+        file_stderr.close()
 
         stderr_data = ""
         if outputs is None:
