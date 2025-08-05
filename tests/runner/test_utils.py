@@ -42,10 +42,11 @@ class ModelTestConfig:
         self.batch_size = self._resolve("batch_size", default=None)
 
         # Arguments to skip_full_eval_test() for skipping tests
-        self.skip_reason = self._resolve("skip_reason", default="Unknown")
+        self.skip_reason = self._resolve("skip_reason", default="Unknown Reason")
         self.skip_bringup_status = self._resolve(
             "skip_bringup_status", default="FAILED_RUNTIME"
         )
+        self.xfail_reason = self._resolve("xfail_reason", default="Unknown Reason")
 
     def _resolve(self, key, default=None):
         overrides = self.data.get("arch_overrides", {})

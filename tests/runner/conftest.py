@@ -58,17 +58,11 @@ def pytest_collection_modifyitems(config, items):
             item.add_marker(pytest.mark.expected_passing)
         elif meta.status == ModelStatus.KNOWN_FAILURE_XFAIL:
             item.add_marker(pytest.mark.known_failure_xfail)
-            # FIXME - Make xfail reason able to be provided in test_config
-            item.add_marker(pytest.mark.xfail(strict=True, reason="Known failure"))
+            item.add_marker(pytest.mark.xfail(strict=True, reason=meta.xfail_reason))
         elif meta.status == ModelStatus.NOT_SUPPORTED_SKIP:
             item.add_marker(pytest.mark.not_supported_skip)
         elif meta.status == ModelStatus.UNSPECIFIED:
             item.add_marker(pytest.mark.unspecified)
-            item.add_marker(
-                pytest.mark.xfail(
-                    strict=False, reason="Status unspecified - awaiting triage"
-                )
-            )
 
 
 # Verify that the test_config.py file is valid.
