@@ -28,6 +28,13 @@ def extract_test_case_info(xml_file):
                 try:
                     path = testcase.get("classname").replace(".", "/")
                     name = testcase.get("name")
+
+                    # Hack because path was missing directories
+                    if path.endswith("test_models") and not path.startswith(
+                        "tests/runner/"
+                    ):
+                        path = "tests/runner/" + path
+
                     test_cases_info[f"{path}.py::{name}"] = float(
                         testcase.get("time", 0)
                     )
