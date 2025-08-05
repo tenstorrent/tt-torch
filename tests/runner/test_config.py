@@ -579,6 +579,103 @@ test_config = {
     "phi1_5/sequence_classification/pytorch-microsoft/phi-1_5-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
+    "roberta/pytorch-cardiffnlp/twitter-roberta-base-sentiment-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "bert/token_classification/pytorch-dbmdz/bert-large-cased-finetuned-conll03-english-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "bert/masked_lm/pytorch-bert-base-uncased-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "bert/sequence_classification/pytorch-textattack/bert-base-uncased-SST-2-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "yoloworld/pytorch-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "opt/qa/pytorch-facebook/opt-125m-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "opt/qa/pytorch-facebook/opt-350m-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "opt/causal_lm/pytorch-facebook/opt-125m-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "opt/causal_lm/pytorch-facebook/opt-350m-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "opt/sequence_classification/pytorch-facebook/opt-125m-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "opt/sequence_classification/pytorch-facebook/opt-350m-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "opt/sequence_classification/pytorch-facebook/opt-1.3b-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "perceiver/pytorch-deepmind/language-perceiver-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "beit/pytorch-base-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "beit/pytorch-large-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "deepcogito/pytorch-v1_preview_llama_3b-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "segformer/semantic_segmentation/pytorch-b0_finetuned_ade_512_512-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "albert/token_classification/pytorch-base_v1-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "albert/token_classification/pytorch-large_v1-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "albert/token_classification/pytorch-xxlarge_v1-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "albert/masked_lm/pytorch-base_v1-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "albert/masked_lm/pytorch-large_v1-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "albert/masked_lm/pytorch-xlarge_v1-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "albert/masked_lm/pytorch-xxlarge_v1-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "albert/question_answering/pytorch-squad2-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "albert/sequence_classification/pytorch-imdb-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "fuyu/pytorch-adept/fuyu-8b-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "phi1/sequence_classification/pytorch-microsoft/phi-1-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "phi1/causal_lm/pytorch-microsoft/phi-1-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "phi1/token_classification/pytorch-microsoft/phi-1-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "bert/sentence_embedding_generation/pytorch-emrecan/bert-base-turkish-cased-mean-nli-stsb-tr-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "yolos/pytorch-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
     "yolov10/pytorch-full-eval": {
         "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "skip_reason": "TorchMlirCompilerError: Lowering Torch Backend IR -> StableHLO Backend IR failed",
