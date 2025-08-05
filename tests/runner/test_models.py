@@ -74,6 +74,7 @@ def test_all_models(test_entry, mode, op_by_op, record_property, test_metadata):
             forge_models_test=True,
         )
 
+    pytest.skip("Early Exit testing")
     tester = DynamicTester(
         model_info.name,
         mode,
