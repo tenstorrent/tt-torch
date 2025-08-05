@@ -4,9 +4,9 @@
 #
 
 # underlying tt-mlir version we will have tt-xla use
-set(TT_MLIR_VERSION "4a7a38c")
+set(TT_MLIR_VERSION "b831a7e12e4fc0a75958cd827bbe2bfb2a416353")
 # tt-xla version to use
-set(TTXLA_VERSION "e6b133ef51da378be6b8a587474f3d1de051c49f") # point to andrej branch
+set(TTXLA_VERSION "e11a4e14fab86fa8695957ac1df663572b80c19c")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
