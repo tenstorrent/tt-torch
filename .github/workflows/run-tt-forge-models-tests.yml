@@ -66,7 +66,7 @@ jobs:
     runs-on: ${{ matrix.runner == 'wormhole' && matrix.build.wh-runner || matrix.runner == 'blackhole' && matrix.build.bh-runner || 'wormhole_b0'}}
     container:
       image: ${{ inputs.docker-image }}
-      options: --user root --device /dev/tenstorrent/0 --shm-size=2gb
+      options: --user root --device /dev/tenstorrent --shm-size=2gb
       volumes:
         - /dev/hugepages:/dev/hugepages
         - /dev/hugepages-1G:/dev/hugepages-1G
