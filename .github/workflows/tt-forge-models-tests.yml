@@ -17,18 +17,18 @@ on:
         required: false
         type: number
         default: 6
-      run-xfail-tests:
-        description: 'Run xfail tests'
+      run-not-passing-tests:
+        description: 'Run not passing tests'
         required: false
         type: boolean
         default: false
-      tests-filter-xfail:
-        description: 'Filter for xfail tests'
+      tests-filter-not-passing:
+        description: 'Filter for not passing tests'
         required: false
         type: string
         default: "not expected_passing"
-      num-splits-xfail:
-        description: 'Number of splits for xfail tests'
+      num-splits-not-passing:
+        description: 'Number of splits for not passing tests'
         required: false
         type: number
         default: 3
@@ -59,13 +59,13 @@ jobs:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       tests-filter: ${{ inputs.tests-filter-passing }}
       num-splits: ${{ fromJSON(inputs.num-splits-passing) }}
-  test-xfail-tt-forge-models:
-    if: ${{ always() && inputs.run-xfail-tests && (inputs.reuse-build-run-id || needs.build.result == 'success') }}
+  test-not-passing-tt-forge-models:
+    if: ${{ always() && inputs.run-not-passing-tests && (inputs.reuse-build-run-id || needs.build.result == 'success') }}
     needs: [docker-build, build]
     uses: ./.github/workflows/run-tt-forge-models-tests.yml
     secrets: inherit
     with:
       reuse-build-run-id: ${{ inputs.reuse-build-run-id }}
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-      tests-filter: ${{ inputs.tests-filter-xfail }}
-      num-splits: ${{ fromJSON(inputs.num-splits-xfail) }}
+      tests-filter: ${{ inputs.tests-filter-not-passing }}
+      num-splits: ${{ fromJSON(inputs.num-splits-not-passing) }}
