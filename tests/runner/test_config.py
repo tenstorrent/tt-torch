@@ -31,8 +31,10 @@ test_config = {
         "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "yolo_x/pytorch-full-eval": {
-        "assert_pcc": False,
+    "yolox/pytorch-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Import issue in tt-forge-models missing yolox package proably",
+        "skip_bringup_status": "FAILED_RUNTIME",
     },
     "wide_resnet/pytorch-full-eval": {
         "required_pcc": 0.96,
@@ -240,6 +242,13 @@ test_config = {
     },
     "mamba/pytorch-mamba-1.4b-hf-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
+        "arch_overrides": {
+            "blackhole": {
+                "status": ModelStatus.NOT_SUPPORTED_SKIP,
+                "skip_reason": "Takes forever on blackhole runner",
+                "skip_bringup_status": "FAILED_RUNTIME",
+            },
+        },
     },
     "mamba/pytorch-mamba-370m-hf-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -276,9 +285,6 @@ test_config = {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "nanogpt/pytorch-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
-    },
-    "phi1_5/pytorch-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "regnet/pytorch-regnet_y_040-full-eval": {
@@ -338,30 +344,33 @@ test_config = {
     "unet/pytorch-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "vgg/pytorch-vgg11_bn-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
-    },
-    "vgg/pytorch-vgg11-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
-    },
-    "vgg/pytorch-vgg13_bn-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
-    },
-    "vgg/pytorch-vgg13-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
-    },
-    "vgg/pytorch-vgg16_bn-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
-    },
-    "vgg/pytorch-vgg16-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
-    },
+    # These 7 recently removed from tt-forge-models
+    # https://github.com/tenstorrent/tt-forge-models/pull/55
+    # May be added back in the future
+    # "vgg/pytorch-vgg11_bn-full-eval": {
+    #     "status": ModelStatus.EXPECTED_PASSING,
+    # },
+    # "vgg/pytorch-vgg11-full-eval": {
+    #     "status": ModelStatus.EXPECTED_PASSING,
+    # },
+    # "vgg/pytorch-vgg13_bn-full-eval": {
+    #     "status": ModelStatus.EXPECTED_PASSING,
+    # },
+    # "vgg/pytorch-vgg13-full-eval": {
+    #     "status": ModelStatus.EXPECTED_PASSING,
+    # },
+    # "vgg/pytorch-vgg16_bn-full-eval": {
+    #     "status": ModelStatus.EXPECTED_PASSING,
+    # },
+    # "vgg/pytorch-vgg16-full-eval": {
+    #     "status": ModelStatus.EXPECTED_PASSING,
+    # },
     "vgg/pytorch-vgg19_bn-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "vgg/pytorch-vgg19-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
-    },
+    # "vgg/pytorch-vgg19-full-eval": {
+    #     "status": ModelStatus.EXPECTED_PASSING,
+    # },
     "vit/pytorch-base-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
@@ -392,6 +401,13 @@ test_config = {
     "mamba/pytorch-mamba-2.8b-hf-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
         "required_pcc": 0.98,
+        "arch_overrides": {
+            "blackhole": {
+                "status": ModelStatus.NOT_SUPPORTED_SKIP,
+                "skip_reason": "Takes forever on blackhole runner",
+                "skip_bringup_status": "FAILED_RUNTIME",
+            },
+        },
     },
     "deit/pytorch-base-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -425,7 +441,8 @@ test_config = {
         "assert_pcc": False,
     },
     "phi2/causal_lm/pytorch-microsoft/phi-2-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.KNOWN_FAILURE_XFAIL,
+        "xfail_reason": "High memory killed",
         "assert_pcc": False,
     },
     "phi2/causal_lm/pytorch-microsoft/phi-2-pytdml-full-eval": {
@@ -515,9 +532,9 @@ test_config = {
         "skip_reason": 'ValueError("You have to specify either decoder_input_ids or decoder_inputs_embeds")',
         "skip_bringup_status": "FAILED_RUNTIME",
     },
-    "yolo_v6/pytorch-full-eval": {
+    "yolov6/pytorch-full-eval": {
         "status": ModelStatus.NOT_SUPPORTED_SKIP,
-        "skip_reason": "Needs fix import library in tt-forge-models",
+        "skip_reason": "Import issue in tt-forge-models missing yolov6detect package",
         "skip_bringup_status": "FAILED_RUNTIME",
     },
     "gliner_model/pytorch-full-eval": {
