@@ -518,6 +518,9 @@ class XLAOpByOpExecutor:
                         self.set_runtime_stack_dump(stderr, op)
 
                         if calculated is None:
+                            op.compilation_status = (
+                                OpCompilationStatus.CONVERTED_TO_TTNN
+                            )
                             raise ValueError(f"Failed to execute: \n {stderr}")
                         op.compilation_status = OpCompilationStatus.EXECUTED
                         if self.compiler_config.verify_op_by_op:
@@ -532,7 +535,7 @@ class XLAOpByOpExecutor:
                     except Exception as e:
                         e_msg = self.get_exception_source(e)
                         self.print_marker(
-                            "Failed to execute", idx, num_nodes, node.target, e_msg
+                            "Failed to execute", idx, num_nodes, node.target, stderr
                         )
 
                 if out_degree[node] > 0:
