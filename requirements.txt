@@ -32,7 +32,7 @@ xlsxwriter
 torchvision
 torchaudio
 bi-lstm-crf
-transformers>=4.50.0,<4.53.0
+transformers==4.55
 tiktoken
 sentencepiece
 pytorchcv
@@ -53,3 +53,4 @@ gliner
 ultralytics
 efficientnet_pytorch
 torchcodec # required for whisper test. Requires system dep ffmpeg.
+kernels # required for gpt-oss
