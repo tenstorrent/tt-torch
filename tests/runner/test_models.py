@@ -71,6 +71,7 @@ def test_all_models(test_entry, mode, op_by_op, record_property, test_metadata):
             bringup_status=test_metadata.skip_bringup_status,
             reason=test_metadata.skip_reason,
             model_group=model_info.group,
+            forge_models_test=True,
         )
 
     tester = DynamicTester(
@@ -80,7 +81,9 @@ def test_all_models(test_entry, mode, op_by_op, record_property, test_metadata):
         model_info=model_info,
         compiler_config=cc,
         record_property_handle=record_property,
+        forge_models_test=True,
         **test_metadata.to_tester_args(),
     )
+
     results = tester.test_model()
     tester.finalize()
