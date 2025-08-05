@@ -327,9 +327,10 @@ test_config = {
     "hrnet/pytorch-hrnet_w64-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "llama/pytorch-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
-    },
+    # FIXME - Not valid anymore.
+    # "llama/pytorch-full-eval": {
+    #     "status": ModelStatus.EXPECTED_PASSING,
+    # },
     "mamba/pytorch-mamba-1.4b-hf-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
         "arch_overrides": {
@@ -402,9 +403,6 @@ test_config = {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "resnext/pytorch-resnext50_32x4d-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
-    },
-    "roberta/pytorch-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "segformer/pytorch-mit_b0-full-eval": {
@@ -499,9 +497,10 @@ test_config = {
     "roberta/masked_lm/pytorch-xlm_base-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "llama/causal_lm/pytorch-3b-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
-    },
+    # FIXME - Not valid anymore.
+    # "llama/causal_lm/pytorch-3b-full-eval": {
+    #     "status": ModelStatus.EXPECTED_PASSING,
+    # },
     "unet/torch_hub/pytorch-brain_segmentation-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
@@ -784,7 +783,12 @@ test_config = {
         "assert_pcc": False,  # PCC observed: -0.43084077321771863 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "yolov10/pytorch-full-eval": {
+    "yolov10/pytorch-yolov10x-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "TorchMlirCompilerError: Lowering Torch Backend IR -> StableHLO Backend IR failed",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "yolov10/pytorch-yolov10n-full-eval": {
         "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "skip_reason": "TorchMlirCompilerError: Lowering Torch Backend IR -> StableHLO Backend IR failed",
         "skip_bringup_status": "FAILED_RUNTIME",
@@ -792,11 +796,6 @@ test_config = {
     "qwen/token_classification/pytorch-full-eval": {
         "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "skip_reason": "Out of Memory: Not enough space to allocate 135790592 B DRAM buffer across 12 banks, where each bank needs to store 11317248 B",
-        "skip_bringup_status": "FAILED_RUNTIME",
-    },
-    "t5/pytorch-full-eval": {
-        "status": ModelStatus.NOT_SUPPORTED_SKIP,
-        "skip_reason": "ValueError: You have to specify either decoder_input_ids or decoder_inputs_embeds",
         "skip_bringup_status": "FAILED_RUNTIME",
     },
     "vgg19_unet/pytorch-full-eval": {
@@ -814,11 +813,6 @@ test_config = {
         "skip_reason": "Out of Memory: Not enough space to allocate 4294967296 B DRAM buffer across 12 banks",
         "skip_bringup_status": "FAILED_RUNTIME",
     },
-    "monodepth2/pytorch-full-eval": {
-        "status": ModelStatus.NOT_SUPPORTED_SKIP,
-        "skip_reason": "tt-forge-models needs to be updated to use get_file() api for loading .pth files",
-        "skip_bringup_status": "FAILED_RUNTIME",
-    },
     "glpn_kitti/pytorch-full-eval": {
         "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "skip_reason": "RuntimeError: Input type (c10::BFloat16) and bias type (float) should be the same",
@@ -829,19 +823,9 @@ test_config = {
         "skip_reason": "Out of Memory: Not enough space to allocate 2902982656 B DRAM buffer across 12 banks - https://github.com/tenstorrent/tt-torch/issues/727",
         "skip_bringup_status": "FAILED_RUNTIME",
     },
-    "yolov8/pytorch-full-eval": {
-        "status": ModelStatus.NOT_SUPPORTED_SKIP,
-        "skip_reason": "RuntimeError: TT_FATAL @ Inputs must be of bfloat16 or bfloat8_b type",
-        "skip_bringup_status": "FAILED_RUNTIME",
-    },
     "vilt/pytorch-full-eval": {
         "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "skip_reason": "RuntimeError: cannot sample n_sample <= 0 samples",
-        "skip_bringup_status": "FAILED_RUNTIME",
-    },
-    "whisper/pytorch-full-eval": {
-        "status": ModelStatus.NOT_SUPPORTED_SKIP,
-        "skip_reason": 'ValueError("You have to specify either decoder_input_ids or decoder_inputs_embeds")',
         "skip_bringup_status": "FAILED_RUNTIME",
     },
     "yolov6/pytorch-full-eval": {
