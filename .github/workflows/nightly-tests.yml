@@ -23,7 +23,7 @@ jobs:
     uses: ./.github/workflows/build-image.yml
     secrets: inherit
   build:
-    needs: [pre-commit, spdx, docker-build]
+    needs: [spdx, docker-build]
     uses: ./.github/workflows/run-build.yml
     secrets: inherit
     with:
