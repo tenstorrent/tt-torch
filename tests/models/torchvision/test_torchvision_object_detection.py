@@ -62,9 +62,18 @@ model_info_list = [
     "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
 )
 def test_torchvision_object_detection(
-    record_property, model_info, mode, op_by_op, data_parallel_mode
+    request, record_property, model_info, mode, op_by_op, data_parallel_mode
 ):
     model_name, _ = model_info
+
+    # Follow up in https://github.com/tenstorrent/tt-torch/issues/1142
+    if model_name in ["ssd300_vgg16"]:
+        request.node.add_marker(
+            pytest.mark.xfail(
+                reason="Error code: 13 - loc(\"reduce-window.244\"): error: 'ttir.max_pool2d' op output tensor height and width dimension (38, 38) do not match the expected dimensions (37, 38)",
+                strict=True,
+            )
+        )
 
     cc = CompilerConfig()
     cc.enable_consteval = True
