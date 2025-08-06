@@ -18,6 +18,7 @@ from typing import Tuple, Union
 from transformers import LlamaModel, LlamaConfig, LlamaForCausalLM, AutoTokenizer
 from transformers.generation import GenerationConfig
 
+MODEL_NAME = "meta-llama/Meta-Llama-3.1-8B"
 PROMPT = "What is the name of the largest planet in our solar system?"
 
 def setup_xla_environment():
@@ -25,19 +26,16 @@ def setup_xla_environment():
     print("Setting up XLA environment...")
 
     # Basic XLA configuration
-    os.environ["ENABLE_AUTO_PARALLEL"] = "TRUE"
-    os.environ["CONVERT_SHLO_TO_SHARDY"] = "1"
-    os.environ["MESH_SHAPE"] = "1,8"
+    os.environ["ENABLE_AUTO_PARALLEL"] = "TRUE" # Enables the auto parallel pass in tt-mlir
+    os.environ["CONVERT_SHLO_TO_SHARDY"] = "1" # Converts the StableHLO emitted by torch-xla to the Shardy dialect
+    os.environ["MESH_SHAPE"] = "1,8" # Sets the mesh shape used by the auto parallel pass
 
     # Initialize SPMD
     xr.use_spmd()
-    torch_xla.sync(True, True)
     print("XLA environment configured.")
 
 
-def create_device_mesh(
-    num_devices: int = 8, mesh_shape: Tuple[int, int] = (1, 8)
-) -> Mesh:
+def create_device_mesh() -> Mesh:
     """
     Create device mesh for tensor parallelism.
 
@@ -48,6 +46,8 @@ def create_device_mesh(
     Returns:
         Mesh object for SPMD operations
     """
+    num_devices = xr.global_runtime_device_count()
+    mesh_shape = (1, num_devices)
     device_ids = np.array(range(num_devices))
     mesh = Mesh(device_ids, mesh_shape, ("batch", "model"))
     print(f"Created device mesh: {mesh_shape} with {num_devices} devices")
@@ -86,13 +86,12 @@ def _apply_tensor_parallel_sharding_to_base_model(model: LlamaModel, mesh: Mesh)
 def apply_tensor_parallel_sharding(model: LlamaForCausalLM, mesh: Mesh) -> None:
     model = model.to(torch_xla.device())
     print("LlamaForCausalLM Model: ", model)
-    # print("Applying tensor parallel sharding to LlamaForCausalLM...")
-    # _apply_tensor_parallel_sharding(model, mesh)
+
+    # Shard base Llama model
     print("Applying tensor parallel sharding to LlamaModel...")
     _apply_tensor_parallel_sharding_to_base_model(model.model, mesh)
 
     # Also shard the language modeling head
-    # print("LM Head weight shape: ", model.lm_head.weight.shape)
     xs.mark_sharding(model.lm_head.weight, mesh, ("model", "batch"))
 
     print("Tensor parallel sharding applied successfully!")
@@ -121,11 +120,10 @@ def generate_single_token(
     return next_token_id
 
 def run_text_generation_cpu_multi_token(
-    model_name: str = "meta-llama/Meta-Llama-3.1-8B",
     num_tokens: int = 64):
-    llama = LlamaForCausalLM.from_pretrained(model_name)
+    llama = LlamaForCausalLM.from_pretrained(MODEL_NAME)
     llama = llama.eval()
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
     
@@ -148,22 +146,19 @@ def run_text_generation_cpu_multi_token(
 
 
 def run_text_generation_tp_multi_token(
-    model_name: str = "meta-llama/Meta-Llama-3.1-8B",
     num_tokens: int = 64
 ):
     setup_xla_environment()
     mesh = create_device_mesh()
-    model = LlamaForCausalLM.from_pretrained(model_name)
+    model = LlamaForCausalLM.from_pretrained(MODEL_NAME)
     model = model.eval()
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
     tokenizer.pad_token = tokenizer.eos_token
 
     print("Applying tensor parallel sharding to CausalLM model...")
     apply_tensor_parallel_sharding(model, mesh)
 
     input_ids = tokenizer.encode(PROMPT, return_tensors="pt", padding=True, truncation=True)
-    # input_ids = input_ids.to(torch_xla.device())
-    # xs.mark_sharding(input_ids, mesh, (None, None))
 
     for step in range(num_tokens):
         print(f"Step {step + 1}/{num_tokens}")
@@ -180,9 +175,8 @@ def run_text_generation_tp_multi_token(
 
 
 def run_text_generation_tp_single_token(
-    model_name: str = "meta-llama/Meta-Llama-3.1-8B",
 ):
-    print(f"Running text generation for {model_name}")
+    print(f"Running text generation for {MODEL_NAME}")
 
     # Setup environment
     setup_xla_environment()
@@ -190,11 +184,11 @@ def run_text_generation_tp_single_token(
 
     # Load model for text generation (not just hidden states)
     print("Loading model for text generation...")
-    model = LlamaForCausalLM.from_pretrained(model_name)
+    model = LlamaForCausalLM.from_pretrained(MODEL_NAME)
     model = model.eval()
     
     # Load tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
     tokenizer.pad_token = tokenizer.eos_token
 
 
