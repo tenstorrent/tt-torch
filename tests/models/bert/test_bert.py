@@ -68,8 +68,8 @@ def test_bert(record_property, mode, op_by_op, variant, variant_config):
             f"""
         model_name: {model_name}
         input:
-            context: {ModelLoader.context}
-            question: {ModelLoader.question}
+            context: {loader.context}
+            question: {loader.question}
         answer: {answer}
         """
         )
