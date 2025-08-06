@@ -53,7 +53,7 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "stable-diffusion-pipe", tests: "
-              tests/models/stable_diffusion/test_stable_diffusion.py::test_stable_diffusion[op_by_op_torch-eval]
+              tests/models/stable_diffusion/test_stable_diffusion_1_4.py::test_stable_diffusion_1_4[op_by_op_torch-eval]
               "
           },
           {
@@ -137,8 +137,8 @@ jobs:
           },
           {
             runs-on: wormhole_b0, name: "stable-diffusion-v3.5", tests: "
-              tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[op_by_op_torch-SD3.5-medium-eval]
-              tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[op_by_op_torch-SD3.5-large-eval]
+              tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[op_by_op_torch-medium-eval]
+              tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[op_by_op_torch-large-eval]
               tests/models/stable_diffusion/test_stable_diffusion_transformer.py::test_stable_diffusion_transformer[op_by_op_torch-SD3.5-large-transformer-eval]
               "
           },
