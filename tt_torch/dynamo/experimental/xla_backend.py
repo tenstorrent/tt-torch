@@ -39,6 +39,8 @@ from tt_torch.tools.utils import (
 
 import torch_xla
 import torch_xla.core.xla_model as xm
+import torch_xla.distributed.spmd as xs
+import .sharding_utils as ts
 
 from ..executor import get_inputs_size, gb_to_bytes
 
@@ -754,10 +756,12 @@ class XLAExecutor:
 
     def push_tensors_to_device(self, inputs, device):
         if hasattr(inputs, "to"):
-            if device not in [inputs.device, inputs.device.type]:
-                return inputs.to(device)
-            else:
-                return inputs
+            # shard_spec = getattr(inputs, "shard_spec", None)
+            shard_spec = ts.get_sharding(inputs)
+            inp = inputs.to(device)
+            if shard_spec is not None:
+                xs.mark_sharding(inp, self.compiler_config.mesh, shard_spec)
+            return inp
         elif isinstance(
             inputs, dict
         ):  # transformers input/output objects are subclasses of dict, however we still wish to return the same wrapper object
