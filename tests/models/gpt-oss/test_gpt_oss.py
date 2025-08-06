@@ -43,10 +43,10 @@ def main():
 
     options = BackendOptions()
     options.compiler_config = cc
-    temp_model = torch.compile(
-        model,
-        dynamic=False,
-    )
+    # temp_model = torch.compile(
+    #     model,
+    #     dynamic=False,
+    # )
     tt_model = torch.compile(model, backend="tt", dynamic=False, options=options)
     outputs = tt_model(**inputs)
 
