@@ -7,7 +7,7 @@ import pytest
 import requests
 import onnx
 import tt_torch
-from transformers.cache_utils import DynamicCache, _flatten_dynamic_cache
+from transformers.cache_utils import DynamicCache
 from onnx.tools import update_model_dims
 import gc
 import onnxruntime
@@ -310,11 +310,15 @@ class ModelTester:
         elif hasattr(output_object, "to_tuple"):
 
             def flatten(t):
-                if isinstance(t, DynamicCache):
-                    # `DynamicCache` is most usually returned for generative models, regardless of whether `model(**inputs)` or `model.generate(**inputs)` is called.
-                    # `_flatten_dynamic_cache` returns a tuple where the first element is a list of tensors and the second element is a list of `['key_cache', 'value_cache']`
-                    # The first element is enough, so we only use that. It is a list so we need to `flatten` it.
-                    return flatten(_flatten_dynamic_cache(t)[0])
+                if hasattr(t, "layers") and t.layers:
+                    # Extract all key and value tensors from the layers
+                    cache_tensors = []
+                    for layer in t.layers:
+                        if hasattr(layer, "keys") and layer.keys is not None:
+                            cache_tensors.append(layer.keys)
+                        if hasattr(layer, "values") and layer.values is not None:
+                            cache_tensors.append(layer.values)
+                    return flatten(cache_tensors)
                 elif not isinstance(t, (tuple, list)):
                     return (t,)
                 else:
