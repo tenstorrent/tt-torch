@@ -1,89 +1,106 @@
 name: Run Op-By-Op Model Tests (Nightly)
 
 on:
-  workflow_dispatch:
   workflow_call:
     inputs:
       docker-image:
         description: 'Docker image to use for build'
         required: true
         type: string
-      docker-image-harbor:
-        description: 'Shared infra Docker image to use for build'
-        required: true
-        type: string
+      use-shared-runners:
+        description: 'Use shared runners instead of custom runners'
+        required: false
+        default: true
+        type: boolean
   workflow_run:
     workflows: [Build]
     types: [completed]
-
-env:
-  DOCKER_CACHE_ROOT: /mnt/dockercache
 
 permissions:
   packages: write
   checks: write
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      runner_name_format: ${{ steps.set-config.outputs.runner_name_format }}
+      container_image: ${{ steps.set-config.outputs.container_image }}
+    steps:
+    - name: Set configuration
+      id: set-config
+      run: |
+        # Set runner name format based on use-shared-runners
+        if [[ "${{ inputs.use-shared-runners }}" == "true" ]]; then
+          echo "runner_name_format=tt-beta-ubuntu-2204-{0}-large-stable" >> $GITHUB_OUTPUT
+          echo "container_image=harbor.ci.tenstorrent.net/${{ inputs.docker-image }}" >> $GITHUB_OUTPUT
+        else
+          echo "runner_name_format={0}" >> $GITHUB_OUTPUT
+          echo "container_image=${{ inputs.docker-image }}" >> $GITHUB_OUTPUT
+        fi
+
   tests:
+    needs: setup
     timeout-minutes: 360
     strategy:
       fail-fast: false
       matrix:
+        runs-on: [ n150 ]
         build: [
           {
-            runs-on: wormhole_b0, name: "qwen", tests: "
+            name: "qwen", tests: "
               tests/models/Qwen/test_qwen2_token_classification.py::test_qwen2_token_classification[op_by_op_torch-eval]
               "
           },
           {
-            runs-on: wormhole_b0, name: "autoencoder", tests: "
+            name: "autoencoder", tests: "
               tests/models/autoencoder_conv/test_autoencoder_conv.py::test_autoencoder_conv[op_by_op_torch-eval]
               tests/models/autoencoder_conv/test_autoencoder_conv_v2.py::test_autoencoder_conv_v2[op_by_op_torch-eval]
               "
           },
           {
-            runs-on: wormhole_b0, name: "falcon", tests: "
+            name: "falcon", tests: "
               tests/models/falcon/test_falcon.py::test_falcon[op_by_op_torch-eval]
               "
           },
           {
-            runs-on: wormhole_b0, name: "openpose", tests: "
+            name: "openpose", tests: "
               tests/models/openpose/test_openpose.py::test_openpose[op_by_op_torch-eval]
               "
           },
           {
-            runs-on: wormhole_b0, name: "stable-diffusion-pipe", tests: "
+            name: "stable-diffusion-pipe", tests: "
               tests/models/stable_diffusion/test_stable_diffusion.py::test_stable_diffusion[op_by_op_torch-eval]
               "
           },
           {
-            runs-on: wormhole_b0, name: "t5", tests: "
+            name: "t5", tests: "
               tests/models/speecht5_tts/test_speecht5_tts.py::test_speecht5_tts[op_by_op_torch-eval]
               "
           },
           {
-            runs-on: wormhole_b0, name: "unet", tests: "
+            name: "unet", tests: "
               tests/models/vgg19_unet/test_vgg19_unet.py::test_vgg19_unet[op_by_op_torch-eval]
               "
           },
           {
-            runs-on: wormhole_b0, name: "RMBG", tests: "
+            name: "RMBG", tests: "
               tests/models/RMBG/test_RMBG.py::test_RMBG[op_by_op_torch-eval]
               "
           },
           {
-            runs-on: wormhole_b0, name: "timm", tests: "
+            name: "timm", tests: "
               tests/models/timm/test_timm_image_classification.py::test_timm_image_classification[single_device-op_by_op_torch-eval-ghostnetv2_100.in1k]
               "
           },
           {
-            runs-on: wormhole_b0, name: "xglm", tests: "
+            name: "xglm", tests: "
               tests/models/xglm/test_xglm.py::test_xglm[op_by_op_torch-xglm-564M-eval]
               tests/models/xglm/test_xglm.py::test_xglm[op_by_op_torch-xglm-1.7B-eval]
               "
           },
           {
-            runs-on: wormhole_b0, name: "vision-misc", tests: "
+            name: "vision-misc", tests: "
               tests/models/glpn_kitti/test_glpn_kitti.py::test_glpn_kitti[op_by_op_torch-eval]
               tests/models/hand_landmark/test_hand_landmark.py::test_hand_landmark[op_by_op_torch-eval]
               tests/models/segment_anything/test_segment_anything.py::test_segment_anything[op_by_op_torch-eval]
@@ -91,64 +108,64 @@ jobs:
               "
           },
           {
-            runs-on: wormhole_b0, name: "torchvision_1", tests: "
+            name: "torchvision_1", tests: "
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op_torch-eval-googlenet]
               tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-op_by_op_torch-eval-regnet_y_128gf]
               "
           },
           {
-            runs-on: wormhole_b0, name: "deepseek", tests: "
+            name: "deepseek", tests: "
               tests/models/deepseek/test_deepseek.py::test_deepseek[op_by_op_torch-eval]
               tests/models/deepseek/test_deepseek_qwen.py::test_deepseek_qwen[op_by_op_torch-eval]
               "
           },
           {
-            runs-on: wormhole_b0, name: "bi_lstm_crf", tests: "
+            name: "bi_lstm_crf", tests: "
               tests/models/bi_lstm_crf/test_bi_lstm_crf.py::test_bi_lstm_crf[op_by_op_torch-lstm-eval]
               tests/models/bi_lstm_crf/test_bi_lstm_crf.py::test_bi_lstm_crf[op_by_op_torch-gru-eval]
               "
           },
           {
-            runs-on: wormhole_b0, name: "gliner", tests: "
+            name: "gliner", tests: "
               tests/models/gliner/test_gliner.py::test_gliner[op_by_op_torch-eval]
               "
           },
           {
-            runs-on: wormhole_b0, name: "YOLOv10", tests: "
+            name: "YOLOv10", tests: "
               tests/models/yolov10/test_yolov10.py::test_yolov10[op_by_op_torch-eval]
               "
           },
           {
-            runs-on: wormhole_b0, name: "OFT", tests: "
+            name: "OFT", tests: "
               tests/models/oft/test_oft.py::test_oft[op_by_op_torch-eval]
               "
           },
           {
 
-            runs-on: wormhole_b0, name: "mistral", tests: "
+            name: "mistral", tests: "
               tests/models/mistral/test_mistral.py::test_mistral[op_by_op_torch-7b-eval]
               tests/models/mistral/test_mistral.py::test_mistral[op_by_op_torch-ministral_8b_instruct-eval]
               "
           },
           {
-            runs-on: wormhole_b0, name: "pixtral", tests: "
+            name: "pixtral", tests: "
               tests/models/mistral/test_pixtral.py::test_pixtral[op_by_op_torch-eval]
             "
           },
           {
-            runs-on: wormhole_b0, name: "stable-diffusion-v3.5", tests: "
+            name: "stable-diffusion-v3.5", tests: "
               tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[op_by_op_torch-SD3.5-medium-eval]
               tests/models/stable_diffusion/test_stable_diffusion_3_5.py::test_stable_diffusion_3_5[op_by_op_torch-SD3.5-large-eval]
               tests/models/stable_diffusion/test_stable_diffusion_transformer.py::test_stable_diffusion_transformer[op_by_op_torch-SD3.5-large-transformer-eval]
               "
           },
           {
-            runs-on: wormhole_b0, name: "detr", tests: "
+            name: "detr", tests: "
               tests/models/detr/test_detr_onnx.py::test_detr_onnx[op_by_op_stablehlo-eval]
               "
           },
           {
-            runs-on: wormhole_b0, name: "d-fine", tests: "
+            name: "d-fine", tests: "
               tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-nano-eval]
               tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-small-eval]
               tests/models/d_fine/test_d_fine.py::test_d_fine[op_by_op_torch-medium-eval]
@@ -158,51 +175,51 @@ jobs:
           },
           {
             # only testing 4k variant as they're identical aside from token size
-            runs-on: wormhole_b0, name: "phi3", tests: "
+            name: "phi3", tests: "
               tests/models/phi/test_phi_3.py::test_phi_3[op_by_op_torch-mini_4k_instruct-eval]
             "
           },
           {
-            runs-on: wormhole_b0, name: "phi3p5_moe", tests: "
+            name: "phi3p5_moe", tests: "
             tests/models/phi/test_phi_3p5_moe.py::test_phi_3p5_moe[op_by_op_torch-eval]
             "
           },
           {
             # Only testing few variants since runtime on these is long. Increase when more mahcines or priority increases.
-            runs-on: wormhole_b0, name: "centernet", tests: "
+            name: "centernet", tests: "
             tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[op_by_op_stablehlo-centernet-hpe-dla1x-eval]
             tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[op_by_op_stablehlo-centernet-3d_bb-ddd_3dop-eval]
             "
           },
           {
-            runs-on: wormhole_b0, name: "phi3p5_vision", tests: "
+            name: "phi3p5_vision", tests: "
               tests/models/phi/test_phi_3p5_vision.py::test_phi_3p5_vision[op_by_op_torch-eval]
             "
           },
           {
-            runs-on: wormhole_b0, name: "phi4", tests: "
+            name: "phi4", tests: "
               tests/models/phi/test_phi_4.py::test_phi_4[op_by_op_torch-eval]
             "
           },
           {
-            runs-on: wormhole_b0, name: "llama", tests: "
+            name: "llama", tests: "
               tests/models/llama/test_llama_7b.py::test_llama_7b[op_by_op_torch-eval]
             "
           },
           {
-            runs-on: wormhole_b0, name: "flux", tests: "
+            name: "flux", tests: "
               tests/models/flux/test_flux.py::test_flux[op_by_op_torch-schnell-eval]
               tests/models/flux/test_flux.py::test_flux[op_by_op_torch-dev-eval]
             "
           },
         ]
-    runs-on:
-      - ${{ matrix.build.sh-run && format('tt-beta-ubuntu-2204-{0}-large-stable', matrix.build.runs-on) ||  matrix.build.runs-on }}
+    runs-on: ${{ format(needs.setup.outputs.runner_name_format, matrix.runs-on) }}
 
-    name: "tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
+    name: "tests (${{ matrix.runs-on }}, ${{ matrix.build.name }})"
 
     container:
-      image: ${{ matrix.build.sh-run && inputs.docker-image-harbor || inputs.docker-image }}
+      # Use container image from the setup job
+      image: ${{ needs.setup.outputs.container_image }}
       options: --user root --device /dev/tenstorrent --shm-size=4gb --pid=host
       volumes:
         - /dev/hugepages:/dev/hugepages
@@ -219,7 +236,7 @@ jobs:
       id: fetch-job-id
       uses: tenstorrent/tt-github-actions/.github/actions/job_id@main
       with:
-        job_name: "tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})" # reference above tests.name
+        job_name: "tests (${{ matrix.runs-on }}, ${{ matrix.build.name }})"
 
     - name: Set reusable strings
       id: strings
@@ -231,6 +248,13 @@ jobs:
         echo "install-dir=$(pwd)/install" >> "$GITHUB_OUTPUT"
         echo "dist-dir=$(pwd)/dist" >> "$GITHUB_OUTPUT"
         echo "test-output-dir=$(pwd)/results/models/tests/" >> "$GITHUB_OUTPUT"
+
+        # Set cache root based on use-shared-runners
+        if [[ "${{ inputs.use-shared-runners }}" == "true" ]]; then
+            echo "IRD_LF_CACHE=http://large-file-cache.large-file-cache.svc.cluster.local/" >> $GITHUB_ENV
+        else
+            echo "DOCKER_CACHE_ROOT=/mnt/dockercache" >> $GITHUB_ENV
+        fi
 
     - name: Sample memory
       shell: bash
@@ -334,5 +358,5 @@ jobs:
       if: success() || failure()
       uses: actions/upload-artifact@v4
       with:
-        name: test-log-${{ matrix.build.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        name: test-log-${{ matrix.runs-on }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: pytest.log

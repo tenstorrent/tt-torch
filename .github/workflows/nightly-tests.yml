@@ -6,6 +6,15 @@ on:
   schedule:
     - cron: '0 4 * * *'  # Runs at 04:00 UTC every day
   workflow_dispatch:  # Manual trigger
+    # Manual trigger
+    inputs:
+      run-on:
+        description: 'Run on'
+        default: 'Civ2'
+        type: choice
+        options:
+        - 'Civ1'
+        - 'Civ2'
 
 permissions:
   packages: write
@@ -34,19 +43,21 @@ jobs:
     uses: ./.github/workflows/run-op-by-op-model-tests-nightly.yml
     secrets: inherit
     with:
+      use-shared-runners: ${{ inputs.run-on == 'Civ2' }}
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
-      docker-image-harbor: ${{ needs.docker-build.outputs.docker-image-harbor }}
   test_full_model:
     needs: [docker-build, build]
     uses: ./.github/workflows/run-full-model-execution-tests.yml
     secrets: inherit
     with:
+      use-shared-runners: ${{ inputs.run-on == 'Civ2' }}
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
   test_full_model_nightly:
     needs: [docker-build, build]
     uses: ./.github/workflows/run-full-model-execution-tests-nightly.yml
     secrets: inherit
     with:
+      use-shared-runners: ${{ inputs.run-on == 'Civ2' }}
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
   test-passing-tt-forge-models:
     needs: [docker-build, build]
