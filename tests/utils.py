@@ -627,7 +627,13 @@ class ModelTester:
         final_outputs = []
         for rt_tensor in rt_tensors:
             torch_tensors = tt_mlir.to_host(rt_tensor)
-            final_outputs.append(tuple(torch_tensors))
+            if isinstance(torch_tensors, list):
+                if len(torch_tensors) == 1:
+                    final_outputs.extend(torch_tensors)
+                else:
+                    final_outputs.append(tuple(torch_tensors))
+            else:
+                final_outputs.append(torch_tensors)
 
         self.record_property("achieved_compile_depth", "EXECUTE")
         if self.compiler_config._enable_intermediate_verification:
