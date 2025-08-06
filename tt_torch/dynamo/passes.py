@@ -100,11 +100,11 @@ def bypass_dtype_promotion(gm, compiler_config):
             and "prims::convert_element_type" in node.target.name()
         ):
             if (
-                node.meta["original_aten"]._name != "aten::_to_copy"
+                node.meta.get("original_aten", None) is not None
+                and node.meta["original_aten"]._name != "aten::_to_copy"
                 and node.args[1] == torch.float32
             ):
                 node.replace_all_uses_with(node.args[0])
-
     return gm
 
 
@@ -580,11 +580,29 @@ def run_pass_pipeline_for_single_gm(
     gm_device = torch.fx.GraphModule(gm, graph, f"_device_{idx}")
     # we use the export API to run the decompositions, as this maintains the
     # source locations in stack_trace
-    gm_device = (
-        torch.export.export_for_training(gm_device, tuple(example_inputs), strict=False)
-        .run_decompositions(decompositions)
-        .module()
+    # gm_device = (
+    #     torch.export.export(gm_device, tuple(example_inputs), strict=False)
+    #     .run_decompositions(decompositions)
+    #     .module()
+    # )
+    import torch.nn as nn
+    from torch.fx.experimental.proxy_tensor import make_fx
+
+    class Wrapped(nn.Module):
+        def __init__(self, gm):
+            super().__init__()
+            self.gm = gm
+
+        def forward(self, *args):
+            return self.gm(*args)
+
+    wrapped = Wrapped(gm_device)
+
+    # Re-apply make_fx
+    gm_device = make_fx(wrapped, decomposition_table=CUSTOM_DECOMPOSITION_TABLE)(
+        *example_inputs
     )
+
     gm_device = bypass_dtype_promotion(gm_device, compiler_config)
     # shape prop also propagates dtypes, need to run to figure out which casts are redundant
     run_shape_prop(gm_device, example_inputs)

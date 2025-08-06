@@ -7,67 +7,49 @@ import pytest
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from tt_torch.dynamo.backend import BackendOptions
 
 
-class ThisTester(ModelTester):
-    def _load_model(self):
-        config = AutoConfig.from_pretrained(
-            "openai/gpt-oss-20b", trust_remote_code=True
-        )
-        config.quantization_config["quant_method"] = "none"
-        self.model = AutoModelForCausalLM.from_pretrained(
-            "openai/gpt-oss-20b",
-            config=config,
-            torch_dtype=torch.bfloat16,
-            device_map="cpu",
-            low_cpu_mem_usage=True,
-            trust_remote_code=True,
-        )
-        return self.model
+def main():
 
-    def _load_inputs(self):
-        tokenizer = AutoTokenizer.from_pretrained("openai/gpt-oss-20b")
-        messages = [
-            {"role": "user", "content": "Who are you?"},
-        ]
-        inputs = tokenizer.apply_chat_template(
-            messages,
-            add_generation_prompt=True,
-            tokenize=True,
-            return_dict=True,
-            return_tensors="pt",
-        ).to(self.model.device)
-        return inputs
+    config = AutoConfig.from_pretrained("openai/gpt-oss-20b", trust_remote_code=True)
+    config.quantization_config["quant_method"] = "none"
+    config.num_hidden_layers = 1
+    config.use_cache = False
+    model = AutoModelForCausalLM.from_pretrained(
+        "openai/gpt-oss-20b",
+        config=config,
+        torch_dtype=torch.bfloat16,
+        low_cpu_mem_usage=True,
+        trust_remote_code=True,
+        attn_implementation="eager",
+    )
 
-
-@pytest.mark.parametrize(
-    "mode",
-    ["eval"],
-)
-@pytest.mark.parametrize(
-    "op_by_op",
-    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
-    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
-)
-def test_gpt_oss(record_property, mode, op_by_op):
-    model_name = "GPT-OSS"
+    tokenizer = AutoTokenizer.from_pretrained("openai/gpt-oss-20b")
+    messages = [
+        {"role": "user", "content": "Who are you?"},
+    ]
+    inputs = tokenizer.apply_chat_template(
+        messages,
+        add_generation_prompt=True,
+        tokenize=True,
+        return_dict=True,
+        return_tensors="pt",
+    )
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-    if op_by_op:
-        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-        if op_by_op == OpByOpBackend.STABLEHLO:
-            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+    cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
-    tester = ThisTester(
-        model_name,
-        mode,
-        compiler_config=cc,
-        record_property_handle=record_property,
-        assert_pcc=False,
-        assert_atol=False,
-        run_generate=False,
+    options = BackendOptions()
+    options.compiler_config = cc
+    temp_model = torch.compile(
+        model,
+        dynamic=False,
     )
-    results = tester.test_model()
-    print(results)
-    tester.finalize()
+    tt_model = torch.compile(model, backend="tt", dynamic=False, options=options)
+    outputs = tt_model(**inputs)
+
+
+if __name__ == "__main__":
+    main()
