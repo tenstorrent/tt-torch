@@ -41,6 +41,7 @@ def skip_full_eval_test(
     reason,
     model_group="generality",
     model_name_filter=None,
+    forge_models_test=False,
 ):
     """
     Helper function to skip a test when frontend has issues and record properties.
@@ -54,6 +55,7 @@ def skip_full_eval_test(
         reason: The reason for skipping the test
         model_group: The model group (default: "generality")
         model_name_filter: Either a string or a list of strings. If provided, the test will only be skipped if model_name matches exactly (string) or is in the list (list of strings)
+        forge_models_test: Whether the test is a tt-forge-models model test run via test_models.py.
     Returns:
         bool: True if test was skipped, False otherwise
     """
@@ -77,6 +79,7 @@ def skip_full_eval_test(
             {
                 "bringup_status": bringup_status,
                 "model_name": model_name,
+                "forge_models_test": forge_models_test,
             },
         )
         record_property("group", model_group)
@@ -115,6 +118,7 @@ class ModelTester:
         devices=None,
         data_parallel_mode=False,
         backend="tt-experimental",
+        forge_models_test=False,
     ):
         """
         Initializes the ModelTester.
@@ -143,6 +147,7 @@ class ModelTester:
             data_parallel_mode (bool, optional): If True, the model will be compiled and run in a data-parallel fashion
                                                     across the specified `devices`. This mode does not support op-by-op
                                                     compilation or execution. Defaults to False.
+            forge_models_test (bool, optional): Whether the test is a tt-forge-models model test run via test_models.py. Defaults to False.
         """
         if mode not in ["train", "eval"]:
             raise ValueError(f"Current mode is not supported: {mode}")
@@ -253,6 +258,7 @@ class ModelTester:
         self.record_tag_cache["is_asserting_atol"] = self.assert_atol
 
         self.record_tag_cache["parallelism"] = self.get_parallelism()
+        self.record_tag_cache["forge_models_test"] = forge_models_test
 
         # configs should be set at test start, so they can be flushed immediately
         self.record_property(

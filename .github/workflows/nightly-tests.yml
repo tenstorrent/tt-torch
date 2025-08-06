@@ -48,6 +48,14 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
+  test-passing-tt-forge-models:
+    needs: [docker-build, build]
+    uses: ./.github/workflows/run-tt-forge-models-tests.yml
+    secrets: inherit
+    with:
+      docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      tests-filter: "expected_passing"
+      num-splits: 6
   download-report:
     if: success() || failure()
     needs: test_op_by_op
