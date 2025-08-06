@@ -28,7 +28,7 @@ jobs:
   check-if-docker-exist:
     runs-on: ubuntu-latest
     outputs:
-      docker-image: ${{ steps.build.outputs.docker-image }}
+      docker-image: ${{ steps.check.outputs.docker-image }}
     steps:
       - uses: actions/checkout@v4
       - name: Override tt-mlir SHA mlir_override is set
