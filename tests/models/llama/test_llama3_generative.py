@@ -130,6 +130,7 @@ def test_llama3_generate():
     # setup XLA environment and device mesh
     setup_xla_environment()
     mesh = create_device_mesh()
+    cc.mesh = mesh # routed into xlaBackend
     
     # apply shardings
     
