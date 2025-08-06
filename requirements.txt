@@ -32,7 +32,7 @@ xlsxwriter
 torchvision
 torchaudio
 bi-lstm-crf
-transformers>=4.50.0,<4.53.0
+transformers==4.55
 tiktoken
 sentencepiece
 pytorchcv
@@ -52,9 +52,5 @@ opencv-contrib-python
 gliner
 ultralytics
 efficientnet_pytorch
-torchcodec==0.5.0 # required for whisper test. Requires system dep ffmpeg. 0.6.0 fails with NotImplementedError: Could not run 'torchcodec_ns::create_from_tensor' with arguments from the 'CPU' backend
-torchxrayvision==0.0.39
-scikit-image>=0.24 # For DenseNet 121 HF XRay model
-ase==3.24.0 # For hippynn
-hippynn==0.0.3
-pycocotools
+torchcodec # required for whisper test. Requires system dep ffmpeg.
+kernels # gpt-oss
