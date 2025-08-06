@@ -83,6 +83,7 @@ from tt_torch.tools.utils import calculate_pcc
 import os
 import torch_xla
 import torch_xla.core.xla_model as xm
+import tt_torch.dynamo.sharding_utils as ts
 
 os.environ["DISABLE_NUMERIC_CC_TOKEN"] = "1"
 
@@ -179,18 +180,18 @@ def test_multichip(prompt="I like taking walks in the"):
     for i, (key, value) in enumerate(
         zip(static_cache.key_cache, static_cache.value_cache)
     ):
-        static_cache.key_cache[i].shard_spec = (None, "model", None, None)
-        static_cache.value_cache[i].shard_spec = (None, "model", None, None)
+        ts.mark_sharding(static_cache.key_cache[i], (None, "model", None, None))
+        ts.mark_sharding(static_cache.value_cache[i],(None, "model", None, None))
 
     for layer in llama.model.layers:
-        layer.mlp.up_proj.weight.shard_spec = ("model", None)
-        layer.mlp.gate_proj.weight.shard_spec = ("model", None)
-        layer.mlp.down_proj.weight.shard_spec = (None, "model")
+        ts.mark_sharding(layer.mlp.up_proj.weight.shard_spec, ("model", None))
+        ts.mark_sharding(layer.mlp.gate_proj.weight.shard_spec, ("model", None))
+        ts.mark_sharding(layer.mlp.down_proj.weight.shard_spec, (None, "model"))
 
-        layer.self_attn.q_proj.weight.shard_spec = ("model", None)
-        layer.self_attn.k_proj.weight.shard_spec = ("model", None)
-        layer.self_attn.v_proj.weight.shard_spec = ("model", None)
-        layer.self_attn.o_proj.weight.shard_spec = (None, "model")
+        ts.mark_sharding(layer.self_attn.q_proj.weight.shard_spec, ("model", None))
+        ts.mark_sharding(layer.self_attn.k_proj.weight.shard_spec, ("model", None))
+        ts.mark_sharding(layer.self_attn.v_proj.weight.shard_spec, ("model", None))
+        ts.mark_sharding(layer.self_attn.o_proj.weight.shard_spec, (None, "model"))
 
     # for i, (key, value) in enumerate(zip(static_cache.key_cache, static_cache.value_cache)):
     #     static_cache.key_cache[i] = key.to("xla")

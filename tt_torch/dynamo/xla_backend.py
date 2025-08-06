@@ -40,6 +40,7 @@ from tt_torch.tools.utils import (
 
 import torch_xla.core.xla_model as xm
 import torch_xla.distributed.spmd as xs
+import .sharding_utils as ts
 
 def get_tensor_size(tensor):
     """Calculate the memory size of a tensor in bytes."""
@@ -666,7 +667,8 @@ class XLAExecutor:
                 self.inputs.append(None)
                 self.user_input_indices.append(idx)
             else:
-                shard_spec = getattr(self.program.state_dict[input_spec.target], "shard_spec", None)
+                # shard_spec = getattr(self.program.state_dict[input_spec.target], "shard_spec", None)
+                shard_spec = ts.get_sharding(self.program.state_dict[input_spec.target])
                 inp = self.program.state_dict[input_spec.target].to("xla")
                 if shard_spec is not None:
                     xs.mark_sharding(inp, self.compiler_config.mesh, shard_spec)
@@ -674,7 +676,8 @@ class XLAExecutor:
 
     def push_tensors_to_device(self, inputs, device):
         if hasattr(inputs, "to"):
-            shard_spec = getattr(inputs, "shard_spec", None)
+            # shard_spec = getattr(inputs, "shard_spec", None)
+            shard_spec = ts.get_sharding(inputs)
             inp = inputs.to(device)
             if shard_spec is not None:
                 xs.mark_sharding(inp, self.compiler_config.mesh, shard_spec)
