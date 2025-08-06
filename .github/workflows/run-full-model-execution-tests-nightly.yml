@@ -313,7 +313,8 @@ jobs:
                 tests/models/EfficientNet/test_EfficientNet_n300.py::test_EfficientNet[full-efficientnet-b6-eval]
                 tests/models/EfficientNet/test_EfficientNet_n300.py::test_EfficientNet[full-efficientnet-b7-eval]
             "
-          },
+          }
+
         ]
     runs-on: ${{ matrix.runner == 'wormhole' && matrix.build.wh-runner || matrix.runner == 'blackhole' && matrix.build.bh-runner  || 'wormhole_b0'}}
     name: "test exec nightly ${{ matrix.runner == 'wormhole' && 'wh' || matrix.runner == 'blackhole' && 'bh' || 'unk' }} (${{ matrix.build.name }})"
