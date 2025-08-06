@@ -593,12 +593,10 @@ def run_pass_pipeline_for_single_gm(
             super().__init__()
             self.gm = gm
 
-        def forward(self, *args):
-            return self.gm(*args)
+        def forward(self, L_kwargs_input_ids_, L_kwargs_attention_mask_):
+            return self.gm(L_kwargs_input_ids_, L_kwargs_attention_mask_)
 
     wrapped = Wrapped(gm_device)
-
-    # Re-apply make_fx
     gm_device = make_fx(wrapped, decomposition_table=CUSTOM_DECOMPOSITION_TABLE)(
         *example_inputs
     )

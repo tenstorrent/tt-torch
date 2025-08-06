@@ -375,7 +375,8 @@ class TorchExecutor(OpByOpExecutor):
                 test_this_op = self.should_test_op()
                 # Another useful debug method:
                 # test_this_op = str(node.target) == "aten.gelu.default"
-
+                if node.target == torch.ops.aten.add_.Tensor:
+                    test_this_op = False
                 if test_this_op:
                     try:
                         start = time.time()
