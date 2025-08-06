@@ -22,29 +22,24 @@ def setup_xla_environment():
     print("Setting up XLA environment...")
 
     # Basic XLA configuration
-    os.environ["ENABLE_AUTO_PARALLEL"] = "TRUE"
-    os.environ["CONVERT_SHLO_TO_SHARDY"] = "1"
-    os.environ["MESH_SHAPE"] = "1,8"
+    os.environ["ENABLE_AUTO_PARALLEL"] = "TRUE" # Enables the auto parallel pass in tt-mlir
+    os.environ["CONVERT_SHLO_TO_SHARDY"] = "1" # Converts the StableHLO emitted by torch-xla to the Shardy dialect
+    os.environ["MESH_SHAPE"] = "1,8" # Sets the mesh shape used by the auto parallel pass
 
     # Initialize SPMD
     xr.use_spmd()
-    torch_xla.sync(True, True)
     print("XLA environment configured.")
 
 
-def create_device_mesh(
-    num_devices: int = 8, mesh_shape: Tuple[int, int] = (1, 8)
-) -> Mesh:
+def create_device_mesh() -> Mesh:
     """
     Create device mesh for tensor parallelism.
-
-    Args:
-        num_devices: Total number of devices
-        mesh_shape: Shape of the device mesh (batch_dim, model_dim)
 
     Returns:
         Mesh object for SPMD operations
     """
+    num_devices = xr.global_runtime_device_count()
+    mesh_shape = (1, num_devices)
     device_ids = np.array(range(num_devices))
     mesh = Mesh(device_ids, mesh_shape, ("batch", "model"))
     print(f"Created device mesh: {mesh_shape} with {num_devices} devices")
@@ -57,10 +52,6 @@ def apply_tensor_parallel_sharding(model: LlamaModel, mesh: Mesh) -> None:
 
     This function modifies the model in-place to add sharding annotations
     for tensor parallelism.
-
-    Args:
-        model: The Llama model to modify
-        mesh: Device mesh for sharding
     """
     print("Applying tensor parallel sharding...")
 
@@ -113,18 +104,6 @@ def apply_tensor_parallel_sharding(model: LlamaModel, mesh: Mesh) -> None:
 
 
 def prepare_inputs(mesh: Mesh, input_ids: torch.Tensor) -> torch.Tensor:
-    """
-    Prepare input tensors with appropriate sharding.
-
-    Args:
-        config: Model configuration
-        mesh: Device mesh
-        batch_size: Batch size
-        seq_length: Sequence length
-
-    Returns:
-        Sharded input tensor
-    """
     print(
         f"Preparing inputs: batch_size={input_ids.shape[0]}, seq_length={input_ids.shape[1]}"
     )
@@ -138,13 +117,11 @@ def prepare_inputs(mesh: Mesh, input_ids: torch.Tensor) -> torch.Tensor:
     return input_ids
 
 
-def run_inference_comparison(model_name: str = "meta-llama/Meta-Llama-3.1-8B"):
+def run_inference_comparison():
     """
     Run a complete example comparing single-device vs tensor-parallel inference.
-
-    Args:
-        model_name: HuggingFace model name to load
     """
+    model_name = "meta-llama/Meta-Llama-3.1-8B"
     print(f"Running inference comparison for {model_name}")
 
     # Setup environment
@@ -221,7 +198,6 @@ def run_inference_comparison(model_name: str = "meta-llama/Meta-Llama-3.1-8B"):
 
 
 def main():
-    """Main function demonstrating tensor parallelism setup."""
     print("Torch-XLA Tensor Parallelism for Llama Models")
     print("=" * 50)
 
@@ -235,7 +211,6 @@ def main():
 
     except Exception as e:
         print(f"Error during execution: {e}")
-        print("This might be due to missing dependencies or hardware requirements.")
         return 1
 
     return 0
