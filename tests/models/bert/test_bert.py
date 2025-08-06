@@ -62,7 +62,7 @@ def test_bert(record_property, mode, op_by_op, variant, variant_config):
     results = tester.test_model()
 
     if mode == "eval":
-        answer = loader.decode_output(results, tester.inputs)
+        answer = loader.decode_output(results)
 
         print(
             f"""
