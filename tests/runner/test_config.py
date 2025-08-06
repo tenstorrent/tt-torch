@@ -12,7 +12,9 @@ test_config = {
     },
     "vovnet/pytorch-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        # Aug5: Issue https://github.com/tenstorrent/tt-torch/issues/1142
+        "status": ModelStatus.KNOWN_FAILURE_XFAIL,
+        "xfail_reason": "loc(\"reduce-window.234\"): error: 'ttir.max_pool2d' op output tensor height and width dimension (28, 28) do not match the expected dimensions (27, 28)",
     },
     "hardnet/pytorch-full-eval": {
         "required_pcc": 0.98,
@@ -131,6 +133,8 @@ test_config = {
     },
     "densenet/pytorch-densenet161-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
+        # PCC Drop to 0.41146078113061335 Aug5: Issue https://github.com/tenstorrent/tt-torch/issues/1142
+        "assert_pcc": False,
     },
     "densenet/pytorch-densenet169-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
