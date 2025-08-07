@@ -24,6 +24,7 @@ def main():
         trust_remote_code=True,
         attn_implementation="eager",
     )
+    model.eval()
 
     tokenizer = AutoTokenizer.from_pretrained("openai/gpt-oss-20b")
     messages = [
@@ -47,8 +48,9 @@ def main():
     #     model,
     #     dynamic=False,
     # )
-    tt_model = torch.compile(model, backend="tt", dynamic=False, options=options)
-    outputs = tt_model(**inputs)
+    with torch.no_grad():
+        tt_model = torch.compile(model, backend="tt", dynamic=False, options=options)
+        outputs = tt_model(**inputs)
 
 
 if __name__ == "__main__":
