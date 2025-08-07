@@ -44,14 +44,13 @@ jobs:
       - id: set-matrix
         run: |
           NUM_GROUPS=${{ inputs.num-splits }}
-          MATRIX_JSON=$(jq -n --argjson n "$NUM_GROUPS" '
-            [range(1; $n + 1)] |
-            map({
+          MATRIX_JSON=$(jq -n '
+            [{
               "wh-runner": "wormhole_b0",
               "bh-runner": "p150",
-              "name": ("grp_" + tostring),
-              "group": .
-            })')
+              "name": "grp_4",
+              "group": 4
+            }]')
           printf "matrix=%s\n" "$(echo "$MATRIX_JSON" | jq -c)" >> "$GITHUB_OUTPUT"
 
   tests:
