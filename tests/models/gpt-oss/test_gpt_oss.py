@@ -8,6 +8,9 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from tt_torch.dynamo.backend import BackendOptions
+from .xla_decompositions import (
+    CUSTOM_DECOMPOSITION_TABLE,
+)
 
 
 def main():
