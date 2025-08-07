@@ -6,16 +6,8 @@ import pytest
 
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from tt_torch.tools.verify import calculate_pcc
-from tt_torch.tools.device_manager import DeviceManager
-from tt_torch.dynamo.backend import backend, BackendOptions
-from transformers import (
-    AutoTokenizer,
-    AutoModelForCausalLM,
-    StaticCache,
-)
-from tests.utils import clear_dynamo_cache
-import tt_mlir
+from tt_torch.dynamo.backend import BackendOptions
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
 
 class ThisTester(ModelTester):
