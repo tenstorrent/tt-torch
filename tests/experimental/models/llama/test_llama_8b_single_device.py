@@ -62,16 +62,24 @@ def test_llama_8b(record_property, model_name, op_by_op):
     tester.test_model()
     tester.finalize()
 
+
 @pytest.mark.parametrize(
     "run_causal",
     [True, False],
+    ids=["causal", "base"],
 )
-@pytest.mark.parametrize("data_type", [torch.bfloat16, torch.float32])
-def test_llama_8b_eager(run_causal, data_type):
+@pytest.mark.parametrize(
+    "data_type", [torch.bfloat16, torch.float32], ids=["bf16", "fp32"]
+)
+@pytest.mark.parametrize("num_layers", [7, 16], ids=["7_layers", "16_layers"])
+@pytest.mark.parametrize("sequence_length", [128, 256, 512], ids=["128", "256", "512"])
+def test_llama_8b_eager(run_causal, data_type, num_layers, sequence_length):
     torch.manual_seed(42)
+    if data_type == torch.float32 and num_layers == 16:
+        pytest.skip("FP32 not supported for 16 layers in Llama-3.1-8B")
     model_name = "meta-llama/Llama-3.1-8B"
     config = LlamaConfig.from_pretrained(model_name)
-    config.num_hidden_layers = 7
+    config.num_hidden_layers = num_layers
     if run_causal:
         model = AutoModelForCausalLM.from_pretrained(
             model_name, config=config, torch_dtype=data_type
@@ -79,9 +87,11 @@ def test_llama_8b_eager(run_causal, data_type):
     else:
         model = LlamaModel.from_pretrained(
             model_name, config=config, torch_dtype=data_type)
-    
-    batch_size, seq_length = 1, 512
-    inputs = torch.randint(0, config.vocab_size, (batch_size, seq_length), dtype=torch.int32)
+
+    batch_size = 1
+    inputs = torch.randint(
+        0, config.vocab_size, (batch_size, sequence_length), dtype=torch.int32
+    )
     outputs = model(inputs)
     if run_causal:
         cpu_outputs = outputs.logits
@@ -93,6 +103,7 @@ def test_llama_8b_eager(run_causal, data_type):
     inputs = inputs.to(device)
 
     outputs = model(inputs)
+    # torch_xla.sync(True, True)
     if run_causal:
         tt_outputs = outputs.logits.to("cpu")
     else:
@@ -102,6 +113,7 @@ def test_llama_8b_eager(run_causal, data_type):
     print(f"PCC: {pcc}")
     '''
     PCC RESULTS:
+
     CAUSAL MODEL:
     - Sequence Length: 1024
       - BF16: 0.7673109955645975
