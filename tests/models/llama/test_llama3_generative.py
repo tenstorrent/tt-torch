@@ -17,18 +17,17 @@ from transformers import (
 from tests.utils import clear_dynamo_cache
 import tt_mlir
 
-_global_max_cache_len = 64 + 64
-
 
 class ThisTester(ModelTester):
     def _load_model(self):
         model_name = "meta-llama/Llama-3.2-3B"
-        # set up the model and tokenizer
+
         self.model = AutoModelForCausalLM.from_pretrained(
             model_name,
             torch_dtype=torch.bfloat16,
             use_cache=True,
         )
+        self.model.generation_config.cache_implementation = "static"
 
         self.tokenizer = AutoTokenizer.from_pretrained(
             model_name, torch_dtype=torch.bfloat16
@@ -44,29 +43,12 @@ class ThisTester(ModelTester):
             return_attention_mask=True,
         )
 
-        # set up static cache
-        static_cache = StaticCache(
-            config=self.model.config,
-            max_batch_size=1,
-            max_cache_len=_global_max_cache_len,
-            device=self.model.device,
-            dtype=self.model.dtype,
-        )
-
-        cache_position = torch.arange(0, inputs.input_ids.shape[1])
-
         args = {
             "input_ids": inputs.input_ids,
             "attention_mask": inputs.attention_mask,
             "max_new_tokens": 32,
-            "do_sample": False,
-            "temperature": 1.0,
-            "top_p": 1.0,
             "pad_token_id": self.tokenizer.eos_token_id,
             "eos_token_id": self.tokenizer.eos_token_id,
-            "past_key_values": static_cache,
-            "use_cache": True,
-            "cache_position": cache_position,
         }
         return args
 
@@ -109,24 +91,3 @@ def test_llama3_generate(record_property, mode, op_by_op):
 
     decoded_output = tester.tokenizer.decode(results[0], skip_special_tokens=True)
     print(decoded_output)
-
-    # device = DeviceManager.create_parent_mesh_device(mesh_shape=[1, 1])
-    # options.devices = [device]
-
-    # compiled_model = torch.compile(
-    #     model, backend=backend, dynamic=False, options=options
-    # )
-
-    # generation_start = time.time()
-    # generated_ids = compiled_model.generate(**input_args)
-    # total_generation_time = time.time() - generation_start
-
-    # generated_text = tokenizer.decode(generated_ids[0], skip_special_tokens=True)
-
-    # print(f"Generated text: '{generated_text}'")
-    # print(f"Total generation time: {total_generation_time:.3f}s")
-    # print(f"Tokens generated: {generated_ids.shape[1] - input_args['input_ids'].shape[1]}")
-
-    # # Cleanup
-    # DeviceManager.release_parent_device(device)
-    # clear_dynamo_cache()
