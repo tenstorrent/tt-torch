@@ -11,7 +11,6 @@ from tt_torch.dynamo.backend import BackendOptions
 
 
 def main():
-
     config = AutoConfig.from_pretrained("openai/gpt-oss-20b", trust_remote_code=True)
     config.quantization_config["quant_method"] = "none"
     config.num_hidden_layers = 1
@@ -44,10 +43,7 @@ def main():
 
     options = BackendOptions()
     options.compiler_config = cc
-    # temp_model = torch.compile(
-    #     model,
-    #     dynamic=False,
-    # )
+
     with torch.no_grad():
         tt_model = torch.compile(model, backend="tt", dynamic=False, options=options)
         outputs = tt_model(**inputs)
