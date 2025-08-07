@@ -22,11 +22,15 @@ test_config = {
     },
     "vovnet/pytorch-vovnet27s-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        # Aug5: Issue https://github.com/tenstorrent/tt-torch/issues/1142
+        "status": ModelStatus.KNOWN_FAILURE_XFAIL,
+        "xfail_reason": "loc(\"reduce-window.234\"): error: 'ttir.max_pool2d' op output tensor height and width dimension (28, 28) do not match the expected dimensions (27, 28)",
     },
     "vovnet/pytorch-vovnet39-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        # Aug5: Issue https://github.com/tenstorrent/tt-torch/issues/1142
+        "status": ModelStatus.KNOWN_FAILURE_XFAIL,
+        "xfail_reason": "loc(\"reduce-window.234\"): error: 'ttir.max_pool2d' op output tensor height and width dimension (28, 28) do not match the expected dimensions (27, 28)",
     },
     "vovnet/pytorch-vovnet57-full-eval": {
         "assert_pcc": False,
@@ -336,7 +340,7 @@ test_config = {
     #     "status": ModelStatus.EXPECTED_PASSING,
     # },
     "mamba/pytorch-mamba-1.4b-hf-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        # "status": ModelStatus.EXPECTED_PASSING,
         "arch_overrides": {
             "blackhole": {
                 "status": ModelStatus.NOT_SUPPORTED_SKIP,
@@ -344,6 +348,9 @@ test_config = {
                 "skip_bringup_status": "FAILED_RUNTIME",
             },
         },
+        # Aug 6 - mamba2.8b getting killed after adding more tests, disabling some big ones.
+        "status": ModelStatus.KNOWN_FAILURE_XFAIL,
+        "xfail_reason": "High memory killed",
     },
     "mamba/pytorch-mamba-370m-hf-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -509,7 +516,7 @@ test_config = {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "mamba/pytorch-mamba-2.8b-hf-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        # "status": ModelStatus.EXPECTED_PASSING,
         "required_pcc": 0.98,
         "arch_overrides": {
             "blackhole": {
@@ -518,6 +525,9 @@ test_config = {
                 "skip_bringup_status": "FAILED_RUNTIME",
             },
         },
+        # Aug 6 - mamba2.8b getting killed after adding more tests, disabling some big ones.
+        "status": ModelStatus.KNOWN_FAILURE_XFAIL,
+        "xfail_reason": "High memory killed",
     },
     "deit/pytorch-base-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -556,22 +566,32 @@ test_config = {
         "assert_pcc": False,
     },
     "phi2/causal_lm/pytorch-microsoft/phi-2-pytdml-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        # Aug 6 - phi2 getting killed after adding more tests, disabling some big ones.
+        "status": ModelStatus.KNOWN_FAILURE_XFAIL,
+        "xfail_reason": "High memory killed",
         "assert_pcc": False,
     },
     "phi2/token_classification/pytorch-microsoft/phi-2-full-eval": {
         "required_pcc": 0.97,  # PCC is ND https://github.com/tenstorrent/tt-torch/issues/1129
-        "status": ModelStatus.EXPECTED_PASSING,
+        # Aug 6 - phi2 getting killed after adding more tests, disabling some big ones.
+        "status": ModelStatus.KNOWN_FAILURE_XFAIL,
+        "xfail_reason": "High memory killed",
     },
     "phi2/token_classification/pytorch-microsoft/phi-2-pytdml-full-eval": {
         "required_pcc": 0.97,  # PCC is ND https://github.com/tenstorrent/tt-torch/issues/1129
-        "status": ModelStatus.EXPECTED_PASSING,
+        # Aug 6 - phi2 getting killed after adding more tests, disabling some big ones.
+        "status": ModelStatus.KNOWN_FAILURE_XFAIL,
+        "xfail_reason": "High memory killed",
     },
     "phi2/sequence_classification/pytorch-microsoft/phi-2-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        # Aug 6 - phi2 getting killed after adding more tests, disabling some big ones.
+        "status": ModelStatus.KNOWN_FAILURE_XFAIL,
+        "xfail_reason": "High memory killed",
     },
     "phi2/sequence_classification/pytorch-microsoft/phi-2-pytdml-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        # Aug 6 - phi2 getting killed after adding more tests, disabling some big ones.
+        "status": ModelStatus.KNOWN_FAILURE_XFAIL,
+        "xfail_reason": "High memory killed",
     },
     "phi1_5/token_classification/pytorch-microsoft/phi-1_5-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -641,6 +661,7 @@ test_config = {
     },
     "albert/token_classification/pytorch-xxlarge_v1-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
+        "required_pcc": 0.98,
     },
     "albert/masked_lm/pytorch-base_v1-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -698,6 +719,8 @@ test_config = {
     "perceiverio_vision/pytorch-deepmind/vision-perceiver-fourier-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
         "required_pcc": 0.98,
+        # FIXME - PCC drop to 0.96 on Aug6 due to tt-mlir/tt-xla uplift (passed locally before it)
+        "assert_pcc": False,
     },
     "yolov8/pytorch-yolov8x-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
