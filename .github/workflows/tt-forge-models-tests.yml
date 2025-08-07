@@ -32,6 +32,11 @@ on:
         required: false
         type: number
         default: 4
+      runners:
+        description: 'JSON array of runners. Example: ["wormhole"] or ["wormhole","blackhole"]'
+        required: false
+        type: string
+        default: '["wormhole","blackhole"]'
 
 permissions:
   packages: write
@@ -59,6 +64,7 @@ jobs:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       tests-filter: ${{ inputs.tests-filter-passing }}
       num-splits: ${{ fromJSON(inputs.num-splits-passing) }}
+      runners: ${{ inputs.runners }}
   test-not-passing-tt-forge-models:
     if: ${{ always() && inputs.run-not-passing-tests && (inputs.reuse-build-run-id || needs.build.result == 'success') }}
     needs: [docker-build, build]
@@ -69,3 +75,4 @@ jobs:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       tests-filter: ${{ inputs.tests-filter-not-passing }}
       num-splits: ${{ fromJSON(inputs.num-splits-not-passing) }}
+      runners: ${{ inputs.runners }}
