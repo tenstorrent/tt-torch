@@ -54,6 +54,7 @@ jobs:
     secrets: inherit
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
+      runners: '["wormhole"]'
       tests-filter: "expected_passing"
       num-splits: 8
   download-report:
