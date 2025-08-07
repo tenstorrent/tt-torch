@@ -233,8 +233,12 @@ class TorchExecutor(OpByOpExecutor):
                 raise ValueError(f"Node target is not an OpOverload: {name}")
             return None, None
 
-        if name == "aten::copy_":
-            raise ValueError(f"inline ops are not supported: {name}")
+        if (
+            name == "aten::copy_"
+            or name == "aten::add_.Tensor"
+            or name == "aten::scatter_.src"
+        ):
+            raise ValueError(f"in-place ops are not supported: {name}")
             return None, None
 
         # Skip validation ops (like aten._assert_tensor_metadata) that lack tensor metadata
@@ -375,11 +379,6 @@ class TorchExecutor(OpByOpExecutor):
                 test_this_op = self.should_test_op()
                 # Another useful debug method:
                 # test_this_op = str(node.target) == "aten.gelu.default"
-                if (
-                    node.target == torch.ops.aten.add_.Tensor
-                    or node.target == torch.ops.aten.scatter_.src
-                ):
-                    test_this_op = False
                 if test_this_op:
                     try:
                         start = time.time()
