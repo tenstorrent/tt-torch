@@ -55,7 +55,7 @@ jobs:
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       tests-filter: "expected_passing"
-      num-splits: 6
+      num-splits: 8
   download-report:
     if: success() || failure()
     needs: test_op_by_op
