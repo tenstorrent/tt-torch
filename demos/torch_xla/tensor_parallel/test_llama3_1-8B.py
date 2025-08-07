@@ -16,6 +16,10 @@ import numpy as np
 from typing import Tuple
 from transformers import LlamaModel, LlamaConfig
 
+from tt_torch.tools.utils import (
+    calculate_pcc,
+)
+
 
 def setup_xla_environment():
     """Setup XLA environment for tensor parallelism."""
@@ -68,13 +72,16 @@ def apply_tensor_parallel_sharding(model: LlamaModel, mesh: Mesh) -> None:
 
         # Column parallel: Split output dimension across devices
         # up_proj: [hidden_size, intermediate_size] -> shard dim 0
+        print(f"[HET DEBUG] up_proj.weight dtype: {layer.mlp.up_proj.weight.dtype}")
         xs.mark_sharding(layer.mlp.up_proj.weight, mesh, ("model", "batch"))
 
         # gate_proj: [hidden_size, intermediate_size] -> shard dim 0
+        print(f"[HET DEBUG] gate_proj.weight dtype: {layer.mlp.gate_proj.weight.dtype}")
         xs.mark_sharding(layer.mlp.gate_proj.weight, mesh, ("model", "batch"))
 
         # Row parallel: Split input dimension across devices
         # down_proj: [intermediate_size, hidden_size] -> shard dim 1
+        print(f"[HET DEBUG] down_proj.weight dtype: {layer.mlp.down_proj.weight.dtype}")
         xs.mark_sharding(layer.mlp.down_proj.weight, mesh, ("batch", "model"))
 
         # ========================================
@@ -83,16 +90,20 @@ def apply_tensor_parallel_sharding(model: LlamaModel, mesh: Mesh) -> None:
 
         # Column parallel: Split attention heads across devices
         # q_proj: [hidden_size, num_heads * head_dim] -> shard dim 0
+        print(f"[HET DEBUG] q_proj.weight dtype: {layer.self_attn.q_proj.weight.dtype}")
         xs.mark_sharding(layer.self_attn.q_proj.weight, mesh, ("model", "batch"))
 
         # k_proj: [hidden_size, num_kv_heads * head_dim] -> shard dim 0
+        print(f"[HET DEBUG] k_proj.weight dtype: {layer.self_attn.k_proj.weight.dtype}")
         xs.mark_sharding(layer.self_attn.k_proj.weight, mesh, ("model", "batch"))
 
         # v_proj: [hidden_size, num_kv_heads * head_dim] -> shard dim 0
+        print(f"[HET DEBUG] v_proj.weight dtype: {layer.self_attn.v_proj.weight.dtype}")
         xs.mark_sharding(layer.self_attn.v_proj.weight, mesh, ("model", "batch"))
 
         # Row parallel: Collect results from all devices
         # o_proj: [num_heads * head_dim, hidden_size] -> shard dim 1
+        print(f"[HET DEBUG] o_proj.weight dtype: {layer.self_attn.o_proj.weight.dtype}")
         xs.mark_sharding(layer.self_attn.o_proj.weight, mesh, ("batch", "model"))
 
         # Note: LayerNorm parameters are typically replicated (small memory footprint)
@@ -124,14 +135,20 @@ def run_inference_comparison():
     model_name = "meta-llama/Meta-Llama-3.1-8B"
     print(f"Running inference comparison for {model_name}")
 
+    # set pytorch seed
+    torch.manual_seed(42)
+
     # Setup environment
     setup_xla_environment()
     mesh = create_device_mesh()
 
     # Load model and configuration
     print("Loading model...")
-    config = LlamaConfig.from_pretrained(model_name)
-    model = LlamaModel(config)
+    config = LlamaConfig.from_pretrained(model_name, torch_dtype=torch.bfloat16)
+    model = LlamaModel.from_pretrained(model_name, torch_dtype=torch.bfloat16)
+    # model = LlamaModel.from_pretrained(model_name, torch_dtype=torch.bfloat16)
+    cpu_model = LlamaModel.from_pretrained(model_name, torch_dtype=torch.bfloat16)
+    # model = LlamaModel(config)
 
     # ========================================
     # Single Device Reference Run
@@ -140,13 +157,14 @@ def run_inference_comparison():
 
     # Prepare inputs for CPU/single device
     batch_size, seq_length = 1, 512
-    input_ids_cpu = torch.randint(0, config.vocab_size, (batch_size, seq_length))
+    input_ids_cpu = torch.randint(0, config.vocab_size, (batch_size, seq_length), dtype=torch.int32)
 
     # Run on CPU for reference
     with torch.no_grad():
-        model_cpu = model.cpu()
-        outputs_cpu = model_cpu(input_ids=input_ids_cpu)
+        # model_cpu = model.cpu()
+        outputs_cpu = cpu_model(input_ids=input_ids_cpu)
         reference_output = outputs_cpu.last_hidden_state
+        print(f"[HET DEBUG] CPU output data type: {reference_output.dtype}")
 
     print(f"CPU output shape: {reference_output.shape}")
 
@@ -176,6 +194,8 @@ def run_inference_comparison():
     def compute_pcc(x: torch.Tensor, y: torch.Tensor) -> float:
         """Compute Pearson Correlation Coefficient."""
         assert x.shape == y.shape, "Input tensors must have the same shape"
+        x = x.float()
+        y = y.float()
         x_flat, y_flat = x.flatten(), y.flatten()
         vx, vy = x_flat - x_flat.mean(), y_flat - y_flat.mean()
         denom = vx.norm() * vy.norm()
@@ -184,7 +204,8 @@ def run_inference_comparison():
         return float((vx @ vy) / denom)
 
     # Compare outputs
-    pcc = compute_pcc(reference_output, tp_output)
+    # pcc = compute_pcc(reference_output, tp_output)
+    pcc = calculate_pcc(reference_output, tp_output)
     print(f"Pearson Correlation Coefficient: {pcc:.6f}")
 
     # Check if outputs are sufficiently similar

@@ -119,6 +119,79 @@ def generate_single_token(
         next_token_id = next_token_logits.argmax(dim=-1, keepdim=True)
     return next_token_id
 
+def generate_single_token_with_cache(
+    model: LlamaForCausalLM,
+    inputs: torch.Tensor,
+    past_key_values: Union[None, DynamicCache]=None,
+    is_multi_device: bool = False,
+    mesh: Union[Mesh, None] = None
+):
+    if is_multi_device:
+        inputs = inputs.to(torch_xla.device())
+        xs.mark_sharding(inputs, mesh, (None, None))
+        
+        # If we have past_key_values, move them to XLA device and mark sharding
+        if past_key_values is not None:
+            # past_key_values = tuple(
+            #     tuple(
+            #         kv.to(torch_xla.device()) if kv is not None else None
+            #         for kv in layer_cache
+            #     ) for layer_cache in past_key_values
+            # )
+            for layer_cache in past_key_values:
+                for kv in layer_cache:
+                    if kv is not None:
+                        kv = kv.to(torch_xla.device())
+                    
+            # Mark sharding for KV cache tensors
+            for layer_idx, (key_cache, value_cache) in enumerate(past_key_values):
+                if key_cache is not None and value_cache is not None:
+                    # Shard along the head dimension (model parallel)
+                    xs.mark_sharding(key_cache, mesh, (None, "model", None, None))
+                    xs.mark_sharding(value_cache, mesh, (None, "model", None, None))
+
+    with torch.no_grad():
+        # if past_key_values is not None:
+        #     torch_xla.sync(True, True)  # Ensure all previous operations are complete
+        #     past_key_values = past_key_values.to("cpu")
+        #     print("[HET DEBUG] Type of past_key_values: ", type(past_key_values))
+        #     print("[HET DEBUG] past_key_values: ", past_key_values)
+        #     past_key_values = past_key_values.to(torch_xla.device())
+        outputs = model(
+            input_ids=inputs, 
+            past_key_values=past_key_values,
+            use_cache=True,
+            output_hidden_states=True
+        )
+        
+        if is_multi_device:
+            torch_xla.sync(True, True)
+        
+        print("[HET DEBUG] Type of outputs: ", type(outputs))
+        print("[HET DEBUG] outputs: ", outputs)
+        logits = outputs.logits
+        new_past_key_values = outputs.past_key_values
+        
+        if is_multi_device:
+            logits = logits.to("cpu")
+            # Move KV cache back to CPU for next iteration
+            # new_past_key_values = tuple(
+            #     tuple(
+            #         kv.to("cpu") if kv is not None else None
+            #         for kv in layer_cache
+            #     ) for layer_cache in new_past_key_values
+            # )
+            for layer_cache in new_past_key_values:
+                for kv in layer_cache:
+                    if kv is not None:
+                        kv = kv.to("cpu")
+
+        # Get next token
+        next_token_logits = logits[:, -1, :]
+        next_token_id = next_token_logits.argmax(dim=-1, keepdim=True)
+    
+    return next_token_id, new_past_key_values
+
 def run_text_generation_cpu_multi_token(
     num_tokens: int = 64):
     llama = LlamaForCausalLM.from_pretrained(MODEL_NAME)
@@ -219,6 +292,45 @@ def run_text_generation_tp_single_token(
     print("Decoded Next token ID: ", tokenizer.decode(next_token_id[0]))
     return last_hidden_state, next_token_id
 
+
+
+def run_text_generation_tp_multi_token_with_cache(
+    num_tokens: int = 64
+):
+    setup_xla_environment()
+    mesh = create_device_mesh()
+    model = LlamaForCausalLM.from_pretrained(MODEL_NAME)
+    model = model.eval()
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+    tokenizer.pad_token = tokenizer.eos_token
+
+    print("Applying tensor parallel sharding to CausalLM model...")
+    apply_tensor_parallel_sharding(model, mesh)
+
+    input_ids = tokenizer.encode(PROMPT, return_tensors="pt", padding=True, truncation=True)
+    past_key_values = None
+
+    for step in range(num_tokens):
+        print(f"Step {step + 1}/{num_tokens}")
+        
+        # For first step, use full input_ids; for subsequent steps, use only the last token
+        current_input = input_ids if step == 0 else input_ids[:, -1:]
+
+        # Generate next token with cache
+        next_token_id, past_key_values = generate_single_token_with_cache(
+            model, current_input, past_key_values, is_multi_device=True, mesh=mesh
+        )
+        
+        if next_token_id == tokenizer.eos_token_id:
+            break
+            
+        # Append next token to input_ids
+        input_ids = torch.cat((input_ids, next_token_id), dim=1)
+
+    decoded_text = tokenizer.batch_decode(input_ids)[0]
+    return decoded_text, input_ids
+
+
 def main():
     """Main function demonstrating tensor parallelism setup."""
     print("Torch-XLA Tensor Parallelism for Llama Models")
@@ -230,7 +342,8 @@ def main():
         print("-" * 30)
         
         # run_text_generation_cpu_multi_token()
-        text, output_ids = run_text_generation_tp_multi_token()
+        # text, output_ids = run_text_generation_tp_multi_token()
+        text, output_ids = run_text_generation_tp_multi_token_with_cache(10)
         print(f"Generated text: {text}")
         print(f"Output IDs: {output_ids}")
 
