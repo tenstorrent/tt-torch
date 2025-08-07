@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-import torch
 import pytest
 
 from bi_lstm_crf import BiRnnCrf
@@ -43,6 +42,10 @@ def test_bi_lstm_crf(record_property, variant, variant_config, mode, op_by_op):
     cc.enable_consteval = True
     cc.consteval_parameters = True
     if op_by_op:
+        if variant.value == "gru":
+            pytest.skip(
+                "Op-by-op not supported for GRU variant, tracking issue: https://github.com/tenstorrent/tt-torch/issues/1153"
+            )
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
