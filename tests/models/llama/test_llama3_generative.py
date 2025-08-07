@@ -44,6 +44,17 @@ class ThisTester(ModelTester):
             return_attention_mask=True,
         )
 
+        # set up static cache
+        static_cache = StaticCache(
+            config=self.model.config,
+            max_batch_size=1,
+            max_cache_len=_global_max_cache_len,
+            device=self.model.device,
+            dtype=self.model.dtype,
+        )
+
+        cache_position = torch.arange(0, inputs.input_ids.shape[1])
+
         args = {
             "input_ids": inputs.input_ids,
             "attention_mask": inputs.attention_mask,
@@ -53,6 +64,9 @@ class ThisTester(ModelTester):
             "top_p": 1.0,
             "pad_token_id": self.tokenizer.eos_token_id,
             "eos_token_id": self.tokenizer.eos_token_id,
+            "past_key_values": static_cache,
+            "use_cache": True,
+            "cache_position": cache_position,
         }
         return args
 
