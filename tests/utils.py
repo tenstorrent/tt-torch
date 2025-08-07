@@ -634,7 +634,10 @@ class ModelTester:
         for rt_tensor in rt_tensors:
             torch_tensors = tt_mlir.to_host(rt_tensor)
             if isinstance(torch_tensors, list):
-                final_outputs.extend(torch_tensors)
+                if len(torch_tensors) == 1:
+                    final_outputs.extend(torch_tensors)
+                else:
+                    final_outputs.append(tuple(torch_tensors))
             else:
                 final_outputs.append(torch_tensors)
 

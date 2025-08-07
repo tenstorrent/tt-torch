@@ -7,7 +7,7 @@ import pytest
 from tests.utils import ModelTester
 import torch
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.flan_t5.pytorch import ModelLoader
+from third_party.tt_forge_models.t5.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):
@@ -51,7 +51,5 @@ def test_flan_t5(record_property, mode, op_by_op):
         run_generate=False,
     )
     results = tester.test_model()
-    if mode == "eval":
-        results = loader.decode_output(results)
 
     tester.finalize()
