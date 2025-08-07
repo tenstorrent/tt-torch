@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import pytest
 import os
+import gc
 from tests.utils import skip_full_eval_test
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from tests.runner.test_utils import (
@@ -87,3 +88,6 @@ def test_all_models(test_entry, mode, op_by_op, record_property, test_metadata):
 
     results = tester.test_model()
     tester.finalize()
+
+    # Cleanup memory after each test to prevent memory leaks
+    gc.collect()
