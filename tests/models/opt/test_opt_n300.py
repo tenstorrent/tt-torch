@@ -86,6 +86,8 @@ def test_opt(record_property, mode, op_by_op):
         relative_atol=0.015,
         assert_pcc=True,
         assert_atol=False,
+        backend="tt",
+        run_generate=False,
     )
     tester.test_model(assert_eval_token_mismatch=False)
     tester.finalize()

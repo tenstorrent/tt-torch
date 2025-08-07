@@ -17,7 +17,7 @@ class ThisTester(ModelTester):
         model = AutoModelForCausalLM.from_pretrained(
             self.model_name, torch_dtype=torch.bfloat16
         )
-        return model.generate
+        return model
 
     def _load_inputs(self):
         self.prompt = [
@@ -90,6 +90,8 @@ def test_falcon(record_property, model_name, mode, op_by_op):
         assert_pcc=False,
         assert_atol=False,
         model_group=model_group,
+        backend="tt",
+        run_generate=False,
     )
     results = tester.test_model()
 

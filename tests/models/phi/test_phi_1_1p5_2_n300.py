@@ -87,6 +87,8 @@ def test_phi(record_property, model_name, mode, op_by_op):
         record_property_handle=record_property,
         is_token_output=True,
         model_group=model_group,
+        backend="tt",
+        run_generate=False,
     )
 
     # TODO - Enable checking - https://github.com/tenstorrent/tt-torch/issues/528
