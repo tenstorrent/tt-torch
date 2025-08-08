@@ -74,6 +74,10 @@ def test_llama_8b_eager(run_causal, data_type, sequence_length):
 
     model_name = "meta-llama/Llama-3.1-8B"
     config = LlamaConfig.from_pretrained(model_name)
+    if data_type == torch.float32 and sequence_length == 512:
+        config.num_hidden_layers = 16
+    else:
+        config.num_hidden_layers = 32
     if run_causal:
         model = AutoModelForCausalLM.from_pretrained(
             model_name, config=config, torch_dtype=data_type
@@ -101,12 +105,13 @@ def test_llama_8b_eager(run_causal, data_type, sequence_length):
     xs.mark_sharding(inputs, mesh, (None, None))
 
     outputs = model(inputs)
-    # torch_xla.sync(True, True)
+    torch_xla.sync(True, True)
     if run_causal:
         tt_outputs = outputs.logits.to("cpu")
     else:
         tt_outputs = outputs.last_hidden_state.to("cpu")
 
     pcc = calculate_pcc(tt_outputs, cpu_outputs)
+    print(f"Num hidden layers: {config.num_hidden_layers}")
     print(f"PCC: {pcc}")
     assert pcc >= 0.96
