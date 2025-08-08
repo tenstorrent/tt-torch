@@ -38,10 +38,6 @@ on:
         type: string
         default: '["wormhole","blackhole"]'
 
-  schedule:
-    # Feb31 impossible date so job appears on Actions UI
-    - cron: '0 0 31 2 *'
-
 permissions:
   packages: write
   checks: write

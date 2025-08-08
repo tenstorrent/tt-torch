@@ -209,6 +209,13 @@ jobs:
         mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
+    - name: Show actual installed python dependencies
+      if: ${{ env.RUN_TEST != 'skip' }}
+      shell: bash
+      run: |
+        source env/activate
+        pip freeze
+
     - name: Run Full Model Execution Tests
       if: ${{ env.RUN_TEST != 'skip' }}
       env:
