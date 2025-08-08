@@ -22,17 +22,31 @@ class TextEncoderTester(ModelTester):
             torch_dtype=torch.bfloat16,
             low_cpu_mem_usage=True,
         )
-        # Return only the text encoder for compilation
-        return self.pipe.text_encoder_3
+
+        # Extract encoder type from model name
+        if self.model_name == "SD3.5-medium-1" or self.model_name == "SD3.5-large-1":
+            return self.pipe.text_encoder
+        elif self.model_name == "SD3.5-medium-2" or self.model_name == "SD3.5-large-2":
+            return self.pipe.text_encoder_2
+        else:  # default to text_encoder_3
+            return self.pipe.text_encoder_3
 
     def _load_inputs(self):
         prompt = "A futuristic cityscape at sunset"
 
+        # Get the corresponding tokenizer based on model name
+        if self.model_name == "SD3.5-medium-1" or self.model_name == "SD3.5-large-1":
+            tokenizer = self.pipe.tokenizer
+        elif self.model_name == "SD3.5-medium-2" or self.model_name == "SD3.5-large-2":
+            tokenizer = self.pipe.tokenizer_2
+        else:  # default to tokenizer_3
+            tokenizer = self.pipe.tokenizer_3
+
         # Tokenize the prompt
-        text_inputs = self.pipe.tokenizer_3(
+        text_inputs = tokenizer(
             prompt,
             padding="max_length",
-            max_length=self.pipe.tokenizer_3.model_max_length,
+            max_length=tokenizer.model_max_length,
             truncation=True,
             return_tensors="pt",
         )
@@ -46,8 +60,12 @@ class TextEncoderTester(ModelTester):
 
 
 model_info_list = [
-    ("SD3.5-medium-text-encoder", "stabilityai/stable-diffusion-3.5-medium"),
-    ("SD3.5-large-text-encoder", "stabilityai/stable-diffusion-3.5-large"),
+    ("SD3.5-medium-1", "stabilityai/stable-diffusion-3.5-medium"),
+    ("SD3.5-medium-2", "stabilityai/stable-diffusion-3.5-medium"),
+    ("SD3.5-medium-3", "stabilityai/stable-diffusion-3.5-medium"),
+    ("SD3.5-large-1", "stabilityai/stable-diffusion-3.5-large"),
+    ("SD3.5-large-2", "stabilityai/stable-diffusion-3.5-large"),
+    ("SD3.5-large-3", "stabilityai/stable-diffusion-3.5-large"),
 ]
 
 
@@ -77,13 +95,22 @@ def test_stable_diffusion_text_encoder(record_property, model_info, mode, op_by_
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
+    assert_pcc = (
+        True
+        if (
+            model_name == "SD3.5-medium-text-encoder-3"
+            or model_name == "SD3.5-large-text-encoder-3"
+        )
+        else False
+    )
+
     tester = TextEncoderTester(
         model_name,
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
         assert_atol=False,
-        assert_pcc=True,
+        assert_pcc=assert_pcc,
         model_group=model_group,
     )
     results = tester.test_model()
