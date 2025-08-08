@@ -36,7 +36,7 @@ MODELS_ROOT, test_entries = setup_test_discovery(PROJECT_ROOT)
     test_entries,
     ids=create_test_id_generator(MODELS_ROOT),
 )
-def test_all_models(test_entry, mode, op_by_op, record_property, test_metadata):
+def test_all_models(test_entry, mode, op_by_op, record_property, test_metadata, request):
     loader_path = test_entry["path"]
     variant_info = test_entry["variant_info"]
 
@@ -48,6 +48,29 @@ def test_all_models(test_entry, mode, op_by_op, record_property, test_metadata):
         # For models without variants
         ModelLoader, _ = import_model_loader_and_variant(loader_path, MODELS_ROOT)
         variant = None
+
+
+    # Get the full test node ID
+    test_node_id = request.node.nodeid
+    print(f"KCM Test node ID: {test_node_id}", flush=True)
+    
+    # KCM - Testing logic to simulate crash testing.
+    simulate_crash = os.environ.get("SIMULATE_CRASH", False)
+    if simulate_crash:
+
+        # CRASH SIMULATION: Crash based on node ID patterns
+        crash_patterns = [
+            "tests/runner/test_models.py::test_all_models[albert/masked_lm/pytorch-large_v2-full-eval]",
+        ]
+        
+        for pattern in crash_patterns:
+            if pattern in test_node_id:
+                import signal
+                print(f"SIMULATING CRASH for: {test_node_id} w/ signal: {signal.SIGTERM}")
+                os.kill(os.getpid(), signal.SIGTERM)  # Simulate process termination
+
+
+    # pytest.skip("KCM - Skipping test")
 
     cc = CompilerConfig()
     cc.enable_consteval = True
