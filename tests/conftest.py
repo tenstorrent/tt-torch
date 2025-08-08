@@ -206,9 +206,9 @@ import gc
 
 
 @pytest.fixture(autouse=True)
-def memory_usage_tracker(request):
+def memory_usage_tracker_and_cleanup(request):
     """
-    A pytest fixture that tracks memory usage during the execution of a test.
+    A pytest fixture that tracks memory usage during the execution of a test and cleans up after the test.
 
     This fixture automatically tracks the memory usage of the process running the tests.
     It starts tracking before the test runs, continues tracking in a background thread during the test,
@@ -221,12 +221,19 @@ def memory_usage_tracker(request):
         - This fixture is automatically used for all tests due to the `autouse=True` parameter.
         - The interval for memory readings can be adjusted by changing the sleep duration in the `track_memory` function.
         - Min, max, and avg memory usage are calculated based on the recorded memory readings from system memory.
+        - After the test completes, the fixture performs cleanup: it runs Python garbage collection and calls
+          `tt_mlir.malloc_trim()` to release memory back to the OS when possible.
+        - Verbose console printing is controlled via the `TT_TORCH_VERBOSE_MEMORY_TRACKER` environment variable.
+          Set it to `1` to enable prints; set to `0` or unset to suppress prints.
     """
     process = psutil.Process()
 
+    # Get the current test name
+    test_name = request.node.name
+
     # Initialize memory tracking variables
     start_mem = process.memory_info().rss / (1024 * 1024)  # MB
-    print(f"Memory usage before test: {start_mem:.2f} MB")
+    verbose = os.getenv("TT_TORCH_VERBOSE_MEMORY_TRACKER", "0") == "1"
 
     min_mem = start_mem
     max_mem = start_mem
@@ -269,30 +276,27 @@ def memory_usage_tracker(request):
 
     by_test = max_mem - start_mem
 
-    # Log memory usage statistics
-    print(f"Test memory usage:")
-    print(f"    By test: {by_test:.2f} MB")
-    print(f"    Minimum: {min_mem:.2f} MB")
-    print(f"    Maximum: {max_mem:.2f} MB")
-    print(f"    Average: {avg_mem:.2f} MB")
-
     before_gc = process.memory_info().rss / (1024 * 1024)
-    print(f"Memory usage before garbage collection: {before_gc:.2f} MB")
-
     gc.collect()  # Force garbage collection
     after_gc = process.memory_info().rss / (1024 * 1024)
-    print(f"Memory usage after garbage collection: {after_gc:.2f} MB")
-
     tt_mlir.malloc_trim()
     after_trim = process.memory_info().rss / (1024 * 1024)
-    print(f"Memory usage after malloc_trim: {after_trim:.2f} MB")
+
+    # Log memory usage statistics
+    if verbose:
+        print(f"\nTest memory usage for {test_name}:")
+        print(f"    By test: {by_test:.2f} MB")
+        print(f"    Minimum: {min_mem:.2f} MB")
+        print(f"    Maximum: {max_mem:.2f} MB")
+        print(f"    Average: {avg_mem:.2f} MB")
+        print(f"Memory usage before test: {start_mem:.2f} MB")
+        print(f"Memory usage before garbage collection: {before_gc:.2f} MB")
+        print(f"Memory usage after garbage collection: {after_gc:.2f} MB")
+        print(f"Memory usage after malloc_trim: {after_trim:.2f} MB")
 
     should_log = request.config.getoption("--log-memory-usage")
     if not should_log:
         return
-
-    # Get the current test name
-    test_name = request.node.name
 
     # Store memory usage stats into a CSV file
     file_name = "pytest-memory-usage.csv"
