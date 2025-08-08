@@ -221,6 +221,7 @@ jobs:
         source env/activate
 
         TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN pytest ${{ matrix.build.pytest-args }} --durations=0 -v -rf ${{matrix.build.tests}} \
+           --log-memory-usage \
            --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
            --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append | tee pytest.log
 
@@ -230,6 +231,13 @@ jobs:
       with:
         name: test-log-${{ matrix.runner }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: pytest.log
+
+    - name: Upload Memory Usage Log
+      uses: actions/upload-artifact@v4
+      if: success() || failure()
+      with:
+        name: memory-usage-${{ matrix.runner }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        path: pytest-memory-usage.csv
 
     - name: Upload Test Report Models
       uses: actions/upload-artifact@v4

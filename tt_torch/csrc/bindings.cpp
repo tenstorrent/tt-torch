@@ -27,6 +27,8 @@
 // tt-torch includes
 #include "tt-mlir-interface.hpp"
 
+#include <malloc.h>
+
 namespace py = pybind11;
 
 py::object TORCH_TENSOR_PYCLASS = py::module::import("torch").attr("Tensor");
@@ -532,6 +534,11 @@ PYBIND11_MODULE(tt_mlir, m) {
   m.def("get_arch", &tt::runtime::getArch,
         "Get the architecture of the device");
   m.def("is_op_model_enabled", &is_op_model_enabled);
+
+  m.def(
+      "malloc_trim", []() { ::malloc_trim(0); },
+      "Call malloc_trim(0) to force malloc to release any unused memory back "
+      "to the OS");
 
 #if defined(TT_RUNTIME_DEBUG) && TT_RUNTIME_DEBUG == 1
   py::class_<tt::runtime::CallbackContext>(m, "CallbackContext");
