@@ -20,26 +20,6 @@ jobs:
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       setup-args: "--code_coverage --include-models --build_perf"
-  build-release:
-    needs: docker-build
-    uses: ./.github/workflows/run-build.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-      setup-args: "--build_perf"
-      artifact-key: "-release"
-  test:
-    needs: [build, docker-build]
-    uses: ./.github/workflows/run-tests.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  # llmbox-tests:
-  #   needs: [build, docker-build]
-  #   uses: ./.github/workflows/run-multidevice-tests.yml
-  #   secrets: inherit
-  #   with:
-  #     docker-image: ${{ needs.docker-build.outputs.docker-image }}
   full-model-test:
     needs: [build, docker-build]
     uses: ./.github/workflows/run-full-model-execution-tests.yml
