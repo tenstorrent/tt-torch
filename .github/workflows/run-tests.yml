@@ -89,6 +89,18 @@ jobs:
         source env/activate
         pip freeze
 
+    - name: Validate tt-forge-models runner test config file
+      shell: bash
+      run: |
+        source env/activate
+        pytest -vv tests/runner/test_models.py --validate-test-config
+
+    - name: Run tt-forge-models runner tests
+      shell: bash
+      run: |
+        source env/activate
+        pytest -vv tests/runner/test_models.py -m expected_passing -k mobilenet
+
     - name: Verify CI model test matrices
       shell: bash
       run: |
