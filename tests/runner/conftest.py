@@ -87,6 +87,7 @@ def pytest_sessionfinish(session, exitstatus):
         flush=True,
     )
 
+    # Unlisted tests are just warnings, for informational purposes.
     if unlisted:
         print("\nWARNING: The following tests are missing from test_config.py:")
         for test_name in sorted(unlisted):
@@ -94,18 +95,16 @@ def pytest_sessionfinish(session, exitstatus):
     else:
         print("\nAll collected tests are properly defined in test_config.py")
 
+    # Unknown tests are tests listed that no longer exist, treat as error.
     if unknown:
-        print("\nERROR: test_config.py contains entries not found in collected tests:")
+        msg = "test_config.py contains entries not found in collected tests."
+        print(f"\nERROR: {msg}")
         for test_name in sorted(unknown):
             print(f"  - {test_name}")
             suggestion = difflib.get_close_matches(test_name, _collected_nodeids, n=1)
             if suggestion:
                 print(f"    Did you mean: {suggestion[0]}?")
         print("\n" + "=" * 60)
-
-    if not unknown and not unlisted:
-        print("Test configuration validation PASSED - all entries match!")
-    elif unknown:
-        raise pytest.UsageError(
-            "test_config.py contains entries not found in collected tests."
-        )
+        raise pytest.UsageError(msg)
+    else:
+        session.exitstatus = 0
