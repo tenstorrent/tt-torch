@@ -15,8 +15,8 @@ def pytest_addoption(parser):
     parser.addoption(
         "--arch",
         action="store",
-        default="blackhole",
-        help="Target architecture (e.g., blackhole, wormhole)",
+        default=None,
+        help="Target architecture (e.g., blackhole, wormhole) for which to match via arch_overrides in test_config.py",
     )
     parser.addoption(
         "--validate-test-config",
