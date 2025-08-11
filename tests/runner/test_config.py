@@ -1050,4 +1050,189 @@ test_config = {
         "skip_reason": "Too large for single chip",
         "skip_bringup_status": "FAILED_RUNTIME",
     },
+    "gpt_neo/sequence_classification/pytorch-gpt_neo_2_7B-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "huggyllama/pytorch-llama_7b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/causal_lm/pytorch-huggyllama_7b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/causal_lm/pytorch-llama_3_1_70b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/causal_lm/pytorch-llama_3_1_70b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/causal_lm/pytorch-llama_3_1_8b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/causal_lm/pytorch-llama_3_1_8b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/causal_lm/pytorch-llama_3_3_70b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/causal_lm/pytorch-llama_3_8b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/causal_lm/pytorch-llama_3_8b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/sequence_classification/pytorch-huggyllama_7b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/sequence_classification/pytorch-llama_3_1_70b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/sequence_classification/pytorch-llama_3_1_70b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/sequence_classification/pytorch-llama_3_1_8b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/sequence_classification/pytorch-llama_3_1_8b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/sequence_classification/pytorch-llama_3_3_70b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/sequence_classification/pytorch-llama_3_8b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/sequence_classification/pytorch-llama_3_8b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "mistral/pytorch-7b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "mistral/pytorch-7b_instruct_v03-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "mistral/pytorch-ministral_8b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5/casual_lm/pytorch-14b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5/casual_lm/pytorch-14b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5/casual_lm/pytorch-14b_instruct_1m-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5/casual_lm/pytorch-32b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5/casual_lm/pytorch-7b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5/casual_lm/pytorch-7b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5/casual_lm/pytorch-7b_instruct_1m-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5/casual_lm/pytorch-math_7b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5_coder/pytorch-32b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5_coder/pytorch-7b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5_coder/pytorch-7b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_3/causal_lm/pytorch-14b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_3/causal_lm/pytorch-30b_a3b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_3/causal_lm/pytorch-32b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_3/causal_lm/pytorch-8b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_3/causal_lm/pytorch-qwq_32b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
 }
