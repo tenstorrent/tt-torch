@@ -33,33 +33,29 @@ def test_gpt_oss_models():
     logger = setup_logging()
     logger.info("🚀 Starting GPT-OSS model testing")
     
-    # Initialize the pipeline
-    pipeline = ModelCompatibilityPipeline(
-        llm_provider="anthropic",
-        cache_dir="./gpt_oss_cache"
-    )
+    # Test the converted model directly
+    converted_model_path = "./gpt_oss_tenstorrent_converted"
     
-    # Define the GPT-OSS models to test (only the smaller one for now)
-    gpt_oss_models = [
-        "openai/gpt-oss-20b"
-    ]
+    if not os.path.exists(converted_model_path):
+        logger.error(f"❌ Converted model not found at {converted_model_path}")
+        logger.info("💡 Please run 'python adapt_gpt_oss_for_tenstorrent.py' first to convert the model")
+        return
     
-    logger.info(f"📋 Testing {len(gpt_oss_models)} GPT-OSS models")
+    logger.info(f"📁 Testing converted model at: {converted_model_path}")
     
-    for model_id in gpt_oss_models:
-        logger.info(f"🧪 Testing model: {model_id}")
+    try:
+        # Import and run the converted model test
+        from test_converted_gpt_oss import test_converted_gpt_oss_model
         
-        try:
-            # Test the model using the pipeline with LLM adaptation
-            test_record = pipeline.test_model(model_id, use_llm_adaptation=True)
+        success = test_converted_gpt_oss_model()
+        
+        if success:
+            logger.info("✅ GPT-OSS model testing completed successfully!")
+        else:
+            logger.error("❌ GPT-OSS model testing failed")
             
-            if test_record.status == "completed" and test_record.result == "success":
-                logger.info(f"✅ Successfully tested {model_id}")
-            else:
-                logger.error(f"❌ Failed to test {model_id}: {test_record.error_message}")
-                
-        except Exception as e:
-            logger.error(f"❌ Error testing {model_id}: {str(e)}")
+    except Exception as e:
+        logger.error(f"❌ Error during testing: {str(e)}")
     
     logger.info("🏁 GPT-OSS model testing completed")
 
