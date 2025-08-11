@@ -31,14 +31,6 @@ class ThisTester(ModelTester):
                         """
                         Print all primes between 1 and n
                         """''',
-            '''def print_prime(n):
-                        """
-                        Print all primes between 1 and n
-                        """''',
-            '''def print_prime(n):
-                        """
-                        Print all primes between 1 and n
-                        """''',
         ]
         self.test_input = input_str
         inputs = self.tokenizer(
