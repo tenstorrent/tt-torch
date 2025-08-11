@@ -27,10 +27,8 @@ MODELS_ROOT, test_entries = setup_test_discovery(PROJECT_ROOT)
 )
 @pytest.mark.parametrize(
     "op_by_op",
-    [None],
-    ids=["full"],
-    # [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
-    # ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
+    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
 @pytest.mark.parametrize(
     "test_entry",
@@ -83,8 +81,7 @@ def test_all_models(
         cc.consteval_parameters = True
         if op_by_op:
             cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-            if op_by_op == OpByOpBackend.STABLEHLO:
-                cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
         # Use the variant from the test_entry parameter
         loader = ModelLoader(variant=variant)
