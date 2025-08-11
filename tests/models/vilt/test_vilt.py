@@ -9,7 +9,9 @@ import pytest
 from tests.utils import ModelTester
 import torch
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.vilt.pytorch.loader import ModelLoader
+from third_party.tt_forge_models.vilt.question_answering.pytorch.loader import (
+    ModelLoader,
+)
 
 
 class ThisTester(ModelTester):
