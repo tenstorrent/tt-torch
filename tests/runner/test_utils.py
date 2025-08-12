@@ -125,16 +125,14 @@ def import_model_loader_and_variant(loader_path, models_root):
 
 def get_model_variants(loader_path, loader_paths, models_root):
     try:
-        # Ensure per-model requirements for discovery/import
-        with RequirementsManager.for_loader(loader_path):
-            # Import both the ModelLoader and ModelVariant class from the same module
-            ModelLoader, ModelVariant = import_model_loader_and_variant(
-                loader_path, models_root
-            )
-            variants = ModelLoader.query_available_variants()
-            for variant in variants.keys():
-                # Store the variant, ModelLoader class, and ModelVariant class together
-                loader_paths[loader_path].append((variant, ModelLoader, ModelVariant))
+        # Import both the ModelLoader and ModelVariant class from the same module
+        ModelLoader, ModelVariant = import_model_loader_and_variant(
+            loader_path, models_root
+        )
+        variants = ModelLoader.query_available_variants()
+        for variant in variants.keys():
+            # Store the variant, ModelLoader class, and ModelVariant class together
+            loader_paths[loader_path].append((variant, ModelLoader, ModelVariant))
 
     except Exception as e:
         print(f"Cannot import path: {loader_path}: {e}")

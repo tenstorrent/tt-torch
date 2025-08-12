@@ -8,13 +8,21 @@ import tempfile
 import fcntl
 from typing import Dict, Tuple, Set, Optional
 
+# Debug flag: set TT_TORCH_REQS_DEBUG=1 to see detailed output
+DEBUG_ENV = "TT_TORCH_REQS_DEBUG"
+
+
+def _dbg(msg: str) -> None:
+    if os.environ.get(DEBUG_ENV, "0") == "1":
+        print(msg, flush=True)
+
 
 class RequirementsManager:
     """Context manager to temporarily install per-model requirements and roll back.
 
     - Looks for a requirements.txt next to a given loader.py
     - Freezes the current environment
-    - Installs required packages
+    - Installs required packages (supports an optional 'requirements.nodeps.txt' installed with --no-deps)
     - On exit, uninstalls newly added packages and restores changed versions
     - Uses a global file lock to serialize pip operations
     """
@@ -52,9 +60,24 @@ class RequirementsManager:
         fcntl.flock(self._lock_file, fcntl.LOCK_EX)
 
         self._before_freeze = self._pip_freeze()
+        _dbg(f"[Requirements] __enter__: installing -r {self.requirements_path}")
         self._pip_install_requirements(self.requirements_path)
+
+        # Optional: a sibling file 'requirements.nodeps.txt' for packages to install without dependencies
+        nodeps_path = os.path.join(
+            os.path.dirname(self.requirements_path), "requirements.nodeps.txt"
+        )
+        if os.path.isfile(nodeps_path):
+            _dbg(f"[Requirements] __enter__: installing (no-deps) -r {nodeps_path}")
+            self._pip(("install", "--no-input", "--no-deps", "-r", nodeps_path))
+
+        _dbg("[Requirements] __enter__: running pip freeze (after)")
         self._after_freeze = self._pip_freeze()
         self._compute_diffs()
+        _dbg(
+            f"[Requirements] __enter__: newly_installed={sorted(self._newly_installed)}"
+        )
+        _dbg(f"[Requirements] __enter__: changed_versions={self._changed_versions}")
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
@@ -67,7 +90,9 @@ class RequirementsManager:
 
             # Uninstall newly installed packages
             if self._newly_installed:
-                self._pip_uninstall(sorted(self._newly_installed))
+                to_remove = sorted(self._newly_installed)
+                _dbg(f"[Requirements] __exit__: uninstalling: {to_remove}")
+                self._pip_uninstall(to_remove)
 
             # Restore original versions for packages that changed
             if self._changed_versions:
@@ -75,6 +100,7 @@ class RequirementsManager:
                     f"{name}=={version}"
                     for name, version in sorted(self._changed_versions.items())
                 ]
+                _dbg(f"[Requirements] __exit__: restoring versions: {pinned}")
                 self._pip_install(tuple(pinned))
         finally:
             # Always release the lock if held
@@ -96,12 +122,16 @@ class RequirementsManager:
             if self._before_freeze[name] != self._after_freeze[name]:
                 changed[name] = self._before_freeze[name]
         self._changed_versions = changed
+        _dbg(
+            f"[Requirements] _compute_diffs: +{len(self._newly_installed)} new, ~{len(self._changed_versions)} changed"
+        )
 
     @staticmethod
     def _pip(args: Tuple[str, ...]) -> None:
         cmd = (sys.executable, "-m", "pip") + args
         env = os.environ.copy()
         env.setdefault("PIP_DISABLE_PIP_VERSION_CHECK", "1")
+        _dbg(f"[Requirements] pip: {' '.join(map(str, cmd))}")
         subprocess.run(
             " ".join(map(str, cmd)),
             shell=True,
@@ -139,6 +169,7 @@ class RequirementsManager:
         cmd = (sys.executable, "-m", "pip", "freeze")
         env = os.environ.copy()
         env.setdefault("PIP_DISABLE_PIP_VERSION_CHECK", "1")
+        _dbg("[Requirements] pip freeze")
         proc = subprocess.run(
             " ".join(map(str, cmd)),
             shell=True,
