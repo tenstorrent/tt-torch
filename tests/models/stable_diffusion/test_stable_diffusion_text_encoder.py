@@ -3,12 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 import torch
 import pytest
-from tests.utils import ModelTester, skip_full_eval_test
-from diffusers import (
-    StableDiffusion3Pipeline,
-    FlowMatchEulerDiscreteScheduler,
-    SD3Transformer2DModel,
-)
+from tests.utils import ModelTester
+from diffusers import StableDiffusion3Pipeline
 
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 
