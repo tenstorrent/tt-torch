@@ -4,9 +4,9 @@
 #
 
 # underlying tt-mlir version we will have tt-xla use
-set(TT_MLIR_VERSION "505cb4f6c8400b809510d87379313f0d178b0fa9")
+set(TT_MLIR_VERSION "18e18fa9fc6b5efeb044eeeee0a2edadb9346fd7")
 # tt-xla version to use
-set(TTXLA_VERSION "e11a4e14fab86fa8695957ac1df663572b80c19c")
+set(TTXLA_VERSION "5c1d222")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
