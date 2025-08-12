@@ -7,7 +7,7 @@
 # commit 18e18fa9fc6b5efeb044eeeee0a2edadb9346fd7 (HEAD -> jzx/xla_fusion, origin/jzx/xla_fusion)
 set(TT_MLIR_VERSION "18e18fa9fc6b5efeb044eeeee0a2edadb9346fd7")
 # tt-xla version to use
-set(TTXLA_VERSION "e11a4e14fab86fa8695957ac1df663572b80c19c")
+set(TTXLA_VERSION "5c1d222") # jzx/persistent
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
@@ -63,7 +63,7 @@ else()
             chmod -R +x ${TTXLA_INSTALL_PREFIX}
         CMAKE_GENERATOR Ninja
         CMAKE_ARGS
-            -DCMAKE_BUILD_TYPE=Release
+            -DCMAKE_BUILD_TYPE=Debug
             -DCMAKE_C_COMPILER=clang-17
             -DCMAKE_CXX_COMPILER=clang++-17
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
