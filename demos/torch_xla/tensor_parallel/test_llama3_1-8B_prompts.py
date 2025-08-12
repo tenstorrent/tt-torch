@@ -17,6 +17,7 @@ import numpy as np
 from typing import Tuple, Union
 from transformers import LlamaModel, LlamaConfig, LlamaForCausalLM, AutoTokenizer
 from transformers.generation import GenerationConfig
+from transformers import StaticCache
 
 MODEL_NAME = "meta-llama/Meta-Llama-3.1-8B"
 PROMPT = "What is the name of the largest planet in our solar system?"
@@ -83,9 +84,17 @@ def _apply_tensor_parallel_sharding_to_base_model(model: LlamaModel, mesh: Mesh)
         # o_proj: [num_heads * head_dim, hidden_size] -> shard dim 1
         xs.mark_sharding(layer.self_attn.o_proj.weight, mesh, ("batch", "model"))
 
-def apply_tensor_parallel_sharding(model: LlamaForCausalLM, mesh: Mesh) -> None:
+
+def apply_tensor_parallel_sharding(
+    model: LlamaForCausalLM, static_cache: StaticCache, mesh: Mesh
+) -> None:
     model = model.to(torch_xla.device())
     print("LlamaForCausalLM Model: ", model)
+
+    # Shard static KV cache
+    for key, value in zip(static_cache.key_cache, static_cache.value_cache):
+        xs.mark_sharding(key, mesh, (None, "model", None, None))
+        xs.mark_sharding(value, mesh, (None, "model", None, None))
 
     # Shard base Llama model
     print("Applying tensor parallel sharding to LlamaModel...")
@@ -100,29 +109,43 @@ def apply_tensor_parallel_sharding(model: LlamaForCausalLM, mesh: Mesh) -> None:
 def generate_single_token(
     model: LlamaForCausalLM,
     inputs: torch.Tensor,
+    static_cache: Union[None, StaticCache] = None,
+    cache_position: Union[None, torch.Tensor] = None,
     is_multi_device: bool = False,
     mesh: Union[Mesh, None] = None
 ):
+
     if is_multi_device:
+        assert static_cache is not None and cache_position is not None, \
+            "Static cache and cache position must be provided for multi-device generation."
+        cache_position = cache_position.to(torch_xla.device())
         inputs = inputs.to(torch_xla.device())
         xs.mark_sharding(inputs, mesh, (None, None))
+        xs.mark_sharding(cache_position, mesh, (None,))
     with torch.no_grad():
-        outputs = model(input_ids=inputs, output_hidden_states=True)
+        outputs = model(
+            input_ids=inputs,
+            output_hidden_states=True,
+            past_key_values=static_cache,
+            cache_position=cache_position,
+            use_cache=True
+        )
         if is_multi_device:
             torch_xla.sync(True, True)
         logits = outputs.logits
         if is_multi_device:
             logits = logits.to("cpu")
+            cache_position = cache_position.to("cpu")
 
         # Get next token
         next_token_logits = logits[:, -1, :]
         next_token_id = next_token_logits.argmax(dim=-1, keepdim=True)
-    return next_token_id
+    return next_token_id, cache_position
 
 def generate_single_token_with_cache(
     model: LlamaForCausalLM,
     inputs: torch.Tensor,
-    past_key_values: Union[None, DynamicCache]=None,
+    past_key_values: Union[None, StaticCache]=None,
     is_multi_device: bool = False,
     mesh: Union[Mesh, None] = None
 ):
@@ -219,32 +242,47 @@ def run_text_generation_cpu_multi_token(
 
 
 def run_text_generation_tp_multi_token(
-    num_tokens: int = 64
+    num_tokens: int = 5
 ):
     setup_xla_environment()
     mesh = create_device_mesh()
+    config = LlamaConfig.from_pretrained(MODEL_NAME)
     model = LlamaForCausalLM.from_pretrained(MODEL_NAME)
     model = model.eval()
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
     tokenizer.pad_token = tokenizer.eos_token
-
-    print("Applying tensor parallel sharding to CausalLM model...")
-    apply_tensor_parallel_sharding(model, mesh)
-
     input_ids = tokenizer.encode(PROMPT, return_tensors="pt", padding=True, truncation=True)
 
+    static_cache = StaticCache(
+        config=config,
+        max_batch_size=1,
+        max_cache_len=input_ids.shape[1] + num_tokens,
+        device=torch_xla.device(),
+        dtype=torch.bfloat16,
+    )
+    cache_position = torch.arange(0, input_ids.shape[1])
+
+    print("Applying tensor parallel sharding to CausalLM model...")
+    apply_tensor_parallel_sharding(model, static_cache, mesh)
+
+    output_ids = input_ids
+    prev_generated_token = None
     for step in range(num_tokens):
         print(f"Step {step + 1}/{num_tokens}")
-
+        input = prev_generated_token if prev_generated_token is not None else input_ids
         # Generate next token
-        next_token_id = generate_single_token(model, input_ids, is_multi_device=True, mesh=mesh)
+        next_token_id, cache_position = generate_single_token(
+            model, input, static_cache, cache_position, is_multi_device=True, mesh=mesh
+        )
+        prev_generated_token = next_token_id
+        cache_position = cache_position[-1:] + 1
         if next_token_id == tokenizer.eos_token_id:
             break
-        # Append next token to input_ids
-        input_ids = torch.cat((input_ids, next_token_id), dim=1)
+        # Append next token to output_ids
+        output_ids = torch.cat((output_ids, next_token_id), dim=1)
 
-    decoded_text = tokenizer.batch_decode(input_ids)[0]
-    return decoded_text, input_ids
+    decoded_text = tokenizer.batch_decode(output_ids)[0]
+    return decoded_text, output_ids
 
 
 def run_text_generation_tp_single_token(
@@ -291,7 +329,6 @@ def run_text_generation_tp_single_token(
     print("Raw next token ID: ", next_token_id)
     print("Decoded Next token ID: ", tokenizer.decode(next_token_id[0]))
     return last_hidden_state, next_token_id
-
 
 
 def run_text_generation_tp_multi_token_with_cache(
@@ -342,8 +379,8 @@ def main():
         print("-" * 30)
         
         # run_text_generation_cpu_multi_token()
-        # text, output_ids = run_text_generation_tp_multi_token()
-        text, output_ids = run_text_generation_tp_multi_token_with_cache(10)
+        text, output_ids = run_text_generation_tp_multi_token()
+        # text, output_ids = run_text_generation_tp_multi_token_with_cache(10)
         print(f"Generated text: {text}")
         print(f"Output IDs: {output_ids}")
 
