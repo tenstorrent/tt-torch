@@ -5,16 +5,24 @@ import torch
 import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from transformers import AutoProcessor, AutoModelForImageTextToText
+from transformers import AutoProcessor, AutoModelForImageTextToText, AutoConfig
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
         model_name = "meta-llama/Llama-4-Scout-17B-16E"
-        self.processor = AutoProcessor.from_pretrained(model_name)
-        self.model = AutoModelForImageTextToText.from_pretrained(model_name)
+        self.processor = AutoProcessor.from_pretrained(model_name, torch_dtype=torch.bfloat16)
 
-        #Waiting for gated repo access to see which layers to remove
+        config = AutoConfig.from_pretrained(model_name)
+        config.vision_config.num_hidden_layers = 1
+        config.text_config.num_hidden_layers = 4
+
+        self.model = AutoModelForImageTextToText.from_pretrained(
+            model_name, 
+            config=config,
+            low_cpu_mem_usage=True, 
+            torch_dtype=torch.bfloat16)
+
         #breakpoint()
 
         return self.model
