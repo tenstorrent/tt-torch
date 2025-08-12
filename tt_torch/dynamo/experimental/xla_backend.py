@@ -603,7 +603,8 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
         raise Exception("consteval_parameters is enabled but enable_consteval is not")
 
     compiled_graph = bypass_redundant_getitem(compiled_graph)
-    compiled_graph = rectify_buffer_inplace_copy(compiled_graph)
+    print("[James] disable rectify buffer inplace copy")
+    # compiled_graph = rectify_buffer_inplace_copy(compiled_graph) 
     compiled_graph = bypass_assert_tensor_metadata(compiled_graph)
     program = torch.export.export(compiled_graph, tuple(example_inputs), strict=False)
 
@@ -611,10 +612,16 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
 
 
 class XLAExecutor:
+    # Shared cache for previously seen inputs across all XLA executor instances
+    previously_seen_inputs = set()
+    # Cache for device-transferred tensors based on object identity and target
+    device_tensor_cache = {}
+    
     def __init__(self, program, compiler_config):
         self.program = program
         self.compiler_config = compiler_config
         self.arg_type_map_str = None
+        self.arg_ref_map_str = None
 
         self.inputs = []
         self.user_input_indices = []
@@ -623,7 +630,127 @@ class XLAExecutor:
                 self.inputs.append(None)
                 self.user_input_indices.append(idx)
             else:
-                self.inputs.append(self.program.state_dict[input_spec.target].to("xla"))
+                # Create cache key based on object identity and target
+                source_tensor = self.program.state_dict[input_spec.target]
+                cache_key = (id(source_tensor), input_spec.target)
+                
+                # Check if we already have this tensor on device
+                if cache_key in XLAExecutor.device_tensor_cache:
+                    cached_tensor = XLAExecutor.device_tensor_cache[cache_key]
+                    self.inputs.append(cached_tensor)
+                    print(f"[Cache] Reusing cached tensor for {input_spec.target}")
+                else:
+                    # Move to device and cache it
+                    device_tensor = source_tensor.to("xla")
+                    XLAExecutor.device_tensor_cache[cache_key] = device_tensor
+                    self.inputs.append(device_tensor)
+                    print(f"[Cache] Cached new tensor for {input_spec.target}")
+        # import pdb; pdb.set_trace()
+        
+        
+    def _create_tensor_cache_key(self, tensor):
+        """Create a unique cache key for a tensor based on its properties."""
+        if not isinstance(tensor, torch.Tensor):
+            return None
+        
+        # Use tensor id, shape, dtype, and device as cache key
+        return (id(tensor), tuple(tensor.shape), tensor.dtype, str(tensor.device))
+    
+    def _get_tensor_name(self, tensor, input_idx):
+        """Generate a descriptive name for the tensor."""
+        if not isinstance(tensor, torch.Tensor):
+            return f"input_{input_idx}_non_tensor"
+        
+        return f"input_{input_idx}_shape_{list(tensor.shape)}_dtype_{tensor.dtype}"
+    
+    def _check_and_log_previously_seen_inputs(self, inputs):
+        """Check which inputs have been previously seen and log them with detailed cache behavior analysis."""
+        cache_hits = []
+        new_inputs = []
+        static_cache_tensors = []
+        
+        print(f"\n[XLA Cache] === DETAILED CACHE ANALYSIS ===")
+        print(f"[XLA Cache] Total inputs to analyze: {len(inputs)}")
+        print(f"[XLA Cache] Current cache contains {len(XLAExecutor.previously_seen_inputs)} unique tensor keys")
+        
+        # Show all existing cache keys first
+        if XLAExecutor.previously_seen_inputs:
+            print(f"[XLA Cache] Existing cache keys:")
+            for i, cache_key in enumerate(sorted(XLAExecutor.previously_seen_inputs)):
+                tensor_id, shape, dtype, device = cache_key
+                is_static_cache = len(shape) == 4 and shape == (1, 8, 128, 128)
+                cache_type = "[STATIC CACHE]" if is_static_cache else "[REGULAR]"
+                print(f"[XLA Cache]   {i+1:2d}. {cache_type} id={tensor_id}, shape={shape}, dtype={dtype}, device={device}")
+        
+        for idx, inp in enumerate(inputs):
+            if isinstance(inp, torch.Tensor):
+                cache_key = self._create_tensor_cache_key(inp)
+                tensor_name = self._get_tensor_name(inp, idx)
+                
+                # Detect static cache tensors (1x8x128x128)
+                is_static_cache = inp.dim() == 4 and inp.shape == (1, 8, 128, 128)
+                if is_static_cache:
+                    static_cache_tensors.append((idx, inp, cache_key, tensor_name))
+                
+                print(f"[XLA Cache] Input {idx}: {tensor_name}")
+                print(f"[XLA Cache]   Cache key: id={cache_key[0]}, shape={cache_key[1]}, dtype={cache_key[2]}, device={cache_key[3]}")
+                print(f"[XLA Cache]   Tensor object id: {id(inp)}")
+                print(f"[XLA Cache]   XLA tensor id: {torch_xla._XLAC._xla_get_tensor_id(inp)}")
+                
+                if is_static_cache:
+                    print(f"[XLA Cache]   *** STATIC CACHE TENSOR DETECTED ***")
+                    # # Analyze tensor content for debugging
+                    # try:
+                    #     mean_val = torch.mean(inp[0, 0, :, :], dim=-1)
+                    #     nonzero_indices = torch.nonzero(mean_val, as_tuple=False).squeeze(-1)
+                    #     nonzero_count = len(nonzero_indices)
+                    #     print(f"[XLA Cache]   Content analysis: nonzero_count={nonzero_count}, first_few_nonzero={nonzero_indices[:5].tolist() if nonzero_count > 0 else []}")
+                    # except Exception as e:
+                    #     print(f"[XLA Cache]   Content analysis failed: {e}")
+                
+                if cache_key in XLAExecutor.previously_seen_inputs:
+                    cache_hits.append((idx, tensor_name))
+                    print(f"[XLA Cache]   Result: CACHE HIT ✓")
+                else:
+                    new_inputs.append((idx, tensor_name))
+                    XLAExecutor.previously_seen_inputs.add(cache_key)
+                    print(f"[XLA Cache]   Result: CACHE MISS - added to cache")
+                    
+                    # Detailed cache miss analysis for static cache tensors
+                    if is_static_cache:
+                        print(f"[XLA Cache]   *** CACHE MISS ANALYSIS FOR STATIC CACHE ***")
+                        print(f"[XLA Cache]   Reason: Each tensor object has unique id() = {id(inp)}")
+                        print(f"[XLA Cache]   Even identical static cache tensors get different cache keys due to object identity")
+                        
+                        # Check if we have any other static cache tensors in the cache
+                        static_cache_count = sum(1 for key in XLAExecutor.previously_seen_inputs 
+                                               if len(key[1]) == 4 and key[1] == (1, 8, 128, 128))
+                        print(f"[XLA Cache]   Total static cache tensors in cache: {static_cache_count}")
+                        
+                        # Show similar cache keys (same shape/dtype/device but different id)
+                        similar_keys = [key for key in XLAExecutor.previously_seen_inputs 
+                                      if key[1] == cache_key[1] and key[2] == cache_key[2] and key[3] == cache_key[3]]
+                        if similar_keys:
+                            print(f"[XLA Cache]   Similar cache keys with same shape/dtype/device:")
+                            for sim_key in similar_keys:
+                                print(f"[XLA Cache]     id={sim_key[0]} (different from current {cache_key[0]})")
+                print(f"[XLA Cache]   ---")
+        
+        # Summary logging
+        if cache_hits:
+            print(f"[XLA Cache] CACHE HITS ({len(cache_hits)}): {[f'{name} (idx={idx})' for idx, name in cache_hits]}")
+        
+        if new_inputs:
+            print(f"[XLA Cache] CACHE MISSES ({len(new_inputs)}): {[f'{name} (idx={idx})' for idx, name in new_inputs]}")
+        
+        if static_cache_tensors:
+            print(f"[XLA Cache] STATIC CACHE TENSORS FOUND ({len(static_cache_tensors)}):")
+            for idx, tensor, cache_key, name in static_cache_tensors:
+                hit_or_miss = "HIT" if cache_key in XLAExecutor.previously_seen_inputs else "MISS"
+                print(f"[XLA Cache]   {name} -> {hit_or_miss} (tensor_id={id(tensor)}, xla_id={torch_xla._XLAC._xla_get_tensor_id(tensor)})")
+        
+        print(f"[XLA Cache] Updated cache size: {len(XLAExecutor.previously_seen_inputs)} unique tensors")
+        print(f"[XLA Cache] === END CACHE ANALYSIS ===\n")
 
     def push_tensors_to_device(self, inputs, device):
         if hasattr(inputs, "to"):
@@ -642,6 +769,7 @@ class XLAExecutor:
                 [self.push_tensors_to_device(i, device) for i in inputs]
             )
         elif hasattr(inputs, "key_cache") or hasattr(inputs, "value_cache"):
+            print("found key cache or value cache.")
             if hasattr(inputs, "key_cache"):
                 inputs.key_cache = self.push_tensors_to_device(inputs.key_cache, device)
             if hasattr(inputs, "value_cache"):
@@ -653,13 +781,15 @@ class XLAExecutor:
             return inputs
 
     def generate_arg_type_map_str(self, output_object):
+        
         hlo_input_ids, _ = torch_xla._XLAC._get_tensors_xla_device_data_node(
             output_object
         )
 
         # xm.get_stablehlo(output_object) gives a graph with just as many inputs as in hlo_input_ids
-
+        print("Hlo input positions pre normalization",hlo_input_ids)
         hlo_input_positions = [id - min(hlo_input_ids) for id in hlo_input_ids]
+        print("Hlo input positions post normalization",hlo_input_positions)
 
         def get_kind_str(kind):
             if kind == InputKind.USER_INPUT:
@@ -670,41 +800,121 @@ class XLAExecutor:
                 return "constant"
 
         arg_types = []
+        arg_refs = []
         output_args = [o.arg for o in self.program.graph_signature.output_specs]
+        
+        # debugging - pull out matching target / state dict key
+        for in_spec in self.program.graph_signature.input_specs:
+            if in_spec.target in self.program.state_dict:
+                print("match key in_spec.target", in_spec.target,"with ID", id(self.program.state_dict[in_spec.target]),"and kind", in_spec.kind)
+                
+        # import pdb; pdb.set_trace()
+        
+        
         for idx in range(len(hlo_input_positions)):
             if hlo_input_positions[idx] < len(self.program.graph_signature.input_specs):
                 in_spec = self.program.graph_signature.input_specs[
                     hlo_input_positions[idx]
                 ]
-
+                
                 # If an input is passed right through to the output, it will not be
                 # captured as an argument
                 if in_spec.arg in output_args:
                     continue
 
-                arg_types.append(get_kind_str(in_spec.kind))
+                # arg_types.append(get_kind_str(in_spec.kind))
+                
+                # Get object ID for the corresponding tensor
+                if (in_spec.kind == InputKind.PARAMETER or in_spec.kind == InputKind.BUFFER) and in_spec.target in self.program.state_dict:
+                    # For parameters, get object ID from state_dict
+                    tensor_obj = self.program.state_dict[in_spec.target]
+                    arg_refs.append(str(id(tensor_obj)))
+                elif in_spec.kind == InputKind.USER_INPUT:
+                    # For user inputs, we need to look at the runtime inputs
+                    # Since we don't have access to them here, use the input spec arg name as identifier
+                    arg_refs.append(f"user_input")
+                else:
+                    # For constants or other types, use a placeholder
+                    arg_refs.append(f"unknown")
             else:
                 arg_types.append("constant")
+                arg_refs.append("constant_unknown")
+                
 
         self.arg_type_map_str = "main=" + ",".join(arg_types)
+        self.arg_ref_map_str = "refs=" + ",".join(arg_refs)
 
     def __call__(self, *args):
+        # Check and log previously seen inputs before pushing to device
+        
         args = self.push_tensors_to_device(args, "xla")
+        
+            
         inputs = self.inputs
         for idx in range(len(args)):
             inputs[self.user_input_indices[idx]] = args[idx]
-
+        
+        # inputs is of type 
+        # import pdb;pdb.set_trace()
+        # for input in inputs:
+        #     print("Tensor id via xlac:",torch_xla._XLAC._xla_get_tensor_id(input), "with shape", input.shape)
+        
+        
+        self._check_and_log_previously_seen_inputs(inputs)
+        
+        
         output = self.program.graph_module(*inputs)
+        
+        self.generate_arg_type_map_str(output)    
+        
+        os.environ["ARG_REF_MAP"] = self.arg_ref_map_str
+        print("[JAMES] setting arg ref map to ", self.arg_ref_map_str, flush=True)
+        
+        # if self.compiler_config.arg_type_map_override:
+        #     if self.arg_type_map_str is None:
+        #         self.generate_arg_type_map_str(output)
+        #     if os.environ.get("ARG_TYPE_MAP_OVERRIDE") != self.arg_type_map_str:
+        #         os.environ["ARG_TYPE_MAP_OVERRIDE"] = self.arg_type_map_str
 
-        if self.compiler_config.arg_type_map_override:
-            if self.arg_type_map_str is None:
-                self.generate_arg_type_map_str(output)
-            if os.environ.get("ARG_TYPE_MAP_OVERRIDE") != self.arg_type_map_str:
-                os.environ["ARG_TYPE_MAP_OVERRIDE"] = self.arg_type_map_str
+        # - `parameter_id_tensor_mapping`
+        # - `_get_xla_tensors_dot`
+        # - `_get_xla_tensors_text`
 
-        xm.mark_step()
+        # ctx = torch_xla._XLAC.lowering.LoweringContext()
+        # ctx.build([output])
+        # host_param_id_tensor_mapping = ctx.parameter_id_tensor_mapping()
+        # device_param_id_tensor_mapping = ctx._XLAC.device_parameter_id_tensor_mapping()
+        # xla_tensors_text = torch_xla._get_xla_tensors_text() # xla 2.8.0 support req'd
+        # import pdb; pdb.set_trace()
+        # with open("test.dot", 'w') as fi:
+        #     fi.write(torch_xla._get_xla_tensors_dot())
+        
+
+        xm.mark_step() # explicit compile step
+        dump_static_cache:bool = True
+        
+        if dump_static_cache:
+            for i,_input in enumerate(inputs):
+                is_static_cache = _input.dim()==4 and _input.shape[2] == 128 and _input.shape[3]==128
+                print(f"input {i}: device = {_input.device}, shape {_input.shape}")
+                if is_static_cache:
+                    # Avoid implicit device transfer during execution - compute after compilation
+                    try:
+                        mean_val = torch.mean(_input[0,0,:,:], dim=-1)
+                        # Find nonzero indices and count for debugging
+                        nonzero_indices = torch.nonzero(mean_val, as_tuple=False).squeeze(-1)
+                        nonzero_count = len(nonzero_indices)
+                        print(f"\tmean along seqlen for static cache @ input idx {i} and shape {_input.shape}:", mean_val)
+                        print(f"\t  nonzero count: {nonzero_count}, nonzero indices: {nonzero_indices.tolist()}")
+                    except Exception as e:
+                        print(f"\tWarning: Could not compute mean for static cache {i}: {e}")
+                        print(f"\tmean along seqlen for static cache @ input idx {i} and shape {_input.shape}: <error during computation>")
+        
         if self.compiler_config.push_outputs_to_cpu:
             return self.push_tensors_to_device(output, "cpu")
+        
+
+                
         return output
 
     def __del__(self):

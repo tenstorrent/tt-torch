@@ -12,9 +12,10 @@ from transformers import (
     AutoModelForCausalLM,
     StaticCache,
 )
+from transformers.modeling_outputs import CausalLMOutputWithPast
 from tests.utils import clear_dynamo_cache
 from transformers.models.llama.modeling_llama import LlamaModel
-
+import os
 
 import tt_mlir
 
@@ -28,6 +29,7 @@ def load_model(model_name="meta-llama/Llama-3.2-3B"):
         torch_dtype=torch.bfloat16,
         use_cache=True,
     )
+    model.config.num_hidden_layers=28
 
     tokenizer = AutoTokenizer.from_pretrained(model_name, torch_dtype=torch.bfloat16)
     tokenizer.pad_token = tokenizer.eos_token
@@ -137,11 +139,22 @@ def test_llama3_generate():
 
     generation_start = time.time()
 
+    is_prefill = True
+    
     for i in range(tokens_to_generate):
         iteration_start = time.time()
 
+        # os.environ["IS_PREFILL"]="1" if is_prefill else "0"
+        # print("[James] set IS_PREFILL to", os.environ["IS_PREFILL"])
         # Execute model
         outputs = compiled_model(**input_args)
+        
+        is_prefill = False
+        
+        # import pdb;pdb.set_trace()
+        # [James] see if output logits can be dumped
+        # past_cache = outputs.past_key_values
+        # import pdb; pdb.set_trace()
 
         # Update inputs for next iteration
         cache_position = input_args["cache_position"][-1:] + 1
