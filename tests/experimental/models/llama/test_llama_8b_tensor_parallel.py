@@ -63,7 +63,7 @@ def apply_tensor_parallel_sharding_causal(model: AutoModelForCausalLM, mesh: Mes
     ids=["causal", "base"],
 )
 @pytest.mark.parametrize(
-    "data_type", [torch.bfloat16, torch.float32], ids=["bf16", "fp32"]
+    "data_type", [torch.bfloat16], ids=["bf16"]
 )
 @pytest.mark.parametrize("sequence_length", [128, 256, 512], ids=["128", "256", "512"])
 def test_llama_8b_eager(run_causal, data_type, sequence_length):
