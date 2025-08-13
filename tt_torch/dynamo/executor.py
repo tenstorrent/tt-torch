@@ -418,6 +418,24 @@ class Executor:
                     weights_and_activations[i], None
                 )
                 if cached_buffer is not None:
+                    print(f"[James] Cache hit on buffer cache, with shape {weights_and_activations[i].shape}")
+
+                    # Transfer cached buffer to host and analyze
+                    try:
+                        host_cached_buffer = tt_mlir.to_host(
+                            cached_buffer, deallocate_tensor=False
+                        )[0]
+                        
+                        if len(host_cached_buffer.shape) == 4:
+                            mean_along_third_dim = torch.mean(host_cached_buffer[0,0,:,:], dim=-1)
+                            nonzero_count = torch.count_nonzero(host_cached_buffer[0,0,:,:])
+                            print(f"[James] Cached buffer mean along 3rd dimension: {mean_along_third_dim}")
+                            print(f"[James] Cached buffer nonzero entries: {nonzero_count}")
+                        else:
+                            print(f"[James] Cached buffer shape {host_cached_buffer.shape} has fewer than 3 dimensions")
+                    except Exception as e:
+                        print(f"[James] Error transferring cached buffer to host: {e}")
+                    
                     weights_and_activations[i] = cached_buffer
                     tensor_start_idx += 1
 
@@ -463,6 +481,8 @@ class Executor:
         If self.async_mode is False, this function will move the runtime tensors to host
         and return them as Torch tensors.
         """
+        
+        print("[EXECUTOR CALL]")
         if self.compiler_config.compile_depth != CompileDepth.EXECUTE:
             assert (
                 len(self.mcg.programs) == 1
