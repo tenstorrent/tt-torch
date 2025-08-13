@@ -4,9 +4,9 @@
 #
 
 # underlying tt-mlir version we will have tt-xla use
-set(TT_MLIR_VERSION "18e18fa9fc6b5efeb044eeeee0a2edadb9346fd7")
+set(TT_MLIR_VERSION "hshah/jazpur/kv-cache-fusion")
 # tt-xla version to use
-set(TTXLA_VERSION "5c1d222")
+set(TTXLA_VERSION "hshah/jzx/persistent")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
