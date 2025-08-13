@@ -40,7 +40,7 @@ from tt_torch.tools.utils import (
 import torch_xla
 import torch_xla.core.xla_model as xm
 import torch_xla.distributed.spmd as xs
-import .sharding_utils as ts
+import tt_torch.dynamo.sharding_utils as ts
 
 from ..executor import get_inputs_size, gb_to_bytes
 
@@ -644,6 +644,13 @@ class XLAExecutor:
                 else:
                     # Move to device and cache it
                     device_tensor = source_tensor.to("xla")
+                    
+                    # apply shard spec when moving model weights & parameters to device
+                    shard_spec = ts.get_sharding(source_tensor)
+                    if shard_spec is not None:
+                        print(f"[Sharding] Applying cached shard_spec {shard_spec} to {input_spec.target}")
+                        xs.mark_sharding(device_tensor, self.compiler_config.mesh, shard_spec)
+
                     XLAExecutor.device_tensor_cache[cache_key] = device_tensor
                     self.inputs.append(device_tensor)
                     print(f"[Cache] Cached new tensor for {input_spec.target}")
@@ -757,10 +764,15 @@ class XLAExecutor:
     def push_tensors_to_device(self, inputs, device):
         if hasattr(inputs, "to"):
             # shard_spec = getattr(inputs, "shard_spec", None)
+            print("attempting retrieval of shard spec for inputs", inputs)
+            # print("shard map contains", ts.print_shard_map_summary())
             shard_spec = ts.get_sharding(inputs)
             inp = inputs.to(device)
             if shard_spec is not None:
+                print(f"[Sharding] Applying runtime shard_spec {shard_spec} to tensor shape {inputs.shape}")
                 xs.mark_sharding(inp, self.compiler_config.mesh, shard_spec)
+            else:
+                print(f"[Sharding] No shard_spec found for runtime tensor shape {inputs.shape}, skipping sharding")
             return inp
         elif isinstance(
             inputs, dict
@@ -808,9 +820,9 @@ class XLAExecutor:
         output_args = [o.arg for o in self.program.graph_signature.output_specs]
         
         # debugging - pull out matching target / state dict key
-        for in_spec in self.program.graph_signature.input_specs:
-            if in_spec.target in self.program.state_dict:
-                print("match key in_spec.target", in_spec.target,"with ID", id(self.program.state_dict[in_spec.target]),"and kind", in_spec.kind)
+        # for in_spec in self.program.graph_signature.input_specs:
+        #     if in_spec.target in self.program.state_dict:
+        #         print("match key in_spec.target", in_spec.target,"with ID", id(self.program.state_dict[in_spec.target]),"and kind", in_spec.kind)
                 
         # import pdb; pdb.set_trace()
         
@@ -866,9 +878,10 @@ class XLAExecutor:
         
         self._check_and_log_previously_seen_inputs(inputs)
         
-        
+        # dump shlo
         output = self.program.graph_module(*inputs)
-        
+        shlo_ir = xm.get_stablehlo(output)
+        print("[JAMES] StableHLO IR:\n", shlo_ir, flush=True)
         self.generate_arg_type_map_str(output)    
         
         os.environ["ARG_REF_MAP"] = self.arg_ref_map_str
