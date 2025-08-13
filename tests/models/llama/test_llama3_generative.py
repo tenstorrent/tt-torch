@@ -21,18 +21,19 @@ import torch_xla.distributed.spmd as xs
 from torch_xla.distributed.spmd import Mesh
 import tt_mlir
 import numpy as np
+import tt_torch.dynamo.sharding_utils as ts
 _global_max_cache_len = 64 + 64
-
+import torch_xla
 
 def load_model(model_name="meta-llama/Llama-3.2-3B"):
     # set up the model and tokenizer
-    model = AutoModelForCausalLM.from_pretrained(
+    model: AutoModelForCausalLM = AutoModelForCausalLM.from_pretrained(
         model_name,
         torch_dtype=torch.bfloat16,
         use_cache=True,
     )
-    model.config.num_hidden_layers=2
-
+    model.config.num_hidden_layers = 1
+    
     tokenizer = AutoTokenizer.from_pretrained(model_name, torch_dtype=torch.bfloat16)
     tokenizer.pad_token = tokenizer.eos_token
     return model.eval(), tokenizer
@@ -77,7 +78,7 @@ def load_inputs(
         "past_key_values": static_cache,
         "use_cache": True,
         "cache_position": cache_position,
-        "attention_mask": attention_mask
+        # "attention_mask": attention_mask
     }
     return args
 
@@ -91,9 +92,11 @@ def setup_xla_environment():
     os.environ["ENABLE_AUTO_PARALLEL"] = "TRUE" # Enables the auto parallel pass in tt-mlir
     os.environ["CONVERT_SHLO_TO_SHARDY"] = "1" # Converts the StableHLO emitted by torch-xla to the Shardy dialect
     os.environ["MESH_SHAPE"] = f"1,{num_devices}" # Sets the mesh shape used by the auto parallel pass
+    # os.environ["XLA_ALWAYS_ALLREDUCE"] = "1" # wot
 
     # Initialize SPMD
     xr.use_spmd()
+    torch_xla.sync(True, True)
     print("XLA environment configured.")
 
 def create_device_mesh() -> Mesh:
@@ -130,12 +133,30 @@ def test_llama3_generate():
     # setup XLA environment and device mesh
     setup_xla_environment()
     mesh = create_device_mesh()
-    cc.mesh = mesh # routed into xlaBackend
     
     # apply shardings
+    # ts.mark_sharding(input_args["input_ids"], (None, None))
+    # ts.mark_sharding(input_args["cache_position"], (None))
+    # ts.mark_sharding(input_args["attention_mask"], (None, None, None, None))
     
     
-    
+    for i, (key, value) in enumerate(
+        zip(input_args['past_key_values'].key_cache, input_args['past_key_values'].value_cache)
+    ):
+        ts.mark_sharding(key, (None, "model", None, None))
+        ts.mark_sharding(value, (None, "model", None, None))
+
+    for layer in model.model.layers:
+        ts.mark_sharding(layer.mlp.up_proj.weight, ("model", None))
+        ts.mark_sharding(layer.mlp.gate_proj.weight, ("model", None))
+        ts.mark_sharding(layer.mlp.down_proj.weight, (None, "model"))
+
+        ts.mark_sharding(layer.self_attn.q_proj.weight, ("model", None))
+        ts.mark_sharding(layer.self_attn.k_proj.weight, ("model", None))
+        ts.mark_sharding(layer.self_attn.v_proj.weight, ("model", None))
+        ts.mark_sharding(layer.self_attn.o_proj.weight, (None, "model"))
+
+
     # Allow local disablement of golden verification to accelerate tests
     # by avoiding dev2host transfer of static cache    
     enable_golden = False
@@ -143,6 +164,7 @@ def test_llama3_generate():
     # Setup compilation
     clear_dynamo_cache()
     cc = CompilerConfig()
+    cc.mesh = mesh # routed into xlaBackend
 
     # Consteval disabled due to 4D Causal Attention Mask evaluation getting constant folded in torchfx
     #   due to incorrect tracing of static cache and malformed output missing static cache tensors
@@ -260,12 +282,7 @@ def test_llama3_generate():
         generated_tokens.append(new_token)
         print(new_token, end="", flush=True)
 
-        input_args = {
-            "input_ids": next_token_ids,
-            "past_key_values": input_args["past_key_values"],  # updated in place
-            "cache_position": cache_position,
-            "use_cache": True,
-            "attention_mask": LlamaModel._prepare_4d_causal_attention_mask_with_cache_position(
+        attention_mask = LlamaModel._prepare_4d_causal_attention_mask_with_cache_position(
                 attention_mask=None,
                 sequence_length=1,  # Just one new token
                 target_length=_global_max_cache_len,
@@ -273,6 +290,12 @@ def test_llama3_generate():
                 cache_position=cache_position,
                 batch_size=1,
             ),
+        input_args = {
+            "input_ids": next_token_ids,
+            "past_key_values": input_args["past_key_values"],  # updated in place
+            "cache_position": cache_position,
+            "use_cache": True,
+            # "attention_mask": attention_mask
         }
 
         total_iteration_time = time.time() - iteration_start
