@@ -67,17 +67,14 @@ def apply_tensor_parallel_sharding_causal(model: AutoModelForCausalLM, mesh: Mes
 )
 @pytest.mark.parametrize("sequence_length", [128, 256, 512], ids=["128", "256", "512"])
 def test_llama_8b_eager(run_causal, data_type, sequence_length):
-    torch.manual_seed(42)
+    # Uncomment the below line if you want reproducibility across test runs
+    # torch.manual_seed(42)
 
     setup_xla_environment()
     mesh = create_device_mesh()
 
     model_name = "meta-llama/Llama-3.1-8B"
     config = LlamaConfig.from_pretrained(model_name)
-    if data_type == torch.float32 and sequence_length == 512:
-        config.num_hidden_layers = 16
-    else:
-        config.num_hidden_layers = 32
     if run_causal:
         model = AutoModelForCausalLM.from_pretrained(
             model_name, config=config, torch_dtype=data_type
@@ -90,28 +87,29 @@ def test_llama_8b_eager(run_causal, data_type, sequence_length):
     inputs = torch.randint(
         0, config.vocab_size, (batch_size, sequence_length), dtype=torch.int32
     )
+    # Run model on CPU first
     outputs = model(inputs)
     if run_causal:
         cpu_outputs = outputs.logits
     else:
         cpu_outputs = outputs.last_hidden_state
 
+    # Now run on devices
     if run_causal:
         apply_tensor_parallel_sharding_causal(model, mesh)
     else:
         apply_tensor_parallel_sharding_base(model, mesh)
 
     inputs = inputs.to(torch_xla.device())
-    xs.mark_sharding(inputs, mesh, (None, None))
+    xs.mark_sharding(inputs, mesh, (None, None)) # Replicate inputs to all devices
 
     outputs = model(inputs)
-    torch_xla.sync(True, True)
+    torch_xla.sync(True, True) # Wait until all computations have finished
     if run_causal:
         tt_outputs = outputs.logits.to("cpu")
     else:
         tt_outputs = outputs.last_hidden_state.to("cpu")
 
     pcc = calculate_pcc(tt_outputs, cpu_outputs)
-    print(f"Num hidden layers: {config.num_hidden_layers}")
     print(f"PCC: {pcc}")
     assert pcc >= 0.96
