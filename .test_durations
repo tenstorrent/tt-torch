@@ -250,5 +250,17 @@
     "tests/runner/test_models.py::test_all_models[qwen_2_5_coder/pytorch-1_5b-full-eval]": 100.958,
     "tests/runner/test_models.py::test_all_models[qwen_2_5_coder/pytorch-1_5b_instruct-full-eval]": 98.948,
     "tests/runner/test_models.py::test_all_models[qwen_2_5_coder/pytorch-3b-full-eval]": 133.283,
-    "tests/runner/test_models.py::test_all_models[qwen_2_5_coder/pytorch-3b_instruct-full-eval]": 133.921
+    "tests/runner/test_models.py::test_all_models[qwen_2_5_coder/pytorch-3b_instruct-full-eval]": 133.921,
+    "tests/runner/test_models.py::test_all_models[yolov6/pytorch-yolov6n-full-eval]": 147.162,
+    "tests/runner/test_models.py::test_all_models[yolov6/pytorch-yolov6s-full-eval]": 83.648,
+    "tests/runner/test_models.py::test_all_models[yolov6/pytorch-yolov6m-full-eval]": 245.798,
+    "tests/runner/test_models.py::test_all_models[yolov6/pytorch-yolov6l-full-eval]": 125.27,
+    "tests/runner/test_models.py::test_all_models[yolox/pytorch-yolox_nano-full-eval]": 120.146,
+    "tests/runner/test_models.py::test_all_models[yolox/pytorch-yolox_tiny-full-eval]": 144.32,
+    "tests/runner/test_models.py::test_all_models[yolox/pytorch-yolox_s-full-eval]": 122.495,
+    "tests/runner/test_models.py::test_all_models[yolox/pytorch-yolox_m-full-eval]": 133.584,
+    "tests/runner/test_models.py::test_all_models[yolox/pytorch-yolox_l-full-eval]": 183.634,
+    "tests/runner/test_models.py::test_all_models[yolox/pytorch-yolox_darknet-full-eval]": 199.886,
+    "tests/runner/test_models.py::test_all_models[yolox/pytorch-yolox_x-full-eval]": 336.541
+
 }
