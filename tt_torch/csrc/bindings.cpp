@@ -394,7 +394,9 @@ std::vector<at::Tensor> run_end_to_end(std::vector<at::Tensor> &inputs,
 
   tt::runtime::Binary binary = create_binary_from_bytestream(byte_stream);
 
-  tt::runtime::Device device = tt::runtime::openMeshDevice({1, 1});
+  tt::runtime::MeshDeviceOptions options;
+  options.meshShape = {1, 1};
+  tt::runtime::Device device = tt::runtime::openMeshDevice(options);
 
   const int program_idx = 0;
 
@@ -450,9 +452,10 @@ PYBIND11_MODULE(tt_mlir, m) {
                                            : py::none();
           },
           [](tt::runtime::MeshDeviceOptions &o, py::handle value) {
-            o.meshShape = py::none().is(value)
-                              ? std::nullopt
-                              : std::make_optional(value.cast<std::vector<uint32_t>>());
+            o.meshShape =
+                py::none().is(value)
+                    ? std::nullopt
+                    : std::make_optional(value.cast<std::vector<uint32_t>>());
           })
       .def_property(
           "l1_small_size",
