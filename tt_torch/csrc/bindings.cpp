@@ -444,6 +444,17 @@ PYBIND11_MODULE(tt_mlir, m) {
       .def_readwrite("enable_program_cache",
                      &tt::runtime::MeshDeviceOptions::enableProgramCache)
       .def_property(
+          "mesh_shape",
+          [](const tt::runtime::MeshDeviceOptions &o) {
+            return o.meshShape.has_value() ? py::cast(o.meshShape.value())
+                                           : py::none();
+          },
+          [](tt::runtime::MeshDeviceOptions &o, py::handle value) {
+            o.meshShape = py::none().is(value)
+                              ? std::nullopt
+                              : std::make_optional(value.cast<std::vector<uint32_t>>());
+          })
+      .def_property(
           "l1_small_size",
           [](const tt::runtime::MeshDeviceOptions &o) {
             return o.l1SmallSize.has_value() ? py::cast(o.l1SmallSize.value())
@@ -480,8 +491,7 @@ PYBIND11_MODULE(tt_mlir, m) {
         "Run shardy automatic data parallelization pass on stableHLO");
   m.def("compile_stable_hlo_to_ttir", &compile_stable_hlo_to_ttir,
         "A function that compiles stableHLO to TTIR");
-  m.def("open_mesh_device", &tt::runtime::openMeshDevice, py::arg("mesh_shape"),
-        py::arg("options"),
+  m.def("open_mesh_device", &tt::runtime::openMeshDevice, py::arg("options"),
         "Open a mesh of devices for execution using the new API and create "
         "system description");
   m.def("close_mesh_device", &tt::runtime::closeMeshDevice,
