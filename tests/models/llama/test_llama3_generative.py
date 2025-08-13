@@ -135,16 +135,18 @@ def test_llama3_generate():
     mesh = create_device_mesh()
     
     # apply shardings
-    # ts.mark_sharding(input_args["input_ids"], (None, None))
-    # ts.mark_sharding(input_args["cache_position"], (None))
-    # ts.mark_sharding(input_args["attention_mask"], (None, None, None, None))
+    ts.mark_sharding(input_args["input_ids"], (None, None))
+    ts.mark_sharding(input_args["cache_position"], (None))
     
     
     for i, (key, value) in enumerate(
         zip(input_args['past_key_values'].key_cache, input_args['past_key_values'].value_cache)
     ):
-        ts.mark_sharding(key, (None, "model", None, None))
-        ts.mark_sharding(value, (None, "model", None, None))
+        # Sharding these over the model dim causes a shardy loop ->manual compute block scatter + all_slice error
+        ts.mark_sharding(key, (None, "batch", None, None))
+        ts.mark_sharding(value, (None, "batch", None, None))
+        # ts.mark_sharding(key, (None, "model", None, None))
+        # ts.mark_sharding(value, (None, "model", None, None))
 
     for layer in model.model.layers:
         ts.mark_sharding(layer.mlp.up_proj.weight, ("model", None))
@@ -156,7 +158,8 @@ def test_llama3_generate():
         ts.mark_sharding(layer.self_attn.v_proj.weight, ("model", None))
         ts.mark_sharding(layer.self_attn.o_proj.weight, (None, "model"))
 
-
+    ts.mark_sharding(model.lm_head.weight, ("model", None))
+    
     # Allow local disablement of golden verification to accelerate tests
     # by avoiding dev2host transfer of static cache    
     enable_golden = False
