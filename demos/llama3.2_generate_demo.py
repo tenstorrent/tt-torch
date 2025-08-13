@@ -22,6 +22,7 @@ def load_model(model_name="meta-llama/Llama-3.2-3B"):
         torch_dtype=torch.bfloat16,
         use_cache=True,
     )
+    model.generation_config.cache_implementation = "static"
 
     tokenizer = AutoTokenizer.from_pretrained(model_name, torch_dtype=torch.bfloat16)
     tokenizer.pad_token = tokenizer.eos_token
@@ -29,34 +30,23 @@ def load_model(model_name="meta-llama/Llama-3.2-3B"):
 
 
 def load_inputs(
-    model,
     tokenizer,
-    test_input="This is a sample text from ",
-    max_cache_len=_global_max_cache_len,
+    test_input="I like taking walks in the",
 ):
-    batch_size = 1
     inputs = tokenizer.encode_plus(
         test_input,
         return_tensors="pt",
         truncation=True,
+        return_attention_mask=True,
     )
-
-    # set up static cache
-    static_cache = StaticCache(
-        config=model.config,
-        max_batch_size=batch_size,
-        max_cache_len=max_cache_len,
-        device=model.device,
-        dtype=model.dtype,
-    )
-
-    cache_position = torch.arange(0, inputs.input_ids.shape[1])
 
     args = {
         "input_ids": inputs.input_ids,
-        "past_key_values": static_cache,
-        "use_cache": True,
-        "cache_position": cache_position,
+        "attention_mask": inputs.attention_mask,
+        "max_new_tokens": 32,
+        "pad_token_id": tokenizer.eos_token_id,
+        "eos_token_id": tokenizer.eos_token_id,
+        "do_sample": False,
     }
     return args
 
@@ -64,9 +54,7 @@ def load_inputs(
 @torch.inference_mode()
 def main():
     model, tokenizer = load_model()
-    input_args = load_inputs(model, tokenizer)
-    generated_ids = input_args["input_ids"]
-    print(tokenizer.decode(generated_ids[0].tolist()), end="", flush=True)
+    input_args = load_inputs(tokenizer)
 
     clear_dynamo_cache()
     cc = CompilerConfig()
@@ -79,32 +67,14 @@ def main():
     device = DeviceManager.create_parent_mesh_device(mesh_shape=[1, 1])
     options.devices = [device]
 
-    buffer_cache = {}
-    options.buffer_cache = buffer_cache
-
-    constant_cache = {}
-    options.constant_cache = constant_cache
-
-    compiled_model = torch.compile(
-        model, backend=backend, dynamic=False, options=options
+    model.forward = torch.compile(
+        model.forward, backend="tt", dynamic=False, options=options
     )
 
-    # up to _global_max_cache_len - input_args["input_ids"].shape[1]
-    tokens_to_generate = 32
+    outputs = model.generate(**input_args)
+    decoded_output = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    print(decoded_output)
 
-    for i in range(tokens_to_generate):
-        outputs = compiled_model(**input_args)
-        next_token_ids = outputs.logits[:, -1:].argmax(dim=-1)
-        generated_ids = torch.cat([generated_ids, next_token_ids], dim=-1)
-        print(tokenizer.decode(next_token_ids[0].tolist()), end="", flush=True)
-
-        cache_position = input_args["cache_position"][-1:] + 1
-        input_args = {
-            "input_ids": next_token_ids.to(dtype=torch.int32),
-            "past_key_values": input_args["past_key_values"],  # updated in place
-            "cache_position": cache_position,
-            "use_cache": True,
-        }
     print()  # Add a newline at the end of the output
     DeviceManager.release_parent_device(device)
     clear_dynamo_cache()
