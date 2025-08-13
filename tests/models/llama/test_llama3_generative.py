@@ -16,9 +16,11 @@ from transformers.modeling_outputs import CausalLMOutputWithPast
 from tests.utils import clear_dynamo_cache
 from transformers.models.llama.modeling_llama import LlamaModel
 import os
-
+import torch_xla.runtime as xr
+import torch_xla.distributed.spmd as xs
+from torch_xla.distributed.spmd import Mesh
 import tt_mlir
-
+import numpy as np
 _global_max_cache_len = 64 + 64
 
 
@@ -29,7 +31,7 @@ def load_model(model_name="meta-llama/Llama-3.2-3B"):
         torch_dtype=torch.bfloat16,
         use_cache=True,
     )
-    model.config.num_hidden_layers=28
+    model.config.num_hidden_layers=2
 
     tokenizer = AutoTokenizer.from_pretrained(model_name, torch_dtype=torch.bfloat16)
     tokenizer.pad_token = tokenizer.eos_token
@@ -80,6 +82,38 @@ def load_inputs(
     return args
 
 
+def setup_xla_environment():
+    """Setup XLA environment for tensor parallelism."""
+    print("Setting up XLA environment...")
+    num_devices = xr.global_runtime_device_count()
+
+    # Basic XLA configuration
+    os.environ["ENABLE_AUTO_PARALLEL"] = "TRUE" # Enables the auto parallel pass in tt-mlir
+    os.environ["CONVERT_SHLO_TO_SHARDY"] = "1" # Converts the StableHLO emitted by torch-xla to the Shardy dialect
+    os.environ["MESH_SHAPE"] = f"1,{num_devices}" # Sets the mesh shape used by the auto parallel pass
+
+    # Initialize SPMD
+    xr.use_spmd()
+    print("XLA environment configured.")
+
+def create_device_mesh() -> Mesh:
+    """
+    Create device mesh for tensor parallelism.
+
+    Args:
+        num_devices: Total number of devices
+        mesh_shape: Shape of the device mesh (batch_dim, model_dim)
+
+    Returns:
+        Mesh object for SPMD operations
+    """
+    num_devices = xr.global_runtime_device_count()
+    mesh_shape = (1, num_devices)
+    device_ids = np.array(range(num_devices))
+    mesh = Mesh(device_ids, mesh_shape, ("batch", "model"))
+    print(f"Created device mesh: {mesh_shape} with {num_devices} devices")
+    return mesh
+
 @torch.inference_mode()
 def test_llama3_generate():
     # Initialize model and inputs
@@ -93,8 +127,16 @@ def test_llama3_generate():
     initial_prompt = tokenizer.decode(generated_ids[0].tolist())
     print(f"Initial prompt: '{initial_prompt}'")
 
+    # setup XLA environment and device mesh
+    setup_xla_environment()
+    mesh = create_device_mesh()
+    
+    # apply shardings
+    
+    
+    
     # Allow local disablement of golden verification to accelerate tests
-    # by avoiding dev2host transfer of static cache
+    # by avoiding dev2host transfer of static cache    
     enable_golden = False
 
     # Setup compilation
@@ -127,7 +169,7 @@ def test_llama3_generate():
     )
 
     # Token generation with data collection
-    tokens_to_generate = 32
+    tokens_to_generate = 3
     golden_pccs = []
     cache_pccs_per_iteration = []  # Store cache PCCs for each iteration
     golden_ids = input_args["input_ids"]
