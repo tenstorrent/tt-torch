@@ -5,6 +5,7 @@ from typing import Optional
 from datetime import datetime
 
 from fastapi import FastAPI, Depends, Query
+from fastapi import HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 import pandas as pd
@@ -90,6 +91,7 @@ async def get_models(
                 "status": r.status.value,
                 "adaptation_level": r.adaptation_level.value if (r.adaptation_level and hasattr(r.adaptation_level, 'value')) else str(r.adaptation_level) if r.adaptation_level else None,
                 "failure_reason": r.failure_reason.value if r.failure_reason else None,
+                "error_message": r.error_message,
                 "compilation_time_seconds": r.compilation_time_seconds,
                 "execution_time_seconds": r.execution_time_seconds,
                 "memory_usage_mb": r.memory_usage_mb
@@ -101,7 +103,7 @@ async def get_models(
         return {"error": str(e)}
 
 
-@app.get("/api/model/{model_id}", tags=["Models"])
+@app.get("/api/model/{model_id:path}", tags=["Models"])
 async def get_model_details(
     model_id: str,
     result_db: ResultTrackingDatabase = Depends(get_result_db)
@@ -133,6 +135,21 @@ async def get_model_details(
     except Exception as e:
         logger.error(f"Error getting model details: {str(e)}")
         return {"error": str(e)}
+
+
+@app.delete("/api/model/{model_id:path}", tags=["Models"])
+async def delete_model(model_id: str, result_db: ResultTrackingDatabase = Depends(get_result_db)):
+    """Delete a model's entry from the database by model_id (exact match)."""
+    try:
+        deleted = result_db.delete_by_model_id(model_id)
+        if deleted == 0:
+            raise HTTPException(status_code=404, detail=f"Model {model_id} not found")
+        return {"deleted": deleted, "model_id": model_id}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting model {model_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/api/statistics", tags=["Statistics"])
@@ -288,6 +305,7 @@ async def get_dashboard():
         .status-failed { background-color: #e74c3c; }
         .status-queued { background-color: #f39c12; }
         .status-running { background-color: #3498db; }
+        .status-executing { background-color: #3498db; }
     </style>
 </head>
 <body>
@@ -303,8 +321,9 @@ async def get_dashboard():
                 <option value="30">Last 30 Days</option>
                 <option value="90">Last 90 Days</option>
                 <option value="365">Last Year</option>
-                <option value="99999">All Time</option>
+                <option value="99999" selected>All Time</option>
             </select>
+            <button id="refreshBtn" onclick="loadDashboardData()">Refresh</button>
         </div>
         
         <div class="summary" id="summary">
@@ -338,7 +357,11 @@ async def get_dashboard():
                         <th>Model ID</th>
                         <th>Status</th>
                         <th>Adaptation Level</th>
+                        <th>Compile (s)</th>
+                        <th>Exec (s)</th>
+                        <th>Error</th>
                         <th>Timestamp</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="recentResultsBody">
@@ -354,7 +377,9 @@ async def get_dashboard():
         // Load dashboard data
         function loadDashboardData() {
             const timeframe = document.getElementById('timeframe').value;
-            axios.get(`/api/dashboard?timeframe_days=${timeframe}`)
+            // Cache-busting param to force fresh data
+            const ts = Date.now();
+            axios.get(`/api/dashboard?timeframe_days=${timeframe}&t=${ts}`, { headers: { 'Cache-Control': 'no-cache' } })
                 .then(response => {
                     const dashboardData = response.data;
                     updateSummaryMetrics(dashboardData.summary_metrics);
@@ -424,7 +449,13 @@ async def get_dashboard():
                 const row = document.createElement('tr');
                 
                 const modelIdCell = document.createElement('td');
-                modelIdCell.textContent = result.model_id;
+                const modelLink = document.createElement('a');
+                // Use encodeURI so path separators (/) are preserved
+                modelLink.href = encodeURI(`https://huggingface.co/${result.model_id}`);
+                modelLink.textContent = result.model_id;
+                modelLink.target = '_blank';
+                modelLink.rel = 'noopener noreferrer';
+                modelIdCell.appendChild(modelLink);
                 
                 const statusCell = document.createElement('td');
                 const statusBadge = document.createElement('span');
@@ -435,20 +466,87 @@ async def get_dashboard():
                 const adaptationLevelCell = document.createElement('td');
                 adaptationLevelCell.textContent = result.adaptation_level || 'N/A';
                 
+                const compileCell = document.createElement('td');
+                compileCell.textContent =
+                    (result.compilation_time_seconds != null)
+                        ? Number(result.compilation_time_seconds).toFixed(2)
+                        : '';
+
+                const execCell = document.createElement('td');
+                execCell.textContent =
+                    (result.execution_time_seconds != null)
+                        ? Number(result.execution_time_seconds).toFixed(2)
+                        : '';
+
+                const errorCell = document.createElement('td');
+                if (result.error_message) {
+                    const msg = String(result.error_message);
+                    const trimmed = msg.length > 120 ? msg.slice(0, 117) + '…' : msg;
+                    errorCell.textContent = trimmed;
+                    errorCell.title = msg; // full on hover
+                } else {
+                    errorCell.textContent = '';
+                }
+
                 const timestampCell = document.createElement('td');
-                timestampCell.textContent = new Date(result.timestamp).toLocaleString();
+                // Treat timestamps without timezone as UTC, then render in America/Chicago (CST/CDT)
+                (function() {
+                    const raw = String(result.timestamp);
+                    const hasTz = /Z$/i.test(raw) || /[+-]\d{2}:?\d{2}$/.test(raw);
+                    const iso = hasTz ? raw : `${raw.replace(' ', 'T')}Z`;
+                    const d = new Date(iso);
+                    if (isNaN(d.getTime())) { timestampCell.textContent = raw; return; }
+                    try {
+                        const fmt = new Intl.DateTimeFormat('en-US', {
+                            timeZone: 'America/Chicago',
+                            year: 'numeric', month: '2-digit', day: '2-digit',
+                            hour: '2-digit', minute: '2-digit', second: '2-digit',
+                            timeZoneName: 'short'
+                        });
+                        timestampCell.textContent = fmt.format(d);
+                    } catch (_) {
+                        timestampCell.textContent = d.toLocaleString('en-US');
+                    }
+                })();
+
+                const actionsCell = document.createElement('td');
+                const delBtn = document.createElement('button');
+                delBtn.textContent = 'Delete';
+                delBtn.style.backgroundColor = '#e74c3c';
+                delBtn.style.color = '#fff';
+                delBtn.style.border = 'none';
+                delBtn.style.padding = '6px 10px';
+                delBtn.style.borderRadius = '4px';
+                delBtn.style.cursor = 'pointer';
+                delBtn.onclick = () => {
+                    if (!confirm(`Delete ${result.model_id}?`)) return;
+                    axios.delete(`/api/model/${encodeURIComponent(result.model_id)}`)
+                        .then(() => loadDashboardData())
+                        .catch(err => alert('Delete failed: ' + (err?.response?.data?.detail || err)));
+                };
+                actionsCell.appendChild(delBtn);
                 
                 row.appendChild(modelIdCell);
                 row.appendChild(statusCell);
                 row.appendChild(adaptationLevelCell);
+                row.appendChild(compileCell);
+                row.appendChild(execCell);
+                row.appendChild(errorCell);
                 row.appendChild(timestampCell);
+                row.appendChild(actionsCell);
                 
                 tableBody.appendChild(row);
             }
         }
         
-        // Initial load
-        document.addEventListener('DOMContentLoaded', loadDashboardData);
+        // Initial load and periodic refresh every 15s
+        document.addEventListener('DOMContentLoaded', () => {
+            // ensure default timeframe is All Time on initial load
+            const tf = document.getElementById('timeframe');
+            if (tf) tf.value = '99999';
+            loadDashboardData();
+            setInterval(loadDashboardData, 15000);
+        });
     </script>
 </body>
 </html>

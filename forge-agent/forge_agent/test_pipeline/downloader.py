@@ -179,6 +179,19 @@ class ModelDownloader:
                 if hasattr(tokenizer, "encode") or hasattr(tokenizer, "encode_plus"):
                     text = "This is a sample input for testing the model."
                     inputs = tokenizer(text, return_tensors="pt")
+                    # If model is encoder-decoder, avoid conflicting decoder inputs
+                    try:
+                        if hasattr(model, "config") and getattr(model.config, "is_encoder_decoder", False):
+                            # Ensure we don't include decoder_inputs_embeds from tokenizer outputs
+                            if isinstance(inputs, dict) and "decoder_inputs_embeds" in inputs:
+                                inputs.pop("decoder_inputs_embeds", None)
+                            # Add minimal decoder_input_ids if not present
+                            if isinstance(inputs, dict) and "decoder_input_ids" not in inputs:
+                                bos_id = getattr(model.config, "decoder_start_token_id", None) or getattr(model.config, "bos_token_id", None) or 1
+                                import torch as _torch
+                                inputs["decoder_input_ids"] = _torch.tensor([[bos_id]], dtype=_torch.long)
+                    except Exception as _e:
+                        logger.debug(f"Seq2seq input sanitation skipped: {_e}")
                     sample_inputs = inputs
                     return sample_inputs
             
@@ -212,10 +225,17 @@ class ModelDownloader:
                         # For other vision models, use random tensors
                         sample_inputs["pixel_values"] = torch.rand(1, 3, 224, 224)
                         logger.debug(f"Created random vision model inputs for {model_class_name}: pixel_values")
-                elif "gpt" in model_class_name or "llama" in model_class_name or "bert" in model_class_name:
+                elif "gpt" in model_class_name or "llama" in model_class_name or "bert" in model_class_name or "m2m100" in model_class_name or "t5" in model_class_name or "bart" in model_class_name:
                     # Language models typically use "input_ids"
                     sample_inputs["input_ids"] = torch.randint(0, 1000, (1, 16))
                     sample_inputs["attention_mask"] = torch.ones(1, 16, dtype=torch.long)
+                    # For encoder-decoder families add minimal decoder_input_ids
+                    try:
+                        if hasattr(model, "config") and getattr(model.config, "is_encoder_decoder", False):
+                            bos_id = getattr(model.config, "decoder_start_token_id", None) or getattr(model.config, "bos_token_id", None) or 1
+                            sample_inputs["decoder_input_ids"] = torch.tensor([[bos_id]], dtype=torch.long)
+                    except Exception as _e:
+                        logger.debug(f"Adding decoder_input_ids skipped: {_e}")
                     logger.debug(f"Created language model inputs for {model_class_name}: input_ids, attention_mask")
                 else:
                     # Generic fallback - try both common parameter names

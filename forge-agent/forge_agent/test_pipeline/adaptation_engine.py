@@ -175,9 +175,16 @@ class AdaptationEngine:
                     adaptation_log.info("🔄 Applying template adaptation...")
                     adapted_model_data = template_module.adapt(model_data, test_config)
                     
-                    # Determine adaptation level
-                    adaptation_level = getattr(template_module, "ADAPTATION_LEVEL", AdaptationLevel.LEVEL_1)
-                    adaptation_log.info(f"✅ Template adaptation successful! Level: {adaptation_level}")
+                    # Determine adaptation level (coerce string constants into enum)
+                    template_level = getattr(template_module, "ADAPTATION_LEVEL", AdaptationLevel.NONE)
+                    if isinstance(template_level, str):
+                        try:
+                            adaptation_level = AdaptationLevel(template_level)
+                        except Exception:
+                            adaptation_level = AdaptationLevel.NONE
+                    else:
+                        adaptation_level = template_level
+                    adaptation_log.info(f"✅ Template adaptation successful! Level: {getattr(adaptation_level, 'value', adaptation_level)}")
                     
                     # Log what was changed
                     original_keys = set(model_data.keys())
@@ -348,13 +355,19 @@ class AdaptationEngine:
             explanation = llm_result.get("explanation", "")
             
             # Convert adaptation level string to enum
-            adaptation_level = AdaptationLevel.LEVEL_2  # Default
-            if adaptation_level_str == "level_1":
-                adaptation_level = AdaptationLevel.LEVEL_1
-            elif adaptation_level_str == "level_2":
-                adaptation_level = AdaptationLevel.LEVEL_2
-            elif adaptation_level_str == "level_3":
-                adaptation_level = AdaptationLevel.LEVEL_3
+            # Map LLM-indicated level: simple param renames => level_1; op/model edits => level_2; major rewrites => level_3
+            adaptation_level = AdaptationLevel.LEVEL_2  # conservative default
+            try:
+                adaptation_level = AdaptationLevel(adaptation_level_str)
+            except Exception:
+                # Heuristic fallback based on explanation contents
+                expl = (explanation or "").lower()
+                if any(k in expl for k in ["rename parameter", "argument name", "input shape", "dtype", "mask field"]):
+                    adaptation_level = AdaptationLevel.LEVEL_1
+                elif any(k in expl for k in ["replace op", "unsupported aten", "layernorm workaround", "wrap forward", "restructure"]):
+                    adaptation_level = AdaptationLevel.LEVEL_2
+                elif any(k in expl for k in ["rewrite", "custom kernel", "re-implement"]):
+                    adaptation_level = AdaptationLevel.LEVEL_3
             
             # Execute the adaptation code
             adapted_model_data = self._execute_adaptation_code(
