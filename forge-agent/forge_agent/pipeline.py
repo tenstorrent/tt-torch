@@ -299,7 +299,16 @@ class ModelCompatibilityPipeline:
             
             adaptation_success, adapted_model, adaptation_level, failure_reason, error_message = \
                 self.adaptation_engine.adapt_model(model_data, test_config, model_logger)
-            
+
+            # If the LLM path was used at all, ensure minimum adaptation level is LEVEL_1
+            if getattr(self.adaptation_engine, "used_llm", False):
+                try:
+                    from forge_agent.test_pipeline.models import AdaptationLevel as _AL
+                    if adaptation_level is None or adaptation_level == _AL.NONE:
+                        adaptation_level = _AL.LEVEL_1
+                except Exception:
+                    pass
+
             test_record.adaptation_level = adaptation_level
             
             if not adaptation_success:
@@ -478,6 +487,12 @@ class ModelCompatibilityPipeline:
                                     sample_inputs = llm_result["inputs"]
                                     # Also update the adapted_model data for consistency
                                     adapted_model["sample_inputs"] = sample_inputs
+                                    # Mark minimal adaptation if not already set
+                                    try:
+                                        if test_record.adaptation_level in (None, AdaptationLevel.NONE):
+                                            test_record.adaptation_level = AdaptationLevel.LEVEL_1
+                                    except Exception:
+                                        pass
                                     logger.info(f"🔄 Retrying original model test with LLM-fixed inputs for {model_id}")
                                     continue  # Retry with fixed inputs
                                 else:

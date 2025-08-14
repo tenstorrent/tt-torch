@@ -49,6 +49,8 @@ class AdaptationEngine:
         
         # Initialize LLM client
         self.llm_client = LLMClient(provider=llm_provider)
+        # Tracks whether LLM-based adaptation was used during the last adapt_model() call
+        self.used_llm: bool = False
     
     def adapt_model(
         self, 
@@ -73,6 +75,8 @@ class AdaptationEngine:
             - Error message if failed
         """
         model_id = test_config.model_id
+        # Reset LLM usage flag for this adaptation session
+        self.used_llm = False
         adaptation_logger = model_logger or logger
         
         # Log adaptation start
@@ -303,6 +307,8 @@ class AdaptationEngine:
         adaptation_log = adaptation_logger or logger
         
         adaptation_log.info(f"🤖 Applying LLM-guided adaptation for {test_config.model_id}")
+        # Mark that LLM path was used
+        self.used_llm = True
         logger.info(f"Applying LLM-guided adaptation for {test_config.model_id}")
         
         try:
