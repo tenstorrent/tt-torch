@@ -109,13 +109,21 @@ def test_stable_diffusion_vae(record_property, model_info, mode, op_by_op):
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     if model_name == "SD3.5-medium-vae-encoder":
-        skip_full_eval_test(
-            record_property,
-            cc,
-            model_name,
-            bringup_status="FAILED_RUNTIME",
-            reason="Out of Memory: Not enough space to allocate 84213760 B L1 buffer across 64 banks, where each bank needs to store 1315840 B",
+        reason = "Out of Memory: Not enough space to allocate 84213760 B L1 buffer across 64 banks, where each bank needs to store 1315840 B"
+    elif model_name == "SD3.5-medium-vae-decoder":
+        reason = "Out of Memory: Not enough space to allocate 71860224 B L1 buffer across 64 banks, where each bank needs to store 1122816 B"
+    else:
+        reason = (
+            "medium-vae encounters OOM errors, so skipping large-vae full eval test"
         )
+
+    skip_full_eval_test(
+        record_property,
+        cc,
+        model_name,
+        bringup_status="FAILED_RUNTIME",
+        reason=reason,
+    )
 
     tester = ThisTester(
         model_name,
