@@ -4,15 +4,13 @@
 import torch
 from tt_torch.tools.utils import CompilerConfig
 from tt_torch.tools.device_manager import DeviceManager
-from tt_torch.dynamo.backend import backend, BackendOptions
+from tt_torch.dynamo.backend import BackendOptions
 from transformers import (
     AutoTokenizer,
     AutoModelForCausalLM,
-    StaticCache,
+    TextStreamer,
 )
 from tests.utils import clear_dynamo_cache
-
-_global_max_cache_len = 64 + 64
 
 
 def load_model(model_name="meta-llama/Llama-3.2-3B"):
@@ -46,7 +44,6 @@ def load_inputs(
         "max_new_tokens": 32,
         "pad_token_id": tokenizer.eos_token_id,
         "eos_token_id": tokenizer.eos_token_id,
-        "do_sample": False,
     }
     return args
 
@@ -64,6 +61,8 @@ def main():
     options = BackendOptions()
     options.compiler_config = cc
 
+    streamer = TextStreamer(tokenizer)
+
     device = DeviceManager.create_parent_mesh_device(mesh_shape=[1, 1])
     options.devices = [device]
 
@@ -71,9 +70,7 @@ def main():
         model.forward, backend="tt", dynamic=False, options=options
     )
 
-    outputs = model.generate(**input_args)
-    decoded_output = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    print(decoded_output)
+    outputs = model.generate(**input_args, streamer=streamer)
 
     print()  # Add a newline at the end of the output
     DeviceManager.release_parent_device(device)
