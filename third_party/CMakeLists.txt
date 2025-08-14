@@ -4,9 +4,9 @@
 #
 
 # underlying tt-mlir version we will have tt-xla use
-set(TT_MLIR_VERSION "b758a62c96ebd0ca9b17796f8279ca8fadfb5308")
+set(TT_MLIR_VERSION "d091067b293cde86466b371963e404a3fa567bda")
 # tt-xla version to use
-set(TTXLA_VERSION "4e980da06f76b9c19da8c19d3fbb2984751eff6e")
+set(TTXLA_VERSION "3c34c7b8ef9b336e4cd6b84ad59bcc26317e9b88")
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
@@ -97,7 +97,7 @@ else()
     # torch-mlir build
     # torch-mlir is using branch tt_torch/main
     # see issue https://github.com/tenstorrent/tt-torch/issues/671
-    set(TORCH_MLIR_VERSION "be21b75d7fc2a45d5cccf5ac5d8d9448106735bd")
+    set(TORCH_MLIR_VERSION "64a937e8cffe40ad06eb8fce0d6b1d674f037160")
     set(TORCH_MLIR_PREFIX ${TTTORCH_SOURCE_DIR}/third_party/torch-mlir)
     set(TORCH_MLIR_INSTALL_PREFIX ${TORCH_MLIR_PREFIX}/install)
 
