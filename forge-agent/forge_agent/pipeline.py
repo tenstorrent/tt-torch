@@ -10,7 +10,6 @@ import requests
 
 from loguru import logger
 import torch
-
 from forge_agent.metadata_service.huggingface_client import HuggingFaceClient
 from forge_agent.metadata_service.database import MetadataDatabase
 from forge_agent.metadata_service.models import ModelMetadata, ModelSelectionCriteria
@@ -267,8 +266,9 @@ class ModelCompatibilityPipeline:
             status=TestStatus.QUEUED
         )
         
-        # Store initial record
+        # Store initial record and keep the ID so future saves update the same row
         record_id = self.result_db.store_test_result(test_record)
+        test_record.id = record_id
         model_logger.info(f"📋 Test record created with ID: {record_id}")
         
         try:
@@ -341,6 +341,25 @@ class ModelCompatibilityPipeline:
                 sample_inputs = {"pixel_values": torch.rand(1, 3, 224, 224)}
             else:
                 logger.debug(f"Using sample_inputs for {model_id}: {list(sample_inputs.keys())}")
+
+            # Sanitize inputs for encoder-decoder models to avoid mutually exclusive args
+            try:
+                if hasattr(model, "config") and getattr(model.config, "is_encoder_decoder", False) and isinstance(sample_inputs, dict):
+                    # Never pass both decoder_input_ids and decoder_inputs_embeds
+                    if "decoder_input_ids" in sample_inputs and "decoder_inputs_embeds" in sample_inputs:
+                        logger.info(f"🧹 Sanitizing inputs for {model_id}: removing decoder_inputs_embeds since decoder_input_ids is present")
+                        sample_inputs.pop("decoder_inputs_embeds", None)
+                    # Ensure at least minimal decoder_input_ids exists
+                    if "decoder_input_ids" not in sample_inputs:
+                        bos_id = getattr(model.config, "decoder_start_token_id", None)
+                        if bos_id is None:
+                            bos_id = getattr(model.config, "bos_token_id", None)
+                        if bos_id is None:
+                            bos_id = 1
+                        sample_inputs["decoder_input_ids"] = torch.tensor([[bos_id]], dtype=torch.long)
+                        logger.debug(f"Added minimal decoder_input_ids for {model_id} using BOS id {bos_id}")
+            except Exception as sanitize_e:
+                logger.debug(f"Input sanitization skipped for {model_id}: {sanitize_e}")
             
             # Force real tt-torch execution - no simulation fallbacks
             
@@ -411,22 +430,13 @@ class ModelCompatibilityPipeline:
                             error_msg = str(orig_e)
                             logger.error(f"Original model failed (attempt {input_fix_attempt + 1}/{max_input_fix_retries}) for {model_id}: {error_msg}")
                             
-                            # Check if this is an input argument mismatch that LLM can fix
-                            is_input_mismatch = (
-                                "unexpected keyword argument" in error_msg.lower() or
-                                "got an unexpected keyword argument" in error_msg.lower() or
-                                "takes no arguments" in error_msg.lower() or
-                                "missing" in error_msg.lower() and "required positional argument" in error_msg.lower()
-                            )
-                            
-                            if is_input_mismatch and input_fix_attempt < max_input_fix_retries - 1 and use_llm_adaptation:
-                                logger.info(f"🤖 DETECTED INPUT MISMATCH - Attempting LLM input fix for {model_id}")
+                            # Route any error to LLM input-fix if enabled and retries remain
+                            if use_llm_adaptation and input_fix_attempt < max_input_fix_retries - 1:
+                                logger.info(f"🤖 ROUTING ERROR TO LLM INPUT FIX for {model_id}")
                                 logger.info(f"   - Error: {error_msg}")
                                 logger.info(f"   - Current inputs: {list(sample_inputs.keys())}")
-                                
                                 # Extract model info for LLM
                                 model_info = self.adaptation_engine._extract_model_info(model, model_id)
-                                
                                 # Call LLM to fix the inputs
                                 llm_result = self.adaptation_engine.llm_client.fix_input_arguments(
                                     model_info=model_info,
@@ -434,60 +444,46 @@ class ModelCompatibilityPipeline:
                                     current_inputs=sample_inputs,
                                     model_class_name=type(model).__name__
                                 )
-                                
                                 if llm_result.get("success") and llm_result.get("inputs"):
                                     logger.info(f"✅ LLM successfully generated fixed inputs for {model_id}")
-                                    
                                     # Log detailed before/after comparison
                                     old_inputs = sample_inputs
                                     new_inputs = llm_result["inputs"]
-                                    
                                     logger.info(f"🔄 INPUT CHANGES MADE BY LLM:")
                                     logger.info(f"   📥 ORIGINAL INPUTS (that failed):")
                                     for key, value in old_inputs.items():
                                         shape_str = getattr(value, 'shape', 'unknown shape')
                                         dtype_str = getattr(value, 'dtype', 'unknown dtype')
                                         logger.info(f"      - {key}: {type(value).__name__} {shape_str} {dtype_str}")
-                                    
                                     logger.info(f"   📤 NEW INPUTS (LLM-generated):")
                                     for key, value in new_inputs.items():
                                         shape_str = getattr(value, 'shape', 'unknown shape')
                                         dtype_str = getattr(value, 'dtype', 'unknown dtype')
                                         logger.info(f"      - {key}: {type(value).__name__} {shape_str} {dtype_str}")
-                                    
                                     logger.info(f"   💡 LLM EXPLANATION: {llm_result.get('explanation', 'No explanation provided')}")
-                                    
                                     # Show the key changes
                                     old_keys = set(old_inputs.keys())
                                     new_keys = set(new_inputs.keys())
-                                    
                                     if old_keys != new_keys:
                                         removed_keys = old_keys - new_keys
                                         added_keys = new_keys - old_keys
-                                        
                                         if removed_keys:
                                             logger.info(f"   ❌ REMOVED PARAMETERS: {list(removed_keys)}")
                                         if added_keys:
                                             logger.info(f"   ✅ ADDED PARAMETERS: {list(added_keys)}")
-                                        
                                         unchanged_keys = old_keys & new_keys
                                         if unchanged_keys:
                                             logger.info(f"   ↔️  UNCHANGED PARAMETERS: {list(unchanged_keys)}")
-                                    else:
-                                        logger.info(f"   ℹ️  PARAMETER NAMES UNCHANGED - likely shape/dtype fixes")
-                                    
                                     # Update sample_inputs with the fixed inputs
                                     sample_inputs = llm_result["inputs"]
-                                    
                                     # Also update the adapted_model data for consistency
                                     adapted_model["sample_inputs"] = sample_inputs
-                                    
                                     logger.info(f"🔄 Retrying original model test with LLM-fixed inputs for {model_id}")
                                     continue  # Retry with fixed inputs
                                 else:
                                     logger.error(f"❌ LLM failed to fix inputs for {model_id}: {llm_result.get('explanation', 'Unknown error')}")
-                            
-                            # If we reach here, either it's not an input mismatch or LLM couldn't fix it
+
+                            # If we reach here, no more retries
                             if input_fix_attempt == max_input_fix_retries - 1:
                                 logger.error(f"Original model failed after all attempts for {model_id}, skipping tt-torch compilation")
                                 raise Exception(f"Original model validation failed: {error_msg}")
@@ -792,7 +788,8 @@ class ModelCompatibilityPipeline:
                                 # Add timeout protection for inference as well
                                 import threading
                                 
-                                inference_timeout = 120  # 2 minutes timeout for inference
+                                # Inference timeout (seconds) - configurable via env
+                                inference_timeout = int(os.environ.get('FORGE_INFERENCE_TIMEOUT_SECONDS', '120'))
                                 inference_result = [None]
                                 inference_exception = [None]
                                 
@@ -815,7 +812,12 @@ class ModelCompatibilityPipeline:
                                 # Check for inference timeout
                                 if inference_thread.is_alive():
                                     logger.error(f"⏰ INFERENCE TIMEOUT: execution exceeded {inference_timeout}s for {model_id}")
-                                    raise Exception(f"Inference timeout after {inference_timeout} seconds")
+                                    # Mark record as failed with timeout and continue to next model
+                                    test_record.status = TestStatus.FAILED
+                                    test_record.failure_reason = FailureReason.TIMEOUT
+                                    test_record.error_message = f"Inference timeout after {inference_timeout} seconds"
+                                    self.result_db.store_test_result(test_record)
+                                    return test_record
                                 
                                 # Check for inference exception
                                 if inference_exception[0]:
@@ -897,52 +899,13 @@ class ModelCompatibilityPipeline:
                         else:
                             logger.info(f"   - Raw output for non-ResNet model: {str(outputs)[:100]}...")
                     except Exception as compiled_e:
+                        # Treat Tenstorrent compiled inference failure as an overall test failure
                         logger.error(f"Compiled model execution failed for {model_id}: {str(compiled_e)}")
-                        logger.info(f"Falling back to original model execution for {model_id}")
-                        
-                        # Fallback: run the original model instead
-                        try:
-                            if model is not None:
-                                model.eval()
-                                with torch.no_grad():
-                                    outputs = model(**sample_inputs)
-                                logger.info(f"Original model fallback successful for {model_id}, output shape: {outputs.shape if hasattr(outputs, 'shape') else type(outputs)}")
-                                
-                                # For ResNet models, interpret the results from original model too
-                                if "resnet" in model_id.lower():
-                                    logger.info(f"🎯 INTERPRETING ORIGINAL MODEL PREDICTIONS for {model_id}")
-                                    interpretation = self._interpret_resnet_output(model_id, outputs)
-                                    
-                                    if "error" not in interpretation:
-                                        logger.info(f"📸 Image: {interpretation['image_info']}")
-                                        
-                                        if "top_predictions" in interpretation:
-                                            logger.info(f"🏆 TOP 5 PREDICTIONS (Original Model):")
-                                            for pred in interpretation["top_predictions"]:
-                                                logger.info(f"   {pred['rank']}. {pred['class']}: {pred['confidence']}")
-                                        elif "demo_note" in interpretation:
-                                            logger.info(f"📋 {interpretation['demo_note']}")
-                                            logger.info(f"   - Feature shape: {interpretation['feature_shape']}")
-                                            logger.info(f"   - {interpretation['explanation']}")
-                                            logger.info(f"   - ✅ Original model also extracted feature vectors!")
-                                    else:
-                                        logger.warning(f"Failed to interpret original model predictions: {interpretation['error']}")
-                                elif "gpt" in model_id.lower() or "bert" in model_id.lower():
-                                    logger.info(f"🎯 INTERPRETING ORIGINAL LLM OUTPUT for {model_id}")
-                                    if hasattr(outputs, 'logits'):
-                                        logger.info(f"📝 Original Language Model Results:")
-                                        logger.info(f"   - Logits shape: {outputs.logits.shape}")
-                                        logger.info(f"   - Vocabulary size: {outputs.logits.shape[-1]}")
-                                        logger.info(f"   - ✅ Original model successfully generated token predictions!")
-                                    else:
-                                        logger.info(f"📝 Original Language Model Output:")
-                                        logger.info(f"   - Output type: {type(outputs)}")
-                                        logger.info(f"   - ✅ Original model successfully processed text through LLM!")
-                            else:
-                                raise Exception("No original model available for fallback")
-                        except Exception as fallback_e:
-                            logger.error(f"Both compiled and original model execution failed for {model_id}: {str(fallback_e)}")
-                            raise Exception(f"Model execution failed: compiled='{str(compiled_e)}', original='{str(fallback_e)}'")
+                        test_record.status = TestStatus.FAILED
+                        test_record.failure_reason = FailureReason.EXECUTION_ERROR
+                        test_record.error_message = f"Inference failed on Tenstorrent: {str(compiled_e)}"
+                        self.result_db.store_test_result(test_record)
+                        return test_record
                 else:
                     # Fail if no compiled model is available - no simulation fallback
                     error_msg = "❌ NO COMPILED MODEL AVAILABLE for inference"
@@ -961,6 +924,20 @@ class ModelCompatibilityPipeline:
                 # Step 5: Mark as completed
                 test_record.status = TestStatus.COMPLETED
                 self.result_db.store_test_result(test_record)
+
+                # Save compiled model artifact if available and execution succeeded
+                try:
+                    if 'compiled_model' in locals() and compiled_model is not None:
+                        artifacts_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "artifacts")
+                        os.makedirs(artifacts_dir, exist_ok=True)
+                        safe_name = model_id.replace('/', '_')
+                        artifact_path = os.path.join(artifacts_dir, f"{safe_name}_compiled.pt")
+                        # Best-effort save: prefer torch.save(state_dict) if available
+                        to_save = compiled_model.state_dict() if hasattr(compiled_model, 'state_dict') else compiled_model
+                        torch.save(to_save, artifact_path)
+                        logger.info(f"💾 Saved compiled model artifact to: {artifact_path}")
+                except Exception as save_err:
+                    logger.warning(f"Could not save compiled model artifact for {model_id}: {save_err}")
                 
                 # Log final success
                 model_logger.info("=" * 80)
@@ -973,6 +950,17 @@ class ModelCompatibilityPipeline:
                 
             except Exception as e:
                 logger.error(f"Execution error: {str(e)}")
+                # Request LLM adaptation suggestions for execution failure
+                try:
+                    if use_llm_adaptation:
+                        model_info = self.adaptation_engine._extract_model_info(model, model_id)
+                        _ = self.adaptation_engine.llm_client.generate_adaptation_code(
+                            model_info=model_info,
+                            error_message=str(e),
+                            model_class_name=type(model).__name__
+                        )
+                except Exception as llm_exec_e:
+                    logger.debug(f"LLM adaptation suggestion failed for execution error: {llm_exec_e}")
                 test_record.status = TestStatus.FAILED
                 test_record.failure_reason = FailureReason.EXECUTION_ERROR
                 test_record.error_message = f"Execution error: {str(e)}"

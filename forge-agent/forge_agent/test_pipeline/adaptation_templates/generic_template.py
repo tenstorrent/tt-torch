@@ -5,7 +5,8 @@ from typing import Dict, Any, Optional
 import torch
 
 # Level of adaptation required for this template
-ADAPTATION_LEVEL = "level_1"
+# Generic template performs no real changes; mark as level 0 (none)
+ADAPTATION_LEVEL = "none"
 
 def adapt(model_data: Dict[str, Any], test_config: Dict[str, Any]) -> Dict[str, Any]:
     """

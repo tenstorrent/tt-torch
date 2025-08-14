@@ -63,7 +63,10 @@ class DashboardDataProvider:
                 "status": result.status.value,
                 "timestamp": result.timestamp.isoformat(),
                 "adaptation_level": result.adaptation_level.value if (result.adaptation_level and hasattr(result.adaptation_level, 'value')) else str(result.adaptation_level) if result.adaptation_level else None,
-                "failure_reason": result.failure_reason.value if result.failure_reason else None
+                "failure_reason": result.failure_reason.value if result.failure_reason else None,
+                "error_message": result.error_message,
+                "compilation_time_seconds": result.compilation_time_seconds,
+                "execution_time_seconds": result.execution_time_seconds
             }
             for result in recent_results
         ]
@@ -98,29 +101,34 @@ class DashboardDataProvider:
         """Create chart for test status distribution."""
         labels = []
         data = []
+        colors = []
+        
+        # Explicit color mapping
+        status_color_map = {
+            TestStatus.COMPLETED.value: "#2ecc71",  # Green
+            TestStatus.FAILED.value: "#e74c3c",     # Red
+            TestStatus.EXECUTING.value: "#3498db",  # Blue
+            TestStatus.QUEUED.value: "#f39c12",     # Orange
+            TestStatus.DOWNLOADING.value: "#2196F3",# Blue-ish
+            TestStatus.ADAPTING.value: "#9C27B0",   # Purple
+            TestStatus.COMPILING.value: "#FF5722"    # Orange-red
+        }
         
         for status in TestStatus:
             count = statistics.status_counts.get(status.value, 0)
             if count > 0:
                 labels.append(status.value)
                 data.append(count)
+                colors.append(status_color_map.get(status.value, "#95a5a6"))
         
         return ChartData(
-            chart_id="status_chart",
+            chart_id="statusChart",
             chart_type="pie",
             title="Test Status Distribution",
             labels=labels,
             datasets=[{
                 "data": data,
-                "backgroundColor": [
-                    "#4CAF50",  # COMPLETED - Green
-                    "#FFC107",  # QUEUED - Yellow
-                    "#2196F3",  # DOWNLOADING - Blue
-                    "#9C27B0",  # ADAPTING - Purple
-                    "#FF5722",  # COMPILING - Orange
-                    "#03A9F4",  # EXECUTING - Light Blue
-                    "#F44336"   # FAILED - Red
-                ]
+                "backgroundColor": colors
             }],
             options={
                 "responsive": True,
@@ -140,7 +148,7 @@ class DashboardDataProvider:
                 data.append(count)
         
         return ChartData(
-            chart_id="adaptation_level_chart",
+            chart_id="adaptationLevelChart",
             chart_type="bar",
             title="Adaptation Level Distribution",
             labels=labels,
@@ -172,7 +180,7 @@ class DashboardDataProvider:
                 data.append(count)
         
         return ChartData(
-            chart_id="failure_reason_chart",
+            chart_id="failureReasonChart",
             chart_type="bar",
             title="Failure Reason Distribution",
             labels=labels,
@@ -210,7 +218,7 @@ class DashboardDataProvider:
         execution_times = df['execution_time_seconds'].tolist()
         
         return ChartData(
-            chart_id="model_performance_chart",
+            chart_id="modelPerformanceChart",
             chart_type="bar",
             title=f"Performance of Top {len(model_ids)} Models",
             labels=model_ids,
