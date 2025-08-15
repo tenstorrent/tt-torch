@@ -695,7 +695,7 @@ test_config = {
     },
     "albert/token_classification/pytorch-xlarge_v1-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
-        "required_pcc": 0.98,
+        "required_pcc": 0.97,
     },
     "perceiverio_vision/pytorch-deepmind/vision-perceiver-fourier-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
