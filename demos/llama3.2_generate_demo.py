@@ -13,45 +13,34 @@ from transformers import (
 from tests.utils import clear_dynamo_cache
 
 
-def load_model(model_name="meta-llama/Llama-3.2-3B"):
-    # set up the model and tokenizer
+@torch.inference_mode()
+def main():
+    model_name = "meta-llama/Llama-3.2-3B"
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         torch_dtype=torch.bfloat16,
         use_cache=True,
     )
     model.generation_config.cache_implementation = "static"
+    model = model.eval()
 
     tokenizer = AutoTokenizer.from_pretrained(model_name, torch_dtype=torch.bfloat16)
     tokenizer.pad_token = tokenizer.eos_token
-    return model.eval(), tokenizer
 
-
-def load_inputs(
-    tokenizer,
-    test_input="I like taking walks in the",
-):
     inputs = tokenizer.encode_plus(
-        test_input,
+        "I like taking walks in the",
         return_tensors="pt",
         truncation=True,
         return_attention_mask=True,
     )
 
-    args = {
+    input_args = {
         "input_ids": inputs.input_ids,
         "attention_mask": inputs.attention_mask,
         "max_new_tokens": 32,
         "pad_token_id": tokenizer.eos_token_id,
         "eos_token_id": tokenizer.eos_token_id,
     }
-    return args
-
-
-@torch.inference_mode()
-def main():
-    model, tokenizer = load_model()
-    input_args = load_inputs(tokenizer)
 
     clear_dynamo_cache()
     cc = CompilerConfig()
