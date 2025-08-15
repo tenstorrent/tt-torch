@@ -291,6 +291,15 @@ class ModelCompatibilityPipeline:
                 test_record.error_message = error_message
                 self.result_db.store_test_result(test_record)
                 return test_record
+
+            # If loader had to adapt dtype (e.g., original weights loaded for CPU), mark as Level 2 adaptation
+            try:
+                if model_data and model_data.get("dtype_adapted"):
+                    from forge_agent.test_pipeline.models import AdaptationLevel as _AL
+                    if test_record.adaptation_level in (None, _AL.NONE, _AL.LEVEL_1):
+                        test_record.adaptation_level = _AL.LEVEL_2
+            except Exception:
+                pass
             
             # Step 2: Apply adaptation
             test_record.status = TestStatus.ADAPTING

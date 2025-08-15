@@ -68,6 +68,7 @@ class ModelDownloader:
             
             # Attempt to load the model
             model = None
+            dtype_adapted = False
             try:
                 # Try different model classes based on common architectures
                 model_classes = [
@@ -88,8 +89,22 @@ class ModelDownloader:
                     model = AutoModel.from_pretrained(snapshot_path)
             
             except Exception as e:
-                logger.error(f"All attempts to load model {model_id} failed: {str(e)}")
-                return False, None, FailureReason.DOWNLOAD_ERROR, f"Failed to load model: {str(e)}"
+                err_text = str(e)
+                logger.error(f"All attempts to load model {model_id} failed: {err_text}")
+                # If this looks like a GPU-only quantized model (e.g., MXFP4), defer to adaptation engine
+                if any(k in err_text.lower() for k in ["requires a gpu", "mxfp4", "quantiz"]):
+                    logger.info(f"Deferring dtype/quantization adaptation to AdaptationEngine for {model_id}")
+                    return True, {
+                        "config": config,
+                        "model": None,
+                        "tokenizer": tokenizer,
+                        "sample_inputs": {},
+                        "path": snapshot_path,
+                        "quantized_gpu_only": True,
+                        "load_error": err_text
+                    }, None, None
+                else:
+                    return False, None, FailureReason.DOWNLOAD_ERROR, f"Failed to load model: {err_text}"
             
             # Create sample inputs if needed
             sample_inputs = self._create_sample_inputs(model, tokenizer, test_config)
