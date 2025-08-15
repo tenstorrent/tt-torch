@@ -11,19 +11,22 @@ from transformers import AutoProcessor, AutoModelForImageTextToText, AutoConfig
 class ThisTester(ModelTester):
     def _load_model(self):
         model_name = "meta-llama/Llama-4-Scout-17B-16E"
-        self.processor = AutoProcessor.from_pretrained(model_name, torch_dtype=torch.bfloat16)
+        self.processor = AutoProcessor.from_pretrained(
+            model_name, torch_dtype=torch.bfloat16
+        )
 
         config = AutoConfig.from_pretrained(model_name)
         config.vision_config.num_hidden_layers = 1
-        config.text_config.num_hidden_layers = 4
+        config.text_config.num_hidden_layers = 1  # Just 1 layer
 
         self.model = AutoModelForImageTextToText.from_pretrained(
-            model_name, 
+            model_name,
             config=config,
-            low_cpu_mem_usage=True, 
-            torch_dtype=torch.bfloat16)
+            low_cpu_mem_usage=True,
+            torch_dtype=torch.bfloat16,
+        )
 
-        #breakpoint()
+        # breakpoint()
 
         return self.model
 
@@ -32,18 +35,23 @@ class ThisTester(ModelTester):
             {
                 "role": "user",
                 "content": [
-                    {"type": "image", "url": "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/p-blog/candy.JPG"},
-                    {"type": "text", "text": "What animal is on the candy?"}
-                ]
+                    {
+                        "type": "image",
+                        "url": "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/p-blog/candy.JPG",
+                    },
+                    {"type": "text", "text": "What animal is on the candy?"},
+                ],
             },
         ]
+        # breakpoint()
         inputs = self.processor.apply_chat_template(
             messages,
             add_generation_prompt=True,
             tokenize=True,
             return_dict=True,
             return_tensors="pt",
-        ).to(self.model.device)
+        )
+        # breakpoint()
         return inputs
 
 
