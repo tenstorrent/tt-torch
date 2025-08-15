@@ -197,7 +197,7 @@ jobs:
           },
         ]
     runs-on:
-      - ${{ matrix.build.sh-run && format('tt-beta-ubuntu-2204-{0}-large-stable', matrix.build.runs-on) ||  matrix.build.runs-on }}
+      - ${{ matrix.build.sh-run && format('tt-ubuntu-2204-{0}-stable', matrix.build.runs-on) ||  matrix.build.runs-on }}
 
     name: "tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})"
 
