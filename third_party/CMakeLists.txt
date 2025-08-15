@@ -4,10 +4,11 @@
 #
 
 # underlying tt-mlir version we will have tt-xla use
-# commit 18e18fa9fc6b5efeb044eeeee0a2edadb9346fd7 (HEAD -> jzx/xla_fusion, origin/jzx/xla_fusion)
-set(TT_MLIR_VERSION "18e18fa9fc6b5efeb044eeeee0a2edadb9346fd7")
+# commit cd51e36ab685499448552393c52caee506465c45 (HEAD -> jzx/xla_fusion, origin/jzx/xla_fusion)
+set(TT_MLIR_VERSION "cd51e36ab685499448552393c52caee506465c45")
+
 # tt-xla version to use
-set(TTXLA_VERSION "5c1d222") # jzx/persistent
+set(TTXLA_VERSION "643f9847bb12da60b6abd9561c275dd0cc499724") # jzx/persistent
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
