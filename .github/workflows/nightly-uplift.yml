@@ -13,8 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      SUBMODULE_PATH: third_party/tt-mlir
-      MLIR_VERSION: origin/main
+      SUBMODULE_PATH: third_party/tt-xla
 
     steps:
 
@@ -26,28 +25,28 @@ jobs:
       - name: Set env variable
         run: |
           echo "TODAY=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
-          echo "CURRENT_COMMIT_SHA=$(grep -oP 'set\(TT_MLIR_VERSION "\K[^"]+' third_party/CMakeLists.txt)" >> $GITHUB_ENV
+          echo "CURRENT_COMMIT_SHA=$(grep -oP 'set\(TT_XLA_VERSION "\K[^"]+' third_party/CMakeLists.txt)" >> $GITHUB_ENV
 
-      - name: Update tt-mlir reference
+      - name: Update tt-xla reference
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
             # Fetch the latest SHA using GitHub CLI
-            LATEST_SHA=$(gh api repos/tenstorrent/tt-mlir/commits/main --jq '.sha')
+            LATEST_SHA=$(gh api repos/tenstorrent/tt-xla/commits/main --jq '.sha')
             echo "LATEST_SHA=${LATEST_SHA}" >> $GITHUB_ENV
             echo "SUBMODULE_VERSION=${LATEST_SHA}" >> $GITHUB_ENV
             # Update the CMakeLists.txt file with the new SHA
-            sed -i "s/set(TT_MLIR_VERSION \".*\")/set(TT_MLIR_VERSION \"${LATEST_SHA}\")/" third_party/CMakeLists.txt
+            sed -i "s/set(TT_XLA_VERSION \".*\")/set(TT_XLA_VERSION \"${LATEST_SHA}\")/" third_party/CMakeLists.txt
 
-      - name: Fetch commit history from tt-mlir repository
+      - name: Fetch commit history from tt-xla repository
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          # Clone the tt-mlir repository
+          # Clone the tt-xla repository
           cd ${{ runner.temp }}
-          echo "### List of tt-mlir commits since previous uplift:" > commit_list.txt
-          git clone https://github.com/tenstorrent/tt-mlir.git tt-mlir
-          cd tt-mlir
+          echo "### List of tt-xla commits since previous uplift:" > commit_list.txt
+          git clone https://github.com/tenstorrent/tt-xla.git tt-xla
+          cd tt-xla
           # Fetch commit history between $COMMIT_SHA and LATEST_SHA
           git log --oneline ${{ env.CURRENT_COMMIT_SHA}}..${{ env.LATEST_SHA }} >>../commit_list.txt
           cd ..
