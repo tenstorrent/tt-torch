@@ -32,7 +32,7 @@ def load_model(model_name="meta-llama/Llama-3.2-3B"):
         torch_dtype=torch.bfloat16,
         use_cache=True,
     )
-    model.config.num_hidden_layers = 1
+    model.config.num_hidden_layers = 28
     
     tokenizer = AutoTokenizer.from_pretrained(model_name, torch_dtype=torch.bfloat16)
     tokenizer.pad_token = tokenizer.eos_token
@@ -136,7 +136,7 @@ def test_llama3_generate():
     
     # apply shardings
     ts.mark_sharding(input_args["input_ids"], (None, None))
-    ts.mark_sharding(input_args["cache_position"], (None))
+    ts.mark_sharding(input_args["cache_position"], (None,))
     
     
     for i, (key, value) in enumerate(
@@ -195,7 +195,7 @@ def test_llama3_generate():
     )
 
     # Token generation with data collection
-    tokens_to_generate = 3
+    tokens_to_generate = 32
     golden_pccs = []
     cache_pccs_per_iteration = []  # Store cache PCCs for each iteration
     golden_ids = input_args["input_ids"]

@@ -906,7 +906,7 @@ class XLAExecutor:
         
 
         xm.mark_step() # explicit compile step
-        dump_static_cache:bool = True
+        dump_static_cache:bool = False
         
         if dump_static_cache:
             for i,_input in enumerate(inputs):
