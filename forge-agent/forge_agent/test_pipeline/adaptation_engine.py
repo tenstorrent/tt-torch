@@ -19,6 +19,13 @@ from forge_agent.test_pipeline.models import (
     TestResult
 )
 from forge_agent.llm.client import LLMClient
+from transformers import (
+    AutoConfig,
+    AutoTokenizer,
+    AutoModel,
+    AutoModelForCausalLM,
+    AutoModelForSequenceClassification,
+)
 
 
 class AdaptationEngine:
@@ -94,6 +101,26 @@ class AdaptationEngine:
             
         logger.info(f"🔧 Adapting model: {model_id}")
         
+        # If the downloader detected a GPU-only quantized model and couldn't load it,
+        # attempt a Level 2 CPU rehydration without quantization first.
+        try:
+            if model is None and bool(model_data.get("quantized_gpu_only")):
+                adaptation_logger.info("🧯 Detected GPU-only quantized weights. Attempting CPU reload without quantization (Level 2)...")
+                cpu_reload_success, cpu_adapted, cpu_failure_reason, cpu_error_message = self._attempt_cpu_reload_without_quantization(
+                    model_data=model_data,
+                    test_config=test_config,
+                    adaptation_logger=adaptation_logger,
+                )
+                if cpu_reload_success and cpu_adapted is not None:
+                    # Early return with Level 2 since this required moderate intervention
+                    return True, cpu_adapted, AdaptationLevel.LEVEL_2, None, None
+                else:
+                    # Fall back to the normal adaptation flow; preserve the error for logging context
+                    if cpu_error_message:
+                        adaptation_logger.warning(f"CPU reload attempt failed: {cpu_error_message}")
+        except Exception as pre_e:
+            adaptation_logger.warning(f"CPU reload pre-adaptation step skipped due to error: {pre_e}")
+
         # Try standard adaptation templates first
         adaptation_logger.info("📝 STEP 1: Attempting Standard Template Adaptation")
         success, adapted_model, adaptation_level, failure_reason, error_message = self._apply_standard_templates(
@@ -123,6 +150,192 @@ class AdaptationEngine:
             logger.error(f"❌ Failed to adapt model {model_id}: {error_message}")
             
         return success, adapted_model, adaptation_level, failure_reason, error_message
+
+    def _attempt_cpu_reload_without_quantization(
+        self,
+        model_data: Dict[str, Any],
+        test_config: TestConfig,
+        adaptation_logger=None,
+    ) -> Tuple[bool, Optional[Dict[str, Any]], Optional[FailureReason], Optional[str]]:
+        """
+        Try to bypass MXFP4/quantized GPU-only checkpoints by reloading the model on CPU without
+        quantization. Falls back to random-initialized model from config if weights cannot be used.
+
+        Returns (success, adapted_model_data, failure_reason, error_message)
+        """
+        log = adaptation_logger or logger
+        try:
+            repo_path = model_data.get("path") or test_config.model_id
+            config = model_data.get("config")
+            tokenizer = model_data.get("tokenizer")
+
+            # Harden the environment against accidental GPU/quant loader paths
+            try:
+                os.environ.setdefault("CUDA_VISIBLE_DEVICES", "")
+                os.environ.setdefault("BITSANDBYTES_NOWELCOME", "1")
+                os.environ.setdefault("BNB_CUDA_VERSION", "0")
+            except Exception:
+                pass
+
+            # Ensure we have a config to fall back on
+            if config is None:
+                try:
+                    config = AutoConfig.from_pretrained(repo_path, trust_remote_code=True)
+                except Exception as e_cfg:
+                    log.warning(f"Could not load config from {repo_path}: {e_cfg}")
+
+            # Attempt to neutralize any quantization settings on the config itself
+            try:
+                if config is not None:
+                    # Common patterns seen in quantized repos
+                    if hasattr(config, "quantization_config"):
+                        qcfg = getattr(config, "quantization_config")
+                        if isinstance(qcfg, dict):
+                            # Set explicit method none and disable 4/8bit flags if present
+                            qcfg["quant_method"] = "none"
+                            qcfg["load_in_4bit"] = False
+                            qcfg["load_in_8bit"] = False
+                            qcfg["bnb_4bit_compute_dtype"] = "float32"
+                            setattr(config, "quantization_config", qcfg)
+                        else:
+                            # If it's a namespace/object, best effort disable
+                            try:
+                                setattr(qcfg, "quant_method", "none")
+                            except Exception:
+                                pass
+                            for attr in ("load_in_4bit", "load_in_8bit"):
+                                try:
+                                    setattr(qcfg, attr, False)
+                                except Exception:
+                                    pass
+                    # Also clear top-level flags sometimes used by loaders
+                    for attr in ("load_in_4bit", "load_in_8bit"):
+                        if hasattr(config, attr):
+                            try:
+                                setattr(config, attr, False)
+                            except Exception:
+                                pass
+            except Exception as qex:
+                log.debug(f"Config quantization neutralization skipped: {qex}")
+
+            # Prefer text models for GPT-*; try several loader variants on CPU with full precision
+            # Prefer bf16 on CPU per user request; fallback to fp32 if it errors
+            preferred_dtype = torch.bfloat16
+            load_kwargs: Dict[str, Any] = {
+                "trust_remote_code": True,
+                "device_map": "cpu",
+                "low_cpu_mem_usage": True,
+                "torch_dtype": preferred_dtype,
+            }
+            # Explicitly disable quantization toggles if respected by the model code
+            for qk in ("load_in_4bit", "load_in_8bit", "quantization_config"):
+                load_kwargs[qk] = False
+
+            model = None
+            last_error: Optional[str] = None
+
+            # Try targeted loaders first
+            for cls in (AutoModelForCausalLM, AutoModelForSequenceClassification, AutoModel):
+                try:
+                    log.info(f"🔄 Trying CPU reload with {cls.__name__} (no quant, bf16)")
+                    model = cls.from_pretrained(repo_path, config=config, **load_kwargs)
+                    break
+                except Exception as e_try:
+                    last_error = str(e_try)
+                    log.debug(f"CPU reload failed with {cls.__name__} (bf16): {last_error}")
+                    # If dtype may be the issue, retry once with float32
+                    try:
+                        log.info(f"🔁 Retrying CPU reload with {cls.__name__} using float32")
+                        model = cls.from_pretrained(
+                            repo_path,
+                            config=config,
+                            trust_remote_code=True,
+                            device_map="cpu",
+                            low_cpu_mem_usage=True,
+                            torch_dtype=torch.float32,
+                            load_in_4bit=False,
+                            load_in_8bit=False,
+                            quantization_config=False,
+                        )
+                        break
+                    except Exception as e_try_fp32:
+                        last_error = f"{last_error} | fp32 retry: {e_try_fp32}"
+                        log.debug(f"CPU reload failed with {cls.__name__} (fp32): {e_try_fp32}")
+
+            # If weight reload fails entirely, attempt random init from config as a last resort
+            weights_random_init = False
+            if model is None and config is not None:
+                try:
+                    log.warning("⚠️  Falling back to random-initialized model from config (no weights)")
+                    # Prefer CausalLM for GPT-like families
+                    try:
+                        model = AutoModelForCausalLM.from_config(config, trust_remote_code=True)
+                    except Exception:
+                        model = AutoModel.from_config(config, trust_remote_code=True)
+                    weights_random_init = True
+                except Exception as e_cfg_init:
+                    last_error = f"Config-based init failed: {e_cfg_init}"
+
+            if model is None:
+                return False, None, FailureReason.ADAPTATION_ERROR, last_error or "CPU reload unsuccessful"
+
+            # Make sure tokenizer exists if this is a text model
+            if tokenizer is None:
+                try:
+                    tokenizer = AutoTokenizer.from_pretrained(repo_path, trust_remote_code=True)
+                except Exception as e_tok:
+                    log.debug(f"Tokenizer load failed (continuing without): {e_tok}")
+                    tokenizer = None
+
+            # Regenerate sample inputs using the downloader helper for consistency
+            sample_inputs: Dict[str, Any] = {}
+            try:
+                from forge_agent.test_pipeline.downloader import ModelDownloader
+                _dl = ModelDownloader()
+                # Construct a lightweight TestConfig for input generation
+                sample_inputs = _dl._create_sample_inputs(model, tokenizer, TestConfig(model_id=test_config.model_id))
+            except Exception as e_inputs:
+                log.debug(f"Sample input generation failed, using fallback inputs: {e_inputs}")
+                # Fallback basic inputs
+                sample_inputs = {}
+                try:
+                    if tokenizer is not None:
+                        tmp = tokenizer("Hello from tt-torch pipeline.", return_tensors="pt")
+                        # Avoid decoder_inputs_embeds for seq2seq models
+                        if hasattr(model, "config") and getattr(model.config, "is_encoder_decoder", False):
+                            if isinstance(tmp, dict):
+                                tmp.pop("decoder_inputs_embeds", None)
+                        sample_inputs = dict(tmp)
+                    else:
+                        # Generic fallback
+                        sample_inputs = {"input_ids": torch.randint(0, 1000, (1, 16)), "attention_mask": torch.ones(1, 16, dtype=torch.long)}
+                except Exception:
+                    sample_inputs = {"pixel_values": torch.rand(1, 3, 224, 224)}
+
+            # Build adapted model_data
+            adapted_data: Dict[str, Any] = {**model_data}
+            adapted_data["model"] = model
+            adapted_data["tokenizer"] = tokenizer if tokenizer is not None else model_data.get("tokenizer")
+            adapted_data["sample_inputs"] = sample_inputs
+            # Mark that we changed dtype/quantization handling to bypass GPU-only quantization
+            adapted_data["dtype_adapted"] = True
+            # Clear the quantized-only flag now that we have a usable CPU model
+            adapted_data["quantized_gpu_only"] = False
+
+            # Put model into eval mode for inference consistency
+            try:
+                model.eval()
+            except Exception:
+                pass
+
+            # If we had to random init, annotate it for downstream visibility
+            if weights_random_init:
+                adapted_data["weights_random_init"] = True
+
+            return True, adapted_data, None, None
+
+        except Exception as e:
+            return False, None, FailureReason.ADAPTATION_ERROR, str(e)
     
     def _apply_standard_templates(
         self, 
