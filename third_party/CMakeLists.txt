@@ -5,10 +5,10 @@
 
 # underlying tt-mlir version we will have tt-xla use
 # commit cd51e36ab685499448552393c52caee506465c45 (HEAD -> jzx/xla_fusion, origin/jzx/xla_fusion)
-set(TT_MLIR_VERSION "cd51e36ab685499448552393c52caee506465c45")
+set(TT_MLIR_VERSION "de6c0f9e8bf4e1f208c7d055c51bdff5e623bbfa")
 
 # tt-xla version to use
-set(TTXLA_VERSION "643f9847bb12da60b6abd9561c275dd0cc499724") # jzx/persistent
+set(TTXLA_VERSION "f6127e4b2d352ae5a49f1223d81aa32ee2fe6c37") # jzx/persistent
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
@@ -99,7 +99,7 @@ else()
     # torch-mlir build
     # torch-mlir is using branch tt_torch/main
     # see issue https://github.com/tenstorrent/tt-torch/issues/671
-    set(TORCH_MLIR_VERSION "be21b75d7fc2a45d5cccf5ac5d8d9448106735bd")
+    set(TORCH_MLIR_VERSION "64a937e8cffe40ad06eb8fce0d6b1d674f037160")
     set(TORCH_MLIR_PREFIX ${TTTORCH_SOURCE_DIR}/third_party/torch-mlir)
     set(TORCH_MLIR_INSTALL_PREFIX ${TORCH_MLIR_PREFIX}/install)
 
