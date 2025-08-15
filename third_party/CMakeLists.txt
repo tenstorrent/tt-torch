@@ -3,10 +3,21 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-# underlying tt-mlir version we will have tt-xla use
-set(TT_MLIR_VERSION "b03d526f953d654ef167faf534a20fd2b357ba76")
 # tt-xla version to use
 set(TTXLA_VERSION "3c34c7b8ef9b336e4cd6b84ad59bcc26317e9b88")
+
+# Optional override of tt-xla's TT_MLIR_VERSION. Default to tt-xla's default TT_MLIR_VERSION if we pass an empty string
+set(TT_MLIR_VERSION "")
+if(DEFINED TT_MLIR_VERSION AND NOT TT_MLIR_VERSION STREQUAL "")
+    set(USE_CUSTOM_TT_MLIR_VERSION ON)
+    message(STATUS "Overriding TT_MLIR_VERSION in tt-xla build: ${TT_MLIR_VERSION}")
+    list(APPEND TT_XLA_MLIR_OVERRIDE_ARGS
+        -DUSE_CUSTOM_TT_MLIR_VERSION=ON
+        -DTT_MLIR_VERSION=${TT_MLIR_VERSION}
+    )
+else()
+    message(STATUS "Not overriding TT_MLIR_VERSION and using TT_XLA default tt-mlir version")
+endif()
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
@@ -66,11 +77,10 @@ else()
             -DCMAKE_C_COMPILER=clang-17
             -DCMAKE_CXX_COMPILER=clang++-17
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-            -DUSE_CUSTOM_TT_MLIR_VERSION=ON
-            -DTT_MLIR_VERSION=${TT_MLIR_VERSION}
             -DTT_RUNTIME_DEBUG=${TT_RUNTIME_DEBUG}
             -DCMAKE_INSTALL_PREFIX=${TTXLA_INSTALL_PREFIX}
             -DTTMLIR_ENABLE_PERF_TRACE=${TT_RUNTIME_ENABLE_PERF_TRACE}
+            ${TT_XLA_MLIR_OVERRIDE_ARGS}
         GIT_REPOSITORY https://github.com/tenstorrent/tt-xla.git
         GIT_TAG ${TTXLA_VERSION}
         GIT_PROGRESS ON
