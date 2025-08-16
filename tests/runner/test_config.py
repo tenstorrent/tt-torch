@@ -984,6 +984,88 @@ test_config = {
     "yolox/pytorch-yolox_x-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
+    "mobilenetv2/pytorch-google/deeplabv3_mobilenet_v2_1.0_513-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mobilenetv2/pytorch-mobilenet_v2_torchvision-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mobilenetv2/pytorch-mobilenetv2_100-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mobilenetv3/pytorch-mobilenet_v3_large-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mobilenetv3/pytorch-mobilenetv3_large_100-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "rresnet/pytorch-resnet101-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "resnet/pytorch-resnet18-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "swin/image_classification/pytorch-microsoft/swin-tiny-patch4-window7-224-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "swin/image_classification/pytorch-microsoft/swinv2-tiny-patch4-window8-256-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "swin/masked_image_modeling/pytorch-microsoft/swinv2-tiny-patch4-window8-256-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "vit/pytorch-vit_b_16-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "vit/pytorch-vit_h_14-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "vit/pytorch-vit_l_16-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "vit/pytorch-vit_l_32-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mobilenetv1/pytorch-mobilenetv1_100.ra4_e3600_r224_in1k-full-eval": {
+        "required_pcc": 0.97,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mobilenetv2/pytorch-google/mobilenet_v2_0.35_96-full-eval": {
+        "required_pcc": 0.96,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mobilenetv2/pytorch-google/mobilenet_v2_0.75_160-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mobilenetv2/pytorch-google/mobilenet_v2_1.0_224-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mobilenetv3/pytorch-mobilenet_v3_small-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mobilenetv3/pytorch-mobilenetv3_small_100-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "resnet/pytorch-resnet152-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "resnet/pytorch-resnet34-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "resnet/pytorch-resnet50-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "vit/pytorch-vit_b_32-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
     "yolov10/pytorch-yolov10x-full-eval": {
         "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "skip_reason": "TorchMlirCompilerError: Lowering Torch Backend IR -> StableHLO Backend IR failed",
