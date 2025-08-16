@@ -44,7 +44,8 @@ def test_llama_3b(record_property, mode, op_by_op):
         loader=loader,
         compiler_config=cc,
         assert_atol=False,
-        assert_pcc=True,
+        # FIXME - PCC check should consider attention_mask: https://github.com/tenstorrent/tt-torch/issues/1176
+        assert_pcc=False,
         required_pcc=0.96,
         record_property_handle=record_property,
     )

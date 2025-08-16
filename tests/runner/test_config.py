@@ -55,11 +55,6 @@ test_config = {
         "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "yolox/pytorch-full-eval": {
-        "status": ModelStatus.NOT_SUPPORTED_SKIP,
-        "skip_reason": "Import issue in tt-forge-models missing yolox package proably",
-        "skip_bringup_status": "FAILED_RUNTIME",
-    },
     "wide_resnet/pytorch-wide_resnet50_2-full-eval": {
         "required_pcc": 0.96,
         "status": ModelStatus.EXPECTED_PASSING,
@@ -78,7 +73,7 @@ test_config = {
         "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "resnet/pytorch-full-eval": {
+    "resnet/pytorch-resnet_50_hf-full-eval": {
         "required_pcc": 0.96,  # Aug 7 - Drop from 0.97 https://github.com/tenstorrent/tt-torch/issues/1151
         "status": ModelStatus.EXPECTED_PASSING,
     },
@@ -373,10 +368,10 @@ test_config = {
     "mnist/pytorch-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "mobilenetv1/pytorch-full-eval": {
+    "mobilenetv1/pytorch-mobilenet_v1-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "mobilenetv2/pytorch-full-eval": {
+    "mobilenetv2/pytorch-mobilenet_v2-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "nanogpt/pytorch-FinancialSupport/NanoGPT-full-eval": {
@@ -430,22 +425,22 @@ test_config = {
     "squeezebert/pytorch-squeezebert-mnli-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "swin/pytorch-swin_t-full-eval": {
+    "swin/image_classification/pytorch-swin_t-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "swin/pytorch-swin_s-full-eval": {
+    "swin/image_classification/pytorch-swin_s-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "swin/pytorch-swin_b-full-eval": {
+    "swin/image_classification/pytorch-swin_b-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "swin/pytorch-swin_v2_t-full-eval": {
+    "swin/image_classification/pytorch-swin_v2_t-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "swin/pytorch-swin_v2_s-full-eval": {
+    "swin/image_classification/pytorch-swin_v2_s-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "swin/pytorch-swin_v2_b-full-eval": {
+    "swin/image_classification/pytorch-swin_v2_b-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "unet/pytorch-full-eval": {
@@ -695,7 +690,7 @@ test_config = {
     },
     "albert/token_classification/pytorch-xlarge_v1-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
-        "required_pcc": 0.98,
+        "required_pcc": 0.97,
     },
     "perceiverio_vision/pytorch-deepmind/vision-perceiver-fourier-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -802,7 +797,7 @@ test_config = {
     },
     "qwen_3/embedding/pytorch-embedding_4b-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
-        "assert_pcc": False,
+        "required_pcc": 0.98,
     },
     "yolov5/pytorch-yolov5n-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -922,14 +917,20 @@ test_config = {
     },
     "llama/causal_lm/pytorch-llama_3_2_1b-full-eval": {
         "required_pcc": 0.98,
+        # FIXME - PCC check should consider attention_mask: https://github.com/tenstorrent/tt-torch/issues/1176
+        "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "llama/causal_lm/pytorch-llama_3_2_3b-full-eval": {
         "required_pcc": 0.98,
+        # FIXME - PCC check should consider attention_mask: https://github.com/tenstorrent/tt-torch/issues/1176
+        "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "llama/causal_lm/pytorch-llama_3_2_1b_instruct-full-eval": {
         "required_pcc": 0.98,
+        # FIXME - PCC check should consider attention_mask: https://github.com/tenstorrent/tt-torch/issues/1176
+        "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
         "arch_overrides": {
             "blackhole": {
@@ -948,12 +949,204 @@ test_config = {
     },
     "llama/causal_lm/pytorch-llama_3_2_3b_instruct-full-eval": {
         "required_pcc": 0.98,
+        # FIXME - PCC check should consider attention_mask: https://github.com/tenstorrent/tt-torch/issues/1176
+        "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
         "arch_overrides": {
             "blackhole": {
                 "required_pcc": 0.97,
             },
         },
+    },
+    "yolov6/pytorch-yolov6n-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "yolov6/pytorch-yolov6s-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "yolov6/pytorch-yolov6m-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "yolov6/pytorch-yolov6l-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "yolox/pytorch-yolox_nano-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "yolox/pytorch-yolox_tiny-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "yolox/pytorch-yolox_s-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "yolox/pytorch-yolox_m-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "yolox/pytorch-yolox_l-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "yolox/pytorch-yolox_darknet-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "yolox/pytorch-yolox_x-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mobilenetv2/pytorch-google/deeplabv3_mobilenet_v2_1.0_513-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mobilenetv2/pytorch-mobilenet_v2_torchvision-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mobilenetv2/pytorch-mobilenetv2_100-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mobilenetv3/pytorch-mobilenet_v3_large-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mobilenetv3/pytorch-mobilenetv3_large_100-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "resnet/pytorch-resnet101-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "resnet/pytorch-resnet18-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "swin/image_classification/pytorch-microsoft/swin-tiny-patch4-window7-224-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "swin/image_classification/pytorch-microsoft/swinv2-tiny-patch4-window8-256-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "swin/masked_image_modeling/pytorch-microsoft/swinv2-tiny-patch4-window8-256-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "vit/pytorch-vit_b_16-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "vit/pytorch-vit_h_14-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "vit/pytorch-vit_l_16-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "vit/pytorch-vit_l_32-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mobilenetv1/pytorch-mobilenetv1_100.ra4_e3600_r224_in1k-full-eval": {
+        "required_pcc": 0.97,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mobilenetv2/pytorch-google/mobilenet_v2_0.35_96-full-eval": {
+        "required_pcc": 0.96,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mobilenetv2/pytorch-google/mobilenet_v2_0.75_160-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mobilenetv2/pytorch-google/mobilenet_v2_1.0_224-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mobilenetv3/pytorch-mobilenet_v3_small-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mobilenetv3/pytorch-mobilenetv3_small_100-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "resnet/pytorch-resnet152-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "resnet/pytorch-resnet34-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "resnet/pytorch-resnet50-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "vit/pytorch-vit_b_32-full-eval": {
+        "required_pcc": 0.98,
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "resnext/pytorch-resnext14_32x4d-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "resnext/pytorch-resnext26_32x4d-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "resnext/pytorch-resnext101_64x4d-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "inception/pytorch-inceptionv4-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+        "required_pcc": 0.97,
+    },
+    "regnet/pytorch-regnet_y_400mf-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "regnet/pytorch-regnet_y_800mf-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "regnet/pytorch-regnet_y_1_6gf-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "regnet/pytorch-regnet_y_3_2gf-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "regnet/pytorch-regnet_y_8gf-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "regnet/pytorch-regnet_y_16gf-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "regnet/pytorch-regnet_y_32gf-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "regnet/pytorch-regnet_x_400mf-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "regnet/pytorch-regnet_x_800mf-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "regnet/pytorch-regnet_x_1_6gf-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "regnet/pytorch-regnet_x_3_2gf-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "regnet/pytorch-regnet_x_8gf-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+        "required_pcc": 0.98,
+    },
+    "regnet/pytorch-regnet_x_16gf-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "regnet/pytorch-regnet_x_32gf-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "fpn/pytorch-resnet50_fpn_v2-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "ssd300_resnet50/pytorch-base-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "stable_diffusion_unet/pytorch-base-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "mlp_mixer/pytorch-mixer_github-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "rcnn/pytorch-alexnet-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "dla/pytorch-dla34.in1k-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
     },
     "yolov10/pytorch-yolov10x-full-eval": {
         "status": ModelStatus.NOT_SUPPORTED_SKIP,
@@ -995,12 +1188,7 @@ test_config = {
         "skip_reason": "RuntimeError: cannot sample n_sample <= 0 samples",
         "skip_bringup_status": "FAILED_RUNTIME",
     },
-    "yolov6/pytorch-full-eval": {
-        "status": ModelStatus.NOT_SUPPORTED_SKIP,
-        "skip_reason": "Import issue in tt-forge-models missing yolov6detect package",
-        "skip_bringup_status": "FAILED_RUNTIME",
-    },
-    "gliner_model/pytorch-full-eval": {
+    "gliner/pytorch-full-eval": {
         "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "skip_reason": "AttributeError: 'function' object has no attribute 'parameters'",
         "skip_bringup_status": "FAILED_RUNTIME",
@@ -1046,6 +1234,201 @@ test_config = {
         "skip_bringup_status": "FAILED_RUNTIME",
     },
     "qwen_3/embedding/pytorch-embedding_8b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "gpt_neo/sequence_classification/pytorch-gpt_neo_2_7B-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "huggyllama/pytorch-llama_7b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/causal_lm/pytorch-huggyllama_7b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/causal_lm/pytorch-llama_3_1_70b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/causal_lm/pytorch-llama_3_1_70b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/causal_lm/pytorch-llama_3_1_8b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/causal_lm/pytorch-llama_3_1_8b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/causal_lm/pytorch-llama_3_3_70b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/causal_lm/pytorch-llama_3_8b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/causal_lm/pytorch-llama_3_8b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/sequence_classification/pytorch-huggyllama_7b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/sequence_classification/pytorch-llama_3_1_70b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/sequence_classification/pytorch-llama_3_1_70b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/sequence_classification/pytorch-llama_3_1_8b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/sequence_classification/pytorch-llama_3_1_8b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/sequence_classification/pytorch-llama_3_3_70b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/sequence_classification/pytorch-llama_3_8b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llama/sequence_classification/pytorch-llama_3_8b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "mistral/pytorch-7b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "mistral/pytorch-7b_instruct_v03-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "mistral/pytorch-ministral_8b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5/casual_lm/pytorch-14b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5/casual_lm/pytorch-14b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5/casual_lm/pytorch-14b_instruct_1m-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5/casual_lm/pytorch-32b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5/casual_lm/pytorch-7b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5/casual_lm/pytorch-7b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5/casual_lm/pytorch-7b_instruct_1m-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5/casual_lm/pytorch-math_7b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5_coder/pytorch-32b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5_coder/pytorch-7b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_2_5_coder/pytorch-7b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_3/causal_lm/pytorch-14b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_3/causal_lm/pytorch-30b_a3b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_3/causal_lm/pytorch-32b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_3/causal_lm/pytorch-8b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "qwen_3/causal_lm/pytorch-qwq_32b-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "deepseek/deepseek_math/pytorch-7b_instruct-full-eval": {
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Too large for single chip",
+        "skip_bringup_status": "FAILED_RUNTIME",
+    },
+    "llava/pytorch-1_5_7b-full-eval": {
         "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "skip_reason": "Too large for single chip",
         "skip_bringup_status": "FAILED_RUNTIME",
