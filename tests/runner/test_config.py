@@ -797,7 +797,7 @@ test_config = {
     },
     "qwen_3/embedding/pytorch-embedding_4b-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
-        "assert_pcc": False,
+        "required_pcc": 0.98,
     },
     "yolov5/pytorch-yolov5n-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
