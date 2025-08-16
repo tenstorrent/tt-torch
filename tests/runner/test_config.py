@@ -73,7 +73,7 @@ test_config = {
         "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "resnet/pytorch-full-eval": {
+    "resnet/pytorch-resnet_50_hf-full-eval": {
         "required_pcc": 0.96,  # Aug 7 - Drop from 0.97 https://github.com/tenstorrent/tt-torch/issues/1151
         "status": ModelStatus.EXPECTED_PASSING,
     },
@@ -368,10 +368,10 @@ test_config = {
     "mnist/pytorch-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "mobilenetv1/pytorch-full-eval": {
+    "mobilenetv1/pytorch-mobilenet_v1-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "mobilenetv2/pytorch-full-eval": {
+    "mobilenetv2/pytorch-mobilenet_v2-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "nanogpt/pytorch-FinancialSupport/NanoGPT-full-eval": {
@@ -425,22 +425,22 @@ test_config = {
     "squeezebert/pytorch-squeezebert-mnli-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "swin/pytorch-swin_t-full-eval": {
+    "swin/image_classification/pytorch-swin_t-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "swin/pytorch-swin_s-full-eval": {
+    "swin/image_classification/pytorch-swin_s-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "swin/pytorch-swin_b-full-eval": {
+    "swin/image_classification/pytorch-swin_b-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "swin/pytorch-swin_v2_t-full-eval": {
+    "swin/image_classification/pytorch-swin_v2_t-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "swin/pytorch-swin_v2_s-full-eval": {
+    "swin/image_classification/pytorch-swin_v2_s-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
-    "swin/pytorch-swin_v2_b-full-eval": {
+    "swin/image_classification/pytorch-swin_v2_b-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "unet/pytorch-full-eval": {
