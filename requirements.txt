@@ -53,3 +53,5 @@ gliner
 ultralytics
 efficientnet_pytorch
 torchcodec==0.5.0 # required for whisper test. Requires system dep ffmpeg. 0.6.0 fails with NotImplementedError: Could not run 'torchcodec_ns::create_from_tensor' with arguments from the 'CPU' backend
+torchxrayvision
+skimage
