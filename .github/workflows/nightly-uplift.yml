@@ -51,7 +51,9 @@ jobs:
           if [ -z ${{env.CURRENT_COMMIT_SHA}} ]; then
             exit 1
           fi
-          git log --oneline ${{ env.CURRENT_COMMIT_SHA}}..${{ env.LATEST_SHA }} >>../commit_list.txt
+          echo '```' >> ../commit_list.txt
+          git log --format='%cd (%h) by %cn (Author %ae) : %s' --date=short ${{ env.CURRENT_COMMIT_SHA}}..${{ env.LATEST_SHA }} >> ../commit_list.txt
+          echo '```' >> ../commit_list.txt
           cd ..
           cat commit_list.txt
 
