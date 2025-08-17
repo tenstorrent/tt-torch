@@ -57,7 +57,7 @@ def test_all_models(test_entry, mode, op_by_op, record_property, test_metadata):
         cc.consteval_parameters = True
         if op_by_op:
             cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
-            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
+            cc.op_by_op_backend = op_by_op
 
         # Use the variant from the test_entry parameter
         loader = ModelLoader(variant=variant)
