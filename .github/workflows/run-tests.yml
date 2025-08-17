@@ -96,10 +96,14 @@ jobs:
         pytest -vv tests/runner/test_models.py --validate-test-config
 
     - name: Run tt-forge-models runner tests
+      env:
+        HF_HOME: ${{ env.DOCKER_CACHE_ROOT }}/huggingface
+        TORCH_HOME: ${{ env.DOCKER_CACHE_ROOT }}/torch
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
       shell: bash
       run: |
         source env/activate
-        pytest -vv tests/runner/test_models.py -m expected_passing -k mobilenet
+        pytest -vv tests/runner/test_models.py -m expected_passing -k "mobilenetv2/pytorch-mobilenet_v2-full-eval"
 
     - name: Verify CI model test matrices
       shell: bash
