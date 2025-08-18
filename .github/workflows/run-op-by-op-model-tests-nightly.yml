@@ -31,6 +31,11 @@ jobs:
       matrix:
         build: [
           {
+            runs-on: wormhole_b0, name: "qwen", tests: "
+              tests/models/Qwen/test_qwen2_token_classification.py::test_qwen2_token_classification[op_by_op_torch-eval]
+              "
+          },
+          {
             runs-on: wormhole_b0, name: "autoencoder", tests: "
               tests/models/autoencoder_conv/test_autoencoder_conv.py::test_autoencoder_conv[op_by_op_torch-eval]
               tests/models/autoencoder_conv/test_autoencoder_conv_v2.py::test_autoencoder_conv_v2[op_by_op_torch-eval]
