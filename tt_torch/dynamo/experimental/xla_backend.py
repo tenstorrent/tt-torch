@@ -633,29 +633,36 @@ class XLAExecutor:
                 self.user_input_indices.append(idx)
             else:
                 # Create cache key based on object identity and target
-                source_tensor = self.program.state_dict[input_spec.target]
-                cache_key = (id(source_tensor), input_spec.target)
+                # source_tensor = self.program.state_dict[input_spec.target]
+                # cache_key = (id(source_tensor), input_spec.target)
+                
+                shard_spec = getattr(self.program.state_dict[input_spec.target], "shard_spec", None)
+                inp = self.program.state_dict[input_spec.target].to("xla")
+                if shard_spec is not None:
+                    xs.mark_sharding(inp, self.compiler_config.mesh, shard_spec)
+                self.inputs.append(inp)
                 
                 # Check if we already have this tensor on device
-                if cache_key in XLAExecutor.device_tensor_cache:
-                    cached_tensor = XLAExecutor.device_tensor_cache[cache_key]
-                    self.inputs.append(cached_tensor)
-                    print(f"[Cache] Reusing cached tensor for {input_spec.target}")
-                else:
-                    # Move to device and cache it
-                    device_tensor = source_tensor.to("xla")
+                # if cache_key in XLAExecutor.device_tensor_cache:
+                #     cached_tensor = XLAExecutor.device_tensor_cache[cache_key]
+                #     self.inputs.append(cached_tensor)
+                #     print(f"[Cache] Reusing cached tensor for {input_spec.target}")
+                # else:
+                #     # Move to device and cache it
+                #     device_tensor = source_tensor.to("xla")
                     
-                    # apply shard spec when moving model weights & parameters to device
-                    shard_spec = ts.get_sharding(source_tensor)
-                    if shard_spec is not None:
-                        print(f"[Sharding] Applying cached shard_spec {shard_spec} to {input_spec.target} on mesh {self.compiler_config.mesh}")
-                        xs.mark_sharding(device_tensor, self.compiler_config.mesh, shard_spec)
+                #     # apply shard spec when moving model weights & parameters to device
+                #     # shard_spec = ts.get_sharding(source_tensor)
+                    
+                #     if shard_spec is not None:
+                #         print(f"[Sharding] Applying cached shard_spec {shard_spec} to {input_spec.target} on mesh {self.compiler_config.mesh}")
+                #         xs.mark_sharding(device_tensor, self.compiler_config.mesh, shard_spec)
 
-                    self.inputs.append(device_tensor)
+                #     self.inputs.append(device_tensor)
 
-                    # print('[James] Disabling input xlatensor cache')
-                    XLAExecutor.device_tensor_cache[cache_key] = device_tensor
-                    print(f"[Cache] Cached new tensor for {input_spec.target}")
+                #     # print('[James] Disabling input xlatensor cache')
+                #     XLAExecutor.device_tensor_cache[cache_key] = device_tensor
+                #     print(f"[Cache] Cached new tensor for {input_spec.target}")
         # import pdb; pdb.set_trace()
         
         
@@ -765,10 +772,10 @@ class XLAExecutor:
 
     def push_tensors_to_device(self, inputs, device):
         if hasattr(inputs, "to"):
-            # shard_spec = getattr(inputs, "shard_spec", None)
-            print("attempting retrieval of shard spec for inputs", inputs)
+            shard_spec = getattr(inputs, "shard_spec", None)
+            # print("attempting retrieval of shard spec for inputs", inputs)
             # print("shard map contains", ts.print_shard_map_summary())
-            shard_spec = ts.get_sharding(inputs)
+            # shard_spec = ts.get_sharding(inputs)
             inp = inputs.to(device)
             if shard_spec is not None:
                 print(f"[Sharding] Applying runtime shard_spec {shard_spec} to tensor shape {inputs.shape}")
@@ -866,7 +873,6 @@ class XLAExecutor:
         # Check and log previously seen inputs before pushing to device
         
         args = self.push_tensors_to_device(args, "xla")
-        
             
         inputs = self.inputs
         for idx in range(len(args)):
@@ -884,7 +890,7 @@ class XLAExecutor:
         # dump shlo
         output = self.program.graph_module(*inputs)
         shlo_ir = xm.get_stablehlo(output)
-        # print("[JAMES] StableHLO IR:\n", shlo_ir, flush=True)
+        print("[JAMES] StableHLO IR:\n", shlo_ir, flush=True)
         self.generate_arg_type_map_str(output)    
         
         os.environ["ARG_REF_MAP"] = self.arg_ref_map_str

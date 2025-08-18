@@ -9,6 +9,7 @@ from tt_torch.tools.device_manager import DeviceManager
 from tt_torch.dynamo.backend import backend, BackendOptions
 from transformers import (
     AutoTokenizer,
+    AutoModel,
     AutoModelForCausalLM,
     StaticCache,
 )
@@ -24,14 +25,14 @@ import numpy as np
 import tt_torch.dynamo.sharding_utils as ts
 import torch_xla
 
-use_static_cache = True
+use_static_cache = False
 _global_max_cache_len = 64 + 64
 tokens_to_generate = 4
 
 
 def load_model(model_name="meta-llama/Llama-3.2-3B"):
     # set up the model and tokenizer
-    model: AutoModelForCausalLM = AutoModelForCausalLM.from_pretrained(
+    model: AutoModel = AutoModel.from_pretrained(
         model_name,
         torch_dtype=torch.bfloat16,
         use_cache=True,
@@ -41,8 +42,6 @@ def load_model(model_name="meta-llama/Llama-3.2-3B"):
     tokenizer = AutoTokenizer.from_pretrained(model_name, torch_dtype=torch.bfloat16)
     tokenizer.pad_token = tokenizer.eos_token
     return model.eval(), tokenizer
-
-
 
 
 def load_inputs(
@@ -169,17 +168,27 @@ def test_llama3_generate():
         print("NOT USING STATIC CACHE")
 
 
-    for layer in model.model.layers:
-        ts.mark_sharding(layer.mlp.up_proj.weight, ("model", 'batch'))
-        ts.mark_sharding(layer.mlp.gate_proj.weight, ("model", 'batch'))
-        ts.mark_sharding(layer.mlp.down_proj.weight, ('batch', "model"))
+    for layer in model.layers:
+        # ts.mark_sharding(layer.mlp.up_proj.weight, ("model", 'batch'))
+        # ts.mark_sharding(layer.mlp.gate_proj.weight, ("model", 'batch'))
+        # ts.mark_sharding(layer.mlp.down_proj.weight, ('batch', "model"))
 
-        ts.mark_sharding(layer.self_attn.q_proj.weight, ("model", 'batch'))
-        ts.mark_sharding(layer.self_attn.k_proj.weight, ("model", 'batch'))
-        ts.mark_sharding(layer.self_attn.v_proj.weight, ("model", 'batch'))
-        ts.mark_sharding(layer.self_attn.o_proj.weight, ('batch', "model"))
+        # ts.mark_sharding(layer.self_attn.q_proj.weight, ("model", 'batch'))
+        # ts.mark_sharding(layer.self_attn.k_proj.weight, ("model", 'batch'))
+        # ts.mark_sharding(layer.self_attn.v_proj.weight, ("model", 'batch'))
+        # ts.mark_sharding(layer.self_attn.o_proj.weight, ('batch', "model"))
 
-    ts.mark_sharding(model.lm_head.weight, ("model", 'batch'))
+
+        layer.mlp.up_proj.weight.shard_spec = ("model", 'batch')
+        layer.mlp.gate_proj.weight.shard_spec = ("model", 'batch')
+        layer.mlp.down_proj.weight.shard_spec = ('batch', "model")
+
+        layer.self_attn.q_proj.weight.shard_spec = ("model", 'batch')
+        layer.self_attn.k_proj.weight.shard_spec = ("model", 'batch')
+        layer.self_attn.v_proj.weight.shard_spec = ("model", 'batch')
+        layer.self_attn.o_proj.weight.shard_spec = ('batch', "model")
+
+    # ts.mark_sharding(model.lm_head.weight, ("model", 'batch'))
 
     # Allow local disablement of golden verification to accelerate tests
     # by avoiding dev2host transfer of static cache    

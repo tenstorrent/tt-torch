@@ -4,10 +4,11 @@ import os
 
 # Type aliases
 ShardSpec = Tuple[Optional[str], ...]
-ShardMap = Dict[torch.Tensor, ShardSpec]
+# Update ShardMap to use tensor IDs as keys
+ShardMap = Dict[int, ShardSpec]
 
 # Debug flag - can be enabled via environment variable
-DEBUG_SHARDING = True
+DEBUG_SHARDING = False
 
 class ShardingRegistry:
     def __init__(self):
@@ -29,24 +30,23 @@ class ShardingRegistry:
         if tensor_count == 0:
             self._debug_log("  (empty)")
         else:
-            for i, (tensor, shard_spec) in enumerate(self.shard_map.items()):
-                tensor_info = f"id={id(tensor)}, shape={list(tensor.shape)}, dtype={tensor.dtype}, device={tensor.device}"
-                self._debug_log(f"  {i+1:2d}. {tensor_info}")
-                self._debug_log(f"      shard_spec: {shard_spec}")
-        
+            for i, (tensor_id, shard_spec) in enumerate(self.shard_map.items()):
+                self._debug_log(f"  {i+1:2d}. id={tensor_id}, shard_spec: {shard_spec}")
+
         self._debug_log("=== END SHARD MAP ===")
     
     def mark_sharding(self, tensor:torch.Tensor, shard_spec: ShardSpec) -> None:
-        # Check if tensor already exists
-        already_exists = tensor in self.shard_map
-        old_shard_spec = self.shard_map.get(tensor) if already_exists else None
-        
+        # Use tensor ID as the key
+        tensor_id = id(tensor)
+        already_exists = tensor_id in self.shard_map
+        old_shard_spec = self.shard_map.get(tensor_id) if already_exists else None
+
         # Add/update the tensor
-        self.shard_map[tensor] = shard_spec
-        
+        self.shard_map[tensor_id] = shard_spec
+
         # Debug logging
         if DEBUG_SHARDING:
-            tensor_info = f"id={id(tensor)}, shape={list(tensor.shape)}, dtype={tensor.dtype}, device={tensor.device}"
+            tensor_info = f"id={tensor_id}, shape={list(tensor.shape)}, dtype={tensor.dtype}, device={tensor.device}"
             if already_exists:
                 self._debug_log(f"UPDATED tensor: {tensor_info}")
                 self._debug_log(f"  old shard_spec: {old_shard_spec}")
@@ -54,20 +54,19 @@ class ShardingRegistry:
             else:
                 self._debug_log(f"ADDED tensor: {tensor_info}")
                 self._debug_log(f"  shard_spec: {shard_spec}")
-            
-            # Print full map contents after each addition/update
-            # self._print_shard_map_contents()
-    
+
     def get_sharding(self, tensor:torch.Tensor) -> Optional[ShardSpec]:
-        result = self.shard_map.get(tensor)
-        
+        # Use tensor ID as the key
+        tensor_id = id(tensor)
+        result = self.shard_map.get(tensor_id)
+
         if DEBUG_SHARDING:
-            tensor_info = f"id={id(tensor)}, shape={list(tensor.shape)}, dtype={tensor.dtype}"
+            tensor_info = f"id={tensor_id}, shape={list(tensor.shape)}, dtype={tensor.dtype}"
             if result is not None:
                 self._debug_log(f"GET tensor: {tensor_info} -> shard_spec: {result}")
             else:
                 self._debug_log(f"GET tensor: {tensor_info} -> NOT FOUND")
-        
+
         return result
 
 _sharding_registry = ShardingRegistry()
