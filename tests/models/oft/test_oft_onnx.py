@@ -6,7 +6,7 @@ import pytest
 import os
 from tests.utils import OnnxModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.oft import ModelLoader
+from third_party.tt_forge_models.oft.pytorch import ModelLoader
 import torch
 
 
