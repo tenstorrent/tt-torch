@@ -28,12 +28,6 @@ jobs:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       setup-args: "--build_perf"
       artifact-key: "-release"
-  test:
-    needs: [build, docker-build]
-    uses: ./.github/workflows/run-tests.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
   # llmbox-tests:
   #   needs: [build, docker-build]
   #   uses: ./.github/workflows/run-multidevice-tests.yml
@@ -47,4 +41,4 @@ jobs:
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       run-codecov: 'false'
-      run-dump-mlir: 'false'
+      run-dump-mlir: 'true'

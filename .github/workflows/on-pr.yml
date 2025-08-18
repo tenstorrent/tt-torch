@@ -127,7 +127,6 @@ jobs:
       - spdx
       - docker-build
       - build
-      - test
       - full-model-test
     runs-on: Ubuntu-latest
     steps:
