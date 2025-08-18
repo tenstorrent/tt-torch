@@ -4,10 +4,10 @@
 #
 
 # tt-xla version to use
-set(TT_XLA_VERSION "90c981f6b0547ad7819ac60aca64fce4e82c2e3c")
+set(TT_XLA_VERSION "3c34c7b8ef9b336e4cd6b84ad59bcc26317e9b88")
 
 # Optional override of tt-xla's TT_MLIR_VERSION. Default to tt-xla's default TT_MLIR_VERSION if we pass an empty string
-set(TT_MLIR_VERSION "")
+set(TT_MLIR_VERSION "8e5d727a31c1809dada4314fb835541998081019")
 if(NOT TT_MLIR_VERSION STREQUAL "")
     set(USE_CUSTOM_TT_MLIR_VERSION ON)
     message(STATUS "Overriding TT_MLIR_VERSION in tt-xla build: ${TT_MLIR_VERSION}")

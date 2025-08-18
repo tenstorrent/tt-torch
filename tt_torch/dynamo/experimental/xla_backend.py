@@ -595,11 +595,27 @@ def dump_module(module, name, compiler_config):
 def xla_pass_pipeline(gm, example_inputs, compiler_config):
     decompositions = torch._decomp.core_aten_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
-    compiled_graph = (
-        torch.export.export_for_training(gm, tuple(example_inputs), strict=False)
-        .run_decompositions(decompositions)
-        .module()
+
+    import torch.nn as nn
+    from torch.fx.experimental.proxy_tensor import make_fx
+
+    class Wrapped(nn.Module):
+        def __init__(self, gm):
+            super().__init__()
+            self.gm = gm
+
+        def forward(self, L_kwargs_input_ids_, L_kwargs_attention_mask_):
+            return self.gm(L_kwargs_input_ids_, L_kwargs_attention_mask_)
+
+    wrapped = Wrapped(gm)
+    compiled_graph = make_fx(wrapped, decomposition_table=CUSTOM_DECOMPOSITION_TABLE)(
+        *example_inputs
     )
+    # compiled_graph = (
+    #     torch.export.export_for_training(gm, tuple(example_inputs), strict=False)
+    #     .run_decompositions(decompositions)
+    #     .module()
+    # )
 
     compiled_graph = bypass_dtype_promotion(compiled_graph, compiler_config)
     run_shape_prop(compiled_graph, example_inputs)
