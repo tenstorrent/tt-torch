@@ -648,11 +648,13 @@ class XLAExecutor:
                     # apply shard spec when moving model weights & parameters to device
                     shard_spec = ts.get_sharding(source_tensor)
                     if shard_spec is not None:
-                        print(f"[Sharding] Applying cached shard_spec {shard_spec} to {input_spec.target}")
+                        print(f"[Sharding] Applying cached shard_spec {shard_spec} to {input_spec.target} on mesh {self.compiler_config.mesh}")
                         xs.mark_sharding(device_tensor, self.compiler_config.mesh, shard_spec)
 
-                    XLAExecutor.device_tensor_cache[cache_key] = device_tensor
                     self.inputs.append(device_tensor)
+
+                    # print('[James] Disabling input xlatensor cache')
+                    XLAExecutor.device_tensor_cache[cache_key] = device_tensor
                     print(f"[Cache] Cached new tensor for {input_spec.target}")
         # import pdb; pdb.set_trace()
         
@@ -736,30 +738,30 @@ class XLAExecutor:
                                                if len(key[1]) == 4 and key[1] == (1, 8, 128, 128))
                         print(f"[XLA Cache]   Total static cache tensors in cache: {static_cache_count}")
                         
-                        # Show similar cache keys (same shape/dtype/device but different id)
-                        similar_keys = [key for key in XLAExecutor.previously_seen_inputs 
-                                      if key[1] == cache_key[1] and key[2] == cache_key[2] and key[3] == cache_key[3]]
-                        if similar_keys:
-                            print(f"[XLA Cache]   Similar cache keys with same shape/dtype/device:")
-                            for sim_key in similar_keys:
-                                print(f"[XLA Cache]     id={sim_key[0]} (different from current {cache_key[0]})")
+                        # # Show similar cache keys (same shape/dtype/device but different id)
+                        # similar_keys = [key for key in XLAExecutor.previously_seen_inputs 
+                        #               if key[1] == cache_key[1] and key[2] == cache_key[2] and key[3] == cache_key[3]]
+                        # if similar_keys:
+                        #     print(f"[XLA Cache]   Similar cache keys with same shape/dtype/device:")
+                        #     for sim_key in similar_keys:
+                        #         print(f"[XLA Cache]     id={sim_key[0]} (different from current {cache_key[0]})")
                 print(f"[XLA Cache]   ---")
         
         # Summary logging
-        if cache_hits:
-            print(f"[XLA Cache] CACHE HITS ({len(cache_hits)}): {[f'{name} (idx={idx})' for idx, name in cache_hits]}")
+        # if cache_hits:
+        #     print(f"[XLA Cache] CACHE HITS ({len(cache_hits)}): {[f'{name} (idx={idx})' for idx, name in cache_hits]}")
         
-        if new_inputs:
-            print(f"[XLA Cache] CACHE MISSES ({len(new_inputs)}): {[f'{name} (idx={idx})' for idx, name in new_inputs]}")
+        # if new_inputs:
+        #     print(f"[XLA Cache] CACHE MISSES ({len(new_inputs)}): {[f'{name} (idx={idx})' for idx, name in new_inputs]}")
         
-        if static_cache_tensors:
-            print(f"[XLA Cache] STATIC CACHE TENSORS FOUND ({len(static_cache_tensors)}):")
-            for idx, tensor, cache_key, name in static_cache_tensors:
-                hit_or_miss = "HIT" if cache_key in XLAExecutor.previously_seen_inputs else "MISS"
-                print(f"[XLA Cache]   {name} -> {hit_or_miss} (tensor_id={id(tensor)}, xla_id={torch_xla._XLAC._xla_get_tensor_id(tensor)})")
+        # if static_cache_tensors:
+        #     print(f"[XLA Cache] STATIC CACHE TENSORS FOUND ({len(static_cache_tensors)}):")
+        #     for idx, tensor, cache_key, name in static_cache_tensors:
+        #         hit_or_miss = "HIT" if cache_key in XLAExecutor.previously_seen_inputs else "MISS"
+        #         print(f"[XLA Cache]   {name} -> {hit_or_miss} (tensor_id={id(tensor)}, xla_id={torch_xla._XLAC._xla_get_tensor_id(tensor)})")
         
-        print(f"[XLA Cache] Updated cache size: {len(XLAExecutor.previously_seen_inputs)} unique tensors")
-        print(f"[XLA Cache] === END CACHE ANALYSIS ===\n")
+        # print(f"[XLA Cache] Updated cache size: {len(XLAExecutor.previously_seen_inputs)} unique tensors")
+        # print(f"[XLA Cache] === END CACHE ANALYSIS ===\n")
 
     def push_tensors_to_device(self, inputs, device):
         if hasattr(inputs, "to"):
@@ -876,12 +878,13 @@ class XLAExecutor:
         #     print("Tensor id via xlac:",torch_xla._XLAC._xla_get_tensor_id(input), "with shape", input.shape)
         
         
+        # print('[James] Disabling input xlatensor cache')
         self._check_and_log_previously_seen_inputs(inputs)
         
         # dump shlo
         output = self.program.graph_module(*inputs)
         shlo_ir = xm.get_stablehlo(output)
-        print("[JAMES] StableHLO IR:\n", shlo_ir, flush=True)
+        # print("[JAMES] StableHLO IR:\n", shlo_ir, flush=True)
         self.generate_arg_type_map_str(output)    
         
         os.environ["ARG_REF_MAP"] = self.arg_ref_map_str

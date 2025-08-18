@@ -22,8 +22,12 @@ from torch_xla.distributed.spmd import Mesh
 import tt_mlir
 import numpy as np
 import tt_torch.dynamo.sharding_utils as ts
-_global_max_cache_len = 64 + 64
 import torch_xla
+
+use_static_cache = True
+_global_max_cache_len = 64 + 64
+tokens_to_generate = 4
+
 
 def load_model(model_name="meta-llama/Llama-3.2-3B"):
     # set up the model and tokenizer
@@ -32,11 +36,13 @@ def load_model(model_name="meta-llama/Llama-3.2-3B"):
         torch_dtype=torch.bfloat16,
         use_cache=True,
     )
-    model.config.num_hidden_layers = 28
+    model.config.num_hidden_layers = 2
     
     tokenizer = AutoTokenizer.from_pretrained(model_name, torch_dtype=torch.bfloat16)
     tokenizer.pad_token = tokenizer.eos_token
     return model.eval(), tokenizer
+
+
 
 
 def load_inputs(
@@ -53,35 +59,43 @@ def load_inputs(
         truncation=True,
     )
 
+    if use_static_cache:
+
     # set up static cache
-    static_cache = StaticCache(
-        config=model.config,
-        max_batch_size=batch_size,
-        max_cache_len=max_cache_len,
-        device=model.device,
-        dtype=model.dtype,
-    )
+        static_cache = StaticCache(
+            config=model.config,
+            max_batch_size=batch_size,
+            max_cache_len=max_cache_len,
+            device=model.device,
+            dtype=model.dtype,
+        )
 
-    cache_position = torch.arange(0, inputs.input_ids.shape[1])
-    print("[James] Manually forwarding attention mask")
-    #  Experiment - Generate attention mask using the LlamaModel method
-    attention_mask = LlamaModel._prepare_4d_causal_attention_mask_with_cache_position(
-        attention_mask=None,  # No initial attention mask
-        sequence_length=inputs.input_ids.shape[1],
-        target_length=max_cache_len,
-        dtype=model.dtype,
-        cache_position=cache_position,
-        batch_size=batch_size,
-    )
-    args = {
-        "input_ids": inputs.input_ids,
-        "past_key_values": static_cache,
-        "use_cache": True,
-        "cache_position": cache_position,
-        # "attention_mask": attention_mask
-    }
-    return args
-
+        cache_position = torch.arange(0, inputs.input_ids.shape[1])
+        print("[James] Manually forwarding attention mask")
+        #  Experiment - Generate attention mask using the LlamaModel method
+        attention_mask = LlamaModel._prepare_4d_causal_attention_mask_with_cache_position(
+            attention_mask=None,  # No initial attention mask
+            sequence_length=inputs.input_ids.shape[1],
+            target_length=max_cache_len,
+            dtype=model.dtype,
+            cache_position=cache_position,
+            batch_size=batch_size,
+        )
+        
+        args = {
+            "input_ids": inputs.input_ids,
+            "past_key_values": static_cache,
+            "use_cache": True,
+            "cache_position": cache_position,
+            # "attention_mask": attention_mask
+        }
+        return args
+    else:
+        print("input attention mask" , inputs.attention_mask)
+        return {
+            "input_ids": inputs.input_ids,
+            "attention_mask": inputs.attention_mask
+            }
 
 def setup_xla_environment():
     """Setup XLA environment for tensor parallelism."""
@@ -93,6 +107,8 @@ def setup_xla_environment():
     os.environ["CONVERT_SHLO_TO_SHARDY"] = "1" # Converts the StableHLO emitted by torch-xla to the Shardy dialect
     os.environ["MESH_SHAPE"] = f"1,{num_devices}" # Sets the mesh shape used by the auto parallel pass
     # os.environ["XLA_ALWAYS_ALLREDUCE"] = "1" # wot
+    
+    print(f"num_devices = {num_devices}")
 
     # Initialize SPMD
     xr.use_spmd()
@@ -135,31 +151,36 @@ def test_llama3_generate():
     mesh = create_device_mesh()
     
     # apply shardings
-    ts.mark_sharding(input_args["input_ids"], (None, None))
-    ts.mark_sharding(input_args["cache_position"], (None,))
-    
-    
-    for i, (key, value) in enumerate(
-        zip(input_args['past_key_values'].key_cache, input_args['past_key_values'].value_cache)
-    ):
-        # Sharding these over the model dim causes a shardy loop ->manual compute block scatter + all_slice error
-        ts.mark_sharding(key, (None, "batch", None, None))
-        ts.mark_sharding(value, (None, "batch", None, None))
-        # ts.mark_sharding(key, (None, "model", None, None))
-        # ts.mark_sharding(value, (None, "model", None, None))
+    if use_static_cache:
+        print ("USING STATIC CACHE")
+        ts.mark_sharding(input_args["input_ids"], (None, None))
+        # ts.mark_sharding(input_args["cache_position"], (None,))
+        
+        
+        for i, (key, value) in enumerate(
+            zip(input_args['past_key_values'].key_cache, input_args['past_key_values'].value_cache)
+        ):
+            # Sharding these over the model dim causes a shardy loop ->manual compute block scatter + all_slice error
+            ts.mark_sharding(key, (None, "batch", None, None))
+            ts.mark_sharding(value, (None, "batch", None, None))
+            # ts.mark_sharding(key, (None, "model", None, None))
+            # ts.mark_sharding(value, (None, "model", None, None))
+    else:
+        print("NOT USING STATIC CACHE")
+
 
     for layer in model.model.layers:
-        ts.mark_sharding(layer.mlp.up_proj.weight, ("model", None))
-        ts.mark_sharding(layer.mlp.gate_proj.weight, ("model", None))
-        ts.mark_sharding(layer.mlp.down_proj.weight, (None, "model"))
+        ts.mark_sharding(layer.mlp.up_proj.weight, ("model", 'batch'))
+        ts.mark_sharding(layer.mlp.gate_proj.weight, ("model", 'batch'))
+        ts.mark_sharding(layer.mlp.down_proj.weight, ('batch', "model"))
 
-        ts.mark_sharding(layer.self_attn.q_proj.weight, ("model", None))
-        ts.mark_sharding(layer.self_attn.k_proj.weight, ("model", None))
-        ts.mark_sharding(layer.self_attn.v_proj.weight, ("model", None))
-        ts.mark_sharding(layer.self_attn.o_proj.weight, (None, "model"))
+        ts.mark_sharding(layer.self_attn.q_proj.weight, ("model", 'batch'))
+        ts.mark_sharding(layer.self_attn.k_proj.weight, ("model", 'batch'))
+        ts.mark_sharding(layer.self_attn.v_proj.weight, ("model", 'batch'))
+        ts.mark_sharding(layer.self_attn.o_proj.weight, ('batch', "model"))
 
-    ts.mark_sharding(model.lm_head.weight, ("model", None))
-    
+    ts.mark_sharding(model.lm_head.weight, ("model", 'batch'))
+
     # Allow local disablement of golden verification to accelerate tests
     # by avoiding dev2host transfer of static cache    
     enable_golden = False
@@ -180,11 +201,11 @@ def test_llama3_generate():
     # device = DeviceManager.create_parent_mesh_device(mesh_shape=[1, 1])
     # options.devices = [device]
 
-    buffer_cache = {}
-    options.buffer_cache = buffer_cache
+    # buffer_cache = {}
+    # options.buffer_cache = buffer_cache
 
-    constant_cache = {}
-    options.constant_cache = constant_cache
+    # constant_cache = {}
+    # options.constant_cache = constant_cache
 
     # _backend = backend 
     _backend = 'tt-experimental' 
@@ -195,7 +216,6 @@ def test_llama3_generate():
     )
 
     # Token generation with data collection
-    tokens_to_generate = 32
     golden_pccs = []
     cache_pccs_per_iteration = []  # Store cache PCCs for each iteration
     golden_ids = input_args["input_ids"]
@@ -225,7 +245,8 @@ def test_llama3_generate():
         # import pdb; pdb.set_trace()
 
         # Update inputs for next iteration
-        cache_position = input_args["cache_position"][-1:] + 1
+        if use_static_cache:
+            cache_position = input_args["cache_position"][-1:] + 1
 
         # Golden calculation - Adds execution time to transfer static caches to host.
         if enable_golden:
@@ -285,7 +306,9 @@ def test_llama3_generate():
         generated_tokens.append(new_token)
         print(new_token, end="", flush=True)
 
-        attention_mask = LlamaModel._prepare_4d_causal_attention_mask_with_cache_position(
+
+        if use_static_cache:
+            attention_mask = LlamaModel._prepare_4d_causal_attention_mask_with_cache_position(
                 attention_mask=None,
                 sequence_length=1,  # Just one new token
                 target_length=_global_max_cache_len,
@@ -293,13 +316,18 @@ def test_llama3_generate():
                 cache_position=cache_position,
                 batch_size=1,
             ),
-        input_args = {
-            "input_ids": next_token_ids,
-            "past_key_values": input_args["past_key_values"],  # updated in place
-            "cache_position": cache_position,
-            "use_cache": True,
-            # "attention_mask": attention_mask
-        }
+            input_args = {
+                "input_ids": next_token_ids,
+                "past_key_values": input_args["past_key_values"],  # updated in place
+                "cache_position": cache_position,
+                "use_cache": True,
+                # "attention_mask": attention_mask
+            }
+        else:
+            input_args = {
+                "input_ids": next_token_ids,
+                "attention_mask": torch.ones((1, len(generated_tokens)))
+            }
 
         total_iteration_time = time.time() - iteration_start
 
