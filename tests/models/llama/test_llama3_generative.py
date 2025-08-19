@@ -20,6 +20,7 @@ import torch_xla.distributed.spmd as xs
 from torch_xla.distributed.spmd import Mesh
 import tt_mlir
 import numpy as np
+import tt_torch.dynamo.sharding_utils as ts
 
 
 # Control vars
@@ -28,6 +29,7 @@ _global_max_cache_len = 64 + 64
 tokens_to_generate = 4
 hidden_layers = 1
 
+
 def load_model(model_name="meta-llama/Llama-3.2-3B"):
     # set up the model and tokenizer
     model = AutoModelForCausalLM.from_pretrained(
@@ -35,7 +37,7 @@ def load_model(model_name="meta-llama/Llama-3.2-3B"):
         torch_dtype=torch.bfloat16,
         use_cache=True,
     )
-    model.config.num_hidden_layers=hidden_layers
+    model.config.num_hidden_layers = hidden_layers
 
     tokenizer = AutoTokenizer.from_pretrained(model_name, torch_dtype=torch.bfloat16)
     tokenizer.pad_token = tokenizer.eos_token
@@ -82,13 +84,20 @@ def setup_xla_environment():
     num_devices = xr.global_runtime_device_count()
 
     # Basic XLA configuration
-    os.environ["ENABLE_AUTO_PARALLEL"] = "TRUE" # Enables the auto parallel pass in tt-mlir
-    os.environ["CONVERT_SHLO_TO_SHARDY"] = "1" # Converts the StableHLO emitted by torch-xla to the Shardy dialect
-    os.environ["MESH_SHAPE"] = f"1,{num_devices}" # Sets the mesh shape used by the auto parallel pass
+    os.environ[
+        "ENABLE_AUTO_PARALLEL"
+    ] = "TRUE"  # Enables the auto parallel pass in tt-mlir
+    os.environ[
+        "CONVERT_SHLO_TO_SHARDY"
+    ] = "1"  # Converts the StableHLO emitted by torch-xla to the Shardy dialect
+    os.environ[
+        "MESH_SHAPE"
+    ] = f"1,{num_devices}"  # Sets the mesh shape used by the auto parallel pass
 
     # Initialize SPMD
     xr.use_spmd()
     print("XLA environment configured.")
+
 
 def create_device_mesh() -> Mesh:
     """
@@ -108,6 +117,7 @@ def create_device_mesh() -> Mesh:
     print(f"Created device mesh: {mesh_shape} with {num_devices} devices")
     return mesh
 
+
 @torch.inference_mode()
 def test_llama3_generate():
     # Initialize model and inputs
@@ -122,12 +132,31 @@ def test_llama3_generate():
     # setup XLA environment and device mesh
     setup_xla_environment()
     mesh = create_device_mesh()
-    
+
     # apply shardings (TBD)
-    
+    for i, (key, value) in enumerate(
+        zip(
+            input_args["past_key_values"].key_cache,
+            input_args["past_key_values"].value_cache,
+        )
+    ):
+        ts.mark_sharding(key, (None, "model", None, None))
+        ts.mark_sharding(value, (None, "model", None, None))
+
+    for layer in model.model.layers:
+        ts.mark_sharding(layer.mlp.up_proj.weight, ("model", None))
+        ts.mark_sharding(layer.mlp.gate_proj.weight, ("model", None))
+        ts.mark_sharding(layer.mlp.down_proj.weight, (None, "model"))
+
+        ts.mark_sharding(layer.self_attn.q_proj.weight, ("model", None))
+        ts.mark_sharding(layer.self_attn.k_proj.weight, ("model", None))
+        ts.mark_sharding(layer.self_attn.v_proj.weight, ("model", None))
+        ts.mark_sharding(layer.self_attn.o_proj.weight, (None, "model"))
+
     # Setup compilation
     clear_dynamo_cache()
     cc = CompilerConfig()
+    cc.mesh = mesh
 
     # Consteval disabled due to 4D Causal Attention Mask evaluation getting constant folded in torchfx
     #   due to incorrect tracing of static cache and malformed output missing static cache tensors
@@ -138,8 +167,7 @@ def test_llama3_generate():
     options.compiler_config = cc
 
     # _backend = backend
-    _backend = 'tt-experimental'
-
+    _backend = "tt-experimental"
 
     compiled_model = torch.compile(
         model, backend=_backend, dynamic=False, options=options
@@ -172,7 +200,6 @@ def test_llama3_generate():
             "cache_position": cache_position,
             "use_cache": True,
         }
-
 
     # Cleanup
     clear_dynamo_cache()
