@@ -40,7 +40,11 @@ from tt_torch.tools.utils import (
 import torch_xla
 import torch_xla.core.xla_model as xm
 import torch_xla.distributed.spmd as xs
+<<<<<<< HEAD
 import tt_torch.dynamo.sharding_utils as sharding_utils
+=======
+import tt_torch.dynamo.sharding_utils as ts
+>>>>>>> 3c384068 (Apply shardings to tensors in xlabackend)
 
 from ..executor import get_inputs_size, gb_to_bytes
 
