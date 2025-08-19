@@ -215,5 +215,7 @@ def test_llama3_generate():
         else:
             input_args = {"input_ids": next_token_ids}
 
+        print(f"Generated tokens: {generated_tokens}")
+
     # Cleanup
     clear_dynamo_cache()

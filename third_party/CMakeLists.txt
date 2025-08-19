@@ -4,10 +4,10 @@
 #
 
 # tt-xla version to use
-set(TT_XLA_VERSION "8fbb97c81e91b3c66e0641e8c6a8767c39056590")
+set(TT_XLA_VERSION "d861782d4ede3aee01f475122923e6b85c3bea89")
 
 # Optional override of tt-xla's TT_MLIR_VERSION. Default to tt-xla's default TT_MLIR_VERSION if we pass an empty string
-set(TT_MLIR_VERSION "974a9885ffaf439747627402879c793a2a55b56e")
+set(TT_MLIR_VERSION "de6c0f9e8bf4e1f208c7d055c51bdff5e623bbfa")
 if(NOT TT_MLIR_VERSION STREQUAL "")
     set(USE_CUSTOM_TT_MLIR_VERSION ON)
     message(STATUS "Overriding TT_MLIR_VERSION in tt-xla build: ${TT_MLIR_VERSION}")
@@ -18,7 +18,6 @@ if(NOT TT_MLIR_VERSION STREQUAL "")
 else()
     message(STATUS "Not overriding TT_MLIR_VERSION and using TT_XLA default tt-mlir version")
 endif()
-
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
