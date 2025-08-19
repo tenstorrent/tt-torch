@@ -6,7 +6,9 @@
 # underlying tt-mlir version we will have tt-xla use
 set(TT_MLIR_VERSION "974a9885ffaf439747627402879c793a2a55b56e") # jazpur/kv-cache-fusion rebased on LLVM update
 # tt-xla version to use
-set(TTXLA_VERSION "d861782d4ede3aee01f475122923e6b85c3bea89") # jzx/persistent_rebased
+set(TTXLA_VERSION "8fbb97c81e91b3c66e0641e8c6a8767c39056590") # jzx/persistent_rebased
+# tt-xla main 8fbb97c81e91b3c66e0641e8c6a8767c39056590
+# tt-xla persistent  d861782d4ede3aee01f475122923e6b85c3bea89
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
