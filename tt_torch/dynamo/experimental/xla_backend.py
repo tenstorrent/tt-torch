@@ -45,6 +45,40 @@ import tt_torch.dynamo.sharding_utils as ts
 from ..executor import get_inputs_size, gb_to_bytes
 
 
+class XLATensorCache:
+    """Singleton cache for tensors that have been moved to XLA device."""
+    
+    _instance = None
+    
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance._cache = {}
+            cls._instance._debug = os.getenv("DEBUG_XLA_CACHE", "0") == "1"
+        return cls._instance
+    
+    def get(self, tensor):
+        """Get tensor from cache if it exists."""
+        cached_tensor = self._cache.get(tensor)
+        if cached_tensor is not None and self._debug:
+            print(f"[XLA Cache] Retrieved tensor from cache: shape={tensor.shape}, dtype={tensor.dtype}, device={tensor.device}", flush=True)
+        return cached_tensor
+    
+    def put(self, original_tensor, cached_tensor):
+        """Add tensor to cache."""
+        if self._debug:
+            print(f"[XLA Cache] Adding tensor to cache: shape={original_tensor.shape}, dtype={original_tensor.dtype}, device={original_tensor.device}", flush=True)
+        self._cache[original_tensor] = cached_tensor
+    
+    def clear(self):
+        """Clear the cache."""
+        self._cache.clear()
+    
+    def size(self):
+        """Get the number of items in cache."""
+        return len(self._cache)
+
+
 def cast_ios_and_run(node, args, kwargs):
     try:
         out_df = node.meta["tensor_meta"].dtype
@@ -612,11 +646,8 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
 
 
 class XLAExecutor:
-    # singleton cache for inputs that are already on device
-    previously_seen_inputs = {}
-    debug_cache = os.getenv("DEBUG_XLA_CACHE", "0") == "1"
-
     def __init__(self, program, compiler_config):
+        self._tensor_cache = XLATensorCache()
         self.program = program
         self.compiler_config = compiler_config
         self.arg_type_map_str = None
@@ -630,14 +661,10 @@ class XLAExecutor:
             else:
                 source_tensor = self.program.state_dict[input_spec.target]
 
-                if XLAExecutor.previously_seen_inputs.get(source_tensor) is not None:
-                    if XLAExecutor.debug_cache:
-                        print(f"[XLA Cache] Retrieved tensor from cache: shape={source_tensor.shape}, dtype={source_tensor.dtype}, device={source_tensor.device}", flush=True)
-                    self.inputs.append(XLAExecutor.previously_seen_inputs[source_tensor])
-
+                cached_tensor = self._tensor_cache.get(source_tensor)
+                if cached_tensor is not None:
+                    self.inputs.append(cached_tensor)
                 else:
-                    if XLAExecutor.debug_cache:
-                        print(f"[XLA Cache] Adding tensor to cache: shape={source_tensor.shape}, dtype={source_tensor.dtype}, device={source_tensor.device}", flush=True)
                     shard_spec = ts.get_sharding(source_tensor)
 
                     print(
@@ -652,23 +679,20 @@ class XLAExecutor:
                             device_tensor, self.compiler_config.mesh, shard_spec
                         )
                     self.inputs.append(device_tensor)
-                    XLAExecutor.previously_seen_inputs[source_tensor] = device_tensor
+                    self._tensor_cache.put(source_tensor, device_tensor)
 
     def push_tensors_to_device(self, inputs, device):
         if hasattr(inputs, "to"):
             if device not in [inputs.device, inputs.device.type]:
-                if XLAExecutor.previously_seen_inputs.get(inputs) is not None:
-                    if XLAExecutor.debug_cache:
-                        print(f"[XLA Cache] Retrieved tensor from cache: shape={inputs.shape}, dtype={inputs.dtype}, device={inputs.device}", flush=True)
-                    return XLAExecutor.previously_seen_inputs[inputs]
+                cached_tensor = self._tensor_cache.get(inputs)
+                if cached_tensor is not None:
+                    return cached_tensor
                 else:
-                    if XLAExecutor.debug_cache:
-                        print(f"[XLA Cache] Adding tensor to cache: shape={inputs.shape}, dtype={inputs.dtype}, device={inputs.device}", flush=True)
                     shard_spec = ts.get_sharding(inputs)
                     inp = inputs.to(device)
                     if shard_spec is not None:
                         xs.mark_sharding(inp, self.compiler_config.mesh, shard_spec)
-                    XLAExecutor.previously_seen_inputs[inputs] = inp
+                    self._tensor_cache.put(inputs, inp)
                     return inp
             else:
                 return inputs
@@ -736,20 +760,20 @@ class XLAExecutor:
         # self.program.graph_module.graph.print_tabular()
 
         # Print input names and shapes from graph signature
-        for idx, input_spec in enumerate(self.program.graph_signature.input_specs):
-            if input_spec.kind == InputKind.USER_INPUT:
-                shape = (
-                    args[self.user_input_indices.index(idx)].shape
-                    if idx in self.user_input_indices
-                    else "N/A"
-                )
-            else:
-                shape = (
-                    self.program.state_dict[input_spec.target].shape
-                    if input_spec.target in self.program.state_dict
-                    else "N/A"
-                )
-            print(f"Input {input_spec.arg}: kind={input_spec.kind}, shape={shape}")
+        # for idx, input_spec in enumerate(self.program.graph_signature.input_specs):
+        #     if input_spec.kind == InputKind.USER_INPUT:
+        #         shape = (
+        #             args[self.user_input_indices.index(idx)].shape
+        #             if idx in self.user_input_indices
+        #             else "N/A"
+        #         )
+        #     else:
+        #         shape = (
+        #             self.program.state_dict[input_spec.target].shape
+        #             if input_spec.target in self.program.state_dict
+        #             else "N/A"
+        #         )
+            # print(f"Input {input_spec.arg}: kind={input_spec.kind}, shape={shape}")
 
         for idx in range(len(args)):
             inputs[self.user_input_indices[idx]] = args[idx]
