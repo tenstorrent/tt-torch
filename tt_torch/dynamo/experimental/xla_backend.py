@@ -611,7 +611,6 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
         raise Exception("consteval_parameters is enabled but enable_consteval is not")
 
     compiled_graph = bypass_redundant_getitem(compiled_graph)
-    compiled_graph = rectify_buffer_inplace_copy(compiled_graph)
     compiled_graph = bypass_assert_tensor_metadata(compiled_graph)
     dump_module(
         module=compiled_graph.code, name="Torch graph", compiler_config=compiler_config
