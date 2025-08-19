@@ -39,6 +39,7 @@ from tt_torch.tools.utils import (
 
 import torch_xla
 import torch_xla.core.xla_model as xm
+import torch_xla.distributed.spmd as xs
 
 from ..executor import get_inputs_size, gb_to_bytes
 
@@ -623,12 +624,22 @@ class XLAExecutor:
                 self.inputs.append(None)
                 self.user_input_indices.append(idx)
             else:
-                self.inputs.append(self.program.state_dict[input_spec.target].to("xla"))
+                shard_spec = getattr(self.program.state_dict[input_spec.target], "shard_spec", None)
+                inp = self.program.state_dict[input_spec.target].to("xla")
+                if shard_spec is not None:
+                    print(f"Applying sharding {shard_spec} to {self.program.state_dict[input_spec.target].shape} on mesh {self.compiler_config.mesh}")
+                    xs.mark_sharding(inp, self.compiler_config.mesh, shard_spec) # does get applied verified by printing its shard spec
+                self.inputs.append(inp)
 
     def push_tensors_to_device(self, inputs, device):
         if hasattr(inputs, "to"):
             if device not in [inputs.device, inputs.device.type]:
-                return inputs.to(device)
+                shard_spec = getattr(inputs, "shard_spec", None)
+                inp = inputs.to(device)
+                if shard_spec is not None:
+                    print("Marking sharding of tensor")
+                    xs.mark_sharding(inp, self.compiler_config.mesh, shard_spec)
+                return inp
             else:
                 return inputs
         elif isinstance(
@@ -689,6 +700,7 @@ class XLAExecutor:
         self.arg_type_map_str = "main=" + ",".join(arg_types)
 
     def __call__(self, *args):
+        print(f"ct args: {len(args)}")
         args = self.push_tensors_to_device(args, "xla")
         inputs = self.inputs
         for idx in range(len(args)):
