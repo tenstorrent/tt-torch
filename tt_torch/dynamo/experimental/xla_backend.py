@@ -40,11 +40,7 @@ from tt_torch.tools.utils import (
 import torch_xla
 import torch_xla.core.xla_model as xm
 import torch_xla.distributed.spmd as xs
-<<<<<<< HEAD
 import tt_torch.dynamo.sharding_utils as sharding_utils
-=======
-import tt_torch.dynamo.sharding_utils as ts
->>>>>>> 3c384068 (Apply shardings to tensors in xlabackend)
 
 from ..executor import get_inputs_size, gb_to_bytes
 
@@ -629,6 +625,10 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
 
 
 class XLAExecutor:
+    # singleton cache for inputs that are already on device
+    previously_seen_inputs = {}
+    debug_cache = os.getenv("DEBUG_XLA_CACHE", "0") == "1"
+
     def __init__(self, program, compiler_config):
         self.program = program
         self.compiler_config = compiler_config
@@ -642,30 +642,53 @@ class XLAExecutor:
                 self.user_input_indices.append(idx)
             else:
                 source_tensor = self.program.state_dict[input_spec.target]
-                shard_spec = sharding_utils.get_sharding(source_tensor)
-                device_tensor = source_tensor.to("xla")
-                if shard_spec is not None:
-                    assert (
-                        self.compiler_config.xla_mesh
-                    ), "compiler_config.xla_mesh must be set to mark_sharding on tensors"
-                    xs.mark_sharding(
-                        device_tensor, self.compiler_config.xla_mesh, shard_spec
+
+
+                if XLAExecutor.previously_seen_inputs.get(source_tensor) is not None:
+                    if XLAExecutor.debug_cache:
+                        print(f"[XLA Cache] Retrieved tensor from cache: shape={source_tensor.shape}, dtype={source_tensor.dtype}, device={source_tensor.device}", flush=True)
+                    self.inputs.append(XLAExecutor.previously_seen_inputs[source_tensor])
+
+                else:
+                    if XLAExecutor.debug_cache:
+                        print(f"[XLA Cache] Adding tensor to cache: shape={source_tensor.shape}, dtype={source_tensor.dtype}, device={source_tensor.device}", flush=True)
+                    shard_spec = sharding_utils.get_sharding(source_tensor)
+
+                    print(
+                        f"input @ {idx} has shape {source_tensor.shape} and shard spec {shard_spec}"
                     )
-                self.inputs.append(device_tensor)
+
+                    device_tensor = source_tensor.to(
+                        "xla"
+                    )  # immediate allocation of host tensor
+                    if shard_spec is not None:
+                        xs.mark_sharding(
+                            device_tensor, self.compiler_config.xla_mesh, shard_spec
+                        )
+                    self.inputs.append(device_tensor)
+                    XLAExecutor.previously_seen_inputs[source_tensor] = device_tensor
 
     def push_tensors_to_device(self, inputs, device):
         if hasattr(inputs, "to"):
             if device not in [inputs.device, inputs.device.type]:
-                shard_spec = sharding_utils.get_sharding(inputs)
-                device_inputs = inputs.to(device)
-                if shard_spec is not None:
-                    assert (
-                        self.compiler_config.xla_mesh
-                    ), "compiler_config.xla_mesh must be set to mark_sharding on tensors"
-                    xs.mark_sharding(
-                        device_inputs, self.compiler_config.xla_mesh, shard_spec
-                    )
-                return device_inputs
+                if XLAExecutor.previously_seen_inputs.get(inputs) is not None:
+                    if XLAExecutor.debug_cache:
+                        print(f"[XLA Cache] Retrieved tensor from cache: shape={inputs.shape}, dtype={inputs.dtype}, device={inputs.device}", flush=True)
+                    return XLAExecutor.previously_seen_inputs[inputs]
+                else:
+                    if XLAExecutor.debug_cache:
+                        print(f"[XLA Cache] Adding tensor to cache: shape={inputs.shape}, dtype={inputs.dtype}, device={inputs.device}", flush=True)
+                    shard_spec = sharding_utils.get_sharding(inputs)
+                    device_inputs = inputs.to(device)
+                    if shard_spec is not None:
+                        assert (
+                            self.compiler_config.xla_mesh
+                        ), "compiler_config.xla_mesh must be set to mark_sharding on tensors"
+                        xs.mark_sharding(
+                            device_inputs, self.compiler_config.xla_mesh, shard_spec
+                        )
+                        XLAExecutor.previously_seen_inputs[inputs] = device_inputs
+                    return device_inputs
             else:
                 return inputs
         elif isinstance(
@@ -729,7 +752,7 @@ class XLAExecutor:
         args = self.push_tensors_to_device(args, "xla")
         inputs = self.inputs
 
-        self.program.graph_module.graph.print_tabular()
+        # self.program.graph_module.graph.print_tabular()
 
         # Print input names and shapes from graph signature
         for idx, input_spec in enumerate(self.program.graph_signature.input_specs):

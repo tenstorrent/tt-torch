@@ -26,7 +26,7 @@ import tt_torch.dynamo.sharding_utils as ts
 # Control vars
 
 _global_max_cache_len = 64 + 64
-tokens_to_generate = 1
+tokens_to_generate = 10
 hidden_layers = 1
 use_static_cache = True
 
