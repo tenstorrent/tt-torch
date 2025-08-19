@@ -4,9 +4,9 @@
 #
 
 # underlying tt-mlir version we will have tt-xla use
-set(TT_MLIR_VERSION "94af4a5f6f9eaeda05a82b68245bc5e2e4434f17")
+set(TT_MLIR_VERSION "974a9885ffaf439747627402879c793a2a55b56e") # jazpur/kv-cache-fusion rebased on LLVM update
 # tt-xla version to use
-set(TTXLA_VERSION "3c34c7b8ef9b336e4cd6b84ad59bcc26317e9b88")
+set(TTXLA_VERSION "d861782d4ede3aee01f475122923e6b85c3bea89") # jzx/persistent_rebased
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
@@ -62,7 +62,7 @@ else()
             chmod -R +x ${TTXLA_INSTALL_PREFIX}
         CMAKE_GENERATOR Ninja
         CMAKE_ARGS
-            -DCMAKE_BUILD_TYPE=Release
+            -DCMAKE_BUILD_TYPE=Debug
             -DCMAKE_C_COMPILER=clang-17
             -DCMAKE_CXX_COMPILER=clang++-17
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
