@@ -728,6 +728,25 @@ class XLAExecutor:
     def __call__(self, *args):
         args = self.push_tensors_to_device(args, "xla")
         inputs = self.inputs
+
+        self.program.graph_module.graph.print_tabular()
+
+        # Print input names and shapes from graph signature
+        for idx, input_spec in enumerate(self.program.graph_signature.input_specs):
+            if input_spec.kind == InputKind.USER_INPUT:
+                shape = (
+                    args[self.user_input_indices.index(idx)].shape
+                    if idx in self.user_input_indices
+                    else "N/A"
+                )
+            else:
+                shape = (
+                    self.program.state_dict[input_spec.target].shape
+                    if input_spec.target in self.program.state_dict
+                    else "N/A"
+                )
+            print(f"Input {input_spec.arg}: kind={input_spec.kind}, shape={shape}")
+
         for idx in range(len(args)):
             inputs[self.user_input_indices[idx]] = args[idx]
 

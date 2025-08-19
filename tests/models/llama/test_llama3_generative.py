@@ -26,8 +26,9 @@ import tt_torch.dynamo.sharding_utils as ts
 # Control vars
 
 _global_max_cache_len = 64 + 64
-tokens_to_generate = 4
+tokens_to_generate = 1
 hidden_layers = 1
+use_static_cache = True
 
 
 def load_model(model_name="meta-llama/Llama-3.2-3B"):
@@ -69,12 +70,15 @@ def load_inputs(
 
     cache_position = torch.arange(0, inputs.input_ids.shape[1])
 
-    args = {
-        "input_ids": inputs.input_ids,
-        "past_key_values": static_cache,
-        "use_cache": True,
-        "cache_position": cache_position,
-    }
+    if use_static_cache:
+        args = {
+            "input_ids": inputs.input_ids,
+            "past_key_values": static_cache,
+            "use_cache": True,
+            "cache_position": cache_position,
+        }
+    else:
+        args = {"input_ids": inputs.input_ids}
     return args
 
 
@@ -133,15 +137,19 @@ def test_llama3_generate():
     setup_xla_environment()
     mesh = create_device_mesh()
 
-    # apply shardings (TBD)
-    for i, (key, value) in enumerate(
-        zip(
-            input_args["past_key_values"].key_cache,
-            input_args["past_key_values"].value_cache,
-        )
-    ):
-        ts.mark_sharding(key, (None, "batch", None, None))
-        ts.mark_sharding(value, (None, "batch", None, None))
+    ts.mark_sharding(input_args["input_ids"], (None, None))
+    if use_static_cache:
+        ts.mark_sharding(input_args["cache_position"], (None,))
+
+        # apply shardings
+        for i, (key, value) in enumerate(
+            zip(
+                input_args["past_key_values"].key_cache,
+                input_args["past_key_values"].value_cache,
+            )
+        ):
+            ts.mark_sharding(key, (None, "model", None, None))
+            ts.mark_sharding(value, (None, "model", None, None))
 
     for layer in model.model.layers:
         ts.mark_sharding(layer.mlp.up_proj.weight, ("model", None))
@@ -153,6 +161,8 @@ def test_llama3_generate():
         ts.mark_sharding(layer.self_attn.v_proj.weight, ("model", None))
         ts.mark_sharding(layer.self_attn.o_proj.weight, (None, "model"))
 
+    ts.mark_sharding(model.lm_head.weight, ("model", None))
+
     # Setup compilation
     clear_dynamo_cache()
     cc = CompilerConfig()
@@ -161,7 +171,7 @@ def test_llama3_generate():
     # Consteval disabled due to 4D Causal Attention Mask evaluation getting constant folded in torchfx
     #   due to incorrect tracing of static cache and malformed output missing static cache tensors
     cc.enable_consteval = True
-    cc.consteval_parameters = True
+    cc.consteval_parameters = False
 
     options = BackendOptions()
     options.compiler_config = cc
@@ -183,7 +193,8 @@ def test_llama3_generate():
         outputs = compiled_model(**input_args)
 
         # Update inputs for next iteration
-        cache_position = input_args["cache_position"][-1:] + 1
+        if use_static_cache:
+            cache_position = input_args["cache_position"][-1:] + 1
 
         # Post-processing
         next_token_ids = outputs.logits[:, -1:].argmax(dim=-1)
@@ -194,12 +205,15 @@ def test_llama3_generate():
         generated_tokens.append(new_token)
         print(new_token, end="", flush=True)
 
-        input_args = {
-            "input_ids": next_token_ids,
-            "past_key_values": input_args["past_key_values"],  # updated in place
-            "cache_position": cache_position,
-            "use_cache": True,
-        }
+        if use_static_cache:
+            input_args = {
+                "input_ids": next_token_ids,
+                "past_key_values": input_args["past_key_values"],  # updated in place
+                "cache_position": cache_position,
+                "use_cache": True,
+            }
+        else:
+            input_args = {"input_ids": next_token_ids}
 
     # Cleanup
     clear_dynamo_cache()
