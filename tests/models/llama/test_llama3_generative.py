@@ -140,8 +140,8 @@ def test_llama3_generate():
             input_args["past_key_values"].value_cache,
         )
     ):
-        ts.mark_sharding(key, (None, "model", None, None))
-        ts.mark_sharding(value, (None, "model", None, None))
+        ts.mark_sharding(key, (None, "batch", None, None))
+        ts.mark_sharding(value, (None, "batch", None, None))
 
     for layer in model.model.layers:
         ts.mark_sharding(layer.mlp.up_proj.weight, ("model", None))
