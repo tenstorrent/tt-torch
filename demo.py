@@ -109,7 +109,6 @@ class FFConfig:
     batch_size: int = 128
     epochs: int = 5
     momentum: float = 0.0  # if you later add peer-normalization
-    device: str = "cuda" if torch.cuda.is_available() else "cpu"
     seed: int = 0
 
 
@@ -307,7 +306,7 @@ class ForwardOnlyFF(nn.Module):
 # Training loop
 # -----------------------------
 def train_forward_only(cfg: FFConfig):
-    device = torch.device(cfg.device)
+    device = torch.device("cpu")
     set_seed(cfg.seed)
 
     # Data
@@ -379,7 +378,9 @@ def train_forward_only(cfg: FFConfig):
             test_acc = evaluate(model, test_loader)
             print(f"          Test classifier acc: {test_acc:.3f}")
     print("Saving model dict...")
-    torch.save(model.state_dict(), "ff_forward_only.pt")
+    weight_file = f"ff_forward_only_{cfg.epochs}.pt"
+    torch.save(model.state_dict(), weight_file)
+    print(f"Model saved to {weight_file}")
     return model
 
 
@@ -448,16 +449,26 @@ def display_results(image, label, pred, filename="result.png"):
     plt.show()
 
 
-def inference(seed: int):
-    cfg = FFConfig(hidden_dim=1024, num_layers=2, device="cpu")
+def inference(weight_file: str, hidden_dim: int = 1024, num_layers: int = 2):
+    # Set random seed for different image each time
+    import time
+
+    random_seed = int(time.time()) % 10000
+    set_seed(random_seed)
+
+    cfg = FFConfig(hidden_dim=hidden_dim, num_layers=num_layers)
     model = ForwardOnlyFF(cfg)
-    model.load_state_dict(torch.load("ff_forward_only.pt", map_location=cfg.device))
+    model.load_state_dict(torch.load(weight_file, map_location="cpu"))
     model.eval()
+    model.compile_forward()
     test_ds = datasets.MNIST(
         "./data", train=False, transform=transforms.ToTensor(), download=True
     )
-    img, label = test_ds[seed]
+    # Use random index for image selection
+    img_idx = random.randint(0, len(test_ds) - 1)
+    img, label = test_ds[img_idx]
     pred = predict(model, img)
+    print(f"Using image index {img_idx} (seed: {random_seed})")
     display_results(img, label, pred)
 
 
@@ -466,25 +477,53 @@ def inference(seed: int):
 # -----------------------------
 def parse_args():
     p = argparse.ArgumentParser()
-    p.add_argument("--hidden-dim", type=int, default=1024)
-    p.add_argument("--num-layers", type=int, default=2)
-    p.add_argument("--lr", type=float, default=1e-3)
-    p.add_argument("--batch-size", type=int, default=128)
-    p.add_argument("--epochs", type=int, default=10)
-    p.add_argument("--seed", type=int, default=0)
-    return p.parse_args()
+    p.add_argument(
+        "--mode",
+        choices=["train", "inference"],
+        required=True,
+        help="Mode: train or inference",
+    )
+
+    # Training arguments
+    p.add_argument("--hidden-dim", type=int, default=1024, help="Hidden dimension size")
+    p.add_argument("--num-layers", type=int, default=2, help="Number of hidden layers")
+    p.add_argument("--lr", type=float, default=1e-3, help="Learning rate")
+    p.add_argument("--batch-size", type=int, default=128, help="Batch size")
+    p.add_argument("--epochs", type=int, default=10, help="Number of epochs")
+    p.add_argument("--seed", type=int, default=0, help="Random seed for training")
+
+    # Inference arguments
+    p.add_argument(
+        "--weight-file",
+        type=str,
+        help="Path to weight file for inference (required for inference mode)",
+    )
+
+    args = p.parse_args()
+
+    # Validate arguments based on mode
+    if args.mode == "inference" and not args.weight_file:
+        p.error("--weight-file is required when mode is 'inference'")
+
+    return args
 
 
 if __name__ == "__main__":
     args = parse_args()
-    cfg = FFConfig(
-        hidden_dim=args.hidden_dim,
-        num_layers=args.num_layers,
-        lr=args.lr,
-        batch_size=args.batch_size,
-        epochs=args.epochs,
-        seed=args.seed,
-    )
-    model = train_forward_only(cfg)
-    # How to call inference loop:
-    # inference(4)
+
+    if args.mode == "train":
+        cfg = FFConfig(
+            hidden_dim=args.hidden_dim,
+            num_layers=args.num_layers,
+            lr=args.lr,
+            batch_size=args.batch_size,
+            epochs=args.epochs,
+            seed=args.seed,
+        )
+        model = train_forward_only(cfg)
+        print(
+            f"Training completed. Use --mode inference --weight-file ff_forward_only_{args.epochs}.pt for inference."
+        )
+
+    elif args.mode == "inference":
+        inference(args.weight_file, args.hidden_dim, args.num_layers)
