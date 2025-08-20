@@ -57,18 +57,56 @@ class XLATensorCache:
             cls._instance._debug = os.getenv("DEBUG_XLA_CACHE", "0") == "1"
         return cls._instance
     
+    def _get_cache_key(self, tensor):
+        """Generate a composite cache key based on tensor properties."""
+        try:
+            # Use tensor's memory address (id), shape, dtype, and device as key
+            tensor_id = id(tensor)
+            shape = tuple(tensor.shape)
+            dtype = tensor.dtype
+            device = str(tensor.device)
+                
+            cache_key = (tensor_id, shape, dtype, device)
+            
+            # if self._debug:
+            #     print(f"[XLA Cache] Generated cache key: {cache_key}", flush=True)
+                
+            return cache_key
+        except Exception as e:
+            if self._debug:
+                print(f"[XLA Cache] Error generating cache key: {e}", flush=True)
+            # Fallback to tensor object itself if key generation fails
+            return tensor
+    
     def get(self, tensor):
         """Get tensor from cache if it exists."""
-        cached_tensor = self._cache.get(tensor)
+        cache_key = self._get_cache_key(tensor)
+        cached_tensor = self._cache.get(cache_key)
+        
         if cached_tensor is not None and self._debug:
-            print(f"[XLA Cache] Retrieved tensor from cache: shape={tensor.shape}, dtype={tensor.dtype}, device={tensor.device}", flush=True)
+            try:
+                xla_tensor_id = torch_xla._XLAC._xla_get_tensor_id(cached_tensor)
+                xla_sharding_spec = torch_xla._XLAC._get_xla_sharding_spec(cached_tensor)
+                print(f"[XLA Cache] Retrieved tensor from cache: key={cache_key}, xla_tensor_id={xla_tensor_id}, xla_sharding_spec={xla_sharding_spec}, cached tensor device {cached_tensor.device}", flush=True)
+            except:
+                print(f"[XLA Cache] Retrieved tensor from cache: key={cache_key}", flush=True)
+                
         return cached_tensor
     
     def put(self, original_tensor, cached_tensor):
         """Add tensor to cache."""
+        cache_key = self._get_cache_key(original_tensor)
+        
         if self._debug:
-            print(f"[XLA Cache] Adding tensor to cache: shape={original_tensor.shape}, dtype={original_tensor.dtype}, device={original_tensor.device}", flush=True)
-        self._cache[original_tensor] = cached_tensor
+            try:
+                # sometimes non xla tensors have this called on them -> cached tensor is somehow not an XLA tensor. 
+                xla_tensor_id = torch_xla._XLAC._xla_get_tensor_id(cached_tensor)
+                xla_sharding_spec = torch_xla._XLAC._get_xla_sharding_spec(cached_tensor)
+                print(f"[XLA Cache] Adding tensor to cache: key={cache_key}, xla_tensor_id={xla_tensor_id}, xla_sharding_spec={xla_sharding_spec}", flush=True)
+            except:
+                print(f"[XLA Cache] Adding tensor to cache: key={cache_key}", flush=True)
+                
+        self._cache[cache_key] = cached_tensor
     
     def clear(self):
         """Clear the cache."""
@@ -643,7 +681,8 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
         compiled_graph = constant_fold(compiled_graph)
     elif compiler_config.consteval_parameters:
         raise Exception("consteval_parameters is enabled but enable_consteval is not")
-
+    
+    # compiled_graph = rectify_buffer_inplace_copy(compiled_graph)
     compiled_graph = bypass_redundant_getitem(compiled_graph)
     compiled_graph = bypass_assert_tensor_metadata(compiled_graph)
     dump_module(
@@ -667,8 +706,13 @@ class XLAExecutor:
 
         self.inputs = []
         self.user_input_indices = []
+        
+        print(f"[XLA Debug] Processing {len(self.program._graph_signature.input_specs)} input specs:", flush=True)
         for idx, input_spec in enumerate(self.program._graph_signature.input_specs):
+            print(f"[XLA Debug] Input {idx}: kind={input_spec.kind}, arg={input_spec.arg}, target={getattr(input_spec, 'target', 'N/A')}", flush=True)
+            
             if input_spec.kind == InputKind.USER_INPUT:
+                print(f"[XLA Debug] Input {idx} is USER_INPUT, adding None placeholder", flush=True)
                 self.inputs.append(None)
                 self.user_input_indices.append(idx)
             else:
@@ -684,18 +728,23 @@ class XLAExecutor:
                     shard_spec = sharding_utils.get_sharding(source_tensor)
 
                     print(
-                        f"input @ {idx} has shape {source_tensor.shape} and shard spec {shard_spec}"
+                        f"[XLA Debug] Input {idx} not in cache - shape: {source_tensor.shape}, shard spec: {shard_spec}, moving to XLA device", flush=True
                     )
-
-                    device_tensor = source_tensor.to(
-                        "xla"
-                    )  # immediate allocation of host tensor
+                    # immediate allocation of host tensor
+                    device_tensor = source_tensor.to("xla")  
                     if shard_spec is not None:
+                        print(f"[XLA Debug] Input {idx} applying shard spec: {shard_spec} with mesh: {self.compiler_config.mesh}", flush=True)
                         xs.mark_sharding(
                             device_tensor, self.compiler_config.xla_mesh, shard_spec
                         )
+                    else:
+                        print(f"[XLA Debug] Input {idx} no sharding applied", flush=True)
                     self.inputs.append(device_tensor)
+                    
                     self._tensor_cache.put(source_tensor, device_tensor)
+                    print(f"[XLA Debug] Input {idx} cached tensor with device: {device_tensor.device}", flush=True)
+        
+        print(f"[XLA Debug] Initialization complete - total inputs: {len(self.inputs)}, user input indices: {self.user_input_indices}", flush=True)
 
     def push_tensors_to_device(self, inputs, device):
         if hasattr(inputs, "to"):
@@ -796,7 +845,8 @@ class XLAExecutor:
         #             if input_spec.target in self.program.state_dict
         #             else "N/A"
         #         )
-            # print(f"Input {input_spec.arg}: kind={input_spec.kind}, shape={shape}")
+        #     xla_tensor_id = torch_xla._XLAC._xla_get_tensor_id(inputs[idx]) if inputs[idx]!=None else "N/A"
+        #     print(f"During __call__: Input {input_spec.arg}: kind={input_spec.kind}, shape={shape}, torchxla tensor id: {xla_tensor_id}", flush=True)
 
         for idx in range(len(args)):
             inputs[self.user_input_indices[idx]] = args[idx]
@@ -809,9 +859,28 @@ class XLAExecutor:
             if os.environ.get("ARG_TYPE_MAP_OVERRIDE") != self.arg_type_map_str:
                 os.environ["ARG_TYPE_MAP_OVERRIDE"] = self.arg_type_map_str
 
-        xm.mark_step()
+        # for i,inp in enumerate(inputs):
+        #     is_static_cache = inp.dim()==4 and inp.shape[2] == 128 and inp.shape[3]==128
+        #     if is_static_cache or True:
+        #         try:
+        #             print(f"BEFORE MARK STEP Enumerating input {i} with shape {inp.shape} and device {inp.device}")
+        #             print(f"with xla tensor id {torch_xla._XLAC._xla_get_tensor_id(inp)} and sharding annotation {torch_xla._XLAC._get_xla_sharding_spec(inp)}", flush=True)
+        #         except:
+        #             pass
+        
+        torch_xla.sync()
+        
+        # for i,inp in enumerate(inputs):
+        #     is_static_cache = inp.dim()==4 and inp.shape[2] == 128 and inp.shape[3]==128
+        #     if is_static_cache or True:
+        #         try:
+        #             print(f"AFTER MARK STEP Enumerating input {i} with shape {inp.shape} and device {inp.device}")
+        #             print(f"with xla tensor id {torch_xla._XLAC._xla_get_tensor_id(inp)} and sharding annotation {torch_xla._XLAC._get_xla_sharding_spec(inp)}", flush=True)
+        #         except:
+        #             pass
         if self.compiler_config.push_outputs_to_cpu:
-            return self.push_tensors_to_device(output, "cpu")
+            output = self.push_tensors_to_device(output, "cpu")
+        
         return output
 
     def __del__(self):
