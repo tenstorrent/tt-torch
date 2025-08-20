@@ -1,6 +1,9 @@
 # SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
+
+# Run with LOGGER_LEVEL=DEBUG python test.py
+
 import torch
 import time
 import operator
@@ -714,9 +717,15 @@ class XLAExecutor:
             if os.environ.get("ARG_TYPE_MAP_OVERRIDE") != self.arg_type_map_str:
                 os.environ["ARG_TYPE_MAP_OVERRIDE"] = self.arg_type_map_str
 
+        for inp in inputs:
+            print(f"PRE STEP input has shape {inp.shape}, device {inp.device}, shard_spec {torch_xla._XLAC._get_xla_sharding_spec(inp)}")
         xm.mark_step()
+        for inp in inputs:
+            print(f"POST STEP input has shape {inp.shape}, device {inp.device}, shard_spec {torch_xla._XLAC._get_xla_sharding_spec(inp)}")
         if self.compiler_config.push_outputs_to_cpu:
-            return self.push_tensors_to_device(output, "cpu")
+            output =  self.push_tensors_to_device(output, "cpu")
+        
+        
         return output
 
     def __del__(self):
