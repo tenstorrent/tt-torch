@@ -444,6 +444,8 @@ class CompilerConfig:
         if dump_intermediates:
             self.dump_debug = dump_intermediates == "DEBUG"
             self.dump_info = self.dump_debug or dump_intermediates == "INFO"
+            # Setting 'LOGGER_LEVEL' for tt-xla to dump vhlo, shlo, ttir, and ttnn graphs.
+            os.environ["LOGGER_LEVEL"] = "DEBUG"
         save_mlir_str = os.environ.get("TT_TORCH_SAVE_MLIR")
         if save_mlir_str:
             self.save_mlir_override = []
