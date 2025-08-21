@@ -2,18 +2,45 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import torch
-import pytest
 import numpy as np
+import os
+from typing import Literal
 
+import torch_xla
+import torch_xla.runtime as xr
+import torch_xla.distributed.spmd as xs
+from torch_xla.distributed.spmd import Mesh
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig
+
 from tt_torch.tools.utils import (
-    CompilerConfig,
-    CompileDepth,
     OpByOpBackend,
     calculate_pcc,
     calculate_atol,
 )
-from tt_torch.dynamo.backend import BackendOptions
+
+
+def setup_xla_environment():
+    """Setup XLA environment for tensor parallelism."""
+    print("Setting up XLA environment...")
+
+    # Converts the StableHLO emitted by torch-xla to the Shardy dialect.
+    os.environ["CONVERT_SHLO_TO_SHARDY"] = "1"
+
+    # Initialize SPMD
+    xr.use_spmd()
+    print("XLA environment configured.")
+
+
+def create_device_mesh() -> Mesh:
+    """
+    Create device mesh for tensor parallelism.
+    """
+    num_devices = xr.global_runtime_device_count()
+    mesh_shape = (1, num_devices)
+    device_ids = np.array(range(num_devices))
+    mesh = Mesh(device_ids, mesh_shape, ("batch", "model"))
+    print(f"Created device mesh: {mesh_shape} with {num_devices} devices")
+    return mesh
 
 
 def _extract_outputs(output_object):
@@ -79,7 +106,33 @@ def verify_outputs(golden, outputs):
     return pccs, atols
 
 
+def move_input_to_device(input, device: Literal["cpu", "xla"]):
+    assert device == "cpu" or device == "xla", f"Invalid device: {device}"
+    input["input_ids"] = input["input_ids"].to(device)
+    input["attention_mask"] = input["attention_mask"].to(device)
+    return
+
+
+def move_output_to_device(output, device: Literal["cpu", "xla"]):
+    assert device == "cpu" or device == "xla", f"Invalid device: {device}"
+    output.logits = output.logits.to(device)
+    return
+
+
+def run_golden(model, input):
+    device = "cpu"
+    model.to(device)
+    move_input_to_device(input, device)
+    torch._dynamo.reset()
+    with torch.no_grad():
+        return model(**input)
+
+
 def main():
+
+    setup_xla_environment()
+    mesh = create_device_mesh()
+
     config = AutoConfig.from_pretrained("openai/gpt-oss-20b", trust_remote_code=True)
     config.quantization_config["quant_method"] = "none"
     config.num_hidden_layers = 1
@@ -98,29 +151,30 @@ def main():
     messages = [
         {"role": "user", "content": "Who are you?"},
     ]
-    inputs = tokenizer.apply_chat_template(
+    input = tokenizer.apply_chat_template(
         messages,
         add_generation_prompt=True,
         tokenize=True,
         return_dict=True,
         return_tensors="pt",
     )
-    cc = CompilerConfig()
-    cc.enable_consteval = True
-    cc.consteval_parameters = True
 
-    options = BackendOptions()
-    options.compiler_config = cc
+    # Run on cpu
+    golden = run_golden(model, input)
 
+    # Run on xla
+    device = "xla"
+    torch._dynamo.reset()
+    model = model.to(device)
+    move_input_to_device(input, device)
+    breakpoint()
     with torch.no_grad():
-        torch._dynamo.reset()
-        tt_model = torch.compile(
-            model, backend="tt-experimental", dynamic=False, options=options
-        )
-        calculated = tt_model(**inputs)
-        torch._dynamo.reset()
-        golden = model(**inputs)
-        verify_outputs(golden, calculated)
+        output = model(**input)
+
+    # PCC/ Atol check
+    device = "cpu"
+    move_output_to_device(output, device)
+    verify_outputs(golden, output)
 
 
 if __name__ == "__main__":
