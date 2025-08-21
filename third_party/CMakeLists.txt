@@ -22,7 +22,39 @@ endif()
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
     project(ttmlir-toolchain LANGUAGES CXX C)
+
+    # Extract TT_MLIR_VERSION from tt-xla repository only if not already set
+    if(TT_MLIR_VERSION STREQUAL "")
+        # Step 1: Download tt-xla's CMakeLists.txt from GitHub
+        set(TTXLA_CMAKE_URL "https://raw.githubusercontent.com/tenstorrent/tt-xla/${TTXLA_VERSION}/third_party/CMakeLists.txt")
+        execute_process(
+            COMMAND curl -s ${TTXLA_CMAKE_URL}
+            OUTPUT_VARIABLE TTXLA_CMAKE_CONTENT
+            ERROR_QUIET
+        )
+
+        # Step 2: Extract TT_MLIR_VERSION that tt-xla is using
+        execute_process(
+            COMMAND bash -c "echo '${TTXLA_CMAKE_CONTENT}' | sed -n 's/.*set(TT_MLIR_VERSION \"\\(.*\\)\").*/\\1/p'"
+            OUTPUT_VARIABLE TT_XLA_FALLBACK_TT_MLIR_VERSION
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            ERROR_QUIET
+        )
+
+        # Use the fallback tt-mlir version from tt-xla to build the toolchain
+        if(TT_XLA_FALLBACK_TT_MLIR_VERSION STREQUAL "")
+            message(FATAL_ERROR "Could not extract TT_MLIR_VERSION from tt-xla")
+        else()
+            set(TT_MLIR_VERSION ${TT_XLA_FALLBACK_TT_MLIR_VERSION})
+            message(STATUS "Extracted TT_MLIR_VERSION from tt-xla: ${TT_MLIR_VERSION}")
+        endif()
+    else()
+        message(STATUS "Using provided override TT_MLIR_VERSION: ${TT_MLIR_VERSION}")
+    endif()
+
     if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tt-mlir/src/tt-mlir)
+        # Create the directory structure if it doesn't exist
+        file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tt-mlir/src)
         execute_process(
             COMMAND git clone --recursive https://github.com/tenstorrent/tt-mlir.git ${CMAKE_CURRENT_SOURCE_DIR}/tt-mlir/src/tt-mlir
         )
