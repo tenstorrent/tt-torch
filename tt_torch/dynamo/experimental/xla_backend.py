@@ -584,6 +584,12 @@ def bypass_assert_tensor_metadata(gm):
     return gm
 
 
+def dump_module(module, name, compiler_config):
+    if compiler_config.dump_info:
+        print(f"{name} module", flush=True)
+        print(module, flush=True)
+
+
 def xla_pass_pipeline(gm, example_inputs, compiler_config):
     decompositions = torch._decomp.core_aten_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
@@ -605,7 +611,14 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
     compiled_graph = bypass_redundant_getitem(compiled_graph)
     compiled_graph = rectify_buffer_inplace_copy(compiled_graph)
     compiled_graph = bypass_assert_tensor_metadata(compiled_graph)
+    dump_module(
+        module=compiled_graph.code, name="Torch graph", compiler_config=compiler_config
+    )
+
     program = torch.export.export(compiled_graph, tuple(example_inputs), strict=False)
+    dump_module(
+        module=program, name="Torch compiled graph", compiler_config=compiler_config
+    )
 
     return program
 
