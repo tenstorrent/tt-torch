@@ -133,6 +133,7 @@ jobs:
       - pre-commit
       - spdx
       - docker-build
+      - check-files
       - build
       - test
       - full-model-test
