@@ -7,13 +7,10 @@ import numpy as np
 
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig
 from tt_torch.tools.utils import (
-    CompilerConfig,
-    CompileDepth,
     OpByOpBackend,
     calculate_pcc,
     calculate_atol,
 )
-from tt_torch.dynamo.backend import BackendOptions
 
 
 def _extract_outputs(output_object):
@@ -105,22 +102,33 @@ def main():
         return_dict=True,
         return_tensors="pt",
     )
-    cc = CompilerConfig()
-    cc.enable_consteval = True
-    cc.consteval_parameters = True
+    torch._dynamo.reset()
+    breakpoint()
+    model = model.to("xla")
 
-    options = BackendOptions()
-    options.compiler_config = cc
+    # Initialize output_dict before using it
+    output_dict = {}
+
+    # Convert inputs to XLA
+    xla_inputs = {}
+    for key, value in inputs.items():
+        xla_inputs[key] = value.to("xla")
 
     with torch.no_grad():
+        output = model(**xla_inputs)
+
+        # Store XLA outputs converted back to CPU
+        for key, value in output.items():
+            if isinstance(value, torch.Tensor):
+                output_dict[key] = value.to("cpu")
+            else:
+                output_dict[key] = value
+
         torch._dynamo.reset()
-        tt_model = torch.compile(
-            model, backend="tt-experimental", dynamic=False, options=options
-        )
-        calculated = tt_model(**inputs)
-        torch._dynamo.reset()
+        model = model.to("cpu")
+
         golden = model(**inputs)
-        verify_outputs(golden, calculated)
+        verify_outputs(golden, output_dict)
 
 
 if __name__ == "__main__":
