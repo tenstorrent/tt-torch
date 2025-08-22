@@ -48,7 +48,7 @@ def test_t5(record_property, model_name, mode, op_by_op):
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
-        assert_pcc=False,
+        assert_pcc=True,
         assert_atol=False,
         run_generate=False,
     )
