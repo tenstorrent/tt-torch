@@ -118,10 +118,8 @@ def test_torchvision_image_classification(
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    # TODO Enable checking (vit_h_14) - https://github.com/tenstorrent/tt-torch/issues/491
-    # TODO Enable checking (densenet161) - https://github.com/tenstorrent/tt-torch/issues/1142
     model_name = model_info[0]
-    assert_pcc = False if model_name in ["vit_h_14", "densenet161"] else True
+    assert_pcc = True
     assert_atol = False
 
     # FIXME fails with tt-experimental - https://github.com/tenstorrent/tt-torch/issues/1105

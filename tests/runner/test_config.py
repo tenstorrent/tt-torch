@@ -189,8 +189,6 @@ test_config = {
     },
     "densenet/pytorch-densenet161-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
-        # PCC Drop to 0.41146078113061335 Aug5: Issue https://github.com/tenstorrent/tt-torch/issues/1142
-        "assert_pcc": False,
     },
     "densenet/pytorch-densenet169-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
