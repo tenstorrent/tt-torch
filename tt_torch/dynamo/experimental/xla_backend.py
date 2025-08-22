@@ -639,8 +639,8 @@ class XLAExecutor:
                 self.user_input_indices.append(idx)
             else:
                 source_tensor = self.program.state_dict[input_spec.target]
+                shard_spec = ts.get_sharding(source_tensor)
                 device_tensor = source_tensor.to("xla")
-                shard_spec = ts.get_sharding(device_tensor)
                 if shard_spec is not None:
                     xs.mark_sharding(
                         device_tensor, self.compiler_config.xla_mesh, shard_spec

@@ -4,7 +4,7 @@
 import tt_torch.dynamo.sharding_utils as ts
 import torch
 import torch.nn as nn
-from tt_torch.dynamo.backend import CompilerConfig, BackendOptions
+from tt_torch.dynamo.backend import CompilerConfig
 from tt_torch.tools.verify import verify_module
 
 import pytest
