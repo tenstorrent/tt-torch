@@ -114,7 +114,6 @@ jobs:
             wh-runner: n300, name: "eval_6", pytest-args: "", tests: "
                 tests/torch/test_basic_async.py
                 tests/torch/test_basic_multichip.py
-                tests/torch/test_basic_sharding.py
                 tests/models/mnist/test_mnist.py::test_mnist_train[data_parallel-full-eval]
                 tests/models/resnet50/test_resnet50.py::test_resnet[data_parallel-full-eval]
                 tests/models/resnet/test_resnet.py::test_resnet[data_parallel-full-eval]
@@ -127,6 +126,12 @@ jobs:
                 tests/models/vit/test_vit_n300.py::test_vit[full-large-eval]
                 tests/models/segformer/test_segformer_n300.py::test_segformer[full-eval]
                 tests/models/hardnet/test_hardnet_n300.py::test_hardnet[full-eval]
+            "
+          },
+          {
+            # It is not safe to run XLA SPMD tests with other tests using torch/xla
+            wh-runner: n300, name: "eval_6_spmd", pytest-args: "", tests: "
+                tests/torch/test_basic_sharding.py
             "
           },
           {

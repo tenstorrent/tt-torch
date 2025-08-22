@@ -45,15 +45,25 @@ def use_xla_environment():
     print("Setting up XLA environment...")
     num_devices = xr.global_runtime_device_count()
 
-    # Enables the auto parallel pass in tt-mlir
-    os.environ["ENABLE_AUTO_PARALLEL"] = "TRUE"
+    # Save original environment variable values
+    env_vars_to_restore = {
+        "CONVERT_SHLO_TO_SHARDY": os.environ.get("CONVERT_SHLO_TO_SHARDY"),
+        "MESH_SHAPE": os.environ.get("MESH_SHAPE"),
+        "TT_TORCH_FORCE_EXPERIMENTAL_BACKEND": os.environ.get(
+            "TT_TORCH_FORCE_EXPERIMENTAL_BACKEND"
+        ),
+    }
+
     # Converts the StableHLO emitted by torch-xla to the Shardy dialect
     os.environ["CONVERT_SHLO_TO_SHARDY"] = "1"
     # Sets the mesh shape used by the auto parallel pass
     os.environ["MESH_SHAPE"] = f"1,{num_devices}"
 
+    # Needed to use verify torch module
     os.environ["TT_TORCH_FORCE_EXPERIMENTAL_BACKEND"] = "1"
-    # Initialize SPMD
+
+    # Initialize SPMD - This has some side effects that don't seem reversible https://github.com/pytorch/xla/issues/9578
+    # It appears unsafe to run pytests using the XLA backend where some tests use SPMD and some don't in the same testgroup
     xr.use_spmd()
 
     torch_xla.sync(True, True)
@@ -61,10 +71,12 @@ def use_xla_environment():
 
     yield
 
-    os.environ.pop("ENABLE_AUTO_PARALLEL", None)
-    os.environ.pop("CONVERT_SHLO_TO_SHARDY", None)
-    os.environ.pop("MESH_SHAPE", None)
-    os.environ.pop("TT_TORCH_FORCE_EXPERIMENTAL_BACKEND", None)
+    # Restore original environment variable values
+    for var_name, original_value in env_vars_to_restore.items():
+        if original_value is None:
+            os.environ.pop(var_name, None)
+        else:
+            os.environ[var_name] = original_value
 
 
 def pytest_addoption(parser):
