@@ -8,6 +8,22 @@
 
 # Exit immediately if a command exits with a non-zero status
 set -e
+
+# Function to checkout tt-xla at the known TT_XLA_VERSION commit
+checkout_tt_xla() {
+    local tt_xla_version="$1"
+    local tt_xla_path="$2"
+
+    if [ ! -d "$tt_xla_path" ]; then
+        git clone https://github.com/tenstorrent/tt-xla.git "$tt_xla_path" --quiet
+    fi
+
+    cd "$tt_xla_path"
+    git fetch --quiet
+    git checkout "$tt_xla_version" --quiet
+    cd - > /dev/null
+}
+
 MLIR_DOCKER_TAG=$(
     # Read tt-mlir version from third_party/tt-xla/src/tt-xla/third_party/CMakeLists.txt
     # clone tt-mlir version to tmp/third_party/tt-mlir
@@ -15,8 +31,10 @@ MLIR_DOCKER_TAG=$(
 
     # Note - third_party/tt-xla is cloned at the commit specified by the TT_XLA_VERSION in third_party/CMakeLists.txt
     #   when **running the cmake build**. In order to get the tt-mlir version pre-build, we can manually clone tt-xla
-    #   at the specified version and read its contents (from the caller in build-image.yml)
+    #   at the specified version and read its contents
+
     TT_MLIR_PATH=tmp/third_party/tt-mlir
+    TT_XLA_PATH=tmp/third_party/tt-xla
 
     # Extract TT_MLIR_VERSION from third_party/CMakeLists.txt if set, either by source modification
     # or application of TT_MLIR_OVERRIDE in build-image.yml
@@ -26,9 +44,24 @@ MLIR_DOCKER_TAG=$(
         : # TT_MLIR_VERSION is directly set in third_party/CMakeLists.txt due to override or source modification
     else
         # Extract TT_MLIR_VERSION from tt-xla's CMakeLists.txt
-        TT_MLIR_VERSION=$(grep -oP 'set\(TT_MLIR_VERSION "\K[^"]+' third_party/tt-xla/src/tt-xla/third_party/CMakeLists.txt || echo "")
+        TT_XLA_VERSION=$(grep -oP 'set\(TTXLA_VERSION "\K[^"]+' third_party/CMakeLists.txt || echo "")
+
+        if [ -z "$TT_XLA_VERSION" ]; then
+            exit 1
+        fi
+
+        checkout_tt_xla "$TT_XLA_VERSION" "$TT_XLA_PATH"
+
+        TT_MLIR_CMAKE_FILE="$TT_XLA_PATH/third_party/CMakeLists.txt"
+
+        if [ ! -f "$TT_MLIR_CMAKE_FILE" ]; then
+            exit 1
+        fi
+
+        TT_MLIR_VERSION=$(grep -oP 'set\(TT_MLIR_VERSION "\K[^"]+' "$TT_MLIR_CMAKE_FILE" || echo "")
+
         if [ -z "$TT_MLIR_VERSION" ]; then
-            exit 1 # Error: TT_MLIR_VERSION could not be determined
+            exit 1
         fi
     fi
 
@@ -36,8 +69,8 @@ MLIR_DOCKER_TAG=$(
     if [ ! -d $TT_MLIR_PATH ]; then
         git clone https://github.com/tenstorrent/tt-mlir.git $TT_MLIR_PATH --quiet
     fi
-    cd $TT_MLIR_PATH
 
+    cd $TT_MLIR_PATH
     git fetch --quiet
     git checkout $TT_MLIR_VERSION --quiet
 

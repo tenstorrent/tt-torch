@@ -38,21 +38,6 @@ jobs:
         run: |
             # Update the CMakeLists.txt file with the new SHA
             sed -i "s/set(TT_MLIR_VERSION \".*\")/set(TT_MLIR_VERSION \"${{ inputs.mlir_override }}\")/" third_party/CMakeLists.txt
-      # The TT_MLIR_VERSION is "" by default and retrieved from tt-xla
-      - name: Clone tt-xla repository and find out the mlir version from tt-xla
-        if: ${{ inputs.mlir_override == '' }}
-        shell: bash
-        run: |
-          # Extract the TTXLA_VERSION from CMakeLists.txt
-          TTXLA_VERSION=$(grep -oP 'set\(TTXLA_VERSION "\K[^"]+' third_party/CMakeLists.txt)
-          echo "Using TTXLA_VERSION: $TTXLA_VERSION"
-
-          # Clone the tt-xla repository
-          mkdir -p third_party/tt-xla/src
-          git clone https://github.com/tenstorrent/tt-xla.git third_party/tt-xla/src/tt-xla
-
-          # Checkout the specific commit
-          git -C third_party/tt-xla/src/tt-xla checkout $TTXLA_VERSION
       - name: Check if Docker image already exists
         id: check
         shell: bash
