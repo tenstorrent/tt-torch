@@ -50,15 +50,12 @@ def test_hardnet(record_property, mode, op_by_op, data_parallel_mode):
     loader = ModelLoader(variant=None)
     model_info = loader.get_model_info(variant=None)
 
-    # Small dip for blackhole using experimental backend
-    required_pcc = 0.98 if tt_mlir.get_arch() != tt_mlir.Arch.BLACKHOLE else 0.97
-
     tester = ThisTester(
         model_info.name,
         mode,
         loader=loader,
         model_info=model_info,
-        required_pcc=required_pcc,
+        required_pcc=0.98,
         relative_atol=0.01,
         compiler_config=cc,
         record_property_handle=record_property,
