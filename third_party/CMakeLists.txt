@@ -3,15 +3,58 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-# underlying tt-mlir version we will have tt-xla use
-set(TT_MLIR_VERSION "b03d526f953d654ef167faf534a20fd2b357ba76")
 # tt-xla version to use
-set(TTXLA_VERSION "3c34c7b8ef9b336e4cd6b84ad59bcc26317e9b88")
+set(TT_XLA_VERSION "3c34c7b8ef9b336e4cd6b84ad59bcc26317e9b88")
+
+# Optional override of tt-xla's TT_MLIR_VERSION. Default to tt-xla's default TT_MLIR_VERSION if we pass an empty string
+set(TT_MLIR_VERSION "")
+if(NOT TT_MLIR_VERSION STREQUAL "")
+    set(USE_CUSTOM_TT_MLIR_VERSION ON)
+    message(STATUS "Overriding TT_MLIR_VERSION in tt-xla build: ${TT_MLIR_VERSION}")
+    list(APPEND TT_XLA_MLIR_OVERRIDE_ARGS
+        -DUSE_CUSTOM_TT_MLIR_VERSION=ON
+        -DTT_MLIR_VERSION=${TT_MLIR_VERSION}
+    )
+else()
+    message(STATUS "Not overriding TT_MLIR_VERSION and using TT_XLA default tt-mlir version")
+endif()
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
     project(ttmlir-toolchain LANGUAGES CXX C)
+
+    # Extract TT_MLIR_VERSION from tt-xla repository only if not already set
+    if(TT_MLIR_VERSION STREQUAL "")
+        # Step 1: Download tt-xla's CMakeLists.txt from GitHub
+        set(TTXLA_CMAKE_URL "https://raw.githubusercontent.com/tenstorrent/tt-xla/${TT_XLA_VERSION}/third_party/CMakeLists.txt")
+        execute_process(
+            COMMAND curl -s ${TTXLA_CMAKE_URL}
+            OUTPUT_VARIABLE TTXLA_CMAKE_CONTENT
+            ERROR_QUIET
+        )
+
+        # Step 2: Extract TT_MLIR_VERSION that tt-xla is using
+        execute_process(
+            COMMAND bash -c "echo '${TTXLA_CMAKE_CONTENT}' | sed -n 's/.*set(TT_MLIR_VERSION \"\\(.*\\)\").*/\\1/p'"
+            OUTPUT_VARIABLE TT_XLA_FALLBACK_TT_MLIR_VERSION
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            ERROR_QUIET
+        )
+
+        # Use the fallback tt-mlir version from tt-xla to build the toolchain
+        if(TT_XLA_FALLBACK_TT_MLIR_VERSION STREQUAL "")
+            message(FATAL_ERROR "Could not extract TT_MLIR_VERSION from tt-xla")
+        else()
+            set(TT_MLIR_VERSION ${TT_XLA_FALLBACK_TT_MLIR_VERSION})
+            message(STATUS "Extracted TT_MLIR_VERSION from tt-xla: ${TT_MLIR_VERSION}")
+        endif()
+    else()
+        message(STATUS "Using provided override TT_MLIR_VERSION: ${TT_MLIR_VERSION}")
+    endif()
+
     if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tt-mlir/src/tt-mlir)
+        # Create the directory structure if it doesn't exist
+        file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tt-mlir/src)
         execute_process(
             COMMAND git clone --recursive https://github.com/tenstorrent/tt-mlir.git ${CMAKE_CURRENT_SOURCE_DIR}/tt-mlir/src/tt-mlir
         )
@@ -66,13 +109,12 @@ else()
             -DCMAKE_C_COMPILER=clang-17
             -DCMAKE_CXX_COMPILER=clang++-17
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-            -DUSE_CUSTOM_TT_MLIR_VERSION=ON
-            -DTT_MLIR_VERSION=${TT_MLIR_VERSION}
             -DTT_RUNTIME_DEBUG=${TT_RUNTIME_DEBUG}
             -DCMAKE_INSTALL_PREFIX=${TTXLA_INSTALL_PREFIX}
             -DTTMLIR_ENABLE_PERF_TRACE=${TT_RUNTIME_ENABLE_PERF_TRACE}
+            ${TT_XLA_MLIR_OVERRIDE_ARGS}
         GIT_REPOSITORY https://github.com/tenstorrent/tt-xla.git
-        GIT_TAG ${TTXLA_VERSION}
+        GIT_TAG ${TT_XLA_VERSION}
         GIT_PROGRESS ON
         BUILD_BYPRODUCTS
             ${TTXLA_PJRT_DYLIB}
