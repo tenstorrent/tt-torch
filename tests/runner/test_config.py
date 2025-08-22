@@ -22,21 +22,15 @@ test_config = {
     },
     "vovnet/pytorch-vovnet27s-full-eval": {
         "assert_pcc": False,
-        # Aug5: Issue https://github.com/tenstorrent/tt-torch/issues/1142
-        "status": ModelStatus.KNOWN_FAILURE_XFAIL,
-        "xfail_reason": "loc(\"reduce-window.234\"): error: 'ttir.max_pool2d' op output tensor height and width dimension (28, 28) do not match the expected dimensions (27, 28)",
+        "status": ModelStatus.EXPECTED_PASSING,
     },
     "vovnet/pytorch-vovnet39-full-eval": {
         "assert_pcc": False,
-        # Aug5: Issue https://github.com/tenstorrent/tt-torch/issues/1142
-        "status": ModelStatus.KNOWN_FAILURE_XFAIL,
-        "xfail_reason": "loc(\"reduce-window.234\"): error: 'ttir.max_pool2d' op output tensor height and width dimension (28, 28) do not match the expected dimensions (27, 28)",
+        "status": ModelStatus.EXPECTED_PASSING,
     },
     "vovnet/pytorch-vovnet57-full-eval": {
         "assert_pcc": False,
-        # Aug5: Issue https://github.com/tenstorrent/tt-torch/issues/1142
-        "status": ModelStatus.KNOWN_FAILURE_XFAIL,
-        "xfail_reason": "loc(\"reduce-window.234\"): error: 'ttir.max_pool2d' op output tensor height and width dimension (28, 28) do not match the expected dimensions (27, 28)",
+        "status": ModelStatus.EXPECTED_PASSING,
     },
     "hardnet/pytorch-full-eval": {
         "required_pcc": 0.98,
