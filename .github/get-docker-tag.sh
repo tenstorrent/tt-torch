@@ -82,4 +82,4 @@ MLIR_DOCKER_TAG=$(
 )
 DOCKERFILE_HASH=$( (cat .github/Dockerfile.base .github/Dockerfile.ci | sha256sum) | cut -d ' ' -f 1)
 COMBINED_HASH=$( (echo $DOCKERFILE_HASH $MLIR_DOCKER_TAG | sha256sum) | cut -d ' ' -f 1)
-echo dt-$COMBINED_HASH
+echo deezt-$COMBINED_HASH
