@@ -48,6 +48,9 @@ jobs:
           git clone https://github.com/tenstorrent/tt-xla.git tt-xla
           cd tt-xla
           # Fetch commit history between $COMMIT_SHA and LATEST_SHA
+          if [ -z ${{env.CURRENT_COMMIT_SHA}} ]; then
+            exit 1
+          fi
           git log --oneline ${{ env.CURRENT_COMMIT_SHA}}..${{ env.LATEST_SHA }} >>../commit_list.txt
           cd ..
           cat commit_list.txt

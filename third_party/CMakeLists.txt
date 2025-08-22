@@ -4,7 +4,7 @@
 #
 
 # tt-xla version to use
-set(TTXLA_VERSION "3c34c7b8ef9b336e4cd6b84ad59bcc26317e9b88")
+set(TT_XLA_VERSION "3c34c7b8ef9b336e4cd6b84ad59bcc26317e9b88")
 
 # Optional override of tt-xla's TT_MLIR_VERSION. Default to tt-xla's default TT_MLIR_VERSION if we pass an empty string
 set(TT_MLIR_VERSION "")
@@ -26,7 +26,7 @@ if (BUILD_TOOLCHAIN)
     # Extract TT_MLIR_VERSION from tt-xla repository only if not already set
     if(TT_MLIR_VERSION STREQUAL "")
         # Step 1: Download tt-xla's CMakeLists.txt from GitHub
-        set(TTXLA_CMAKE_URL "https://raw.githubusercontent.com/tenstorrent/tt-xla/${TTXLA_VERSION}/third_party/CMakeLists.txt")
+        set(TTXLA_CMAKE_URL "https://raw.githubusercontent.com/tenstorrent/tt-xla/${TT_XLA_VERSION}/third_party/CMakeLists.txt")
         execute_process(
             COMMAND curl -s ${TTXLA_CMAKE_URL}
             OUTPUT_VARIABLE TTXLA_CMAKE_CONTENT
@@ -114,7 +114,7 @@ else()
             -DTTMLIR_ENABLE_PERF_TRACE=${TT_RUNTIME_ENABLE_PERF_TRACE}
             ${TT_XLA_MLIR_OVERRIDE_ARGS}
         GIT_REPOSITORY https://github.com/tenstorrent/tt-xla.git
-        GIT_TAG ${TTXLA_VERSION}
+        GIT_TAG ${TT_XLA_VERSION}
         GIT_PROGRESS ON
         BUILD_BYPRODUCTS
             ${TTXLA_PJRT_DYLIB}

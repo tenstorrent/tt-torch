@@ -25,8 +25,8 @@ checkout_tt_xla() {
 }
 
 MLIR_DOCKER_TAG=$(
-    # Read tt-mlir version from third_party/tt-xla/src/tt-xla/third_party/CMakeLists.txt
-    # clone tt-mlir version to tmp/third_party/tt-mlir
+    # Read tt-mlir version from tt-xla's third_party/CMakeLists.txt
+    # Clone tt-mlir version to tmp/third_party/tt-mlir
     # Get the MLIR docker tag
 
     # Note - third_party/tt-xla is cloned at the commit specified by the TT_XLA_VERSION in third_party/CMakeLists.txt
@@ -44,7 +44,7 @@ MLIR_DOCKER_TAG=$(
         : # TT_MLIR_VERSION is directly set in third_party/CMakeLists.txt due to override or source modification
     else
         # Extract TT_MLIR_VERSION from tt-xla's CMakeLists.txt
-        TT_XLA_VERSION=$(grep -oP 'set\(TTXLA_VERSION "\K[^"]+' third_party/CMakeLists.txt || echo "")
+        TT_XLA_VERSION=$(grep -oP 'set\(TT_XLA_VERSION "\K[^"]+' third_party/CMakeLists.txt || echo "")
 
         if [ -z "$TT_XLA_VERSION" ]; then
             exit 1
