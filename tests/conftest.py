@@ -12,6 +12,9 @@ import xml.etree.ElementTree as ET
 import socket
 import os
 import tt_mlir
+import torch_xla.runtime as xr
+import torch_xla
+
 
 global junitxml_path
 junitxml_path = None
@@ -34,6 +37,34 @@ def manage_dependencies(request):
     subprocess.check_call(
         [sys.executable, "-m", "pip", "uninstall", "-y"] + dependencies
     )
+
+
+@pytest.fixture(scope="function")
+def use_xla_environment():
+    """Setup XLA environment for tensor parallelism."""
+    print("Setting up XLA environment...")
+    num_devices = xr.global_runtime_device_count()
+
+    # Enables the auto parallel pass in tt-mlir
+    os.environ["ENABLE_AUTO_PARALLEL"] = "TRUE"
+    # Converts the StableHLO emitted by torch-xla to the Shardy dialect
+    os.environ["CONVERT_SHLO_TO_SHARDY"] = "1"
+    # Sets the mesh shape used by the auto parallel pass
+    os.environ["MESH_SHAPE"] = f"1,{num_devices}"
+
+    os.environ["TT_TORCH_USE_EXPERIMENTAL_BACKEND"] = "1"
+    # Initialize SPMD
+    xr.use_spmd()
+
+    torch_xla.sync(True, True)
+    print("XLA environment configured.")
+
+    yield
+
+    os.environ.pop("ENABLE_AUTO_PARALLEL", None)
+    os.environ.pop("CONVERT_SHLO_TO_SHARDY", None)
+    os.environ.pop("MESH_SHAPE", None)
+    os.environ.pop("TT_TORCH_USE_EXPERIMENTAL_BACKEND", None)
 
 
 def pytest_addoption(parser):

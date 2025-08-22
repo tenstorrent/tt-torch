@@ -114,6 +114,7 @@ jobs:
             wh-runner: n300, name: "eval_6", pytest-args: "", tests: "
                 tests/torch/test_basic_async.py
                 tests/torch/test_basic_multichip.py
+                tests/torch/test_basic_sharding.py
                 tests/models/mnist/test_mnist.py::test_mnist_train[data_parallel-full-eval]
                 tests/models/resnet50/test_resnet50.py::test_resnet[data_parallel-full-eval]
                 tests/models/resnet/test_resnet.py::test_resnet[data_parallel-full-eval]
