@@ -44,7 +44,8 @@ def test_linear_param_sharded():
             return x @ self.sharded_weight
 
     cc = CompilerConfig()
-    cc.mesh = create_device_mesh()
+    cc.xla_mesh = create_device_mesh()
+
     test_class = Basic()
     weight_shard_spec = (None, "model")
     ts.mark_sharding(test_class.sharded_weight, weight_shard_spec)

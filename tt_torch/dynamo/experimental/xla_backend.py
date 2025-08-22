@@ -643,7 +643,7 @@ class XLAExecutor:
                 shard_spec = ts.get_sharding(device_tensor)
                 if shard_spec is not None:
                     xs.mark_sharding(
-                        device_tensor, self.compiler_config.mesh, shard_spec
+                        device_tensor, self.compiler_config.xla_mesh, shard_spec
                     )
                 self.inputs.append(device_tensor)
 
@@ -654,7 +654,7 @@ class XLAExecutor:
                 device_inputs = inputs.to(device)
                 if shard_spec is not None:
                     xs.mark_sharding(
-                        device_inputs, self.compiler_config.mesh, shard_spec
+                        device_inputs, self.compiler_config.xla_mesh, shard_spec
                     )
                 return device_inputs
             else:

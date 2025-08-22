@@ -52,7 +52,7 @@ def use_xla_environment():
     # Sets the mesh shape used by the auto parallel pass
     os.environ["MESH_SHAPE"] = f"1,{num_devices}"
 
-    os.environ["TT_TORCH_USE_EXPERIMENTAL_BACKEND"] = "1"
+    os.environ["TT_TORCH_FORCE_EXPERIMENTAL_BACKEND"] = "1"
     # Initialize SPMD
     xr.use_spmd()
 
@@ -64,7 +64,7 @@ def use_xla_environment():
     os.environ.pop("ENABLE_AUTO_PARALLEL", None)
     os.environ.pop("CONVERT_SHLO_TO_SHARDY", None)
     os.environ.pop("MESH_SHAPE", None)
-    os.environ.pop("TT_TORCH_USE_EXPERIMENTAL_BACKEND", None)
+    os.environ.pop("TT_TORCH_FORCE_EXPERIMENTAL_BACKEND", None)
 
 
 def pytest_addoption(parser):
