@@ -58,12 +58,11 @@ def test_yolos(record_property, mode, op_by_op, data_parallel_mode):
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
-    assert_pcc = tt_mlir.get_arch() != tt_mlir.Arch.BLACKHOLE
     tester = ThisTester(
         model_name,
         mode,
         required_pcc=0.98,
-        assert_pcc=assert_pcc,
+        assert_pcc=True,
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,
