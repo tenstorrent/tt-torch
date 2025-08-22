@@ -158,7 +158,7 @@ jobs:
           },
           {
             # only testing 4k variant as they're identical aside from token size
-            runs-on: wormhole_b0, name: "phi3", tests: "
+            runs-on: high-memory-wormhole, name: "phi3", tests: "
               tests/models/phi/test_phi_3.py::test_phi_3[op_by_op_torch-mini_4k_instruct-eval]
             "
           },
@@ -180,7 +180,7 @@ jobs:
             "
           },
           {
-            runs-on: wormhole_b0, name: "phi4", tests: "
+            runs-on: high-memory-wormhole, name: "phi4", tests: "
               tests/models/phi/test_phi_4.py::test_phi_4[op_by_op_torch-eval]
             "
           },
