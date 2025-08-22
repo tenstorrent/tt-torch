@@ -18,10 +18,6 @@ def create_device_mesh() -> Mesh:
     """
     Create device mesh for tensor parallelism.
 
-    Args:
-        num_devices: Total number of devices
-        mesh_shape: Shape of the device mesh (batch_dim, model_dim)
-
     Returns:
         Mesh object for SPMD operations
     """
