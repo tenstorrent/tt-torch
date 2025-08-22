@@ -5,7 +5,7 @@ import tt_torch
 
 import torch
 import pytest
-from transformers import AutoModelForCausalLM, LlamaConfig, LlamaModel
+from transformers import AutoModelForCausalLM, AutoConfig, AutoModel
 import torch_xla
 import torch_xla.runtime as xr
 import torch_xla.distributed.spmd as xs
@@ -17,7 +17,7 @@ from tt_torch.tools.utils import (
 
 
 def apply_tensor_parallel_sharding_base(
-    model: LlamaModel, mesh: Mesh, move_to_device: bool = True
+    model: AutoModel, mesh: Mesh, move_to_device: bool = True
 ) -> None:
     if move_to_device:
         model = model.to(torch_xla.device())
@@ -47,21 +47,22 @@ def apply_tensor_parallel_sharding_causal(
     [True, False],
     ids=["causal", "base"],
 )
-@pytest.mark.parametrize("sequence_length", [128, 256, 512], ids=["128", "256", "512"])
-def test_llama_8b_eager(run_causal, sequence_length):
+@pytest.mark.parametrize("sequence_length", [512], ids=["512"])
+def test_mistral_7b_eager(run_causal, sequence_length):
+    # Uncomment the below line if you want reproducibility across test runs
     torch.manual_seed(42)
 
     setup_xla_environment_for_tp()
     mesh = create_device_mesh((1, xr.global_runtime_device_count()), ("batch", "model"))
 
-    model_name = "meta-llama/Llama-3.1-8B"
-    config = LlamaConfig.from_pretrained(model_name)
+    model_name = "mistralai/Mistral-7B-v0.1"
+    config = AutoConfig.from_pretrained(model_name)
     if run_causal:
         model = AutoModelForCausalLM.from_pretrained(
             model_name, config=config, torch_dtype=torch.bfloat16
         ).eval()
     else:
-        model = LlamaModel.from_pretrained(
+        model = AutoModel.from_pretrained(
             model_name, config=config, torch_dtype=torch.bfloat16
         )
 
@@ -92,6 +93,17 @@ def test_llama_8b_eager(run_causal, sequence_length):
     else:
         tt_outputs = outputs.last_hidden_state.to("cpu")
 
-    pcc = calculate_pcc(tt_outputs, cpu_outputs)
+    def compute_pcc(x: torch.Tensor, y: torch.Tensor) -> float:
+        """Compute Pearson Correlation Coefficient."""
+        assert x.shape == y.shape, "Input tensors must have the same shape"
+        x_flat, y_flat = x.flatten(), y.flatten()
+        x_flat, y_flat = x_flat.float(), y_flat.float()
+        vx, vy = x_flat - x_flat.mean(), y_flat - y_flat.mean()
+        denom = vx.norm() * vy.norm()
+        if denom == 0:
+            return float("nan")
+        return float((vx @ vy) / denom)
+
+    pcc = compute_pcc(tt_outputs, cpu_outputs)
     print(f"PCC: {pcc}")
     assert pcc >= 0.95
