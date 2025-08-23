@@ -1118,6 +1118,9 @@ test_config = {
     "dla/pytorch-dla34.in1k-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
+    "googlenet/pytorch-googlenet-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
     "yolov10/pytorch-yolov10x-full-eval": {
         "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "skip_reason": "TorchMlirCompilerError: Lowering Torch Backend IR -> StableHLO Backend IR failed",
