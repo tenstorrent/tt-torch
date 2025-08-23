@@ -67,7 +67,7 @@ test_config = {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "resnet/pytorch-resnet_50_hf-full-eval": {
-        "required_pcc": 0.96,  # Aug 7 - Drop from 0.97 https://github.com/tenstorrent/tt-torch/issues/1151
+        "required_pcc": 0.98,
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "mamba/pytorch-mamba-790m-hf-full-eval": {
@@ -562,7 +562,6 @@ test_config = {
     },
     "bert/token_classification/pytorch-dbmdz/bert-large-cased-finetuned-conll03-english-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
-        "required_pcc": 0.98,  # Aug 7 - Drop from 0.99 https://github.com/tenstorrent/tt-torch/issues/1151
     },
     "bert/masked_lm/pytorch-bert-base-uncased-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
