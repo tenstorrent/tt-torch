@@ -531,6 +531,7 @@ test_config = {
     },
     "bert/token_classification/pytorch-dbmdz/bert-large-cased-finetuned-conll03-english-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
+        "required_pcc": 0.985,
     },
     "bert/masked_lm/pytorch-bert-base-uncased-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
