@@ -54,7 +54,7 @@ def test_all_models(test_entry, mode, op_by_op, record_property, test_metadata):
 
         cc = CompilerConfig()
         cc.enable_consteval = True
-        cc.consteval_parameters = True
+        cc.consteval_parameters = False
         if op_by_op:
             cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
             cc.op_by_op_backend = op_by_op
