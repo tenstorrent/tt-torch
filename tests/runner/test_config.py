@@ -64,7 +64,6 @@ test_config = {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "xglm/pytorch-xglm-1.7B-full-eval": {
-        "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "resnet/pytorch-resnet_50_hf-full-eval": {
@@ -96,27 +95,21 @@ test_config = {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "t5/pytorch-google/flan-t5-small-full-eval": {
-        "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "t5/pytorch-google/flan-t5-base-full-eval": {
-        "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "t5/pytorch-google/flan-t5-large-full-eval": {
-        "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "musicgen_small/pytorch-full-eval": {
-        "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "falcon/pytorch-tiiuae/Falcon3-1B-Base-full-eval": {
-        "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "falcon/pytorch-tiiuae/Falcon3-3B-Base-full-eval": {
-        "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "falcon/pytorch-tiiuae/Falcon3-7B-Base-full-eval": {
@@ -687,15 +680,12 @@ test_config = {
     "perceiverio_vision/pytorch-deepmind/vision-perceiver-fourier-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
         "required_pcc": 0.98,
-        # FIXME - PCC drop to 0.96 on Aug6 due to tt-mlir/tt-xla uplift (passed locally before it)
-        "assert_pcc": False,
     },
     "yolov8/pytorch-yolov8x-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
         "required_pcc": 0.98,
     },
     "albert/token_classification/pytorch-base_v2-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.9709743889025922 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "albert/token_classification/pytorch-xxlarge_v2-full-eval": {
@@ -727,11 +717,9 @@ test_config = {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "t5/pytorch-t5-base-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.8489356254421029 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "t5/pytorch-t5-large-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.5978668686425952 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "stereo/pytorch-medium-full-eval": {
@@ -739,43 +727,33 @@ test_config = {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "monodepth2/pytorch-mono_640x192-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.0017802508273225888 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "monodepth2/pytorch-stereo_no_pt_640x192-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.001758846541901752 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "monodepth2/pytorch-stereo_640x192-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.001758846541901752 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "monodepth2/pytorch-stereo_1024x320-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.001758846541901752 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "monodepth2/pytorch-mono_no_pt_640x192-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.001758846541901752 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "monodepth2/pytorch-mono_1024x320-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.001758846541901752 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "monodepth2/pytorch-mono+stereo_no_pt_640x192-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.001758846541901752 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "monodepth2/pytorch-mono+stereo_640x192-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.001758846541901752 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "monodepth2/pytorch-mono+stereo_1024x320-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.001758846541901752 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "stereo/pytorch-large-full-eval": {
-        "assert_pcc": False,  # PCC observed: -0.43084077321771863 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "qwen_3/embedding/pytorch-embedding_0_6b-full-eval": {
