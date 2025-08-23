@@ -309,5 +309,6 @@
     "tests/runner/test_models.py::test_all_models[stable_diffusion_unet/pytorch-base-full-eval]": 1892.177,
     "tests/runner/test_models.py::test_all_models[mlp_mixer/pytorch-mixer_github-full-eval]": 50.719,
     "tests/runner/test_models.py::test_all_models[rcnn/pytorch-alexnet-full-eval]": 38.031,
-    "tests/runner/test_models.py::test_all_models[dla/pytorch-dla34.in1k-full-eval]": 74.2
+    "tests/runner/test_models.py::test_all_models[dla/pytorch-dla34.in1k-full-eval]": 74.2,
+    "tests/runner/test_models.py::test_all_models[googlenet/pytorch-googlenet-full-eval]": 165.711
 }
