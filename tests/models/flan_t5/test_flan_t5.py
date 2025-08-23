@@ -7,7 +7,7 @@ import pytest
 from tests.utils import ModelTester
 import torch
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.t5.pytorch import ModelLoader
+from third_party.tt_forge_models.t5.pytorch import ModelLoader, ModelVariant
 
 
 class ThisTester(ModelTester):
@@ -36,8 +36,8 @@ def test_flan_t5(record_property, mode, op_by_op):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    loader = ModelLoader(variant=None)
-    model_info = loader.get_model_info(variant=None)
+    loader = ModelLoader(variant=ModelVariant.FLAN_T5_SMALL)
+    model_info = loader.get_model_info(variant=ModelVariant.FLAN_T5_SMALL)
 
     tester = ThisTester(
         model_info.name,
@@ -46,7 +46,7 @@ def test_flan_t5(record_property, mode, op_by_op):
         model_info=model_info,
         compiler_config=cc,
         record_property_handle=record_property,
-        assert_pcc=False,
+        assert_pcc=True,
         assert_atol=False,
         run_generate=False,
     )

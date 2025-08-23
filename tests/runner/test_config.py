@@ -22,30 +22,19 @@ test_config = {
     },
     "vovnet/pytorch-vovnet27s-full-eval": {
         "assert_pcc": False,
-        # Aug5: Issue https://github.com/tenstorrent/tt-torch/issues/1142
-        "status": ModelStatus.KNOWN_FAILURE_XFAIL,
-        "xfail_reason": "loc(\"reduce-window.234\"): error: 'ttir.max_pool2d' op output tensor height and width dimension (28, 28) do not match the expected dimensions (27, 28)",
+        "status": ModelStatus.EXPECTED_PASSING,
     },
     "vovnet/pytorch-vovnet39-full-eval": {
         "assert_pcc": False,
-        # Aug5: Issue https://github.com/tenstorrent/tt-torch/issues/1142
-        "status": ModelStatus.KNOWN_FAILURE_XFAIL,
-        "xfail_reason": "loc(\"reduce-window.234\"): error: 'ttir.max_pool2d' op output tensor height and width dimension (28, 28) do not match the expected dimensions (27, 28)",
+        "status": ModelStatus.EXPECTED_PASSING,
     },
     "vovnet/pytorch-vovnet57-full-eval": {
         "assert_pcc": False,
-        # Aug5: Issue https://github.com/tenstorrent/tt-torch/issues/1142
-        "status": ModelStatus.KNOWN_FAILURE_XFAIL,
-        "xfail_reason": "loc(\"reduce-window.234\"): error: 'ttir.max_pool2d' op output tensor height and width dimension (28, 28) do not match the expected dimensions (27, 28)",
+        "status": ModelStatus.EXPECTED_PASSING,
     },
     "hardnet/pytorch-full-eval": {
         "required_pcc": 0.98,
         "status": ModelStatus.EXPECTED_PASSING,
-        "arch_overrides": {
-            "blackhole": {
-                "required_pcc": 0.97,
-            },
-        },
     },
     "qwen_2_5/casual_lm/pytorch-1_5b-full-eval": {
         "assert_pcc": False,
@@ -70,11 +59,10 @@ test_config = {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "xglm/pytorch-xglm-1.7B-full-eval": {
-        "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "resnet/pytorch-resnet_50_hf-full-eval": {
-        "required_pcc": 0.96,  # Aug 7 - Drop from 0.97 https://github.com/tenstorrent/tt-torch/issues/1151
+        "required_pcc": 0.98,
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "mamba/pytorch-mamba-790m-hf-full-eval": {
@@ -102,27 +90,21 @@ test_config = {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "t5/pytorch-google/flan-t5-small-full-eval": {
-        "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "t5/pytorch-google/flan-t5-base-full-eval": {
-        "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "t5/pytorch-google/flan-t5-large-full-eval": {
-        "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "musicgen_small/pytorch-full-eval": {
-        "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "falcon/pytorch-tiiuae/Falcon3-1B-Base-full-eval": {
-        "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "falcon/pytorch-tiiuae/Falcon3-3B-Base-full-eval": {
-        "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "falcon/pytorch-tiiuae/Falcon3-7B-Base-full-eval": {
@@ -148,11 +130,6 @@ test_config = {
     },
     "albert/masked_lm/pytorch-base_v2-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
-        "arch_overrides": {
-            "blackhole": {
-                "required_pcc": 0.98,
-            },
-        },
     },
     "albert/masked_lm/pytorch-xlarge_v2-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -195,8 +172,6 @@ test_config = {
     },
     "densenet/pytorch-densenet161-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
-        # PCC Drop to 0.41146078113061335 Aug5: Issue https://github.com/tenstorrent/tt-torch/issues/1142
-        "assert_pcc": False,
     },
     "densenet/pytorch-densenet169-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -332,13 +307,6 @@ test_config = {
     },
     "mamba/pytorch-mamba-1.4b-hf-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
-        "arch_overrides": {
-            "blackhole": {
-                "status": ModelStatus.NOT_SUPPORTED_SKIP,
-                "skip_reason": "Takes forever on blackhole runner",
-                "skip_bringup_status": "FAILED_RUNTIME",
-            },
-        },
     },
     "mamba/pytorch-mamba-370m-hf-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -460,11 +428,6 @@ test_config = {
     },
     "vgg/pytorch-vgg16_bn-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
-        "arch_overrides": {
-            "blackhole": {
-                "required_pcc": 0.98,
-            },
-        },
     },
     "vgg/pytorch-vgg16-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -502,13 +465,6 @@ test_config = {
     "mamba/pytorch-mamba-2.8b-hf-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
         "required_pcc": 0.98,
-        "arch_overrides": {
-            "blackhole": {
-                "status": ModelStatus.NOT_SUPPORTED_SKIP,
-                "skip_reason": "Takes forever on blackhole runner",
-                "skip_bringup_status": "FAILED_RUNTIME",
-            },
-        },
     },
     "deit/pytorch-base-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -577,7 +533,6 @@ test_config = {
     },
     "bert/token_classification/pytorch-dbmdz/bert-large-cased-finetuned-conll03-english-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
-        "required_pcc": 0.98,  # Aug 7 - Drop from 0.99 https://github.com/tenstorrent/tt-torch/issues/1151
     },
     "bert/masked_lm/pytorch-bert-base-uncased-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -670,11 +625,6 @@ test_config = {
     "yolos/pytorch-full-eval": {
         "required_pcc": 0.98,
         "status": ModelStatus.EXPECTED_PASSING,
-        "arch_overrides": {
-            "blackhole": {
-                "required_pcc": 0.97,
-            },
-        },
     },
     "perceiverio_vision/pytorch-deepmind/vision-perceiver-conv-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -695,15 +645,12 @@ test_config = {
     "perceiverio_vision/pytorch-deepmind/vision-perceiver-fourier-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
         "required_pcc": 0.98,
-        # FIXME - PCC drop to 0.96 on Aug6 due to tt-mlir/tt-xla uplift (passed locally before it)
-        "assert_pcc": False,
     },
     "yolov8/pytorch-yolov8x-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
         "required_pcc": 0.98,
     },
     "albert/token_classification/pytorch-base_v2-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.9709743889025922 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "albert/token_classification/pytorch-xxlarge_v2-full-eval": {
@@ -727,7 +674,6 @@ test_config = {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "stereo/pytorch-small-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.9212397387139992 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "albert/token_classification/pytorch-xlarge_v2-full-eval": {
@@ -735,11 +681,9 @@ test_config = {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "t5/pytorch-t5-base-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.8489356254421029 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "t5/pytorch-t5-large-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.5978668686425952 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "stereo/pytorch-medium-full-eval": {
@@ -747,39 +691,30 @@ test_config = {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "monodepth2/pytorch-mono_640x192-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.0017802508273225888 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "monodepth2/pytorch-stereo_no_pt_640x192-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.001758846541901752 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "monodepth2/pytorch-stereo_640x192-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.001758846541901752 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "monodepth2/pytorch-stereo_1024x320-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.001758846541901752 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "monodepth2/pytorch-mono_no_pt_640x192-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.001758846541901752 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "monodepth2/pytorch-mono_1024x320-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.001758846541901752 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "monodepth2/pytorch-mono+stereo_no_pt_640x192-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.001758846541901752 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "monodepth2/pytorch-mono+stereo_640x192-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.001758846541901752 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "monodepth2/pytorch-mono+stereo_1024x320-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.001758846541901752 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "stereo/pytorch-large-full-eval": {
@@ -789,11 +724,6 @@ test_config = {
     "qwen_3/embedding/pytorch-embedding_0_6b-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
         "required_pcc": 0.98,
-        "arch_overrides": {
-            "blackhole": {
-                "required_pcc": 0.97,
-            },
-        },
     },
     "qwen_3/embedding/pytorch-embedding_4b-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -900,18 +830,13 @@ test_config = {
     "qwen_2_5_coder/pytorch-0_5b-full-eval": {
         "required_pcc": 0.97,
         "status": ModelStatus.EXPECTED_PASSING,
-        "arch_overrides": {
-            "blackhole": {
-                "required_pcc": 0.96,
-            },
-        },
     },
     "qwen_2_5/casual_lm/pytorch-0_5b-full-eval": {
         "required_pcc": 0.98,
         "status": ModelStatus.EXPECTED_PASSING,
         "arch_overrides": {
             "blackhole": {
-                "required_pcc": 0.97,
+                "required_pcc": 0.97,  # https://github.com/tenstorrent/tt-torch/issues/1192
             },
         },
     },
@@ -932,31 +857,16 @@ test_config = {
         # FIXME - PCC check should consider attention_mask: https://github.com/tenstorrent/tt-torch/issues/1176
         "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
-        "arch_overrides": {
-            "blackhole": {
-                "required_pcc": 0.97,
-            },
-        },
     },
     "qwen_2_5/casual_lm/pytorch-0_5b_instruct-full-eval": {
         "required_pcc": 0.98,
         "status": ModelStatus.EXPECTED_PASSING,
-        "arch_overrides": {
-            "blackhole": {
-                "required_pcc": 0.97,
-            },
-        },
     },
     "llama/causal_lm/pytorch-llama_3_2_3b_instruct-full-eval": {
         "required_pcc": 0.98,
         # FIXME - PCC check should consider attention_mask: https://github.com/tenstorrent/tt-torch/issues/1176
         "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
-        "arch_overrides": {
-            "blackhole": {
-                "required_pcc": 0.97,
-            },
-        },
     },
     "yolov6/pytorch-yolov6n-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -1146,6 +1056,9 @@ test_config = {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "dla/pytorch-dla34.in1k-full-eval": {
+        "status": ModelStatus.EXPECTED_PASSING,
+    },
+    "googlenet/pytorch-googlenet-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "yolov10/pytorch-yolov10x-full-eval": {
