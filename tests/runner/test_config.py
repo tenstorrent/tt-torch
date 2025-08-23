@@ -35,11 +35,6 @@ test_config = {
     "hardnet/pytorch-full-eval": {
         "required_pcc": 0.98,
         "status": ModelStatus.EXPECTED_PASSING,
-        "arch_overrides": {
-            "blackhole": {
-                "required_pcc": 0.97,
-            },
-        },
     },
     "qwen_2_5/casual_lm/pytorch-1_5b-full-eval": {
         "assert_pcc": False,
@@ -135,11 +130,6 @@ test_config = {
     },
     "albert/masked_lm/pytorch-base_v2-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
-        "arch_overrides": {
-            "blackhole": {
-                "required_pcc": 0.98,
-            },
-        },
     },
     "albert/masked_lm/pytorch-xlarge_v2-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -317,13 +307,6 @@ test_config = {
     },
     "mamba/pytorch-mamba-1.4b-hf-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
-        "arch_overrides": {
-            "blackhole": {
-                "status": ModelStatus.NOT_SUPPORTED_SKIP,
-                "skip_reason": "Takes forever on blackhole runner",
-                "skip_bringup_status": "FAILED_RUNTIME",
-            },
-        },
     },
     "mamba/pytorch-mamba-370m-hf-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -445,11 +428,6 @@ test_config = {
     },
     "vgg/pytorch-vgg16_bn-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
-        "arch_overrides": {
-            "blackhole": {
-                "required_pcc": 0.98,
-            },
-        },
     },
     "vgg/pytorch-vgg16-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -487,13 +465,6 @@ test_config = {
     "mamba/pytorch-mamba-2.8b-hf-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
         "required_pcc": 0.98,
-        "arch_overrides": {
-            "blackhole": {
-                "status": ModelStatus.NOT_SUPPORTED_SKIP,
-                "skip_reason": "Takes forever on blackhole runner",
-                "skip_bringup_status": "FAILED_RUNTIME",
-            },
-        },
     },
     "deit/pytorch-base-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -654,11 +625,6 @@ test_config = {
     "yolos/pytorch-full-eval": {
         "required_pcc": 0.98,
         "status": ModelStatus.EXPECTED_PASSING,
-        "arch_overrides": {
-            "blackhole": {
-                "required_pcc": 0.97,
-            },
-        },
     },
     "perceiverio_vision/pytorch-deepmind/vision-perceiver-conv-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -758,11 +724,6 @@ test_config = {
     "qwen_3/embedding/pytorch-embedding_0_6b-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
         "required_pcc": 0.98,
-        "arch_overrides": {
-            "blackhole": {
-                "required_pcc": 0.97,
-            },
-        },
     },
     "qwen_3/embedding/pytorch-embedding_4b-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -869,18 +830,13 @@ test_config = {
     "qwen_2_5_coder/pytorch-0_5b-full-eval": {
         "required_pcc": 0.97,
         "status": ModelStatus.EXPECTED_PASSING,
-        "arch_overrides": {
-            "blackhole": {
-                "required_pcc": 0.96,
-            },
-        },
     },
     "qwen_2_5/casual_lm/pytorch-0_5b-full-eval": {
         "required_pcc": 0.98,
         "status": ModelStatus.EXPECTED_PASSING,
         "arch_overrides": {
             "blackhole": {
-                "required_pcc": 0.97,
+                "required_pcc": 0.97,  # https://github.com/tenstorrent/tt-torch/issues/1192
             },
         },
     },
@@ -901,31 +857,16 @@ test_config = {
         # FIXME - PCC check should consider attention_mask: https://github.com/tenstorrent/tt-torch/issues/1176
         "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
-        "arch_overrides": {
-            "blackhole": {
-                "required_pcc": 0.97,
-            },
-        },
     },
     "qwen_2_5/casual_lm/pytorch-0_5b_instruct-full-eval": {
         "required_pcc": 0.98,
         "status": ModelStatus.EXPECTED_PASSING,
-        "arch_overrides": {
-            "blackhole": {
-                "required_pcc": 0.97,
-            },
-        },
     },
     "llama/causal_lm/pytorch-llama_3_2_3b_instruct-full-eval": {
         "required_pcc": 0.98,
         # FIXME - PCC check should consider attention_mask: https://github.com/tenstorrent/tt-torch/issues/1176
         "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
-        "arch_overrides": {
-            "blackhole": {
-                "required_pcc": 0.97,
-            },
-        },
     },
     "yolov6/pytorch-yolov6n-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
