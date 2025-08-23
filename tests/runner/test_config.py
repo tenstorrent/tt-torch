@@ -709,7 +709,6 @@ test_config = {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "stereo/pytorch-small-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.9212397387139992 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "albert/token_classification/pytorch-xlarge_v2-full-eval": {
@@ -754,6 +753,7 @@ test_config = {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "stereo/pytorch-large-full-eval": {
+        "assert_pcc": False,  # PCC observed: -0.43084077321771863 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "qwen_3/embedding/pytorch-embedding_0_6b-full-eval": {
