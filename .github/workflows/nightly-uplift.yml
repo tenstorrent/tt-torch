@@ -51,9 +51,9 @@ jobs:
           if [ -z ${{env.CURRENT_COMMIT_SHA}} ]; then
             exit 1
           fi
-          echo "```" >> ../commit_list.txt
-          git log --format="%cd (%h) by %cn (Author %ae) : %s" --date=short ${{ env.CURRENT_COMMIT_SHA}}..${{ env.LATEST_SHA }} >>../commit_list.txt
-          echo "```" >> ../commit_list.txt
+          echo '```' >> ../commit_list.txt
+          git log --format='%cd (%h) by %cn (Author %ae) : %s' --date=short ${{ env.CURRENT_COMMIT_SHA}}..${{ env.LATEST_SHA }} >> ../commit_list.txt
+          echo '```' >> ../commit_list.txt
           cd ..
           cat commit_list.txt
 
@@ -61,11 +61,11 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         id: create-pr
         with:
-          branch: uplift
+          branch: uplift_testing
           committer: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
           author: ${{ github.actor }} <${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com>
           base: main
-          commit-message: "Uplift ${{ env.SUBMODULE_PATH }} to ${{ env.SUBMODULE_VERSION }} ${{ env.TODAY }}"
+          commit-message: "Uplift Testing ${{ env.SUBMODULE_PATH }} to ${{ env.SUBMODULE_VERSION }} ${{ env.TODAY }}"
           title: "Uplift ${{ env.SUBMODULE_PATH }} to ${{ env.SUBMODULE_VERSION }} ${{ env.TODAY }}"
           body: "This PR uplifts the ${{ env.SUBMODULE_PATH }} to the ${{ env.SUBMODULE_VERSION }}"
           labels: uplift
