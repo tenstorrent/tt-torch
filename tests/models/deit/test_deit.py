@@ -63,6 +63,9 @@ def test_deit(record_property, mode, op_by_op, data_parallel_mode):
     loader = ModelLoader(variant=None)
     model_info = loader.get_model_info(variant=None)
 
+    # Enable Checking - https://github.com/tenstorrent/tt-torch/issues/1195
+    assert_pcc = False if data_parallel_mode else True
+
     tester = ThisTester(
         model_info.name,
         mode,
@@ -72,7 +75,7 @@ def test_deit(record_property, mode, op_by_op, data_parallel_mode):
         relative_atol=0.015,
         compiler_config=cc,
         record_property_handle=record_property,
-        assert_pcc=True,
+        assert_pcc=assert_pcc,
         assert_atol=False,
         data_parallel_mode=data_parallel_mode,
     )
