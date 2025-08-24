@@ -19,6 +19,9 @@ from tt_torch.tools.utils import (
 from .decompositions import (
     CUSTOM_DECOMPOSITION_TABLE,
 )
+from .transformations import (
+    ReplaceRandWithConstant,
+)
 
 
 def run_shape_prop(gm, example_inputs):
@@ -585,6 +588,8 @@ def run_pass_pipeline_for_single_gm(
         .run_decompositions(decompositions)
         .module()
     )
+
+    gm_device = ReplaceRandWithConstant(gm_device).transform()
     gm_device = bypass_dtype_promotion(gm_device, compiler_config)
     # shape prop also propagates dtypes, need to run to figure out which casts are redundant
     run_shape_prop(gm_device, example_inputs)
