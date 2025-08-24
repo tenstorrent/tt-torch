@@ -10,100 +10,100 @@ test_config = {
         # "required_pcc": 0.98,
         # PCC decreased with inputs changes to 0.946 in BH / 0.887 in WH
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "gpt_neo/causal_lm/pytorch-gpt_neo_1_3B-full-eval": {
         "required_pcc": 0.98,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "gpt_neo/causal_lm/pytorch-gpt_neo_2_7B-full-eval": {
         "assert_pcc": False,  # 0.749 on BH / 0.76 on WH
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "vovnet/pytorch-vovnet27s-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "vovnet/pytorch-vovnet39-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "vovnet/pytorch-vovnet57-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "hardnet/pytorch-full-eval": {
         "required_pcc": 0.98,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "qwen_2_5/casual_lm/pytorch-1_5b-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "clip/pytorch-openai/clip-vit-base-patch32-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "wide_resnet/pytorch-wide_resnet50_2-full-eval": {
         "required_pcc": 0.98,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "wide_resnet/pytorch-wide_resnet101_2-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "bloom/pytorch-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "xglm/pytorch-xglm-564M-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "xglm/pytorch-xglm-1.7B-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "resnet/pytorch-resnet_50_hf-full-eval": {
         "required_pcc": 0.98,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mamba/pytorch-mamba-790m-hf-full-eval": {
         "required_pcc": 0.96,  # BH is higher at 0.97
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "openpose/v2/pytorch-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "albert/masked_lm/pytorch-xxlarge_v2-full-eval": {
         "required_pcc": 0.98,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "albert/masked_lm/pytorch-large_v2-full-eval": {
         "required_pcc": 0.98,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "yolov3/pytorch-base-full-eval": {
         "required_pcc": 0.98,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "yolov4/pytorch-base-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "t5/pytorch-google/flan-t5-small-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "t5/pytorch-google/flan-t5-base-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "t5/pytorch-google/flan-t5-large-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "musicgen_small/pytorch-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "falcon/pytorch-tiiuae/Falcon3-1B-Base-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "falcon/pytorch-tiiuae/Falcon3-3B-Base-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "falcon/pytorch-tiiuae/Falcon3-7B-Base-full-eval": {
         "assert_pcc": False,
@@ -124,713 +124,713 @@ test_config = {
         "skip_bringup_status": "FAILED_RUNTIME",
     },
     "yolov5/pytorch-yolov5s-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "albert/masked_lm/pytorch-base_v2-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "albert/masked_lm/pytorch-xlarge_v2-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "alexnet/pytorch-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "autoencoder_linear/pytorch-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "bart/pytorch-large-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "bert/question_answering/pytorch-phiyodr/bert-large-finetuned-squad2-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "bert/question_answering/pytorch-bert-large-cased-whole-word-masking-finetuned-squad-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "codegen/pytorch-Salesforce/codegen-350M-mono-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "codegen/pytorch-Salesforce/codegen-350M-multi-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "codegen/pytorch-Salesforce/codegen-350M-nl-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "deit/pytorch-base_distilled-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "deit/pytorch-small-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "deit/pytorch-tiny-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "densenet/pytorch-densenet121-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "densenet/pytorch-densenet161-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "densenet/pytorch-densenet169-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "densenet/pytorch-densenet201-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "distilbert/question_answering/pytorch-distilbert-base-cased-distilled-squad-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "distilbert/masked_lm/pytorch-distilbert-base-cased-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "distilbert/masked_lm/pytorch-distilbert-base-uncased-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "distilbert/masked_lm/pytorch-distilbert-base-multilingual-cased-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "distilbert/sequence_classification/pytorch-distilbert-base-uncased-finetuned-sst-2-english-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "distilbert/token_classification/pytorch-Davlan/distilbert-base-multilingual-cased-ner-hrl-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "dla/pytorch-dla102-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "dla/pytorch-dla102x2-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "dla/pytorch-dla102x-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "dla/pytorch-dla169-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "dla/pytorch-dla34-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "dla/pytorch-dla46_c-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "dla/pytorch-dla46x_c-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "dla/pytorch-dla60-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "dla/pytorch-dla60x_c-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "dla/pytorch-dla60x-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "dpr/question_encoder/pytorch-facebook/dpr-question_encoder-single-nq-base-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "dpr/question_encoder/pytorch-facebook/dpr-question_encoder-multiset-base-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "dpr/context_encoder/pytorch-facebook/dpr-ctx_encoder-single-nq-base-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "dpr/context_encoder/pytorch-facebook/dpr-ctx_encoder-multiset-base-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "dpr/reader/pytorch-facebook/dpr-reader-single-nq-base-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "dpr/reader/pytorch-facebook/dpr-reader-multiset-base-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "efficientnet/pytorch-efficientnet_b0-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "efficientnet/pytorch-efficientnet_b1-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "efficientnet/pytorch-efficientnet_b2-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "efficientnet/pytorch-efficientnet_b3-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "efficientnet/pytorch-efficientnet_b4-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "efficientnet/pytorch-efficientnet_b5-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "efficientnet/pytorch-efficientnet_b6-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "efficientnet/pytorch-efficientnet_b7-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "ghostnet/pytorch-ghostnet_100-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "ghostnet/pytorch-ghostnet_100.in1k-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "hrnet/pytorch-hrnet_w18-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "hrnet/pytorch-hrnet_w18.ms_aug_in1k-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "hrnet/pytorch-hrnet_w18_small-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "hrnet/pytorch-hrnet_w18_small_v2-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "hrnet/pytorch-hrnet_w30-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "hrnet/pytorch-hrnet_w32-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "hrnet/pytorch-hrnet_w40-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "hrnet/pytorch-hrnet_w44-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "hrnet/pytorch-hrnet_w48-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "hrnet/pytorch-hrnet_w64-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mamba/pytorch-mamba-1.4b-hf-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mamba/pytorch-mamba-370m-hf-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mgp_str_base/pytorch-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mlp_mixer/pytorch-mixer_b16_224_miil-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mlp_mixer/pytorch-mixer_b32_224-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mlp_mixer/pytorch-mixer_l32_224-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mlp_mixer/pytorch-mixer_s16_224-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mlp_mixer/pytorch-mixer_s32_224-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mlp_mixer/pytorch-mixer_b16_224_miil_in21k-full-eval": {
         "required_pcc": 0.97,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mnist/pytorch-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mobilenetv1/pytorch-mobilenet_v1-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mobilenetv2/pytorch-mobilenet_v2-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "nanogpt/pytorch-FinancialSupport/NanoGPT-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "regnet/pytorch-regnet_y_040-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "regnet/pytorch-regnet_y_064-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "regnet/pytorch-regnet_y_080-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "regnet/pytorch-regnet_y_120-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "regnet/pytorch-regnet_y_160-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "regnet/pytorch-regnet_y_320-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "resnext/pytorch-resnext101_32x8d-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "resnext/pytorch-resnext101_32x8d_wsl-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "resnext/pytorch-resnext50_32x4d-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "segformer/pytorch-mit_b0-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "segformer/pytorch-mit_b1-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "segformer/pytorch-mit_b2-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "segformer/pytorch-mit_b3-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "segformer/pytorch-mit_b4-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "segformer/pytorch-mit_b5-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "squeezebert/pytorch-squeezebert-mnli-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "swin/image_classification/pytorch-swin_t-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "swin/image_classification/pytorch-swin_s-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "swin/image_classification/pytorch-swin_b-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "swin/image_classification/pytorch-swin_v2_t-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "swin/image_classification/pytorch-swin_v2_s-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "swin/image_classification/pytorch-swin_v2_b-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "unet/pytorch-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "vgg/pytorch-vgg11_bn-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "vgg/pytorch-vgg11-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "vgg/pytorch-vgg13_bn-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "vgg/pytorch-vgg13-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "vgg/pytorch-vgg16_bn-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "vgg/pytorch-vgg16-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "vgg/pytorch-vgg19_bn-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "vgg/pytorch-vgg19-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "vit/pytorch-base-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "vit/pytorch-large-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "xception/pytorch-xception41-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "xception/pytorch-xception65-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "xception/pytorch-xception71-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "xception/pytorch-xception71.tf_in1k-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "roberta/masked_lm/pytorch-xlm_base-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "unet/torch_hub/pytorch-brain_segmentation-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mamba/pytorch-mamba-2.8b-hf-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "required_pcc": 0.98,
     },
     "deit/pytorch-base-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "required_pcc": 0.98,
     },
     "mlp_mixer/lucidrains/pytorch-base-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mistral/pytorch-ministral_3b_instruct-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "assert_pcc": False,
     },
     "mlp_mixer/pytorch-mixer_b16_224-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "assert_pcc": False,
     },
     "mlp_mixer/pytorch-mixer_b16_224_in21k-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "assert_pcc": False,
     },
     "mlp_mixer/pytorch-mixer_l16_224-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "assert_pcc": False,
     },
     "mlp_mixer/pytorch-mixer_l16_224_in21k-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "assert_pcc": False,
     },
     "mlp_mixer/pytorch-mixer_b16_224.goog_in21k-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "assert_pcc": False,
     },
     "phi2/causal_lm/pytorch-microsoft/phi-2-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "assert_pcc": False,
     },
     "phi2/causal_lm/pytorch-microsoft/phi-2-pytdml-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "assert_pcc": False,
     },
     "phi2/token_classification/pytorch-microsoft/phi-2-full-eval": {
         "required_pcc": 0.98,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "phi2/token_classification/pytorch-microsoft/phi-2-pytdml-full-eval": {
         "required_pcc": 0.98,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "phi2/sequence_classification/pytorch-microsoft/phi-2-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "phi2/sequence_classification/pytorch-microsoft/phi-2-pytdml-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "phi1_5/token_classification/pytorch-microsoft/phi-1_5-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "phi1_5/causal_lm/pytorch-microsoft/phi-1_5-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "phi1_5/sequence_classification/pytorch-microsoft/phi-1_5-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "roberta/pytorch-cardiffnlp/twitter-roberta-base-sentiment-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "bert/token_classification/pytorch-dbmdz/bert-large-cased-finetuned-conll03-english-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "required_pcc": 0.985,
     },
     "bert/masked_lm/pytorch-bert-base-uncased-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "bert/sequence_classification/pytorch-textattack/bert-base-uncased-SST-2-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "yoloworld/pytorch-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "opt/qa/pytorch-facebook/opt-125m-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "opt/qa/pytorch-facebook/opt-350m-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "opt/causal_lm/pytorch-facebook/opt-125m-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "opt/causal_lm/pytorch-facebook/opt-350m-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "opt/sequence_classification/pytorch-facebook/opt-125m-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "opt/sequence_classification/pytorch-facebook/opt-350m-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "opt/sequence_classification/pytorch-facebook/opt-1.3b-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "perceiver/pytorch-deepmind/language-perceiver-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "beit/pytorch-base-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "beit/pytorch-large-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "deepcogito/pytorch-v1_preview_llama_3b-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "segformer/semantic_segmentation/pytorch-b0_finetuned_ade_512_512-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "albert/token_classification/pytorch-base_v1-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "albert/token_classification/pytorch-large_v1-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "albert/token_classification/pytorch-xxlarge_v1-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "albert/masked_lm/pytorch-base_v1-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "albert/masked_lm/pytorch-large_v1-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "albert/masked_lm/pytorch-xlarge_v1-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "albert/masked_lm/pytorch-xxlarge_v1-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "albert/question_answering/pytorch-squad2-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "albert/sequence_classification/pytorch-imdb-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "fuyu/pytorch-adept/fuyu-8b-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "phi1/sequence_classification/pytorch-microsoft/phi-1-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "phi1/causal_lm/pytorch-microsoft/phi-1-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "phi1/token_classification/pytorch-microsoft/phi-1-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "bert/sentence_embedding_generation/pytorch-emrecan/bert-base-turkish-cased-mean-nli-stsb-tr-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "yolos/pytorch-full-eval": {
         "required_pcc": 0.98,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "perceiverio_vision/pytorch-deepmind/vision-perceiver-conv-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "required_pcc": 0.98,
     },
     "t5/pytorch-t5-small-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "albert/token_classification/pytorch-large_v2-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "required_pcc": 0.98,
     },
     "albert/token_classification/pytorch-xlarge_v1-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "required_pcc": 0.98,
     },
     "perceiverio_vision/pytorch-deepmind/vision-perceiver-fourier-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "required_pcc": 0.98,
     },
     "yolov8/pytorch-yolov8x-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "required_pcc": 0.98,
     },
     "albert/token_classification/pytorch-base_v2-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "albert/token_classification/pytorch-xxlarge_v2-full-eval": {
         "assert_pcc": False,  # PCC observed: 0.958276593048647 (below 0.99 threshold)
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "opt/causal_lm/pytorch-facebook/opt-1.3b-full-eval": {
         "assert_pcc": False,  # PCC observed: 0.9574284831613491 (below 0.99 threshold)
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "perceiverio_vision/pytorch-deepmind/vision-perceiver-learned-full-eval": {
         "assert_pcc": False,  # PCC observed: 0.9516052236372167 (below 0.99 threshold)
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "opt/qa/pytorch-facebook/opt-1.3b-full-eval": {
         "assert_pcc": False,  # PCC observed: 0.9410670165223607 (below 0.99 threshold)
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "yolov8/pytorch-yolov8n-full-eval": {
         "assert_pcc": False,  # PCC observed: 0.9296823098857484 (below 0.99 threshold)
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "stereo/pytorch-small-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "albert/token_classification/pytorch-xlarge_v2-full-eval": {
         "assert_pcc": False,  # PCC observed: 0.872334097539835 (below 0.99 threshold)
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "t5/pytorch-t5-base-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "t5/pytorch-t5-large-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "stereo/pytorch-medium-full-eval": {
         "assert_pcc": False,  # PCC observed: 0.3149577673900601 (below 0.99 threshold)
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "monodepth2/pytorch-mono_640x192-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "monodepth2/pytorch-stereo_no_pt_640x192-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "monodepth2/pytorch-stereo_640x192-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "monodepth2/pytorch-stereo_1024x320-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "monodepth2/pytorch-mono_no_pt_640x192-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "monodepth2/pytorch-mono_1024x320-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "monodepth2/pytorch-mono+stereo_no_pt_640x192-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "monodepth2/pytorch-mono+stereo_640x192-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "monodepth2/pytorch-mono+stereo_1024x320-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "stereo/pytorch-large-full-eval": {
         "assert_pcc": False,  # PCC observed: -0.43084077321771863 (below 0.99 threshold)
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "qwen_3/embedding/pytorch-embedding_0_6b-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "required_pcc": 0.98,
     },
     "qwen_3/embedding/pytorch-embedding_4b-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "required_pcc": 0.98,
     },
     "yolov5/pytorch-yolov5n-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "yolov5/pytorch-yolov5m-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "yolov5/pytorch-yolov5l-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "yolov5/pytorch-yolov5x-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "qwen_1_5/causal_lm/pytorch-0_5b-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "qwen_1_5/causal_lm/pytorch-0_5b_chat-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "llama/sequence_classification/pytorch-llama_3_2_1b-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "llama/sequence_classification/pytorch-llama_3_2_1b_instruct-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "llama/sequence_classification/pytorch-llama_3_2_3b-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "llama/sequence_classification/pytorch-llama_3_2_3b_instruct-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "qwen_3/causal_lm/pytorch-4b-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "qwen_3/causal_lm/pytorch-1_7b-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "qwen_2_5_coder/pytorch-3b-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "qwen_3/causal_lm/pytorch-0_6b-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "qwen_2_5/casual_lm/pytorch-3b-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "qwen_2_5/casual_lm/pytorch-3b_instruct-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "qwen_2_5_coder/pytorch-3b_instruct-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "qwen_2_5_coder/pytorch-1_5b-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "retinanet/pytorch-retinanet_rn34fpn-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "qwen_2_5/casual_lm/pytorch-1_5b_instruct-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "retinanet/pytorch-retinanet_rn18fpn-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "retinanet/pytorch-retinanet_rn152fpn-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "retinanet/pytorch-retinanet_rn50fpn-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "retinanet/pytorch-retinanet_rn101fpn-full-eval": {
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "inception/pytorch-inception_v4-full-eval": {
         "required_pcc": 0.97,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "inception/pytorch-inception_v4.tf_in1k-full-eval": {
         "required_pcc": 0.97,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "qwen_2_5_coder/pytorch-1_5b_instruct-full-eval": {
         "required_pcc": 0.97,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "qwen_2_5_coder/pytorch-0_5b-full-eval": {
         "required_pcc": 0.97,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "qwen_2_5/casual_lm/pytorch-0_5b-full-eval": {
         "required_pcc": 0.98,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "arch_overrides": {
             "blackhole": {
                 "required_pcc": 0.97,  # https://github.com/tenstorrent/tt-torch/issues/1192
@@ -841,42 +841,42 @@ test_config = {
         "required_pcc": 0.98,
         # FIXME - PCC check should consider attention_mask: https://github.com/tenstorrent/tt-torch/issues/1176
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "llama/causal_lm/pytorch-llama_3_2_3b-full-eval": {
         "required_pcc": 0.98,
         # FIXME - PCC check should consider attention_mask: https://github.com/tenstorrent/tt-torch/issues/1176
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "llama/causal_lm/pytorch-llama_3_2_1b_instruct-full-eval": {
         "required_pcc": 0.98,
         # FIXME - PCC check should consider attention_mask: https://github.com/tenstorrent/tt-torch/issues/1176
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "qwen_2_5/casual_lm/pytorch-0_5b_instruct-full-eval": {
         "required_pcc": 0.98,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "llama/causal_lm/pytorch-llama_3_2_3b_instruct-full-eval": {
         "required_pcc": 0.98,
         # FIXME - PCC check should consider attention_mask: https://github.com/tenstorrent/tt-torch/issues/1176
         "assert_pcc": False,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "yolov6/pytorch-yolov6n-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "yolov6/pytorch-yolov6s-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "yolov6/pytorch-yolov6m-full-eval": {
         "required_pcc": 0.98,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "yolov6/pytorch-yolov6l-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "yolox/pytorch-yolox_nano-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -900,163 +900,163 @@ test_config = {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "mobilenetv2/pytorch-google/deeplabv3_mobilenet_v2_1.0_513-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mobilenetv2/pytorch-mobilenet_v2_torchvision-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mobilenetv2/pytorch-mobilenetv2_100-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mobilenetv3/pytorch-mobilenet_v3_large-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mobilenetv3/pytorch-mobilenetv3_large_100-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "resnet/pytorch-resnet101-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "resnet/pytorch-resnet18-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "swin/image_classification/pytorch-microsoft/swin-tiny-patch4-window7-224-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "swin/image_classification/pytorch-microsoft/swinv2-tiny-patch4-window8-256-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "swin/masked_image_modeling/pytorch-microsoft/swinv2-tiny-patch4-window8-256-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "vit/pytorch-vit_b_16-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "vit/pytorch-vit_h_14-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "vit/pytorch-vit_l_16-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "vit/pytorch-vit_l_32-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mobilenetv1/pytorch-mobilenetv1_100.ra4_e3600_r224_in1k-full-eval": {
         "required_pcc": 0.97,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mobilenetv2/pytorch-google/mobilenet_v2_0.35_96-full-eval": {
         "required_pcc": 0.96,  # BH is higher at 0.97
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mobilenetv2/pytorch-google/mobilenet_v2_0.75_160-full-eval": {
         "required_pcc": 0.98,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mobilenetv2/pytorch-google/mobilenet_v2_1.0_224-full-eval": {
         "required_pcc": 0.98,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mobilenetv3/pytorch-mobilenet_v3_small-full-eval": {
         "required_pcc": 0.98,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mobilenetv3/pytorch-mobilenetv3_small_100-full-eval": {
         "required_pcc": 0.98,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "resnet/pytorch-resnet152-full-eval": {
         "required_pcc": 0.98,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "resnet/pytorch-resnet34-full-eval": {
         "required_pcc": 0.98,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "resnet/pytorch-resnet50-full-eval": {
         "required_pcc": 0.98,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "vit/pytorch-vit_b_32-full-eval": {
         "required_pcc": 0.98,
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "resnext/pytorch-resnext14_32x4d-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "resnext/pytorch-resnext26_32x4d-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "resnext/pytorch-resnext101_64x4d-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "inception/pytorch-inceptionv4-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "required_pcc": 0.97,
     },
     "regnet/pytorch-regnet_y_400mf-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "regnet/pytorch-regnet_y_800mf-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "regnet/pytorch-regnet_y_1_6gf-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "regnet/pytorch-regnet_y_3_2gf-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "regnet/pytorch-regnet_y_8gf-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "regnet/pytorch-regnet_y_16gf-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "regnet/pytorch-regnet_y_32gf-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "regnet/pytorch-regnet_x_400mf-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "regnet/pytorch-regnet_x_800mf-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "regnet/pytorch-regnet_x_1_6gf-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "regnet/pytorch-regnet_x_3_2gf-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "regnet/pytorch-regnet_x_8gf-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
         "required_pcc": 0.98,
     },
     "regnet/pytorch-regnet_x_16gf-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "regnet/pytorch-regnet_x_32gf-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "fpn/pytorch-resnet50_fpn_v2-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "ssd300_resnet50/pytorch-base-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "stable_diffusion_unet/pytorch-base-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "mlp_mixer/pytorch-mixer_github-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "rcnn/pytorch-alexnet-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "dla/pytorch-dla34.in1k-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "googlenet/pytorch-googlenet-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
     },
     "yolov10/pytorch-yolov10x-full-eval": {
         "status": ModelStatus.NOT_SUPPORTED_SKIP,
