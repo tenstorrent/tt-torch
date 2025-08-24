@@ -60,13 +60,15 @@ def test_whisper(record_property, mode, op_by_op, data_parallel_mode):
         if op_by_op == OpByOpBackend.STABLEHLO:
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
-    # TODO Enable checking - https://github.com/tenstorrent/tt-torch/issues/593
+    # Enable Checking - https://github.com/tenstorrent/tt-torch/issues/1195
+    assert_pcc = False if data_parallel_mode else True
+
     tester = ThisTester(
         model_name,
         mode,
         compiler_config=cc,
         record_property_handle=record_property,
-        assert_pcc=True,
+        assert_pcc=assert_pcc,
         assert_atol=False,
         data_parallel_mode=data_parallel_mode,
     )
