@@ -40,19 +40,21 @@ def manage_dependencies(request):
 
 
 @pytest.fixture(scope="function")
-def use_xla_environment():
+def use_xla_spmd_environment():
     """
     Setup XLA environment for tensor parallelism.
     SPMD and nonSPMD tests are not to be mixed in the same pytest process/test group.
     """
 
     env_vars_to_restore = {
-        "TT_TORCH_FORCE_EXPERIMENTAL_BACKEND": os.environ.get("TT_TORCH_FORCE_EXPERIMENTAL_BACKEND", None)
+        "TT_TORCH_FORCE_EXPERIMENTAL_BACKEND": os.environ.get(
+            "TT_TORCH_FORCE_EXPERIMENTAL_BACKEND", None
+        )
     }
 
     # Needed to set TT_TORCH_FORCE_EXPERIMENTAL_BACKEND to reuse verify_torch_module
     os.environ["TT_TORCH_FORCE_EXPERIMENTAL_BACKEND"] = "1"
-    sharding_utils.setup_xla_environment()
+    sharding_utils.setup_xla_spmd_environment()
 
     yield
 

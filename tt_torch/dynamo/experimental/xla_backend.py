@@ -642,6 +642,9 @@ class XLAExecutor:
                 shard_spec = sharding_utils.get_sharding(source_tensor)
                 device_tensor = source_tensor.to("xla")
                 if shard_spec is not None:
+                    assert (
+                        self.compiler_config.xla_mesh
+                    ), "compiler_config.xla_mesh must be set to mark_sharding on tensors"
                     xs.mark_sharding(
                         device_tensor, self.compiler_config.xla_mesh, shard_spec
                     )
@@ -653,6 +656,9 @@ class XLAExecutor:
                 shard_spec = sharding_utils.get_sharding(inputs)
                 device_inputs = inputs.to(device)
                 if shard_spec is not None:
+                    assert (
+                        self.compiler_config.xla_mesh
+                    ), "compiler_config.xla_mesh must be set to mark_sharding on tensors"
                     xs.mark_sharding(
                         device_inputs, self.compiler_config.xla_mesh, shard_spec
                     )

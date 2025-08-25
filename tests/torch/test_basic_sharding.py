@@ -29,7 +29,7 @@ def create_device_mesh() -> Mesh:
     return mesh
 
 
-@pytest.mark.usefixtures("use_xla_environment")
+@pytest.mark.usefixtures("use_xla_spmd_environment")
 def test_linear_param_sharded():
     class Basic(nn.Module):
         def __init__(self):
@@ -62,3 +62,26 @@ def test_linear_param_sharded():
     assert (
         weak_ref() is None
     ), "Reference to sharded weight torch.Tensor is still held after deleting the module"
+
+
+@pytest.mark.usefixtures("use_xla_spmd_environment")
+def test_duplicate_sharding_assert():
+    class Basic(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.sharded_weight = nn.Parameter(torch.randn(32, 128))
+
+        def forward(self, x):
+            return x @ self.sharded_weight
+
+    cc = CompilerConfig()
+    cc.xla_mesh = create_device_mesh()
+
+    test_class = Basic()
+    weight_shard_spec = (None, "model")
+    sharding_utils.mark_sharding(test_class.sharded_weight, weight_shard_spec)
+    with pytest.raises(
+        AssertionError,
+        match=r"Source tensor with shape (.+) is already marked for sharding with shard_spec .+",
+    ):
+        sharding_utils.mark_sharding(test_class.sharded_weight, weight_shard_spec)

@@ -23,6 +23,9 @@ class ShardingRegistry:
 
     def mark_sharding(self, tensor: torch.Tensor, shard_spec: ShardSpec) -> None:
         key = _tensor_key(tensor)
+        assert (
+            key not in self.shard_map
+        ), f"Source tensor with shape {tensor.shape} is already marked for sharding with shard_spec {self.shard_map[key]}"
         self.shard_map[key] = shard_spec
 
     def get_sharding(self, tensor: torch.Tensor) -> Optional[ShardSpec]:
@@ -48,7 +51,7 @@ def get_shard_map_size() -> int:
     return len(_sharding_registry.shard_map)
 
 
-def setup_xla_environment():
+def setup_xla_spmd_environment():
     """
     Configure XLA environment for SPMD.
 
