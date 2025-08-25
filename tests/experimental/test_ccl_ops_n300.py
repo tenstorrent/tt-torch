@@ -9,14 +9,16 @@ import torch_xla.core.xla_model as xm
 import torch_xla.distributed.spmd as xs
 import os
 import copy
-from tests.utils import create_device_mesh, setup_xla_environment_for_tp
+from tests.utils import create_device_mesh
 import pytest
 
 """
 These tests are meant to be run on an N300 (2 devices).
 """
 
+
 @pytest.mark.parametrize("shard_dim", [0, 1])
+@pytest.mark.usefixtures("use_xla_spmd_environment")
 def test_all_reduce(shard_dim):
     """Test all_reduce operation with sharding on different dimensions.
 
@@ -24,7 +26,6 @@ def test_all_reduce(shard_dim):
         shard_dim: Dimension to shard on (0 for batch, 1 for model)
     """
     os.environ["XLA_ALWAYS_ALLREDUCE"] = "1"
-    setup_xla_environment_for_tp()
 
     # Create tensor with values that make reduction easy to verify
     t = torch.ones(256, 512)
@@ -55,13 +56,13 @@ def test_all_reduce(shard_dim):
 
 
 @pytest.mark.parametrize("shard_dim", [0, 1])
+@pytest.mark.usefixtures("use_xla_spmd_environment")
 def test_all_gather(shard_dim):
     """Test all_gather operation with sharding on different dimensions.
 
     Args:
         shard_dim: Dimension to shard on (0 for batch, 1 for model)
     """
-    setup_xla_environment_for_tp()
 
     # Random inputs between 0 and 0.1
     t = (torch.rand(8192, 784) - 0.0) * 0.1

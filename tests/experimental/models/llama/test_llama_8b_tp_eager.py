@@ -5,12 +5,12 @@ import tt_torch
 
 import torch
 import pytest
-from transformers import AutoTokenizer, AutoModelForCausalLM, LlamaConfig, LlamaModel
+from transformers import AutoModelForCausalLM, LlamaConfig, LlamaModel
 import torch_xla
 import torch_xla.runtime as xr
 import torch_xla.distributed.spmd as xs
 from torch_xla.distributed.spmd import Mesh
-from tests.utils import create_device_mesh, setup_xla_environment_for_tp
+from tests.utils import create_device_mesh
 
 from tt_torch.tools.utils import (
     calculate_pcc,
@@ -49,10 +49,10 @@ def apply_tensor_parallel_sharding_causal(
     ids=["causal", "base"],
 )
 @pytest.mark.parametrize("sequence_length", [128, 256, 512], ids=["128", "256", "512"])
+@pytest.mark.usefixtures("use_xla_spmd_environment")
 def test_llama_8b_eager(run_causal, sequence_length):
     torch.manual_seed(42)
 
-    setup_xla_environment_for_tp()
     mesh = create_device_mesh((1, xr.global_runtime_device_count()), ("batch", "model"))
 
     model_name = "meta-llama/Llama-3.1-8B"
