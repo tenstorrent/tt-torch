@@ -151,8 +151,7 @@ jobs:
       if: ${{ env.RUN_TEST != 'skip' }}
       shell: bash
       run: |
-        BASE_PYTEST_CMD="
-          tests/runner/test_models.py::test_all_models[yolov6/pytorch-yolov6m-full-eval] \
+        BASE_PYTEST_CMD="tests/runner/test_models.py::test_all_models[yolov6/pytorch-yolov6m-full-eval] \
           tests/runner/test_models.py::test_all_models[yolox/pytorch-yolox_m-full-eval] \
           --log-memory-usage \
           --arch ${{ env.RUN_TEST }}"
