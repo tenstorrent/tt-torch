@@ -12,8 +12,6 @@ import xml.etree.ElementTree as ET
 import socket
 import os
 import tt_mlir
-import torch_xla.runtime as xr
-import torch_xla
 import tt_torch.dynamo.sharding_utils as sharding_utils
 
 global junitxml_path
