@@ -36,7 +36,6 @@ def test_phi_3p5_moe(record_property, mode, op_by_op):
 
     cc = CompilerConfig()
     cc.enable_consteval = True
-    # consteval_parameters is disabled because it results in a memory related crash
 
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
