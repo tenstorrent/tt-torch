@@ -12,6 +12,7 @@ import xml.etree.ElementTree as ET
 import socket
 import os
 import tt_mlir
+import tt_torch.dynamo.sharding_utils as sharding_utils
 
 global junitxml_path
 junitxml_path = None
@@ -34,6 +35,33 @@ def manage_dependencies(request):
     subprocess.check_call(
         [sys.executable, "-m", "pip", "uninstall", "-y"] + dependencies
     )
+
+
+@pytest.fixture(scope="function")
+def use_xla_spmd_environment():
+    """
+    Setup XLA environment for tensor parallelism.
+    SPMD and nonSPMD tests are not to be mixed in the same pytest process/test group.
+    """
+
+    env_vars_to_restore = {
+        "TT_TORCH_FORCE_EXPERIMENTAL_BACKEND": os.environ.get(
+            "TT_TORCH_FORCE_EXPERIMENTAL_BACKEND", None
+        )
+    }
+
+    # Needed to set TT_TORCH_FORCE_EXPERIMENTAL_BACKEND to reuse verify_torch_module
+    os.environ["TT_TORCH_FORCE_EXPERIMENTAL_BACKEND"] = "1"
+    sharding_utils.setup_xla_spmd_environment()
+
+    yield
+
+    # Restore original environment variable values
+    for var_name, original_value in env_vars_to_restore.items():
+        if original_value is None:
+            os.environ.pop(var_name, None)
+        else:
+            os.environ[var_name] = original_value
 
 
 def pytest_addoption(parser):
