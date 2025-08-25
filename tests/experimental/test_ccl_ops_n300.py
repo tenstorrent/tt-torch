@@ -13,7 +13,7 @@ from tests.utils import create_device_mesh, setup_xla_environment_for_tp
 import pytest
 
 """
-These tests are meant to be run on an LLMBox or T3K (8 devices).
+These tests are meant to be run on an N300 (2 devices).
 """
 
 @pytest.mark.parametrize("shard_dim", [0, 1])
@@ -25,7 +25,6 @@ def test_all_reduce(shard_dim):
     """
     os.environ["XLA_ALWAYS_ALLREDUCE"] = "1"
     setup_xla_environment_for_tp()
-    mesh = create_device_mesh((2, 4), ("batch", "model"))
 
     # Create tensor with values that make reduction easy to verify
     t = torch.ones(256, 512)
@@ -33,14 +32,14 @@ def test_all_reduce(shard_dim):
 
     if shard_dim == 0:
         # Shard on batch dimension (dim 0)
+        mesh = create_device_mesh((2, 1), ("batch", "model"))
         xs.mark_sharding(t, mesh, ("batch", None))
-        # For all_reduce on batch sharding: pair devices across batch rows
-        groups = [[0, 4], [1, 5], [2, 6], [3, 7]]
+        groups = [[0, 1]]
     elif shard_dim == 1:
         # Shard on model dimension (dim 1)
+        mesh = create_device_mesh((1, 2), ("batch", "model"))
         xs.mark_sharding(t, mesh, (None, "model"))
-        # For all_reduce on model sharding: two groups of 4 devices each
-        groups = [[0, 1, 2, 3], [4, 5, 6, 7]]
+        groups = [[0, 1]]
 
     # Perform all_reduce sum operation
     y = xm.all_reduce(xm.REDUCE_SUM, t, groups=groups)
@@ -50,12 +49,7 @@ def test_all_reduce(shard_dim):
     print(f"All-reduce shard dim: {shard_dim}, Y Shape: {y.shape}")
     print(f"y: {y}")
 
-    # All_reduce sums values across the sharded dimension within each group
-    # The result tensor has reduced shape along the sharded dimension
-    if shard_dim == 0:
-        expected = torch.ones(256, 512) * 2.0
-    elif shard_dim == 1:
-        expected = torch.ones(256, 512) * 4.0
+    expected = torch.ones(256, 512) * 2.0
 
     assert torch.allclose(y, expected, atol=0.001)
 
@@ -68,7 +62,6 @@ def test_all_gather(shard_dim):
         shard_dim: Dimension to shard on (0 for batch, 1 for model)
     """
     setup_xla_environment_for_tp()
-    mesh = create_device_mesh((2, 4), ("batch", "model"))
 
     # Random inputs between 0 and 0.1
     t = (torch.rand(8192, 784) - 0.0) * 0.1
@@ -78,16 +71,14 @@ def test_all_gather(shard_dim):
     t = t.to(torch_xla.device())
 
     if shard_dim == 0:
-        # Shard on batch dimension (dim 0)
+        mesh = create_device_mesh((2, 1), ("batch", "model"))
         xs.mark_sharding(t, mesh, ("batch", None))
-        # Correct replica groups for batch sharding: pair devices across batch rows
-        groups = [[0, 4], [1, 5], [2, 6], [3, 7]]
+        groups = [[0, 1]]
         gather_dim = 0
     else:
-        # Shard on model dimension (dim 1)
+        mesh = create_device_mesh((1, 2), ("batch", "model"))
         xs.mark_sharding(t, mesh, (None, "model"))
-        # For model sharding: two groups of 4 devices each (one group per batch row)
-        groups = [[0, 1, 2, 3], [4, 5, 6, 7]]
+        groups = [[0, 1]]
         gather_dim = 1
 
     y = xm.all_gather(t, gather_dim, groups=groups, pin_layout=False)
