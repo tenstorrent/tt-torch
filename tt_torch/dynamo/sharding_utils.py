@@ -3,6 +3,9 @@
 # SPDX-License-Identifier: Apache-2.0
 from typing import Tuple, Optional, Dict
 import torch
+import torch_xla.runtime as xr
+import torch_xla
+import os
 
 # Type aliases
 ShardSpec = Tuple[Optional[str], ...]
@@ -43,3 +46,24 @@ def get_sharding(tensor: torch.Tensor) -> Optional[ShardSpec]:
 def get_shard_map_size() -> int:
     """Get the number of tensors in the shard map."""
     return len(_sharding_registry.shard_map)
+
+
+def setup_xla_environment():
+    """
+    Configure XLA environment for SPMD.
+
+    Per torchxla issue https://github.com/pytorch/xla/issues/9578 SPMD enablement
+        is irreversible within the same process, so SPMD and non SPMD tests
+        should not be mixed.
+    """
+
+    # Converts the StableHLO emitted by torch-xla to the Shardy dialect
+    os.environ["CONVERT_SHLO_TO_SHARDY"] = "1"
+
+    # Initialize SPMD - This has some side effects that don't seem reversible https://github.com/pytorch/xla/issues/9578
+    # It is unsafe to run pytests using the XLA backend where some tests use SPMD and some don't in the same test process
+    xr.use_spmd()
+
+    torch_xla.sync(True, True)
+
+    print("XLA environment configured.")

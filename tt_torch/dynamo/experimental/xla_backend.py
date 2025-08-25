@@ -40,7 +40,7 @@ from tt_torch.tools.utils import (
 import torch_xla
 import torch_xla.core.xla_model as xm
 import torch_xla.distributed.spmd as xs
-import tt_torch.dynamo.sharding_utils as ts
+import tt_torch.dynamo.sharding_utils as sharding_utils
 
 from ..executor import get_inputs_size, gb_to_bytes
 
@@ -639,7 +639,7 @@ class XLAExecutor:
                 self.user_input_indices.append(idx)
             else:
                 source_tensor = self.program.state_dict[input_spec.target]
-                shard_spec = ts.get_sharding(source_tensor)
+                shard_spec = sharding_utils.get_sharding(source_tensor)
                 device_tensor = source_tensor.to("xla")
                 if shard_spec is not None:
                     xs.mark_sharding(
@@ -650,7 +650,7 @@ class XLAExecutor:
     def push_tensors_to_device(self, inputs, device):
         if hasattr(inputs, "to"):
             if device not in [inputs.device, inputs.device.type]:
-                shard_spec = ts.get_sharding(inputs)
+                shard_spec = sharding_utils.get_sharding(inputs)
                 device_inputs = inputs.to(device)
                 if shard_spec is not None:
                     xs.mark_sharding(

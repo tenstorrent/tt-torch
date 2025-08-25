@@ -14,7 +14,7 @@ import os
 import tt_mlir
 import torch_xla.runtime as xr
 import torch_xla
-
+import tt_torch.dynamo.sharding_utils as sharding_utils
 
 global junitxml_path
 junitxml_path = None
@@ -41,33 +41,18 @@ def manage_dependencies(request):
 
 @pytest.fixture(scope="function")
 def use_xla_environment():
-    """Setup XLA environment for tensor parallelism."""
-    print("Setting up XLA environment...")
-    num_devices = xr.global_runtime_device_count()
+    """
+    Setup XLA environment for tensor parallelism.
+    SPMD and nonSPMD tests are not to be mixed in the same pytest process/test group.
+    """
 
-    # Save original environment variable values
     env_vars_to_restore = {
-        "CONVERT_SHLO_TO_SHARDY": os.environ.get("CONVERT_SHLO_TO_SHARDY"),
-        "MESH_SHAPE": os.environ.get("MESH_SHAPE"),
-        "TT_TORCH_FORCE_EXPERIMENTAL_BACKEND": os.environ.get(
-            "TT_TORCH_FORCE_EXPERIMENTAL_BACKEND"
-        ),
+        "TT_TORCH_FORCE_EXPERIMENTAL_BACKEND": os.environ.get("TT_TORCH_FORCE_EXPERIMENTAL_BACKEND", None)
     }
 
-    # Converts the StableHLO emitted by torch-xla to the Shardy dialect
-    os.environ["CONVERT_SHLO_TO_SHARDY"] = "1"
-    # Sets the mesh shape used by the auto parallel pass
-    os.environ["MESH_SHAPE"] = f"1,{num_devices}"
-
-    # Needed to use verify torch module
+    # Needed to set TT_TORCH_FORCE_EXPERIMENTAL_BACKEND to reuse verify_torch_module
     os.environ["TT_TORCH_FORCE_EXPERIMENTAL_BACKEND"] = "1"
-
-    # Initialize SPMD - This has some side effects that don't seem reversible https://github.com/pytorch/xla/issues/9578
-    # It appears unsafe to run pytests using the XLA backend where some tests use SPMD and some don't in the same testgroup
-    xr.use_spmd()
-
-    torch_xla.sync(True, True)
-    print("XLA environment configured.")
+    sharding_utils.setup_xla_environment()
 
     yield
 

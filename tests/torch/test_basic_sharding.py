@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
-import tt_torch.dynamo.sharding_utils as ts
+import tt_torch.dynamo.sharding_utils as sharding_utils
 import torch
 import torch.nn as nn
 from tt_torch.dynamo.backend import CompilerConfig
@@ -44,10 +44,10 @@ def test_linear_param_sharded():
 
     test_class = Basic()
     weight_shard_spec = (None, "model")
-    ts.mark_sharding(test_class.sharded_weight, weight_shard_spec)
+    sharding_utils.mark_sharding(test_class.sharded_weight, weight_shard_spec)
 
     # Check that sharding annotation worked
-    assert ts.get_sharding(test_class.sharded_weight) == weight_shard_spec
+    assert sharding_utils.get_sharding(test_class.sharded_weight) == weight_shard_spec
 
     weak_ref = weakref.ref(test_class.sharded_weight)
 
