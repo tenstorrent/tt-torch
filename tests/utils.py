@@ -239,7 +239,7 @@ class ModelTester:
         # setting consteval parameters to false for the nightly (issue #1182)
         if self.compiler_config is not None:
             self.compiler_config.consteval_parameters = False
-        
+
         self.parent_device = None
         if self.data_parallel_mode:
             assert self.compiler_config.compile_depth not in (
