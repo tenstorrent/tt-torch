@@ -468,10 +468,11 @@ class CompilerConfig:
             self.dump_binary = True
 
     def post_init(self):
-        """if self.consteval_parameters:
-            torch._dynamo.config.inline_inbuilt_nn_modules = False
-        else:
-            torch._dynamo.config.inline_inbuilt_nn_modules = True"""
+        pass
+        # if self.consteval_parameters:
+        #     torch._dynamo.config.inline_inbuilt_nn_modules = False
+        # else:
+        #     torch._dynamo.config.inline_inbuilt_nn_modules = True
 
     def reset_unique_ops(self):
         self.unique_ops = {}
