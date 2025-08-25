@@ -37,7 +37,6 @@ def test_distilbert(record_property, model_name, mode, op_by_op):
 
     cc = CompilerConfig()
     cc.enable_consteval = True
-    cc.consteval_parameters = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
@@ -78,7 +77,6 @@ def test_distilbert_multiloop(record_property, model_name, mode, op_by_op, num_l
 
     cc = CompilerConfig()
     cc.enable_consteval = True
-    cc.consteval_parameters = True
     cc.cache_preprocessed_constants = True
 
     tester = ThisTester(

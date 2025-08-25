@@ -33,7 +33,6 @@ class ThisTester(ModelTester):
 def test_musicgen_small(record_property, mode, op_by_op, data_parallel_mode):
     cc = CompilerConfig()
     cc.enable_consteval = True
-    cc.consteval_parameters = True
     if op_by_op:
         if data_parallel_mode:
             pytest.skip("Op-by-op not supported in data parallel mode")

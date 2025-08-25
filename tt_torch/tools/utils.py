@@ -312,7 +312,6 @@ class CompilerConfig:
         self.op_by_op_backend = OpByOpBackend.TORCH
         self.enable_consteval = False
         self.enable_optimizer = False
-        self._consteval_parameters = False
         self._enable_intermediate_verification = False
         self.dump_debug = False
         self.dump_info = False
@@ -331,7 +330,6 @@ class CompilerConfig:
         self.valid_dialects = ["STABLEHLO", "TTIR", "TTNN"]
         self.device_map = {}
         self.apply_environment_overrides()
-        self.post_init()
         self.automatic_parallelization = False
         self.mesh_shape = [1, 1]
         self.push_outputs_to_cpu = True
@@ -406,14 +404,6 @@ class CompilerConfig:
         if self.runtime_intermediate_cache is None:
             self.runtime_intermediate_cache = {}
 
-    @property
-    def consteval_parameters(self):
-        return self._consteval_parameters
-
-    @consteval_parameters.setter
-    def consteval_parameters(self, value):
-        self._consteval_parameters = value
-        self.post_init()
 
     def apply_environment_overrides(self):
         compile_depth = os.environ.get("TT_TORCH_COMPILE_DEPTH")
@@ -434,9 +424,6 @@ class CompilerConfig:
         enable_optimizer = os.environ.get("TT_TORCH_OPTIMIZER")
         if enable_optimizer and int(enable_optimizer):
             self.enable_optimizer = True
-        consteval_parameters = os.environ.get("TT_TORCH_CONSTEVAL_PARAMETERS")
-        if consteval_parameters and int(consteval_parameters):
-            self.consteval_parameters = True
         inline_parameters = os.environ.get("TT_TORCH_INLINE_PARAMETERS")
         if inline_parameters and int(inline_parameters):
             self.inline_parameters = True
@@ -465,12 +452,6 @@ class CompilerConfig:
         dump_binary = os.environ.get("TT_TORCH_SAVE_BINARY")
         if dump_binary and int(dump_binary):
             self.dump_binary = True
-
-    def post_init(self):
-        if self.consteval_parameters:
-            torch._dynamo.config.inline_inbuilt_nn_modules = False
-        else:
-            torch._dynamo.config.inline_inbuilt_nn_modules = True
 
     def reset_unique_ops(self):
         self.unique_ops = {}
@@ -564,7 +545,6 @@ class CompilerConfig:
             "single_op_timeout": self.single_op_timeout,
             "enable_consteval": self.enable_consteval,
             "enable_optimizer": self.enable_optimizer,
-            "_consteval_parameters": self._consteval_parameters,
             "_enable_intermediate_verification": self._enable_intermediate_verification,
             "_verify_op_by_op": self._verify_op_by_op,
         }

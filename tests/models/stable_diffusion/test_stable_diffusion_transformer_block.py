@@ -59,7 +59,6 @@ def test_stable_diffusion_transformer_block(record_property, model_info, mode):
 
     cc = CompilerConfig()
     cc.enable_consteval = True
-    cc.consteval_parameters = True
 
     tester = ThisTester(
         model_name,

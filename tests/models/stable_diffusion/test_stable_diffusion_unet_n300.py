@@ -74,7 +74,6 @@ def test_stable_diffusion_unet(record_property, mode, op_by_op):
 
     cc = CompilerConfig()
     cc.enable_consteval = True
-    cc.consteval_parameters = True
     cc.automatic_parallelization = True
     cc.mesh_shape = [1, 2]
     cc.dump_debug = True

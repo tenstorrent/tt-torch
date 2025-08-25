@@ -84,7 +84,6 @@ def test_llama_7b_pipeline_parallel(record_property, model_name, mode):
     options.compiler_config = cc
     cc.device_map = device_map
     cc.enable_consteval = True
-    cc.consteval_parameters = True
     options.devices = [device1, device2]
     compiled_model = torch.compile(model, backend="tt", dynamic=False, options=options)
     out = compiled_model(**test_input)

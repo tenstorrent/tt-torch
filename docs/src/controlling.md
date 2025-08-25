@@ -34,7 +34,6 @@ model = MyModel()
 
 cc = CompilerConfig()
 cc.enable_consteval = True
-cc.consteval_parameters = True # This will enable constant folding on the parameters in addition to any constants
 
 options = BackendOptions()
 options.compiler_config = cc
