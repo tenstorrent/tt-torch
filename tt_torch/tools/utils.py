@@ -404,7 +404,6 @@ class CompilerConfig:
         if self.runtime_intermediate_cache is None:
             self.runtime_intermediate_cache = {}
 
-
     def apply_environment_overrides(self):
         compile_depth = os.environ.get("TT_TORCH_COMPILE_DEPTH")
         if compile_depth:
