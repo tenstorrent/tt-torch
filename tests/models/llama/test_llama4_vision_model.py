@@ -21,7 +21,8 @@ def reshape_for_broadcast(freqs: torch.Tensor, query: torch.Tensor):
 def real_valued_vision_apply_rotary_emb(
     query: torch.Tensor,
     key: torch.Tensor,
-    freqs_ci: Tuple[torch.Tensor, torch.Tensor],
+    freqs_cos: torch.Tensor,
+    freqs_sin: torch.Tensor,
 ) -> Tuple[torch.Tensor, torch.Tensor]:
     """
     Apply rotary embedding using real-valued arithmetic instead of complex numbers.
@@ -29,15 +30,7 @@ def real_valued_vision_apply_rotary_emb(
     This implements the same rotation as complex multiplication but using only real tensors:
     x' = x * cos(θ) - y * sin(θ)
     y' = x * sin(θ) + y * cos(θ)
-
-    Args:
-        query: Query tensor
-        key: Key tensor
-        freqs_ci: Tuple of (freqs_cos, freqs_sin) tensors
     """
-    # Extract cos and sin from the tuple
-    freqs_cos, freqs_sin = freqs_ci
-
     # Reshape query and key to separate real/imaginary parts
     query_real, query_imag = query.float().chunk(2, dim=-1)
     key_real, key_imag = key.float().chunk(2, dim=-1)
@@ -93,6 +86,26 @@ class RealValuedVisionRotaryEmbedding(nn.Module):
         )
 
 
+# Temporary monkeypatch to avoid complex tensors, need to revisit this
+class MockVisionRotaryEmbedding(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        image_size = config.image_size
+        patch_size = config.patch_size
+        self.num_patches = (image_size // patch_size) ** 2 + 1
+        self.head_dim = config.hidden_size // config.num_attention_heads
+
+    def forward(self, pixel_values):
+        # CRITICAL: Create tensor with float32 dtype to avoid XLA issues
+        return torch.ones(
+            self.num_patches,
+            self.num_patches,
+            self.head_dim,
+            device=pixel_values.device,
+            dtype=torch.float32,
+        )
+
+
 class ThisTester(ModelTester):
     def _load_model(self):
         model_name = "meta-llama/Llama-4-Scout-17B-16E"
@@ -106,7 +119,7 @@ class ThisTester(ModelTester):
 
         vision_config = Llama4VisionConfig(
             hidden_size=64,
-            intermediate_size=16,
+            intermediate_size=16,  # After pixel shuffle: 64/(2²) = 16
             num_hidden_layers=1,
             num_attention_heads=2,
             image_size=64,
@@ -115,24 +128,25 @@ class ThisTester(ModelTester):
             attention_dropout=0.0,
             rope_theta=getattr(original_vision_config, "rope_theta", 10000.0),
             vision_output_dim=64,
-            projector_input_dim=32,
-            projector_output_dim=32,
+            projector_input_dim=32,  # fc1: 16 → 32
+            projector_output_dim=32,  # fc2: 32 → 32
             pixel_shuffle_ratio=2,
             projector_dropout=0.0,
         )
 
+        # Create vision-only model
         self.model = Llama4VisionModel(vision_config)
+        # self.model = self.model.to(torch.bfloat16)
         self.model.eval()
 
-        ## UNCOMMENT BELOW TO ENABLE REAL-VALUED ROTARY EMB
+        # Replace vision rotary embedding with real-valued version
+        self.model.rotary_embedding = RealValuedVisionRotaryEmbedding(vision_config)
 
-        # # Replace vision rotary embedding with real-valued version
-        # self.model.rotary_embedding = RealValuedVisionRotaryEmbedding(vision_config)
+        # CRITICAL: Also replace the vision_apply_rotary_emb function
+        import transformers.models.llama4.modeling_llama4 as llama4_mod
 
-        # import transformers.models.llama4.modeling_llama4 as llama4_mod
-
-        # # Monkey patch the module-level function to use real-valued version
-        # llama4_mod.vision_apply_rotary_emb = real_valued_vision_apply_rotary_emb
+        # Monkey patch the module-level function to use real-valued version
+        llama4_mod.vision_apply_rotary_emb = real_valued_vision_apply_rotary_emb
 
         return self.model
 
@@ -142,13 +156,17 @@ class ThisTester(ModelTester):
         vision_config = self.model.config
 
         batch_size = 1
-        channels = vision_config.num_channels
-        height = vision_config.image_size
+        channels = vision_config.num_channels  # Usually 3 (RGB)
+        height = vision_config.image_size  # e.g., 448
         width = vision_config.image_size
 
         pixel_values = torch.randn(
-            batch_size, channels, height, width, dtype=torch.float32
+            batch_size, channels, height, width, dtype=torch.bfloat16
         )
+
+        # CRITICAL: Ensure ALL tensors are float type and on same device
+        # This prevents "CPULongType" XLA tensor errors
+        pixel_values = pixel_values.float()  # Convert to float32 for XLA compatibility
 
         inputs = {
             "pixel_values": pixel_values,
@@ -180,7 +198,7 @@ def test_llama4_vision_layer(record_property, mode, op_by_op):
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     tester = ThisTester(
-        "llama4_vision_only",
+        "llama4_vision_only",  # Custom name since we're not using standard model loading
         mode,
         compiler_config=cc,
         assert_atol=False,

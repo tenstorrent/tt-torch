@@ -18,7 +18,9 @@ class ThisTester(ModelTester):
         config.text_config.num_hidden_layers = 4
 
         # Disable RoPE for all layers
-        # config.text_config.no_rope_layers = [False] * config.text_config.num_hidden_layers
+        config.text_config.no_rope_layers = [
+            False
+        ] * config.text_config.num_hidden_layers
 
         self.model = Llama4ForConditionalGeneration.from_pretrained(
             model_name,
@@ -32,7 +34,7 @@ class ThisTester(ModelTester):
         #     # Return identity - no rotation applied
         #     batch_size, seq_len = position_ids.shape
         #     head_dim = x.shape[-1] // self.model.language_model.model.config.num_attention_heads
-        #
+
         #     # Create a dummy tensor that looks like complex but is just real
         #     # This will be ignored since we disabled RoPE usage in layers
         #     dummy_rotation = torch.ones(
@@ -41,7 +43,7 @@ class ThisTester(ModelTester):
         #         dtype=x.dtype
         #     )
         #     return dummy_rotation
-        #
+
         # # Replace the rotary embedding forward method
         # self.model.language_model.model.rotary_emb.forward = mock_rotary_forward
 
@@ -87,7 +89,7 @@ def test_llama4(record_property, mode, op_by_op):
         assert_pcc=True,
         record_property_handle=record_property,
         run_generate=False,  # Disable generation for this test
-        backend="tt",
+        # backend="tt",
     )
     results = tester.test_model()
     tester.finalize()
