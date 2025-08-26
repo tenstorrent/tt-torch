@@ -32,6 +32,23 @@ import io
 import csv
 import tt_mlir
 
+# Torch-XLA imports
+import torch_xla.runtime as xr
+from torch_xla.distributed.spmd import Mesh
+
+
+def create_device_mesh(mesh_shape, mesh_names):
+    assert len(mesh_shape) == len(
+        mesh_names
+    ), "Mesh shape and names must match in length"
+    num_devices = xr.global_runtime_device_count()
+    assert (
+        np.prod(mesh_shape) == num_devices
+    ), "Mesh shape must match the number of devices"
+    device_ids = np.array(range(num_devices))
+    mesh = Mesh(device_ids, mesh_shape, mesh_names)
+    return mesh
+
 
 def skip_full_eval_test(
     record_property,

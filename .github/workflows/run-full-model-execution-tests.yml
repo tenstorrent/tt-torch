@@ -132,6 +132,7 @@ jobs:
             # It is not safe to run XLA SPMD tests with other tests using torch/xla
             wh-runner: n300, name: "eval_6_spmd", pytest-args: "", tests: "
                 tests/torch/test_basic_sharding.py
+                tests/experimental/test_ccl_ops_n300.py
             "
           },
           {
@@ -151,13 +152,19 @@ jobs:
               tests/experimental/models/resnet50/test_resnet50.py::test_resnet_eager
             "
           },
+          {
+            wh-runner: llmbox, name: "tp_eager", pytest-args: "", tests: "
+                tests/experimental/test_ccl_ops_llmbox.py
+                tests/experimental/models/llama/test_llama_8b_tp_eager.py::test_llama_8b_eager[128-causal]
+            "
+          },
         ]
     runs-on: ${{ matrix.runner == 'wormhole' && matrix.build.wh-runner || matrix.runner == 'blackhole' && matrix.build.bh-runner  || 'wormhole_b0'}}
     name: "test exec ${{ matrix.runner == 'wormhole' && 'wh' || matrix.runner == 'blackhole' && 'bh' || 'unk' }} (${{ matrix.build.name }})"
 
     container:
       image: ${{ inputs.docker-image }}
-      options: --user root --device /dev/tenstorrent/0 --shm-size=4gb
+      options: --user root --device /dev/tenstorrent --shm-size=4gb
       volumes:
         - /dev/hugepages:/dev/hugepages
         - /dev/hugepages-1G:/dev/hugepages-1G
