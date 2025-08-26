@@ -7,6 +7,7 @@ import contextlib
 import threading
 
 import torch
+import torch_xla.experimental.custom_kernel
 from torch._decomp import get_decompositions, remove_decompositions
 
 DecompositionTable = Dict[torch._ops.OperatorBase, Callable]
@@ -361,6 +362,131 @@ def squeeze(input, dims):
     return input.reshape(newshape)
 
 
+def flash_attention(query, key, value):
+    return torch.nn.functional.scaled_dot_product_attention(
+        query, key, value, is_causal=True
+    )
+
+
+def paged_attention(
+    query: torch.Tensor,
+    key_cache: torch.Tensor,
+    value_cache: torch.Tensor,
+    context_lens: torch.Tensor,
+    block_tables: torch.Tensor,
+    pages_per_compute_block: int,
+    megacore_mode: Optional[str] = None,
+    attn_logits_soft_cap: Optional[float] = None,
+):
+    """
+    Paged attention implementation using `block_tables` and `pages_per_compute_block`.
+
+    Shapes (decode):
+      - query: [B, H, 1, D]
+      - key_cache: [num_blocks, H_kv, D/x, block_size, x]
+      - value_cache: [num_blocks, H_kv, D, block_size]
+      - context_lens: [B]
+      - block_tables: [B, max_num_blocks_per_seq]
+
+    This implementation gathers the active KV pages per sequence using
+    `block_tables` up to `context_lens[i]`, concatenates them along the time
+    dimension, and applies SDPA. It ignores `pages_per_compute_block` for math
+    but slices pages in groups of that size to bound temporary memory.
+    """
+    batch_size, num_heads, head_dim = query.shape
+    seq_len = 1
+    breakpoint()
+    # Derive cache layout info
+    num_blocks = value_cache.shape[0]
+    num_kv_heads = value_cache.shape[1]
+    kv_head_dim = value_cache.shape[2]
+    block_size = value_cache.shape[3]
+
+    assert seq_len == 1, "Decode path expected: query shape [B, H, 1, D]"
+    assert kv_head_dim == head_dim, "Mismatched head dims between Q and KV caches"
+
+    outputs = []
+    for i in range(batch_size):
+        # Number of valid tokens in the prefix for this sequence
+        context_len = int(context_lens[i].item())
+        if context_len == 0:
+            # No past context; attention over empty KV should yield zeros
+            outputs.append(torch.zeros_like(query[i]))
+            continue
+
+        # How many full/partial blocks are needed
+        num_blocks_needed = (context_len + block_size - 1) // block_size
+        block_ids = block_tables[i, :num_blocks_needed].to(torch.long)
+
+        # Gather K/V pages for this sequence: list of [H_kv, D, block_size]
+        # Key cache layout is packed in x groups. Reconstruct last dim D.
+        # We first gather blocks then reshape/permute.
+        gathered_k = key_cache.index_select(
+            0, block_ids
+        )  # [M, H_kv, D/x, block_size, x]
+        # Fold x into D and move time before heads: [H_kv, M*block_size, D]
+        gathered_k = gathered_k.permute(
+            1, 0, 3, 2, 4
+        ).contiguous()  # [H_kv, M, block_size, D/x, x]
+        gathered_k = gathered_k.view(num_kv_heads, -1, kv_head_dim)
+        # Trim to the exact context length
+        gathered_k = gathered_k[:, :context_len, :]
+
+        gathered_v = value_cache.index_select(0, block_ids)  # [M, H_kv, D, block_size]
+        # Move time before heads: [H_kv, M*block_size, D]
+        gathered_v = gathered_v.permute(1, 0, 3, 2).contiguous()
+        gathered_v = gathered_v.view(num_kv_heads, -1, kv_head_dim)
+        gathered_v = gathered_v[:, :context_len, :]
+
+        # Query for this sequence
+        q_i = query[i : i + 1]  # [1, H, 1, D]
+
+        # Optionally chunk K/V by pages_per_compute_block to bound temp memory
+        if pages_per_compute_block is not None and pages_per_compute_block > 0:
+            # pages_per_compute_block is in units of pages; translate to tokens
+            tokens_per_chunk = pages_per_compute_block * block_size
+            if context_len > tokens_per_chunk:
+                # Accumulate attention over chunks using masked concatenation
+                attn_accum = None
+                start = 0
+                while start < context_len:
+                    end = min(start + tokens_per_chunk, context_len)
+                    k_chunk = gathered_k[:, start:end, :].unsqueeze(
+                        0
+                    )  # [1, H_kv, T, D]
+                    v_chunk = gathered_v[:, start:end, :].unsqueeze(
+                        0
+                    )  # [1, H_kv, T, D]
+                    out_chunk = torch.nn.functional.scaled_dot_product_attention(
+                        q_i, k_chunk, v_chunk, is_causal=True
+                    )  # [1, H, 1, D]
+                    attn_accum = (
+                        out_chunk if attn_accum is None else attn_accum + out_chunk
+                    )
+                    start = end
+                attn_output = attn_accum
+            else:
+                attn_output = torch.nn.functional.scaled_dot_product_attention(
+                    q_i,
+                    gathered_k.unsqueeze(0),
+                    gathered_v.unsqueeze(0),
+                    is_causal=True,
+                )
+        else:
+            attn_output = torch.nn.functional.scaled_dot_product_attention(
+                q_i, gathered_k.unsqueeze(0), gathered_v.unsqueeze(0), is_causal=True
+            )
+
+        if attn_logits_soft_cap is not None:
+            attn_output = (
+                torch.tanh(attn_output / attn_logits_soft_cap) * attn_logits_soft_cap
+            )
+
+            outputs.append(attn_output)
+
+    return torch.cat(outputs, dim=0)
+
+
 # TODO: DO we ever need this?
 def _get_default_decomposition_ops() -> DecompositionOpsList:
     aten = torch.ops.aten
@@ -434,6 +560,8 @@ def _get_custom_decompositions() -> DecompositionTable:
         aten.erf.default: erf,
         aten.masked_fill.Tensor: masked_fill_tensor,
         torch.ops.prims.squeeze.default: squeeze,
+        # torch.ops.xla.flash_attention.default: flash_attention,
+        # torch.ops.xla.paged_attention.default: paged_attention,
     }
 
 

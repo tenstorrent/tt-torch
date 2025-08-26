@@ -27,6 +27,7 @@ import tt_torch.dynamo.backend
 import tt_torch.dynamo.experimental.xla_backend
 
 from torch_xla.experimental import plugins
+from torch_xla.experimental import stablehlo_custom_call
 
 
 class TTPjrtPlugin(plugins.DevicePlugin):
@@ -63,3 +64,34 @@ class TTPjrtPlugin(plugins.DevicePlugin):
 plugins.register_plugin("TT", TTPjrtPlugin())
 os.environ["XLA_STABLEHLO_COMPILE"] = "1"
 os.environ["PJRT_DEVICE"] = "TT"
+
+
+@torch.library.custom_op("tt::paged_attention", mutates_args=[], device_types=["xla"])
+def paged_attention(
+    query: torch.Tensor,
+    key_cache: torch.Tensor,
+    value_cache: torch.Tensor,
+    context_lens: torch.Tensor,
+    block_tables: torch.Tensor,
+) -> torch.Tensor:
+    return stablehlo_custom_call.stablehlo_custom_call(
+        [query, key_cache, value_cache, context_lens, block_tables],
+        "tt.paged_attention",
+        [[1, query.shape[0], query.shape[1], query.shape[2]]],
+        [query.dtype],
+    )
+
+
+@paged_attention.register_fake
+def _(
+    query: torch.Tensor,
+    key_cache: torch.Tensor,
+    value_cache: torch.Tensor,
+    context_lens: torch.Tensor,
+    block_tables: torch.Tensor,
+) -> torch.Tensor:
+    fake_output = torch.empty_like(query)
+    return fake_output.reshape(1, query.shape[0], query.shape[1], query.shape[2])
+
+
+torch._dynamo.allow_in_graph(torch.ops.tt.paged_attention)

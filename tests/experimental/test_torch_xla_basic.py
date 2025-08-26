@@ -10,6 +10,54 @@ from tt_torch.dynamo.backend import BackendOptions
 import pytest
 
 
+@pytest.mark.parametrize("kernel_size", [2, 3, 4, 5])
+@pytest.mark.parametrize("stride", [1, 2, 3, 4])
+@pytest.mark.parametrize("padding_h", [1, 2, 3, 4])
+@pytest.mark.parametrize("padding_w", [1, 2, 3, 4])
+@pytest.mark.parametrize("ceil_mode", [True, False])
+@pytest.mark.parametrize("input_h", [31, 32, 33])
+@pytest.mark.parametrize("input_w", [31, 32, 33])
+def test_avg_pool2d(
+    kernel_size, stride, padding_h, padding_w, ceil_mode, input_h, input_w
+):
+    # breakpoint()
+    class AvgPool(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.avg_pool = torch.nn.AvgPool2d(
+                kernel_size,
+                stride,
+                padding=(padding_h, padding_w),
+                ceil_mode=ceil_mode,
+                count_include_pad=True,
+            )
+
+        def forward(self, x):
+            return self.avg_pool(x)
+
+    input_x = torch.ones(1, 32, input_h, input_w, dtype=torch.bfloat16)
+
+    model = AvgPool()
+    golden = model(input_x)
+    if not torch.all(golden == 1.0):
+        breakpoint()
+    else:
+        return
+
+    model = torch.compile(model, backend="tt-experimental")
+
+    output = model(input_x)
+
+    verify_against_golden(
+        (golden,),
+        (output,),
+        assert_pcc=False,
+        assert_atol=True,
+        required_pcc=0.99,
+        required_atol=0.008,
+    )
+
+
 @pytest.mark.parametrize("bias", [True, False])
 def test_simple_mm(bias):
     class MM(torch.nn.Module):
