@@ -129,7 +129,6 @@ class ThisTester(ModelTester):
         # # Replace vision rotary embedding with real-valued version
         # self.model.rotary_embedding = RealValuedVisionRotaryEmbedding(vision_config)
 
-        # # CRITICAL: Also replace the vision_apply_rotary_emb function
         # import transformers.models.llama4.modeling_llama4 as llama4_mod
 
         # # Monkey patch the module-level function to use real-valued version
@@ -143,17 +142,13 @@ class ThisTester(ModelTester):
         vision_config = self.model.config
 
         batch_size = 1
-        channels = vision_config.num_channels  # Usually 3 (RGB)
-        height = vision_config.image_size  # e.g., 448
+        channels = vision_config.num_channels
+        height = vision_config.image_size
         width = vision_config.image_size
 
         pixel_values = torch.randn(
-            batch_size, channels, height, width, dtype=torch.bfloat16
+            batch_size, channels, height, width, dtype=torch.float32
         )
-
-        # CRITICAL: Ensure ALL tensors are float type and on same device
-        # This prevents "CPULongType" XLA tensor errors
-        pixel_values = pixel_values.float()  # Convert to float32 for XLA compatibility
 
         inputs = {
             "pixel_values": pixel_values,
@@ -185,7 +180,7 @@ def test_llama4_vision_layer(record_property, mode, op_by_op):
             cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     tester = ThisTester(
-        "llama4_vision_only",  # Custom name since we're not using standard model loading
+        "llama4_vision_only",
         mode,
         compiler_config=cc,
         assert_atol=False,
