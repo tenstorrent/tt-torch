@@ -102,7 +102,7 @@ else()
         PREFIX ${TTXLA_PREFIX}
         INSTALL_COMMAND
             ${CMAKE_COMMAND} --install ${TTXLA_BUILD_DIR} --prefix ${TTXLA_INSTALL_PREFIX} &&
-            chmod -R +x ${TTXLA_INSTALL_PREFIX} && pip uninstall pjrt_plugin_tt
+            chmod -R +x ${TTXLA_INSTALL_PREFIX} && pip uninstall --yes --no-input pjrt_plugin_tt
         CMAKE_GENERATOR Ninja
         CMAKE_ARGS
             -DCMAKE_BUILD_TYPE=Release
