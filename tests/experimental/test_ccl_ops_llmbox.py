@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
+
+# This import is unused but needed to register the Tenstorrent PJRT device with XLA
 import tt_torch
 
 import torch
@@ -37,7 +39,7 @@ def test_all_reduce(shard_dim):
         xs.mark_sharding(t, mesh, ("batch", None))
         # For all_reduce on batch sharding: pair devices across batch rows
         groups = [[0, 4], [1, 5], [2, 6], [3, 7]]
-    elif shard_dim == 1:
+    else:
         # Shard on model dimension (dim 1)
         xs.mark_sharding(t, mesh, (None, "model"))
         # For all_reduce on model sharding: two groups of 4 devices each
@@ -55,7 +57,7 @@ def test_all_reduce(shard_dim):
     # The result tensor has reduced shape along the sharded dimension
     if shard_dim == 0:
         expected = torch.ones(256, 512) * 2.0
-    elif shard_dim == 1:
+    else:
         expected = torch.ones(256, 512) * 4.0
 
     assert torch.allclose(y, expected, atol=0.001)

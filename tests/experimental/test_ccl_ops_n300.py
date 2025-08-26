@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: (c) 2025 Tenstorrent AI ULC
 #
 # SPDX-License-Identifier: Apache-2.0
+
+# This import is unused but needed to register the Tenstorrent PJRT device with XLA
 import tt_torch
 
 import torch
@@ -36,7 +38,7 @@ def test_all_reduce(shard_dim):
         mesh = create_device_mesh((2, 1), ("batch", "model"))
         xs.mark_sharding(t, mesh, ("batch", None))
         groups = [[0, 1]]
-    elif shard_dim == 1:
+    else:
         # Shard on model dimension (dim 1)
         mesh = create_device_mesh((1, 2), ("batch", "model"))
         xs.mark_sharding(t, mesh, (None, "model"))
