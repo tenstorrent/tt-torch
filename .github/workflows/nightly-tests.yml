@@ -36,13 +36,13 @@ jobs:
     with:
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       docker-image-harbor: ${{ needs.docker-build.outputs.docker-image-harbor }}
-  test_full_model:
-    needs: [docker-build, build]
-    uses: ./.github/workflows/run-full-model-execution-tests.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-      run-dump-mlir: 'false'
+  # test_full_model:
+  #   needs: [docker-build, build]
+  #   uses: ./.github/workflows/run-full-model-execution-tests.yml
+  #   secrets: inherit
+  #   with:
+  #     docker-image: ${{ needs.docker-build.outputs.docker-image }}
+  #     run-dump-mlir: 'false'
   test_full_model_nightly:
     needs: [docker-build, build]
     uses: ./.github/workflows/run-full-model-execution-tests-nightly.yml
