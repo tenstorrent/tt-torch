@@ -33,7 +33,7 @@ class TTPjrtPlugin(plugins.DevicePlugin):
     def library_path(self):
         # This is where the pjrt plugin will be located if you've built and installed from source
         direct_build_install_path = os.path.join(
-            os.path.dirname(__file__), "../install/lib/pjrt_plugin_tt.so"
+            os.path.dirname(__file__), "../install/pjrt_plugin_tt.so"
         )
         if os.path.exists(direct_build_install_path):
             return direct_build_install_path
@@ -53,12 +53,11 @@ class TTPjrtPlugin(plugins.DevicePlugin):
 
         # This is where the pjrt plugin will be located if you've installed the tt-torch wheel in a clean virtual environment
         # Use sys.prefix to get the venv root instead of relative paths
-        venv_install_path = os.path.join(sys.prefix, "lib/pjrt_plugin_tt.so")
+        venv_install_path = os.path.join(sys.prefix, "pjrt_plugin_tt.so")
         if os.path.exists(venv_install_path):
             return venv_install_path
 
         assert False, "Could not find pjrt_plugin_tt.so"
-
 
 plugins.register_plugin("TT", TTPjrtPlugin())
 os.environ["XLA_STABLEHLO_COMPILE"] = "1"
