@@ -131,10 +131,10 @@ else()
     add_library(TTMLIRRuntime SHARED IMPORTED GLOBAL)
     set_target_properties(TTMLIRRuntime PROPERTIES EXCLUDE_FROM_ALL TRUE IMPORTED_LOCATION ${TT_MLIR_RUNTIME_LIBRARY_PATH})
     add_dependencies(TTMLIRRuntime tt-xla)
-    install(DIRECTORY ${TTXLA_INSTALL_PREFIX}/ DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
     set(TTMLIR_PREFIX ${TTXLA_PREFIX}/src/tt-xla/third_party/tt-mlir/)
     set(TTMETAL_PREFIX ${TTMLIR_PREFIX}/src/tt-mlir/third_party/tt-metal/)
     install(DIRECTORY ${TTMETAL_PREFIX}/src/tt-metal/build/ DESTINATION "${CMAKE_INSTALL_PREFIX}/tt-metal" USE_SOURCE_PERMISSIONS)
+    install(DIRECTORY ${TTMLIR_PREFIX}/install/ DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
 
     # torch-mlir build
     # torch-mlir is using branch tt_torch/main
