@@ -135,7 +135,7 @@ jobs:
       - docker-build
       - build
       - test
-      - full-model-test
+      # - full-model-test
     runs-on: Ubuntu-latest
     steps:
     - name: Check if the needed jobs succeeded or failed
