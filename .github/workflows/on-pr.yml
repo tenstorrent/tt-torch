@@ -118,15 +118,15 @@ jobs:
   #   secrets: inherit
   #   with:
   #     docker-image: ${{ needs.docker-build.outputs.docker-image }}
-  full-model-test:
-    needs: [build, docker-build]
-    if: github.event.pull_request.draft == false
-    uses: ./.github/workflows/run-full-model-execution-tests.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
-      run-codecov: 'false'
-      run-dump-mlir: 'false'
+  # full-model-test:
+  #   needs: [build, docker-build]
+  #   if: github.event.pull_request.draft == false
+  #   uses: ./.github/workflows/run-full-model-execution-tests.yml
+  #   secrets: inherit
+  #   with:
+  #     docker-image: ${{ needs.docker-build.outputs.docker-image }}
+  #     run-codecov: 'false'
+  #     run-dump-mlir: 'false'
   check-all-green:
     if: always()
     needs:

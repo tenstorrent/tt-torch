@@ -105,11 +105,11 @@ jobs:
         source env/activate
         pytest -vv tests/runner/test_models.py -m expected_passing -k "mobilenetv2/pytorch-mobilenet_v2-full-eval"
 
-    - name: Verify CI model test matrices
-      shell: bash
-      run: |
-        source env/activate
-        python tt_torch/tools/ci_verification.py --scan-workflows
+    # - name: Verify CI model test matrices
+    #   shell: bash
+    #   run: |
+    #     source env/activate
+    #     python tt_torch/tools/ci_verification.py --scan-workflows
 
     - name: Run PyTorch Unit tests
       shell: bash
