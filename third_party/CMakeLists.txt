@@ -4,7 +4,7 @@
 #
 
 # tt-xla version to use
-set(TT_XLA_VERSION "4ecd0b45c5bbb9dd26a6e5b7553595d58272b6de")
+set(TT_XLA_VERSION "c3ea12ca0414ff574a9dc3da09ce1f2e1538ba55")
 
 # Optional override of tt-xla's TT_MLIR_VERSION. Default to tt-xla's default TT_MLIR_VERSION if we pass an empty string
 set(TT_MLIR_VERSION "")
@@ -102,7 +102,7 @@ else()
         PREFIX ${TTXLA_PREFIX}
         INSTALL_COMMAND
             ${CMAKE_COMMAND} --install ${TTXLA_BUILD_DIR} --prefix ${TTXLA_INSTALL_PREFIX} &&
-            chmod -R +x ${TTXLA_INSTALL_PREFIX}
+            chmod -R +x ${TTXLA_INSTALL_PREFIX} && pip uninstall --yes --no-input pjrt_plugin_tt
         CMAKE_GENERATOR Ninja
         CMAKE_ARGS
             -DCMAKE_BUILD_TYPE=Release
