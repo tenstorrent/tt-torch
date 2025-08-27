@@ -4,65 +4,23 @@
 import torch
 import pytest
 from tests.utils import ModelTester
-from diffusers import StableDiffusion3Pipeline
-
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.stable_diffusion_3_5.text_encoder.pytorch import (
+    ModelLoader,
+)
 
 
 class TextEncoderTester(ModelTester):
     def _load_model(self):
-        model_dict = dict(model_info_list)
-        model_path = model_dict[self.model_name]
-        self.pipe = StableDiffusion3Pipeline.from_pretrained(
-            model_path,
-            torch_dtype=torch.bfloat16,
-            low_cpu_mem_usage=True,
-        )
-
-        # Extract encoder type from model name
-        if self.model_name == "SD3.5-medium-1" or self.model_name == "SD3.5-large-1":
-            return self.pipe.text_encoder
-        elif self.model_name == "SD3.5-medium-2" or self.model_name == "SD3.5-large-2":
-            return self.pipe.text_encoder_2
-        else:  # default to text_encoder_3
-            return self.pipe.text_encoder_3
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        prompt = "A futuristic cityscape at sunset"
-
-        # Get the corresponding tokenizer based on model name
-        if self.model_name == "SD3.5-medium-1" or self.model_name == "SD3.5-large-1":
-            tokenizer = self.pipe.tokenizer
-        elif self.model_name == "SD3.5-medium-2" or self.model_name == "SD3.5-large-2":
-            tokenizer = self.pipe.tokenizer_2
-        else:  # default to tokenizer_3
-            tokenizer = self.pipe.tokenizer_3
-
-        # Tokenize the prompt
-        text_inputs = tokenizer(
-            prompt,
-            padding="max_length",
-            max_length=tokenizer.model_max_length,
-            truncation=True,
-            return_tensors="pt",
-        )
-
-        arguments = {
-            "input_ids": text_inputs.input_ids,
-            "attention_mask": text_inputs.attention_mask,
-        }
-
-        return arguments
+        return self.loader.load_inputs()
 
 
-model_info_list = [
-    ("SD3.5-medium-1", "stabilityai/stable-diffusion-3.5-medium"),
-    ("SD3.5-medium-2", "stabilityai/stable-diffusion-3.5-medium"),
-    ("SD3.5-medium-3", "stabilityai/stable-diffusion-3.5-medium"),
-    ("SD3.5-large-1", "stabilityai/stable-diffusion-3.5-large"),
-    ("SD3.5-large-2", "stabilityai/stable-diffusion-3.5-large"),
-    ("SD3.5-large-3", "stabilityai/stable-diffusion-3.5-large"),
-]
+# Print available variants for reference
+available_variants = ModelLoader.query_available_variants()
+print("Available variants: ", [str(k) for k in available_variants.keys()])
 
 
 @pytest.mark.parametrize(
@@ -70,18 +28,21 @@ model_info_list = [
     ["eval"],
 )
 @pytest.mark.parametrize(
-    "model_info",
-    model_info_list,
-    ids=[model_info[0] for model_info in model_info_list],
+    "variant, variant_config",
+    available_variants.items(),
+    ids=[str(k) for k in available_variants.keys()],
 )
 @pytest.mark.parametrize(
     "op_by_op",
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-def test_stable_diffusion_text_encoder(record_property, model_info, mode, op_by_op):
-    model_group = "red"
-    model_name, model_path = model_info
+def test_stable_diffusion_text_encoder(
+    record_property, variant, variant_config, mode, op_by_op
+):
+    loader = ModelLoader(variant=variant)
+    model_info = loader.get_model_info(variant=variant)
+    model_name = model_info.name
 
     cc = CompilerConfig()
     cc.enable_consteval = True
@@ -103,11 +64,12 @@ def test_stable_diffusion_text_encoder(record_property, model_info, mode, op_by_
     tester = TextEncoderTester(
         model_name,
         mode,
+        loader=loader,
         compiler_config=cc,
         record_property_handle=record_property,
         assert_atol=False,
         assert_pcc=assert_pcc,
-        model_group=model_group,
+        model_group=model_info.group,
     )
     results = tester.test_model()
     tester.finalize()
