@@ -4,12 +4,13 @@
 #
 
 # underlying tt-mlir version we will have tt-xla use
-set(TT_MLIR_VERSION "568f0022ccebae940e8bb1508da895427ceede33") # jazpur/kv-cache-fusion rebased on LLVM update 974a9885ffaf439747627402879c793a2a55b56e
-# jzx/xla_fusion de6c0f9e8bf4e1f208c7d055c51bdff5e623bbfa
-# tt-xla version to use
-set(TTXLA_VERSION "f5139018250134bb49f6ab961255b46dc8112522") # jzx/persistent_rebased
-# tt-xla main 8fbb97c81e91b3c66e0641e8c6a8767c39056590
-# tt-xla persistent_rebased  f5139018250134bb49f6ab961255b46dc8112522
+set(TT_MLIR_VERSION "b777e28dcfbcff989d0fb73bda0e3846c88cbef6")
+# no reduce scatter e343df327b7fcdccd67a7db05dc1b920a9bad915
+# with reduce scatter b777e28dcfbcff989d0fb73bda0e3846c88cbef6
+set(TTXLA_VERSION "c3568c51fa5e93d246115b77c9c8f304e910a609")  
+
+# new - 6a10d1ff6ce8fae7b9160fd0cc9189de2a5e2628
+# base - c3568c51fa5e93d246115b77c9c8f304e910a609
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
@@ -62,10 +63,10 @@ else()
         PREFIX ${TTXLA_PREFIX}
         INSTALL_COMMAND
             ${CMAKE_COMMAND} --install ${TTXLA_BUILD_DIR} --prefix ${TTXLA_INSTALL_PREFIX} &&
-            chmod -R +x ${TTXLA_INSTALL_PREFIX}
+            chmod -R +x ${TTXLA_INSTALL_PREFIX} && pip uninstall --yes --no-input pjrt_plugin_tt
         CMAKE_GENERATOR Ninja
         CMAKE_ARGS
-            -DCMAKE_BUILD_TYPE=Debug
+            -DCMAKE_BUILD_TYPE=Release
             -DCMAKE_C_COMPILER=clang-17
             -DCMAKE_CXX_COMPILER=clang++-17
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache

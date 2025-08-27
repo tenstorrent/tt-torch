@@ -27,7 +27,7 @@ import tt_torch.dynamo.sharding_utils as ts
 
 _global_max_cache_len = 64 + 64
 tokens_to_generate = 5
-hidden_layers = 1
+hidden_layers = 22
 use_static_cache = True
 
 
@@ -133,6 +133,11 @@ def test_llama3_generate():
     input_args = load_inputs(model, tokenizer)
     generated_ids = input_args["input_ids"]
 
+    cpu_result = model(**input_args)
+    cpu_logits = cpu_result.logits
+
+    pccs = []
+
     initial_prompt = tokenizer.decode(generated_ids[0].tolist())
     print(f"Initial prompt: '{initial_prompt}'")
 
@@ -164,7 +169,7 @@ def test_llama3_generate():
         ts.mark_sharding(layer.self_attn.v_proj.weight, ("model", None))
         ts.mark_sharding(layer.self_attn.o_proj.weight, (None, "model"))
 
-    ts.mark_sharding(model.lm_head.weight, ("model", None))
+    # ts.mark_sharding(model.lm_head.weight, ("model", None))
 
     # Setup compilation
     clear_dynamo_cache()
@@ -201,6 +206,8 @@ def test_llama3_generate():
 
         # Post-processing
         next_token_ids = outputs.logits[:, -1:].argmax(dim=-1)
+        print("CPU logit shape: ", cpu_logits.shape, "XLA logit shape: ", outputs.logits.shape)
+        pccs.append(calculate_pcc(outputs.logits[:, -1:].cpu(), cpu_logits[:, -1:]))
         generated_ids = torch.cat([generated_ids, next_token_ids], dim=-1)
 
         # Decode and collect token
@@ -218,11 +225,12 @@ def test_llama3_generate():
         else:
             input_args = {
                 "input_ids": generated_ids,
-                # "attention_mask": torch.ones((1, len(generated_tokens)))                
+                # "attention_mask": torch.ones((1, len(generated_tokens)))
             }
-            
+
 
         print(f"Generated tokens: {generated_tokens}")
 
     # Cleanup
+    print("PCCs:", pccs)
     clear_dynamo_cache()
