@@ -48,7 +48,6 @@ class ThisTester(ModelTester):
                     f"No tensors found in output dictionary. Keys: {list(output_object.keys())}"
                 )
 
-            # If it's not a dict, let the parent class handle it
             return super()._extract_outputs(output_object)
 
 
@@ -82,5 +81,4 @@ def test_bge_m2(record_property, mode, op_by_op):
         assert_atol=False,
     )
     results = tester.test_model()
-    print(results)
     tester.finalize()

@@ -41,6 +41,7 @@ class ThisTester(ModelTester):
                         tensors.append(torch.tensor(weights))
                 elif isinstance(value, torch.Tensor):
                     tensors.append(value)
+
             if tensors:
                 return tuple(tensors)
             else:
@@ -79,5 +80,4 @@ def test_bge_m2_encode(record_property, mode, op_by_op):
         assert_atol=False,
     )
     results = tester.test_model()
-    print(results)
     tester.finalize()
