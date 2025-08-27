@@ -4,44 +4,23 @@
 import torch
 import pytest
 from tests.utils import ModelTester
-from diffusers import (
-    SD3Transformer2DModel,
-)
-
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
+from third_party.tt_forge_models.stable_diffusion_3_5.transformer_block.pytorch import (
+    ModelLoader,
+)
 
 
 class ThisTester(ModelTester):
     def _load_model(self):
-        model_dict = dict(model_info_list)
-        model_path = model_dict[self.model_name]
-
-        transformer = SD3Transformer2DModel.from_pretrained(
-            model_path, subfolder="transformer", torch_dtype=torch.bfloat16
-        )
-        return transformer.transformer_blocks[0]
+        return self.loader.load_model(dtype_override=torch.bfloat16)
 
     def _load_inputs(self):
-        hidden_states = torch.randn(1, 1024, 1536)
-        encoder_hidden_states = torch.randn(1, 333, 1536)
-        temb = torch.rand(1, 1536)
-        hidden_states = hidden_states.to(torch.bfloat16)
-        encoder_hidden_states = encoder_hidden_states.to(torch.bfloat16)
-        temb = temb.to(torch.bfloat16)
-        joint_attention_kwargs = {}
-
-        arguments = {
-            "hidden_states": hidden_states,
-            "encoder_hidden_states": encoder_hidden_states,
-            "temb": temb,
-            "joint_attention_kwargs": joint_attention_kwargs,
-        }
-        return arguments
+        return self.loader.load_inputs(dtype_override=torch.bfloat16)
 
 
-model_info_list = [
-    ("SD3.5-medium-transformer-block", "stabilityai/stable-diffusion-3.5-medium"),
-]
+# Print available variants for reference
+available_variants = ModelLoader.query_available_variants()
+print("Available variants: ", [str(k) for k in available_variants.keys()])
 
 
 @pytest.mark.parametrize(
@@ -49,26 +28,39 @@ model_info_list = [
     ["eval"],
 )
 @pytest.mark.parametrize(
-    "model_info",
-    model_info_list,
-    ids=[model_info[0] for model_info in model_info_list],
+    "variant, variant_config",
+    available_variants.items(),
+    ids=[str(k) for k in available_variants.keys()],
 )
-def test_stable_diffusion_transformer_block(record_property, model_info, mode):
-    model_group = "red"
-    model_name, model_path = model_info
+@pytest.mark.parametrize(
+    "op_by_op",
+    [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
+    ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
+)
+def test_stable_diffusion_transformer_block(
+    record_property, variant, variant_config, mode, op_by_op
+):
+    loader = ModelLoader(variant=variant)
+    model_info = loader.get_model_info(variant=variant)
+    model_name = model_info.name
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
+    if op_by_op:
+        cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
+        if op_by_op == OpByOpBackend.STABLEHLO:
+            cc.op_by_op_backend = OpByOpBackend.STABLEHLO
 
     tester = ThisTester(
         model_name,
         mode,
+        loader=loader,
         compiler_config=cc,
         record_property_handle=record_property,
         assert_atol=False,
         assert_pcc=True,
-        model_group=model_group,
+        model_group=model_info.group,
     )
     results = tester.test_model()
 
