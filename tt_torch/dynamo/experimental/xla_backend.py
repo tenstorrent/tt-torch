@@ -591,6 +591,66 @@ def dump_module(module, name, compiler_config):
         print(f"{name} module", flush=True)
         print(module, flush=True)
 
+def handle_empty_tensors_in_graph(gm):
+    """Replace empty tensors in the graph with non-empty equivalents"""
+    for node in gm.graph.nodes:
+        if node.op == "placeholder" and hasattr(node, "meta") and "tensor_meta" in node.meta:
+            tensor_meta = node.meta["tensor_meta"]
+            if hasattr(tensor_meta, "shape") and any(dim == 0 for dim in tensor_meta.shape):
+                # Update the tensor metadata to replace 0 dims with 1
+                new_shape = tuple(1 if dim == 0 else dim for dim in tensor_meta.shape)
+                print(f"Reshaping placeholder {node.name} from {tensor_meta.shape} to {new_shape}")
+                # Update the metadata
+                tensor_meta.shape = new_shape
+    return gm
+
+def fix_empty_tensors_in_compiled_graph(gm):
+    """Fix empty tensors in the compiled graph by updating their metadata"""
+    print("Fixing empty tensors in compiled graph...")
+    
+    for node in gm.graph.nodes:
+        if hasattr(node, "meta"):
+            # Fix tensor_meta
+            if "tensor_meta" in node.meta:
+                tensor_meta = node.meta["tensor_meta"]
+                if hasattr(tensor_meta, "shape") and any(dim == 0 for dim in tensor_meta.shape):
+                    old_shape = tensor_meta.shape
+                    new_shape = tuple(1 if dim == 0 else dim for dim in tensor_meta.shape)
+                    print(f"Fixing tensor_meta for {node.name}: {old_shape} -> {new_shape}")
+                    
+                    # Create new TensorMetadata with fixed shape
+                    from torch.fx.passes.shape_prop import TensorMetadata
+                    new_tensor_meta = TensorMetadata(
+                        shape=new_shape,
+                        dtype=tensor_meta.dtype,
+                        requires_grad=getattr(tensor_meta, 'requires_grad', False),
+                        stride=tuple(1 if s == 0 else s for s in getattr(tensor_meta, 'stride', (1,) * len(new_shape))),
+                        memory_format=getattr(tensor_meta, 'memory_format', None),
+                        is_quantized=getattr(tensor_meta, 'is_quantized', False),
+                        qparams=getattr(tensor_meta, 'qparams', {})
+                    )
+                    node.meta["tensor_meta"] = new_tensor_meta
+            
+            # Fix val metadata
+            if "val" in node.meta:
+                val = node.meta["val"]
+                if isinstance(val, torch.Tensor) and val.numel() == 0:
+                    old_shape = val.shape
+                    new_shape = tuple(1 if dim == 0 else dim for dim in val.shape)
+                    print(f"Fixing val for {node.name}: {old_shape} -> {new_shape}")
+                    # Create new tensor with fixed shape
+                    node.meta["val"] = torch.empty(new_shape, dtype=val.dtype, device=val.device)
+                
+            # Fix example_value metadata if it exists
+            if "example_value" in node.meta:
+                example_val = node.meta["example_value"]
+                if isinstance(example_val, torch.Tensor) and example_val.numel() == 0:
+                    old_shape = example_val.shape
+                    new_shape = tuple(1 if dim == 0 else dim for dim in example_val.shape)
+                    print(f"Fixing example_value for {node.name}: {old_shape} -> {new_shape}")
+                    node.meta["example_value"] = torch.empty(new_shape, dtype=example_val.dtype, device=example_val.device)
+    
+    return gm
 
 def xla_pass_pipeline(gm, example_inputs, compiler_config):
     decompositions = torch._decomp.core_aten_decompositions()
@@ -613,6 +673,12 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
     compiled_graph = bypass_redundant_getitem(compiled_graph)
     compiled_graph = rectify_buffer_inplace_copy(compiled_graph)
     compiled_graph = bypass_assert_tensor_metadata(compiled_graph)
+    
+    # Add empty tensor removal here
+    compiled_graph = remove_empty_tensor_operations(compiled_graph)
+    compiled_graph = fix_empty_tensors_in_compiled_graph(compiled_graph)
+    breakpoint()
+    
     dump_module(
         module=compiled_graph.code, name="Torch graph", compiler_config=compiler_config
     )
@@ -624,6 +690,37 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
 
     return program
 
+def remove_empty_tensor_operations(graph_module):
+    """Remove operations that create or work with empty tensors"""
+    graph = graph_module.graph
+    changed = True
+    
+    while changed:
+        changed = False
+        nodes_to_remove = []
+        
+        for node in graph.nodes:
+            # Skip placeholder, output, and get_attr nodes
+            if node.op in ['placeholder', 'output', 'get_attr']:
+                continue
+                
+            # Check if node produces empty tensor
+            if hasattr(node, "meta") and "val" in node.meta:
+                val = node.meta["val"]
+                if isinstance(val, torch.Tensor) and val.numel() == 0:
+                    nodes_to_remove.append(node)
+                elif hasattr(val, "shape") and any(dim == 0 for dim in val.shape):
+                    nodes_to_remove.append(node)
+        
+        # Remove the nodes
+        for node in nodes_to_remove:
+            if len(node.users) == 0:  # Only remove if no users
+                graph.erase_node(node)
+                changed = True
+    
+    graph_module.recompile()
+    return graph_module
+
 
 class XLAExecutor:
     def __init__(self, program, compiler_config):
@@ -633,12 +730,21 @@ class XLAExecutor:
 
         self.inputs = []
         self.user_input_indices = []
+        
         for idx, input_spec in enumerate(self.program._graph_signature.input_specs):
             if input_spec.kind == InputKind.USER_INPUT:
                 self.inputs.append(None)
                 self.user_input_indices.append(idx)
             else:
                 source_tensor = self.program.state_dict[input_spec.target]
+                print(f"DEBUG: Non-user input {idx}: {input_spec.target}, shape: {source_tensor.shape}, numel: {source_tensor.numel()}")
+                
+                if source_tensor.numel() == 0:
+                    old_shape = source_tensor.shape
+                    new_shape = tuple(1 if dim == 0 else dim for dim in source_tensor.shape)
+                    print(f"DEBUG: Fixing empty parameter tensor {input_spec.target}: {old_shape} -> {new_shape}")
+                    source_tensor = torch.zeros(new_shape, dtype=source_tensor.dtype, device=source_tensor.device)
+                
                 shard_spec = sharding_utils.get_sharding(source_tensor)
                 device_tensor = source_tensor.to("xla")
                 if shard_spec is not None:
@@ -652,6 +758,12 @@ class XLAExecutor:
 
     def push_tensors_to_device(self, inputs, device):
         if hasattr(inputs, "to"):
+            # Handle empty tensors FIRST, regardless of device
+            if inputs.numel() == 0:
+                original_shape = inputs.shape
+                new_shape = [1 if dim == 0 else dim for dim in inputs.shape]
+                print(f"Reshaping empty tensor from {original_shape} to {new_shape}")
+                inputs = torch.empty(new_shape, dtype=inputs.dtype, device=inputs.device)
             if device not in [inputs.device, inputs.device.type]:
                 shard_spec = sharding_utils.get_sharding(inputs)
                 device_inputs = inputs.to(device)
