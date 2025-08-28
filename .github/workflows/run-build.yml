@@ -101,6 +101,7 @@ jobs:
         cp ../dist/*.whl wheels
         # Exclude libtorch*.so & libc10.so since they are sourced from torch in the python requirements.txt
         pip install auditwheel
+        sudo apt-get install -y patchelf
         auditwheel repair --disable-isa-ext-check --plat manylinux_2_35_x86_64  --exclude libtorch*.so --exclude libc10.so wheels/*.whl
         tar cvf artifact.tar wheelhouse/.
 
