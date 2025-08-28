@@ -43,6 +43,14 @@ def test_qwen3_4b_tp(record_property):
 
     model = loader.load_model(dtype_override=torch.bfloat16)
     model.layers = model.layers[:1]
+    batch_size = 1
+    max_length = 128
+    input_ids = torch.randint(
+        0, model.config.vocab_size, (batch_size, max_length), dtype=torch.int32
+    )
+    attention_mask = torch.ones_like(input_ids, dtype=torch.int32)
+    cpu_output = model(input_ids=input_ids, attention_mask=attention_mask).last_hidden_state
+
     model = model.to(torch_xla.device())
     mesh = create_device_mesh((1, xr.global_runtime_device_count()), ("batch", "model"))
 
@@ -56,12 +64,9 @@ def test_qwen3_4b_tp(record_property):
       xs.mark_sharding(layer.self_attn.v_proj.weight, mesh, ("model", "batch"))
       xs.mark_sharding(layer.self_attn.o_proj.weight, mesh, ("batch", "model"))
 
-    batch_size = 1
-    max_length = 8192
-    input_ids = torch.randint(
-        0, model.config.vocab_size, (batch_size, max_length), dtype=torch.int32
-    )
     input_ids = input_ids.to(torch_xla.device())
+    attention_mask = attention_mask.to(torch_xla.device())
     output = model(input_ids=input_ids).last_hidden_state.to("cpu")
-    print(output.shape)
-    breakpoint()
+    pcc = calculate_pcc(cpu_output, output)
+    print(f"PCC: {pcc}")
+    # assert pcc > 0.99
