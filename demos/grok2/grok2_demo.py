@@ -36,21 +36,33 @@ def main(run_interactive, use_test_model=False):
     
     try:
         # Load the model with appropriate settings
-        model = AutoModelForCausalLM.from_pretrained(
-            model_name,
-            torch_dtype=torch.bfloat16,
-            use_cache=True,
-            device_map="auto",  # Automatically distribute across available GPUs
-            trust_remote_code=True,  # Required for some custom model architectures
-        )
+        if use_test_model:
+            # Simpler loading for test model
+            model = AutoModelForCausalLM.from_pretrained(
+                model_name,
+                torch_dtype=torch.bfloat16,
+                use_cache=True,
+            )
+        else:
+            # Full Grok 2 loading with device mapping
+            model = AutoModelForCausalLM.from_pretrained(
+                model_name,
+                torch_dtype=torch.bfloat16,
+                use_cache=True,
+                device_map="auto",  # Automatically distribute across available GPUs
+                trust_remote_code=True,  # Required for some custom model architectures
+            )
         model = model.eval()
         
         # Load tokenizer
-        tokenizer = AutoTokenizer.from_pretrained(
-            model_name, 
-            torch_dtype=torch.bfloat16,
-            trust_remote_code=True
-        )
+        if use_test_model:
+            tokenizer = AutoTokenizer.from_pretrained(model_name)
+        else:
+            tokenizer = AutoTokenizer.from_pretrained(
+                model_name, 
+                torch_dtype=torch.bfloat16,
+                trust_remote_code=True
+            )
         
         # Set pad token if not already set
         if tokenizer.pad_token is None:
@@ -77,12 +89,19 @@ def main(run_interactive, use_test_model=False):
     options = BackendOptions()
     options.compiler_config = cc
 
-    # Create device mesh - Grok 2 requires multiple devices
+    # Create device mesh
     try:
-        device = DeviceManager.create_parent_mesh_device(mesh_shape=[1, 8])  # 8 GPUs as per Grok 2 requirements
+        if use_test_model:
+            # Single device for test model
+            device = DeviceManager.create_parent_mesh_device(mesh_shape=[1, 1])
+            print("Using single device for test model...")
+        else:
+            # 8 GPUs for Grok 2
+            device = DeviceManager.create_parent_mesh_device(mesh_shape=[1, 8])
+            print("Using 8-device mesh for Grok 2...")
         options.devices = [device]
     except Exception as e:
-        print(f"Warning: Could not create 8-device mesh: {e}")
+        print(f"Warning: Could not create device mesh: {e}")
         print("Falling back to single device...")
         device = DeviceManager.create_parent_mesh_device(mesh_shape=[1, 1])
         options.devices = [device]
