@@ -75,17 +75,17 @@ def apply_tensor_parallel_sharding_base(
         #         # MLP (Feed-Forward) Layer Sharding - ALL REPLICATED
         #         # ========================================
 
-        #         # gate_up_proj: [32, 2880, 5760] -> replicate all dimensions
-        #         xs.mark_sharding(layer.mlp.experts.gate_up_proj, mesh, (None, None, None))
+        # # gate_up_proj: [32, 2880, 5760] -> replicate all dimensions
+        # xs.mark_sharding(layer.mlp.experts.gate_up_proj, mesh, (None, None, None))
 
-        #         # gate_up_proj_bias: [32, 5760] -> replicate all dimensions
-        #         xs.mark_sharding(layer.mlp.experts.gate_up_proj_bias, mesh, (None, None))
+        # # gate_up_proj_bias: [32, 5760] -> replicate all dimensions
+        # xs.mark_sharding(layer.mlp.experts.gate_up_proj_bias, mesh, (None, None))
 
-        #         # down_proj: [32, 2880, 2880] -> replicate all dimensions
-        #         xs.mark_sharding(layer.mlp.experts.down_proj, mesh, (None, None, None))
+        # # down_proj: [32, 2880, 2880] -> replicate all dimensions
+        # xs.mark_sharding(layer.mlp.experts.down_proj, mesh, (None, None, None))
 
-        #         # down_proj_bias: [32, 2880] -> replicate all dimensions
-        #         xs.mark_sharding(layer.mlp.experts.down_proj_bias, mesh, (None, None))
+        # # down_proj_bias: [32, 2880] -> replicate all dimensions
+        # xs.mark_sharding(layer.mlp.experts.down_proj_bias, mesh, (None, None))
 
         # ========================================
         # Self-Attention Layer Sharding
@@ -193,9 +193,9 @@ def run_gpt_oss_tp():
     with torch.no_grad():
         outputs = model(**inputs_tp)
         print("Ran model")
-        torch_xla.sync()
+        # torch_xla.sync()
         print("torch xla synced")
-        outputs.logits = outputs.logits + 0.0
+        # outputs.logits = outputs.logits + 0.0
         breakpoint()
         outputs.logits = outputs.logits.to("cpu")
     print(outputs)
