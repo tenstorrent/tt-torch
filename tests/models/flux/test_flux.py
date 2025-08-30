@@ -40,7 +40,6 @@ print("Available variants: ", [str(k) for k in available_variants.keys()])
 def test_flux(record_property, variant, variant_config, mode, op_by_op):
     cc = CompilerConfig()
     cc.enable_consteval = True
-    # consteval_parameters is disabled because it results in a memory related crash
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:

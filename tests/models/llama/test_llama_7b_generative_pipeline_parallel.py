@@ -61,7 +61,6 @@ def test_llama_7b_generative_pipeline_parallel():
     clear_dynamo_cache()
     cc = CompilerConfig()
     cc.enable_consteval = False
-    cc.consteval_parameters = False
 
     model_name = "huggyllama/llama-7b"
 

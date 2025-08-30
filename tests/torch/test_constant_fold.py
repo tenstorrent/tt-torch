@@ -28,7 +28,6 @@ def test_multiple_ops():
 
     cc = CompilerConfig()
     cc.enable_consteval = True
-    cc.consteval_parameters = True
     verify_module(
         ConstantFoldable(),
         input_shapes=[(256, 256)],
@@ -59,7 +58,6 @@ def test_interp():
     )
     cc = CompilerConfig()
     cc.enable_consteval = True
-    cc.consteval_parameters = True
     verify_module(Basic(), inputs=[small], compiler_config=cc)
 
 
@@ -85,7 +83,6 @@ def test_linear():
 
     cc = CompilerConfig()
     cc.enable_consteval = True
-    cc.consteval_parameters = True
     verify_module(
         Basic(), input_shapes=[(32, 32)], compiler_config=cc, required_atol=0.02
     )

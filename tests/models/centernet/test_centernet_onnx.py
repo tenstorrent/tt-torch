@@ -51,7 +51,6 @@ def test_centernet_onnx(record_property, model_info, mode, op_by_op):
     model_name, _ = model_info
     cc = CompilerConfig()
     cc.enable_consteval = True
-    cc.consteval_parameters = True
 
     if op_by_op is not None:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP

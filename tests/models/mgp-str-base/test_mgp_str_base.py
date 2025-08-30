@@ -39,7 +39,6 @@ def test_mgp_str_base(record_property, mode, op_by_op, data_parallel_mode):
 
     cc = CompilerConfig()
     cc.enable_consteval = True
-    cc.consteval_parameters = True
     cc.dump_info = True
     if op_by_op:
         if data_parallel_mode:

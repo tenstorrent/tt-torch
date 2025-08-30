@@ -33,7 +33,6 @@ def download_image(url):
 def main():
     cc = CompilerConfig()
     cc.enable_consteval = True
-    cc.consteval_parameters = True
 
     num_devices = DeviceManager.get_num_available_devices()
     parent, devices = DeviceManager.acquire_available_devices()

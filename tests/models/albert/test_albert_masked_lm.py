@@ -61,7 +61,6 @@ def test_albert_masked_lm(
 ):
     cc = CompilerConfig()
     cc.enable_consteval = True
-    cc.consteval_parameters = True
     if op_by_op:
         if data_parallel_mode:
             pytest.skip("Op-by-op not supported in data parallel mode")
