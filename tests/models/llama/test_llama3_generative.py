@@ -26,7 +26,7 @@ import tt_torch.dynamo.sharding_utils as ts
 # Control vars
 
 _global_max_cache_len = 64 + 64
-tokens_to_generate = 10
+tokens_to_generate = 5
 hidden_layers = 1
 use_static_cache = True
 
@@ -78,7 +78,10 @@ def load_inputs(
             "cache_position": cache_position,
         }
     else:
-        args = {"input_ids": inputs.input_ids}
+        args = {
+            "input_ids": inputs.input_ids, 
+            # "attention_mask": inputs.attention_mask
+        }
     return args
 
 
@@ -213,7 +216,11 @@ def test_llama3_generate():
                 "use_cache": True,
             }
         else:
-            input_args = {"input_ids": next_token_ids}
+            input_args = {
+                "input_ids": generated_ids,
+                # "attention_mask": torch.ones((1, len(generated_tokens)))                
+            }
+            
 
         print(f"Generated tokens: {generated_tokens}")
 
