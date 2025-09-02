@@ -37,24 +37,24 @@ You should see the Tenstorrent System Management Interface. It allows you to vie
 
 TT-Torch has the following system dependencies:
 * Ubuntu 22.04
-* Python 3.10
-* python3.10-venv
+* Python 3.11
+* python3.11-venv
 * Clang 17
 * GCC 11
 * Ninja
 * CMake 4.0.3
 
 ### Installing Python
-If your system already has Python installed, make sure it is Python 3.10 or higher:
+If your system already has Python installed, make sure it is Python 3.11 or higher:
 
 ```bash
-python3 --version
+python3.11 --version
 ```
 
 If not, install Python:
 
 ```bash
-sudo apt install python3
+sudo apt install python3.11
 ```
 
 ### Installing CMake 4.0.3
