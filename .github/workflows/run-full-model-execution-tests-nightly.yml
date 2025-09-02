@@ -178,6 +178,8 @@ jobs:
                   tests/models/vovnet/test_vovnet_onnx.py::test_vovnet_onnx[full-eval]
                   tests/models/seamless_m4t/test_seamless_m4t.py::test_seamless_m4t[full-eval]
                   tests/models/bert/test_bert.py::test_bert[phiyodr/bert-large-finetuned-squad2-full-eval]
+                  tests/models/bge_m3/test_bge_m3.py::test_bge_m3[full-eval]
+                  tests/models/bge_m3/test_bge_m3_encode.py::test_bge_m3_encode[full-eval]
             "
           },
           {
