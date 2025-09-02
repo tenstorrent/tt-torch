@@ -97,5 +97,4 @@ def test_llama_8b_eager(run_causal, sequence_length):
 
     pcc = calculate_pcc(tt_outputs, cpu_outputs)
     print(f"PCC: {pcc}")
-    # TODO: PCC is low due to experimental reduce_scatter - https://github.com/tenstorrent/tt-torch/issues/1209
-    assert pcc >= 0.8
+    assert pcc >= 0.95
