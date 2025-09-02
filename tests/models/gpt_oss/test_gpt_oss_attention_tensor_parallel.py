@@ -239,9 +239,9 @@ def run_multichip_attention_test():
             )
 
             print("Tensor parallel attention forward pass completed!")
-            print(f"Output shapes: attn_output={attn_output.shape}")
-            if attn_weights is not None:
-                print(f"Attention weights shape: {attn_weights.shape}")
+            # print(f"Output shapes: attn_output={attn_output.shape}")
+            # if attn_weights is not None:
+            #     print(f"Attention weights shape: {attn_weights.shape}")
 
             # # Synchronize XLA before moving to CPU
             # print("Synchronizing XLA device...")
@@ -250,6 +250,7 @@ def run_multichip_attention_test():
             # Move results back to CPU for inspection
             print("Moving results to CPU...")
             attn_output_cpu = attn_output.cpu()
+            print(f"Output shapes: attn_output_cpu={attn_output_cpu.shape}")
 
             # Print some basic statistics
             print(f"\n=== Tensor Parallel Results ===")
