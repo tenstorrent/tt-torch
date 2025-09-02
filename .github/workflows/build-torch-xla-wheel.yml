@@ -32,13 +32,13 @@ jobs:
           curl https://pyenv.run | bash
           export PATH="$HOME/.pyenv/bin:$PATH"
           eval "$(pyenv init -)"
-          pyenv install 3.10.12
-          pyenv global 3.10.12
-          ln -sf $HOME/.pyenv/versions/3.10.12/bin/python3.10 /usr/local/bin/python3.10
+          pyenv install 3.11
+          pyenv global 3.11
+          ln -sf $HOME/.pyenv/versions/3.11.13/bin/python3.11 /usr/local/bin/python3.11
 
-          # Install essential packages for Python 3.10
-          python3.10 -m pip install --upgrade pip
-          python3.10 -m pip install pyyaml setuptools wheel numpy typing_extensions requests
+          # Install essential packages for Python 3.11
+          python3.11 -m pip install --upgrade pip
+          python3.11 -m pip install pyyaml setuptools wheel numpy typing_extensions requests
 
           cd /tmp
           git clone --recursive --branch v${{ inputs.torch_version }} https://github.com/pytorch/pytorch.git
@@ -49,13 +49,13 @@ jobs:
           mkdir -p ./dist
           if [ -d /mnt/dockercache/models/tt-ci-models-private/wheels ]; then
             echo "Using pre-built wheels from cache"
-            cp -r /mnt/dockercache/models/tt-ci-models-private/wheels/torch-2.7.0*cp310*.whl ./dist/
+            cp -r /mnt/dockercache/models/tt-ci-models-private/wheels/torch-2.7.0*cp311*.whl ./dist/
           fi
-          python3.10 setup.py develop
+          python3.11 setup.py develop
 
           # Build PyTorch/XLA
           cd xla/
-          python3.10 setup.py bdist_wheel
+          python3.11 setup.py bdist_wheel
 
           # Collect wheels
           mkdir -p /dist

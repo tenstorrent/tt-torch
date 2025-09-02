@@ -123,7 +123,7 @@ class install_metal_libs(install_lib):
                     ignore=shutil.ignore_patterns(".git"),
                 )
         # copy everything from skbuild cmake-install/tt-metal to self.install_dir/tt-metal
-        src_metal_dir = "_skbuild/linux-x86_64-3.10/cmake-install/tt-metal"
+        src_metal_dir = "_skbuild/linux-x86_64-3.11/cmake-install/tt-metal"
         dest_metal_dir = os.path.join(self.install_dir, "tt-metal")
         if os.path.exists(src_metal_dir):
             os.makedirs(dest_metal_dir, exist_ok=True)
