@@ -65,8 +65,9 @@ class XLATensorCache:
             shape = tuple(tensor.shape)
             dtype = tensor.dtype
             device = str(tensor.device)
-                
-            cache_key = (tensor_id, shape, dtype, device)
+            _tensor = tensor # for rev lookup
+                 
+            cache_key = (tensor_id, shape, dtype, device, _tensor)
             
             # if self._debug:
             #     print(f"[XLA Cache] Generated cache key: {cache_key}", flush=True)
@@ -115,6 +116,25 @@ class XLATensorCache:
     def size(self):
         """Get the number of items in cache."""
         return len(self._cache)
+    
+    def get_key_for_device_tensor(self, cached_tensor):
+        """Get the cache key for a given cached tensor value (reverse lookup).
+        
+        Args:
+            cached_tensor: The tensor that was previously cached
+            
+        Returns:
+            The cache key if found, None otherwise
+        """
+        for key, value in self._cache.items():
+            if value is cached_tensor:
+                if self._debug:
+                    print(f"[XLA Cache] Found key for cached tensor: {key}", flush=True)
+                return key
+        
+        if self._debug:
+            print(f"[XLA Cache] No key found for cached tensor", flush=True)
+        return None
 
 
 def cast_ios_and_run(node, args, kwargs):
@@ -699,12 +719,12 @@ class XLAExecutor:
             print(f"[XLA Debug] Input {idx}: kind={input_spec.kind}, arg={input_spec.arg}, target={getattr(input_spec, 'target', 'N/A')}", flush=True)
             
             if input_spec.kind == InputKind.USER_INPUT:
-                print(f"[XLA Debug] Input {idx} is USER_INPUT, adding None placeholder", flush=True)
+                # print(f"[XLA Debug] Input {idx} is USER_INPUT, adding None placeholder", flush=True)
                 self.inputs.append(None)
                 self.user_input_indices.append(idx)
             else:
                 source_tensor = self.program.state_dict[input_spec.target]
-                print(f"[XLA Debug] Input {idx} is {input_spec.kind}, source tensor shape: {source_tensor.shape}, dtype: {source_tensor.dtype}, device: {source_tensor.device}", flush=True)
+                # print(f"[XLA Debug] Input {idx} is {input_spec.kind}, source tensor shape: {source_tensor.shape}, dtype: {source_tensor.dtype}, device: {source_tensor.device}", flush=True)
 
                 cached_tensor = self._tensor_cache.get(source_tensor)                
                 if cached_tensor is not None:
@@ -719,21 +739,22 @@ class XLAExecutor:
                 else:
                     shard_spec = ts.get_sharding(source_tensor)
                     print(
-                        f"[XLA Debug] Input {idx} not in cache - shape: {source_tensor.shape}, shard spec: {shard_spec}, moving to XLA device", flush=True
+                        # f"[XLA Debug] Input {idx} not in cache - shape: {source_tensor.shape}, shard spec: {shard_spec}, moving to XLA device", flush=True
                     )
                     # immediate allocation of host tensor
                     device_tensor = source_tensor.to("xla")  
                     if shard_spec is not None:
-                        print(f"[XLA Debug] Input {idx} applying shard spec: {shard_spec} with mesh: {self.compiler_config.mesh}", flush=True)
+                        # print(f"[XLA Debug] Input {idx} applying shard spec: {shard_spec} with mesh: {self.compiler_config.mesh}", flush=True)
                         xs.mark_sharding(
                             device_tensor, self.compiler_config.mesh, shard_spec
                         )
                     else:
-                        print(f"[XLA Debug] Input {idx} no sharding applied", flush=True)
+                        # print(f"[XLA Debug] Input {idx} no sharding applied", flush=True)
+                        pass
                     self.inputs.append(device_tensor)
                     
                     self._tensor_cache.put(source_tensor, device_tensor)
-                    print(f"[XLA Debug] Input {idx} cached tensor with device: {device_tensor.device}", flush=True)
+                    # print(f"[XLA Debug] Input {idx} cached tensor with device: {device_tensor.device}", flush=True)
         
         print(f"[XLA Debug] Initialization complete - total inputs: {len(self.inputs)}, user input indices: {self.user_input_indices}", flush=True)
 
@@ -773,6 +794,17 @@ class XLAExecutor:
         else:
             return inputs
 
+    def rectify_shard_specs_during_call(self, inputs:list[torch.Tensor]):
+        # some shard specs get changed for the buffer tensors, for some unknown reason after mark_step()
+        # thus we remark the shard specs before the next call.
+        for xla_tensor in inputs:
+            maybe_key = self._tensor_cache.get_key_for_device_tensor(xla_tensor)
+            if maybe_key:
+                _,_,_,_,cpu_tensor = maybe_key
+                shard_spec = ts.get_sharding(cpu_tensor)
+                if shard_spec:
+                    xs.mark_sharding(xla_tensor, self.compiler_config.mesh, shard_spec)
+    
     def generate_arg_type_map_str(self, output_object):
         hlo_input_ids, _ = torch_xla._XLAC._get_tensors_xla_device_data_node(
             output_object
@@ -814,6 +846,8 @@ class XLAExecutor:
         inputs = self.inputs
 
         # self.program.graph_module.graph.print_tabular()
+        
+        self.rectify_shard_specs_during_call(inputs)
 
         # Print input names and shapes from graph signature
         # for idx, input_spec in enumerate(self.program.graph_signature.input_specs):
@@ -842,28 +876,24 @@ class XLAExecutor:
                 self.generate_arg_type_map_str(output)
             if os.environ.get("ARG_TYPE_MAP_OVERRIDE") != self.arg_type_map_str:
                 os.environ["ARG_TYPE_MAP_OVERRIDE"] = self.arg_type_map_str
-
-        # for i,inp in enumerate(inputs):
-        #     is_static_cache = inp.dim()==4 and inp.shape[2] == 128 and inp.shape[3]==128
-        #     if is_static_cache or True:
-        #         try:
-        #             print(f"BEFORE MARK STEP Enumerating input {i} with shape {inp.shape} and device {inp.device}")
-        #             print(f"with xla tensor id {torch_xla._XLAC._xla_get_tensor_id(inp)} and sharding annotation {torch_xla._XLAC._get_xla_sharding_spec(inp)}", flush=True)
-        #         except:
-        #             pass
         
         torch_xla.sync()
-        
-        # for i,inp in enumerate(inputs):
-        #     is_static_cache = inp.dim()==4 and inp.shape[2] == 128 and inp.shape[3]==128
-        #     if is_static_cache or True:
-        #         try:
-        #             print(f"AFTER MARK STEP Enumerating input {i} with shape {inp.shape} and device {inp.device}")
-        #             print(f"with xla tensor id {torch_xla._XLAC._xla_get_tensor_id(inp)} and sharding annotation {torch_xla._XLAC._get_xla_sharding_spec(inp)}", flush=True)
-        #         except:
-        #             pass
         if self.compiler_config.push_outputs_to_cpu:
             output = self.push_tensors_to_device(output, "cpu")
+        
+        dump_static_cache = True
+        if dump_static_cache:
+            for i,_input in enumerate(inputs):
+                is_static_cache = _input.dim()==4 and _input.shape[2] == 128 and _input.shape[3]==128
+                print(f"input {i}: device = {_input.device}, shape {_input.shape} and shard spec {torch_xla._XLAC._get_xla_sharding_spec(_input)}", flush=True)
+                if is_static_cache:         
+                    _input = _input.to('cpu')
+                    try:
+                        mean_val = torch.mean(_input[0,0,:,:], dim=-1)
+                        print(f"[STATIC CACHE DUMP ]mean along seqlen for static cache @ input idx {i} and shape {_input.shape}:", mean_val, flush=True)
+                    except Exception as e:
+                        print(f"\tWarning: Could not compute mean for static cache {i}: {e}")
+                        print(f"\tmean along seqlen for static cache @ input idx {i} and shape {_input.shape}: <error during computation>")
         
         return output
 
