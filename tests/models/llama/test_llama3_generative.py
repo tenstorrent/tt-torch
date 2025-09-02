@@ -14,8 +14,27 @@ from transformers import (
 )
 from tests.utils import clear_dynamo_cache
 import tt_mlir
+import tt_torch.dynamo.sharding_utils as sharding_utils
+import numpy as np
+import torch_xla.runtime as xr
+from torch_xla.distributed.spmd import Mesh
 
 _global_max_cache_len = 64 + 64
+
+
+def create_device_mesh() -> Mesh:
+    """
+    Create device mesh for tensor parallelism.
+
+    Returns:
+        Mesh object for SPMD operations
+    """
+    num_devices = xr.global_runtime_device_count()
+    mesh_shape = (1, num_devices)
+    device_ids = np.array(range(num_devices))
+    mesh = Mesh(device_ids, mesh_shape, ("batch", "model"))
+    print(f"Created device mesh: {mesh_shape} with {num_devices} devices")
+    return mesh
 
 
 def load_model(model_name="meta-llama/Llama-3.2-3B"):
@@ -67,6 +86,11 @@ def load_inputs(
 
 @torch.inference_mode()
 def test_llama3_generate():
+
+    # setup xla backend
+    sharding_utils.setup_xla_spmd_environment()
+    mesh = create_device_mesh()
+
     # Initialize model and inputs
     start_time = time.time()
     model, tokenizer = load_model()
@@ -85,6 +109,7 @@ def test_llama3_generate():
     # Setup compilation
     clear_dynamo_cache()
     cc = CompilerConfig()
+    cc.xla_mesh = mesh
 
     # Consteval disabled due to 4D Causal Attention Mask evaluation getting constant folded in torchfx
     #   due to incorrect tracing of static cache and malformed output missing static cache tensors
@@ -103,9 +128,8 @@ def test_llama3_generate():
     constant_cache = {}
     options.constant_cache = constant_cache
 
-    # _backend = backend 
-    _backend = 'tt-experimental' 
-    
+    # _backend = backend
+    _backend = "tt-experimental"
 
     compiled_model = torch.compile(
         model, backend=_backend, dynamic=False, options=options
