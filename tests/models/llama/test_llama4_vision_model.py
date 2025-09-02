@@ -19,37 +19,76 @@ def reshape_for_broadcast(freqs: torch.Tensor, query: torch.Tensor):
 
 
 def real_valued_vision_apply_rotary_emb(
-    query: torch.Tensor,
-    key: torch.Tensor,
-    freqs_cos: torch.Tensor,
-    freqs_sin: torch.Tensor,
+    query: torch.Tensor, key: torch.Tensor, freqs_ci: torch.Tensor = None, **kwargs
 ) -> Tuple[torch.Tensor, torch.Tensor]:
     """
     Apply rotary embedding using real-valued arithmetic instead of complex numbers.
 
     This implements the same rotation as complex multiplication but using only real tensors:
-    x' = x * cos(θ) - y * sin(θ)
-    y' = x * sin(θ) + y * cos(θ)
+    For a complex number z = x + iy rotated by angle θ:
+    z' = z * e^(iθ) = z * (cos(θ) + i*sin(θ))
+    Real part: x' = x*cos(θ) - y*sin(θ)
+    Imag part: y' = x*sin(θ) + y*cos(θ)
     """
-    # Reshape query and key to separate real/imaginary parts
-    query_real, query_imag = query.float().chunk(2, dim=-1)
-    key_real, key_imag = key.float().chunk(2, dim=-1)
+    if freqs_ci is None:
+        return query, key
 
-    # Reshape frequency tensors for broadcasting
-    freqs_cos = reshape_for_broadcast(freqs_cos, query_real).to(query_real.device)
-    freqs_sin = reshape_for_broadcast(freqs_sin, query_real).to(query_real.device)
+    # Handle case where freqs_ci is a tuple (cos, sin)
+    if isinstance(freqs_ci, tuple):
+        cos_vals, sin_vals = freqs_ci
+        cos_vals = cos_vals.to(query.device)
+        sin_vals = sin_vals.to(query.device)
+    else:
+        # Extract cos and sin from the combined frequency tensor
+        # freqs_ci is typically structured as [cos_values, sin_values] or interleaved
+        # For vision models, freqs_ci often contains both cos and sin components
+
+        device = query.device
+
+        # Use a simpler approach that doesn't involve dynamic slicing
+        # Just use the freqs_ci tensor directly and broadcast it properly
+        if freqs_ci.dim() >= 2:
+            # Take the appropriate slice based on the expected dimensions
+            freq_slice = freqs_ci[..., 0 : query.size(-1) // 2]
+        else:
+            # If freqs_ci is 1D, expand it to match query dimensions
+            freq_slice = freqs_ci[: query.size(-1) // 2]
+
+        cos_vals = torch.cos(freq_slice).to(device)
+        sin_vals = torch.sin(freq_slice).to(device)
+
+    # Split query and key into pairs (treating adjacent dims as real/imaginary pairs)
+    # Shape: [..., head_dim] -> [..., head_dim//2, 2]
+    query_reshaped = query.float().view(*query.shape[:-1], -1, 2)
+    key_reshaped = key.float().view(*key.shape[:-1], -1, 2)
+
+    # Extract real and imaginary parts
+    query_real = query_reshaped[..., 0]  # [..., head_dim//2]
+    query_imag = query_reshaped[..., 1]  # [..., head_dim//2]
+    key_real = key_reshaped[..., 0]  # [..., head_dim//2]
+    key_imag = key_reshaped[..., 1]  # [..., head_dim//2]
+
+    # Ensure cos/sin have compatible shapes for broadcasting
+    cos_vals = reshape_for_broadcast(cos_vals, query_real)
+    sin_vals = reshape_for_broadcast(sin_vals, query_real)
 
     # Apply rotation using real arithmetic
-    query_out_real = query_real * freqs_cos - query_imag * freqs_sin
-    query_out_imag = query_real * freqs_sin + query_imag * freqs_cos
-    key_out_real = key_real * freqs_cos - key_imag * freqs_sin
-    key_out_imag = key_real * freqs_sin + key_imag * freqs_cos
+    # Real part: x' = x*cos - y*sin
+    # Imag part: y' = x*sin + y*cos
+    query_out_real = query_real * cos_vals - query_imag * sin_vals
+    query_out_imag = query_real * sin_vals + query_imag * cos_vals
+    key_out_real = key_real * cos_vals - key_imag * sin_vals
+    key_out_imag = key_real * sin_vals + key_imag * cos_vals
 
-    # Concatenate back to original shape
-    query_out = torch.cat([query_out_real, query_out_imag], dim=-1)
-    key_out = torch.cat([key_out_real, key_out_imag], dim=-1)
+    # Recombine real and imaginary parts
+    query_out = torch.stack([query_out_real, query_out_imag], dim=-1)
+    key_out = torch.stack([key_out_real, key_out_imag], dim=-1)
 
-    return query_out.type_as(query), key_out.type_as(key)
+    # Reshape back to original shape
+    query_out = query_out.view(*query.shape).type_as(query)
+    key_out = key_out.view(*key.shape).type_as(key)
+
+    return query_out, key_out
 
 
 # Real-valued rotary embedding to avoid complex tensors
