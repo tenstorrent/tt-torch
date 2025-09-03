@@ -7,7 +7,7 @@
 set(TT_XLA_VERSION "90c981f6b0547ad7819ac60aca64fce4e82c2e3c")
 
 # Optional override of tt-xla's TT_MLIR_VERSION. Default to tt-xla's default TT_MLIR_VERSION if we pass an empty string
-set(TT_MLIR_VERSION "")
+set(TT_MLIR_VERSION "641eb5008bb1dbb4bbabbc3776fd4986c6d48ec7")
 if(NOT TT_MLIR_VERSION STREQUAL "")
     set(USE_CUSTOM_TT_MLIR_VERSION ON)
     message(STATUS "Overriding TT_MLIR_VERSION in tt-xla build: ${TT_MLIR_VERSION}")
