@@ -150,7 +150,7 @@ def apply_attention_tensor_parallel_sharding(
 
     # sinks -> local. rowwise
     if hasattr(attention_layer, "sinks") and attention_layer.sinks is not None:
-        xs.mark_sharding(attention_layer.sinks, mesh, (None,))
+        xs.mark_sharding(attention_layer.sinks, mesh, ("model", ))
         print(f"Sharded sinks: {attention_layer.sinks.shape}")
 
     print("Tensor parallel sharding applied successfully to attention layer!")
@@ -180,7 +180,7 @@ def run_multichip_attention_test():
     attention_layer, rotary_emb = gpt_oss_attention._create_attention_layer(config)
 
     print("Creating synthetic inputs...")
-    batch_size, seq_len = 2, 128
+    batch_size, seq_len = 1, 128
     (
         hidden_states,
         position_ids,
@@ -201,6 +201,7 @@ def run_multichip_attention_test():
     hidden_states = hidden_states.to(torch_xla.device())
     position_ids = position_ids.to(torch_xla.device())
     attention_mask = attention_mask.to(torch_xla.device())
+    xs.mark_sharding(attention_mask, mesh, (None, "model", None, None))
 
     print("Moving rotary embedding to XLA device...")
     rotary_emb = rotary_emb.to(torch_xla.device())
@@ -242,9 +243,9 @@ def run_multichip_attention_test():
             if attn_weights is not None:
                 print(f"Attention weights shape: {attn_weights.shape}")
 
-            # Synchronize XLA before moving to CPU
-            print("Synchronizing XLA device...")
-            torch_xla.sync()  # Ensure all computations are done
+            # # Synchronize XLA before moving to CPU
+            # print("Synchronizing XLA device...")
+            # torch_xla.sync()  # Ensure all computations are done
 
             # Move results back to CPU for inspection
             print("Moving results to CPU...")
