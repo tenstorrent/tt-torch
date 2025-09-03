@@ -6,11 +6,7 @@ import tt_torch
 import sys
 import torch
 import torch_xla
-import torch_xla.runtime as xr
-import torch_xla.distributed.spmd as xs
 import torch_xla.core.xla_model as xm
-from torch_xla.distributed.spmd import Mesh
-import numpy as np
 from transformers import AutoConfig
 
 # Import the specific attention components from the model file
