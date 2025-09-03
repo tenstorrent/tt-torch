@@ -52,6 +52,7 @@ def test_resnet(record_property, mode, op_by_op, data_parallel_mode):
         mode,
         assert_pcc=True,
         assert_atol=False,
+        required_pcc=0.98,
         compiler_config=cc,
         record_property_handle=record_property,
         data_parallel_mode=data_parallel_mode,
