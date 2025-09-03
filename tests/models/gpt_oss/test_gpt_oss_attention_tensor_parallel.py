@@ -244,8 +244,8 @@ def run_multichip_attention_test():
             #     print(f"Attention weights shape: {attn_weights.shape}")
 
             # # Synchronize XLA before moving to CPU
-            # print("Synchronizing XLA device...")
-            # torch_xla.sync()  # Ensure all computations are done
+            print("Synchronizing XLA device...")
+            torch_xla.sync()  # Ensure all computations are done
 
             # Move results back to CPU for inspection
             print("Moving results to CPU...")

@@ -67,14 +67,12 @@ class GPT_OSS_MLP:
 
     def _create_mlp_layer(self, config):
         """Create and initialize MLP layer"""
-        mlp = GptOssMLP(config)
-
-        mlp.eval()
+        mlp = GptOssMLP(config).eval()
         mlp = mlp.to(torch.bfloat16)
 
         return mlp
 
-    def _create_normed_inputs(self, config, batch_size=2, seq_len=128):
+    def _create_normed_inputs(self, config, batch_size=1, seq_len=128):
         """Create synthetic hidden states and RMSNorm them"""
         dtype = torch.bfloat16
         hidden_states = torch.randn(
@@ -92,13 +90,19 @@ class GPT_OSS_MLP:
 
         mlp_layer = mlp_layer.to(torch_xla.device())
 
+        # Router weights - replicated (needed for routing decisions)
         xs.mark_sharding(mlp_layer.router.weight, mesh, (None, None))
         xs.mark_sharding(mlp_layer.router.bias, mesh, (None,))
 
+        # Expert weights - optimal tensor parallelism configuration
+        # Keep gate_up_proj replicated to avoid XLA sharding conflicts
         xs.mark_sharding(mlp_layer.experts.gate_up_proj, mesh, (None, None, None))
         xs.mark_sharding(mlp_layer.experts.gate_up_proj_bias, mesh, (None, None))
-        xs.mark_sharding(mlp_layer.experts.down_proj, mesh, (None, None, None))
-        xs.mark_sharding(mlp_layer.experts.down_proj_bias, mesh, (None, None))
+
+        # Shard down_proj for tensor parallelism (most beneficial for performance)
+        # down_proj: (num_experts, intermediate_size, hidden_size)
+        xs.mark_sharding(mlp_layer.experts.down_proj, mesh, (None, None, "model"))
+        xs.mark_sharding(mlp_layer.experts.down_proj_bias, mesh, (None, "model"))
 
         return mlp_layer
 
@@ -130,7 +134,7 @@ def run_mlp_test():
     mlp_layer = gpt_oss_mlp._setup_tensor_parallel(mlp_layer, mesh)
 
     print("Creating normalized synthetic inputs...")
-    batch_size, seq_len = 2, 128
+    batch_size, seq_len = 1, 128
     hidden_states = gpt_oss_mlp._create_normed_inputs(config, batch_size, seq_len)
 
     print(
@@ -160,21 +164,21 @@ def run_mlp_test():
             torch_xla.sync()
 
             print("Moving results to CPU...")
-            mlp_output_cpu = mlp_output.cpu()
-            router_scores_cpu = router_scores.cpu()
+            mlp_output = mlp_output.to("cpu")
+            router_scores = router_scores.to("cpu")
 
             # Stats
             print(f"MLP output stats:")
-            print(f"  Mean: {mlp_output_cpu.mean():.6f}")
-            print(f"  Std: {mlp_output_cpu.std():.6f}")
-            print(f"  Min: {mlp_output_cpu.min():.6f}")
-            print(f"  Max: {mlp_output_cpu.max():.6f}")
+            print(f"  Mean: {mlp_output.mean()}")
+            print(f"  Std: {mlp_output.std()}")
+            print(f"  Min: {mlp_output.min()}")
+            print(f"  Max: {mlp_output.max()}")
 
             print(f"Router scores stats:")
-            print(f"  Mean: {router_scores_cpu.mean():.6f}")
-            print(f"  Std: {router_scores_cpu.std():.6f}")
-            print(f"  Min: {router_scores_cpu.min():.6f}")
-            print(f"  Max: {router_scores_cpu.max():.6f}")
+            print(f"  Mean: {router_scores.mean()}")
+            print(f"  Std: {router_scores.std()}")
+            print(f"  Min: {router_scores.min()}")
+            print(f"  Max: {router_scores.max()}")
 
         except Exception as e:
             print(f"Error during MLP forward pass: {e}")
