@@ -21,14 +21,15 @@ from torch_xla.distributed.spmd import Mesh
 import tt_mlir
 import numpy as np
 import tt_torch.dynamo.sharding_utils as ts
-
+from tt_torch.dynamo.experimental.xla_backend import cpu_cache_tensors
 
 # Control vars
 
 _global_max_cache_len = 64 + 64
-tokens_to_generate = 5
-hidden_layers = 22
+tokens_to_generate = 32
+hidden_layers = 28
 use_static_cache = True
+use_golden_comparison = False
 
 
 def load_model(model_name="meta-llama/Llama-3.2-3B"):
@@ -65,7 +66,7 @@ def load_inputs(
         max_batch_size=batch_size,
         max_cache_len=max_cache_len,
         device=model.device,
-        dtype=model.dtype,
+        dtype=torch.bfloat16,
     )
 
     cache_position = torch.arange(0, inputs.input_ids.shape[1])
@@ -133,9 +134,6 @@ def test_llama3_generate():
     input_args = load_inputs(model, tokenizer)
     generated_ids = input_args["input_ids"]
 
-    cpu_result = model(**input_args)
-    cpu_logits = cpu_result.logits
-
     pccs = []
 
     initial_prompt = tokenizer.decode(generated_ids[0].tolist())
@@ -199,6 +197,11 @@ def test_llama3_generate():
     for i in range(tokens_to_generate):
         # Execute model
         outputs = compiled_model(**input_args)
+        if use_golden_comparison:
+            cpu_result = model(**input_args)
+            cpu_logits = cpu_result.logits
+            print("CPU logit shape: ", cpu_logits.shape, "XLA logit shape: ", outputs.logits.shape)
+            pccs.append(calculate_pcc(outputs.logits[:, -1:].cpu(), cpu_logits[:, -1:]))
 
         # Update inputs for next iteration
         if use_static_cache:
@@ -206,8 +209,6 @@ def test_llama3_generate():
 
         # Post-processing
         next_token_ids = outputs.logits[:, -1:].argmax(dim=-1)
-        print("CPU logit shape: ", cpu_logits.shape, "XLA logit shape: ", outputs.logits.shape)
-        pccs.append(calculate_pcc(outputs.logits[:, -1:].cpu(), cpu_logits[:, -1:]))
         generated_ids = torch.cat([generated_ids, next_token_ids], dim=-1)
 
         # Decode and collect token
@@ -233,4 +234,21 @@ def test_llama3_generate():
 
     # Cleanup
     print("PCCs:", pccs)
+
+    # inspect static cache tensors from past_key_values
+    # if use_static_cache and "past_key_values" in input_args:
+    #     torch.set_printoptions(precision=12)
+    #     past_key_values = input_args["past_key_values"]
+    #     print(f"Past key values static cache:")
+    #     for i, (key, value) in enumerate(zip(past_key_values.key_cache, past_key_values.value_cache)):
+    #         print(f" Layer {i} key cache: shape {key.shape}")
+    #         print(f" Layer {i} value cache: shape {value.shape}")
+    #         try:
+    #             key_mean = torch.mean(key[0,0,:,:], dim=-1)
+    #             value_mean = torch.mean(value[0,0,:,:], dim=-1) 
+    #             print(f"[STATIC CACHE DUMP] key mean along seqlen for layer {i} with shape {key.shape}: {key_mean}", flush=True)
+    #             print(f"[STATIC CACHE DUMP] value mean along seqlen for layer {i} with shape {value.shape}: {value_mean}", flush=True)
+    #         except Exception as e:
+    #             print(f"\tWarning: Could not compute mean for layer {i} cache: {e}")
+    
     clear_dynamo_cache()

@@ -44,6 +44,7 @@ import tt_torch.dynamo.sharding_utils as ts
 
 from ..executor import get_inputs_size, gb_to_bytes
 
+cpu_cache_tensors = []
 
 class XLATensorCache:
     """Singleton cache for tensors that have been moved to XLA device."""
@@ -883,14 +884,17 @@ class XLAExecutor:
         
         dump_static_cache = True
         if dump_static_cache:
+            cpu_cache_tensors.append([])
             for i,_input in enumerate(inputs):
                 is_static_cache = _input.dim()==4 and _input.shape[2] == 128 and _input.shape[3]==128
                 print(f"input {i}: device = {_input.device}, shape {_input.shape} and shard spec {torch_xla._XLAC._get_xla_sharding_spec(_input)}", flush=True)
-                if is_static_cache:         
+                if is_static_cache:
                     _input = _input.to('cpu')
+                    cpu_cache_tensors[-1].append(_input)
                     try:
                         mean_val = torch.mean(_input[0,0,:,:], dim=-1)
-                        print(f"[STATIC CACHE DUMP ]mean along seqlen for static cache @ input idx {i} and shape {_input.shape}:", mean_val, flush=True)
+                        torch.set_printoptions(precision=12)
+                        print(f"[STATIC CACHE DUMP ]mean along seqlen for static cache @ input idx {i} and shape {_input.shape}: {mean_val}", flush=True)
                     except Exception as e:
                         print(f"\tWarning: Could not compute mean for static cache {i}: {e}")
                         print(f"\tmean along seqlen for static cache @ input idx {i} and shape {_input.shape}: <error during computation>")
