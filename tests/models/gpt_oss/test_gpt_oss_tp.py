@@ -55,7 +55,7 @@ def apply_tensor_parallel_sharding_causal(causal_model: GptOssForCausalLM, mesh:
 
     # Now shard the LM head
     # lm_head: [vocab_size, hidden_size] -> shard dim 0
-    xs.mark_sharding(causal_model.lm_head.weight, mesh, ("model", "batch"))
+    xs.mark_sharding(causal_model.lm_head.weight, mesh, ("model", None))
     print("Tensor parallel sharding applied successfully!")
 
 
