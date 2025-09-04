@@ -34,7 +34,7 @@ jobs:
           eval "$(pyenv init -)"
           pyenv install 3.11
           pyenv global 3.11
-          ln -sf $HOME/.pyenv/versions/3.11.13/bin/python3.11 /usr/local/bin/python3.11
+          ln -sf $(pyenv which python3.11) /usr/local/bin/python3.11
 
           # Install essential packages for Python 3.11
           python3.11 -m pip install --upgrade pip
