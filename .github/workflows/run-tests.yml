@@ -83,10 +83,12 @@ jobs:
         mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
-    - name: Show actual installed python dependencies
+    - name: Show python version and actual installed python dependencies
       shell: bash
       run: |
         source env/activate
+        echo "Python version:"
+        python --version
         pip freeze
 
     - name: Validate tt-forge-models runner test config file

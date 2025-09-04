@@ -10,9 +10,13 @@ if [ -z "$TTMLIR_TOOLCHAIN_DIR" ]; then
   export TTMLIR_TOOLCHAIN_DIR="/opt/ttmlir-toolchain/"
 fi
 if command -v sudo > /dev/null 2>&1; then
-  sudo apt-get install -y python3.11-dev python3.11-venv
+  sudo add-apt-repository ppa:deadsnakes/ppa -y
+  sudo apt-get update
+  sudo apt-get install -y python3.11 python3.11-dev python3.11-venv python3.11-distutils
 else
-  apt-get install -y python3.11-dev python3.11-venv
+  add-apt-repository ppa:deadsnakes/ppa -y
+  apt-get update
+  apt-get install -y python3.11 python3.11-dev python3.11-venv python3.11-distutils
 fi
 
 export TT_TORCH_HOME="$(pwd)"
