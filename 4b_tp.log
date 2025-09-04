@@ -1,0 +1,47 @@
+WARNING:root:Defaulting to PJRT_DEVICE=CPU
+============================= test session starts ==============================
+platform linux -- Python 3.10.12, pytest-8.4.1, pluggy-1.6.0 -- /localdev/ssalice/tt-torch/env/venv/bin/python3.10
+cachedir: .pytest_cache
+rootdir: /localdev/ssalice/tt-torch
+configfile: pytest.ini
+plugins: xdist-3.8.0, cov-6.2.1, forked-1.6.0, split-0.10.0
+collecting ... collected 0 items / 1 error
+
+==================================== ERRORS ====================================
+_____ ERROR collecting tests/experimental/models/Qwen3/test_qwen3_4b_tp.py _____
+ImportError while importing test module '/localdev/ssalice/tt-torch/tests/experimental/models/Qwen3/test_qwen3_4b_tp.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+env/venv/lib/python3.10/site-packages/_pytest/python.py:498: in importtestmodule
+    mod = import_path(
+env/venv/lib/python3.10/site-packages/_pytest/pathlib.py:587: in import_path
+    importlib.import_module(module_name)
+/usr/lib/python3.10/importlib/__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+<frozen importlib._bootstrap>:1050: in _gcd_import
+    ???
+<frozen importlib._bootstrap>:1027: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1006: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:688: in _load_unlocked
+    ???
+env/venv/lib/python3.10/site-packages/_pytest/assertion/rewrite.py:186: in exec_module
+    exec(co, module.__dict__)
+tests/experimental/models/Qwen3/test_qwen3_4b_tp.py:24: in <module>
+    from tests.utils import create_device_mesh
+E   ImportError: cannot import name 'create_device_mesh' from 'tests.utils' (/localdev/ssalice/tt-torch/tests/utils.py)
+=============================== warnings summary ===============================
+tt_torch/tools/utils.py:23
+  /localdev/ssalice/tt-torch/tt_torch/tools/utils.py:23: DeprecationWarning: invalid escape sequence '\-'
+    """
+
+install/torch_mlir/extras/onnx_importer.py:748
+  /localdev/ssalice/tt-torch/install/torch_mlir/extras/onnx_importer.py:748: DeprecationWarning: invalid escape sequence '\w'
+    return re.sub("[^\w\.]", "_", name)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+ERROR tests/experimental/models/Qwen3/test_qwen3_4b_tp.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+========================= 2 warnings, 1 error in 2.17s =========================
