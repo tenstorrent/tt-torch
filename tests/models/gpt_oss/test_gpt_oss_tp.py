@@ -59,7 +59,7 @@ def apply_tensor_parallel_sharding_causal(causal_model: GptOssForCausalLM, mesh:
     print("Tensor parallel sharding applied successfully!")
 
 
-def apply_tensor_parallel_sharding_base(base_model: GptOssForCausalLM, mesh: Mesh) -> None:
+def apply_tensor_parallel_sharding_base(base_model: GptOssModel, mesh: Mesh) -> None:
     """
     Apply tensor parallel sharding to the base Llama model.
     """
@@ -68,66 +68,55 @@ def apply_tensor_parallel_sharding_base(base_model: GptOssForCausalLM, mesh: Mes
         # ========================================
         # MLP (Feed-Forward) Layer Sharding - shard the intermediate_size across devices
         # ========================================
+
+        # EP try
+
+        # Replicate all router matrices
+        xs.mark_sharding(layer.mlp.router.weight, mesh, (None, None)) # [32, 2880]
+        xs.mark_sharding(layer.mlp.router.bias, mesh, (None,)) # [32]
+
+        # Shard all expert matrices on the experts dimension (dim 0)
+        # [32, 2880, 5760]
+        xs.mark_sharding(layer.mlp.experts.gate_up_proj, mesh, ("model", None, None))
+        # [32, 5760]
+        xs.mark_sharding(layer.mlp.experts.gate_up_proj_bias, mesh, ("model", None))
+        # [32, 2880, 2880]
+        xs.mark_sharding(layer.mlp.experts.down_proj, mesh, ("model", None, None))
+        # [32, 2880]
+        xs.mark_sharding(layer.mlp.experts.down_proj_bias, mesh, ("model", None))
+
+        
+        # TP try
         # xs.mark_sharding(layer.mlp.router.weight, mesh, (None, None))
         # xs.mark_sharding(layer.mlp.router.bias, mesh, (None,))
-        # xs.mark_sharding(layer.mlp.experts.gate_up_proj, mesh, ("model", None, None))
-        # xs.mark_sharding(layer.mlp.experts.gate_up_proj_bias, mesh, ("model", None))
-        # xs.mark_sharding(layer.mlp.experts.down_proj, mesh, ("model", None, None))
-        # xs.mark_sharding(layer.mlp.experts.down_proj_bias, mesh, ("model", None))
-
-        xs.mark_sharding(layer.mlp.router.weight, mesh, (None, None))
-        xs.mark_sharding(layer.mlp.router.bias, mesh, (None,))
-        xs.mark_sharding(layer.mlp.experts.gate_up_proj, mesh, (None, None, None))
-        xs.mark_sharding(layer.mlp.experts.gate_up_proj_bias, mesh, (None, None))
-        xs.mark_sharding(layer.mlp.experts.down_proj, mesh, (None, None, "model"))
-        xs.mark_sharding(layer.mlp.experts.down_proj_bias, mesh, (None, "model"))
-
-        # original_forward = layer.mlp.router.forward
-
-        # def router_forward_with_remapping(hidden_states):
-        #     # Get original router outputs
-        #     router_logits, router_indices = original_forward(hidden_states)
-            
-        #     # Remap indices for this device
-        #     device_rank = xr.local_ordinal()  # Get current device rank
-        #     router_indices = remap_router_indices(router_indices, device_rank)
-            
-        #     return router_logits, router_indices
-        
-        # layer.mlp.router.forward = router_forward_with_remapping
+        # xs.mark_sharding(layer.mlp.experts.gate_up_proj, mesh, (None, None, None))
+        # xs.mark_sharding(layer.mlp.experts.gate_up_proj_bias, mesh, (None, None))
+        # xs.mark_sharding(layer.mlp.experts.down_proj, mesh, (None, None, "model"))
+        # xs.mark_sharding(layer.mlp.experts.down_proj_bias, mesh, (None, "model"))
 
         # ========================================
         # Self-Attention Layer Sharding - shard the heads across all devices
         # ========================================
 
         # q_proj: [num_heads * head_dim, hidden_size] -> shard dim 0
-        xs.mark_sharding(layer.self_attn.q_proj.weight, mesh, ("model", "batch"))
+        # [4096, 2880]
+        xs.mark_sharding(layer.self_attn.q_proj.weight, mesh, ("model", None))
 
         # k_proj: [num_kv_heads * head_dim, hidden_size] -> shard dim 0
-        xs.mark_sharding(layer.self_attn.k_proj.weight, mesh, ("model", "batch"))
+        # [512, 2880]
+        xs.mark_sharding(layer.self_attn.k_proj.weight, mesh, ("model", None))
 
         # v_proj: [num_kv_heads * head_dim, hidden_size] -> shard dim 0
-        xs.mark_sharding(layer.self_attn.v_proj.weight, mesh, ("model", "batch"))
+        # [512, 2880]
+        xs.mark_sharding(layer.self_attn.v_proj.weight, mesh, ("model", None))
 
         # o_proj: [hidden_size, num_heads * head_dim] -> shard dim 1
-        xs.mark_sharding(layer.self_attn.o_proj.weight, mesh, ("batch", "model"))
+        # [2880, 4096]
+        xs.mark_sharding(layer.self_attn.o_proj.weight, mesh, (None, "model"))
 
         # sinks: [num_heads] -> shard dim 0
+        # [64]
         xs.mark_sharding(layer.self_attn.sinks, mesh, ("model",))
-
-
-# def remap_router_indices(router_indices, device_rank):
-#     experts_per_device = 4
-#     # Mask out experts not on this device
-#     local_expert_mask = (router_indices // experts_per_device) == device_rank
-    
-#     # Convert global indices to local indices
-#     local_indices = router_indices % experts_per_device
-    
-#     # Zero out indices for experts not on this device
-#     local_indices = local_indices * local_expert_mask
-    
-#     return local_indices
 
 def prepare_inputs(mesh: Mesh, input_ids: torch.Tensor) -> torch.Tensor:
     """
@@ -171,8 +160,8 @@ def run_gpt_oss_tp():
     config = GptOssConfig.from_pretrained(model_name)
     # Delete quantization config since mxfp4 quantization is not supported
     delattr(config, "quantization_config")
-    # config.num_hidden_layers = 1
-    config.num_local_experts = 32
+    config.num_hidden_layers = 1
+    # config.num_local_experts = 32
     model = GptOssForCausalLM.from_pretrained(model_name, torch_dtype=torch.bfloat16, config=config)
     model = model.eval()
     tokenizer = AutoTokenizer.from_pretrained(model_name)
