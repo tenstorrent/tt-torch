@@ -785,20 +785,19 @@ def calculate_atol(tensor, golden_tensor):
 def calculate_pcc(tensor, golden_tensor):
     if torch.equal(golden_tensor, tensor):
         return 1.0
-
     tensor, golden_tensor = prepare_tensors(tensor, golden_tensor)
-    return float(
-        np.min(
-            np.ma.corrcoef(
-                np.ma.masked_invalid(
-                    torch.squeeze(tensor).detach().float().numpy()
-                ).flatten(),
-                np.ma.masked_invalid(
-                    torch.squeeze(golden_tensor).detach().float().numpy()
-                ).flatten(),
-            )
-        )
-    )
+
+    x = torch.squeeze(tensor).detach().float().numpy().flatten()
+    y = torch.squeeze(golden_tensor).detach().float().numpy().flatten()
+
+    corr = np.ma.corrcoef(np.ma.masked_invalid(x), np.ma.masked_invalid(y))
+
+    values = [v for v in [corr[0, 1], corr[1, 0]] if not np.isnan(v)]
+
+    if values:
+        return float(min(max(values), 1.0))
+    else:
+        return 1.0 if np.allclose(x, y) else 0.0
 
 
 def serialize_enum(enum_value):
