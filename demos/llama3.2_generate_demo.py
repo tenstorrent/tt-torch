@@ -45,7 +45,6 @@ def main():
     clear_dynamo_cache()
     cc = CompilerConfig()
     cc.enable_consteval = False
-    cc.consteval_parameters = False
 
     options = BackendOptions()
     options.compiler_config = cc

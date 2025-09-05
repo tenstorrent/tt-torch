@@ -26,7 +26,6 @@ def test_pipeline_parallel():
     cc = CompilerConfig()
     options.compiler_config = cc
     cc.enable_consteval = True
-    cc.consteval_parameters = True
     cc.device_map = {"l1": 0, "l2": 1}
     parent_device = DeviceManager.create_parent_mesh_device([1, 2])
     device1 = DeviceManager.create_sub_mesh_device(parent_device, (0, 0))
@@ -73,7 +72,6 @@ def test_pipeline_parallel_topological_sort():
     cc = CompilerConfig()
     options.compiler_config = cc
     cc.enable_consteval = True
-    cc.consteval_parameters = True
     cc.device_map = {"l1": 0, "l2": 1, "l3": 1, "l4": 0}
     parent_device = DeviceManager.create_parent_mesh_device([1, 2])
     device1 = DeviceManager.create_sub_mesh_device(parent_device, (0, 0))
