@@ -101,18 +101,22 @@ def apply_tensor_parallel_sharding_base(base_model: GptOssModel, mesh: Mesh) -> 
         # q_proj: [num_heads * head_dim, hidden_size] -> shard dim 0
         # [4096, 2880]
         xs.mark_sharding(layer.self_attn.q_proj.weight, mesh, ("model", None))
+        xs.mark_sharding(layer.self_attn.q_proj.bias, mesh, ("model",))
 
         # k_proj: [num_kv_heads * head_dim, hidden_size] -> shard dim 0
         # [512, 2880]
         xs.mark_sharding(layer.self_attn.k_proj.weight, mesh, ("model", None))
+        xs.mark_sharding(layer.self_attn.k_proj.bias, mesh, ("model",))
 
         # v_proj: [num_kv_heads * head_dim, hidden_size] -> shard dim 0
         # [512, 2880]
         xs.mark_sharding(layer.self_attn.v_proj.weight, mesh, ("model", None))
+        xs.mark_sharding(layer.self_attn.v_proj.bias, mesh, ("model",))
 
         # o_proj: [hidden_size, num_heads * head_dim] -> shard dim 1
         # [2880, 4096]
         xs.mark_sharding(layer.self_attn.o_proj.weight, mesh, (None, "model"))
+        xs.mark_sharding(layer.self_attn.o_proj.bias, mesh, (None,))
 
         # sinks: [num_heads] -> shard dim 0
         # [64]
