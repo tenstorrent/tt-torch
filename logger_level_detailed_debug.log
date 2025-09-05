@@ -1,0 +1,685 @@
+WARNING:root:Defaulting to PJRT_DEVICE=CPU
+2025-09-05 12:39:51.201993: W torch_xla/csrc/runtime/profiler.cpp:88] Profiler API not found for PJRT plugin
+Torch-XLA SPMD Tensor Parallelism for GPT-OSS 20B Model
+==================================================
+Setting up XLA environment...
+XLA environment configured.
+Created device mesh: (1, 8) with 8 devices
+Loading model...
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:00<00:00, 224.37it/s]
+Some weights of the model checkpoint at openai/gpt-oss-20b were not used when initializing GptOssForCausalLM: ['model.layers.0.mlp.experts.down_proj_blocks', 'model.layers.0.mlp.experts.down_proj_scales', 'model.layers.0.mlp.experts.gate_up_proj_blocks', 'model.layers.0.mlp.experts.gate_up_proj_scales', 'model.layers.1.input_layernorm.weight', 'model.layers.1.mlp.experts.down_proj_bias', 'model.layers.1.mlp.experts.down_proj_blocks', 'model.layers.1.mlp.experts.down_proj_scales', 'model.layers.1.mlp.experts.gate_up_proj_bias', 'model.layers.1.mlp.experts.gate_up_proj_blocks', 'model.layers.1.mlp.experts.gate_up_proj_scales', 'model.layers.1.mlp.router.bias', 'model.layers.1.mlp.router.weight', 'model.layers.1.post_attention_layernorm.weight', 'model.layers.1.self_attn.k_proj.bias', 'model.layers.1.self_attn.k_proj.weight', 'model.layers.1.self_attn.o_proj.bias', 'model.layers.1.self_attn.o_proj.weight', 'model.layers.1.self_attn.q_proj.bias', 'model.layers.1.self_attn.q_proj.weight', 'model.layers.1.self_attn.sinks', 'model.layers.1.self_attn.v_proj.bias', 'model.layers.1.self_attn.v_proj.weight', 'model.layers.10.input_layernorm.weight', 'model.layers.10.mlp.experts.down_proj_bias', 'model.layers.10.mlp.experts.down_proj_blocks', 'model.layers.10.mlp.experts.down_proj_scales', 'model.layers.10.mlp.experts.gate_up_proj_bias', 'model.layers.10.mlp.experts.gate_up_proj_blocks', 'model.layers.10.mlp.experts.gate_up_proj_scales', 'model.layers.10.mlp.router.bias', 'model.layers.10.mlp.router.weight', 'model.layers.10.post_attention_layernorm.weight', 'model.layers.10.self_attn.k_proj.bias', 'model.layers.10.self_attn.k_proj.weight', 'model.layers.10.self_attn.o_proj.bias', 'model.layers.10.self_attn.o_proj.weight', 'model.layers.10.self_attn.q_proj.bias', 'model.layers.10.self_attn.q_proj.weight', 'model.layers.10.self_attn.sinks', 'model.layers.10.self_attn.v_proj.bias', 'model.layers.10.self_attn.v_proj.weight', 'model.layers.11.input_layernorm.weight', 'model.layers.11.mlp.experts.down_proj_bias', 'model.layers.11.mlp.experts.down_proj_blocks', 'model.layers.11.mlp.experts.down_proj_scales', 'model.layers.11.mlp.experts.gate_up_proj_bias', 'model.layers.11.mlp.experts.gate_up_proj_blocks', 'model.layers.11.mlp.experts.gate_up_proj_scales', 'model.layers.11.mlp.router.bias', 'model.layers.11.mlp.router.weight', 'model.layers.11.post_attention_layernorm.weight', 'model.layers.11.self_attn.k_proj.bias', 'model.layers.11.self_attn.k_proj.weight', 'model.layers.11.self_attn.o_proj.bias', 'model.layers.11.self_attn.o_proj.weight', 'model.layers.11.self_attn.q_proj.bias', 'model.layers.11.self_attn.q_proj.weight', 'model.layers.11.self_attn.sinks', 'model.layers.11.self_attn.v_proj.bias', 'model.layers.11.self_attn.v_proj.weight', 'model.layers.12.input_layernorm.weight', 'model.layers.12.mlp.experts.down_proj_bias', 'model.layers.12.mlp.experts.down_proj_blocks', 'model.layers.12.mlp.experts.down_proj_scales', 'model.layers.12.mlp.experts.gate_up_proj_bias', 'model.layers.12.mlp.experts.gate_up_proj_blocks', 'model.layers.12.mlp.experts.gate_up_proj_scales', 'model.layers.12.mlp.router.bias', 'model.layers.12.mlp.router.weight', 'model.layers.12.post_attention_layernorm.weight', 'model.layers.12.self_attn.k_proj.bias', 'model.layers.12.self_attn.k_proj.weight', 'model.layers.12.self_attn.o_proj.bias', 'model.layers.12.self_attn.o_proj.weight', 'model.layers.12.self_attn.q_proj.bias', 'model.layers.12.self_attn.q_proj.weight', 'model.layers.12.self_attn.sinks', 'model.layers.12.self_attn.v_proj.bias', 'model.layers.12.self_attn.v_proj.weight', 'model.layers.13.input_layernorm.weight', 'model.layers.13.mlp.experts.down_proj_bias', 'model.layers.13.mlp.experts.down_proj_blocks', 'model.layers.13.mlp.experts.down_proj_scales', 'model.layers.13.mlp.experts.gate_up_proj_bias', 'model.layers.13.mlp.experts.gate_up_proj_blocks', 'model.layers.13.mlp.experts.gate_up_proj_scales', 'model.layers.13.mlp.router.bias', 'model.layers.13.mlp.router.weight', 'model.layers.13.post_attention_layernorm.weight', 'model.layers.13.self_attn.k_proj.bias', 'model.layers.13.self_attn.k_proj.weight', 'model.layers.13.self_attn.o_proj.bias', 'model.layers.13.self_attn.o_proj.weight', 'model.layers.13.self_attn.q_proj.bias', 'model.layers.13.self_attn.q_proj.weight', 'model.layers.13.self_attn.sinks', 'model.layers.13.self_attn.v_proj.bias', 'model.layers.13.self_attn.v_proj.weight', 'model.layers.14.input_layernorm.weight', 'model.layers.14.mlp.experts.down_proj_bias', 'model.layers.14.mlp.experts.down_proj_blocks', 'model.layers.14.mlp.experts.down_proj_scales', 'model.layers.14.mlp.experts.gate_up_proj_bias', 'model.layers.14.mlp.experts.gate_up_proj_blocks', 'model.layers.14.mlp.experts.gate_up_proj_scales', 'model.layers.14.mlp.router.bias', 'model.layers.14.mlp.router.weight', 'model.layers.14.post_attention_layernorm.weight', 'model.layers.14.self_attn.k_proj.bias', 'model.layers.14.self_attn.k_proj.weight', 'model.layers.14.self_attn.o_proj.bias', 'model.layers.14.self_attn.o_proj.weight', 'model.layers.14.self_attn.q_proj.bias', 'model.layers.14.self_attn.q_proj.weight', 'model.layers.14.self_attn.sinks', 'model.layers.14.self_attn.v_proj.bias', 'model.layers.14.self_attn.v_proj.weight', 'model.layers.15.input_layernorm.weight', 'model.layers.15.mlp.experts.down_proj_bias', 'model.layers.15.mlp.experts.down_proj_blocks', 'model.layers.15.mlp.experts.down_proj_scales', 'model.layers.15.mlp.experts.gate_up_proj_bias', 'model.layers.15.mlp.experts.gate_up_proj_blocks', 'model.layers.15.mlp.experts.gate_up_proj_scales', 'model.layers.15.mlp.router.bias', 'model.layers.15.mlp.router.weight', 'model.layers.15.post_attention_layernorm.weight', 'model.layers.15.self_attn.k_proj.bias', 'model.layers.15.self_attn.k_proj.weight', 'model.layers.15.self_attn.o_proj.bias', 'model.layers.15.self_attn.o_proj.weight', 'model.layers.15.self_attn.q_proj.bias', 'model.layers.15.self_attn.q_proj.weight', 'model.layers.15.self_attn.sinks', 'model.layers.15.self_attn.v_proj.bias', 'model.layers.15.self_attn.v_proj.weight', 'model.layers.16.input_layernorm.weight', 'model.layers.16.mlp.experts.down_proj_bias', 'model.layers.16.mlp.experts.down_proj_blocks', 'model.layers.16.mlp.experts.down_proj_scales', 'model.layers.16.mlp.experts.gate_up_proj_bias', 'model.layers.16.mlp.experts.gate_up_proj_blocks', 'model.layers.16.mlp.experts.gate_up_proj_scales', 'model.layers.16.mlp.router.bias', 'model.layers.16.mlp.router.weight', 'model.layers.16.post_attention_layernorm.weight', 'model.layers.16.self_attn.k_proj.bias', 'model.layers.16.self_attn.k_proj.weight', 'model.layers.16.self_attn.o_proj.bias', 'model.layers.16.self_attn.o_proj.weight', 'model.layers.16.self_attn.q_proj.bias', 'model.layers.16.self_attn.q_proj.weight', 'model.layers.16.self_attn.sinks', 'model.layers.16.self_attn.v_proj.bias', 'model.layers.16.self_attn.v_proj.weight', 'model.layers.17.input_layernorm.weight', 'model.layers.17.mlp.experts.down_proj_bias', 'model.layers.17.mlp.experts.down_proj_blocks', 'model.layers.17.mlp.experts.down_proj_scales', 'model.layers.17.mlp.experts.gate_up_proj_bias', 'model.layers.17.mlp.experts.gate_up_proj_blocks', 'model.layers.17.mlp.experts.gate_up_proj_scales', 'model.layers.17.mlp.router.bias', 'model.layers.17.mlp.router.weight', 'model.layers.17.post_attention_layernorm.weight', 'model.layers.17.self_attn.k_proj.bias', 'model.layers.17.self_attn.k_proj.weight', 'model.layers.17.self_attn.o_proj.bias', 'model.layers.17.self_attn.o_proj.weight', 'model.layers.17.self_attn.q_proj.bias', 'model.layers.17.self_attn.q_proj.weight', 'model.layers.17.self_attn.sinks', 'model.layers.17.self_attn.v_proj.bias', 'model.layers.17.self_attn.v_proj.weight', 'model.layers.18.input_layernorm.weight', 'model.layers.18.mlp.experts.down_proj_bias', 'model.layers.18.mlp.experts.down_proj_blocks', 'model.layers.18.mlp.experts.down_proj_scales', 'model.layers.18.mlp.experts.gate_up_proj_bias', 'model.layers.18.mlp.experts.gate_up_proj_blocks', 'model.layers.18.mlp.experts.gate_up_proj_scales', 'model.layers.18.mlp.router.bias', 'model.layers.18.mlp.router.weight', 'model.layers.18.post_attention_layernorm.weight', 'model.layers.18.self_attn.k_proj.bias', 'model.layers.18.self_attn.k_proj.weight', 'model.layers.18.self_attn.o_proj.bias', 'model.layers.18.self_attn.o_proj.weight', 'model.layers.18.self_attn.q_proj.bias', 'model.layers.18.self_attn.q_proj.weight', 'model.layers.18.self_attn.sinks', 'model.layers.18.self_attn.v_proj.bias', 'model.layers.18.self_attn.v_proj.weight', 'model.layers.19.input_layernorm.weight', 'model.layers.19.mlp.experts.down_proj_bias', 'model.layers.19.mlp.experts.down_proj_blocks', 'model.layers.19.mlp.experts.down_proj_scales', 'model.layers.19.mlp.experts.gate_up_proj_bias', 'model.layers.19.mlp.experts.gate_up_proj_blocks', 'model.layers.19.mlp.experts.gate_up_proj_scales', 'model.layers.19.mlp.router.bias', 'model.layers.19.mlp.router.weight', 'model.layers.19.post_attention_layernorm.weight', 'model.layers.19.self_attn.k_proj.bias', 'model.layers.19.self_attn.k_proj.weight', 'model.layers.19.self_attn.o_proj.bias', 'model.layers.19.self_attn.o_proj.weight', 'model.layers.19.self_attn.q_proj.bias', 'model.layers.19.self_attn.q_proj.weight', 'model.layers.19.self_attn.sinks', 'model.layers.19.self_attn.v_proj.bias', 'model.layers.19.self_attn.v_proj.weight', 'model.layers.2.input_layernorm.weight', 'model.layers.2.mlp.experts.down_proj_bias', 'model.layers.2.mlp.experts.down_proj_blocks', 'model.layers.2.mlp.experts.down_proj_scales', 'model.layers.2.mlp.experts.gate_up_proj_bias', 'model.layers.2.mlp.experts.gate_up_proj_blocks', 'model.layers.2.mlp.experts.gate_up_proj_scales', 'model.layers.2.mlp.router.bias', 'model.layers.2.mlp.router.weight', 'model.layers.2.post_attention_layernorm.weight', 'model.layers.2.self_attn.k_proj.bias', 'model.layers.2.self_attn.k_proj.weight', 'model.layers.2.self_attn.o_proj.bias', 'model.layers.2.self_attn.o_proj.weight', 'model.layers.2.self_attn.q_proj.bias', 'model.layers.2.self_attn.q_proj.weight', 'model.layers.2.self_attn.sinks', 'model.layers.2.self_attn.v_proj.bias', 'model.layers.2.self_attn.v_proj.weight', 'model.layers.20.input_layernorm.weight', 'model.layers.20.mlp.experts.down_proj_bias', 'model.layers.20.mlp.experts.down_proj_blocks', 'model.layers.20.mlp.experts.down_proj_scales', 'model.layers.20.mlp.experts.gate_up_proj_bias', 'model.layers.20.mlp.experts.gate_up_proj_blocks', 'model.layers.20.mlp.experts.gate_up_proj_scales', 'model.layers.20.mlp.router.bias', 'model.layers.20.mlp.router.weight', 'model.layers.20.post_attention_layernorm.weight', 'model.layers.20.self_attn.k_proj.bias', 'model.layers.20.self_attn.k_proj.weight', 'model.layers.20.self_attn.o_proj.bias', 'model.layers.20.self_attn.o_proj.weight', 'model.layers.20.self_attn.q_proj.bias', 'model.layers.20.self_attn.q_proj.weight', 'model.layers.20.self_attn.sinks', 'model.layers.20.self_attn.v_proj.bias', 'model.layers.20.self_attn.v_proj.weight', 'model.layers.21.input_layernorm.weight', 'model.layers.21.mlp.experts.down_proj_bias', 'model.layers.21.mlp.experts.down_proj_blocks', 'model.layers.21.mlp.experts.down_proj_scales', 'model.layers.21.mlp.experts.gate_up_proj_bias', 'model.layers.21.mlp.experts.gate_up_proj_blocks', 'model.layers.21.mlp.experts.gate_up_proj_scales', 'model.layers.21.mlp.router.bias', 'model.layers.21.mlp.router.weight', 'model.layers.21.post_attention_layernorm.weight', 'model.layers.21.self_attn.k_proj.bias', 'model.layers.21.self_attn.k_proj.weight', 'model.layers.21.self_attn.o_proj.bias', 'model.layers.21.self_attn.o_proj.weight', 'model.layers.21.self_attn.q_proj.bias', 'model.layers.21.self_attn.q_proj.weight', 'model.layers.21.self_attn.sinks', 'model.layers.21.self_attn.v_proj.bias', 'model.layers.21.self_attn.v_proj.weight', 'model.layers.22.input_layernorm.weight', 'model.layers.22.mlp.experts.down_proj_bias', 'model.layers.22.mlp.experts.down_proj_blocks', 'model.layers.22.mlp.experts.down_proj_scales', 'model.layers.22.mlp.experts.gate_up_proj_bias', 'model.layers.22.mlp.experts.gate_up_proj_blocks', 'model.layers.22.mlp.experts.gate_up_proj_scales', 'model.layers.22.mlp.router.bias', 'model.layers.22.mlp.router.weight', 'model.layers.22.post_attention_layernorm.weight', 'model.layers.22.self_attn.k_proj.bias', 'model.layers.22.self_attn.k_proj.weight', 'model.layers.22.self_attn.o_proj.bias', 'model.layers.22.self_attn.o_proj.weight', 'model.layers.22.self_attn.q_proj.bias', 'model.layers.22.self_attn.q_proj.weight', 'model.layers.22.self_attn.sinks', 'model.layers.22.self_attn.v_proj.bias', 'model.layers.22.self_attn.v_proj.weight', 'model.layers.23.input_layernorm.weight', 'model.layers.23.mlp.experts.down_proj_bias', 'model.layers.23.mlp.experts.down_proj_blocks', 'model.layers.23.mlp.experts.down_proj_scales', 'model.layers.23.mlp.experts.gate_up_proj_bias', 'model.layers.23.mlp.experts.gate_up_proj_blocks', 'model.layers.23.mlp.experts.gate_up_proj_scales', 'model.layers.23.mlp.router.bias', 'model.layers.23.mlp.router.weight', 'model.layers.23.post_attention_layernorm.weight', 'model.layers.23.self_attn.k_proj.bias', 'model.layers.23.self_attn.k_proj.weight', 'model.layers.23.self_attn.o_proj.bias', 'model.layers.23.self_attn.o_proj.weight', 'model.layers.23.self_attn.q_proj.bias', 'model.layers.23.self_attn.q_proj.weight', 'model.layers.23.self_attn.sinks', 'model.layers.23.self_attn.v_proj.bias', 'model.layers.23.self_attn.v_proj.weight', 'model.layers.3.input_layernorm.weight', 'model.layers.3.mlp.experts.down_proj_bias', 'model.layers.3.mlp.experts.down_proj_blocks', 'model.layers.3.mlp.experts.down_proj_scales', 'model.layers.3.mlp.experts.gate_up_proj_bias', 'model.layers.3.mlp.experts.gate_up_proj_blocks', 'model.layers.3.mlp.experts.gate_up_proj_scales', 'model.layers.3.mlp.router.bias', 'model.layers.3.mlp.router.weight', 'model.layers.3.post_attention_layernorm.weight', 'model.layers.3.self_attn.k_proj.bias', 'model.layers.3.self_attn.k_proj.weight', 'model.layers.3.self_attn.o_proj.bias', 'model.layers.3.self_attn.o_proj.weight', 'model.layers.3.self_attn.q_proj.bias', 'model.layers.3.self_attn.q_proj.weight', 'model.layers.3.self_attn.sinks', 'model.layers.3.self_attn.v_proj.bias', 'model.layers.3.self_attn.v_proj.weight', 'model.layers.4.input_layernorm.weight', 'model.layers.4.mlp.experts.down_proj_bias', 'model.layers.4.mlp.experts.down_proj_blocks', 'model.layers.4.mlp.experts.down_proj_scales', 'model.layers.4.mlp.experts.gate_up_proj_bias', 'model.layers.4.mlp.experts.gate_up_proj_blocks', 'model.layers.4.mlp.experts.gate_up_proj_scales', 'model.layers.4.mlp.router.bias', 'model.layers.4.mlp.router.weight', 'model.layers.4.post_attention_layernorm.weight', 'model.layers.4.self_attn.k_proj.bias', 'model.layers.4.self_attn.k_proj.weight', 'model.layers.4.self_attn.o_proj.bias', 'model.layers.4.self_attn.o_proj.weight', 'model.layers.4.self_attn.q_proj.bias', 'model.layers.4.self_attn.q_proj.weight', 'model.layers.4.self_attn.sinks', 'model.layers.4.self_attn.v_proj.bias', 'model.layers.4.self_attn.v_proj.weight', 'model.layers.5.input_layernorm.weight', 'model.layers.5.mlp.experts.down_proj_bias', 'model.layers.5.mlp.experts.down_proj_blocks', 'model.layers.5.mlp.experts.down_proj_scales', 'model.layers.5.mlp.experts.gate_up_proj_bias', 'model.layers.5.mlp.experts.gate_up_proj_blocks', 'model.layers.5.mlp.experts.gate_up_proj_scales', 'model.layers.5.mlp.router.bias', 'model.layers.5.mlp.router.weight', 'model.layers.5.post_attention_layernorm.weight', 'model.layers.5.self_attn.k_proj.bias', 'model.layers.5.self_attn.k_proj.weight', 'model.layers.5.self_attn.o_proj.bias', 'model.layers.5.self_attn.o_proj.weight', 'model.layers.5.self_attn.q_proj.bias', 'model.layers.5.self_attn.q_proj.weight', 'model.layers.5.self_attn.sinks', 'model.layers.5.self_attn.v_proj.bias', 'model.layers.5.self_attn.v_proj.weight', 'model.layers.6.input_layernorm.weight', 'model.layers.6.mlp.experts.down_proj_bias', 'model.layers.6.mlp.experts.down_proj_blocks', 'model.layers.6.mlp.experts.down_proj_scales', 'model.layers.6.mlp.experts.gate_up_proj_bias', 'model.layers.6.mlp.experts.gate_up_proj_blocks', 'model.layers.6.mlp.experts.gate_up_proj_scales', 'model.layers.6.mlp.router.bias', 'model.layers.6.mlp.router.weight', 'model.layers.6.post_attention_layernorm.weight', 'model.layers.6.self_attn.k_proj.bias', 'model.layers.6.self_attn.k_proj.weight', 'model.layers.6.self_attn.o_proj.bias', 'model.layers.6.self_attn.o_proj.weight', 'model.layers.6.self_attn.q_proj.bias', 'model.layers.6.self_attn.q_proj.weight', 'model.layers.6.self_attn.sinks', 'model.layers.6.self_attn.v_proj.bias', 'model.layers.6.self_attn.v_proj.weight', 'model.layers.7.input_layernorm.weight', 'model.layers.7.mlp.experts.down_proj_bias', 'model.layers.7.mlp.experts.down_proj_blocks', 'model.layers.7.mlp.experts.down_proj_scales', 'model.layers.7.mlp.experts.gate_up_proj_bias', 'model.layers.7.mlp.experts.gate_up_proj_blocks', 'model.layers.7.mlp.experts.gate_up_proj_scales', 'model.layers.7.mlp.router.bias', 'model.layers.7.mlp.router.weight', 'model.layers.7.post_attention_layernorm.weight', 'model.layers.7.self_attn.k_proj.bias', 'model.layers.7.self_attn.k_proj.weight', 'model.layers.7.self_attn.o_proj.bias', 'model.layers.7.self_attn.o_proj.weight', 'model.layers.7.self_attn.q_proj.bias', 'model.layers.7.self_attn.q_proj.weight', 'model.layers.7.self_attn.sinks', 'model.layers.7.self_attn.v_proj.bias', 'model.layers.7.self_attn.v_proj.weight', 'model.layers.8.input_layernorm.weight', 'model.layers.8.mlp.experts.down_proj_bias', 'model.layers.8.mlp.experts.down_proj_blocks', 'model.layers.8.mlp.experts.down_proj_scales', 'model.layers.8.mlp.experts.gate_up_proj_bias', 'model.layers.8.mlp.experts.gate_up_proj_blocks', 'model.layers.8.mlp.experts.gate_up_proj_scales', 'model.layers.8.mlp.router.bias', 'model.layers.8.mlp.router.weight', 'model.layers.8.post_attention_layernorm.weight', 'model.layers.8.self_attn.k_proj.bias', 'model.layers.8.self_attn.k_proj.weight', 'model.layers.8.self_attn.o_proj.bias', 'model.layers.8.self_attn.o_proj.weight', 'model.layers.8.self_attn.q_proj.bias', 'model.layers.8.self_attn.q_proj.weight', 'model.layers.8.self_attn.sinks', 'model.layers.8.self_attn.v_proj.bias', 'model.layers.8.self_attn.v_proj.weight', 'model.layers.9.input_layernorm.weight', 'model.layers.9.mlp.experts.down_proj_bias', 'model.layers.9.mlp.experts.down_proj_blocks', 'model.layers.9.mlp.experts.down_proj_scales', 'model.layers.9.mlp.experts.gate_up_proj_bias', 'model.layers.9.mlp.experts.gate_up_proj_blocks', 'model.layers.9.mlp.experts.gate_up_proj_scales', 'model.layers.9.mlp.router.bias', 'model.layers.9.mlp.router.weight', 'model.layers.9.post_attention_layernorm.weight', 'model.layers.9.self_attn.k_proj.bias', 'model.layers.9.self_attn.k_proj.weight', 'model.layers.9.self_attn.o_proj.bias', 'model.layers.9.self_attn.o_proj.weight', 'model.layers.9.self_attn.q_proj.bias', 'model.layers.9.self_attn.q_proj.weight', 'model.layers.9.self_attn.sinks', 'model.layers.9.self_attn.v_proj.bias', 'model.layers.9.self_attn.v_proj.weight']
+- This IS expected if you are initializing GptOssForCausalLM from the checkpoint of a model trained on another task or with another architecture (e.g. initializing a BertForSequenceClassification model from a BertForPreTraining model).
+- This IS NOT expected if you are initializing GptOssForCausalLM from the checkpoint of a model that you expect to be exactly identical (initializing a BertForSequenceClassification model from a BertForSequenceClassification model).
+Some weights of GptOssForCausalLM were not initialized from the model checkpoint at openai/gpt-oss-20b and are newly initialized: ['model.layers.0.mlp.experts.down_proj', 'model.layers.0.mlp.experts.gate_up_proj']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Asking to truncate to max_length but no maximum length is provided and the model has no predefined maximum length. Default to no truncation.
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | User provided a tensor of data type: Int64 which is not supported by runtime/ttnn. Casting to: Int32, this may impact throughput and the integrity of the data.
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | User provided a tensor of data type: Int64 which is not supported by runtime/ttnn. Casting to: Int32, this may impact throughput and the integrity of the data.
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | User provided a tensor of data type: Int64 which is not supported by runtime/ttnn. Casting to: Int32, this may impact throughput and the integrity of the data.
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | User provided a tensor of data type: Int64 which is not supported by runtime/ttnn. Casting to: Int32, this may impact throughput and the integrity of the data.
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | User provided a tensor of data type: Int64 which is not supported by runtime/ttnn. Casting to: Int32, this may impact throughput and the integrity of the data.
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | User provided a tensor of data type: Int64 which is not supported by runtime/ttnn. Casting to: Int32, this may impact throughput and the integrity of the data.
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | User provided a tensor of data type: Int64 which is not supported by runtime/ttnn. Casting to: Int32, this may impact throughput and the integrity of the data.
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | User provided a tensor of data type: Int64 which is not supported by runtime/ttnn. Casting to: Int32, this may impact throughput and the integrity of the data.
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | User provided a tensor of data type: Int64 which is not supported by runtime/ttnn. Casting to: Int32, this may impact throughput and the integrity of the data.
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | User provided a tensor of data type: Int64 which is not supported by runtime/ttnn. Casting to: Int32, this may impact throughput and the integrity of the data.
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | User provided a tensor of data type: Int64 which is not supported by runtime/ttnn. Casting to: Int32, this may impact throughput and the integrity of the data.
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | User provided a tensor of data type: Int64 which is not supported by runtime/ttnn. Casting to: Int32, this may impact throughput and the integrity of the data.
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | User provided a tensor of data type: Int64 which is not supported by runtime/ttnn. Casting to: Int32, this may impact throughput and the integrity of the data.
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | User provided a tensor of data type: Int64 which is not supported by runtime/ttnn. Casting to: Int32, this may impact throughput and the integrity of the data.
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | User provided a tensor of data type: Int64 which is not supported by runtime/ttnn. Casting to: Int32, this may impact throughput and the integrity of the data.
+[32m                 Always[0m | [1m[38;5;208m WARNING[0m | User provided a tensor of data type: Int64 which is not supported by runtime/ttnn. Casting to: Int32, this may impact throughput and the integrity of the data.
+module @SyncTensorsGraph.577 attributes {mhlo.cross_program_prefetches = [], mhlo.frontend_attributes = {xla.sdy.meshes = "{mesh = #sdy.mesh<[\22_axis_0\22=8]>}"}, mhlo.input_output_alias = [], mhlo.is_dynamic = false, mhlo.use_auto_spmd_partitioning = false} {
+  vhlo.func_v1 @main(%arg0: !vhlo.tensor_v1<512x!vhlo.bf16_v1>, %arg1: !vhlo.tensor_v1<512x2880x!vhlo.bf16_v1>, %arg2: !vhlo.tensor_v1<!vhlo.f32_v1>, %arg3: !vhlo.tensor_v1<1x13x!vhlo.i64_v1>, %arg4: !vhlo.tensor_v1<201088x2880x!vhlo.bf16_v1>, %arg5: !vhlo.tensor_v1<2880x!vhlo.bf16_v1>, %arg6: !vhlo.tensor_v1<!vhlo.f32_v1>, %arg7: !vhlo.tensor_v1<32x!vhlo.f32_v1>, %arg8: !vhlo.tensor_v1<512x!vhlo.bf16_v1>, %arg9: !vhlo.tensor_v1<512x2880x!vhlo.bf16_v1>, %arg10: !vhlo.tensor_v1<201088x2880x!vhlo.bf16_v1>, %arg11: !vhlo.tensor_v1<32x!vhlo.bf16_v1>, %arg12: !vhlo.tensor_v1<32x2880x!vhlo.bf16_v1>, %arg13: !vhlo.tensor_v1<2880x!vhlo.bf16_v1>, %arg14: !vhlo.tensor_v1<2880x4096x!vhlo.bf16_v1>, %arg15: !vhlo.tensor_v1<64x!vhlo.bf16_v1>, %arg16: !vhlo.tensor_v1<!vhlo.bf16_v1>, %arg17: !vhlo.tensor_v1<!vhlo.i64_v1>, %arg18: !vhlo.tensor_v1<!vhlo.f32_v1>, %arg19: !vhlo.tensor_v1<4096x!vhlo.bf16_v1>, %arg20: !vhlo.tensor_v1<4096x2880x!vhlo.bf16_v1>, %arg21: !vhlo.tensor_v1<2880x!vhlo.bf16_v1>, %arg22: !vhlo.tensor_v1<32x2880x!vhlo.bf16_v1>, %arg23: !vhlo.tensor_v1<32x2880x2880x!vhlo.bf16_v1>, %arg24: !vhlo.tensor_v1<!vhlo.f32_v1>, %arg25: !vhlo.tensor_v1<!vhlo.bf16_v1>, %arg26: !vhlo.tensor_v1<!vhlo.bf16_v1>, %arg27: !vhlo.tensor_v1<32x5760x!vhlo.bf16_v1>, %arg28: !vhlo.tensor_v1<32x2880x5760x!vhlo.bf16_v1>, %arg29: !vhlo.tensor_v1<!vhlo.bf16_v1>, %arg30: !vhlo.tensor_v1<2880x!vhlo.bf16_v1>) -> (!vhlo.tensor_v1<1x13x512x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x13x8x64x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x8x13x64x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x8x13x64x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x201088x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x13x201088x!vhlo.bf16_v1>) {
+    %0 = "vhlo.constant_v1"() <{value = #vhlo.tensor_v1<dense<0.000000e+00> : tensor<f32>>}> : () -> !vhlo.tensor_v1<!vhlo.f32_v1>
+    %1 = "vhlo.constant_v1"() <{value = #vhlo.tensor_v1<dense<[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]> : tensor<13xi64>>}> : () -> !vhlo.tensor_v1<13x!vhlo.i64_v1>
+    %2 = "vhlo.constant_v1"() <{value = #vhlo.tensor_v1<dense<0> : tensor<ui8>>}> : () -> !vhlo.tensor_v1<!vhlo.ui8_v1>
+    %3 = "vhlo.constant_v1"() <{value = #vhlo.tensor_v1<dense<0xFF80> : tensor<bf16>>}> : () -> !vhlo.tensor_v1<!vhlo.bf16_v1>
+    %4 = "vhlo.constant_v1"() <{value = #vhlo.tensor_v1<dense<2.000000e+00> : tensor<f32>>}> : () -> !vhlo.tensor_v1<!vhlo.f32_v1>
+    %5 = "vhlo.constant_v1"() <{value = #vhlo.tensor_v1<dense<3.47222231E-4> : tensor<1x13xf32>>}> : () -> !vhlo.tensor_v1<1x13x!vhlo.f32_v1>
+    %6 = "vhlo.constant_v1"() <{value = #vhlo.tensor_v1<dense<[[[0.000000e+00, 1.000000e+00, 2.000000e+00, 3.000000e+00, 4.000000e+00, 5.000000e+00, 6.000000e+00, 7.000000e+00, 8.000000e+00, 9.000000e+00, 1.000000e+01, 1.100000e+01, 1.200000e+01]]]> : tensor<1x1x13xf32>>}> : () -> !vhlo.tensor_v1<1x1x13x!vhlo.f32_v1>
+    %7 = "vhlo.constant_v1"() <{value = #vhlo.tensor_v1<dense<1> : tensor<ui8>>}> : () -> !vhlo.tensor_v1<!vhlo.ui8_v1>
+    %8 = "vhlo.constant_v1"() <{value = #vhlo.tensor_v1<dense<1.000000e+00> : tensor<bf16>>}> : () -> !vhlo.tensor_v1<!vhlo.bf16_v1>
+    %9 = "vhlo.constant_v1"() <{value = #vhlo.tensor_v1<dense<0.000000e+00> : tensor<bf16>>}> : () -> !vhlo.tensor_v1<!vhlo.bf16_v1>
+    %10 = "vhlo.broadcast_in_dim_v1"(%9) <{broadcast_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>}> : (!vhlo.tensor_v1<!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x32x!vhlo.bf16_v1>
+    %11 = "vhlo.broadcast_in_dim_v1"(%8) <{broadcast_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>}> : (!vhlo.tensor_v1<!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>
+    %12 = "vhlo.broadcast_in_dim_v1"(%9) <{broadcast_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>}> : (!vhlo.tensor_v1<!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x1x13x13x!vhlo.bf16_v1>
+    %13 = "vhlo.broadcast_in_dim_v1"(%7) <{broadcast_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>}> : (!vhlo.tensor_v1<!vhlo.ui8_v1>) -> !vhlo.tensor_v1<13x13x!vhlo.ui8_v1>
+    %14 = "vhlo.broadcast_in_dim_v1"(%4) <{broadcast_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>}> : (!vhlo.tensor_v1<!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>
+    %15 = "vhlo.broadcast_in_dim_v1"(%2) <{broadcast_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>}> : (!vhlo.tensor_v1<!vhlo.ui8_v1>) -> !vhlo.tensor_v1<13x13x!vhlo.ui8_v1>
+    %16 = "vhlo.convert_v1"(%arg5) : (!vhlo.tensor_v1<2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<2880x!vhlo.f32_v1>
+    %17 = "vhlo.broadcast_in_dim_v1"(%16) <{broadcast_dimensions = #vhlo.tensor_v1<dense<2> : tensor<1xi64>>}> : (!vhlo.tensor_v1<2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>
+    %18 = "vhlo.reshape_v1"(%arg3) : (!vhlo.tensor_v1<1x13x!vhlo.i64_v1>) -> !vhlo.tensor_v1<13x!vhlo.i64_v1>
+    %19 = "vhlo.convert_v1"(%18) : (!vhlo.tensor_v1<13x!vhlo.i64_v1>) -> !vhlo.tensor_v1<13x!vhlo.ui32_v1>
+    %20 = "vhlo.gather_v2"(%arg4, %19) <{collapsed_slice_dims = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>, index_vector_dim = #vhlo.integer_v1<1 : i64>, indices_are_sorted = #vhlo.bool_v1<false>, offset_dims = #vhlo.tensor_v1<dense<1> : tensor<1xi64>>, operand_batching_dims = #vhlo.tensor_v1<dense<> : tensor<0xi64>>, slice_sizes = #vhlo.tensor_v1<dense<[1, 2880]> : tensor<2xi64>>, start_index_map = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>, start_indices_batching_dims = #vhlo.tensor_v1<dense<> : tensor<0xi64>>}> : (!vhlo.tensor_v1<201088x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x!vhlo.ui32_v1>) -> !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>
+    %21 = "vhlo.reshape_v1"(%20) : (!vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>
+    %22 = "vhlo.convert_v1"(%21) : (!vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>
+    %23 = "vhlo.power_v1"(%22, %14) : (!vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>, !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>
+    %24 = "vhlo.reduce_v1"(%23, %0) <{dimensions = #vhlo.tensor_v1<dense<2> : tensor<1xi64>>}> ({
+    ^bb0(%arg31: !vhlo.tensor_v1<!vhlo.f32_v1>, %arg32: !vhlo.tensor_v1<!vhlo.f32_v1>):
+      %260 = "vhlo.add_v1"(%arg31, %arg32) : (!vhlo.tensor_v1<!vhlo.f32_v1>, !vhlo.tensor_v1<!vhlo.f32_v1>) -> !vhlo.tensor_v1<!vhlo.f32_v1>
+      "vhlo.return_v1"(%260) : (!vhlo.tensor_v1<!vhlo.f32_v1>) -> ()
+    }) : (!vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>, !vhlo.tensor_v1<!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x!vhlo.f32_v1>
+    %25 = "vhlo.multiply_v1"(%24, %5) : (!vhlo.tensor_v1<1x13x!vhlo.f32_v1>, !vhlo.tensor_v1<1x13x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x!vhlo.f32_v1>
+    %26 = "vhlo.reshape_v1"(%25) : (!vhlo.tensor_v1<1x13x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>
+    %27 = "vhlo.broadcast_in_dim_v1"(%arg2) <{broadcast_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>}> : (!vhlo.tensor_v1<!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>
+    %28 = "vhlo.add_v1"(%26, %27) : (!vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>, !vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>
+    %29 = "vhlo.rsqrt_v2"(%28) <{result_accuracy = #vhlo.result_accuracy_v1<atol = 0.000000e+00, rtol = 0.000000e+00, ulps = 0, mode = #vhlo<result_accuracy_mode_v1 DEFAULT>>}> : (!vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>
+    %30 = "vhlo.reshape_v1"(%29) : (!vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x!vhlo.f32_v1>
+    %31 = "vhlo.broadcast_in_dim_v1"(%30) <{broadcast_dimensions = #vhlo.tensor_v1<dense<[0, 1]> : tensor<2xi64>>}> : (!vhlo.tensor_v1<1x13x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>
+    %32 = "vhlo.multiply_v1"(%22, %31) : (!vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>, !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>
+    %33 = "vhlo.multiply_v1"(%17, %32) : (!vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>, !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>
+    %34 = "vhlo.convert_v1"(%33) : (!vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>
+    %35 = "vhlo.reshape_v1"(%34) : (!vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>
+    %36 = "vhlo.transpose_v1"(%arg20) <{permutation = #vhlo.tensor_v1<dense<[1, 0]> : tensor<2xi64>>}> {result_layout = #vhlo.tensor_v1<dense<[0, 1]> : tensor<2xindex>>, xla_shape = #vhlo.string_v1<"bf16[2880,4096]{0,1}">} : (!vhlo.tensor_v1<4096x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<2880x4096x!vhlo.bf16_v1>
+    %37 = "vhlo.dot_general_v2"(%35, %36) <{accumulation_type = #vhlo.type_v1<!vhlo.none_v1>, allow_imprecise_accumulation = #vhlo.type_v1<!vhlo.none_v1>, lhs_batching_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>, lhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, lhs_contracting_dimensions = #vhlo.tensor_v1<dense<1> : tensor<1xi64>>, lhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>, num_primitive_operations = #vhlo.type_v1<!vhlo.none_v1>, precision_config = #vhlo.array_v1<[#vhlo<precision_v1 DEFAULT>, #vhlo<precision_v1 DEFAULT>]>, rhs_batching_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>, rhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, rhs_contracting_dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>, rhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>}> : (!vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<2880x4096x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x4096x!vhlo.bf16_v1>
+    %38 = "vhlo.reshape_v1"(%37) : (!vhlo.tensor_v1<13x4096x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x4096x!vhlo.bf16_v1>
+    %39 = "vhlo.broadcast_in_dim_v1"(%arg19) <{broadcast_dimensions = #vhlo.tensor_v1<dense<2> : tensor<1xi64>>}> : (!vhlo.tensor_v1<4096x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x4096x!vhlo.bf16_v1>
+    %40 = "vhlo.add_v1"(%38, %39) : (!vhlo.tensor_v1<1x13x4096x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x13x4096x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x4096x!vhlo.bf16_v1>
+    %41 = "vhlo.reshape_v1"(%40) : (!vhlo.tensor_v1<1x13x4096x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x64x64x!vhlo.bf16_v1>
+    %42 = "vhlo.transpose_v1"(%41) <{permutation = #vhlo.tensor_v1<dense<[0, 2, 1, 3]> : tensor<4xi64>>}> {result_layout = #vhlo.tensor_v1<dense<[3, 1, 2, 0]> : tensor<4xindex>>, xla_shape = #vhlo.string_v1<"bf16[1,64,13,64]{3,1,2,0}">} : (!vhlo.tensor_v1<1x13x64x64x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x64x!vhlo.bf16_v1>
+    %43 = "vhlo.slice_v1"(%42) <{limit_indices = #vhlo.tensor_v1<dense<[1, 64, 13, 32]> : tensor<4xi64>>, start_indices = #vhlo.tensor_v1<dense<0> : tensor<4xi64>>, strides = #vhlo.tensor_v1<dense<1> : tensor<4xi64>>}> : (!vhlo.tensor_v1<1x64x13x64x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x32x!vhlo.bf16_v1>
+    %44 = "vhlo.convert_v1"(%43) : (!vhlo.tensor_v1<1x64x13x32x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x32x!vhlo.f32_v1>
+    %45 = "vhlo.reshape_v1"(%arg7) : (!vhlo.tensor_v1<32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x32x1x!vhlo.f32_v1>
+    %46 = "vhlo.dot_general_v2"(%45, %6) <{accumulation_type = #vhlo.type_v1<!vhlo.none_v1>, allow_imprecise_accumulation = #vhlo.type_v1<!vhlo.none_v1>, lhs_batching_dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>, lhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, lhs_contracting_dimensions = #vhlo.tensor_v1<dense<2> : tensor<1xi64>>, lhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>, num_primitive_operations = #vhlo.type_v1<!vhlo.none_v1>, precision_config = #vhlo.array_v1<[#vhlo<precision_v1 DEFAULT>, #vhlo<precision_v1 DEFAULT>]>, rhs_batching_dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>, rhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, rhs_contracting_dimensions = #vhlo.tensor_v1<dense<1> : tensor<1xi64>>, rhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>}> : (!vhlo.tensor_v1<1x32x1x!vhlo.f32_v1>, !vhlo.tensor_v1<1x1x13x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x32x13x!vhlo.f32_v1>
+    %47 = "vhlo.transpose_v1"(%46) <{permutation = #vhlo.tensor_v1<dense<[0, 2, 1]> : tensor<3xi64>>}> {result_layout = #vhlo.tensor_v1<dense<[1, 2, 0]> : tensor<3xindex>>, xla_shape = #vhlo.string_v1<"f32[1,13,32]{1,2,0}">} : (!vhlo.tensor_v1<1x32x13x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x32x!vhlo.f32_v1>
+    %48 = "vhlo.cosine_v2"(%47) <{result_accuracy = #vhlo.result_accuracy_v1<atol = 0.000000e+00, rtol = 0.000000e+00, ulps = 0, mode = #vhlo<result_accuracy_mode_v1 DEFAULT>>}> {result_layout = #vhlo.tensor_v1<dense<[1, 2, 0]> : tensor<3xindex>>, xla_shape = #vhlo.string_v1<"f32[1,13,32]{1,2,0}">} : (!vhlo.tensor_v1<1x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x32x!vhlo.f32_v1>
+    %49 = "vhlo.broadcast_in_dim_v1"(%arg6) <{broadcast_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>}> : (!vhlo.tensor_v1<!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x32x!vhlo.f32_v1>
+    %50 = "vhlo.multiply_v1"(%48, %49) : (!vhlo.tensor_v1<1x13x32x!vhlo.f32_v1>, !vhlo.tensor_v1<1x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x32x!vhlo.f32_v1>
+    %51 = "vhlo.convert_v1"(%50) : (!vhlo.tensor_v1<1x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x32x!vhlo.bf16_v1>
+    %52 = "vhlo.reshape_v1"(%51) : (!vhlo.tensor_v1<1x13x32x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x1x13x32x!vhlo.bf16_v1>
+    %53 = "vhlo.convert_v1"(%52) : (!vhlo.tensor_v1<1x1x13x32x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x1x13x32x!vhlo.f32_v1>
+    %54 = "vhlo.reshape_v1"(%53) : (!vhlo.tensor_v1<1x1x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x32x!vhlo.f32_v1>
+    %55 = "vhlo.broadcast_in_dim_v1"(%54) <{broadcast_dimensions = #vhlo.tensor_v1<dense<[0, 2, 3]> : tensor<3xi64>>}> : (!vhlo.tensor_v1<1x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x64x13x32x!vhlo.f32_v1>
+    %56 = "vhlo.multiply_v1"(%44, %55) : (!vhlo.tensor_v1<1x64x13x32x!vhlo.f32_v1>, !vhlo.tensor_v1<1x64x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x64x13x32x!vhlo.f32_v1>
+    %57 = "vhlo.convert_v1"(%56) : (!vhlo.tensor_v1<1x64x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x64x13x32x!vhlo.bf16_v1>
+    %58 = "vhlo.slice_v1"(%42) <{limit_indices = #vhlo.tensor_v1<dense<[1, 64, 13, 64]> : tensor<4xi64>>, start_indices = #vhlo.tensor_v1<dense<[0, 0, 0, 32]> : tensor<4xi64>>, strides = #vhlo.tensor_v1<dense<1> : tensor<4xi64>>}> : (!vhlo.tensor_v1<1x64x13x64x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x32x!vhlo.bf16_v1>
+    %59 = "vhlo.convert_v1"(%58) : (!vhlo.tensor_v1<1x64x13x32x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x32x!vhlo.f32_v1>
+    %60 = "vhlo.sine_v2"(%47) <{result_accuracy = #vhlo.result_accuracy_v1<atol = 0.000000e+00, rtol = 0.000000e+00, ulps = 0, mode = #vhlo<result_accuracy_mode_v1 DEFAULT>>}> {result_layout = #vhlo.tensor_v1<dense<[1, 2, 0]> : tensor<3xindex>>, xla_shape = #vhlo.string_v1<"f32[1,13,32]{1,2,0}">} : (!vhlo.tensor_v1<1x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x32x!vhlo.f32_v1>
+    %61 = "vhlo.multiply_v1"(%60, %49) : (!vhlo.tensor_v1<1x13x32x!vhlo.f32_v1>, !vhlo.tensor_v1<1x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x32x!vhlo.f32_v1>
+    %62 = "vhlo.convert_v1"(%61) : (!vhlo.tensor_v1<1x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x32x!vhlo.bf16_v1>
+    %63 = "vhlo.reshape_v1"(%62) : (!vhlo.tensor_v1<1x13x32x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x1x13x32x!vhlo.bf16_v1>
+    %64 = "vhlo.convert_v1"(%63) : (!vhlo.tensor_v1<1x1x13x32x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x1x13x32x!vhlo.f32_v1>
+    %65 = "vhlo.reshape_v1"(%64) : (!vhlo.tensor_v1<1x1x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x32x!vhlo.f32_v1>
+    %66 = "vhlo.broadcast_in_dim_v1"(%65) <{broadcast_dimensions = #vhlo.tensor_v1<dense<[0, 2, 3]> : tensor<3xi64>>}> : (!vhlo.tensor_v1<1x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x64x13x32x!vhlo.f32_v1>
+    %67 = "vhlo.multiply_v1"(%59, %66) : (!vhlo.tensor_v1<1x64x13x32x!vhlo.f32_v1>, !vhlo.tensor_v1<1x64x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x64x13x32x!vhlo.f32_v1>
+    %68 = "vhlo.convert_v1"(%67) : (!vhlo.tensor_v1<1x64x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x64x13x32x!vhlo.bf16_v1>
+    %69 = "vhlo.subtract_v1"(%57, %68) : (!vhlo.tensor_v1<1x64x13x32x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x64x13x32x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x32x!vhlo.bf16_v1>
+    %70 = "vhlo.multiply_v1"(%59, %55) : (!vhlo.tensor_v1<1x64x13x32x!vhlo.f32_v1>, !vhlo.tensor_v1<1x64x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x64x13x32x!vhlo.f32_v1>
+    %71 = "vhlo.convert_v1"(%70) : (!vhlo.tensor_v1<1x64x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x64x13x32x!vhlo.bf16_v1>
+    %72 = "vhlo.multiply_v1"(%44, %66) : (!vhlo.tensor_v1<1x64x13x32x!vhlo.f32_v1>, !vhlo.tensor_v1<1x64x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x64x13x32x!vhlo.f32_v1>
+    %73 = "vhlo.convert_v1"(%72) : (!vhlo.tensor_v1<1x64x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x64x13x32x!vhlo.bf16_v1>
+    %74 = "vhlo.add_v1"(%71, %73) : (!vhlo.tensor_v1<1x64x13x32x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x64x13x32x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x32x!vhlo.bf16_v1>
+    %75 = "vhlo.concatenate_v1"(%69, %74) <{dimension = #vhlo.integer_v1<3 : i64>}> : (!vhlo.tensor_v1<1x64x13x32x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x64x13x32x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x64x!vhlo.bf16_v1>
+    %76 = "vhlo.reshape_v1"(%75) : (!vhlo.tensor_v1<1x64x13x64x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<64x13x64x!vhlo.bf16_v1>
+    %77 = "vhlo.transpose_v1"(%arg9) <{permutation = #vhlo.tensor_v1<dense<[1, 0]> : tensor<2xi64>>}> {result_layout = #vhlo.tensor_v1<dense<[0, 1]> : tensor<2xindex>>, xla_shape = #vhlo.string_v1<"bf16[2880,512]{0,1}">} : (!vhlo.tensor_v1<512x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<2880x512x!vhlo.bf16_v1>
+    %78 = "vhlo.dot_general_v2"(%35, %77) <{accumulation_type = #vhlo.type_v1<!vhlo.none_v1>, allow_imprecise_accumulation = #vhlo.type_v1<!vhlo.none_v1>, lhs_batching_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>, lhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, lhs_contracting_dimensions = #vhlo.tensor_v1<dense<1> : tensor<1xi64>>, lhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>, num_primitive_operations = #vhlo.type_v1<!vhlo.none_v1>, precision_config = #vhlo.array_v1<[#vhlo<precision_v1 DEFAULT>, #vhlo<precision_v1 DEFAULT>]>, rhs_batching_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>, rhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, rhs_contracting_dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>, rhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>}> : (!vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<2880x512x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x512x!vhlo.bf16_v1>
+    %79 = "vhlo.reshape_v1"(%78) : (!vhlo.tensor_v1<13x512x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x512x!vhlo.bf16_v1>
+    %80 = "vhlo.broadcast_in_dim_v1"(%arg8) <{broadcast_dimensions = #vhlo.tensor_v1<dense<2> : tensor<1xi64>>}> : (!vhlo.tensor_v1<512x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x512x!vhlo.bf16_v1>
+    %81 = "vhlo.add_v1"(%79, %80) : (!vhlo.tensor_v1<1x13x512x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x13x512x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x512x!vhlo.bf16_v1>
+    %82 = "vhlo.reshape_v1"(%81) : (!vhlo.tensor_v1<1x13x512x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x8x64x!vhlo.bf16_v1>
+    %83 = "vhlo.transpose_v1"(%82) <{permutation = #vhlo.tensor_v1<dense<[0, 2, 1, 3]> : tensor<4xi64>>}> {result_layout = #vhlo.tensor_v1<dense<[3, 1, 2, 0]> : tensor<4xindex>>, xla_shape = #vhlo.string_v1<"bf16[1,8,13,64]{3,1,2,0}">} : (!vhlo.tensor_v1<1x13x8x64x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x8x13x64x!vhlo.bf16_v1>
+    %84 = "vhlo.slice_v1"(%83) <{limit_indices = #vhlo.tensor_v1<dense<[1, 8, 13, 32]> : tensor<4xi64>>, start_indices = #vhlo.tensor_v1<dense<0> : tensor<4xi64>>, strides = #vhlo.tensor_v1<dense<1> : tensor<4xi64>>}> : (!vhlo.tensor_v1<1x8x13x64x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x8x13x32x!vhlo.bf16_v1>
+    %85 = "vhlo.convert_v1"(%84) : (!vhlo.tensor_v1<1x8x13x32x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x8x13x32x!vhlo.f32_v1>
+    %86 = "vhlo.broadcast_in_dim_v1"(%54) <{broadcast_dimensions = #vhlo.tensor_v1<dense<[0, 2, 3]> : tensor<3xi64>>}> : (!vhlo.tensor_v1<1x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x8x13x32x!vhlo.f32_v1>
+    %87 = "vhlo.multiply_v1"(%85, %86) : (!vhlo.tensor_v1<1x8x13x32x!vhlo.f32_v1>, !vhlo.tensor_v1<1x8x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x8x13x32x!vhlo.f32_v1>
+    %88 = "vhlo.convert_v1"(%87) : (!vhlo.tensor_v1<1x8x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x8x13x32x!vhlo.bf16_v1>
+    %89 = "vhlo.slice_v1"(%83) <{limit_indices = #vhlo.tensor_v1<dense<[1, 8, 13, 64]> : tensor<4xi64>>, start_indices = #vhlo.tensor_v1<dense<[0, 0, 0, 32]> : tensor<4xi64>>, strides = #vhlo.tensor_v1<dense<1> : tensor<4xi64>>}> : (!vhlo.tensor_v1<1x8x13x64x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x8x13x32x!vhlo.bf16_v1>
+    %90 = "vhlo.convert_v1"(%89) : (!vhlo.tensor_v1<1x8x13x32x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x8x13x32x!vhlo.f32_v1>
+    %91 = "vhlo.broadcast_in_dim_v1"(%65) <{broadcast_dimensions = #vhlo.tensor_v1<dense<[0, 2, 3]> : tensor<3xi64>>}> : (!vhlo.tensor_v1<1x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x8x13x32x!vhlo.f32_v1>
+    %92 = "vhlo.multiply_v1"(%90, %91) : (!vhlo.tensor_v1<1x8x13x32x!vhlo.f32_v1>, !vhlo.tensor_v1<1x8x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x8x13x32x!vhlo.f32_v1>
+    %93 = "vhlo.convert_v1"(%92) : (!vhlo.tensor_v1<1x8x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x8x13x32x!vhlo.bf16_v1>
+    %94 = "vhlo.subtract_v1"(%88, %93) : (!vhlo.tensor_v1<1x8x13x32x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x8x13x32x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x8x13x32x!vhlo.bf16_v1>
+    %95 = "vhlo.multiply_v1"(%90, %86) : (!vhlo.tensor_v1<1x8x13x32x!vhlo.f32_v1>, !vhlo.tensor_v1<1x8x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x8x13x32x!vhlo.f32_v1>
+    %96 = "vhlo.convert_v1"(%95) : (!vhlo.tensor_v1<1x8x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x8x13x32x!vhlo.bf16_v1>
+    %97 = "vhlo.multiply_v1"(%85, %91) : (!vhlo.tensor_v1<1x8x13x32x!vhlo.f32_v1>, !vhlo.tensor_v1<1x8x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x8x13x32x!vhlo.f32_v1>
+    %98 = "vhlo.convert_v1"(%97) : (!vhlo.tensor_v1<1x8x13x32x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x8x13x32x!vhlo.bf16_v1>
+    %99 = "vhlo.add_v1"(%96, %98) : (!vhlo.tensor_v1<1x8x13x32x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x8x13x32x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x8x13x32x!vhlo.bf16_v1>
+    %100 = "vhlo.concatenate_v1"(%94, %99) <{dimension = #vhlo.integer_v1<3 : i64>}> : (!vhlo.tensor_v1<1x8x13x32x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x8x13x32x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x8x13x64x!vhlo.bf16_v1>
+    %101 = "vhlo.broadcast_in_dim_v1"(%100) <{broadcast_dimensions = #vhlo.tensor_v1<dense<[0, 1, 3, 4]> : tensor<4xi64>>}> : (!vhlo.tensor_v1<1x8x13x64x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x8x8x13x64x!vhlo.bf16_v1>
+    %102 = "vhlo.reshape_v1"(%101) : (!vhlo.tensor_v1<1x8x8x13x64x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x64x!vhlo.bf16_v1>
+    %103 = "vhlo.transpose_v1"(%102) <{permutation = #vhlo.tensor_v1<dense<[0, 1, 3, 2]> : tensor<4xi64>>}> {result_layout = #vhlo.tensor_v1<dense<[2, 3, 1, 0]> : tensor<4xindex>>, xla_shape = #vhlo.string_v1<"bf16[1,64,64,13]{2,3,1,0}">} : (!vhlo.tensor_v1<1x64x13x64x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x64x13x!vhlo.bf16_v1>
+    %104 = "vhlo.reshape_v1"(%103) : (!vhlo.tensor_v1<1x64x64x13x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<64x64x13x!vhlo.bf16_v1>
+    %105 = "vhlo.dot_general_v2"(%76, %104) <{accumulation_type = #vhlo.type_v1<!vhlo.none_v1>, allow_imprecise_accumulation = #vhlo.type_v1<!vhlo.none_v1>, lhs_batching_dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>, lhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, lhs_contracting_dimensions = #vhlo.tensor_v1<dense<2> : tensor<1xi64>>, lhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>, num_primitive_operations = #vhlo.type_v1<!vhlo.none_v1>, precision_config = #vhlo.array_v1<[#vhlo<precision_v1 DEFAULT>, #vhlo<precision_v1 DEFAULT>]>, rhs_batching_dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>, rhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, rhs_contracting_dimensions = #vhlo.tensor_v1<dense<1> : tensor<1xi64>>, rhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>}> : (!vhlo.tensor_v1<64x13x64x!vhlo.bf16_v1>, !vhlo.tensor_v1<64x64x13x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<64x13x13x!vhlo.bf16_v1>
+    %106 = "vhlo.reshape_v1"(%105) : (!vhlo.tensor_v1<64x13x13x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x13x!vhlo.bf16_v1>
+    %107 = "vhlo.convert_v1"(%106) : (!vhlo.tensor_v1<1x64x13x13x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x13x!vhlo.f32_v1>
+    %108 = "vhlo.broadcast_in_dim_v1"(%arg18) <{broadcast_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>}> : (!vhlo.tensor_v1<!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x64x13x13x!vhlo.f32_v1>
+    %109 = "vhlo.multiply_v1"(%107, %108) : (!vhlo.tensor_v1<1x64x13x13x!vhlo.f32_v1>, !vhlo.tensor_v1<1x64x13x13x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x64x13x13x!vhlo.f32_v1>
+    %110 = "vhlo.convert_v1"(%109) : (!vhlo.tensor_v1<1x64x13x13x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x64x13x13x!vhlo.bf16_v1>
+    %111 = "vhlo.broadcast_in_dim_v1"(%1) <{broadcast_dimensions = #vhlo.tensor_v1<dense<1> : tensor<1xi64>>}> : (!vhlo.tensor_v1<13x!vhlo.i64_v1>) -> !vhlo.tensor_v1<13x13x!vhlo.i64_v1>
+    %112 = "vhlo.broadcast_in_dim_v1"(%arg17) <{broadcast_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>}> : (!vhlo.tensor_v1<!vhlo.i64_v1>) -> !vhlo.tensor_v1<13x!vhlo.i64_v1>
+    %113 = "vhlo.subtract_v1"(%1, %112) : (!vhlo.tensor_v1<13x!vhlo.i64_v1>, !vhlo.tensor_v1<13x!vhlo.i64_v1>) -> !vhlo.tensor_v1<13x!vhlo.i64_v1>
+    %114 = "vhlo.broadcast_in_dim_v1"(%113) <{broadcast_dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>}> : (!vhlo.tensor_v1<13x!vhlo.i64_v1>) -> !vhlo.tensor_v1<13x13x!vhlo.i64_v1>
+    %115 = "vhlo.compare_v1"(%111, %114) <{compare_type = #vhlo<comparison_type_v1 NOTYPE>, comparison_direction = #vhlo<comparison_direction_v1 GT>}> : (!vhlo.tensor_v1<13x13x!vhlo.i64_v1>, !vhlo.tensor_v1<13x13x!vhlo.i64_v1>) -> !vhlo.tensor_v1<13x13x!vhlo.bool_v1>
+    %116 = "vhlo.convert_v1"(%115) : (!vhlo.tensor_v1<13x13x!vhlo.bool_v1>) -> !vhlo.tensor_v1<13x13x!vhlo.ui8_v1>
+    %117 = "vhlo.and_v1"(%116, %13) : (!vhlo.tensor_v1<13x13x!vhlo.ui8_v1>, !vhlo.tensor_v1<13x13x!vhlo.ui8_v1>) -> !vhlo.tensor_v1<13x13x!vhlo.ui8_v1>
+    %118 = "vhlo.compare_v1"(%117, %15) <{compare_type = #vhlo<comparison_type_v1 NOTYPE>, comparison_direction = #vhlo<comparison_direction_v1 NE>}> : (!vhlo.tensor_v1<13x13x!vhlo.ui8_v1>, !vhlo.tensor_v1<13x13x!vhlo.ui8_v1>) -> !vhlo.tensor_v1<13x13x!vhlo.bool_v1>
+    %119 = "vhlo.convert_v1"(%118) : (!vhlo.tensor_v1<13x13x!vhlo.bool_v1>) -> !vhlo.tensor_v1<13x13x!vhlo.ui8_v1>
+    %120 = "vhlo.broadcast_in_dim_v1"(%1) <{broadcast_dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>}> : (!vhlo.tensor_v1<13x!vhlo.i64_v1>) -> !vhlo.tensor_v1<13x13x!vhlo.i64_v1>
+    %121 = "vhlo.compare_v1"(%111, %120) <{compare_type = #vhlo<comparison_type_v1 NOTYPE>, comparison_direction = #vhlo<comparison_direction_v1 LE>}> : (!vhlo.tensor_v1<13x13x!vhlo.i64_v1>, !vhlo.tensor_v1<13x13x!vhlo.i64_v1>) -> !vhlo.tensor_v1<13x13x!vhlo.bool_v1>
+    %122 = "vhlo.convert_v1"(%121) : (!vhlo.tensor_v1<13x13x!vhlo.bool_v1>) -> !vhlo.tensor_v1<13x13x!vhlo.ui8_v1>
+    %123 = "vhlo.and_v1"(%119, %122) : (!vhlo.tensor_v1<13x13x!vhlo.ui8_v1>, !vhlo.tensor_v1<13x13x!vhlo.ui8_v1>) -> !vhlo.tensor_v1<13x13x!vhlo.ui8_v1>
+    %124 = "vhlo.compare_v1"(%123, %15) <{compare_type = #vhlo<comparison_type_v1 NOTYPE>, comparison_direction = #vhlo<comparison_direction_v1 NE>}> : (!vhlo.tensor_v1<13x13x!vhlo.ui8_v1>, !vhlo.tensor_v1<13x13x!vhlo.ui8_v1>) -> !vhlo.tensor_v1<13x13x!vhlo.bool_v1>
+    %125 = "vhlo.reshape_v1"(%124) : (!vhlo.tensor_v1<13x13x!vhlo.bool_v1>) -> !vhlo.tensor_v1<1x1x13x13x!vhlo.bool_v1>
+    %126 = "vhlo.reshape_v1"(%arg16) : (!vhlo.tensor_v1<!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x1x!vhlo.bf16_v1>
+    %127 = "vhlo.broadcast_in_dim_v1"(%126) <{broadcast_dimensions = #vhlo.tensor_v1<dense<[0, 1]> : tensor<2xi64>>}> : (!vhlo.tensor_v1<1x1x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x1x13x13x!vhlo.bf16_v1>
+    %128 = "vhlo.select_v1"(%125, %12, %127) : (!vhlo.tensor_v1<1x1x13x13x!vhlo.bool_v1>, !vhlo.tensor_v1<1x1x13x13x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x1x13x13x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x1x13x13x!vhlo.bf16_v1>
+    %129 = "vhlo.reshape_v1"(%128) : (!vhlo.tensor_v1<1x1x13x13x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x13x!vhlo.bf16_v1>
+    %130 = "vhlo.broadcast_in_dim_v1"(%129) <{broadcast_dimensions = #vhlo.tensor_v1<dense<[0, 2, 3]> : tensor<3xi64>>}> : (!vhlo.tensor_v1<1x13x13x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x13x!vhlo.bf16_v1>
+    %131 = "vhlo.add_v1"(%110, %130) : (!vhlo.tensor_v1<1x64x13x13x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x64x13x13x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x13x!vhlo.bf16_v1>
+    %132 = "vhlo.reshape_v1"(%arg15) : (!vhlo.tensor_v1<64x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x1x!vhlo.bf16_v1>
+    %133 = "vhlo.broadcast_in_dim_v1"(%132) <{broadcast_dimensions = #vhlo.tensor_v1<dense<[0, 1, 3]> : tensor<3xi64>>}> : (!vhlo.tensor_v1<1x64x1x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x1x!vhlo.bf16_v1>
+    %134 = "vhlo.concatenate_v1"(%131, %133) <{dimension = #vhlo.integer_v1<3 : i64>}> : (!vhlo.tensor_v1<1x64x13x13x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x64x13x1x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x14x!vhlo.bf16_v1>
+    %135 = "vhlo.transpose_v1"(%arg1) <{permutation = #vhlo.tensor_v1<dense<[1, 0]> : tensor<2xi64>>}> {result_layout = #vhlo.tensor_v1<dense<[0, 1]> : tensor<2xindex>>, xla_shape = #vhlo.string_v1<"bf16[2880,512]{0,1}">} : (!vhlo.tensor_v1<512x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<2880x512x!vhlo.bf16_v1>
+    %136 = "vhlo.dot_general_v2"(%35, %135) <{accumulation_type = #vhlo.type_v1<!vhlo.none_v1>, allow_imprecise_accumulation = #vhlo.type_v1<!vhlo.none_v1>, lhs_batching_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>, lhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, lhs_contracting_dimensions = #vhlo.tensor_v1<dense<1> : tensor<1xi64>>, lhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>, num_primitive_operations = #vhlo.type_v1<!vhlo.none_v1>, precision_config = #vhlo.array_v1<[#vhlo<precision_v1 DEFAULT>, #vhlo<precision_v1 DEFAULT>]>, rhs_batching_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>, rhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, rhs_contracting_dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>, rhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>}> : (!vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<2880x512x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x512x!vhlo.bf16_v1>
+    %137 = "vhlo.reshape_v1"(%136) : (!vhlo.tensor_v1<13x512x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x512x!vhlo.bf16_v1>
+    %138 = "vhlo.broadcast_in_dim_v1"(%arg0) <{broadcast_dimensions = #vhlo.tensor_v1<dense<2> : tensor<1xi64>>}> : (!vhlo.tensor_v1<512x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x512x!vhlo.bf16_v1>
+    %139 = "vhlo.add_v1"(%137, %138) : (!vhlo.tensor_v1<1x13x512x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x13x512x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x512x!vhlo.bf16_v1>
+    %140 = "vhlo.reshape_v1"(%139) : (!vhlo.tensor_v1<1x13x512x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x8x64x!vhlo.bf16_v1>
+    %141 = "vhlo.transpose_v1"(%140) <{permutation = #vhlo.tensor_v1<dense<[0, 2, 1, 3]> : tensor<4xi64>>}> {result_layout = #vhlo.tensor_v1<dense<[3, 1, 2, 0]> : tensor<4xindex>>, xla_shape = #vhlo.string_v1<"bf16[1,8,13,64]{3,1,2,0}">} : (!vhlo.tensor_v1<1x13x8x64x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x8x13x64x!vhlo.bf16_v1>
+    %142 = "vhlo.convert_v1"(%arg30) : (!vhlo.tensor_v1<2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<2880x!vhlo.f32_v1>
+    %143 = "vhlo.broadcast_in_dim_v1"(%142) <{broadcast_dimensions = #vhlo.tensor_v1<dense<2> : tensor<1xi64>>}> : (!vhlo.tensor_v1<2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>
+    %144 = "vhlo.reduce_v1"(%134, %3) <{dimensions = #vhlo.tensor_v1<dense<3> : tensor<1xi64>>}> ({
+    ^bb0(%arg31: !vhlo.tensor_v1<!vhlo.bf16_v1>, %arg32: !vhlo.tensor_v1<!vhlo.bf16_v1>):
+      %260 = "vhlo.maximum_v1"(%arg31, %arg32) : (!vhlo.tensor_v1<!vhlo.bf16_v1>, !vhlo.tensor_v1<!vhlo.bf16_v1>) -> !vhlo.tensor_v1<!vhlo.bf16_v1>
+      "vhlo.return_v1"(%260) : (!vhlo.tensor_v1<!vhlo.bf16_v1>) -> ()
+    }) : (!vhlo.tensor_v1<1x64x13x14x!vhlo.bf16_v1>, !vhlo.tensor_v1<!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x!vhlo.bf16_v1>
+    %145 = "vhlo.broadcast_in_dim_v1"(%144) <{broadcast_dimensions = #vhlo.tensor_v1<dense<[0, 1, 2]> : tensor<3xi64>>}> : (!vhlo.tensor_v1<1x64x13x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x14x!vhlo.bf16_v1>
+    %146 = "vhlo.subtract_v1"(%134, %145) : (!vhlo.tensor_v1<1x64x13x14x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x64x13x14x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x14x!vhlo.bf16_v1>
+    %147 = "vhlo.reduce_v1"(%146, %3) <{dimensions = #vhlo.tensor_v1<dense<3> : tensor<1xi64>>}> ({
+    ^bb0(%arg31: !vhlo.tensor_v1<!vhlo.bf16_v1>, %arg32: !vhlo.tensor_v1<!vhlo.bf16_v1>):
+      %260 = "vhlo.maximum_v1"(%arg31, %arg32) : (!vhlo.tensor_v1<!vhlo.bf16_v1>, !vhlo.tensor_v1<!vhlo.bf16_v1>) -> !vhlo.tensor_v1<!vhlo.bf16_v1>
+      "vhlo.return_v1"(%260) : (!vhlo.tensor_v1<!vhlo.bf16_v1>) -> ()
+    }) : (!vhlo.tensor_v1<1x64x13x14x!vhlo.bf16_v1>, !vhlo.tensor_v1<!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x!vhlo.bf16_v1>
+    %148 = "vhlo.broadcast_in_dim_v1"(%147) <{broadcast_dimensions = #vhlo.tensor_v1<dense<[0, 1, 2]> : tensor<3xi64>>}> : (!vhlo.tensor_v1<1x64x13x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x14x!vhlo.bf16_v1>
+    %149 = "vhlo.subtract_v1"(%146, %148) : (!vhlo.tensor_v1<1x64x13x14x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x64x13x14x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x14x!vhlo.bf16_v1>
+    %150 = "vhlo.exponential_v2"(%149) <{result_accuracy = #vhlo.result_accuracy_v1<atol = 0.000000e+00, rtol = 0.000000e+00, ulps = 0, mode = #vhlo<result_accuracy_mode_v1 DEFAULT>>}> : (!vhlo.tensor_v1<1x64x13x14x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x14x!vhlo.bf16_v1>
+    %151 = "vhlo.reduce_v1"(%150, %9) <{dimensions = #vhlo.tensor_v1<dense<3> : tensor<1xi64>>}> ({
+    ^bb0(%arg31: !vhlo.tensor_v1<!vhlo.bf16_v1>, %arg32: !vhlo.tensor_v1<!vhlo.bf16_v1>):
+      %260 = "vhlo.add_v1"(%arg31, %arg32) : (!vhlo.tensor_v1<!vhlo.bf16_v1>, !vhlo.tensor_v1<!vhlo.bf16_v1>) -> !vhlo.tensor_v1<!vhlo.bf16_v1>
+      "vhlo.return_v1"(%260) : (!vhlo.tensor_v1<!vhlo.bf16_v1>) -> ()
+    }) : (!vhlo.tensor_v1<1x64x13x14x!vhlo.bf16_v1>, !vhlo.tensor_v1<!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x!vhlo.bf16_v1>
+    %152 = "vhlo.broadcast_in_dim_v1"(%151) <{broadcast_dimensions = #vhlo.tensor_v1<dense<[0, 1, 2]> : tensor<3xi64>>}> : (!vhlo.tensor_v1<1x64x13x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x14x!vhlo.bf16_v1>
+    %153 = "vhlo.divide_v1"(%150, %152) : (!vhlo.tensor_v1<1x64x13x14x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x64x13x14x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x14x!vhlo.bf16_v1>
+    %154 = "vhlo.slice_v1"(%153) <{limit_indices = #vhlo.tensor_v1<dense<[1, 64, 13, 13]> : tensor<4xi64>>, start_indices = #vhlo.tensor_v1<dense<0> : tensor<4xi64>>, strides = #vhlo.tensor_v1<dense<1> : tensor<4xi64>>}> : (!vhlo.tensor_v1<1x64x13x14x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x13x!vhlo.bf16_v1>
+    %155 = "vhlo.reshape_v1"(%154) : (!vhlo.tensor_v1<1x64x13x13x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<64x13x13x!vhlo.bf16_v1>
+    %156 = "vhlo.broadcast_in_dim_v1"(%141) <{broadcast_dimensions = #vhlo.tensor_v1<dense<[0, 1, 3, 4]> : tensor<4xi64>>}> : (!vhlo.tensor_v1<1x8x13x64x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x8x8x13x64x!vhlo.bf16_v1>
+    %157 = "vhlo.reshape_v1"(%156) : (!vhlo.tensor_v1<1x8x8x13x64x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<64x13x64x!vhlo.bf16_v1>
+    %158 = "vhlo.dot_general_v2"(%155, %157) <{accumulation_type = #vhlo.type_v1<!vhlo.none_v1>, allow_imprecise_accumulation = #vhlo.type_v1<!vhlo.none_v1>, lhs_batching_dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>, lhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, lhs_contracting_dimensions = #vhlo.tensor_v1<dense<2> : tensor<1xi64>>, lhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>, num_primitive_operations = #vhlo.type_v1<!vhlo.none_v1>, precision_config = #vhlo.array_v1<[#vhlo<precision_v1 DEFAULT>, #vhlo<precision_v1 DEFAULT>]>, rhs_batching_dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>, rhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, rhs_contracting_dimensions = #vhlo.tensor_v1<dense<1> : tensor<1xi64>>, rhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>}> : (!vhlo.tensor_v1<64x13x13x!vhlo.bf16_v1>, !vhlo.tensor_v1<64x13x64x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<64x13x64x!vhlo.bf16_v1>
+    %159 = "vhlo.reshape_v1"(%158) : (!vhlo.tensor_v1<64x13x64x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x64x13x64x!vhlo.bf16_v1>
+    %160 = "vhlo.transpose_v1"(%159) <{permutation = #vhlo.tensor_v1<dense<[0, 2, 1, 3]> : tensor<4xi64>>}> {result_layout = #vhlo.tensor_v1<dense<[3, 1, 2, 0]> : tensor<4xindex>>, xla_shape = #vhlo.string_v1<"bf16[1,13,64,64]{3,1,2,0}">} : (!vhlo.tensor_v1<1x64x13x64x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x64x64x!vhlo.bf16_v1>
+    %161 = "vhlo.reshape_v1"(%160) : (!vhlo.tensor_v1<1x13x64x64x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x4096x!vhlo.bf16_v1>
+    %162 = "vhlo.transpose_v1"(%arg14) <{permutation = #vhlo.tensor_v1<dense<[1, 0]> : tensor<2xi64>>}> {result_layout = #vhlo.tensor_v1<dense<[0, 1]> : tensor<2xindex>>, xla_shape = #vhlo.string_v1<"bf16[4096,2880]{0,1}">} : (!vhlo.tensor_v1<2880x4096x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<4096x2880x!vhlo.bf16_v1>
+    %163 = "vhlo.dot_general_v2"(%161, %162) <{accumulation_type = #vhlo.type_v1<!vhlo.none_v1>, allow_imprecise_accumulation = #vhlo.type_v1<!vhlo.none_v1>, lhs_batching_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>, lhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, lhs_contracting_dimensions = #vhlo.tensor_v1<dense<1> : tensor<1xi64>>, lhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>, num_primitive_operations = #vhlo.type_v1<!vhlo.none_v1>, precision_config = #vhlo.array_v1<[#vhlo<precision_v1 DEFAULT>, #vhlo<precision_v1 DEFAULT>]>, rhs_batching_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>, rhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, rhs_contracting_dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>, rhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>}> : (!vhlo.tensor_v1<13x4096x!vhlo.bf16_v1>, !vhlo.tensor_v1<4096x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>
+    %164 = "vhlo.reshape_v1"(%163) : (!vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>
+    %165 = "vhlo.broadcast_in_dim_v1"(%arg13) <{broadcast_dimensions = #vhlo.tensor_v1<dense<2> : tensor<1xi64>>}> : (!vhlo.tensor_v1<2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>
+    %166 = "vhlo.add_v1"(%164, %165) : (!vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>
+    %167 = "vhlo.add_v1"(%21, %166) : (!vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>
+    %168 = "vhlo.broadcast_in_dim_v1"(%arg29) <{broadcast_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>}> : (!vhlo.tensor_v1<!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>
+    %169 = "vhlo.convert_v1"(%arg21) : (!vhlo.tensor_v1<2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<2880x!vhlo.f32_v1>
+    %170 = "vhlo.broadcast_in_dim_v1"(%169) <{broadcast_dimensions = #vhlo.tensor_v1<dense<2> : tensor<1xi64>>}> : (!vhlo.tensor_v1<2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>
+    %171 = "vhlo.convert_v1"(%167) : (!vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>
+    %172 = "vhlo.power_v1"(%171, %14) : (!vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>, !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>
+    %173 = "vhlo.reduce_v1"(%172, %0) <{dimensions = #vhlo.tensor_v1<dense<2> : tensor<1xi64>>}> ({
+    ^bb0(%arg31: !vhlo.tensor_v1<!vhlo.f32_v1>, %arg32: !vhlo.tensor_v1<!vhlo.f32_v1>):
+      %260 = "vhlo.add_v1"(%arg31, %arg32) : (!vhlo.tensor_v1<!vhlo.f32_v1>, !vhlo.tensor_v1<!vhlo.f32_v1>) -> !vhlo.tensor_v1<!vhlo.f32_v1>
+      "vhlo.return_v1"(%260) : (!vhlo.tensor_v1<!vhlo.f32_v1>) -> ()
+    }) : (!vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>, !vhlo.tensor_v1<!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x!vhlo.f32_v1>
+    %174 = "vhlo.multiply_v1"(%173, %5) : (!vhlo.tensor_v1<1x13x!vhlo.f32_v1>, !vhlo.tensor_v1<1x13x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x!vhlo.f32_v1>
+    %175 = "vhlo.reshape_v1"(%174) : (!vhlo.tensor_v1<1x13x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>
+    %176 = "vhlo.add_v1"(%175, %27) : (!vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>, !vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>
+    %177 = "vhlo.rsqrt_v2"(%176) <{result_accuracy = #vhlo.result_accuracy_v1<atol = 0.000000e+00, rtol = 0.000000e+00, ulps = 0, mode = #vhlo<result_accuracy_mode_v1 DEFAULT>>}> : (!vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>
+    %178 = "vhlo.reshape_v1"(%177) : (!vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x!vhlo.f32_v1>
+    %179 = "vhlo.broadcast_in_dim_v1"(%178) <{broadcast_dimensions = #vhlo.tensor_v1<dense<[0, 1]> : tensor<2xi64>>}> : (!vhlo.tensor_v1<1x13x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>
+    %180 = "vhlo.multiply_v1"(%171, %179) : (!vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>, !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>
+    %181 = "vhlo.multiply_v1"(%170, %180) : (!vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>, !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>
+    %182 = "vhlo.convert_v1"(%181) : (!vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>
+    %183 = "vhlo.reshape_v1"(%182) : (!vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>
+    %184 = "vhlo.concatenate_v1"(%183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183, %183) <{dimension = #vhlo.integer_v1<0 : i64>}> : (!vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<416x2880x!vhlo.bf16_v1>
+    %185 = "vhlo.reshape_v1"(%184) : (!vhlo.tensor_v1<416x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>
+    %186 = "vhlo.dot_general_v2"(%185, %arg28) <{accumulation_type = #vhlo.type_v1<!vhlo.none_v1>, allow_imprecise_accumulation = #vhlo.type_v1<!vhlo.none_v1>, lhs_batching_dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>, lhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, lhs_contracting_dimensions = #vhlo.tensor_v1<dense<2> : tensor<1xi64>>, lhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>, num_primitive_operations = #vhlo.type_v1<!vhlo.none_v1>, precision_config = #vhlo.array_v1<[#vhlo<precision_v1 DEFAULT>, #vhlo<precision_v1 DEFAULT>]>, rhs_batching_dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>, rhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, rhs_contracting_dimensions = #vhlo.tensor_v1<dense<1> : tensor<1xi64>>, rhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>}> : (!vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<32x2880x5760x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x5760x!vhlo.bf16_v1>
+    %187 = "vhlo.broadcast_in_dim_v1"(%arg27) <{broadcast_dimensions = #vhlo.tensor_v1<dense<[0, 2]> : tensor<2xi64>>}> : (!vhlo.tensor_v1<32x5760x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x5760x!vhlo.bf16_v1>
+    %188 = "vhlo.add_v1"(%186, %187) : (!vhlo.tensor_v1<32x13x5760x!vhlo.bf16_v1>, !vhlo.tensor_v1<32x13x5760x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x5760x!vhlo.bf16_v1>
+    %189 = "vhlo.slice_v1"(%188) <{limit_indices = #vhlo.tensor_v1<dense<[32, 13, 5760]> : tensor<3xi64>>, start_indices = #vhlo.tensor_v1<dense<[0, 0, 1]> : tensor<3xi64>>, strides = #vhlo.tensor_v1<dense<[1, 1, 2]> : tensor<3xi64>>}> : (!vhlo.tensor_v1<32x13x5760x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>
+    %190 = "vhlo.broadcast_in_dim_v1"(%arg25) <{broadcast_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>}> : (!vhlo.tensor_v1<!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>
+    %191 = "vhlo.clamp_v1"(%168, %189, %190) : (!vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>
+    %192 = "vhlo.add_v1"(%191, %11) : (!vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>
+    %193 = "vhlo.convert_v1"(%192) : (!vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.f32_v1>
+    %194 = "vhlo.broadcast_in_dim_v1"(%arg26) <{broadcast_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>}> : (!vhlo.tensor_v1<!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>
+    %195 = "vhlo.slice_v1"(%188) <{limit_indices = #vhlo.tensor_v1<dense<[32, 13, 5760]> : tensor<3xi64>>, start_indices = #vhlo.tensor_v1<dense<0> : tensor<3xi64>>, strides = #vhlo.tensor_v1<dense<[1, 1, 2]> : tensor<3xi64>>}> : (!vhlo.tensor_v1<32x13x5760x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>
+    %196 = "vhlo.clamp_v1"(%194, %195, %190) : (!vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>
+    %197 = "vhlo.convert_v1"(%196) : (!vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.f32_v1>
+    %198 = "vhlo.broadcast_in_dim_v1"(%arg24) <{broadcast_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>}> : (!vhlo.tensor_v1<!vhlo.f32_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.f32_v1>
+    %199 = "vhlo.multiply_v1"(%197, %198) : (!vhlo.tensor_v1<32x13x2880x!vhlo.f32_v1>, !vhlo.tensor_v1<32x13x2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.f32_v1>
+    %200 = "vhlo.convert_v1"(%199) : (!vhlo.tensor_v1<32x13x2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>
+    %201 = "vhlo.logistic_v2"(%200) <{result_accuracy = #vhlo.result_accuracy_v1<atol = 0.000000e+00, rtol = 0.000000e+00, ulps = 0, mode = #vhlo<result_accuracy_mode_v1 DEFAULT>>}> : (!vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>
+    %202 = "vhlo.convert_v1"(%201) : (!vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.f32_v1>
+    %203 = "vhlo.multiply_v1"(%197, %202) : (!vhlo.tensor_v1<32x13x2880x!vhlo.f32_v1>, !vhlo.tensor_v1<32x13x2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.f32_v1>
+    %204 = "vhlo.convert_v1"(%203) : (!vhlo.tensor_v1<32x13x2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>
+    %205 = "vhlo.convert_v1"(%204) : (!vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.f32_v1>
+    %206 = "vhlo.multiply_v1"(%193, %205) : (!vhlo.tensor_v1<32x13x2880x!vhlo.f32_v1>, !vhlo.tensor_v1<32x13x2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.f32_v1>
+    %207 = "vhlo.convert_v1"(%206) : (!vhlo.tensor_v1<32x13x2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>
+    %208 = "vhlo.dot_general_v2"(%207, %arg23) <{accumulation_type = #vhlo.type_v1<!vhlo.none_v1>, allow_imprecise_accumulation = #vhlo.type_v1<!vhlo.none_v1>, lhs_batching_dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>, lhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, lhs_contracting_dimensions = #vhlo.tensor_v1<dense<2> : tensor<1xi64>>, lhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>, num_primitive_operations = #vhlo.type_v1<!vhlo.none_v1>, precision_config = #vhlo.array_v1<[#vhlo<precision_v1 DEFAULT>, #vhlo<precision_v1 DEFAULT>]>, rhs_batching_dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>, rhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, rhs_contracting_dimensions = #vhlo.tensor_v1<dense<1> : tensor<1xi64>>, rhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>}> : (!vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<32x2880x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>
+    %209 = "vhlo.broadcast_in_dim_v1"(%arg22) <{broadcast_dimensions = #vhlo.tensor_v1<dense<[0, 2]> : tensor<2xi64>>}> : (!vhlo.tensor_v1<32x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>
+    %210 = "vhlo.add_v1"(%208, %209) : (!vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>
+    %211 = "vhlo.reshape_v1"(%210) : (!vhlo.tensor_v1<32x13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x1x13x2880x!vhlo.bf16_v1>
+    %212 = "vhlo.convert_v1"(%211) : (!vhlo.tensor_v1<32x1x13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x1x13x2880x!vhlo.f32_v1>
+    %213 = "vhlo.iota_v1"() <{iota_dimension = #vhlo.integer_v1<0 : i64>}> : () -> !vhlo.tensor_v1<13x!vhlo.i64_v1>
+    %214 = "vhlo.broadcast_in_dim_v1"(%213) <{broadcast_dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>}> : (!vhlo.tensor_v1<13x!vhlo.i64_v1>) -> !vhlo.tensor_v1<13x4x1x!vhlo.i64_v1>
+    %215 = "vhlo.transpose_v1"(%arg12) <{permutation = #vhlo.tensor_v1<dense<[1, 0]> : tensor<2xi64>>}> {result_layout = #vhlo.tensor_v1<dense<[0, 1]> : tensor<2xindex>>, xla_shape = #vhlo.string_v1<"bf16[2880,32]{0,1}">} : (!vhlo.tensor_v1<32x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<2880x32x!vhlo.bf16_v1>
+    %216 = "vhlo.dot_general_v2"(%183, %215) <{accumulation_type = #vhlo.type_v1<!vhlo.none_v1>, allow_imprecise_accumulation = #vhlo.type_v1<!vhlo.none_v1>, lhs_batching_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>, lhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, lhs_contracting_dimensions = #vhlo.tensor_v1<dense<1> : tensor<1xi64>>, lhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>, num_primitive_operations = #vhlo.type_v1<!vhlo.none_v1>, precision_config = #vhlo.array_v1<[#vhlo<precision_v1 DEFAULT>, #vhlo<precision_v1 DEFAULT>]>, rhs_batching_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>, rhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, rhs_contracting_dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>, rhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>}> : (!vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<2880x32x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x32x!vhlo.bf16_v1>
+    %217 = "vhlo.broadcast_in_dim_v1"(%arg11) <{broadcast_dimensions = #vhlo.tensor_v1<dense<1> : tensor<1xi64>>}> : (!vhlo.tensor_v1<32x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x32x!vhlo.bf16_v1>
+    %218 = "vhlo.add_v1"(%216, %217) : (!vhlo.tensor_v1<13x32x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x32x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x32x!vhlo.bf16_v1>
+    %219 = "vhlo.iota_v1"() <{iota_dimension = #vhlo.integer_v1<0 : i64>}> : () -> !vhlo.tensor_v1<32x!vhlo.i32_v1>
+    %220 = "vhlo.broadcast_in_dim_v1"(%219) <{broadcast_dimensions = #vhlo.tensor_v1<dense<1> : tensor<1xi64>>}> : (!vhlo.tensor_v1<32x!vhlo.i32_v1>) -> !vhlo.tensor_v1<13x32x!vhlo.i32_v1>
+    %221:2 = "vhlo.sort_v1"(%218, %220) <{dimension = #vhlo.integer_v1<1 : i64>, is_stable = #vhlo.bool_v1<false>}> ({
+    ^bb0(%arg31: !vhlo.tensor_v1<!vhlo.bf16_v1>, %arg32: !vhlo.tensor_v1<!vhlo.bf16_v1>, %arg33: !vhlo.tensor_v1<!vhlo.i32_v1>, %arg34: !vhlo.tensor_v1<!vhlo.i32_v1>):
+      %260 = "vhlo.compare_v1"(%arg31, %arg32) <{compare_type = #vhlo<comparison_type_v1 TOTALORDER>, comparison_direction = #vhlo<comparison_direction_v1 GT>}> : (!vhlo.tensor_v1<!vhlo.bf16_v1>, !vhlo.tensor_v1<!vhlo.bf16_v1>) -> !vhlo.tensor_v1<!vhlo.bool_v1>
+      "vhlo.return_v1"(%260) : (!vhlo.tensor_v1<!vhlo.bool_v1>) -> ()
+    }) : (!vhlo.tensor_v1<13x32x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x32x!vhlo.i32_v1>) -> (!vhlo.tensor_v1<13x32x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x32x!vhlo.i32_v1>)
+    %222 = "vhlo.slice_v1"(%221#1) <{limit_indices = #vhlo.tensor_v1<dense<[13, 4]> : tensor<2xi64>>, start_indices = #vhlo.tensor_v1<dense<0> : tensor<2xi64>>, strides = #vhlo.tensor_v1<dense<1> : tensor<2xi64>>}> : (!vhlo.tensor_v1<13x32x!vhlo.i32_v1>) -> !vhlo.tensor_v1<13x4x!vhlo.i32_v1>
+    %223 = "vhlo.convert_v1"(%222) : (!vhlo.tensor_v1<13x4x!vhlo.i32_v1>) -> !vhlo.tensor_v1<13x4x!vhlo.i64_v1>
+    %224 = "vhlo.reshape_v1"(%223) : (!vhlo.tensor_v1<13x4x!vhlo.i64_v1>) -> !vhlo.tensor_v1<13x4x1x!vhlo.i64_v1>
+    %225 = "vhlo.concatenate_v1"(%214, %224) <{dimension = #vhlo.integer_v1<2 : i64>}> : (!vhlo.tensor_v1<13x4x1x!vhlo.i64_v1>, !vhlo.tensor_v1<13x4x1x!vhlo.i64_v1>) -> !vhlo.tensor_v1<13x4x2x!vhlo.i64_v1>
+    %226 = "vhlo.slice_v1"(%221#0) <{limit_indices = #vhlo.tensor_v1<dense<[13, 4]> : tensor<2xi64>>, start_indices = #vhlo.tensor_v1<dense<0> : tensor<2xi64>>, strides = #vhlo.tensor_v1<dense<1> : tensor<2xi64>>}> : (!vhlo.tensor_v1<13x32x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x4x!vhlo.bf16_v1>
+    %227 = "vhlo.reduce_v1"(%226, %3) <{dimensions = #vhlo.tensor_v1<dense<1> : tensor<1xi64>>}> ({
+    ^bb0(%arg31: !vhlo.tensor_v1<!vhlo.bf16_v1>, %arg32: !vhlo.tensor_v1<!vhlo.bf16_v1>):
+      %260 = "vhlo.maximum_v1"(%arg31, %arg32) : (!vhlo.tensor_v1<!vhlo.bf16_v1>, !vhlo.tensor_v1<!vhlo.bf16_v1>) -> !vhlo.tensor_v1<!vhlo.bf16_v1>
+      "vhlo.return_v1"(%260) : (!vhlo.tensor_v1<!vhlo.bf16_v1>) -> ()
+    }) : (!vhlo.tensor_v1<13x4x!vhlo.bf16_v1>, !vhlo.tensor_v1<!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x!vhlo.bf16_v1>
+    %228 = "vhlo.broadcast_in_dim_v1"(%227) <{broadcast_dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>}> : (!vhlo.tensor_v1<13x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x4x!vhlo.bf16_v1>
+    %229 = "vhlo.subtract_v1"(%226, %228) : (!vhlo.tensor_v1<13x4x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x4x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x4x!vhlo.bf16_v1>
+    %230 = "vhlo.exponential_v2"(%229) <{result_accuracy = #vhlo.result_accuracy_v1<atol = 0.000000e+00, rtol = 0.000000e+00, ulps = 0, mode = #vhlo<result_accuracy_mode_v1 DEFAULT>>}> : (!vhlo.tensor_v1<13x4x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x4x!vhlo.bf16_v1>
+    %231 = "vhlo.reduce_v1"(%230, %9) <{dimensions = #vhlo.tensor_v1<dense<1> : tensor<1xi64>>}> ({
+    ^bb0(%arg31: !vhlo.tensor_v1<!vhlo.bf16_v1>, %arg32: !vhlo.tensor_v1<!vhlo.bf16_v1>):
+      %260 = "vhlo.add_v1"(%arg31, %arg32) : (!vhlo.tensor_v1<!vhlo.bf16_v1>, !vhlo.tensor_v1<!vhlo.bf16_v1>) -> !vhlo.tensor_v1<!vhlo.bf16_v1>
+      "vhlo.return_v1"(%260) : (!vhlo.tensor_v1<!vhlo.bf16_v1>) -> ()
+    }) : (!vhlo.tensor_v1<13x4x!vhlo.bf16_v1>, !vhlo.tensor_v1<!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x!vhlo.bf16_v1>
+    %232 = "vhlo.broadcast_in_dim_v1"(%231) <{broadcast_dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>}> : (!vhlo.tensor_v1<13x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x4x!vhlo.bf16_v1>
+    %233 = "vhlo.divide_v1"(%230, %232) : (!vhlo.tensor_v1<13x4x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x4x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x4x!vhlo.bf16_v1>
+    %234 = "vhlo.scatter_v2"(%10, %225, %233) <{index_vector_dim = #vhlo.integer_v1<2 : i64>, indices_are_sorted = #vhlo.bool_v1<false>, input_batching_dims = #vhlo.tensor_v1<dense<> : tensor<0xi64>>, inserted_window_dims = #vhlo.tensor_v1<dense<[0, 1]> : tensor<2xi64>>, scatter_dims_to_operand_dims = #vhlo.tensor_v1<dense<[0, 1]> : tensor<2xi64>>, scatter_indices_batching_dims = #vhlo.tensor_v1<dense<> : tensor<0xi64>>, unique_indices = #vhlo.bool_v1<false>, update_window_dims = #vhlo.tensor_v1<dense<> : tensor<0xi64>>}> ({
+    ^bb0(%arg31: !vhlo.tensor_v1<!vhlo.bf16_v1>, %arg32: !vhlo.tensor_v1<!vhlo.bf16_v1>):
+      "vhlo.return_v1"(%arg32) : (!vhlo.tensor_v1<!vhlo.bf16_v1>) -> ()
+    }) : (!vhlo.tensor_v1<13x32x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x4x2x!vhlo.i64_v1>, !vhlo.tensor_v1<13x4x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x32x!vhlo.bf16_v1>
+    %235 = "vhlo.transpose_v1"(%234) <{permutation = #vhlo.tensor_v1<dense<[1, 0]> : tensor<2xi64>>}> {result_layout = #vhlo.tensor_v1<dense<[0, 1]> : tensor<2xindex>>, xla_shape = #vhlo.string_v1<"bf16[32,13]{0,1}">} : (!vhlo.tensor_v1<13x32x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x13x!vhlo.bf16_v1>
+    %236 = "vhlo.reshape_v1"(%235) : (!vhlo.tensor_v1<32x13x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x1x13x1x!vhlo.bf16_v1>
+    %237 = "vhlo.convert_v1"(%236) : (!vhlo.tensor_v1<32x1x13x1x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<32x1x13x1x!vhlo.f32_v1>
+    %238 = "vhlo.reshape_v1"(%237) : (!vhlo.tensor_v1<32x1x13x1x!vhlo.f32_v1>) -> !vhlo.tensor_v1<32x1x13x!vhlo.f32_v1>
+    %239 = "vhlo.broadcast_in_dim_v1"(%238) <{broadcast_dimensions = #vhlo.tensor_v1<dense<[0, 1, 2]> : tensor<3xi64>>}> : (!vhlo.tensor_v1<32x1x13x!vhlo.f32_v1>) -> !vhlo.tensor_v1<32x1x13x2880x!vhlo.f32_v1>
+    %240 = "vhlo.multiply_v1"(%212, %239) : (!vhlo.tensor_v1<32x1x13x2880x!vhlo.f32_v1>, !vhlo.tensor_v1<32x1x13x2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<32x1x13x2880x!vhlo.f32_v1>
+    %241 = "vhlo.convert_v1"(%240) : (!vhlo.tensor_v1<32x1x13x2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<32x1x13x2880x!vhlo.bf16_v1>
+    %242 = "vhlo.reduce_v1"(%241, %9) <{dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>}> ({
+    ^bb0(%arg31: !vhlo.tensor_v1<!vhlo.bf16_v1>, %arg32: !vhlo.tensor_v1<!vhlo.bf16_v1>):
+      %260 = "vhlo.add_v1"(%arg31, %arg32) : (!vhlo.tensor_v1<!vhlo.bf16_v1>, !vhlo.tensor_v1<!vhlo.bf16_v1>) -> !vhlo.tensor_v1<!vhlo.bf16_v1>
+      "vhlo.return_v1"(%260) : (!vhlo.tensor_v1<!vhlo.bf16_v1>) -> ()
+    }) : (!vhlo.tensor_v1<32x1x13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>
+    %243 = "vhlo.add_v1"(%167, %242) : (!vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>
+    %244 = "vhlo.convert_v1"(%243) : (!vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>
+    %245 = "vhlo.power_v1"(%244, %14) : (!vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>, !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>
+    %246 = "vhlo.reduce_v1"(%245, %0) <{dimensions = #vhlo.tensor_v1<dense<2> : tensor<1xi64>>}> ({
+    ^bb0(%arg31: !vhlo.tensor_v1<!vhlo.f32_v1>, %arg32: !vhlo.tensor_v1<!vhlo.f32_v1>):
+      %260 = "vhlo.add_v1"(%arg31, %arg32) : (!vhlo.tensor_v1<!vhlo.f32_v1>, !vhlo.tensor_v1<!vhlo.f32_v1>) -> !vhlo.tensor_v1<!vhlo.f32_v1>
+      "vhlo.return_v1"(%260) : (!vhlo.tensor_v1<!vhlo.f32_v1>) -> ()
+    }) : (!vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>, !vhlo.tensor_v1<!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x!vhlo.f32_v1>
+    %247 = "vhlo.multiply_v1"(%246, %5) : (!vhlo.tensor_v1<1x13x!vhlo.f32_v1>, !vhlo.tensor_v1<1x13x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x!vhlo.f32_v1>
+    %248 = "vhlo.reshape_v1"(%247) : (!vhlo.tensor_v1<1x13x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>
+    %249 = "vhlo.add_v1"(%248, %27) : (!vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>, !vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>
+    %250 = "vhlo.rsqrt_v2"(%249) <{result_accuracy = #vhlo.result_accuracy_v1<atol = 0.000000e+00, rtol = 0.000000e+00, ulps = 0, mode = #vhlo<result_accuracy_mode_v1 DEFAULT>>}> : (!vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>
+    %251 = "vhlo.reshape_v1"(%250) : (!vhlo.tensor_v1<1x13x1x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x!vhlo.f32_v1>
+    %252 = "vhlo.broadcast_in_dim_v1"(%251) <{broadcast_dimensions = #vhlo.tensor_v1<dense<[0, 1]> : tensor<2xi64>>}> : (!vhlo.tensor_v1<1x13x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>
+    %253 = "vhlo.multiply_v1"(%244, %252) : (!vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>, !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>
+    %254 = "vhlo.multiply_v1"(%143, %253) : (!vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>, !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>
+    %255 = "vhlo.convert_v1"(%254) : (!vhlo.tensor_v1<1x13x2880x!vhlo.f32_v1>) -> !vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>
+    %256 = "vhlo.reshape_v1"(%255) : (!vhlo.tensor_v1<1x13x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>
+    %257 = "vhlo.transpose_v1"(%arg10) <{permutation = #vhlo.tensor_v1<dense<[1, 0]> : tensor<2xi64>>}> {result_layout = #vhlo.tensor_v1<dense<[0, 1]> : tensor<2xindex>>, xla_shape = #vhlo.string_v1<"bf16[2880,201088]{0,1}">} : (!vhlo.tensor_v1<201088x2880x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<2880x201088x!vhlo.bf16_v1>
+    %258 = "vhlo.dot_general_v2"(%256, %257) <{accumulation_type = #vhlo.type_v1<!vhlo.none_v1>, allow_imprecise_accumulation = #vhlo.type_v1<!vhlo.none_v1>, lhs_batching_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>, lhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, lhs_contracting_dimensions = #vhlo.tensor_v1<dense<1> : tensor<1xi64>>, lhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>, num_primitive_operations = #vhlo.type_v1<!vhlo.none_v1>, precision_config = #vhlo.array_v1<[#vhlo<precision_v1 DEFAULT>, #vhlo<precision_v1 DEFAULT>]>, rhs_batching_dimensions = #vhlo.tensor_v1<dense<> : tensor<0xi64>>, rhs_component_count = #vhlo.type_v1<!vhlo.none_v1>, rhs_contracting_dimensions = #vhlo.tensor_v1<dense<0> : tensor<1xi64>>, rhs_precision_type = #vhlo.type_v1<!vhlo.none_v1>}> : (!vhlo.tensor_v1<13x2880x!vhlo.bf16_v1>, !vhlo.tensor_v1<2880x201088x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<13x201088x!vhlo.bf16_v1>
+    %259 = "vhlo.reshape_v1"(%258) : (!vhlo.tensor_v1<13x201088x!vhlo.bf16_v1>) -> !vhlo.tensor_v1<1x13x201088x!vhlo.bf16_v1>
+    "vhlo.return_v1"(%139, %140, %141, %100, %258, %259) : (!vhlo.tensor_v1<1x13x512x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x13x8x64x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x8x13x64x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x8x13x64x!vhlo.bf16_v1>, !vhlo.tensor_v1<13x201088x!vhlo.bf16_v1>, !vhlo.tensor_v1<1x13x201088x!vhlo.bf16_v1>) -> ()
+  } {arg_attrs = #vhlo.array_v1<[#vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{replicated}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{\22_axis_0\22}, {}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{devices=[8,1]<=[8]}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, []>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{replicated}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{}, {}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{replicated}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{}, {}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{replicated}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{replicated}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, []>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{replicated}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{replicated}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{replicated}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{\22_axis_0\22}, {}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{devices=[8,1]<=[8]}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{\22_axis_0\22}, {}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{devices=[8,1]<=[8]}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{replicated}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{}, {}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{replicated}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{replicated}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{}, {\22_axis_0\22}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{devices=[1,8]<=[8]}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{\22_axis_0\22}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{devices=[8]<=[8]}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, []>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{replicated}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, []>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{replicated}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, []>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{replicated}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{replicated}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{\22_axis_0\22}, {}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{devices=[8,1]<=[8]}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{replicated}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{\22_axis_0\22}, {}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{devices=[8,1]<=[8]}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{\22_axis_0\22}, {}, {}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{devices=[8,1,1]<=[8]}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, []>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{replicated}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, []>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{replicated}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, []>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{replicated}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{\22_axis_0\22}, {}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{devices=[8,1]<=[8]}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{\22_axis_0\22}, {}, {}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{devices=[8,1,1]<=[8]}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, []>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{replicated}">}>, #vhlo.dict_v1<{#vhlo.string_v1<"mhlo.frontend_attributes"> = #vhlo.dict_v1<{#vhlo.string_v1<"xla.sdy.sharding"> = #vhlo.string_v1<"#sdy.sharding<@mesh, [{}]>">}>, #vhlo.string_v1<"mhlo.sharding"> = #vhlo.string_v1<"{replicated}">}>]>, res_attrs = #vhlo.array_v1<[]>, sym_visibility = #vhlo.string_v1<"">}
+}
+module @SyncTensorsGraph.577 attributes {mhlo.cross_program_prefetches = [], mhlo.input_output_alias = [], mhlo.is_dynamic = false, mhlo.use_auto_spmd_partitioning = false} {
+  sdy.mesh @mesh = <["_axis_0"=8]>
+  func.func @main(%arg0: tensor<512xbf16> {sdy.sharding = #sdy.sharding<@mesh, [{}]>}, %arg1: tensor<512x2880xbf16> {sdy.sharding = #sdy.sharding<@mesh, [{"_axis_0"}, {}]>}, %arg2: tensor<f32> {sdy.sharding = #sdy.sharding<@mesh, []>}, %arg3: tensor<1x13xi64> {sdy.sharding = #sdy.sharding<@mesh, [{}, {}]>}, %arg4: tensor<201088x2880xbf16> {sdy.sharding = #sdy.sharding<@mesh, [{}, {}]>}, %arg5: tensor<2880xbf16> {sdy.sharding = #sdy.sharding<@mesh, [{}]>}, %arg6: tensor<f32> {sdy.sharding = #sdy.sharding<@mesh, []>}, %arg7: tensor<32xf32> {sdy.sharding = #sdy.sharding<@mesh, [{}]>}, %arg8: tensor<512xbf16> {sdy.sharding = #sdy.sharding<@mesh, [{}]>}, %arg9: tensor<512x2880xbf16> {sdy.sharding = #sdy.sharding<@mesh, [{"_axis_0"}, {}]>}, %arg10: tensor<201088x2880xbf16> {sdy.sharding = #sdy.sharding<@mesh, [{"_axis_0"}, {}]>}, %arg11: tensor<32xbf16> {sdy.sharding = #sdy.sharding<@mesh, [{}]>}, %arg12: tensor<32x2880xbf16> {sdy.sharding = #sdy.sharding<@mesh, [{}, {}]>}, %arg13: tensor<2880xbf16> {sdy.sharding = #sdy.sharding<@mesh, [{}]>}, %arg14: tensor<2880x4096xbf16> {sdy.sharding = #sdy.sharding<@mesh, [{}, {"_axis_0"}]>}, %arg15: tensor<64xbf16> {sdy.sharding = #sdy.sharding<@mesh, [{"_axis_0"}]>}, %arg16: tensor<bf16> {sdy.sharding = #sdy.sharding<@mesh, []>}, %arg17: tensor<i64> {sdy.sharding = #sdy.sharding<@mesh, []>}, %arg18: tensor<f32> {sdy.sharding = #sdy.sharding<@mesh, []>}, %arg19: tensor<4096xbf16> {sdy.sharding = #sdy.sharding<@mesh, [{}]>}, %arg20: tensor<4096x2880xbf16> {sdy.sharding = #sdy.sharding<@mesh, [{"_axis_0"}, {}]>}, %arg21: tensor<2880xbf16> {sdy.sharding = #sdy.sharding<@mesh, [{}]>}, %arg22: tensor<32x2880xbf16> {sdy.sharding = #sdy.sharding<@mesh, [{"_axis_0"}, {}]>}, %arg23: tensor<32x2880x2880xbf16> {sdy.sharding = #sdy.sharding<@mesh, [{"_axis_0"}, {}, {}]>}, %arg24: tensor<f32> {sdy.sharding = #sdy.sharding<@mesh, []>}, %arg25: tensor<bf16> {sdy.sharding = #sdy.sharding<@mesh, []>}, %arg26: tensor<bf16> {sdy.sharding = #sdy.sharding<@mesh, []>}, %arg27: tensor<32x5760xbf16> {sdy.sharding = #sdy.sharding<@mesh, [{"_axis_0"}, {}]>}, %arg28: tensor<32x2880x5760xbf16> {sdy.sharding = #sdy.sharding<@mesh, [{"_axis_0"}, {}, {}]>}, %arg29: tensor<bf16> {sdy.sharding = #sdy.sharding<@mesh, []>}, %arg30: tensor<2880xbf16> {sdy.sharding = #sdy.sharding<@mesh, [{}]>}) -> (tensor<1x13x512xbf16>, tensor<1x13x8x64xbf16>, tensor<1x8x13x64xbf16>, tensor<1x8x13x64xbf16>, tensor<13x201088xbf16>, tensor<1x13x201088xbf16>) {
+    %cst = stablehlo.constant dense<0.000000e+00> : tensor<f32>
+    %c = stablehlo.constant dense<[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]> : tensor<13xi64>
+    %c_0 = stablehlo.constant dense<0> : tensor<ui8>
+    %cst_1 = stablehlo.constant dense<0xFF80> : tensor<bf16>
+    %cst_2 = stablehlo.constant dense<2.000000e+00> : tensor<f32>
+    %cst_3 = stablehlo.constant dense<3.47222231E-4> : tensor<1x13xf32>
+    %cst_4 = stablehlo.constant dense<[[[0.000000e+00, 1.000000e+00, 2.000000e+00, 3.000000e+00, 4.000000e+00, 5.000000e+00, 6.000000e+00, 7.000000e+00, 8.000000e+00, 9.000000e+00, 1.000000e+01, 1.100000e+01, 1.200000e+01]]]> : tensor<1x1x13xf32>
+    %c_5 = stablehlo.constant dense<1> : tensor<ui8>
+    %cst_6 = stablehlo.constant dense<1.000000e+00> : tensor<bf16>
+    %cst_7 = stablehlo.constant dense<0.000000e+00> : tensor<bf16>
+    %0 = stablehlo.broadcast_in_dim %cst_7, dims = [] : (tensor<bf16>) -> tensor<13x32xbf16>
+    %1 = stablehlo.broadcast_in_dim %cst_6, dims = [] : (tensor<bf16>) -> tensor<32x13x2880xbf16>
+    %2 = stablehlo.broadcast_in_dim %cst_7, dims = [] : (tensor<bf16>) -> tensor<1x1x13x13xbf16>
+    %3 = stablehlo.broadcast_in_dim %c_5, dims = [] : (tensor<ui8>) -> tensor<13x13xui8>
+    %4 = stablehlo.broadcast_in_dim %cst_2, dims = [] : (tensor<f32>) -> tensor<1x13x2880xf32>
+    %5 = stablehlo.broadcast_in_dim %c_0, dims = [] : (tensor<ui8>) -> tensor<13x13xui8>
+    %6 = stablehlo.convert %arg5 : (tensor<2880xbf16>) -> tensor<2880xf32>
+    %7 = stablehlo.broadcast_in_dim %6, dims = [2] : (tensor<2880xf32>) -> tensor<1x13x2880xf32>
+    %8 = stablehlo.convert %arg3 : (tensor<1x13xi64>) -> tensor<1x13xui32>
+    %9 = stablehlo.reshape %8 : (tensor<1x13xui32>) -> tensor<13xui32>
+    %10 = "stablehlo.gather"(%arg4, %9) <{dimension_numbers = #stablehlo.gather<offset_dims = [1], collapsed_slice_dims = [0], start_index_map = [0], index_vector_dim = 1>, slice_sizes = array<i64: 1, 2880>}> : (tensor<201088x2880xbf16>, tensor<13xui32>) -> tensor<13x2880xbf16>
+    %11 = stablehlo.reshape %10 : (tensor<13x2880xbf16>) -> tensor<1x13x2880xbf16>
+    %12 = stablehlo.convert %11 : (tensor<1x13x2880xbf16>) -> tensor<1x13x2880xf32>
+    %13 = stablehlo.power %12, %4 : tensor<1x13x2880xf32>
+    %14 = stablehlo.reduce(%13 init: %cst) applies stablehlo.add across dimensions = [2] : (tensor<1x13x2880xf32>, tensor<f32>) -> tensor<1x13xf32>
+    %15 = stablehlo.multiply %14, %cst_3 : tensor<1x13xf32>
+    %16 = stablehlo.reshape %15 : (tensor<1x13xf32>) -> tensor<1x13x1xf32>
+    %17 = stablehlo.broadcast_in_dim %arg2, dims = [] : (tensor<f32>) -> tensor<1x13x1xf32>
+    %18 = stablehlo.add %16, %17 : tensor<1x13x1xf32>
+    %19 = stablehlo.rsqrt %18 : tensor<1x13x1xf32>
+    %20 = stablehlo.reshape %19 : (tensor<1x13x1xf32>) -> tensor<1x13xf32>
+    %21 = stablehlo.broadcast_in_dim %20, dims = [0, 1] : (tensor<1x13xf32>) -> tensor<1x13x2880xf32>
+    %22 = stablehlo.multiply %12, %21 : tensor<1x13x2880xf32>
+    %23 = stablehlo.multiply %7, %22 : tensor<1x13x2880xf32>
+    %24 = stablehlo.convert %23 : (tensor<1x13x2880xf32>) -> tensor<1x13x2880xbf16>
+    %25 = stablehlo.reshape %24 : (tensor<1x13x2880xbf16>) -> tensor<13x2880xbf16>
+    %26 = stablehlo.transpose %arg20, dims = [1, 0] {result_layout = dense<[0, 1]> : tensor<2xindex>, xla_shape = "bf16[2880,4096]{0,1}"} : (tensor<4096x2880xbf16>) -> tensor<2880x4096xbf16>
+    %27 = stablehlo.dot_general %25, %26, contracting_dims = [1] x [0] : (tensor<13x2880xbf16>, tensor<2880x4096xbf16>) -> tensor<13x4096xbf16>
+    %28 = stablehlo.reshape %27 : (tensor<13x4096xbf16>) -> tensor<1x13x4096xbf16>
+    %29 = stablehlo.broadcast_in_dim %arg19, dims = [2] : (tensor<4096xbf16>) -> tensor<1x13x4096xbf16>
+    %30 = stablehlo.add %28, %29 : tensor<1x13x4096xbf16>
+    %31 = stablehlo.reshape %30 : (tensor<1x13x4096xbf16>) -> tensor<1x13x64x64xbf16>
+    %32 = stablehlo.transpose %31, dims = [0, 2, 1, 3] {result_layout = dense<[3, 1, 2, 0]> : tensor<4xindex>, xla_shape = "bf16[1,64,13,64]{3,1,2,0}"} : (tensor<1x13x64x64xbf16>) -> tensor<1x64x13x64xbf16>
+    %33 = stablehlo.slice %32 [0:1, 0:64, 0:13, 0:32] : (tensor<1x64x13x64xbf16>) -> tensor<1x64x13x32xbf16>
+    %34 = stablehlo.convert %33 : (tensor<1x64x13x32xbf16>) -> tensor<1x64x13x32xf32>
+    %35 = stablehlo.reshape %arg7 : (tensor<32xf32>) -> tensor<1x32x1xf32>
+    %36 = stablehlo.dot_general %35, %cst_4, batching_dims = [0] x [0], contracting_dims = [2] x [1] : (tensor<1x32x1xf32>, tensor<1x1x13xf32>) -> tensor<1x32x13xf32>
+    %37 = stablehlo.transpose %36, dims = [0, 2, 1] {result_layout = dense<[1, 2, 0]> : tensor<3xindex>, xla_shape = "f32[1,13,32]{1,2,0}"} : (tensor<1x32x13xf32>) -> tensor<1x13x32xf32>
+    %38 = stablehlo.cosine %37 {result_layout = dense<[1, 2, 0]> : tensor<3xindex>, xla_shape = "f32[1,13,32]{1,2,0}"} : tensor<1x13x32xf32>
+    %39 = stablehlo.broadcast_in_dim %arg6, dims = [] : (tensor<f32>) -> tensor<1x13x32xf32>
+    %40 = stablehlo.multiply %38, %39 : tensor<1x13x32xf32>
+    %41 = stablehlo.convert %40 : (tensor<1x13x32xf32>) -> tensor<1x13x32xbf16>
+    %42 = stablehlo.convert %41 : (tensor<1x13x32xbf16>) -> tensor<1x13x32xf32>
+    %43 = stablehlo.broadcast_in_dim %42, dims = [0, 2, 3] : (tensor<1x13x32xf32>) -> tensor<1x64x13x32xf32>
+    %44 = stablehlo.multiply %34, %43 : tensor<1x64x13x32xf32>
+    %45 = stablehlo.convert %44 : (tensor<1x64x13x32xf32>) -> tensor<1x64x13x32xbf16>
+    %46 = stablehlo.slice %32 [0:1, 0:64, 0:13, 32:64] : (tensor<1x64x13x64xbf16>) -> tensor<1x64x13x32xbf16>
+    %47 = stablehlo.convert %46 : (tensor<1x64x13x32xbf16>) -> tensor<1x64x13x32xf32>
+    %48 = stablehlo.sine %37 {result_layout = dense<[1, 2, 0]> : tensor<3xindex>, xla_shape = "f32[1,13,32]{1,2,0}"} : tensor<1x13x32xf32>
+    %49 = stablehlo.multiply %48, %39 : tensor<1x13x32xf32>
+    %50 = stablehlo.convert %49 : (tensor<1x13x32xf32>) -> tensor<1x13x32xbf16>
+    %51 = stablehlo.convert %50 : (tensor<1x13x32xbf16>) -> tensor<1x13x32xf32>
+    %52 = stablehlo.broadcast_in_dim %51, dims = [0, 2, 3] : (tensor<1x13x32xf32>) -> tensor<1x64x13x32xf32>
+    %53 = stablehlo.multiply %47, %52 : tensor<1x64x13x32xf32>
+    %54 = stablehlo.convert %53 : (tensor<1x64x13x32xf32>) -> tensor<1x64x13x32xbf16>
+    %55 = stablehlo.subtract %45, %54 : tensor<1x64x13x32xbf16>
+    %56 = stablehlo.multiply %47, %43 : tensor<1x64x13x32xf32>
+    %57 = stablehlo.convert %56 : (tensor<1x64x13x32xf32>) -> tensor<1x64x13x32xbf16>
+    %58 = stablehlo.multiply %34, %52 : tensor<1x64x13x32xf32>
+    %59 = stablehlo.convert %58 : (tensor<1x64x13x32xf32>) -> tensor<1x64x13x32xbf16>
+    %60 = stablehlo.add %57, %59 : tensor<1x64x13x32xbf16>
+    %61 = stablehlo.concatenate %55, %60, dim = 3 : (tensor<1x64x13x32xbf16>, tensor<1x64x13x32xbf16>) -> tensor<1x64x13x64xbf16>
+    %62 = stablehlo.reshape %61 : (tensor<1x64x13x64xbf16>) -> tensor<64x13x64xbf16>
+    %63 = stablehlo.transpose %arg9, dims = [1, 0] {result_layout = dense<[0, 1]> : tensor<2xindex>, xla_shape = "bf16[2880,512]{0,1}"} : (tensor<512x2880xbf16>) -> tensor<2880x512xbf16>
+    %64 = stablehlo.dot_general %25, %63, contracting_dims = [1] x [0] : (tensor<13x2880xbf16>, tensor<2880x512xbf16>) -> tensor<13x512xbf16>
+    %65 = stablehlo.reshape %64 : (tensor<13x512xbf16>) -> tensor<1x13x512xbf16>
+    %66 = stablehlo.broadcast_in_dim %arg8, dims = [2] : (tensor<512xbf16>) -> tensor<1x13x512xbf16>
+    %67 = stablehlo.add %65, %66 : tensor<1x13x512xbf16>
+    %68 = stablehlo.reshape %67 : (tensor<1x13x512xbf16>) -> tensor<1x13x8x64xbf16>
+    %69 = stablehlo.transpose %68, dims = [0, 2, 1, 3] {result_layout = dense<[3, 1, 2, 0]> : tensor<4xindex>, xla_shape = "bf16[1,8,13,64]{3,1,2,0}"} : (tensor<1x13x8x64xbf16>) -> tensor<1x8x13x64xbf16>
+    %70 = stablehlo.slice %69 [0:1, 0:8, 0:13, 0:32] : (tensor<1x8x13x64xbf16>) -> tensor<1x8x13x32xbf16>
+    %71 = stablehlo.convert %70 : (tensor<1x8x13x32xbf16>) -> tensor<1x8x13x32xf32>
+    %72 = stablehlo.broadcast_in_dim %42, dims = [0, 2, 3] : (tensor<1x13x32xf32>) -> tensor<1x8x13x32xf32>
+    %73 = stablehlo.multiply %71, %72 : tensor<1x8x13x32xf32>
+    %74 = stablehlo.convert %73 : (tensor<1x8x13x32xf32>) -> tensor<1x8x13x32xbf16>
+    %75 = stablehlo.slice %69 [0:1, 0:8, 0:13, 32:64] : (tensor<1x8x13x64xbf16>) -> tensor<1x8x13x32xbf16>
+    %76 = stablehlo.convert %75 : (tensor<1x8x13x32xbf16>) -> tensor<1x8x13x32xf32>
+    %77 = stablehlo.broadcast_in_dim %51, dims = [0, 2, 3] : (tensor<1x13x32xf32>) -> tensor<1x8x13x32xf32>
+    %78 = stablehlo.multiply %76, %77 : tensor<1x8x13x32xf32>
+    %79 = stablehlo.convert %78 : (tensor<1x8x13x32xf32>) -> tensor<1x8x13x32xbf16>
+    %80 = stablehlo.subtract %74, %79 : tensor<1x8x13x32xbf16>
+    %81 = stablehlo.multiply %76, %72 : tensor<1x8x13x32xf32>
+    %82 = stablehlo.convert %81 : (tensor<1x8x13x32xf32>) -> tensor<1x8x13x32xbf16>
+    %83 = stablehlo.multiply %71, %77 : tensor<1x8x13x32xf32>
+    %84 = stablehlo.convert %83 : (tensor<1x8x13x32xf32>) -> tensor<1x8x13x32xbf16>
+    %85 = stablehlo.add %82, %84 : tensor<1x8x13x32xbf16>
+    %86 = stablehlo.concatenate %80, %85, dim = 3 : (tensor<1x8x13x32xbf16>, tensor<1x8x13x32xbf16>) -> tensor<1x8x13x64xbf16>
+    %87 = stablehlo.broadcast_in_dim %86, dims = [0, 1, 3, 4] : (tensor<1x8x13x64xbf16>) -> tensor<1x8x8x13x64xbf16>
+    %88 = stablehlo.reshape %87 : (tensor<1x8x8x13x64xbf16>) -> tensor<1x64x13x64xbf16>
+    %89 = stablehlo.transpose %88, dims = [0, 1, 3, 2] {result_layout = dense<[2, 3, 1, 0]> : tensor<4xindex>, xla_shape = "bf16[1,64,64,13]{2,3,1,0}"} : (tensor<1x64x13x64xbf16>) -> tensor<1x64x64x13xbf16>
+    %90 = stablehlo.reshape %89 : (tensor<1x64x64x13xbf16>) -> tensor<64x64x13xbf16>
+    %91 = stablehlo.dot_general %62, %90, batching_dims = [0] x [0], contracting_dims = [2] x [1] : (tensor<64x13x64xbf16>, tensor<64x64x13xbf16>) -> tensor<64x13x13xbf16>
+    %92 = stablehlo.convert %91 : (tensor<64x13x13xbf16>) -> tensor<64x13x13xf32>
+    %93 = stablehlo.reshape %92 : (tensor<64x13x13xf32>) -> tensor<1x64x13x13xf32>
+    %94 = stablehlo.broadcast_in_dim %arg18, dims = [] : (tensor<f32>) -> tensor<1x64x13x13xf32>
+    %95 = stablehlo.multiply %93, %94 : tensor<1x64x13x13xf32>
+    %96 = stablehlo.convert %95 : (tensor<1x64x13x13xf32>) -> tensor<1x64x13x13xbf16>
+    %97 = stablehlo.broadcast_in_dim %c, dims = [1] : (tensor<13xi64>) -> tensor<13x13xi64>
+    %98 = stablehlo.broadcast_in_dim %arg17, dims = [] : (tensor<i64>) -> tensor<13xi64>
+    %99 = stablehlo.subtract %c, %98 : tensor<13xi64>
+    %100 = stablehlo.broadcast_in_dim %99, dims = [0] : (tensor<13xi64>) -> tensor<13x13xi64>
+    %101 = stablehlo.compare  GT, %97, %100 : (tensor<13x13xi64>, tensor<13x13xi64>) -> tensor<13x13xi1>
+    %102 = stablehlo.convert %101 : (tensor<13x13xi1>) -> tensor<13x13xui8>
+    %103 = stablehlo.and %102, %3 : tensor<13x13xui8>
+    %104 = stablehlo.compare  NE, %103, %5 : (tensor<13x13xui8>, tensor<13x13xui8>) -> tensor<13x13xi1>
+    %105 = stablehlo.convert %104 : (tensor<13x13xi1>) -> tensor<13x13xui8>
+    %106 = stablehlo.broadcast_in_dim %c, dims = [0] : (tensor<13xi64>) -> tensor<13x13xi64>
+    %107 = stablehlo.compare  LE, %97, %106 : (tensor<13x13xi64>, tensor<13x13xi64>) -> tensor<13x13xi1>
+    %108 = stablehlo.convert %107 : (tensor<13x13xi1>) -> tensor<13x13xui8>
+    %109 = stablehlo.and %105, %108 : tensor<13x13xui8>
+    %110 = stablehlo.compare  NE, %109, %5 : (tensor<13x13xui8>, tensor<13x13xui8>) -> tensor<13x13xi1>
+    %111 = stablehlo.reshape %110 : (tensor<13x13xi1>) -> tensor<1x1x13x13xi1>
+    %112 = stablehlo.reshape %arg16 : (tensor<bf16>) -> tensor<1x1xbf16>
+    %113 = stablehlo.broadcast_in_dim %112, dims = [0, 1] : (tensor<1x1xbf16>) -> tensor<1x1x13x13xbf16>
+    %114 = stablehlo.select %111, %2, %113 : tensor<1x1x13x13xi1>, tensor<1x1x13x13xbf16>
+    %115 = stablehlo.reshape %114 : (tensor<1x1x13x13xbf16>) -> tensor<1x13x13xbf16>
+    %116 = stablehlo.broadcast_in_dim %115, dims = [0, 2, 3] : (tensor<1x13x13xbf16>) -> tensor<1x64x13x13xbf16>
+    %117 = stablehlo.add %96, %116 : tensor<1x64x13x13xbf16>
+    %118 = stablehlo.reshape %arg15 : (tensor<64xbf16>) -> tensor<1x64x1xbf16>
+    %119 = stablehlo.broadcast_in_dim %118, dims = [0, 1, 3] : (tensor<1x64x1xbf16>) -> tensor<1x64x13x1xbf16>
+    %120 = stablehlo.concatenate %117, %119, dim = 3 : (tensor<1x64x13x13xbf16>, tensor<1x64x13x1xbf16>) -> tensor<1x64x13x14xbf16>
+    %121 = stablehlo.transpose %arg1, dims = [1, 0] {result_layout = dense<[0, 1]> : tensor<2xindex>, xla_shape = "bf16[2880,512]{0,1}"} : (tensor<512x2880xbf16>) -> tensor<2880x512xbf16>
+    %122 = stablehlo.dot_general %25, %121, contracting_dims = [1] x [0] : (tensor<13x2880xbf16>, tensor<2880x512xbf16>) -> tensor<13x512xbf16>
+    %123 = stablehlo.reshape %122 : (tensor<13x512xbf16>) -> tensor<1x13x512xbf16>
+    %124 = stablehlo.broadcast_in_dim %arg0, dims = [2] : (tensor<512xbf16>) -> tensor<1x13x512xbf16>
+    %125 = stablehlo.add %123, %124 : tensor<1x13x512xbf16>
+    %126 = stablehlo.reshape %125 : (tensor<1x13x512xbf16>) -> tensor<1x13x8x64xbf16>
+    %127 = stablehlo.transpose %126, dims = [0, 2, 1, 3] {result_layout = dense<[3, 1, 2, 0]> : tensor<4xindex>, xla_shape = "bf16[1,8,13,64]{3,1,2,0}"} : (tensor<1x13x8x64xbf16>) -> tensor<1x8x13x64xbf16>
+    %128 = stablehlo.convert %arg30 : (tensor<2880xbf16>) -> tensor<2880xf32>
+    %129 = stablehlo.broadcast_in_dim %128, dims = [2] : (tensor<2880xf32>) -> tensor<1x13x2880xf32>
+    %130 = stablehlo.reduce(%120 init: %cst_1) applies stablehlo.maximum across dimensions = [3] : (tensor<1x64x13x14xbf16>, tensor<bf16>) -> tensor<1x64x13xbf16>
+    %131 = stablehlo.broadcast_in_dim %130, dims = [0, 1, 2] : (tensor<1x64x13xbf16>) -> tensor<1x64x13x14xbf16>
+    %132 = stablehlo.subtract %120, %131 : tensor<1x64x13x14xbf16>
+    %133 = stablehlo.reduce(%132 init: %cst_1) applies stablehlo.maximum across dimensions = [3] : (tensor<1x64x13x14xbf16>, tensor<bf16>) -> tensor<1x64x13xbf16>
+    %134 = stablehlo.broadcast_in_dim %133, dims = [0, 1, 2] : (tensor<1x64x13xbf16>) -> tensor<1x64x13x14xbf16>
+    %135 = stablehlo.subtract %132, %134 : tensor<1x64x13x14xbf16>
+    %136 = stablehlo.exponential %135 : tensor<1x64x13x14xbf16>
+    %137 = stablehlo.reduce(%136 init: %cst_7) applies stablehlo.add across dimensions = [3] : (tensor<1x64x13x14xbf16>, tensor<bf16>) -> tensor<1x64x13xbf16>
+    %138 = stablehlo.broadcast_in_dim %137, dims = [0, 1, 2] : (tensor<1x64x13xbf16>) -> tensor<1x64x13x14xbf16>
+    %139 = stablehlo.divide %136, %138 : tensor<1x64x13x14xbf16>
+    %140 = stablehlo.slice %139 [0:1, 0:64, 0:13, 0:13] : (tensor<1x64x13x14xbf16>) -> tensor<1x64x13x13xbf16>
+    %141 = stablehlo.reshape %140 : (tensor<1x64x13x13xbf16>) -> tensor<64x13x13xbf16>
+    %142 = stablehlo.broadcast_in_dim %127, dims = [0, 1, 3, 4] : (tensor<1x8x13x64xbf16>) -> tensor<1x8x8x13x64xbf16>
+    %143 = stablehlo.reshape %142 : (tensor<1x8x8x13x64xbf16>) -> tensor<64x13x64xbf16>
+    %144 = stablehlo.dot_general %141, %143, batching_dims = [0] x [0], contracting_dims = [2] x [1] : (tensor<64x13x13xbf16>, tensor<64x13x64xbf16>) -> tensor<64x13x64xbf16>
+    %145 = stablehlo.reshape %144 : (tensor<64x13x64xbf16>) -> tensor<1x64x13x64xbf16>
+    %146 = stablehlo.transpose %145, dims = [0, 2, 1, 3] {result_layout = dense<[3, 1, 2, 0]> : tensor<4xindex>, xla_shape = "bf16[1,13,64,64]{3,1,2,0}"} : (tensor<1x64x13x64xbf16>) -> tensor<1x13x64x64xbf16>
+    %147 = stablehlo.reshape %146 : (tensor<1x13x64x64xbf16>) -> tensor<13x4096xbf16>
+    %148 = stablehlo.transpose %arg14, dims = [1, 0] {result_layout = dense<[0, 1]> : tensor<2xindex>, xla_shape = "bf16[4096,2880]{0,1}"} : (tensor<2880x4096xbf16>) -> tensor<4096x2880xbf16>
+    %149 = stablehlo.dot_general %147, %148, contracting_dims = [1] x [0] : (tensor<13x4096xbf16>, tensor<4096x2880xbf16>) -> tensor<13x2880xbf16>
+    %150 = stablehlo.reshape %149 : (tensor<13x2880xbf16>) -> tensor<1x13x2880xbf16>
+    %151 = stablehlo.broadcast_in_dim %arg13, dims = [2] : (tensor<2880xbf16>) -> tensor<1x13x2880xbf16>
+    %152 = stablehlo.add %150, %151 : tensor<1x13x2880xbf16>
+    %153 = stablehlo.add %11, %152 : tensor<1x13x2880xbf16>
+    %154 = stablehlo.broadcast_in_dim %arg29, dims = [] : (tensor<bf16>) -> tensor<32x13x2880xbf16>
+    %155 = stablehlo.convert %arg21 : (tensor<2880xbf16>) -> tensor<2880xf32>
+    %156 = stablehlo.broadcast_in_dim %155, dims = [2] : (tensor<2880xf32>) -> tensor<1x13x2880xf32>
+    %157 = stablehlo.convert %153 : (tensor<1x13x2880xbf16>) -> tensor<1x13x2880xf32>
+    %158 = stablehlo.power %157, %4 : tensor<1x13x2880xf32>
+    %159 = stablehlo.reduce(%158 init: %cst) applies stablehlo.add across dimensions = [2] : (tensor<1x13x2880xf32>, tensor<f32>) -> tensor<1x13xf32>
+    %160 = stablehlo.multiply %159, %cst_3 : tensor<1x13xf32>
+    %161 = stablehlo.reshape %160 : (tensor<1x13xf32>) -> tensor<1x13x1xf32>
+    %162 = stablehlo.add %161, %17 : tensor<1x13x1xf32>
+    %163 = stablehlo.rsqrt %162 : tensor<1x13x1xf32>
+    %164 = stablehlo.reshape %163 : (tensor<1x13x1xf32>) -> tensor<1x13xf32>
+    %165 = stablehlo.broadcast_in_dim %164, dims = [0, 1] : (tensor<1x13xf32>) -> tensor<1x13x2880xf32>
+    %166 = stablehlo.multiply %157, %165 : tensor<1x13x2880xf32>
+    %167 = stablehlo.multiply %156, %166 : tensor<1x13x2880xf32>
+    %168 = stablehlo.convert %167 : (tensor<1x13x2880xf32>) -> tensor<1x13x2880xbf16>
+    %169 = stablehlo.reshape %168 : (tensor<1x13x2880xbf16>) -> tensor<13x2880xbf16>
+    %170 = stablehlo.concatenate %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, %169, dim = 0 : (tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>, tensor<13x2880xbf16>) -> tensor<416x2880xbf16>
+    %171 = stablehlo.reshape %170 : (tensor<416x2880xbf16>) -> tensor<32x13x2880xbf16>
+    %172 = stablehlo.dot_general %171, %arg28, batching_dims = [0] x [0], contracting_dims = [2] x [1] : (tensor<32x13x2880xbf16>, tensor<32x2880x5760xbf16>) -> tensor<32x13x5760xbf16>
+    %173 = stablehlo.broadcast_in_dim %arg27, dims = [0, 2] : (tensor<32x5760xbf16>) -> tensor<32x13x5760xbf16>
+    %174 = stablehlo.add %172, %173 : tensor<32x13x5760xbf16>
+    %175 = stablehlo.slice %174 [0:32, 0:13, 1:5760:2] : (tensor<32x13x5760xbf16>) -> tensor<32x13x2880xbf16>
+    %176 = stablehlo.broadcast_in_dim %arg25, dims = [] : (tensor<bf16>) -> tensor<32x13x2880xbf16>
+    %177 = stablehlo.clamp %154, %175, %176 : tensor<32x13x2880xbf16>
+    %178 = stablehlo.add %177, %1 : tensor<32x13x2880xbf16>
+    %179 = stablehlo.convert %178 : (tensor<32x13x2880xbf16>) -> tensor<32x13x2880xf32>
+    %180 = stablehlo.broadcast_in_dim %arg26, dims = [] : (tensor<bf16>) -> tensor<32x13x2880xbf16>
+    %181 = stablehlo.slice %174 [0:32, 0:13, 0:5760:2] : (tensor<32x13x5760xbf16>) -> tensor<32x13x2880xbf16>
+    %182 = stablehlo.clamp %180, %181, %176 : tensor<32x13x2880xbf16>
+    %183 = stablehlo.convert %182 : (tensor<32x13x2880xbf16>) -> tensor<32x13x2880xf32>
+    %184 = stablehlo.broadcast_in_dim %arg24, dims = [] : (tensor<f32>) -> tensor<32x13x2880xf32>
+    %185 = stablehlo.multiply %183, %184 : tensor<32x13x2880xf32>
+    %186 = stablehlo.convert %185 : (tensor<32x13x2880xf32>) -> tensor<32x13x2880xbf16>
+    %187 = stablehlo.logistic %186 : tensor<32x13x2880xbf16>
+    %188 = stablehlo.convert %187 : (tensor<32x13x2880xbf16>) -> tensor<32x13x2880xf32>
+    %189 = stablehlo.multiply %183, %188 : tensor<32x13x2880xf32>
+    %190 = stablehlo.convert %189 : (tensor<32x13x2880xf32>) -> tensor<32x13x2880xbf16>
+    %191 = stablehlo.convert %190 : (tensor<32x13x2880xbf16>) -> tensor<32x13x2880xf32>
+    %192 = stablehlo.multiply %179, %191 : tensor<32x13x2880xf32>
+    %193 = stablehlo.convert %192 : (tensor<32x13x2880xf32>) -> tensor<32x13x2880xbf16>
+    %194 = stablehlo.dot_general %193, %arg23, batching_dims = [0] x [0], contracting_dims = [2] x [1] : (tensor<32x13x2880xbf16>, tensor<32x2880x2880xbf16>) -> tensor<32x13x2880xbf16>
+    %195 = stablehlo.broadcast_in_dim %arg22, dims = [0, 2] : (tensor<32x2880xbf16>) -> tensor<32x13x2880xbf16>
+    %196 = stablehlo.add %194, %195 : tensor<32x13x2880xbf16>
+    %197 = stablehlo.convert %196 : (tensor<32x13x2880xbf16>) -> tensor<32x13x2880xf32>
+    %198 = stablehlo.reshape %197 : (tensor<32x13x2880xf32>) -> tensor<32x1x13x2880xf32>
+    %199 = stablehlo.iota dim = 0 : tensor<13xi64>
+    %200 = stablehlo.broadcast_in_dim %199, dims = [0] : (tensor<13xi64>) -> tensor<13x4x1xi64>
+    %201 = stablehlo.transpose %arg12, dims = [1, 0] {result_layout = dense<[0, 1]> : tensor<2xindex>, xla_shape = "bf16[2880,32]{0,1}"} : (tensor<32x2880xbf16>) -> tensor<2880x32xbf16>
+    %202 = stablehlo.dot_general %169, %201, contracting_dims = [1] x [0] : (tensor<13x2880xbf16>, tensor<2880x32xbf16>) -> tensor<13x32xbf16>
+    %203 = stablehlo.broadcast_in_dim %arg11, dims = [1] : (tensor<32xbf16>) -> tensor<13x32xbf16>
+    %204 = stablehlo.add %202, %203 : tensor<13x32xbf16>
+    %205 = stablehlo.iota dim = 0 : tensor<32xi32>
+    %206 = stablehlo.broadcast_in_dim %205, dims = [1] : (tensor<32xi32>) -> tensor<13x32xi32>
+    %207:2 = "stablehlo.sort"(%204, %206) <{dimension = 1 : i64}> ({
+    ^bb0(%arg31: tensor<bf16>, %arg32: tensor<bf16>, %arg33: tensor<i32>, %arg34: tensor<i32>):
+      %245 = stablehlo.compare  GT, %arg31, %arg32,  TOTALORDER : (tensor<bf16>, tensor<bf16>) -> tensor<i1>
+      stablehlo.return %245 : tensor<i1>
+    }) : (tensor<13x32xbf16>, tensor<13x32xi32>) -> (tensor<13x32xbf16>, tensor<13x32xi32>)
+    %208 = stablehlo.slice %207#1 [0:13, 0:4] : (tensor<13x32xi32>) -> tensor<13x4xi32>
+    %209 = stablehlo.convert %208 : (tensor<13x4xi32>) -> tensor<13x4xi64>
+    %210 = stablehlo.reshape %209 : (tensor<13x4xi64>) -> tensor<13x4x1xi64>
+    %211 = stablehlo.concatenate %200, %210, dim = 2 : (tensor<13x4x1xi64>, tensor<13x4x1xi64>) -> tensor<13x4x2xi64>
+    %212 = stablehlo.slice %207#0 [0:13, 0:4] : (tensor<13x32xbf16>) -> tensor<13x4xbf16>
+    %213 = stablehlo.reduce(%212 init: %cst_1) applies stablehlo.maximum across dimensions = [1] : (tensor<13x4xbf16>, tensor<bf16>) -> tensor<13xbf16>
+    %214 = stablehlo.broadcast_in_dim %213, dims = [0] : (tensor<13xbf16>) -> tensor<13x4xbf16>
+    %215 = stablehlo.subtract %212, %214 : tensor<13x4xbf16>
+    %216 = stablehlo.exponential %215 : tensor<13x4xbf16>
+    %217 = stablehlo.reduce(%216 init: %cst_7) applies stablehlo.add across dimensions = [1] : (tensor<13x4xbf16>, tensor<bf16>) -> tensor<13xbf16>
+    %218 = stablehlo.broadcast_in_dim %217, dims = [0] : (tensor<13xbf16>) -> tensor<13x4xbf16>
+    %219 = stablehlo.divide %216, %218 : tensor<13x4xbf16>
+    %220 = "stablehlo.scatter"(%0, %211, %219) <{scatter_dimension_numbers = #stablehlo.scatter<inserted_window_dims = [0, 1], scatter_dims_to_operand_dims = [0, 1], index_vector_dim = 2>}> ({
+    ^bb0(%arg31: tensor<bf16>, %arg32: tensor<bf16>):
+      stablehlo.return %arg32 : tensor<bf16>
+    }) : (tensor<13x32xbf16>, tensor<13x4x2xi64>, tensor<13x4xbf16>) -> tensor<13x32xbf16>
+    %221 = stablehlo.convert %220 : (tensor<13x32xbf16>) -> tensor<13x32xf32>
+    %222 = stablehlo.transpose %221, dims = [1, 0] {result_layout = dense<[0, 1]> : tensor<2xindex>, xla_shape = "bf16[32,13]{0,1}"} : (tensor<13x32xf32>) -> tensor<32x13xf32>
+    %223 = stablehlo.reshape %222 : (tensor<32x13xf32>) -> tensor<32x1x13xf32>
+    %224 = stablehlo.broadcast_in_dim %223, dims = [0, 1, 2] : (tensor<32x1x13xf32>) -> tensor<32x1x13x2880xf32>
+    %225 = stablehlo.multiply %198, %224 : tensor<32x1x13x2880xf32>
+    %226 = stablehlo.convert %225 : (tensor<32x1x13x2880xf32>) -> tensor<32x1x13x2880xbf16>
+    %227 = stablehlo.reduce(%226 init: %cst_7) applies stablehlo.add across dimensions = [0] : (tensor<32x1x13x2880xbf16>, tensor<bf16>) -> tensor<1x13x2880xbf16>
+    %228 = stablehlo.add %153, %227 : tensor<1x13x2880xbf16>
+    %229 = stablehlo.convert %228 : (tensor<1x13x2880xbf16>) -> tensor<1x13x2880xf32>
+    %230 = stablehlo.power %229, %4 : tensor<1x13x2880xf32>
+    %231 = stablehlo.reduce(%230 init: %cst) applies stablehlo.add across dimensions = [2] : (tensor<1x13x2880xf32>, tensor<f32>) -> tensor<1x13xf32>
+    %232 = stablehlo.multiply %231, %cst_3 : tensor<1x13xf32>
+    %233 = stablehlo.reshape %232 : (tensor<1x13xf32>) -> tensor<1x13x1xf32>
+    %234 = stablehlo.add %233, %17 : tensor<1x13x1xf32>
+    %235 = stablehlo.rsqrt %234 : tensor<1x13x1xf32>
+    %236 = stablehlo.reshape %235 : (tensor<1x13x1xf32>) -> tensor<1x13xf32>
+    %237 = stablehlo.broadcast_in_dim %236, dims = [0, 1] : (tensor<1x13xf32>) -> tensor<1x13x2880xf32>
+    %238 = stablehlo.multiply %229, %237 : tensor<1x13x2880xf32>
+    %239 = stablehlo.multiply %129, %238 : tensor<1x13x2880xf32>
+    %240 = stablehlo.convert %239 : (tensor<1x13x2880xf32>) -> tensor<1x13x2880xbf16>
+    %241 = stablehlo.reshape %240 : (tensor<1x13x2880xbf16>) -> tensor<13x2880xbf16>
+    %242 = stablehlo.transpose %arg10, dims = [1, 0] {result_layout = dense<[0, 1]> : tensor<2xindex>, xla_shape = "bf16[2880,201088]{0,1}"} : (tensor<201088x2880xbf16>) -> tensor<2880x201088xbf16>
+    %243 = stablehlo.dot_general %241, %242, contracting_dims = [1] x [0] : (tensor<13x2880xbf16>, tensor<2880x201088xbf16>) -> tensor<13x201088xbf16>
+    %244 = stablehlo.reshape %243 : (tensor<13x201088xbf16>) -> tensor<1x13x201088xbf16>
+    return %125, %126, %127, %86, %243, %244 : tensor<1x13x512xbf16>, tensor<1x13x8x64xbf16>, tensor<1x8x13x64xbf16>, tensor<1x8x13x64xbf16>, tensor<13x201088xbf16>, tensor<1x13x201088xbf16>
+  }
+}
+loc("scatter.460"): error: Scatter operation is not supported in stablehlo-pipeline for meshes not 1x1: https://github.com/tenstorrent/tt-mlir/issues/3496.
+loc("scatter.460"): error: Could not updated attribute dictionary for operation
+loc("scatter.460"): error: Could not create a new operation with updated shapes
+error: Could not update shapes based on their tensor sharding attributes
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("p0.2"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("p8.80"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("p19.236"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("reshape.478"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("p0.2"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("p8.80"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+loc("p19.236"): error: ShardyToStableHLO lowering for AllSliceOp is not implemented yet: https://github.com/tenstorrent/tt-mlir/issues/3368.
+Running Tensor Parallel Inference
+Tensor parallel sharding applied successfully!
+Preparing inputs for TP: batch_size=1, seq_length=13
+Error during execution: Error code: 13
