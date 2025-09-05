@@ -322,7 +322,7 @@ jobs:
 
     container:
       image: ${{ inputs.docker-image }}
-      options: --user root --device /dev/tenstorrent/0 --shm-size=4gb
+      options: --user root --device /dev/tenstorrent --shm-size=4gb
       volumes:
         - /dev/hugepages:/dev/hugepages
         - /dev/hugepages-1G:/dev/hugepages-1G
