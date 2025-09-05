@@ -39,7 +39,10 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
-@pytest.mark.xfail(reason="Fails in SHLO pass UpdateGlobalToLocalShapes due to MLIR commit dad8981. See issue https://github.com/tenstorrent/tt-mlir/commit/dad8981939a1234a523b3f8ae9b92253f273b956", strict=True)
+@pytest.mark.xfail(
+    reason="Fails in SHLO pass UpdateGlobalToLocalShapes due to MLIR commit dad8981. See issue https://github.com/tenstorrent/tt-mlir/commit/dad8981939a1234a523b3f8ae9b92253f273b956",
+    strict=True,
+)
 def test_yolov4(record_property, mode, op_by_op):
     cc = CompilerConfig()
     cc.enable_consteval = True
