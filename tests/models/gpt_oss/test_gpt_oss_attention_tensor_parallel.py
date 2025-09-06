@@ -4,7 +4,9 @@
 
 import tt_torch
 
-import os
+import os, time
+print(f'pid = {os.getpid()}')
+time.sleep(3)  # Time to attach debugger if needed
 import sys
 import torch
 import torch_xla
@@ -21,6 +23,9 @@ from transformers.models.gpt_oss.modeling_gpt_oss import (
     GptOssConfig,
 )
 
+import copy
+import math
+
 
 def setup_xla_environment():
     """Setup XLA environment for tensor parallelism."""
@@ -28,7 +33,6 @@ def setup_xla_environment():
 
     # Converts the StableHLO emitted by torch-xla to the Shardy dialect.
     os.environ["CONVERT_SHLO_TO_SHARDY"] = "1"
-
     # Initialize SPMD
     xr.use_spmd()
     print("XLA environment configured.")
@@ -150,18 +154,56 @@ def apply_attention_tensor_parallel_sharding(
 
     # sinks -> local. rowwise
     if hasattr(attention_layer, "sinks") and attention_layer.sinks is not None:
-        xs.mark_sharding(attention_layer.sinks, mesh, ("model", ))
+        xs.mark_sharding(attention_layer.sinks, mesh, (None, ))
         print(f"Sharded sinks: {attention_layer.sinks.shape}")
 
     print("Tensor parallel sharding applied successfully to attention layer!")
 
 
-def run_multichip_attention_test():
+def compare_tensors(a: torch.Tensor, b: torch.Tensor, name="attn_output",
+                    atol=8e-3, rtol=1e-2, pcc_min: float | None = None) -> bool:
     """
-    Run a single forward pass through the attention layer using tensor parallelism
-    across multiple chips.
+    Prints max/mean abs diff, max relative diff, and PCC between a and b.
+    Returns True if (max_abs <= atol or max_rel <= rtol) and, if pcc_min is set,
+    PCC >= pcc_min (and not NaN). Otherwise returns False.
     """
+    # bring to CPU FP32 for fair comparison
+    a32 = a.detach().float().cpu()
+    b32 = b.detach().float().cpu()
+
+    diff = (a32 - b32).abs()
+    max_abs = diff.max().item()
+    mean_abs = diff.mean().item()
+    denom = torch.maximum(a32.abs(), b32.abs())
+    max_rel = (diff / torch.clamp(denom, min=1e-6)).max().item()
+
+    # PCC (Pearson) on flattened vectors
+    a1 = a32.reshape(-1)
+    b1 = b32.reshape(-1)
+    ac = a1 - a1.mean()
+    bc = b1 - b1.mean()
+    num = (ac * bc).sum()
+    den = torch.sqrt((ac * ac).sum() * (bc * bc).sum())
+    if den.item() == 0.0:
+        pcc = 1.0 if torch.allclose(a1, b1, atol=atol, rtol=rtol) else float("nan")
+    else:
+        pcc = (num / den).item()
+
+    print(f"[{name}] max_abs={max_abs:.6f}, mean_abs={mean_abs:.6f}, max_rel={max_rel:.6f}, PCC={pcc:.6f}")
+
+    ok = (max_abs <= atol) or (max_rel <= rtol)
+    if pcc_min is not None:
+        ok = ok and (not math.isnan(pcc) and pcc >= pcc_min)
+        print(f"[{name}] PCC check (>= {pcc_min}): {'OK' if (not math.isnan(pcc) and pcc >= pcc_min) else 'FAIL'}")
+
+    print(f"[{name}] {'OK ✅' if ok else 'MISMATCH ❌'}  (atol={atol}, rtol={rtol}{', pcc_min='+str(pcc_min) if pcc_min is not None else ''})")
+    return ok
+
+def test_run_multichip_attention_test():
     print("Setting up GPT-OSS Multichip Attention Layer Test...")
+
+    torch.manual_seed(0)
+    np.random.seed(0)
 
     # Setup environment and mesh
     setup_xla_environment()
@@ -169,106 +211,67 @@ def run_multichip_attention_test():
 
     gpt_oss_attention = GPT_OSS_Attention()
     config = gpt_oss_attention._create_config()
-
-    print(
-        f"Config: hidden_size={config.hidden_size}, "
-        f"num_heads={config.num_attention_heads}, "
-        f"num_kv_heads={config.num_key_value_heads}"
-    )
+    print(f"Config: hidden_size={config.hidden_size}, num_heads={config.num_attention_heads}, num_kv_heads={config.num_key_value_heads}")
 
     print("Creating attention layer...")
     attention_layer, rotary_emb = gpt_oss_attention._create_attention_layer(config)
 
+    attention_cpu = copy.deepcopy(attention_layer).to("cpu").eval().to(torch.float32)
+    rotary_cpu = copy.deepcopy(rotary_emb).to("cpu").eval().to(torch.float32)
+
     print("Creating synthetic inputs...")
     batch_size, seq_len = 1, 128
-    (
-        hidden_states,
-        position_ids,
-        attention_mask,
-    ) = gpt_oss_attention._create_synthetic_inputs(config, batch_size, seq_len)
+    hidden_states, position_ids, attention_mask = gpt_oss_attention._create_synthetic_inputs(config, batch_size, seq_len)
 
-    print(
-        f"Input shapes: hidden_states={hidden_states.shape} ({hidden_states.dtype}), "
-        f"position_ids={position_ids.shape} ({position_ids.dtype}), "
-        f"attention_mask={attention_mask.shape} ({attention_mask.dtype})"
-    )
+    with torch.no_grad():
+        hs_for_rope = hidden_states.float()  # FP32 for CPU rotary
+        cos_cpu, sin_cpu = rotary_cpu(hs_for_rope, position_ids)  
+        pos_emb_cpu = (cos_cpu, sin_cpu)  
+        pos_emb_xla = (cos_cpu.to(torch.bfloat16), sin_cpu.to(torch.bfloat16))
+
+    print("Running CPU reference forward pass...")
+    with torch.no_grad():
+        attn_out_cpu, attn_w_cpu = attention_cpu(
+            hidden_states=hidden_states.float(),          
+            position_embeddings=pos_emb_cpu,              
+            attention_mask=attention_mask.float(),        
+            past_key_values=None,
+            cache_position=None,
+        )
+    print(f"[CPU] attn_out={attn_out_cpu.shape}, dtype={attn_out_cpu.dtype}")
 
     print("Applying tensor parallel sharding...")
     apply_attention_tensor_parallel_sharding(attention_layer, mesh)
 
     print("Preparing inputs for tensor parallelism...")
+    hidden_states_xla = hidden_states.to(torch.bfloat16).to(torch_xla.device())
+    position_ids_xla = position_ids.to(torch_xla.device())
+    attention_mask_xla = attention_mask.to(torch.bfloat16).to(torch_xla.device())
+    xs.mark_sharding(attention_mask_xla, mesh, (None, "model", None, None))
 
-    hidden_states = hidden_states.to(torch_xla.device())
-    position_ids = position_ids.to(torch_xla.device())
-    attention_mask = attention_mask.to(torch_xla.device())
-    xs.mark_sharding(attention_mask, mesh, (None, "model", None, None))
+    rotary_emb = rotary_emb.to(torch_xla.device())  
 
-    print("Moving rotary embedding to XLA device...")
-    rotary_emb = rotary_emb.to(torch_xla.device())
-
-    print(
-        f"After TP preparation - hidden_states dtype: {hidden_states.dtype}, "
-        f"attention_mask dtype: {attention_mask.dtype}"
-    )
-
-    print("Computing position embeddings...")
     with torch.no_grad():
-        # Ensure position_ids are on the same device
-        position_embeddings = rotary_emb(hidden_states, position_ids)
-        cos, sin = position_embeddings
-
-        # Ensure position embeddings are in bfloat16
-        cos = cos.to(torch.bfloat16)
-        sin = sin.to(torch.bfloat16)
-        position_embeddings = (cos, sin)
-
-        print(
-            f"Position embeddings: cos={cos.shape} ({cos.dtype}), sin={sin.shape} ({sin.dtype})"
+        attn_out_xla, attn_w_xla = attention_layer(
+            hidden_states=hidden_states_xla,
+            position_embeddings=(pos_emb_xla[0].to(torch_xla.device()),
+                                 pos_emb_xla[1].to(torch_xla.device())),
+            attention_mask=attention_mask_xla,
+            past_key_values=None,
+            cache_position=None,
         )
+    print(f"[XLA] attn_out={attn_out_xla.shape}, dtype={attn_out_xla.dtype}")
 
-    print("Running Tensor Parallel Attention Layer Forward Pass...")
-    with torch.no_grad():
-        try:
-            # Forward pass through attention with tensor parallelism
-            attn_output, attn_weights = attention_layer(
-                hidden_states=hidden_states,
-                position_embeddings=position_embeddings,
-                attention_mask=attention_mask,
-                past_key_values=None,
-                cache_position=None,
-            )
+    attn_out_xla_cpu = attn_out_xla.detach().float().cpu()
+    ok = compare_tensors(attn_out_xla_cpu, attn_out_cpu, name="attn_output",
+                         atol=1e-2, rtol=1e-2, pcc_min=0.98)
 
-            print("Tensor parallel attention forward pass completed!")
-            print(f"Output shapes: attn_output={attn_output.shape}")
-            if attn_weights is not None:
-                print(f"Attention weights shape: {attn_weights.shape}")
+    if not ok:
+        diff = (attn_out_xla_cpu - attn_out_cpu).abs()
+        print(f"percentiles | p50={diff.quantile(0.5).item():.6f} "
+              f"p90={diff.quantile(0.9).item():.6f} p99={diff.quantile(0.99).item():.6f}")
 
-            # # Synchronize XLA before moving to CPU
-            # print("Synchronizing XLA device...")
-            # torch_xla.sync()  # Ensure all computations are done
-
-            # Move results back to CPU for inspection
-            print("Moving results to CPU...")
-            attn_output_cpu = attn_output.cpu()
-
-            # Print some basic statistics
-            print(f"\n=== Tensor Parallel Results ===")
-            print(f"Attention output stats:")
-            print(f"  Mean: {attn_output_cpu.mean():.6f}")
-            print(f"  Std: {attn_output_cpu.std():.6f}")
-            print(f"  Min: {attn_output_cpu.min():.6f}")
-            print(f"  Max: {attn_output_cpu.max():.6f}")
-            print(f"  Shape: {attn_output_cpu.shape}")
-
-        except Exception as e:
-            print(f"Error during tensor parallel attention forward pass: {e}")
-            print(f"Error type: {type(e).__name__}")
-            import traceback
-
-            traceback.print_exc()
-            raise
-
-    print("Multichip attention layer test completed successfully!")
+    print("Done.")
 
 
 def main():
@@ -276,7 +279,7 @@ def main():
     print("=" * 70)
 
     try:
-        run_multichip_attention_test()
+        test_run_multichip_attention_test()
         return 0
     except Exception as e:
         print(f"Test failed with error: {e}")
