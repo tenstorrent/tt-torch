@@ -99,12 +99,14 @@ def bypass_dtype_promotion(gm, compiler_config):
             and hasattr(node.target, "name")
             and "prims::convert_element_type" in node.target.name()
         ):
-            if (
-                node.meta["original_aten"]._name != "aten::_to_copy"
-                and node.args[1] == torch.float32
-            ):
-                node.replace_all_uses_with(node.args[0])
-
+            node.replace_all_uses_with(node.args[0])
+            #print("target name:", node.target.name())
+            #if (
+            #   node.meta["original_aten"]._name != "aten::_to_copy"
+            #    and node.args[1] == torch.float32
+            #):
+            #    node.replace_all_uses_with(node.args[0])
+    
     return gm
 
 
