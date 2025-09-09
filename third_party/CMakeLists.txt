@@ -4,7 +4,7 @@
 #
 
 # tt-xla version to use
-set(TT_XLA_VERSION "90c981f6b0547ad7819ac60aca64fce4e82c2e3c")
+set(TT_XLA_VERSION "ajakovljevic/round_mesh_fix")
 
 # Optional override of tt-xla's TT_MLIR_VERSION. Default to tt-xla's default TT_MLIR_VERSION if we pass an empty string
 set(TT_MLIR_VERSION "")
@@ -105,7 +105,7 @@ else()
             chmod -R +x ${TTXLA_INSTALL_PREFIX} && pip uninstall --yes --no-input pjrt_plugin_tt
         CMAKE_GENERATOR Ninja
         CMAKE_ARGS
-            -DCMAKE_BUILD_TYPE=Release
+            -DCMAKE_BUILD_TYPE=Debug
             -DCMAKE_C_COMPILER=clang-17
             -DCMAKE_CXX_COMPILER=clang++-17
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
