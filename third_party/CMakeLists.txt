@@ -4,7 +4,7 @@
 #
 
 # tt-xla version to use
-set(TT_XLA_VERSION "90c981f6b0547ad7819ac60aca64fce4e82c2e3c")
+set(TT_XLA_VERSION "jzx/spec_uplift_sep_11")
 
 # Optional override of tt-xla's TT_MLIR_VERSION. Default to tt-xla's default TT_MLIR_VERSION if we pass an empty string
 set(TT_MLIR_VERSION "")
