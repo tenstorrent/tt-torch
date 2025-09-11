@@ -20,7 +20,6 @@ from tt_torch.tools.verify import verify_module
 #         [0, 2, 0, 0, 0],
 #         [0, 0, 3, 0, 0]])
 def test_scatter_dim0():
-
     class ScatterDim0(nn.Module):
         def forward(self, x, index, src):
             return torch.scatter(x, dim=0, index=index, src=src)
@@ -33,6 +32,7 @@ def test_scatter_dim0():
         inputs=[x, index, src],
         required_atol=1,
     )
+
 
 # Example 2:
 # src = torch.arange(1, 11).reshape((2, 5))
@@ -57,6 +57,7 @@ def test_scatter_dim1():
         inputs=[x, index, src],
         required_atol=1,
     )
+
 
 # Example 3:
 # index = torch.tensor([[0, 1]])

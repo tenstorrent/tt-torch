@@ -426,9 +426,10 @@ get_op_output_torch_tensor(tt::runtime::OpContext opContextHandle,
     return torch::Tensor(); // Return an empty PyTorch tensor
   }
 
-  // Get the first tensor from the map (assuming single output for this function)
+  // Get the first tensor from the map (assuming single output for this
+  // function)
   tt::runtime::Tensor tensor = tensorMap.begin()->second;
-  
+
   if (tensor.handle == nullptr) {
     std::cout << "Warning: getOpOutputTensor returned a null tensor."
               << std::endl;
