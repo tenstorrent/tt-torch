@@ -63,6 +63,7 @@ def apply_tensor_parallel_sharding_base(base_model: GptOssModel, mesh: Mesh) -> 
     """
     Apply tensor parallel sharding to the base Llama model.
     """
+    xs.mark_sharding(base_model.embed_tokens.weight, mesh, ("model", None))
     # Apply sharding to each transformer layer
     for layer in base_model.layers:
         # ========================================
