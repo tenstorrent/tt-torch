@@ -32,7 +32,7 @@ xlsxwriter
 torchvision
 torchaudio
 bi-lstm-crf
-transformers>=4.50.0,<4.53.0
+transformers
 tiktoken
 sentencepiece
 pytorchcv

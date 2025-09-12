@@ -593,13 +593,14 @@ def dump_module(module, name, compiler_config):
 
 
 def xla_pass_pipeline(gm, example_inputs, compiler_config):
+    from torch.fx.experimental.proxy_tensor import make_fx
+    from torch.func import functionalize
+
     decompositions = torch._decomp.core_aten_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
-    compiled_graph = (
-        torch.export.export_for_training(gm, tuple(example_inputs), strict=False)
-        .run_decompositions(decompositions)
-        .module()
-    )
+    compiled_graph = make_fx(
+        functionalize(gm), decomposition_table=CUSTOM_DECOMPOSITION_TABLE
+    )(*example_inputs)
 
     compiled_graph = bypass_dtype_promotion(compiled_graph, compiler_config)
     run_shape_prop(compiled_graph, example_inputs)
