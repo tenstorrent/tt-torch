@@ -19,14 +19,15 @@ from tt_torch.tools.verify import verify_module
 # tensor([[1, 0, 0, 4, 0],
 #         [0, 2, 0, 0, 0],
 #         [0, 0, 3, 0, 0]])
-def test_scatter_dim0():
+@pytest.mark.parametrize("dtype", [torch.bfloat16, torch.float32])
+def test_scatter_dim0(dtype):
     class ScatterDim0(nn.Module):
         def forward(self, x, index, src):
             return torch.scatter(x, dim=0, index=index, src=src)
 
-    src = torch.arange(1, 11, dtype=torch.bfloat16).reshape((2, 5))
+    src = torch.arange(1, 11, dtype=dtype).reshape((2, 5))
     index = torch.tensor([[0, 1, 2, 0, 1]], dtype=torch.int64)  # shape (1,5)
-    x = torch.zeros((3, 5), dtype=torch.bfloat16)
+    x = torch.zeros((3, 5), dtype=dtype)
     verify_module(
         ScatterDim0(),
         inputs=[x, index, src],
@@ -44,14 +45,15 @@ def test_scatter_dim0():
 # tensor([[1, 2, 3, 0, 0],
 #         [6, 7, 0, 0, 8],
 #         [0, 0, 0, 0, 0]])
-def test_scatter_dim1():
+@pytest.mark.parametrize("dtype", [torch.bfloat16, torch.float32])
+def test_scatter_dim1(dtype):
     class ScatterDim1(nn.Module):
         def forward(self, x, index, src):
             return torch.scatter(x, dim=1, index=index, src=src)
 
-    src = torch.arange(1, 11, dtype=torch.bfloat16).reshape((2, 5))
+    src = torch.arange(1, 11, dtype=dtype).reshape((2, 5))
     index = torch.tensor([[0, 1, 2], [0, 1, 4]], dtype=torch.int64)  # shape (2,5)
-    x = torch.zeros((3, 5), dtype=torch.bfloat16)
+    x = torch.zeros((3, 5), dtype=dtype)
     verify_module(
         ScatterDim1(),
         inputs=[x, index, src],
@@ -66,15 +68,16 @@ def test_scatter_dim1():
 # tensor([[2., 0., 0., 0., 0.],
 #         [0., 2., 0., 0., 0.],
 #         [0., 0., 0., 0., 0.]])
-def test_scatter_scalar_value_fixed():
+@pytest.mark.parametrize("dtype", [torch.bfloat16, torch.float32])
+def test_scatter_scalar_value_fixed(dtype):
     class ScatterScalarValueFixed(nn.Module):
         def forward(self, x, index, value):
-            src = torch.full_like(index, value, dtype=torch.bfloat16)
+            src = torch.full_like(index, value, dtype=dtype)
             return torch.scatter(x, dim=0, index=index, src=src)
 
     index = torch.tensor([[0, 1]], dtype=torch.int64)  # shape (1,2)
-    value = torch.tensor(2, dtype=torch.bfloat16)
-    x = torch.zeros((3, 5), dtype=torch.bfloat16)
+    value = torch.tensor(2, dtype=dtype)
+    x = torch.zeros((3, 5), dtype=dtype)
     verify_module(
         ScatterScalarValueFixed(),
         inputs=[x, index, value],
