@@ -414,11 +414,20 @@ torch::Tensor
 get_op_output_torch_tensor(tt::runtime::OpContext opContextHandle,
                            tt::runtime::CallbackContext programContextHandle) {
 
-  tt::runtime::Tensor tensor =
+  auto tensorMap =
       tt::runtime::getOpOutputTensor(opContextHandle, programContextHandle);
 
   // Some ops in a decomposed tfx node may not have valid output tensors (eg.
   // deallocate) For these, return an empty tensor
+
+  if (tensorMap.empty()) {
+    std::cout << "Warning: getOpOutputTensor returned an empty tensor map."
+              << std::endl;
+    return torch::Tensor(); // Return an empty PyTorch tensor
+  }
+
+  // Get the first tensor in the map
+  auto tensor = tensorMap.begin()->second;
 
   if (tensor.handle == nullptr) {
     std::cout << "Warning: getOpOutputTensor returned a null tensor."
