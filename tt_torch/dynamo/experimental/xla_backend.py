@@ -597,7 +597,7 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
     compiled_graph = (
         torch.export.export_for_training(gm, tuple(example_inputs), strict=False)
-        .run_decompositions(decompositions)
+        # .run_decompositions(decompositions)
         .module()
     )
 

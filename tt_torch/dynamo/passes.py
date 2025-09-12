@@ -582,7 +582,7 @@ def run_pass_pipeline_for_single_gm(
     # source locations in stack_trace
     gm_device = (
         torch.export.export_for_training(gm_device, tuple(example_inputs), strict=False)
-        .run_decompositions(decompositions)
+        # .run_decompositions(decompositions)
         .module()
     )
     gm_device = bypass_dtype_promotion(gm_device, compiler_config)
