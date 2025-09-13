@@ -50,7 +50,6 @@ def test_resnet(record_property, op_by_op):
 
     cc = CompilerConfig()
     cc.enable_consteval = True
-    cc.consteval_parameters = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
 
@@ -135,7 +134,6 @@ def test_resnet_perf():
 
     cc = CompilerConfig()
     cc.enable_consteval = True
-    cc.consteval_parameters = True
     cc.push_outputs_to_cpu = False
     options = BackendOptions(compiler_config=cc)
     # Push model and input to device

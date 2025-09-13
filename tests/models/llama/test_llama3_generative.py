@@ -63,7 +63,6 @@ def test_llama3_generate(record_property, mode, op_by_op):
     # Consteval disabled due to 4D Causal Attention Mask evaluation getting constant folded in torchfx
     # due to incorrect tracing of static cache and malformed output missing static cache tensors
     cc.enable_consteval = False
-    cc.consteval_parameters = False
 
     options = BackendOptions()
     options.compiler_config = cc
