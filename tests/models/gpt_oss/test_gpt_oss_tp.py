@@ -75,6 +75,8 @@ def apply_tensor_parallel_sharding_base(base_model: GptOssModel, mesh: Mesh) -> 
         # Replicate all router matrices
         xs.mark_sharding(layer.mlp.router.weight, mesh, (None, None)) # [32, 2880]
         xs.mark_sharding(layer.mlp.router.bias, mesh, (None,)) # [32]
+        # xs.mark_sharding(layer.mlp.router.weight, mesh, ("model", None)) # [32, 2880]
+        # xs.mark_sharding(layer.mlp.router.bias, mesh, ("model",)) # [32]
 
         # Shard all expert matrices on the experts dimension (dim 0)
         # [32, 2880, 5760]
@@ -121,7 +123,9 @@ def apply_tensor_parallel_sharding_base(base_model: GptOssModel, mesh: Mesh) -> 
 
         # sinks: [num_heads] -> shard dim 0
         # [64]
-        xs.mark_sharding(layer.self_attn.sinks, mesh, ("model",))
+        if hasattr(layer.self_attn, "sinks") and layer.self_attn.sinks is not None:
+            xs.mark_sharding(layer.self_attn.sinks, mesh, ("model", ))
+            print(f"Sharded sinks: {layer.self_attn.sinks.shape}")
 
 def prepare_inputs(mesh: Mesh, input_ids: torch.Tensor) -> torch.Tensor:
     """
@@ -166,6 +170,7 @@ def run_gpt_oss_tp():
     # Delete quantization config since mxfp4 quantization is not supported
     delattr(config, "quantization_config")
     config.num_hidden_layers = 1
+    config.use_cache = False
     # config.num_local_experts = 32
     model = GptOssForCausalLM.from_pretrained(model_name, torch_dtype=torch.bfloat16, config=config)
     model = model.eval()
