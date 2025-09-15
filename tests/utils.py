@@ -342,6 +342,28 @@ class ModelTester:
                     return tuple(flattened)
 
             return flatten(output_object.to_tuple())
+        elif isinstance(output_object, dict):
+            tensors = []
+            for key, value in output_object.items():
+                if isinstance(value, torch.Tensor):
+                    tensors.append(value)
+                elif isinstance(value, (np.ndarray)):
+                    tensors.append(torch.from_numpy(value))
+                elif isinstance(value, list) and value:
+                    # Handle lists - check first element and convert if it's a numpy array
+                    if isinstance(value[0], np.ndarray):
+                        tensors.append(torch.from_numpy(value[0]))
+                    elif isinstance(value[0], torch.Tensor):
+                        tensors.append(value[0])
+                elif np.isscalar(value):
+                    tensors.append(torch.tensor(value))
+
+            if tensors:
+                return tuple(tensors)
+            else:
+                raise ValueError(
+                    f"No tensors found in output dictionary. Keys: {list(output_object.keys())}"
+                )
 
         raise NotImplementedError(
             f"Output object type: ({type(output_object)}) is not a torch.Tensor, tuple[torch.Tensor], or list[torch.Tensor], nor does it implement to_tuple. Please implement _extract_outputs in the derived class."
