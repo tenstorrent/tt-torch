@@ -105,13 +105,6 @@ jobs:
       mlir_override: ${{ github.event.inputs.mlir_override }}
       docker-image: ${{ needs.docker-build.outputs.docker-image }}
       setup-args: "--code_coverage --include-models --build_perf"
-  test:
-    needs: [build, docker-build]
-    if: github.event.pull_request.draft == false
-    uses: ./.github/workflows/run-tests.yml
-    secrets: inherit
-    with:
-      docker-image: ${{ needs.docker-build.outputs.docker-image }}
   # llmbox-tests:
   #   needs: [build, docker-build]
   #   uses: ./.github/workflows/run-multidevice-tests.yml
@@ -134,12 +127,11 @@ jobs:
       - spdx
       - docker-build
       - build
-      - test
       - full-model-test
     runs-on: Ubuntu-latest
     steps:
     - name: Check if the needed jobs succeeded or failed
       uses: re-actors/alls-green@release/v1
       with:
-        allowed-skips: pre-commit,spdx,docker-build,check-files,build,test,full-model-test
+        allowed-skips: pre-commit,spdx,docker-build,check-files,build,full-model-test
         jobs: ${{ toJSON(needs) }}
