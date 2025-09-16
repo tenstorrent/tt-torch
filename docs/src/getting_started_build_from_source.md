@@ -1,5 +1,7 @@
 # Getting Started
 
+> **NOTE:** TT-Torch is deprecated. To work with PyTorch and the various features available in TT-Torch, please see the documentation for [TT-XLA](https://github.com/tenstorrent/tt-xla/blob/main/README.md). 
+
 This document describes how to build the TT-Torch project on your local machine. You must build from source if you want to develop for TT-Torch. If you only want to run models, please choose one of the following sets of instructions instead:
 * [Installing a Wheel and Running an Example](getting_started.md) - You should choose this option if you want to run models.
 * [Using a Docker Container to Run an Example](getting_started_docker.md) - Choose this option if you want to keep the environment separate from your existing environment.

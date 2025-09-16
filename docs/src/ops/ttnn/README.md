@@ -1,5 +1,7 @@
 # TTNN OP Traces
 
+> **NOTE:** TT-Torch is deprecated. To work with PyTorch and the various features available in TT-Torch, please see the documentation for [TT-XLA](https://github.com/tenstorrent/tt-xla/blob/main/README.md). 
+
 The following pages have traces of operations that are currently not being compiled correctly. They can be updated by running:
 ```
 python tt_torch/tools/generate_md.py --excel_path <path to xlsx file> --md_dir docs/src/ops/ttnn --json_dir docs/src/ops/ttnn --failures_only

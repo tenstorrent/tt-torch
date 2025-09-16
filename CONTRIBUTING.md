@@ -1,7 +1,9 @@
-# Contributing guidelines for TT-Torch
+# Contributing Guidelines for TT-Torch
+
+> **NOTE:** TT-Torch is deprecated. To work with PyTorch and the various features available in TT-Torch, please see the documentation for [TT-XLA](https://github.com/tenstorrent/tt-xla/blob/main/README.md). 
 
 ## PR Guidelines
-### Community contributions
+### Community Contributions
 Thank you for your interest in the TT-Torch project we appreciate your support.
 For all PRs we have an internal policy listed below which your PR will go through after an initial review has been done.
 
@@ -9,7 +11,7 @@ The initial review will encompase the following:
 * Review the PR for CI / CD Readiness. Includes making sure that the code and PR at a high level makes sense for the project
 * Once approved for CI / CD readiness a Tenstorrent developer will kick off our CI/CD pipeline on your behalf.
 
-### Internal contributions
+### Internal Contributions
 For internal contributions we have the following guidelines:
 
 * A 24 hour merge rule exists. The rule is to wait at least 24 hours since the PR was initially opened for review. This gives members of our teams that span the globe opportunity to provide feedback to PRs.
