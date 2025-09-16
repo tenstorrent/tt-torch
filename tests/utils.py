@@ -350,7 +350,6 @@ class ModelTester:
                 elif isinstance(value, (np.ndarray)):
                     tensors.append(torch.from_numpy(value))
                 elif isinstance(value, list) and value:
-                    # Handle lists - process all items, not just the first one
                     for item in value:
                         if isinstance(item, torch.Tensor):
                             tensors.append(item)
