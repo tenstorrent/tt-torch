@@ -13,6 +13,7 @@ if mp.get_start_method() != "forkserver":
 
 import os
 import sys
+import site
 import importlib.util
 
 # find the tt-metal directory, it can either be in the venv if installed from a wheel or in the third_party source tree
@@ -56,6 +57,14 @@ class TTPjrtPlugin(plugins.DevicePlugin):
         venv_install_path = os.path.join(sys.prefix, "pjrt_plugin_tt.so")
         if os.path.exists(venv_install_path):
             return venv_install_path
+
+        # For a user site-packages installation / global pip package installation, check the user site-packages directory
+        user_site_packages_path = site.getusersitepackages()
+        user_site_package_install_pjrt_path = os.path.normpath(
+            os.path.join(user_site_packages_path, "../../../pjrt_plugin_tt.so")
+        )
+        if os.path.exists(user_site_package_install_pjrt_path):
+            return user_site_package_install_pjrt_path
 
         assert False, "Could not find pjrt_plugin_tt.so"
 

@@ -1,4 +1,7 @@
 # Getting Started with Docker
+
+> **NOTE:** TT-Torch is deprecated. To work with PyTorch and the various features available in TT-Torch, please see the documentation for [TT-XLA](https://github.com/tenstorrent/tt-xla/blob/main/README.md).
+
 This document walks you through how to set up TT-Torch using a Docker image. There are two other available options for getting started:
 * [Installing a Wheel](getting_started.md) - if you do not want to use Docker, and prefer to use a virtual environment by itself instead, use this method.
 * [Building From Source](getting_started_build_from_source.md) - if you plan to develop TT-Torch further, you must build from source, and should use this method.
@@ -100,7 +103,6 @@ git submodule update --init --recursive
 
 ```bash
 pip install pillow
-pip install torchvision
 pip install tabulate
 pip install requests
 ```

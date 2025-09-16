@@ -27,6 +27,10 @@ class ThisTester(ModelTester):
     [OpByOpBackend.STABLEHLO, OpByOpBackend.TORCH, None],
     ids=["op_by_op_stablehlo", "op_by_op_torch", "full"],
 )
+@pytest.mark.xfail(
+    reason="Fails due to error: Could not update shapes based on their tensor sharding attributes, tracked in issue https://github.com/tenstorrent/tt-torch/issues/1215",
+    strict=True,
+)
 def test_stable_diffusion_unet(record_property, mode, op_by_op):
     model_name = "Stable Diffusion UNET"
 

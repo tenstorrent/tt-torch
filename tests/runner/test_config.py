@@ -498,10 +498,24 @@ test_config = {
     "phi2/causal_lm/pytorch-microsoft/phi-2-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
         "assert_pcc": False,
+        "arch_overrides": {
+            "wormhole": {
+                "status": ModelStatus.NOT_SUPPORTED_SKIP,
+                "skip_reason": "Test failures on wormhole machines due to out of host memory causing test group to be killed - https://github.com/tenstorrent/tt-torch/issues/1224",
+                "skip_bringup_status": "FAILED_RUNTIME",
+            },
+        },
     },
     "phi2/causal_lm/pytorch-microsoft/phi-2-pytdml-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
         "assert_pcc": False,
+        "arch_overrides": {
+            "wormhole": {
+                "status": ModelStatus.NOT_SUPPORTED_SKIP,
+                "skip_reason": "Test failures on wormhole machines due to out of host memory causing test group to be killed - https://github.com/tenstorrent/tt-torch/issues/1224",
+                "skip_bringup_status": "FAILED_RUNTIME",
+            },
+        },
     },
     "phi2/token_classification/pytorch-microsoft/phi-2-full-eval": {
         "required_pcc": 0.98,
@@ -625,8 +639,9 @@ test_config = {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "perceiverio_vision/pytorch-deepmind/vision-perceiver-conv-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
-        "required_pcc": 0.98,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Runs extremely slowly after Sept 12 uplift and causes test group to timeout - https://github.com/tenstorrent/tt-torch/issues/1225",
+        "skip_bringup_status": "FAILED_RUNTIME",
     },
     "t5/pytorch-t5-small-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -640,8 +655,9 @@ test_config = {
         "required_pcc": 0.98,
     },
     "perceiverio_vision/pytorch-deepmind/vision-perceiver-fourier-full-eval": {
-        "status": ModelStatus.EXPECTED_PASSING,
-        "required_pcc": 0.98,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Runs extremely slowly after Sept 12 uplift and causes test group to timeout - https://github.com/tenstorrent/tt-torch/issues/1225",
+        "skip_bringup_status": "FAILED_RUNTIME",
     },
     "yolov8/pytorch-yolov8x-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -659,8 +675,9 @@ test_config = {
         "status": ModelStatus.EXPECTED_PASSING,
     },
     "perceiverio_vision/pytorch-deepmind/vision-perceiver-learned-full-eval": {
-        "assert_pcc": False,  # PCC observed: 0.9516052236372167 (below 0.99 threshold)
-        "status": ModelStatus.EXPECTED_PASSING,
+        "status": ModelStatus.NOT_SUPPORTED_SKIP,
+        "skip_reason": "Runs extremely slowly after Sept 12 uplift and causes test group to timeout - https://github.com/tenstorrent/tt-torch/issues/1225",
+        "skip_bringup_status": "FAILED_RUNTIME",
     },
     "opt/qa/pytorch-facebook/opt-1.3b-full-eval": {
         "assert_pcc": False,  # PCC observed: 0.9410670165223607 (below 0.99 threshold)
@@ -717,6 +734,13 @@ test_config = {
     "stereo/pytorch-large-full-eval": {
         "assert_pcc": False,  # PCC observed: -0.43084077321771863 (below 0.99 threshold)
         "status": ModelStatus.EXPECTED_PASSING,
+        "arch_overrides": {
+            "wormhole": {
+                "status": ModelStatus.NOT_SUPPORTED_SKIP,
+                "skip_reason": "Test failures on wormhole machines due to out of host memory causing test group to be killed - https://github.com/tenstorrent/tt-torch/issues/1224",
+                "skip_bringup_status": "FAILED_RUNTIME",
+            },
+        },
     },
     "qwen_3/embedding/pytorch-embedding_0_6b-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
@@ -759,6 +783,13 @@ test_config = {
     "qwen_3/causal_lm/pytorch-4b-full-eval": {
         "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
+        "arch_overrides": {
+            "wormhole": {
+                "status": ModelStatus.NOT_SUPPORTED_SKIP,
+                "skip_reason": "Test failures on wormhole machines due to out of host memory causing test group to be killed - https://github.com/tenstorrent/tt-torch/issues/1224",
+                "skip_bringup_status": "FAILED_RUNTIME",
+            },
+        },
     },
     "qwen_3/causal_lm/pytorch-1_7b-full-eval": {
         "assert_pcc": False,
@@ -864,6 +895,13 @@ test_config = {
         # FIXME - PCC check should consider attention_mask: https://github.com/tenstorrent/tt-torch/issues/1176
         "assert_pcc": False,
         "status": ModelStatus.EXPECTED_PASSING,
+        "arch_overrides": {
+            "wormhole": {
+                "status": ModelStatus.NOT_SUPPORTED_SKIP,
+                "skip_reason": "Test failures on wormhole machines due to out of host memory causing test group to be killed - https://github.com/tenstorrent/tt-torch/issues/1224",
+                "skip_bringup_status": "FAILED_RUNTIME",
+            },
+        },
     },
     "yolov6/pytorch-yolov6n-full-eval": {
         "status": ModelStatus.EXPECTED_PASSING,
