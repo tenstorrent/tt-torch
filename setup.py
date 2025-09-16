@@ -153,8 +153,8 @@ install_requires = [
     "torch@https://download.pytorch.org/whl/cpu/torch-2.7.0%2Bcpu-cp311-cp311-manylinux_2_28_x86_64.whl",  # pytorch does not always resolve as CPU pkg by default
     "torch-xla@https://pypi.eng.aws.tenstorrent.com/torch-xla/torch_xla-2.9.0%2Bgit1adbe97-cp311-cp311-linux_x86_64.whl",
     "stablehlo@https://github.com/openxla/stablehlo/releases/download/v1.0.0/stablehlo-1.0.0.1715728102%2B6051bcdf-cp311-cp311-linux_x86_64.whl",
+    "torchvision@https://download.pytorch.org/whl/cpu/torchvision-0.22.0%2Bcpu-cp311-cp311-manylinux_2_28_x86_64.whl",
     "numpy",
-    "torchvision",
     "onnx==1.17.0",
     "onnxruntime",
     "ml_dtypes",
