@@ -350,28 +350,30 @@ class ModelTester:
                 elif isinstance(value, (np.ndarray)):
                     tensors.append(torch.from_numpy(value))
                 elif isinstance(value, list) and value:
-                    # Handle lists - check first element and convert if it's a numpy array or tensor
-                    first_item = value[0]
-                    if isinstance(first_item, torch.Tensor):
-                        tensors.append(first_item)
-                    elif isinstance(first_item, np.ndarray):
-                        tensors.append(torch.from_numpy(first_item))
-                    elif isinstance(first_item, dict):
-                        dict_values = list(first_item.values())
-                        if dict_values and isinstance(
-                            dict_values[0], (np.floating, np.integer, np.number)
-                        ):
-                            tensor_values = [float(val) for val in dict_values]
-                            tensors.append(torch.tensor(tensor_values))
-                        elif dict_values and isinstance(dict_values[0], (int, float)):
-                            tensors.append(torch.tensor(list(dict_values)))
-                    elif np.isscalar(first_item):
-                        tensors.append(torch.tensor(first_item))
-                    else:
-                        # Add warning for unhandled list types
-                        warnings.warn(
-                            f"Key '{key}' with unhandled list type in dict. Add support for its output shape to extract_outputs."
-                        )
+                    # Handle lists - process all items, not just the first one
+                    for item in value:
+                        if isinstance(item, torch.Tensor):
+                            tensors.append(item)
+                        elif isinstance(item, np.ndarray):
+                            tensors.append(torch.from_numpy(item))
+                        elif isinstance(item, dict):
+                            dict_values = list(item.values())
+                            if dict_values and isinstance(
+                                dict_values[0], (np.floating, np.integer, np.number)
+                            ):
+                                tensor_values = [float(val) for val in dict_values]
+                                tensors.append(torch.tensor(tensor_values))
+                            elif dict_values and isinstance(
+                                dict_values[0], (int, float)
+                            ):
+                                tensors.append(torch.tensor(list(dict_values)))
+                        elif np.isscalar(item):
+                            tensors.append(torch.tensor(item))
+                        else:
+                            # Add warning for unhandled list item types
+                            warnings.warn(
+                                f"Key '{key}' contains unhandled list item type '{type(item).__name__}' in dict. Add support for its output shape to extract_outputs."
+                            )
                 elif np.isscalar(value):
                     tensors.append(torch.tensor(value))
                 else:
