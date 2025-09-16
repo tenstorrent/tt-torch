@@ -169,15 +169,16 @@ def run_gpt_oss_tp():
     config = GptOssConfig.from_pretrained(model_name)
     # Delete quantization config since mxfp4 quantization is not supported
     delattr(config, "quantization_config")
-    config.num_hidden_layers = 1
+    # config.num_hidden_layers = 32
     config.use_cache = False
     # config.num_local_experts = 32
     model = GptOssForCausalLM.from_pretrained(model_name, torch_dtype=torch.bfloat16, config=config)
     model = model.eval()
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     if tokenizer.pad_token is None:
+        print("[HET DEBUG] No pad token found, setting to eos token")
         tokenizer.pad_token = tokenizer.eos_token
-    input_ids = tokenizer.encode(prompt, return_tensors="pt", padding=True, truncation=True)
+    input_ids = tokenizer.encode(prompt, return_tensors="pt", padding="max_length", truncation=True, max_length=16)
 
     print("Running Tensor Parallel Inference")
 

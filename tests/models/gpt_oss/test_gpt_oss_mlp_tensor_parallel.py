@@ -13,6 +13,7 @@ import torch_xla.runtime as xr
 import torch_xla.distributed.spmd as xs
 from torch_xla.distributed.spmd import Mesh
 from transformers import AutoConfig
+from torch import nn
 
 # Import the specific MLP + RMSNorm
 from transformers.models.gpt_oss.modeling_gpt_oss import (
@@ -20,6 +21,21 @@ from transformers.models.gpt_oss.modeling_gpt_oss import (
     GptOssConfig,
     GptOssRMSNorm,
 )
+
+def calculate_pcc(tensor1, tensor2):
+    """Compute PCC using torch.corrcoef"""
+    # Flatten tensors to 1D
+    flat1 = tensor1.flatten()
+    flat2 = tensor2.flatten()
+    
+    # Stack tensors and compute correlation matrix
+    stacked = torch.stack([flat1, flat2])
+    corr_matrix = torch.corrcoef(stacked)
+    
+    # PCC is the off-diagonal element
+    pcc = corr_matrix[0, 1]
+    return pcc.item()
+
 
 
 def setup_xla_environment():
@@ -56,18 +72,26 @@ class GPT_OSS_MLP:
         config = AutoConfig.from_pretrained(self.model_name, trust_remote_code=True)
 
         # Override config for testing
-        config.hidden_size = 2048
-        config.intermediate_size = 8192
-        config.num_local_experts = 4
-        config.num_experts_per_tok = 2
-        config.rms_norm_eps = 1e-6
-        config.layer_types = ["full_attention"]
+        # config.hidden_size = 2048
+        # config.intermediate_size = 8192
+        # config.num_local_experts = 4
+        # config.num_experts_per_tok = 2
+        # config.rms_norm_eps = 1e-6
+        # config.layer_types = ["full_attention"]
 
         return config
 
     def _create_mlp_layer(self, config):
         """Create and initialize MLP layer"""
         mlp = GptOssMLP(config).eval()
+        mlp.router.weight = nn.Parameter(torch.randn(config.num_local_experts, config.hidden_size))
+        mlp.router.bias = nn.Parameter(torch.randn(config.num_local_experts))
+
+        mlp.experts.gate_up_proj = nn.Parameter(torch.randn(config.num_local_experts, config.hidden_size, 2 * config.intermediate_size))
+        mlp.experts.gate_up_proj_bias = nn.Parameter(torch.randn(config.num_local_experts, 2 * config.intermediate_size))
+        mlp.experts.down_proj = nn.Parameter(torch.randn(config.num_local_experts, config.intermediate_size, config.hidden_size))
+        mlp.experts.down_proj_bias = nn.Parameter(torch.randn(config.num_local_experts, config.hidden_size))
+
         mlp = mlp.to(torch.bfloat16)
 
         return mlp
@@ -96,15 +120,118 @@ class GPT_OSS_MLP:
 
         # Expert weights - optimal tensor parallelism configuration
         # Keep gate_up_proj replicated to avoid XLA sharding conflicts
-        xs.mark_sharding(mlp_layer.experts.gate_up_proj, mesh, (None, None, None))
-        xs.mark_sharding(mlp_layer.experts.gate_up_proj_bias, mesh, (None, None))
+        xs.mark_sharding(mlp_layer.experts.gate_up_proj, mesh, ("model", None, None))
+        xs.mark_sharding(mlp_layer.experts.gate_up_proj_bias, mesh, ("model", None))
 
         # Shard down_proj for tensor parallelism (most beneficial for performance)
         # down_proj: (num_experts, intermediate_size, hidden_size)
-        xs.mark_sharding(mlp_layer.experts.down_proj, mesh, (None, None, "model"))
-        xs.mark_sharding(mlp_layer.experts.down_proj_bias, mesh, (None, "model"))
+        xs.mark_sharding(mlp_layer.experts.down_proj, mesh, ("model", None, None))
+        xs.mark_sharding(mlp_layer.experts.down_proj_bias, mesh, ("model", None))
 
         return mlp_layer
+
+
+
+def run_on_cpu():
+    torch.manual_seed(42)
+    gpt_oss_mlp = GPT_OSS_MLP()
+    config = gpt_oss_mlp._create_config()
+
+
+    mlp_layer = gpt_oss_mlp._create_mlp_layer(config)
+    batch_size, seq_len = 1, 128
+    hidden_states = gpt_oss_mlp._create_normed_inputs(config, batch_size, seq_len)
+    print(
+        f"Input shapes (after RMSNorm): hidden_states={hidden_states.shape} ({hidden_states.dtype})"
+    )
+    print("Running MLP layer forward pass on CPU...")
+    cpu_mlp_output, cpu_router_scores = mlp_layer(hidden_states)
+    print(f"CPU output: {cpu_mlp_output.shape} ({cpu_mlp_output.dtype})")
+    print(f"CPU router scores: {cpu_router_scores.shape} ({cpu_router_scores.dtype})")
+    print(f"CPU output full: {cpu_mlp_output}")
+    print(f"CPU router scores full: {cpu_router_scores}")
+
+    print(f"CPU MLP output stats:")
+    print(f"  Mean: {cpu_mlp_output.mean()}")
+    print(f"  Std: {cpu_mlp_output.std()}")
+    print(f"  Min: {cpu_mlp_output.min()}")
+    print(f"  Max: {cpu_mlp_output.max()}")
+    print(f"CPU router scores stats:")
+    print(f"  Mean: {cpu_router_scores.mean()}")
+    print(f"  Std: {cpu_router_scores.std()}")
+    print(f"  Min: {cpu_router_scores.min()}")
+    print(f"  Max: {cpu_router_scores.max()}")
+
+
+def compare_against_cpu():
+    torch.manual_seed(42)
+    setup_xla_environment()
+    mesh = create_device_mesh()
+    gpt_oss_mlp = GPT_OSS_MLP()
+    config = gpt_oss_mlp._create_config()
+
+
+    mlp_layer = gpt_oss_mlp._create_mlp_layer(config)
+    batch_size, seq_len = 1, 128
+    hidden_states = gpt_oss_mlp._create_normed_inputs(config, batch_size, seq_len)
+    print(
+        f"Input shapes (after RMSNorm): hidden_states={hidden_states.shape} ({hidden_states.dtype})"
+    )
+    print("Running MLP layer forward pass on CPU...")
+    cpu_mlp_output, cpu_router_scores = mlp_layer(hidden_states)
+    
+    print("Running MLP layer forward pass on device...")
+    mlp_layer = gpt_oss_mlp._setup_tensor_parallel(mlp_layer, mesh)
+    hidden_states = hidden_states.to(torch_xla.device())
+    hidden_states = xs.mark_sharding(hidden_states, mesh, (None, None, None))
+    
+    dev_mlp_output, dev_router_scores = mlp_layer(hidden_states)
+    torch_xla.sync()
+    dev_mlp_output = dev_mlp_output.to("cpu")
+    dev_router_scores = dev_router_scores.to("cpu")
+    print("Comparing results...")
+    print(f"CPU output: {cpu_mlp_output.shape} ({cpu_mlp_output.dtype})")
+    print(f"Device output: {dev_mlp_output.shape} ({dev_mlp_output.dtype})")
+    print(f"CPU router scores: {cpu_router_scores.shape} ({cpu_router_scores.dtype})")
+    print(f"Device router scores: {dev_router_scores.shape} ({dev_router_scores.dtype})")
+
+    output_pcc = calculate_pcc(dev_mlp_output, cpu_mlp_output)
+    router_scores_pcc = calculate_pcc(dev_router_scores, cpu_router_scores)
+    print(f"CPU output full: {cpu_mlp_output}")
+    print(f"Device output full: {dev_mlp_output}")
+    print(f"CPU router scores full: {cpu_router_scores}")
+    print(f"Device router scores full: {dev_router_scores}")
+    print(f"Output PCC: {output_pcc}")
+    print(f"Router scores PCC: {router_scores_pcc}")
+
+    print()
+    print()
+
+    print(f"CPU MLP output stats:")
+    print(f"  Mean: {cpu_mlp_output.mean()}")
+    print(f"  Std: {cpu_mlp_output.std()}")
+    print(f"  Min: {cpu_mlp_output.min()}")
+    print(f"  Max: {cpu_mlp_output.max()}")
+    print(f"CPU router scores stats:")
+    print(f"  Mean: {cpu_router_scores.mean()}")
+    print(f"  Std: {cpu_router_scores.std()}")
+    print(f"  Min: {cpu_router_scores.min()}")
+    print(f"  Max: {cpu_router_scores.max()}")
+
+    print()
+    print()
+
+    print(f"Device MLP output stats:")
+    print(f"  Mean: {dev_mlp_output.mean()}")
+    print(f"  Std: {dev_mlp_output.std()}")
+    print(f"  Min: {dev_mlp_output.min()}")
+    print(f"  Max: {dev_mlp_output.max()}")
+    print(f"Device router scores stats:")
+    print(f"  Mean: {dev_router_scores.mean()}")
+    print(f"  Std: {dev_router_scores.std()}")
+    print(f"  Min: {dev_router_scores.min()}")
+    print(f"  Max: {dev_router_scores.max()}")
+
 
 
 def run_mlp_test():
@@ -196,7 +323,9 @@ def main():
     print("=" * 60)
 
     try:
-        run_mlp_test()
+        # run_mlp_test()
+        # compare_against_cpu()
+        run_on_cpu()
         return 0
     except Exception as e:
         print(f"Test failed with error: {e}")
