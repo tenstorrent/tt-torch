@@ -4,7 +4,7 @@
 #
 
 # tt-xla version to use
-set(TT_XLA_VERSION "fd1da141605e56e5b123ba42d3ff6011bbec5090")
+set(TT_XLA_VERSION "d297be27e16945d0c1d22ebd3d28272a15a9de08")
 
 # Optional override of tt-xla's TT_MLIR_VERSION. Default to tt-xla's default TT_MLIR_VERSION if we pass an empty string
 set(TT_MLIR_VERSION "")
