@@ -50,8 +50,7 @@ def test_codegen(record_property, mode, op_by_op):
         record_property_handle=record_property,
         run_generate=False,
         assert_atol=False,
-        assert_pcc=False,  # Follow up in https://github.com/tenstorrent/tt-torch/issues/1098
-        required_pcc=0.97,
+        assert_pcc=True,
     )
 
     results = tester.test_model()

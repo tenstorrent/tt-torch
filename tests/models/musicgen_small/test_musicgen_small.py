@@ -51,7 +51,7 @@ def test_musicgen_small(record_property, mode, op_by_op, data_parallel_mode):
         model_info=model_info,
         compiler_config=cc,
         assert_atol=False,
-        assert_pcc=False,
+        assert_pcc=True,
         record_property_handle=record_property,
         data_parallel_mode=data_parallel_mode,
     )

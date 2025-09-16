@@ -62,14 +62,13 @@ model_info_list = [
     "data_parallel_mode", [False, True], ids=["single_device", "data_parallel"]
 )
 def test_torchvision_object_detection(
-    record_property, model_info, mode, op_by_op, data_parallel_mode
+    request, record_property, model_info, mode, op_by_op, data_parallel_mode
 ):
     model_name, _ = model_info
 
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
-
     if op_by_op:
         if data_parallel_mode:
             pytest.skip("Op-by-op not supported in data parallel mode")

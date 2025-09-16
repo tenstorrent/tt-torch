@@ -50,6 +50,7 @@ def test_mnist_train(record_property, mode, op_by_op):
         loader=loader,
         model_info=model_info,
         assert_pcc=True,
+        required_pcc=0.98,
         assert_atol=False,
         compiler_config=cc,
         record_property_handle=record_property,

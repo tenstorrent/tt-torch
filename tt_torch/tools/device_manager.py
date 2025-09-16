@@ -16,6 +16,7 @@ class DeviceManager:
 
     @staticmethod
     def _get_parent_mesh_options(
+        mesh_shape=None,
         device_ids=None,
         num_hw_cqs=None,
         enable_program_cache=None,
@@ -23,6 +24,8 @@ class DeviceManager:
         dispatch_core_type=None,
     ) -> tt_mlir.MeshDeviceOptions:
         options = tt_mlir.MeshDeviceOptions()
+        if mesh_shape is not None:
+            options.mesh_shape = mesh_shape
         if device_ids is not None:
             options.device_ids = device_ids
         if num_hw_cqs is not None:
@@ -45,7 +48,7 @@ class DeviceManager:
     @classmethod
     def create_parent_mesh_device(
         cls,
-        mesh_shape,
+        mesh_shape=None,
         device_ids=None,
         num_hw_cqs=None,
         enable_program_cache=None,
@@ -63,13 +66,14 @@ class DeviceManager:
             mesh_shape[0] * mesh_shape[1] <= num_available
         ), "Mesh shape exceeds available devices."
         options = cls._get_parent_mesh_options(
+            mesh_shape,
             device_ids,
             num_hw_cqs,
             enable_program_cache,
             l1_small_size,
             dispatch_core_type,
         )
-        parent_mesh = tt_mlir.open_mesh_device(mesh_shape=mesh_shape, options=options)
+        parent_mesh = tt_mlir.open_mesh_device(options=options)
         cls._devices[parent_mesh] = set()
         cls._parent_shapes[parent_mesh] = mesh_shape
         return parent_mesh

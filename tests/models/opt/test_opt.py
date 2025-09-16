@@ -51,7 +51,7 @@ def test_opt(record_property, mode, op_by_op):
         compiler_config=cc,
         record_property_handle=record_property,
         relative_atol=0.015,
-        assert_pcc=False,  # PCC regression in OPT model observed around July 17, follow up in https://github.com/tenstorrent/tt-torch/issues/1072
+        assert_pcc=True,
         assert_atol=False,
     )
     tester.test_model(assert_eval_token_mismatch=False)

@@ -27,6 +27,8 @@
 // tt-torch includes
 #include "tt-mlir-interface.hpp"
 
+#include <malloc.h>
+
 namespace py = pybind11;
 
 py::object TORCH_TENSOR_PYCLASS = py::module::import("torch").attr("Tensor");
@@ -392,7 +394,9 @@ std::vector<at::Tensor> run_end_to_end(std::vector<at::Tensor> &inputs,
 
   tt::runtime::Binary binary = create_binary_from_bytestream(byte_stream);
 
-  tt::runtime::Device device = tt::runtime::openMeshDevice({1, 1});
+  tt::runtime::MeshDeviceOptions options;
+  options.meshShape = {1, 1};
+  tt::runtime::Device device = tt::runtime::openMeshDevice(options);
 
   const int program_idx = 0;
 
@@ -410,17 +414,21 @@ torch::Tensor
 get_op_output_torch_tensor(tt::runtime::OpContext opContextHandle,
                            tt::runtime::CallbackContext programContextHandle) {
 
-  tt::runtime::Tensor tensor =
+  auto tensorMap =
       tt::runtime::getOpOutputTensor(opContextHandle, programContextHandle);
 
   // Some ops in a decomposed tfx node may not have valid output tensors (eg.
   // deallocate) For these, return an empty tensor
 
-  if (tensor.handle == nullptr) {
-    std::cout << "Warning: getOpOutputTensor returned a null tensor."
+  if (tensorMap.empty()) {
+    std::cout << "Warning: getOpOutputTensor does not return any tensor."
               << std::endl;
     return torch::Tensor(); // Return an empty PyTorch tensor
   }
+
+  // Return the first tensor in the map. We do not currently support
+  // intermediate comparison for ops with multiple outputs
+  tt::runtime::Tensor tensor = tensorMap.begin()->second;
 
   return create_torch_tensor(tensor);
 }
@@ -441,6 +449,18 @@ PYBIND11_MODULE(tt_mlir, m) {
       .def_readwrite("num_hw_cqs", &tt::runtime::MeshDeviceOptions::numHWCQs)
       .def_readwrite("enable_program_cache",
                      &tt::runtime::MeshDeviceOptions::enableProgramCache)
+      .def_property(
+          "mesh_shape",
+          [](const tt::runtime::MeshDeviceOptions &o) {
+            return o.meshShape.has_value() ? py::cast(o.meshShape.value())
+                                           : py::none();
+          },
+          [](tt::runtime::MeshDeviceOptions &o, py::handle value) {
+            o.meshShape =
+                py::none().is(value)
+                    ? std::nullopt
+                    : std::make_optional(value.cast<std::vector<uint32_t>>());
+          })
       .def_property(
           "l1_small_size",
           [](const tt::runtime::MeshDeviceOptions &o) {
@@ -478,8 +498,7 @@ PYBIND11_MODULE(tt_mlir, m) {
         "Run shardy automatic data parallelization pass on stableHLO");
   m.def("compile_stable_hlo_to_ttir", &compile_stable_hlo_to_ttir,
         "A function that compiles stableHLO to TTIR");
-  m.def("open_mesh_device", &tt::runtime::openMeshDevice, py::arg("mesh_shape"),
-        py::arg("options"),
+  m.def("open_mesh_device", &tt::runtime::openMeshDevice, py::arg("options"),
         "Open a mesh of devices for execution using the new API and create "
         "system description");
   m.def("close_mesh_device", &tt::runtime::closeMeshDevice,
@@ -532,6 +551,11 @@ PYBIND11_MODULE(tt_mlir, m) {
   m.def("get_arch", &tt::runtime::getArch,
         "Get the architecture of the device");
   m.def("is_op_model_enabled", &is_op_model_enabled);
+
+  m.def(
+      "malloc_trim", []() { ::malloc_trim(0); },
+      "Call malloc_trim(0) to force malloc to release any unused memory back "
+      "to the OS");
 
 #if defined(TT_RUNTIME_DEBUG) && TT_RUNTIME_DEBUG == 1
   py::class_<tt::runtime::CallbackContext>(m, "CallbackContext");

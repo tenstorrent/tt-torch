@@ -9,7 +9,10 @@ import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 import tt_mlir
-from third_party.tt_forge_models.qwen.casual_lm.pytorch import ModelLoader
+from third_party.tt_forge_models.qwen_2_5.casual_lm.pytorch import (
+    ModelLoader,
+    ModelVariant,
+)
 import torch_xla.core.xla_model as xm
 
 from tt_torch.tools.utils import (
@@ -40,8 +43,9 @@ def test_qwen2_causal_lm(record_property, op_by_op):
     # TODO: Remove this once PCC ATOL is fixed on blackhole runners - https://github.com/tenstorrent/tt-torch/issues/1003
     assert_pcc = tt_mlir.get_arch() != tt_mlir.Arch.BLACKHOLE
 
-    loader = ModelLoader(variant=None)
-    model_info = loader.get_model_info(variant=None)
+    variant = ModelVariant.QWEN_2_5_1_5B
+    loader = ModelLoader(variant=variant)
+    model_info = loader.get_model_info(variant=variant)
 
     tester = ThisTester(
         model_info.name,
@@ -60,9 +64,9 @@ def test_qwen2_causal_lm(record_property, op_by_op):
 
     results = tester.test_model()
 
-    gen_text = loader.decode_output(results, dtype_override=torch.bfloat16)
-
-    print(f"Model: {model_info.name} | Input: {loader.text} | Decoded Text: {gen_text}")
+    # TODO - decode_output() recently removed from ModelLoader. Consider bringing it back.
+    # gen_text = loader.decode_output(results, dtype_override=torch.bfloat16)
+    # print(f"Model: {model_info.name} | Input: {loader.text} | Decoded Text: {gen_text}")
 
     tester.finalize()
 
@@ -81,11 +85,12 @@ def test_qwen2_causal_lm_eager():
 
     tt_outputs = model(**inputs).logits.to("cpu")
 
-    gen_text_cpu = loader.decode_output((cpu_outputs,))
-    gen_text_tt = loader.decode_output((tt_outputs,))
+    # TODO - decode_output() recently removed from ModelLoader. Consider bringing it back.
+    # gen_text_cpu = loader.decode_output((cpu_outputs,))
+    # gen_text_tt = loader.decode_output((tt_outputs,))
 
-    print(f'CPU Decoded Text: "{gen_text_cpu}"')
-    print(f'TT Decoded Text: "{gen_text_tt}"')
+    # print(f'CPU Decoded Text: "{gen_text_cpu}"')
+    # print(f'TT Decoded Text: "{gen_text_tt}"')
 
     pcc = calculate_pcc(tt_outputs, cpu_outputs)
     print(f"PCC: {pcc}")

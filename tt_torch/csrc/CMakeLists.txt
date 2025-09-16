@@ -1,6 +1,6 @@
 
-list(APPEND CMAKE_PREFIX_PATH ${TTTORCH_SOURCE_DIR}/env/venv/lib/python3.10/site-packages/pybind11)
-find_package(Python 3.10 REQUIRED COMPONENTS Interpreter Development.Module)
+list(APPEND CMAKE_PREFIX_PATH ${TTTORCH_SOURCE_DIR}/env/venv/lib/python3.11/site-packages/pybind11)
+find_package(Python 3.11 REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
 
 add_library(TT_TORCH_MLIR "tt-mlir-interface.cpp")
@@ -37,7 +37,7 @@ target_link_directories(TT_TORCH_MLIR PUBLIC
     ${TTMLIR_INSTALL_PREFIX}/lib
 )
 
-set(TORCH_INSTALL_PREFIX ${TTTORCH_SOURCE_DIR}/env/venv/lib/python3.10/site-packages/torch)
+set(TORCH_INSTALL_PREFIX ${TTTORCH_SOURCE_DIR}/env/venv/lib/python3.11/site-packages/torch)
 set(CMAKE_PREFIX_PATH ${TORCH_INSTALL_PREFIX})
 
 find_package(Torch REQUIRED)
@@ -83,7 +83,7 @@ set_target_properties(${TARGET_NAME}
     PROPERTIES
     PREFIX ""  # Disable "lib" prefix.
     LIBRARY_OUTPUT_NAME ${TARGET_NAME}
-    INSTALL_RPATH "$ORIGIN:$ORIGIN/python3.10/site-packages/torch/lib"
+    INSTALL_RPATH "$ORIGIN:$ORIGIN/python3.11/site-packages/torch/lib"
     BUILD_WITH_INSTALL_RPATH TRUE
 )
 install (TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

@@ -269,9 +269,10 @@ class Executor:
             return self.devices[device_idx]
         # Return a default parent mesh
         mesh_options = tt_mlir.MeshDeviceOptions()
+        mesh_options.mesh_shape = self.compiler_config.mesh_shape
         if len(self.compiler_config.mesh_shape) == 32:
             mesh_options.dispatch_core_type = tt_mlir.DispatchCoreType.WORKER
-        device = tt_mlir.open_mesh_device(self.compiler_config.mesh_shape, mesh_options)
+        device = tt_mlir.open_mesh_device(mesh_options)
         self.devices[device_idx] = device
         self.owned_device_indices.append(device_idx)
         return device

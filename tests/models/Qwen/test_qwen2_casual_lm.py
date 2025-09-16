@@ -9,7 +9,10 @@ import pytest
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 import tt_mlir
-from third_party.tt_forge_models.qwen.casual_lm.pytorch import ModelLoader
+from third_party.tt_forge_models.qwen_2_5.casual_lm.pytorch import (
+    ModelLoader,
+    ModelVariant,
+)
 
 
 class ThisTester(ModelTester):
@@ -43,8 +46,9 @@ def test_qwen2_casual_lm(record_property, mode, op_by_op):
     # TODO: Remove this once PCC ATOL is fixed on blackhole runners - https://github.com/tenstorrent/tt-torch/issues/1003
     assert_pcc = tt_mlir.get_arch() != tt_mlir.Arch.BLACKHOLE
 
-    loader = ModelLoader(variant=None)
-    model_info = loader.get_model_info(variant=None)
+    variant = ModelVariant.QWEN_2_5_1_5B
+    loader = ModelLoader(variant=variant)
+    model_info = loader.get_model_info(variant=variant)
 
     tester = ThisTester(
         model_info.name,
@@ -56,16 +60,17 @@ def test_qwen2_casual_lm(record_property, mode, op_by_op):
         assert_pcc=assert_pcc,
         assert_atol=False,
         run_generate=False,
-        required_pcc=0.85,
+        required_pcc=0.93,
     )
 
     results = tester.test_model()
 
-    if mode == "eval":
-        gen_text = loader.decode_output(results, dtype_override=torch.bfloat16)
+    # TODO - decode_output() recently removed from ModelLoader. Consider bringing it back.
+    # if mode == "eval":
+    #     gen_text = loader.decode_output(results, dtype_override=torch.bfloat16)
 
-        print(
-            f"Model: {model_info.name} | Input: {loader.text} | Decoded Text: {gen_text}"
-        )
+    #     print(
+    #         f"Model: {model_info.name} | Input: {loader.text} | Decoded Text: {gen_text}"
+    #     )
 
     tester.finalize()

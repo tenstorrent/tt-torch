@@ -23,13 +23,13 @@ on:
         description: 'Use shared runners'
         required: false
         type: boolean
-        default: true
+        default: false
 
 jobs:
   build:
     timeout-minutes: 120
 
-    runs-on: ${{ inputs.sh-runner && 'tt-beta-ubuntu-2204-large' || fromJson('["wormhole_b0", "in-service"]') }}
+    runs-on: ${{ inputs.sh-runner && 'tt-ubuntu-2204-large-stable' || fromJson('["wormhole_b0", "in-service"]') }}
 
     container:
       image: ${{ inputs.sh-runner && format('harbor.ci.tenstorrent.net/{0}', inputs.docker-image) || inputs.docker-image }}
@@ -81,7 +81,7 @@ jobs:
       continue-on-error: true
       shell: bash
       run: |
-          cd third_party/tt-mlir/src/tt-mlir
+          cd third_party/tt-xla/src/tt-xla/third_party/tt-mlir/src/tt-mlir
           branch_name=$(git rev-parse --abbrev-ref HEAD)
           commit_sha=$(git rev-parse HEAD)
           commit_title=$(git log -1 --pretty=%s)
@@ -89,7 +89,7 @@ jobs:
           echo "Commit SHA: $commit_sha"
           echo "Commit title: $commit_title"
           echo "::notice::Using tt-mlir: $branch_name, commit: $commit_sha, title: $commit_title"
-          cd ../../../..
+          cd -
 
 
     - name: Copy wheel and env directories

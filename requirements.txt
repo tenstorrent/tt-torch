@@ -1,7 +1,7 @@
 # Core Dependencies
 --extra-index-url https://download.pytorch.org/whl/cpu
 torch==2.7.0
-torch-xla@https://pypi.eng.aws.tenstorrent.com/torch-xla/torch_xla-2.9.0%2Bgitb87262d-cp310-cp310-linux_x86_64.whl
+torch-xla@https://pypi.eng.aws.tenstorrent.com/torch-xla/torch_xla-2.9.0%2Bgit1adbe97-cp311-cp311-linux_x86_64.whl
 ninja
 pybind11
 protobuf
@@ -9,7 +9,7 @@ setuptools==59.6.0 #  pinned torchvision wheel build in env/activate requires lo
 wheel
 onnx==1.17.0 # 1.18.0 fails with "Unsupported model IR version: 11, max supported IR version: 10"
 onnxruntime
-stablehlo@https://github.com/openxla/stablehlo/releases/download/v1.0.0/stablehlo-1.0.0.1715728102%2B6051bcdf-cp310-cp310-linux_x86_64.whl
+stablehlo@https://github.com/openxla/stablehlo/releases/download/v1.0.0/stablehlo-1.0.0.1715728102%2B6051bcdf-cp311-cp311-linux_x86_64.whl
 scikit-build
 nanobind
 loguru
@@ -22,6 +22,7 @@ pytest
 pytest-cov
 pytest-xdist
 pytest-forked
+pytest-split
 tabulate
 openpyxl
 seaborn
@@ -48,7 +49,13 @@ kornia
 timm
 ml_dtypes
 opencv-contrib-python
-gliner
+gliner==0.2.21
 ultralytics
 efficientnet_pytorch
-torchcodec # required for whisper test. Requires system dep ffmpeg.
+torchcodec==0.5.0 # required for whisper test. Requires system dep ffmpeg. 0.6.0 fails with NotImplementedError: Could not run 'torchcodec_ns::create_from_tensor' with arguments from the 'CPU' backend
+torchxrayvision==0.0.39
+scikit-image>=0.24 # For DenseNet 121 HF XRay model
+ase==3.24.0 # For hippynn
+hippynn==0.0.3
+pycocotools
+FlagEmbedding

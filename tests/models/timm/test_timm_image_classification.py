@@ -74,7 +74,7 @@ model_list = [
     ids=["single_device", "data_parallel"],
 )
 def test_timm_image_classification(
-    record_property, model_name, mode, op_by_op, data_parallel_mode
+    request, record_property, model_name, mode, op_by_op, data_parallel_mode
 ):
     if mode == "train":
         pytest.skip()

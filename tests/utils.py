@@ -32,6 +32,23 @@ import io
 import csv
 import tt_mlir
 
+# Torch-XLA imports
+import torch_xla.runtime as xr
+from torch_xla.distributed.spmd import Mesh
+
+
+def create_device_mesh(mesh_shape, mesh_names):
+    assert len(mesh_shape) == len(
+        mesh_names
+    ), "Mesh shape and names must match in length"
+    num_devices = xr.global_runtime_device_count()
+    assert (
+        np.prod(mesh_shape) == num_devices
+    ), "Mesh shape must match the number of devices"
+    device_ids = np.array(range(num_devices))
+    mesh = Mesh(device_ids, mesh_shape, mesh_names)
+    return mesh
+
 
 def skip_full_eval_test(
     record_property,
@@ -41,6 +58,7 @@ def skip_full_eval_test(
     reason,
     model_group="generality",
     model_name_filter=None,
+    forge_models_test=False,
 ):
     """
     Helper function to skip a test when frontend has issues and record properties.
@@ -54,6 +72,7 @@ def skip_full_eval_test(
         reason: The reason for skipping the test
         model_group: The model group (default: "generality")
         model_name_filter: Either a string or a list of strings. If provided, the test will only be skipped if model_name matches exactly (string) or is in the list (list of strings)
+        forge_models_test: Whether the test is a tt-forge-models model test run via test_models.py.
     Returns:
         bool: True if test was skipped, False otherwise
     """
@@ -77,6 +96,7 @@ def skip_full_eval_test(
             {
                 "bringup_status": bringup_status,
                 "model_name": model_name,
+                "forge_models_test": forge_models_test,
             },
         )
         record_property("group", model_group)
@@ -115,6 +135,7 @@ class ModelTester:
         devices=None,
         data_parallel_mode=False,
         backend="tt-experimental",
+        forge_models_test=False,
     ):
         """
         Initializes the ModelTester.
@@ -143,6 +164,7 @@ class ModelTester:
             data_parallel_mode (bool, optional): If True, the model will be compiled and run in a data-parallel fashion
                                                     across the specified `devices`. This mode does not support op-by-op
                                                     compilation or execution. Defaults to False.
+            forge_models_test (bool, optional): Whether the test is a tt-forge-models model test run via test_models.py. Defaults to False.
         """
         if mode not in ["train", "eval"]:
             raise ValueError(f"Current mode is not supported: {mode}")
@@ -253,6 +275,7 @@ class ModelTester:
         self.record_tag_cache["is_asserting_atol"] = self.assert_atol
 
         self.record_tag_cache["parallelism"] = self.get_parallelism()
+        self.record_tag_cache["forge_models_test"] = forge_models_test
 
         # configs should be set at test start, so they can be flushed immediately
         self.record_property(
@@ -628,7 +651,10 @@ class ModelTester:
         for rt_tensor in rt_tensors:
             torch_tensors = tt_mlir.to_host(rt_tensor)
             if isinstance(torch_tensors, list):
-                final_outputs.extend(torch_tensors)
+                if len(torch_tensors) == 1:
+                    final_outputs.extend(torch_tensors)
+                else:
+                    final_outputs.append(tuple(torch_tensors))
             else:
                 final_outputs.append(torch_tensors)
 

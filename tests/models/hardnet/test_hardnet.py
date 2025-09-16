@@ -50,8 +50,8 @@ def test_hardnet(record_property, mode, op_by_op, data_parallel_mode):
     loader = ModelLoader(variant=None)
     model_info = loader.get_model_info(variant=None)
 
-    # Small dip for blackhole using experimental backend
-    required_pcc = 0.98 if tt_mlir.get_arch() != tt_mlir.Arch.BLACKHOLE else 0.97
+    # Increase Threshold - https://github.com/tenstorrent/tt-torch/issues/1195
+    required_pcc = 0.97 if data_parallel_mode else 0.98
 
     tester = ThisTester(
         model_info.name,
@@ -62,7 +62,6 @@ def test_hardnet(record_property, mode, op_by_op, data_parallel_mode):
         relative_atol=0.01,
         compiler_config=cc,
         record_property_handle=record_property,
-        # TODO Enable checking - https://github.com/tenstorrent/tt-torch/issues/488
         assert_pcc=True,
         assert_atol=False,
         data_parallel_mode=data_parallel_mode,

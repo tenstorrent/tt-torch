@@ -49,7 +49,7 @@ jobs:
                   tests/models/yolov3/test_yolov3.py::test_yolov3[full-eval]
                   tests/models/yolov4/test_yolov4.py::test_yolov4[full-eval]
                   tests/models/vovnet/test_vovnet_onnx.py::test_vovnet_onnx[full-eval]
-                  tests/models/llama/test_llama3_generative.py::test_llama3_generate
+                  tests/models/llama/test_llama3_generative.py::test_llama3_generate[full-eval]
             "
           },
           {
@@ -68,7 +68,7 @@ jobs:
           },
           {
             wh-runner: wormhole_b0, bh-runner: p150, name: "eval_3", pytest-args: "", tests: "
-                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[single_device-full-albert-xxlarge-v2-eval]
+                  tests/models/albert/test_albert_masked_lm.py::test_albert_masked_lm[single_device-full-xxlarge_v2-eval]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_y_400mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_y_800mf]
                   tests/models/torchvision/test_torchvision_image_classification.py::test_torchvision_image_classification[single_device-full-eval-regnet_y_1_6gf]
@@ -129,6 +129,13 @@ jobs:
             "
           },
           {
+            # It is not safe to run XLA SPMD tests with other tests using torch/xla
+            wh-runner: n300, name: "eval_6_spmd", pytest-args: "", tests: "
+                tests/torch/test_basic_sharding.py
+                tests/experimental/test_ccl_ops_n300.py
+            "
+          },
+          {
             wh-runner: high-memory-n300, name: "eval_6_highmem_quarantine", pytest-args: "--forked", tests: "
               tests/models/llama/test_llama_7b_pipeline_parallel.py::test_llama_7b_pipeline_parallel[huggyllama/llama-7b-eval]
               tests/models/falcon/test_falcon3_7b_10b_pipeline_parallel.py::test_falcon_pipeline_parallel[full-tiiuae/Falcon3-7B-Base-eval]
@@ -145,13 +152,19 @@ jobs:
               tests/experimental/models/resnet50/test_resnet50.py::test_resnet_eager
             "
           },
+          {
+            wh-runner: llmbox, name: "tp_eager", pytest-args: "", tests: "
+                tests/experimental/test_ccl_ops_llmbox.py
+                tests/experimental/models/llama/test_llama_8b_tp_eager.py::test_llama_8b_eager[128-causal]
+            "
+          },
         ]
     runs-on: ${{ matrix.runner == 'wormhole' && matrix.build.wh-runner || matrix.runner == 'blackhole' && matrix.build.bh-runner  || 'wormhole_b0'}}
     name: "test exec ${{ matrix.runner == 'wormhole' && 'wh' || matrix.runner == 'blackhole' && 'bh' || 'unk' }} (${{ matrix.build.name }})"
 
     container:
       image: ${{ inputs.docker-image }}
-      options: --user root --device /dev/tenstorrent/0 --shm-size=4gb
+      options: --user root --device /dev/tenstorrent --shm-size=4gb
       volumes:
         - /dev/hugepages:/dev/hugepages
         - /dev/hugepages-1G:/dev/hugepages-1G
@@ -209,6 +222,13 @@ jobs:
         mv install/wheels/* ${{ steps.strings.outputs.dist-dir }}
         pip install ${{ steps.strings.outputs.dist-dir }}/*.whl
 
+    - name: Show actual installed python dependencies
+      if: ${{ env.RUN_TEST != 'skip' }}
+      shell: bash
+      run: |
+        source env/activate
+        pip freeze
+
     - name: Run Full Model Execution Tests
       if: ${{ env.RUN_TEST != 'skip' }}
       env:
@@ -221,6 +241,7 @@ jobs:
         source env/activate
 
         TT_TORCH_SAVE_MLIR=STABLEHLO,TTIR,TTNN pytest ${{ matrix.build.pytest-args }} --durations=0 -v -rf ${{matrix.build.tests}} \
+           --log-memory-usage \
            --junit-xml=${{ steps.strings.outputs.test_report_path_models }} \
            --cov=tt_torch --cov-report term --cov-report xml:coverage.xml --cov-append | tee pytest.log
 
@@ -230,6 +251,13 @@ jobs:
       with:
         name: test-log-${{ matrix.runner }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
         path: pytest.log
+
+    - name: Upload Memory Usage Log
+      uses: actions/upload-artifact@v4
+      if: success() || failure()
+      with:
+        name: memory-usage-${{ matrix.runner }}-${{ matrix.build.name }}-${{ steps.fetch-job-id.outputs.job_id }}
+        path: pytest-memory-usage.csv
 
     - name: Upload Test Report Models
       uses: actions/upload-artifact@v4

@@ -7,7 +7,7 @@ import pytest
 # Load model directly
 from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
-from third_party.tt_forge_models.qwen.token_classification.pytorch import ModelLoader
+from third_party.tt_forge_models.qwen_2.token_classification.pytorch import ModelLoader
 
 
 class ThisTester(ModelTester):

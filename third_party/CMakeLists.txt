@@ -3,15 +3,58 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-# underlying tt-mlir version we will have tt-xla use
-set(TT_MLIR_VERSION "7338ca99e")
 # tt-xla version to use
-set(TTXLA_VERSION "10061a261faf8008c781c3282bee9ba58bdeab52")
+set(TT_XLA_VERSION "fd1da141605e56e5b123ba42d3ff6011bbec5090")
+
+# Optional override of tt-xla's TT_MLIR_VERSION. Default to tt-xla's default TT_MLIR_VERSION if we pass an empty string
+set(TT_MLIR_VERSION "")
+if(NOT TT_MLIR_VERSION STREQUAL "")
+    set(USE_CUSTOM_TT_MLIR_VERSION ON)
+    message(STATUS "Overriding TT_MLIR_VERSION in tt-xla build: ${TT_MLIR_VERSION}")
+    list(APPEND TT_XLA_MLIR_OVERRIDE_ARGS
+        -DUSE_CUSTOM_TT_MLIR_VERSION=ON
+        -DTT_MLIR_VERSION=${TT_MLIR_VERSION}
+    )
+else()
+    message(STATUS "Not overriding TT_MLIR_VERSION and using TT_XLA default tt-mlir version")
+endif()
 
 if (BUILD_TOOLCHAIN)
     cmake_minimum_required(VERSION 3.20)
     project(ttmlir-toolchain LANGUAGES CXX C)
+
+    # Extract TT_MLIR_VERSION from tt-xla repository only if not already set
+    if(TT_MLIR_VERSION STREQUAL "")
+        # Step 1: Download tt-xla's CMakeLists.txt from GitHub
+        set(TTXLA_CMAKE_URL "https://raw.githubusercontent.com/tenstorrent/tt-xla/${TT_XLA_VERSION}/third_party/CMakeLists.txt")
+        execute_process(
+            COMMAND curl -s ${TTXLA_CMAKE_URL}
+            OUTPUT_VARIABLE TTXLA_CMAKE_CONTENT
+            ERROR_QUIET
+        )
+
+        # Step 2: Extract TT_MLIR_VERSION that tt-xla is using
+        execute_process(
+            COMMAND bash -c "echo '${TTXLA_CMAKE_CONTENT}' | sed -n 's/.*set(TT_MLIR_VERSION \"\\(.*\\)\").*/\\1/p'"
+            OUTPUT_VARIABLE TT_XLA_FALLBACK_TT_MLIR_VERSION
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            ERROR_QUIET
+        )
+
+        # Use the fallback tt-mlir version from tt-xla to build the toolchain
+        if(TT_XLA_FALLBACK_TT_MLIR_VERSION STREQUAL "")
+            message(FATAL_ERROR "Could not extract TT_MLIR_VERSION from tt-xla")
+        else()
+            set(TT_MLIR_VERSION ${TT_XLA_FALLBACK_TT_MLIR_VERSION})
+            message(STATUS "Extracted TT_MLIR_VERSION from tt-xla: ${TT_MLIR_VERSION}")
+        endif()
+    else()
+        message(STATUS "Using provided override TT_MLIR_VERSION: ${TT_MLIR_VERSION}")
+    endif()
+
     if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tt-mlir/src/tt-mlir)
+        # Create the directory structure if it doesn't exist
+        file(MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tt-mlir/src)
         execute_process(
             COMMAND git clone --recursive https://github.com/tenstorrent/tt-mlir.git ${CMAKE_CURRENT_SOURCE_DIR}/tt-mlir/src/tt-mlir
         )
@@ -59,20 +102,19 @@ else()
         PREFIX ${TTXLA_PREFIX}
         INSTALL_COMMAND
             ${CMAKE_COMMAND} --install ${TTXLA_BUILD_DIR} --prefix ${TTXLA_INSTALL_PREFIX} &&
-            chmod -R +x ${TTXLA_INSTALL_PREFIX}
+            chmod -R +x ${TTXLA_INSTALL_PREFIX} && pip uninstall --yes --no-input pjrt_plugin_tt
         CMAKE_GENERATOR Ninja
         CMAKE_ARGS
             -DCMAKE_BUILD_TYPE=Release
             -DCMAKE_C_COMPILER=clang-17
             -DCMAKE_CXX_COMPILER=clang++-17
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-            -DUSE_CUSTOM_TT_MLIR_VERSION=ON
-            -DTT_MLIR_VERSION=${TT_MLIR_VERSION}
             -DTT_RUNTIME_DEBUG=${TT_RUNTIME_DEBUG}
             -DCMAKE_INSTALL_PREFIX=${TTXLA_INSTALL_PREFIX}
             -DTTMLIR_ENABLE_PERF_TRACE=${TT_RUNTIME_ENABLE_PERF_TRACE}
+            ${TT_XLA_MLIR_OVERRIDE_ARGS}
         GIT_REPOSITORY https://github.com/tenstorrent/tt-xla.git
-        GIT_TAG ${TTXLA_VERSION}
+        GIT_TAG ${TT_XLA_VERSION}
         GIT_PROGRESS ON
         BUILD_BYPRODUCTS
             ${TTXLA_PJRT_DYLIB}
@@ -97,7 +139,7 @@ else()
     # torch-mlir build
     # torch-mlir is using branch tt_torch/main
     # see issue https://github.com/tenstorrent/tt-torch/issues/671
-    set(TORCH_MLIR_VERSION "be21b75d7fc2a45d5cccf5ac5d8d9448106735bd")
+    set(TORCH_MLIR_VERSION "64a937e8cffe40ad06eb8fce0d6b1d674f037160")
     set(TORCH_MLIR_PREFIX ${TTTORCH_SOURCE_DIR}/third_party/torch-mlir)
     set(TORCH_MLIR_INSTALL_PREFIX ${TORCH_MLIR_PREFIX}/install)
 
@@ -134,7 +176,7 @@ else()
     install(DIRECTORY ${TORCH_MLIR_INSTALL_PREFIX}/python_packages/torch_mlir/torch_mlir DESTINATION "${CMAKE_INSTALL_PREFIX}" USE_SOURCE_PERMISSIONS)
 
     # tt-forge-models - Python-only project, no need to build.
-    set(TT_FORGE_MODELS_VERSION "3e11880246c1b926a61116a00c0a46aebf25fd8f")
+    set(TT_FORGE_MODELS_VERSION "c8a3cb8ee57189fa59e693cae7c4b3ab72b4ede1")
     ExternalProject_Add(
         tt_forge_models
         SOURCE_DIR ${TTTORCH_SOURCE_DIR}/third_party/tt_forge_models

@@ -412,7 +412,7 @@ def _get_default_decomposition_ops() -> DecompositionOpsList:
     ]
 
 
-def _get_custom_decopositions() -> DecompositionTable:
+def _get_custom_decompositions() -> DecompositionTable:
     aten = torch.ops.aten
     return {
         aten.upsample_nearest1d.vec: upsample_nearest_vec,
@@ -438,4 +438,4 @@ def _get_custom_decopositions() -> DecompositionTable:
 
 
 CUSTOM_DECOMPOSITION_TABLE = get_decompositions(_get_default_decomposition_ops())
-CUSTOM_DECOMPOSITION_TABLE.update(_get_custom_decopositions())
+CUSTOM_DECOMPOSITION_TABLE.update(_get_custom_decompositions())

@@ -13,7 +13,6 @@ import tempfile
 import multiprocessing as mp
 import re
 import pickle
-import sys
 import faulthandler
 import collections
 from ..passes import (
@@ -40,6 +39,8 @@ from tt_torch.tools.utils import (
 
 import torch_xla
 import torch_xla.core.xla_model as xm
+import torch_xla.distributed.spmd as xs
+import tt_torch.dynamo.sharding_utils as sharding_utils
 
 from ..executor import get_inputs_size, gb_to_bytes
 
@@ -70,7 +71,6 @@ def execute_pjrt_process(receiver, sender, exec_event):
         obj = receiver.get()
         faulthandler.disable()
         gm = obj["gm"]
-        file_name = obj["dump_file"]
         large_input = obj["large_input"]
         inputs = None
 
@@ -87,11 +87,6 @@ def execute_pjrt_process(receiver, sender, exec_event):
         else:
             inputs = obj["inputs"]
 
-        file_stderr = open(file_name, "w")
-        old_stderr = sys.stderr
-        sys.stderr = file_stderr
-        old_stdout = sys.stdout
-        sys.stdout = file_stderr
         from typing import Union, List, Dict
 
         def push_tensors_to_device(
@@ -133,10 +128,6 @@ def execute_pjrt_process(receiver, sender, exec_event):
             outputs = gm(*inputs)
             xm.mark_step()
             outputs = push_tensors_to_device(outputs, device="cpu", detach=True)
-
-        sys.stderr = old_stderr
-        sys.stdout = old_stdout
-        file_stderr.close()
 
         sender.put({"outputs": outputs})
         exec_event.wait()
@@ -342,13 +333,18 @@ class XLAOpByOpExecutor:
             self.file_stderr = tempfile.NamedTemporaryFile(mode="w+t", delete=False)
             self.stderror_redirected = True
 
+        file_stderr = open(self.file_stderr.name, "w")
+        old_stdout = os.dup(1)  # Backup stdout descriptor.
+        old_stderr = os.dup(2)  # Backup stderr descriptor.
+        os.dup2(file_stderr.fileno(), 1)  # Redirect stdout (fd 1)
+        os.dup2(file_stderr.fileno(), 2)  # Redirect stderr (fd 2)
+
         inputs_size = get_inputs_size(inputs)
 
         large_input = inputs_size >= self.op_memory_limit
 
         obj = {
             "gm": gm,
-            "dump_file": self.file_stderr.name,
             "large_input": large_input,
         }
 
@@ -415,6 +411,11 @@ class XLAOpByOpExecutor:
 
         if len(outputs) == 1:
             outputs = outputs[0]
+
+        # Revert redirection of stdout/stderr.
+        os.dup2(old_stdout, 1)
+        os.dup2(old_stderr, 2)
+        file_stderr.close()
 
         stderr_data = ""
         if outputs is None:
@@ -518,6 +519,9 @@ class XLAOpByOpExecutor:
                         self.set_runtime_stack_dump(stderr, op)
 
                         if calculated is None:
+                            op.compilation_status = (
+                                OpCompilationStatus.CONVERTED_TO_TTNN
+                            )
                             raise ValueError(f"Failed to execute: \n {stderr}")
                         op.compilation_status = OpCompilationStatus.EXECUTED
                         if self.compiler_config.verify_op_by_op:
@@ -532,7 +536,7 @@ class XLAOpByOpExecutor:
                     except Exception as e:
                         e_msg = self.get_exception_source(e)
                         self.print_marker(
-                            "Failed to execute", idx, num_nodes, node.target, e_msg
+                            "Failed to execute", idx, num_nodes, node.target, stderr
                         )
 
                 if out_degree[node] > 0:
@@ -582,6 +586,12 @@ def bypass_assert_tensor_metadata(gm):
     return gm
 
 
+def dump_module(module, name, compiler_config):
+    if compiler_config.dump_info:
+        print(f"{name} module", flush=True)
+        print(module, flush=True)
+
+
 def xla_pass_pipeline(gm, example_inputs, compiler_config):
     decompositions = torch._decomp.core_aten_decompositions()
     decompositions.update(CUSTOM_DECOMPOSITION_TABLE)
@@ -603,7 +613,14 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
     compiled_graph = bypass_redundant_getitem(compiled_graph)
     compiled_graph = rectify_buffer_inplace_copy(compiled_graph)
     compiled_graph = bypass_assert_tensor_metadata(compiled_graph)
+    dump_module(
+        module=compiled_graph.code, name="Torch graph", compiler_config=compiler_config
+    )
+
     program = torch.export.export(compiled_graph, tuple(example_inputs), strict=False)
+    dump_module(
+        module=program, name="Torch compiled graph", compiler_config=compiler_config
+    )
 
     return program
 
@@ -621,12 +638,31 @@ class XLAExecutor:
                 self.inputs.append(None)
                 self.user_input_indices.append(idx)
             else:
-                self.inputs.append(self.program.state_dict[input_spec.target].to("xla"))
+                source_tensor = self.program.state_dict[input_spec.target]
+                shard_spec = sharding_utils.get_sharding(source_tensor)
+                device_tensor = source_tensor.to("xla")
+                if shard_spec is not None:
+                    assert (
+                        self.compiler_config.xla_mesh
+                    ), "compiler_config.xla_mesh must be set to mark_sharding on tensors"
+                    xs.mark_sharding(
+                        device_tensor, self.compiler_config.xla_mesh, shard_spec
+                    )
+                self.inputs.append(device_tensor)
 
     def push_tensors_to_device(self, inputs, device):
         if hasattr(inputs, "to"):
             if device not in [inputs.device, inputs.device.type]:
-                return inputs.to(device)
+                shard_spec = sharding_utils.get_sharding(inputs)
+                device_inputs = inputs.to(device)
+                if shard_spec is not None:
+                    assert (
+                        self.compiler_config.xla_mesh
+                    ), "compiler_config.xla_mesh must be set to mark_sharding on tensors"
+                    xs.mark_sharding(
+                        device_inputs, self.compiler_config.xla_mesh, shard_spec
+                    )
+                return device_inputs
             else:
                 return inputs
         elif isinstance(

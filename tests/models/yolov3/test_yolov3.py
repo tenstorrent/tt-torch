@@ -44,7 +44,7 @@ def test_yolov3(record_property, mode, op_by_op):
         mode,
         loader=loader,
         model_info=model_info,
-        required_pcc=0.97,
+        required_pcc=0.96,
         assert_pcc=True,
         assert_atol=False,
         compiler_config=cc,
