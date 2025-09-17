@@ -74,7 +74,6 @@ sudo apt install -y /tmp/openmpi-ulfm.deb
 
 ```bash
 pip install pillow
-pip install torchvision
 pip install tabulate
 pip install requests
 ```
