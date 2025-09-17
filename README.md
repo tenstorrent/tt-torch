@@ -57,5 +57,7 @@ This repo is a part of Tenstorrent’s bounty program. If you are interested in 
 
 [codecov]: https://codecov.io/gh/tenstorrent/tt-torch
 [tests]: https://github.com/tenstorrent/tt-torch/actions/workflows/on-push.yml?query=branch%3Amain
+[deepwiki]: https://deepwiki.com/tenstorrent/tt-torch
 [codecov badge]: https://codecov.io/gh/tenstorrent/tt-torch/graph/badge.svg?token=XQJ3JVKIRI
 [tests badge]: https://github.com/tenstorrent/tt-torch/actions/workflows/on-push.yml/badge.svg?query=branch%3Amain
+[deep wiki badge]: https://deepwiki.com/badge.svg
