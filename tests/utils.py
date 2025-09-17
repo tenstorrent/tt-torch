@@ -294,6 +294,35 @@ class ModelTester:
         )
 
     def _extract_outputs(self, output_object):
+
+        def flatten_tensor_lists(obj):
+            flattened = []
+            for item in obj:
+                if isinstance(item, torch.Tensor):
+                    flattened.append(item)
+                elif isinstance(item, (np.ndarray)):
+                    flattened.append(torch.from_numpy(item))
+                elif np.isscalar(item):
+                    flattened.append(torch.tensor(item))
+                elif isinstance(item, (tuple, list)):
+                    flattened.extend(flatten_tensor_lists(item))
+                elif isinstance(item, dict):
+                    dict_values = list(item.values())
+                    if dict_values and isinstance(
+                        dict_values[0], (np.floating, np.integer, np.number)
+                    ):
+                        tensor_values = [float(val) for val in dict_values]
+                        flattened.append(torch.tensor(tensor_values))
+                    elif dict_values and isinstance(
+                        dict_values[0], (int, float)
+                    ):
+                        flattened.append(torch.tensor(list(dict_values)))
+                else:
+                    raise NotImplementedError(
+                        f"Item type: ({type(item)}) is not a torch.Tensor or list/tuple of torch.Tensors"
+                    )
+            return flattened
+
         if isinstance(output_object, torch.Tensor):
             return (output_object,)
         elif isinstance(output_object, (int, float)):
@@ -301,24 +330,6 @@ class ModelTester:
         elif isinstance(output_object, str):
             return (output_object,)
         elif isinstance(output_object, (tuple, list)):
-
-            def flatten_tensor_lists(obj):
-                flattened = []
-                for item in obj:
-                    if isinstance(item, torch.Tensor):
-                        flattened.append(item)
-                    elif isinstance(item, (np.ndarray)):
-                        flattened.append(torch.from_numpy(item))
-                    elif np.isscalar(item):
-                        flattened.append(torch.tensor(item))
-                    elif isinstance(item, (tuple, list)):
-                        flattened.extend(flatten_tensor_lists(item))
-                    else:
-                        raise NotImplementedError(
-                            f"Item type: ({type(item)}) is not a torch.Tensor or list/tuple of torch.Tensors"
-                        )
-                return flattened
-
             try:
                 flattened_tensors = flatten_tensor_lists(output_object)
                 return tuple(flattened_tensors)
@@ -350,29 +361,10 @@ class ModelTester:
                 elif isinstance(value, (np.ndarray)):
                     tensors.append(torch.from_numpy(value))
                 elif isinstance(value, list) and value:
-                    for item in value:
-                        if isinstance(item, torch.Tensor):
-                            tensors.append(item)
-                        elif isinstance(item, np.ndarray):
-                            tensors.append(torch.from_numpy(item))
-                        elif isinstance(item, dict):
-                            dict_values = list(item.values())
-                            if dict_values and isinstance(
-                                dict_values[0], (np.floating, np.integer, np.number)
-                            ):
-                                tensor_values = [float(val) for val in dict_values]
-                                tensors.append(torch.tensor(tensor_values))
-                            elif dict_values and isinstance(
-                                dict_values[0], (int, float)
-                            ):
-                                tensors.append(torch.tensor(list(dict_values)))
-                        elif np.isscalar(item):
-                            tensors.append(torch.tensor(item))
-                        else:
-                            # Add warning for unhandled list item types
-                            warnings.warn(
-                                f"Key '{key}' contains unhandled list item type '{type(item).__name__}' in dict. Add support for its output shape to extract_outputs."
-                            )
+                    flattened_tensors = flatten_tensor_lists(value)                    
+                    if flattened_tensors:
+                        combined_tensor = torch.cat([t.flatten() for t in flattened_tensors])
+                        tensors.append(combined_tensor)
                 elif np.isscalar(value):
                     tensors.append(torch.tensor(value))
                 else:
