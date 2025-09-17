@@ -294,7 +294,6 @@ class ModelTester:
         )
 
     def _extract_outputs(self, output_object):
-
         def flatten_tensor_lists(obj):
             flattened = []
             for item in obj:
@@ -313,9 +312,7 @@ class ModelTester:
                     ):
                         tensor_values = [float(val) for val in dict_values]
                         flattened.append(torch.tensor(tensor_values))
-                    elif dict_values and isinstance(
-                        dict_values[0], (int, float)
-                    ):
+                    elif dict_values and isinstance(dict_values[0], (int, float)):
                         flattened.append(torch.tensor(list(dict_values)))
                 else:
                     raise NotImplementedError(
@@ -361,9 +358,11 @@ class ModelTester:
                 elif isinstance(value, (np.ndarray)):
                     tensors.append(torch.from_numpy(value))
                 elif isinstance(value, list) and value:
-                    flattened_tensors = flatten_tensor_lists(value)                    
+                    flattened_tensors = flatten_tensor_lists(value)
                     if flattened_tensors:
-                        combined_tensor = torch.cat([t.flatten() for t in flattened_tensors])
+                        combined_tensor = torch.cat(
+                            [t.flatten() for t in flattened_tensors]
+                        )
                         tensors.append(combined_tensor)
                 elif np.isscalar(value):
                     tensors.append(torch.tensor(value))
