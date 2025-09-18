@@ -103,7 +103,6 @@ git submodule update --init --recursive
 
 ```bash
 pip install pillow
-pip install torchvision
 pip install tabulate
 pip install requests
 ```
