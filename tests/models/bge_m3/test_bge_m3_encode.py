@@ -26,29 +26,6 @@ class ThisTester(ModelTester):
             "return_colbert_vecs": True,
         }
 
-    def _extract_outputs(self, output_object):
-        if isinstance(output_object, dict):
-            tensors = []
-            for key, value in output_object.items():
-                if key == "dense_vecs" and isinstance(value, np.ndarray):
-                    tensors.append(torch.from_numpy(value))
-                elif key == "colbert_vecs" and isinstance(value, list):
-                    if value and isinstance(value[0], np.ndarray):
-                        tensors.append(torch.from_numpy(value[0]))
-                elif key == "lexical_weights" and isinstance(value, list):
-                    if value and isinstance(value[0], dict):
-                        weights = list(value[0].values())
-                        tensors.append(torch.tensor(weights))
-                elif isinstance(value, torch.Tensor):
-                    tensors.append(value)
-
-            if tensors:
-                return tuple(tensors)
-            else:
-                raise ValueError(
-                    f"No tensors found in output dictionary. Keys: {list(output_object.keys())}"
-                )
-
 
 @pytest.mark.parametrize(
     "mode",

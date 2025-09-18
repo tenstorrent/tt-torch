@@ -34,22 +34,6 @@ class ThisTester(ModelTester):
 
         return forward_inputs
 
-    def _extract_outputs(self, output_object):
-        if isinstance(output_object, dict):
-            tensors = []
-            for key, value in output_object.items():
-                if isinstance(value, torch.Tensor):
-                    tensors.append(value)
-
-            if tensors:
-                return tuple(tensors)
-            else:
-                raise ValueError(
-                    f"No tensors found in output dictionary. Keys: {list(output_object.keys())}"
-                )
-
-            return super()._extract_outputs(output_object)
-
 
 @pytest.mark.parametrize(
     "mode",
