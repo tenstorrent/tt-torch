@@ -10,7 +10,7 @@ Note: Paths in this document are given relative to the repo root.
 
 ## Prerequisites
 
-> **NOTE:** TT-Torch is deprecated. To work with PyTorch and the various features available in TT-Torch, please see the documentation for [TT-XLA](https://github.com/tenstorrent/tt-xla/blob/main/README.md). 
+> **NOTE:** TT-Torch is deprecated. To work with PyTorch and the various features available in TT-Torch, please see the documentation for [TT-XLA](https://github.com/tenstorrent/tt-xla/blob/main/README.md).
 
 In the tt-torch building step ([Getting Started](https://docs.tenstorrent.com/tt-torch/getting_started.html#building-tt-torch)), it is required to configure your cmake build with the additional cmake directive `TT_RUNTIME_ENABLE_PERF_TRACE=ON` (i.e. run: `cmake -G Ninja -B build -DTT_RUNTIME_ENABLE_PERF_TRACE=ON`).
 

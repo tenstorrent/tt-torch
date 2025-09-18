@@ -1,6 +1,6 @@
 # Getting Started
 
-> **NOTE:** TT-Torch is deprecated. To work with PyTorch and the various features available in TT-Torch, please see the documentation for [TT-XLA](https://github.com/tenstorrent/tt-xla/blob/main/README.md). 
+> **NOTE:** TT-Torch is deprecated. To work with PyTorch and the various features available in TT-Torch, please see the documentation for [TT-XLA](https://github.com/tenstorrent/tt-xla/blob/main/README.md).
 
 This document walks you through how to set up TT-Torch. TT-Torch is TT-Forge's front end for converting PyTorch models to different levels of Intermediate Representation (IR) all the way down to TTNN. This is the main Getting Started page. There are two additional Getting Started pages depending on what you want to do. They are all described here, with links provided to each.
 

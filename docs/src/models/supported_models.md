@@ -1,7 +1,7 @@
 
 ## Supported Models
 
-> **NOTE:** TT-Torch is deprecated. To work with PyTorch and the various features available in TT-Torch, please see the documentation for [TT-XLA](https://github.com/tenstorrent/tt-xla/blob/main/README.md). 
+> **NOTE:** TT-Torch is deprecated. To work with PyTorch and the various features available in TT-Torch, please see the documentation for [TT-XLA](https://github.com/tenstorrent/tt-xla/blob/main/README.md).
 
 The following models can be currently run through tt-torch as of Feb 3rd, 2025. Please note, there is a known bug causing incorrect output for some models. The [PCC](https://en.wikipedia.org/wiki/Pearson_correlation_coefficient) is displayed at the end of each test below. This issue will be addressed soon.
 
