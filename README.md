@@ -30,7 +30,7 @@ tt-torch is a [PyTorch2.0](https://pytorch.org/get-started/pytorch-2.0/) and [to
 -----
 # What is this Repo?
 
-The TT-Torch repository is a PyTorch-based front end compiler that lets developers write standard PyTorch models as well as compile and run those models on Tenstorrent AI accelerators. TT-Tsorch is a bridge between PyTorch models, MLIR dialects (Tenstorrent-specific IRs like ttir and ttgir), and low-level hardware execution on Tenstorrent chips.
+The TT-Torch repository is a PyTorch-based front end compiler that lets developers write standard PyTorch models as well as compile and run those models on Tenstorrent AI accelerators. TT-Torch is a bridge between PyTorch models, MLIR dialects (Tenstorrent-specific IRs like ttir and ttnn), and low-level hardware execution on Tenstorrent chips.
 
 -----
 # Related Tenstorrent Projects
