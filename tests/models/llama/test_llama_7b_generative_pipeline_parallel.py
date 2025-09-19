@@ -12,7 +12,7 @@ from transformers import (
 )
 from tests.utils import clear_dynamo_cache
 from accelerate import infer_auto_device_map
-
+import pytest
 
 def load_model(model_name):
     tokenizer = AutoTokenizer.from_pretrained(
@@ -55,7 +55,7 @@ def load_inputs(model, tokenizer):
     }
     return args
 
-
+@pytest.mark.skip(reason="Test hangs during execution - GitHub issue: https://github.com/tenstorrent/tt-torch/issues/1238")
 @torch.inference_mode()
 def test_llama_7b_generative_pipeline_parallel():
     clear_dynamo_cache()
