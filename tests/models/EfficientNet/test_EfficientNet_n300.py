@@ -59,6 +59,12 @@ def test_EfficientNet(record_property, model_name, mode, op_by_op):
     if mode == "train":
         pytest.skip()
 
+    # XFAIL specific failing test case - Out of DRAM issue
+    if model_name == "efficientnet-b0" and mode == "eval" and op_by_op is None:
+        pytest.xfail(
+            reason="Out of Memory: Not enough space to allocate 2136064 B L1 buffer - GitHub issue: https://github.com/tenstorrent/tt-torch/issues/1239"
+        )
+
     model_group = "red" if model_name == "efficientnet-b0" else "generality"
 
     cc = CompilerConfig()
