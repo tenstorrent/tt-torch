@@ -116,7 +116,7 @@ def verify_against_golden(
             pcc_ = SKIPPED_PCC_CALCULATION_FOR_SINGLE_VALUE
             pcc_passeds.append(True)
         else:
-            pcc_ = calculate_pcc(golden, calculated)
+            pcc_ = calculate_pcc(calculated, golden)
             pcc_passeds.append(pcc_ >= required_pcc)
         pccs.append(pcc_)
 
@@ -125,7 +125,7 @@ def verify_against_golden(
             required_atol = max_value * relative_atol
 
         atol_thresholds.append(required_atol)
-        atol_ = calculate_atol(golden, calculated)
+        atol_ = calculate_atol(calculated, golden)
         atols.append(atol_)
         atols_passeds.append(atol_ <= required_atol)
 
