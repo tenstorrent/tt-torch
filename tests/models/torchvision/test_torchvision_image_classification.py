@@ -112,7 +112,6 @@ def test_torchvision_image_classification(
 
     cc = CompilerConfig()
     cc.enable_consteval = True
-    cc.consteval_parameters = True
     if op_by_op:
         if data_parallel_mode == "data_parallel":
             pytest.skip("Op-by-op not supported in data parallel mode")
