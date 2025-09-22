@@ -8,9 +8,9 @@ set(TT_XLA_VERSION "6fc462d0bb80e2141839dc396856c5d5a1426b59")
 
 # Optional override of tt-xla's TT_MLIR_VERSION. Default to tt-xla's default TT_MLIR_VERSION if we pass an empty string
 # without printing sharding rules (works)
-# set(TT_MLIR_VERSION "6eb029b3afa8bf742d47287a147bbfa87cb6eaa8")
+set(TT_MLIR_VERSION "c8f0cb68fdfbd2fd9aa6fd90006fb633da6d867e")
 # with printing sharding rules (breaks)
-set(TT_MLIR_VERSION "6ff6914aab92fc31c9ea62741cec30bc540f5ae1")
+# set(TT_MLIR_VERSION "6ff6914aab92fc31c9ea62741cec30bc540f5ae1")
 if(NOT TT_MLIR_VERSION STREQUAL "")
     set(USE_CUSTOM_TT_MLIR_VERSION ON)
     message(STATUS "Overriding TT_MLIR_VERSION in tt-xla build: ${TT_MLIR_VERSION}")
