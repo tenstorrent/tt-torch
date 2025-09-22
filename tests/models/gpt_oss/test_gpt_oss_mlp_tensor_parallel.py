@@ -323,9 +323,9 @@ def main():
     print("=" * 60)
 
     try:
-        # run_mlp_test()
+        run_mlp_test()
         # compare_against_cpu()
-        run_on_cpu()
+        # run_on_cpu()
         return 0
     except Exception as e:
         print(f"Test failed with error: {e}")
