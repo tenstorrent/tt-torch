@@ -36,7 +36,8 @@ RUN apt-get update && apt-get install -y \
     libglx-mesa0 \
     unzip \
     ffmpeg \
-    protobuf-compiler
+    protobuf-compiler \
+    xxd
 
 # Install python 3.11
 RUN add-apt-repository ppa:deadsnakes/ppa && \
