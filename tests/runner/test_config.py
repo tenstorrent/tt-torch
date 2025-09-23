@@ -1182,9 +1182,11 @@ test_config = {
         "skip_bringup_status": "FAILED_RUNTIME",
     },
     "qwen_3/embedding/pytorch-embedding_8b-full-eval": {
-        "status": ModelStatus.NOT_SUPPORTED_SKIP,
-        "skip_reason": "Too large for single chip",
-        "skip_bringup_status": "FAILED_RUNTIME",
+        "status": ModelStatus.EXPECTED_PASSING,
+        "required_pcc": 0.90,
+        #"status": ModelStatus.NOT_SUPPORTED_SKIP,
+        #"skip_reason": "Too large for single chip",
+        #"skip_bringup_status": "FAILED_RUNTIME",
     },
     "gpt_neo/sequence_classification/pytorch-gpt_neo_2_7B-full-eval": {
         "status": ModelStatus.NOT_SUPPORTED_SKIP,

@@ -600,45 +600,45 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
         .run_decompositions(decompositions)
         .module()
     )
-    print("Before bypass_dtype_promotion")
-    compiled_graph.graph.print_tabular()
+    #print("Before bypass_dtype_promotion")
+    #compiled_graph.graph.print_tabular()
     compiled_graph = bypass_dtype_promotion(compiled_graph, compiler_config)
     compiled_graph.graph.eliminate_dead_code()
     compiled_graph.graph.lint()
     compiled_graph.recompile()
-    print("After bypass_dtype_promotion")
-    compiled_graph.graph.print_tabular()
+    #print("After bypass_dtype_promotion")
+    #compiled_graph.graph.print_tabular()
     
     compiled_graph = bypass_assert_tensor_metadata(compiled_graph)
-    print("After bypass_assert_tensor_metadata")
-    compiled_graph.graph.print_tabular()
+    #print("After bypass_assert_tensor_metadata")
+    #compiled_graph.graph.print_tabular()
 
     run_shape_prop(compiled_graph, example_inputs)
-    print("After run_shape_prop")
-    compiled_graph.graph.print_tabular()
+    #print("After run_shape_prop")
+    #compiled_graph.graph.print_tabular()
 
     compiled_graph = bypass_redundant_cast(compiled_graph)
-    print("After bypass_redundant_cast")
-    compiled_graph.graph.print_tabular()
+    #print("After bypass_redundant_cast")
+    #//compiled_graph.graph.print_tabular()
 
     if compiler_config.enable_consteval:
         compiled_graph = constant_fold(compiled_graph)
     elif compiler_config.consteval_parameters:
         raise Exception("consteval_parameters is enabled but enable_consteval is not")
-    print("After const fold")
-    compiled_graph.graph.print_tabular()
+    #print("After const fold")
+    #compiled_graph.graph.print_tabular()
 
     compiled_graph = bypass_redundant_getitem(compiled_graph)
-    print("After bypass_redundant_getitem")
-    compiled_graph.graph.print_tabular()
+    #print("After bypass_redundant_getitem")
+    #compiled_graph.graph.print_tabular()
 
     compiled_graph = rectify_buffer_inplace_copy(compiled_graph)
-    print("After rectify_buffer_inplace_copy")
-    compiled_graph.graph.print_tabular()
+    #print("After rectify_buffer_inplace_copy")
+    #compiled_graph.graph.print_tabular()
 
     compiled_graph = bypass_assert_tensor_metadata(compiled_graph)
-    print("After 2nd bypass_assert_tensor_metadata")
-    compiled_graph.graph.print_tabular()  
+    #print("After 2nd bypass_assert_tensor_metadata")
+    #compiled_graph.graph.print_tabular()  
 
     dump_module(
         module=compiled_graph.code, name="Torch graph", compiler_config=compiler_config
