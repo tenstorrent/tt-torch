@@ -35,7 +35,7 @@ options = BackendOptions()
 options.compiler_config = cc
 # We didn't provide any explicit device while
 # compiling the model.
-tt_model = torch.compile(model, backend="tt", dynamic=False, options=options)
+tt_model = torch.compile(model, backend="tt-legacy", dynamic=False, options=options)
 ```
 This causes the model to be compiled onto the default device present in the board. The device acquisition and release get handled automatically.
 
@@ -59,7 +59,7 @@ def main():
         options.compiler_config = cc
         options.device = device # Explicitly compile the model for a specific device
         tt_models.append(
-            torch.compile(model, backend="tt", dynamic=False, options=options)
+            torch.compile(model, backend="tt-legacy", dynamic=False, options=options)
         )
     ...
     # Release all acquired devices after use

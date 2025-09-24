@@ -76,7 +76,7 @@ def test_llama3_generate(record_property, mode, op_by_op):
         assert_pcc=False,
         assert_atol=False,
         run_generate=True,
-        backend="tt",
+        backend="tt-legacy",
     )
 
     results = tester.test_model()

@@ -57,7 +57,7 @@ def test_phi(record_property, model_name, mode, op_by_op):
 
     # FIXME 44GB memory usage w/ experimental backend and consteval in phi2
     # fails with tt-experimental - https://github.com/tenstorrent/tt-torch/issues/1108
-    backend = "tt" if model_name == "microsoft/phi-2" else "tt-experimental"
+    backend = "tt-legacy" if model_name == "microsoft/phi-2" else "tt-experimental"
 
     tester = ThisTester(
         model_name,
