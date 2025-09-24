@@ -86,7 +86,9 @@ def test_llama_7b_pipeline_parallel(record_property, model_name, mode):
     cc.enable_consteval = True
     cc.consteval_parameters = True
     options.devices = [device1, device2]
-    compiled_model = torch.compile(model, backend="tt", dynamic=False, options=options)
+    compiled_model = torch.compile(
+        model, backend="tt-legacy", dynamic=False, options=options
+    )
     out = compiled_model(**test_input)
     golden = model(**test_input)
     pccs, atols, _, _, _ = verify_against_golden(

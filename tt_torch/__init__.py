@@ -23,7 +23,7 @@ if spec is not None:
     tt_metal_home = os.path.abspath(spec.submodule_search_locations[0])
     os.environ["TT_METAL_HOME"] = tt_metal_home
 
-# Import these modules so backends are registered ("tt", and "tt-experimental")
+# Import these modules so backends are registered ("tt-legacy", and "tt-experimental")
 import tt_torch.dynamo.backend
 import tt_torch.dynamo.experimental.xla_backend
 
@@ -69,6 +69,6 @@ class TTPjrtPlugin(plugins.DevicePlugin):
         assert False, "Could not find pjrt_plugin_tt.so"
 
 
-plugins.register_plugin("TT", TTPjrtPlugin())
+plugins.register_plugin("TT_LEGACY", TTPjrtPlugin())
 os.environ["XLA_STABLEHLO_COMPILE"] = "1"
-os.environ["PJRT_DEVICE"] = "TT"
+os.environ["PJRT_DEVICE"] = "TT_LEGACY"

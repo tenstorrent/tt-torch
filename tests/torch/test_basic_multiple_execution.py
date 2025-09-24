@@ -16,7 +16,7 @@ def test_multiple_execution():
             return self.linear(x)
 
     model = Basic()
-    model = torch.compile(model, backend="tt")
+    model = torch.compile(model, backend="tt-legacy")
     inputs = torch.randn(32, 32)
 
     for _ in range(10):

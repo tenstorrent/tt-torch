@@ -100,7 +100,9 @@ def test_llama_7b_generative_pipeline_parallel():
     constant_cache = {}
     options.constant_cache = constant_cache
 
-    compiled_model = torch.compile(model, backend="tt", dynamic=False, options=options)
+    compiled_model = torch.compile(
+        model, backend="tt-legacy", dynamic=False, options=options
+    )
 
     # up to _global_max_cache_len - input_args["input_ids"].shape[1]
     tokens_to_generate = 32

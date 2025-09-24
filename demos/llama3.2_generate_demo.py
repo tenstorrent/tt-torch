@@ -56,7 +56,7 @@ def main():
     options.devices = [device]
 
     model.forward = torch.compile(
-        model.forward, backend="tt", dynamic=False, options=options
+        model.forward, backend="tt-legacy", dynamic=False, options=options
     )
 
     outputs = model.generate(**input_args, streamer=streamer)

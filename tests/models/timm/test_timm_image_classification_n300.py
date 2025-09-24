@@ -112,7 +112,9 @@ def test_timm_image_classification(record_property, model_name, mode, op_by_op):
 
     # FIXME fails with tt-experimental - https://github.com/tenstorrent/tt-torch/issues/1105
     backend = (
-        "tt" if model_name in ["tf_efficientnet_lite4.in1k"] else "tt-experimental"
+        "tt-legacy"
+        if model_name in ["tf_efficientnet_lite4.in1k"]
+        else "tt-experimental"
     )
 
     model_group = "generality"

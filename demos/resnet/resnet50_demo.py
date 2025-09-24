@@ -26,7 +26,7 @@ def main(run_interactive):
 
     options = BackendOptions()
     options.compiler_config = cc
-    tt_model = torch.compile(model, backend="tt", dynamic=False, options=options)
+    tt_model = torch.compile(model, backend="tt-legacy", dynamic=False, options=options)
 
     headers = ["Top 5 Predictions"]
     topk = 5

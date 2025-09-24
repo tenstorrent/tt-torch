@@ -40,7 +40,7 @@ cc.consteval_parameters = True # This will enable constant folding on the parame
 
 options = BackendOptions()
 options.compiler_config = cc
-model = torch.compile(model, backend="tt", options=options)
+model = torch.compile(model, backend="tt-legacy", options=options)
 
 inputs = ...
 

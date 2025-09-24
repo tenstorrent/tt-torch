@@ -31,7 +31,7 @@ def compile_model(model, compiler_config, device, async_mode):
     if int(os.environ.get("TT_TORCH_FORCE_EXPERIMENTAL_BACKEND", False)):
         backend = "tt-experimental"
     else:
-        backend = "tt"
+        backend = "tt-legacy"
 
     return torch.compile(model, backend=backend, options=torch_options)
 

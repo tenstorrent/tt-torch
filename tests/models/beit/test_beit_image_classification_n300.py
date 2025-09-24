@@ -78,7 +78,7 @@ def test_beit_image_classification(
         assert_pcc=True,
         assert_atol=False,
         # FIXME fails with tt-experimental - https://github.com/tenstorrent/tt-torch/issues/1105
-        backend="tt",
+        backend="tt-legacy",
     )
     results = tester.test_model()
 
