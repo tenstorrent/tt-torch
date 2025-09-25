@@ -48,7 +48,7 @@ jobs:
     name: "Test ${{matrix.build.runs-on}}-${{ matrix.build.c }}-${{ matrix.build.commit }}"
     container:
       image: "ghcr.io/tenstorrent/tt-torch/tt-torch-ci-ubuntu-22-04:${{ needs.inspect.outputs.docker-tag }}"
-      options: --device /dev/tenstorrent/0
+      options: --device /dev/tenstorrent
       volumes:
         - /dev/hugepages:/dev/hugepages
         - /dev/hugepages-1G:/dev/hugepages-1G

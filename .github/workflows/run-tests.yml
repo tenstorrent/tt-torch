@@ -27,7 +27,7 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-          {runs-on: wormhole_b0, name: "run", container-options: "--device /dev/tenstorrent/0"},
+          {runs-on: wormhole_b0, name: "run", container-options: "--device /dev/tenstorrent"},
         ]
     name: tests (${{ matrix.build.runs-on }}, ${{ matrix.build.name }})
     runs-on:
