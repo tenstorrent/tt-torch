@@ -126,7 +126,6 @@ if __name__ == "__main__":
     # Compile for single device
     cc = CompilerConfig()
     cc.enable_consteval = True
-    cc.consteval_parameters = True
 
     single_options = BackendOptions()
     single_options.compiler_config = cc

@@ -22,7 +22,6 @@ def main(run_interactive):
 
     cc = CompilerConfig()
     cc.enable_consteval = True
-    cc.consteval_parameters = True
 
     options = BackendOptions()
     options.compiler_config = cc

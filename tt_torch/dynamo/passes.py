@@ -592,8 +592,6 @@ def run_pass_pipeline_for_single_gm(
 
     if compiler_config.enable_consteval:
         gm_device = constant_fold(gm_device)
-    elif compiler_config.consteval_parameters:
-        raise Exception("consteval_parameters is enabled but enable_consteval is not")
 
     gm_device = bypass_redundant_getitem(gm_device)
     gm_device = rectify_buffer_inplace_copy(gm_device)

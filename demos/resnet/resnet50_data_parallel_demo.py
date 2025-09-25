@@ -77,7 +77,6 @@ def main(use_simplified_manager):
 
     cc = CompilerConfig()
     cc.enable_consteval = True
-    cc.consteval_parameters = True
 
     num_devices = DeviceManager.get_num_available_devices()
     if use_simplified_manager:

@@ -43,7 +43,6 @@ def test_MobileNetV2(record_property, mode, op_by_op):
     model_name = "MobileNetV2"
     cc = CompilerConfig()
     cc.enable_consteval = True
-    cc.consteval_parameters = True
     cc.automatic_parallelization = True
     cc.mesh_shape = [1, 2]
 

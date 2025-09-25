@@ -35,7 +35,6 @@ def test_mlpmixer(record_property, mode, op_by_op):
 
     cc = CompilerConfig()
     cc.enable_consteval = True
-    cc.consteval_parameters = True
     cc.automatic_parallelization = True
     cc.mesh_shape = [1, 2]
     if op_by_op:

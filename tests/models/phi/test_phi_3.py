@@ -49,7 +49,6 @@ def test_phi_3(record_property, variant, variant_config, mode, op_by_op):
 
     cc = CompilerConfig()
     cc.enable_consteval = True
-    cc.consteval_parameters = True
     if op_by_op:
         cc.compile_depth = CompileDepth.EXECUTE_OP_BY_OP
         if op_by_op == OpByOpBackend.STABLEHLO:
