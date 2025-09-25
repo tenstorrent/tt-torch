@@ -35,7 +35,7 @@ def test_pipeline_parallel():
 
     host_model = Basic()
 
-    model = torch.compile(host_model, backend="tt", options=options)
+    model = torch.compile(host_model, backend="tt-legacy", options=options)
     x = torch.rand(32, 32)
     y = torch.rand(32, 64)
     calculated = model(x, y)
@@ -82,7 +82,7 @@ def test_pipeline_parallel_topological_sort():
 
     host_model = Basic()
 
-    model = torch.compile(host_model, backend="tt", options=options)
+    model = torch.compile(host_model, backend="tt-legacy", options=options)
     x = torch.rand(32, 32)
     y = torch.rand(32, 64)
     calculated = model(x, y)

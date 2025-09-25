@@ -187,7 +187,7 @@ class ModelTester:
         if int(os.environ.get("TT_TORCH_FORCE_EXPERIMENTAL_BACKEND", False)):
             self.backend = "tt-experimental"
         elif int(os.environ.get("TT_TORCH_FORCE_LEGACY_BACKEND", False)):
-            self.backend = "tt"
+            self.backend = "tt-legacy"
         else:
             self.backend = backend
 
@@ -197,7 +197,7 @@ class ModelTester:
             print(
                 "Data parallel mode is not supported with XLA currently - reverting to legacy"
             )
-            self.backend = "tt"
+            self.backend = "tt-legacy"
 
         self.framework_model = self._load_model()
         self.is_token_output = is_token_output
@@ -630,7 +630,7 @@ class ModelTester:
             return self._test_model_eval_op_by_op(on_device)
         if self.data_parallel_mode:
             assert (
-                self.backend == "tt"
+                self.backend == "tt-legacy"
             ), "Data parallel mode is not supported with XLA currently"
             outputs = self._test_model_eval_data_parallel(assert_eval_token_mismatch)
             assert len(outputs) == len(self.devices), "Num outputs != num devices"

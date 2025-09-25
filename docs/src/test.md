@@ -64,7 +64,7 @@ class MyModel(torch.nn.Module):
 
 model = MyModel()
 
-model = torch.compile(model, backend="tt")
+model = torch.compile(model, backend="tt-legacy")
 
 inputs = ...
 
@@ -85,7 +85,7 @@ class AddTensors(torch.nn.Module):
 
 
 model = AddTensors()
-tt_model = torch.compile(model, backend="tt")
+tt_model = torch.compile(model, backend="tt-legacy")
 
 x = torch.ones(5, 5)
 y = torch.ones(5, 5)

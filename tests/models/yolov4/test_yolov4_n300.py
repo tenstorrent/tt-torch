@@ -70,7 +70,7 @@ def test_yolov4(record_property, mode, op_by_op):
         record_property_handle=record_property,
         model_group="red",
         # FIXME fails with tt-experimental - https://github.com/tenstorrent/tt-torch/issues/1105
-        backend="tt",
+        backend="tt-legacy",
     )
     with torch.no_grad():
         tester.test_model()

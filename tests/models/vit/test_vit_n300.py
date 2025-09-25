@@ -66,7 +66,7 @@ def test_vit(record_property, mode, variant, variant_config, op_by_op):
         assert_pcc=True,
         assert_atol=False,
         # FIXME fails with tt-experimental - https://github.com/tenstorrent/tt-torch/issues/1105
-        backend="tt",
+        backend="tt-legacy",
     )
 
     results = tester.test_model()
