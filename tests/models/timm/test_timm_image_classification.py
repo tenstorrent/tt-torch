@@ -129,7 +129,7 @@ def test_timm_image_classification(
 
     # FIXME - Issue https://github.com/tenstorrent/tt-torch/issues/1104
     if model_name == "inception_v4.tf_in1k":
-        backend = "tt"
+        backend = "tt-legacy"
     else:
         backend = "tt-experimental"
 

@@ -310,7 +310,7 @@ def _base_backend(
 
 
 @tt_torch_error_message
-@register_backend(name="tt")
+@register_backend(name="tt-legacy")
 def backend(gm, example_inputs, options: BackendOptions = None):
     warnings.filterwarnings("ignore", message="Failed to fetch module*")
     assert isinstance(gm, torch.fx.GraphModule), "Backend only supports torch graphs"

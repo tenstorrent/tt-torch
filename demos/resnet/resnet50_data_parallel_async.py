@@ -46,7 +46,7 @@ def main():
         options.async_mode = True
 
         tt_models.append(
-            torch.compile(model, backend="tt", dynamic=False, options=options)
+            torch.compile(model, backend="tt-legacy", dynamic=False, options=options)
         )
 
     # List of image URLs to be processed
