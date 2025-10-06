@@ -4,8 +4,8 @@
 name: Nightly Uplift
 
 on:
-  schedule:
-    - cron: '0 23 * * *'  # Runs at 23:00 UTC every day
+  # schedule:
+  #   - cron: '0 23 * * *'  # Runs at 23:00 UTC every day
   workflow_dispatch:  # Manual trigger
 
 jobs:

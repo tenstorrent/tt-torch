@@ -3,8 +3,8 @@
 name: Weekly Depth Benchmarks
 
 on:
-  schedule:
-    - cron: '0 10 * * 0'  # Runs at 10:00 UTC every Sunday, 6 hours after Nightly Tests
+  # schedule:
+  #   - cron: '0 10 * * 0'  # Runs at 10:00 UTC every Sunday, 6 hours after Nightly Tests
   workflow_dispatch:  # Manual trigger
 
 permissions:
