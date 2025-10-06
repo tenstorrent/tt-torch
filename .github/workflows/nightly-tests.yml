@@ -3,8 +3,8 @@
 name: Nightly Tests
 
 on:
-  schedule:
-    - cron: '0 2 * * *'  # Runs at 02:00 UTC every day
+  # schedule:
+  #   - cron: '0 2 * * *'  # Runs at 02:00 UTC every day
   workflow_dispatch:  # Manual trigger
 
 permissions:
