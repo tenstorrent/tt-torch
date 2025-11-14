@@ -242,6 +242,7 @@ jobs:
                 tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-hpe-hg3x-eval]
                 tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-3d_bb-ddd_3dop-eval]
                 tests/models/centernet/test_centernet_onnx.py::test_centernet_onnx[full-centernet-3d_bb-ddd_sub-eval]
+                tests/models/detr3d/test_detr3d.py::test_detr3d[full-eval]
             "
           },
           # This test group needs to be moved. This will be done once multichip tests are refactored: #780
