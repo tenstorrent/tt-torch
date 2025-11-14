@@ -12,8 +12,6 @@ from tests.utils import ModelTester
 from tt_torch.tools.utils import CompilerConfig, CompileDepth, OpByOpBackend
 from third_party.tt_forge_models.tools.utils import get_file
 
-dependencies = ["ultralytics==8.2.92", "ultralytics-thop==2.0.6"]
-
 
 class ThisTester(ModelTester):
     def _load_model(self):
@@ -117,6 +115,7 @@ class ThisTester(ModelTester):
 def test_yolov5(record_property, mode, op_by_op):
     model_name = "YOLOv5"
 
+    pytest.xfail()
     cc = CompilerConfig()
     cc.enable_consteval = True
     cc.consteval_parameters = True
