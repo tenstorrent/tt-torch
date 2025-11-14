@@ -33,9 +33,7 @@ class ThisTester(OnnxModelTester):
 
     def _load_torch_inputs(self):
         # Images
-        image_file = get_file(
-            "http://images.cocodataset.org/val2017/000000039769.jpg"
-        )
+        image_file = get_file("http://images.cocodataset.org/val2017/000000039769.jpg")
         input_image = Image.open(str(image_file))
         m, s = np.mean(input_image, axis=(0, 1)), np.std(input_image, axis=(0, 1))
         preprocess = transforms.Compose(
