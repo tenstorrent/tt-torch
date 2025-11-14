@@ -195,6 +195,12 @@ jobs:
               tests/models/flux/test_flux.py::test_flux[op_by_op_torch-dev-eval]
             "
           },
+          {
+            runs-on: wormhole_b0, name: "vadv2", tests: "
+              tests/models/vadv2/test_vadv2.py::test_vadv2[op_by_op_torch-eval]
+              tests/models/vadv2/test_vadv2.py::test_vadv2[op_by_op_stablehlo-eval]
+            "
+          },
         ]
     runs-on:
       - ${{ matrix.build.sh-run && format('tt-ubuntu-2204-{0}-stable', matrix.build.runs-on) ||  matrix.build.runs-on }}
