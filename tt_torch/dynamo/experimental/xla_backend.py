@@ -8,6 +8,9 @@ import operator
 from .xla_decompositions import (
     CUSTOM_DECOMPOSITION_TABLE,
 )
+from .xla_transformations import (
+    ReplaceRandWithConstant,
+)
 import os
 import tempfile
 import multiprocessing as mp
@@ -600,6 +603,8 @@ def xla_pass_pipeline(gm, example_inputs, compiler_config):
         .run_decompositions(decompositions)
         .module()
     )
+
+    compiled_graph = ReplaceRandWithConstant(compiled_graph).transform()
 
     compiled_graph = bypass_dtype_promotion(compiled_graph, compiler_config)
     run_shape_prop(compiled_graph, example_inputs)
