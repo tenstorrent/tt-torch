@@ -1,5 +1,5 @@
 # How to use
-Build/install and activate the environment as you would for development on tt-torch: [Build Instructions](https://docs.tenstorrent.com/tt-torch/build.html)
+> 🚨 **DEPRECATED:** TT-Torch is archived. Active development has moved to [TT-XLA](https://github.com/tenstorrent/tt-xla). 🚨
 
 From the project root, run
 ```

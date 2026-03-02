@@ -18,7 +18,7 @@
 
 # tt-torch
 
-> **NOTE:** TT-Torch is deprecated. To work with PyTorch and the various features available in TT-Torch, please see the documentation for [TT-XLA](https://github.com/tenstorrent/tt-xla/blob/main/README.md).
+> 🚨 **DEPRECATED:** TT-Torch is archived. Active development has moved to [TT-XLA](https://github.com/tenstorrent/tt-xla). 🚨
 
 tt-torch is a [PyTorch2.0](https://pytorch.org/get-started/pytorch-2.0/) and [torch-mlir](https://github.com/llvm/torch-mlir/) based front-end for [tt-mlir](https://github.com/tenstorrent/tt-mlir/).
 
@@ -44,7 +44,7 @@ The TT-Torch repository is a PyTorch-based front end compiler that lets develope
 
 -----
 # Tenstorrent Bounty Program Terms and Conditions
-This repo is a part of Tenstorrent’s bounty program. If you are interested in helping to improve tt-forge, please make sure to read the [Tenstorrent Bounty Program Terms and Conditions](https://docs.tenstorrent.com/bounty_terms.html) before heading to the issues tab. Look for the issues that are tagged with both “bounty” and difficulty level!
+This repo was part of Tenstorrent's bounty program. The bounty program for this repo is no longer active. For current bounty opportunities, see the [TT-XLA](https://github.com/tenstorrent/tt-xla) repository.
 
 [codecov]: https://codecov.io/gh/tenstorrent/tt-torch
 [tests]: https://github.com/tenstorrent/tt-torch/actions/workflows/on-push.yml?query=branch%3Amain

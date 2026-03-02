@@ -1,7 +1,7 @@
 
 ## Pre-Commit
 
-> **NOTE:** TT-Torch is deprecated. To work with PyTorch and the various features available in TT-Torch, please see the documentation for [TT-XLA](https://github.com/tenstorrent/tt-xla/blob/main/README.md).
+> 🚨 **DEPRECATED:** TT-Torch is archived. Active development has moved to [TT-XLA](https://github.com/tenstorrent/tt-xla). 🚨
 
 Pre-Commit applies a Git hook to the local repository, ensuring linting is checked and applied on every git commit action. Install it from the root of the repository using:
 
