@@ -1,6 +1,6 @@
 # How to add model tests?
 
-> **NOTE:** TT-Torch is deprecated. To work with PyTorch and the various features available in TT-Torch, please see the documentation for [TT-XLA](https://github.com/tenstorrent/tt-xla/blob/main/README.md).
+> 🚨 **DEPRECATED:** TT-Torch is archived. Active development has moved to [TT-XLA](https://github.com/tenstorrent/tt-xla). 🚨
 
 ## Requirements
 [Getting Started](https://docs.tenstorrent.com/tt-torch/getting_started.html)
